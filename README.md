@@ -45,7 +45,11 @@ Copy `.env.example` to `.env`. The committed file contains safe placeholders onl
 | `RESEND_API_KEY`                                         | Transactional email        | Resend API keys                    |
 | `NEXT_PUBLIC_APP_URL`                                    | Absolute application links | Deployment URL                     |
 
-Sanity Studio uses the corresponding `SANITY_STUDIO_PROJECT_ID` and `SANITY_STUDIO_DATASET` variables. Integrations are intentionally exposed through shared packages but are not wired into product flows in this foundation milestone.
+Sanity Studio uses the corresponding `SANITY_STUDIO_PROJECT_ID` and `SANITY_STUDIO_DATASET` variables. Published active programmes are validated and rendered on their matching public school pages. If CMS configuration or content is unavailable, reviewed typed fallback programmes keep the website operational.
+
+## Content management
+
+Run `pnpm --filter @luminol/studio dev` to open Sanity Studio locally. Studio manages programmes, site settings, team members, and consent-confirmed testimonials. See [docs/cms.md](docs/cms.md) for environment setup, publishing rules, content safety, CORS configuration, and fallback behavior.
 
 ## Commands
 
