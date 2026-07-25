@@ -1,12 +1,7 @@
 @import 'tailwindcss';
-@theme {
-  --color-brand-navy: #102a43;
-  --color-brand-gold: #c79a3b;
-  --color-brand-canvas: #fafaf8;
-  --font-sans: Manrope, sans-serif;
-  --font-serif: 'Cormorant Garamond', serif;
-  --font-arabic: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
-}
+@import '@luminol/config/tokens.css';
+@source '../../../packages/ui/src';
+
 * {
   box-sizing: border-box;
 }
@@ -15,17 +10,17 @@ html {
 }
 body {
   margin: 0;
-  background: #fafaf8;
-  color: #102a43;
-  font-family: Manrope, sans-serif;
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+  font-family: var(--font-sans);
 }
 nav {
   height: 100px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 7vw;
-  border-bottom: 1px solid #102a4320;
+  padding-inline: var(--luminol-page-gutter);
+  border-bottom: 1px solid var(--color-brand-line);
 }
 .nav-links {
   display: flex;
@@ -35,95 +30,95 @@ nav {
   letter-spacing: 0.12em;
 }
 .nav-links a {
-  text-decoration: none;
   color: inherit;
+  text-decoration: none;
 }
 .hero {
   min-height: 680px;
-  padding: 110px 7vw 80px;
-  background: linear-gradient(90deg, #fafaf8 55%, #eeeae0 55%);
+  padding: 110px var(--luminol-page-gutter) 80px;
   position: relative;
+  background: linear-gradient(
+    90deg,
+    var(--color-brand-canvas) 55%,
+    color-mix(in srgb, var(--color-brand-gold) 9%, var(--color-brand-canvas)) 55%
+  );
 }
-.hero:after {
+.hero::after {
   content: 'LA';
   position: absolute;
-  right: 8vw;
-  top: 90px;
-  font-family: 'Cormorant Garamond';
+  inset-block-start: 90px;
+  inset-inline-end: 8vw;
+  color: color-mix(in srgb, var(--color-brand-ink) 4%, transparent);
+  font-family: var(--font-display);
   font-size: 24rem;
   line-height: 1;
-  color: #102a4308;
+  pointer-events: none;
 }
 .eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
+  color: var(--color-brand-gold-strong);
   font-size: 0.7rem;
   font-weight: 700;
-  color: #a67827;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 .hero h1,
 .schools h2 {
-  font-family: 'Cormorant Garamond';
-  font-weight: 500;
-  font-size: clamp(4rem, 8vw, 7.2rem);
-  line-height: 0.85;
-  letter-spacing: -0.04em;
   margin: 2rem 0;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 8vw, 7.2rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
 }
 .hero em {
-  color: #c79a3b;
+  color: var(--color-brand-gold-strong);
   font-weight: 400;
 }
 .lede {
-  max-width: 490px;
+  max-width: var(--luminol-reading-width);
+  color: var(--color-brand-muted);
   font-size: 1.1rem;
   line-height: 1.8;
-  color: #486581;
-}
-.cta {
-  display: inline-flex;
-  gap: 3rem;
-  margin-top: 2rem;
-  background: #102a43;
-  color: white;
-  padding: 1.2rem 1.5rem;
-  text-decoration: none;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
 }
 .schools {
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   gap: 8vw;
-  padding: 120px 7vw;
-  background: #102a43;
-  color: #fafaf8;
+  padding: var(--luminol-section-space) var(--luminol-page-gutter);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
 }
 .schools h2 {
   font-size: 4.5rem;
 }
 .school-list article {
-  border-top: 1px solid #ffffff30;
-  padding: 2rem 0 2.5rem;
   display: grid;
   grid-template-columns: 50px 1fr;
+  padding: 2rem 0 2.5rem;
+  border-top: 1px solid rgb(255 255 255 / 0.2);
 }
 .school-list span {
-  color: #c79a3b;
+  color: var(--color-brand-gold);
 }
 .school-list h3 {
-  font-family: 'Cormorant Garamond';
-  font-size: 2rem;
   margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
 }
 .school-list p {
   grid-column: 2;
-  color: #bcccdc;
   margin-bottom: 0;
+  color: var(--color-brand-line);
 }
 html[dir='rtl'] body {
-  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+  font-family: var(--font-arabic);
+}
+html[dir='rtl'] .hero {
+  background: linear-gradient(
+    -90deg,
+    var(--color-brand-canvas) 55%,
+    color-mix(in srgb, var(--color-brand-gold) 9%, var(--color-brand-canvas)) 55%
+  );
 }
 @media (max-width: 700px) {
   .nav-links {
@@ -131,7 +126,10 @@ html[dir='rtl'] body {
   }
   .hero {
     padding-top: 70px;
-    background: #fafaf8;
+    background: var(--color-brand-canvas);
+  }
+  .hero::after {
+    display: none;
   }
   .schools {
     grid-template-columns: 1fr;
