@@ -1,22 +1,171 @@
 CREATE TYPE "EnrollmentStatus" AS ENUM ('PENDING', 'ACTIVE', 'COMPLETED', 'CANCELLED');
 CREATE TYPE "LearningRecordStatus" AS ENUM ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED');
-CREATE TABLE "User" ("id" TEXT NOT NULL, "clerkId" TEXT NOT NULL, "email" TEXT NOT NULL, "firstName" TEXT, "lastName" TEXT, "imageUrl" TEXT, "lastSignInAt" TIMESTAMP(3), "deletedAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "User_pkey" PRIMARY KEY ("id"));
-CREATE TABLE "Role" ("id" TEXT NOT NULL, "key" TEXT NOT NULL, "name" TEXT NOT NULL, "description" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Role_pkey" PRIMARY KEY ("id"));
-CREATE TABLE "Permission" ("id" TEXT NOT NULL, "key" TEXT NOT NULL, "description" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT "Permission_pkey" PRIMARY KEY ("id"));
-CREATE TABLE "UserRole" ("userId" TEXT NOT NULL, "roleId" TEXT NOT NULL, "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT "UserRole_pkey" PRIMARY KEY ("userId", "roleId"));
-CREATE TABLE "RolePermission" ("roleId" TEXT NOT NULL, "permissionId" TEXT NOT NULL, CONSTRAINT "RolePermission_pkey" PRIMARY KEY ("roleId", "permissionId"));
-CREATE TABLE "Course" ("id" TEXT NOT NULL, "sanityId" TEXT NOT NULL, "slug" TEXT NOT NULL, "title" TEXT NOT NULL, "published" BOOLEAN NOT NULL DEFAULT false, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Course_pkey" PRIMARY KEY ("id"));
-CREATE TABLE "Enrollment" ("id" TEXT NOT NULL, "userId" TEXT NOT NULL, "courseId" TEXT NOT NULL, "status" "EnrollmentStatus" NOT NULL DEFAULT 'PENDING', "enrolledAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "startedAt" TIMESTAMP(3), "completedAt" TIMESTAMP(3), "expiresAt" TIMESTAMP(3), CONSTRAINT "Enrollment_pkey" PRIMARY KEY ("id"));
-CREATE TABLE "LearningRecord" ("id" TEXT NOT NULL, "userId" TEXT NOT NULL, "courseId" TEXT NOT NULL, "lessonId" TEXT NOT NULL, "status" "LearningRecordStatus" NOT NULL DEFAULT 'NOT_STARTED', "progress" INTEGER NOT NULL DEFAULT 0, "score" DECIMAL(5,2), "startedAt" TIMESTAMP(3), "completedAt" TIMESTAMP(3), "lastActivityAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "LearningRecord_pkey" PRIMARY KEY ("id"), CONSTRAINT "LearningRecord_progress_check" CHECK ("progress" BETWEEN 0 AND 100), CONSTRAINT "LearningRecord_score_check" CHECK ("score" IS NULL OR "score" BETWEEN 0 AND 100));
-CREATE TABLE "Certificate" ("id" TEXT NOT NULL, "verificationId" TEXT NOT NULL, "userId" TEXT NOT NULL, "courseId" TEXT NOT NULL, "issuedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "revokedAt" TIMESTAMP(3), "metadata" JSONB, CONSTRAINT "Certificate_pkey" PRIMARY KEY ("id"));
-CREATE UNIQUE INDEX "User_clerkId_key" ON "User"("clerkId"); CREATE UNIQUE INDEX "User_email_key" ON "User"("email"); CREATE INDEX "User_email_idx" ON "User"("email"); CREATE INDEX "User_deletedAt_idx" ON "User"("deletedAt");
-CREATE UNIQUE INDEX "Role_key_key" ON "Role"("key"); CREATE UNIQUE INDEX "Permission_key_key" ON "Permission"("key"); CREATE INDEX "UserRole_roleId_idx" ON "UserRole"("roleId"); CREATE INDEX "RolePermission_permissionId_idx" ON "RolePermission"("permissionId");
-CREATE UNIQUE INDEX "Course_sanityId_key" ON "Course"("sanityId"); CREATE UNIQUE INDEX "Course_slug_key" ON "Course"("slug");
-CREATE UNIQUE INDEX "Enrollment_userId_courseId_key" ON "Enrollment"("userId", "courseId"); CREATE INDEX "Enrollment_courseId_status_idx" ON "Enrollment"("courseId", "status"); CREATE INDEX "Enrollment_userId_status_idx" ON "Enrollment"("userId", "status");
-CREATE UNIQUE INDEX "LearningRecord_userId_courseId_lessonId_key" ON "LearningRecord"("userId", "courseId", "lessonId"); CREATE INDEX "LearningRecord_courseId_lessonId_idx" ON "LearningRecord"("courseId", "lessonId"); CREATE INDEX "LearningRecord_userId_status_idx" ON "LearningRecord"("userId", "status");
-CREATE UNIQUE INDEX "Certificate_verificationId_key" ON "Certificate"("verificationId"); CREATE UNIQUE INDEX "Certificate_userId_courseId_key" ON "Certificate"("userId", "courseId"); CREATE INDEX "Certificate_courseId_issuedAt_idx" ON "Certificate"("courseId", "issuedAt");
-ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE; ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "RolePermission" ADD CONSTRAINT "RolePermission_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE; ALTER TABLE "RolePermission" ADD CONSTRAINT "RolePermission_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE "Enrollment" ADD CONSTRAINT "Enrollment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE; ALTER TABLE "Enrollment" ADD CONSTRAINT "Enrollment_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "LearningRecord" ADD CONSTRAINT "LearningRecord_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE; ALTER TABLE "LearningRecord" ADD CONSTRAINT "LearningRecord_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "Certificate" ADD CONSTRAINT "Certificate_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE; ALTER TABLE "Certificate" ADD CONSTRAINT "Certificate_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- Preserve the Milestone 1 role values while freeing the UserRole name for the
+-- RBAC join table introduced in this migration.
+ALTER TYPE "UserRole" RENAME TO "LegacyUserRole";
+
+ALTER TABLE "User"
+  ADD COLUMN "imageUrl" TEXT,
+  ADD COLUMN "lastSignInAt" TIMESTAMP(3),
+  ADD COLUMN "deletedAt" TIMESTAMP(3);
+
+CREATE TABLE "Role" (
+  "id" TEXT NOT NULL,
+  "key" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL,
+  CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
+);
+
+CREATE TABLE "Permission" (
+  "id" TEXT NOT NULL,
+  "key" TEXT NOT NULL,
+  "description" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "Permission_pkey" PRIMARY KEY ("id")
+);
+
+CREATE TABLE "UserRole" (
+  "userId" TEXT NOT NULL,
+  "roleId" TEXT NOT NULL,
+  "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "UserRole_pkey" PRIMARY KEY ("userId", "roleId")
+);
+
+CREATE TABLE "RolePermission" (
+  "roleId" TEXT NOT NULL,
+  "permissionId" TEXT NOT NULL,
+  CONSTRAINT "RolePermission_pkey" PRIMARY KEY ("roleId", "permissionId")
+);
+
+CREATE TABLE "Course" (
+  "id" TEXT NOT NULL,
+  "sanityId" TEXT NOT NULL,
+  "slug" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "published" BOOLEAN NOT NULL DEFAULT false,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL,
+  CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
+);
+
+CREATE TABLE "Enrollment" (
+  "id" TEXT NOT NULL,
+  "userId" TEXT NOT NULL,
+  "courseId" TEXT NOT NULL,
+  "status" "EnrollmentStatus" NOT NULL DEFAULT 'PENDING',
+  "enrolledAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "startedAt" TIMESTAMP(3),
+  "completedAt" TIMESTAMP(3),
+  "expiresAt" TIMESTAMP(3),
+  CONSTRAINT "Enrollment_pkey" PRIMARY KEY ("id")
+);
+
+CREATE TABLE "LearningRecord" (
+  "id" TEXT NOT NULL,
+  "userId" TEXT NOT NULL,
+  "courseId" TEXT NOT NULL,
+  "lessonId" TEXT NOT NULL,
+  "status" "LearningRecordStatus" NOT NULL DEFAULT 'NOT_STARTED',
+  "progress" INTEGER NOT NULL DEFAULT 0,
+  "score" DECIMAL(5,2),
+  "startedAt" TIMESTAMP(3),
+  "completedAt" TIMESTAMP(3),
+  "lastActivityAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL,
+  CONSTRAINT "LearningRecord_pkey" PRIMARY KEY ("id"),
+  CONSTRAINT "LearningRecord_progress_check" CHECK ("progress" BETWEEN 0 AND 100),
+  CONSTRAINT "LearningRecord_score_check" CHECK ("score" IS NULL OR "score" BETWEEN 0 AND 100)
+);
+
+CREATE TABLE "Certificate" (
+  "id" TEXT NOT NULL,
+  "verificationId" TEXT NOT NULL,
+  "userId" TEXT NOT NULL,
+  "courseId" TEXT NOT NULL,
+  "issuedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "revokedAt" TIMESTAMP(3),
+  "metadata" JSONB,
+  CONSTRAINT "Certificate_pkey" PRIMARY KEY ("id")
+);
+
+CREATE UNIQUE INDEX "Role_key_key" ON "Role"("key");
+CREATE UNIQUE INDEX "Permission_key_key" ON "Permission"("key");
+CREATE INDEX "UserRole_roleId_idx" ON "UserRole"("roleId");
+CREATE INDEX "RolePermission_permissionId_idx" ON "RolePermission"("permissionId");
+CREATE UNIQUE INDEX "Course_sanityId_key" ON "Course"("sanityId");
+CREATE UNIQUE INDEX "Course_slug_key" ON "Course"("slug");
+CREATE UNIQUE INDEX "Enrollment_userId_courseId_key" ON "Enrollment"("userId", "courseId");
+CREATE INDEX "Enrollment_courseId_status_idx" ON "Enrollment"("courseId", "status");
+CREATE INDEX "Enrollment_userId_status_idx" ON "Enrollment"("userId", "status");
+CREATE UNIQUE INDEX "LearningRecord_userId_courseId_lessonId_key" ON "LearningRecord"("userId", "courseId", "lessonId");
+CREATE INDEX "LearningRecord_courseId_lessonId_idx" ON "LearningRecord"("courseId", "lessonId");
+CREATE INDEX "LearningRecord_userId_status_idx" ON "LearningRecord"("userId", "status");
+CREATE UNIQUE INDEX "Certificate_verificationId_key" ON "Certificate"("verificationId");
+CREATE UNIQUE INDEX "Certificate_userId_courseId_key" ON "Certificate"("userId", "courseId");
+CREATE INDEX "Certificate_courseId_issuedAt_idx" ON "Certificate"("courseId", "issuedAt");
+CREATE INDEX "User_email_idx" ON "User"("email");
+CREATE INDEX "User_deletedAt_idx" ON "User"("deletedAt");
+
+ALTER TABLE "UserRole"
+  ADD CONSTRAINT "UserRole_userId_fkey"
+  FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "UserRole"
+  ADD CONSTRAINT "UserRole_roleId_fkey"
+  FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "RolePermission"
+  ADD CONSTRAINT "RolePermission_roleId_fkey"
+  FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "RolePermission"
+  ADD CONSTRAINT "RolePermission_permissionId_fkey"
+  FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Enrollment"
+  ADD CONSTRAINT "Enrollment_userId_fkey"
+  FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Enrollment"
+  ADD CONSTRAINT "Enrollment_courseId_fkey"
+  FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LearningRecord"
+  ADD CONSTRAINT "LearningRecord_userId_fkey"
+  FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "LearningRecord"
+  ADD CONSTRAINT "LearningRecord_courseId_fkey"
+  FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Certificate"
+  ADD CONSTRAINT "Certificate_userId_fkey"
+  FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Certificate"
+  ADD CONSTRAINT "Certificate_courseId_fkey"
+  FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- Seed stable RBAC records and preserve every existing user's Milestone 1 role.
+INSERT INTO "Role" ("id", "key", "name", "updatedAt") VALUES
+  ('role_student', 'student', 'Student', CURRENT_TIMESTAMP),
+  ('role_client', 'client', 'Client', CURRENT_TIMESTAMP),
+  ('role_staff', 'staff', 'Staff', CURRENT_TIMESTAMP),
+  ('role_admin', 'admin', 'Administrator', CURRENT_TIMESTAMP);
+
+INSERT INTO "Permission" ("id", "key", "description") VALUES
+  ('permission_academy_manage', 'academy:manage', 'Manage academy operations');
+
+INSERT INTO "RolePermission" ("roleId", "permissionId")
+VALUES ('role_admin', 'permission_academy_manage');
+
+INSERT INTO "UserRole" ("userId", "roleId")
+SELECT
+  "id",
+  CASE "role"::TEXT
+    WHEN 'STUDENT' THEN 'role_student'
+    WHEN 'CLIENT' THEN 'role_client'
+    WHEN 'STAFF' THEN 'role_staff'
+    WHEN 'ADMIN' THEN 'role_admin'
+  END
+FROM "User";
+
+DROP INDEX "User_role_idx";
+ALTER TABLE "User" DROP COLUMN "role";
+DROP TYPE "LegacyUserRole";
