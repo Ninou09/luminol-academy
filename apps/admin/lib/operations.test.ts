@@ -4,7 +4,9 @@ import {
   calculateCompletionRate,
   displayPersonName,
   formatEnumLabel,
+  getEnrollmentTransitions,
   getEnquiryTransitions,
+  isEnrollmentTransitionAllowed,
   isEnquiryTransitionAllowed,
 } from './operations';
 
@@ -34,5 +36,15 @@ describe('admin operations helpers', () => {
     expect(isEnquiryTransitionAllowed('IN_REVIEW', 'CONTACTED')).toBe(true);
     expect(isEnquiryTransitionAllowed('NEW', 'CLOSED')).toBe(false);
     expect(isEnquiryTransitionAllowed('CLOSED', 'CLOSED')).toBe(false);
+  });
+
+  it('allows only explicit enrolment lifecycle transitions', () => {
+    expect(getEnrollmentTransitions('PENDING')).toEqual([
+      'ACTIVE',
+      'CANCELLED',
+    ]);
+    expect(isEnrollmentTransitionAllowed('ACTIVE', 'COMPLETED')).toBe(true);
+    expect(isEnrollmentTransitionAllowed('PENDING', 'COMPLETED')).toBe(false);
+    expect(isEnrollmentTransitionAllowed('CANCELLED', 'ACTIVE')).toBe(false);
   });
 });

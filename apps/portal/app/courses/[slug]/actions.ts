@@ -87,9 +87,32 @@ export async function completeLesson(formData: FormData) {
   });
 
   if (lessonCount > 0 && completedCount >= lessonCount) {
-    await db.enrollment.update({
-      where: { userId_courseId: { userId: user.id, courseId: course.id } },
-      data: { status: 'COMPLETED', completedAt: now },
+    await db.$transaction(async (transaction) => {
+      const updated = await transaction.enrollment.updateMany({
+        where: {
+          userId: user.id,
+          courseId: course.id,
+          status: 'ACTIVE',
+        },
+        data: { status: 'COMPLETED', completedAt: now },
+      });
+
+      if (updated.count === 1) {
+        const enrollment = await transaction.enrollment.findUniqueOrThrow({
+          where: {
+            userId_courseId: { userId: user.id, courseId: course.id },
+          },
+          select: { id: true },
+        });
+        await transaction.enrollmentStatusEvent.create({
+          data: {
+            enrollmentId: enrollment.id,
+            actorUserId: user.id,
+            fromStatus: 'ACTIVE',
+            toStatus: 'COMPLETED',
+          },
+        });
+      }
     });
   }
 

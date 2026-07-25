@@ -58,6 +58,7 @@ model User {
   records      LearningRecord[]
   certificates Certificate[]
   enquiryStatusEvents EnquiryStatusEvent[]
+  enrollmentStatusEvents EnrollmentStatusEvent[]
 
   @@index([email])
   @@index([deletedAt])
@@ -153,20 +154,35 @@ model Lesson {
 }
 
 model Enrollment {
-  id          String           @id @default(cuid())
-  userId      String
-  courseId    String
-  status      EnrollmentStatus @default(PENDING)
-  enrolledAt  DateTime         @default(now())
-  startedAt   DateTime?
-  completedAt DateTime?
-  expiresAt   DateTime?
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course      Course           @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  id           String                  @id @default(cuid())
+  userId       String
+  courseId     String
+  status       EnrollmentStatus        @default(PENDING)
+  enrolledAt   DateTime                @default(now())
+  startedAt    DateTime?
+  completedAt  DateTime?
+  expiresAt    DateTime?
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course       Course                  @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  statusEvents EnrollmentStatusEvent[]
 
   @@unique([userId, courseId])
   @@index([courseId, status])
   @@index([userId, status])
+}
+
+model EnrollmentStatusEvent {
+  id           String            @id @default(cuid())
+  enrollmentId String
+  actorUserId  String
+  fromStatus   EnrollmentStatus?
+  toStatus     EnrollmentStatus
+  createdAt    DateTime          @default(now())
+  enrollment   Enrollment        @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  actor        User              @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([enrollmentId, createdAt])
+  @@index([actorUserId, createdAt])
 }
 
 model LearningRecord {

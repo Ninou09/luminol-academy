@@ -15,6 +15,8 @@ export async function getOperationsDashboard() {
     recentEnquiries,
     recentEnrollments,
     coursePortfolio,
+    eligibleLearners,
+    eligibleCourses,
   ] = await Promise.all([
     db.user.count({ where: { deletedAt: null } }),
     db.enrollment.count({ where: { status: 'ACTIVE' } }),
@@ -67,6 +69,28 @@ export async function getOperationsDashboard() {
         },
       },
     }),
+    db.user.findMany({
+      take: 100,
+      where: {
+        deletedAt: null,
+        roles: {
+          some: { role: { key: { in: ['student', 'client'] } } },
+        },
+      },
+      orderBy: { email: 'asc' },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+    }),
+    db.course.findMany({
+      take: 100,
+      where: { published: true },
+      orderBy: { title: 'asc' },
+      select: { id: true, title: true },
+    }),
   ]);
 
   return {
@@ -83,5 +107,9 @@ export async function getOperationsDashboard() {
     recentEnquiries,
     recentEnrollments,
     coursePortfolio,
+    enrollmentOptions: {
+      learners: eligibleLearners,
+      courses: eligibleCourses,
+    },
   };
 }

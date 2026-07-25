@@ -424,18 +424,81 @@ body {
 }
 
 .compact-list article {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   padding: 1rem 0;
   border-bottom: 1px solid var(--color-brand-line);
 }
 
-.compact-list article > div:last-child {
+.compact-list article > div:nth-child(2) {
   display: grid;
   justify-items: end;
   gap: 0.4rem;
+}
+
+.enrollment-create-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--color-brand-line);
+  background: var(--color-brand-canvas);
+}
+
+.enrollment-create-form label {
+  min-width: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.enrollment-create-form label > span {
+  color: var(--color-brand-muted);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.enrollment-create-form select,
+.enrollment-create-form button {
+  min-width: 0;
+  min-height: 2.35rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--radius-control);
+  font: 700 0.68rem var(--font-sans);
+}
+
+.enrollment-create-form select {
+  width: 100%;
+  padding: 0.45rem;
+  background: var(--color-brand-surface);
+  color: var(--color-brand-ink);
+}
+
+.enrollment-create-form button {
+  padding: 0.45rem 0.75rem;
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+  cursor: pointer;
+}
+
+.enrollment-status-form {
+  grid-column: 1 / -1;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-brand-line);
+}
+
+.enrollment-readiness {
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  border: 1px dashed var(--color-brand-line);
+  color: var(--color-brand-muted);
+  font-size: 0.7rem;
+  line-height: 1.55;
 }
 
 .portfolio-panel {
@@ -495,6 +558,14 @@ html[dir='rtl'] .admin-shell {
 
   .operations-grid {
     grid-template-columns: 1fr;
+  }
+
+  .enrollment-create-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .enrollment-create-form button {
+    grid-column: 1 / -1;
   }
 }
 
@@ -607,6 +678,14 @@ html[dir='rtl'] .admin-shell {
 
   .status-form {
     grid-column: 2;
+  }
+
+  .enrollment-create-form {
+    grid-template-columns: 1fr;
+  }
+
+  .enrollment-create-form button {
+    grid-column: auto;
   }
 }
 

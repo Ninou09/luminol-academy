@@ -30,6 +30,36 @@ export function isEnquiryTransitionAllowed(
   return enquiryTransitions[fromStatus].includes(toStatus);
 }
 
+export const enrollmentStatuses = [
+  'PENDING',
+  'ACTIVE',
+  'COMPLETED',
+  'CANCELLED',
+] as const;
+
+export type EnrollmentStatusValue = (typeof enrollmentStatuses)[number];
+
+const enrollmentTransitions: Record<
+  EnrollmentStatusValue,
+  readonly EnrollmentStatusValue[]
+> = {
+  PENDING: ['ACTIVE', 'CANCELLED'],
+  ACTIVE: ['COMPLETED', 'CANCELLED'],
+  COMPLETED: ['ACTIVE'],
+  CANCELLED: ['PENDING'],
+};
+
+export function getEnrollmentTransitions(status: EnrollmentStatusValue) {
+  return enrollmentTransitions[status];
+}
+
+export function isEnrollmentTransitionAllowed(
+  fromStatus: EnrollmentStatusValue,
+  toStatus: EnrollmentStatusValue,
+) {
+  return enrollmentTransitions[fromStatus].includes(toStatus);
+}
+
 export function calculateCompletionRate(
   completedEnrollments: number,
   trackedEnrollments: number,
