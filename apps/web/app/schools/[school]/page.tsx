@@ -47,7 +47,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         id: programme._id,
         title: programme.title,
         description: programme.summary,
-        delivery: programme.delivery,
+        delivery: programme.delivery ?? null,
       }))
     : school.programs.map((programme) => ({
         id: programme.title,
