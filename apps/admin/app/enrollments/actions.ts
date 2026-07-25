@@ -2,6 +2,7 @@
 
 import { requirePermission } from '@luminol/auth';
 import { db } from '@luminol/database';
+import type { Prisma } from '@luminol/database';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -28,7 +29,7 @@ export async function createEnrollment(formData: FormData) {
   });
   const now = new Date();
 
-  await db.$transaction(async (transaction) => {
+  await db.$transaction(async (transaction: Prisma.TransactionClient) => {
     const [learner, course, existing] = await Promise.all([
       transaction.user.findFirst({
         where: {
@@ -91,7 +92,7 @@ export async function transitionEnrollmentStatus(formData: FormData) {
   });
   const now = new Date();
 
-  await db.$transaction(async (transaction) => {
+  await db.$transaction(async (transaction: Prisma.TransactionClient) => {
     const enrollment = await transaction.enrollment.findUnique({
       where: { id: input.enrollmentId },
       select: {
