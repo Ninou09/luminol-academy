@@ -1,0 +1,55 @@
+@theme {
+  --color-brand-ink: #102a43;
+  --color-brand-ink-soft: #243b53;
+  --color-brand-gold: #c79a3b;
+  --color-brand-gold-strong: #8b651f;
+  --color-brand-canvas: #fafaf8;
+  --color-brand-surface: #ffffff;
+  --color-brand-muted: #627d98;
+  --color-brand-line: #d9e2ec;
+  --color-brand-success: #277a53;
+  --color-brand-danger: #b42318;
+  --color-school-psychology: #2f6b67;
+  --color-school-languages: #375a7f;
+  --color-school-training: #8a5a32;
+  --font-sans: Manrope, system-ui, sans-serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-arabic: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+  --radius-control: 0.375rem;
+  --radius-card: 0.75rem;
+  --radius-pill: 999px;
+  --shadow-elevated: 0 1.25rem 3rem rgb(16 42 67 / 0.12);
+}
+
+:root {
+  color-scheme: light;
+  --luminol-page-gutter: clamp(1.25rem, 5vw, 5rem);
+  --luminol-section-space: clamp(4rem, 9vw, 8rem);
+  --luminol-content-width: 72rem;
+  --luminol-reading-width: 42rem;
+}
+
+html[dir='rtl'] {
+  font-family: var(--font-arabic);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-brand-gold) 35%, transparent);
+  color: var(--color-brand-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
