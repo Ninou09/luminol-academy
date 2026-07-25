@@ -1,0 +1,205 @@
+.page {
+  min-height: 75svh;
+  padding: clamp(4rem, 9vw, 8rem) var(--luminol-page-gutter);
+  background:
+    radial-gradient(
+      circle at 85% 5%,
+      color-mix(in srgb, var(--color-brand-gold) 18%, transparent),
+      transparent 28rem
+    ),
+    var(--color-brand-canvas);
+}
+
+.intro {
+  max-width: 52rem;
+  margin-bottom: clamp(3rem, 7vw, 6rem);
+}
+
+.intro > p:first-child,
+.heading > span,
+.details dt {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.intro h1 {
+  margin: 1rem 0 1.25rem;
+  font-family: var(--font-display);
+  font-size: clamp(3.6rem, 7vw, 6.5rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+.intro > p:last-child {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--color-brand-muted);
+  line-height: 1.75;
+}
+
+.certificate {
+  position: relative;
+  max-width: 920px;
+  padding: clamp(2rem, 6vw, 5rem);
+  border: 1px solid var(--color-brand-line);
+  background: var(--color-brand-surface);
+  box-shadow: var(--shadow-elevated);
+}
+
+.certificate::before {
+  position: absolute;
+  inset: 0.75rem;
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-gold) 45%, transparent);
+  content: '';
+  pointer-events: none;
+}
+
+.seal {
+  position: relative;
+  width: 4.5rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  margin-bottom: 2.5rem;
+  border-radius: 50%;
+  background: var(--color-brand-ink);
+  color: var(--color-brand-gold);
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+
+.heading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.heading p {
+  margin: 0;
+  padding: 0.45rem 0.7rem;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.valid {
+  background: color-mix(in srgb, var(--color-brand-success) 13%, transparent);
+  color: var(--color-brand-success);
+}
+
+.revoked {
+  background: color-mix(in srgb, var(--color-brand-danger) 12%, transparent);
+  color: var(--color-brand-danger);
+}
+
+.statement {
+  position: relative;
+  padding: clamp(3rem, 7vw, 6rem) 0;
+  text-align: center;
+}
+
+.statement p {
+  margin: 0.6rem 0;
+  color: var(--color-brand-muted);
+}
+
+.statement h2 {
+  margin: 0.7rem 0 1.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.statement h3 {
+  margin: 0.75rem auto 0;
+  color: var(--color-brand-ink-soft);
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 500;
+}
+
+.details {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--color-brand-line);
+}
+
+.details > div {
+  min-width: 0;
+  padding: 1.4rem 1.4rem 0 0;
+}
+
+.details dd {
+  margin: 0.55rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.details code {
+  font-size: 0.72rem;
+}
+
+.notice {
+  position: relative;
+  margin: 2rem 0 0;
+  padding: 1rem;
+  border-inline-start: 3px solid var(--color-brand-danger);
+  background: color-mix(in srgb, var(--color-brand-danger) 6%, transparent);
+  color: var(--color-brand-muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.privacy {
+  max-width: 920px;
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.4fr) 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-brand-line);
+  color: var(--color-brand-muted);
+  font-size: 0.78rem;
+}
+
+.privacy strong {
+  color: var(--color-brand-ink-soft);
+}
+
+.privacy p {
+  margin: 0;
+  line-height: 1.65;
+}
+
+@media (max-width: 42rem) {
+  .heading,
+  .privacy {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+  }
+
+  .heading {
+    display: grid;
+  }
+
+  .details {
+    grid-template-columns: 1fr;
+  }
+
+  .details > div {
+    padding-top: 1.2rem;
+  }
+}

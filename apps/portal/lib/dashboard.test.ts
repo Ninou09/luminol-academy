@@ -46,6 +46,8 @@ describe('buildLearnerDashboard', () => {
         verificationId: 'verify-1',
         issuedAt: now,
         revokedAt: null,
+        publiclyVisible: false,
+        recipientName: null,
         course: { slug: 'leadership', title: 'Leadership' },
       },
     ];

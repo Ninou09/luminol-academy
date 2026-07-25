@@ -26,6 +26,8 @@ export interface DashboardCertificateRow {
   verificationId: string;
   issuedAt: Date;
   revokedAt: Date | null;
+  publiclyVisible: boolean;
+  recipientName: string | null;
   course: { slug: string; title: string };
 }
 

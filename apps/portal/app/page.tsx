@@ -4,6 +4,7 @@ import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
 import { getLearnerDashboard } from '../lib/dashboard.server';
+import { setCertificateVisibility } from './certificates/actions';
 
 const dateFormatter = new Intl.DateTimeFormat('en', {
   day: 'numeric',
@@ -19,6 +20,9 @@ export default async function Page() {
   const user = await requireUser();
   const dashboard = await getLearnerDashboard(user.id);
   const firstName = user.firstName?.trim() || 'there';
+  const websiteUrl = (
+    process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  ).replace(/\/$/, '');
 
   return (
     <main>
@@ -155,8 +159,49 @@ export default async function Page() {
                     <p>Issued {dateFormatter.format(certificate.issuedAt)}</p>
                   </div>
                   <div className="certificate-verification">
-                    <span>{certificate.revokedAt ? 'Revoked' : 'Verified'}</span>
+                    <span>
+                      {certificate.revokedAt
+                        ? 'Revoked'
+                        : certificate.publiclyVisible
+                          ? 'Public verification on'
+                          : 'Private'}
+                    </span>
                     <code>{certificate.verificationId}</code>
+                    <div className="certificate-actions">
+                      {certificate.publiclyVisible && (
+                        <a
+                          href={`${websiteUrl}/certificates/${certificate.verificationId}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Open verification
+                        </a>
+                      )}
+                      {(!certificate.revokedAt ||
+                        certificate.publiclyVisible) && (
+                        <form action={setCertificateVisibility}>
+                          <input
+                            type="hidden"
+                            name="certificateId"
+                            value={certificate.id}
+                          />
+                          <input
+                            type="hidden"
+                            name="visibility"
+                            value={
+                              certificate.publiclyVisible
+                                ? 'private'
+                                : 'public'
+                            }
+                          />
+                          <button type="submit">
+                            {certificate.publiclyVisible
+                              ? 'Make private'
+                              : 'Publish verification'}
+                          </button>
+                        </form>
+                      )}
+                    </div>
                   </div>
                 </article>
               ))}
@@ -164,6 +209,14 @@ export default async function Page() {
           ) : (
             <p className="certificate-empty">
               Completed programme certificates will appear here automatically.
+            </p>
+          )}
+          {dashboard.certificates.length > 0 && (
+            <p className="certificate-privacy-note">
+              Certificates stay private unless you publish them. Publishing
+              displays your synchronized name, programme, issue date and
+              verification status on an unindexed public page. You can withdraw
+              access at any time.
             </p>
           )}
         </section>

@@ -398,6 +398,34 @@ main {
   font-size: 0.72rem;
 }
 
+.certificate-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 0.65rem;
+}
+
+.certificate-actions a,
+.certificate-actions button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-brand-ink);
+  cursor: pointer;
+  font: 700 0.68rem var(--font-sans);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.certificate-privacy-note {
+  max-width: 760px;
+  margin: 1.25rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.75rem;
+  line-height: 1.65;
+}
+
 .certificate-empty {
   padding: 2rem;
   border: 1px solid rgb(24 42 51 / 0.14);
@@ -682,6 +710,12 @@ footer [lang='ar'] {
   .certificate-verification {
     grid-column: 2;
     text-align: left;
+  }
+
+  .certificate-actions {
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
   }
 
   .lesson {

@@ -1,0 +1,101 @@
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
+import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { getPublicCertificate } from '../../../lib/certificate.server';
+import styles from './verification.module.css';
+
+export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: 'Certificate verification',
+  description: 'Verify a Luminol Academy learning certificate.',
+  robots: { index: false, follow: false },
+};
+
+const dateFormatter = new Intl.DateTimeFormat('en', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+export default async function CertificateVerificationPage({
+  params,
+}: {
+  params: Promise<{ verificationId: string }>;
+}) {
+  const { verificationId } = await params;
+  const certificate = await getPublicCertificate(verificationId);
+
+  if (!certificate || !certificate.recipientName) notFound();
+
+  const valid = !certificate.revokedAt;
+
+  return (
+    <>
+      <SiteHeader />
+      <main className={styles.page}>
+        <section className={styles.intro}>
+          <p>Credential verification</p>
+          <h1>{valid ? 'Certificate verified.' : 'Certificate revoked.'}</h1>
+          <p>
+            This record comes directly from Luminol Academy&apos;s secure
+            certificate registry.
+          </p>
+        </section>
+
+        <section
+          className={styles.certificate}
+          aria-labelledby="certificate-title"
+        >
+          <div className={styles.seal} aria-hidden="true">
+            L
+          </div>
+          <div className={styles.heading}>
+            <span>Luminol Academy</span>
+            <p className={valid ? styles.valid : styles.revoked}>
+              {valid ? 'Valid credential' : 'Revoked credential'}
+            </p>
+          </div>
+          <div className={styles.statement}>
+            <p>This certifies that</p>
+            <h2 id="certificate-title">{certificate.recipientName}</h2>
+            <p>completed the Luminol programme</p>
+            <h3>{certificate.course.title}</h3>
+          </div>
+          <dl className={styles.details}>
+            <div>
+              <dt>Issued</dt>
+              <dd>{dateFormatter.format(certificate.issuedAt)}</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd>{valid ? 'Verified' : 'Revoked'}</dd>
+            </div>
+            <div>
+              <dt>Verification ID</dt>
+              <dd>
+                <code>{certificate.verificationId}</code>
+              </dd>
+            </div>
+          </dl>
+          {!valid && (
+            <p className={styles.notice}>
+              This credential is no longer valid. Contact Luminol Academy for
+              further information.
+            </p>
+          )}
+        </section>
+
+        <aside className={styles.privacy}>
+          <strong>Privacy-controlled verification</strong>
+          <p>
+            This page is available because the certificate holder chose to
+            make this credential public. It is excluded from search indexing.
+          </p>
+        </aside>
+      </main>
+      <SiteFooter />
+    </>
+  );
+}
