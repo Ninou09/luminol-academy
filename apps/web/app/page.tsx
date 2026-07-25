@@ -1,4 +1,5 @@
-import { Wordmark } from '@luminol/ui';
+import { ButtonLink, Wordmark } from '@luminol/ui';
+
 export default function Page() {
   return (
     <main>
@@ -21,9 +22,9 @@ export default function Page() {
           An international academy bringing depth, clarity and human insight to
           lifelong learning.
         </p>
-        <a className="cta" href="#schools">
-          Discover our schools <span>→</span>
-        </a>
+        <ButtonLink className="mt-8" href="#schools" size="lg">
+          Discover our schools <span aria-hidden="true">→</span>
+        </ButtonLink>
       </section>
       <section id="schools" className="schools">
         <div>
