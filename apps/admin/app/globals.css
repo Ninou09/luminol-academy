@@ -1,29 +1,26 @@
 @import 'tailwindcss';
-@theme {
-  --color-brand-navy: #102a43;
-  --color-brand-gold: #c79a3b;
-  --color-brand-canvas: #fafaf8;
-  --font-serif: 'Cormorant Garamond', serif;
-}
+@import '@luminol/config/tokens.css';
+@source '../../../packages/ui/src';
+
 .shell {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 260px 1fr;
-  background: #f4f4f0;
-  color: #102a43;
-  font-family: Manrope, sans-serif;
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+  font-family: var(--font-sans);
 }
 aside {
-  background: #102a43;
-  color: white;
   padding: 2.5rem 2rem;
+  background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
 }
 .label {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: #c79a3b;
   margin: 1rem 0 5rem;
+  color: var(--color-brand-gold);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 aside nav {
   display: grid;
@@ -31,35 +28,35 @@ aside nav {
 }
 aside a {
   padding: 0.8rem 1rem;
-  color: #bcccdc;
+  color: var(--color-brand-line);
 }
 .active {
-  background: #ffffff12 !important;
-  color: white !important;
-  border-left: 2px solid #c79a3b;
+  border-inline-start: 2px solid var(--color-brand-gold);
+  background: rgb(255 255 255 / 0.07) !important;
+  color: var(--color-brand-surface) !important;
 }
 .dashboard {
-  padding: 4rem 5vw;
+  padding: 4rem var(--luminol-page-gutter);
 }
 .dashboard header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 .eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: #a67827;
+  color: var(--color-brand-gold-strong);
   font-size: 0.68rem;
   font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 .dashboard h1 {
-  font: 500 4rem 'Cormorant Garamond';
   margin: 0.4rem 0;
+  font: 500 4rem var(--font-display);
 }
 .status {
-  border: 1px solid #c79a3b;
   padding: 0.7rem 1rem;
+  border: 1px solid var(--color-brand-gold);
   font-size: 0.75rem;
 }
 .cards {
@@ -70,27 +67,29 @@ aside a {
 }
 .cards article,
 .panel {
-  background: white;
   padding: 2rem;
-  border: 1px solid #102a4312;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--radius-card);
+  background: var(--color-brand-surface);
 }
 .cards p {
   font-size: 0.75rem;
-  text-transform: uppercase;
   letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 .cards strong {
-  font: 3rem 'Cormorant Garamond';
   display: block;
+  font: 3rem var(--font-display);
 }
-.cards small {
-  color: #829ab1;
+.cards small,
+.panel p {
+  color: var(--color-brand-muted);
 }
 .panel h2 {
-  font: 2rem 'Cormorant Garamond';
+  font: 2rem var(--font-display);
 }
-.panel p {
-  color: #627d98;
+html[dir='rtl'] .shell {
+  font-family: var(--font-arabic);
 }
 @media (max-width: 750px) {
   .shell {
