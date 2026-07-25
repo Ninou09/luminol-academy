@@ -20,6 +20,13 @@ enum LearningRecordStatus {
   COMPLETED
 }
 
+enum LessonType {
+  VIDEO
+  ARTICLE
+  RESOURCE
+  LIVE
+}
+
 enum EnquirySchool {
   PSYCHOLOGY
   LANGUAGES
@@ -36,19 +43,19 @@ enum EnquiryStatus {
 }
 
 model User {
-  id          String       @id @default(cuid())
-  clerkId     String       @unique
-  email       String       @unique
-  firstName   String?
-  lastName    String?
-  imageUrl    String?
+  id           String           @id @default(cuid())
+  clerkId      String           @unique
+  email        String           @unique
+  firstName    String?
+  lastName     String?
+  imageUrl     String?
   lastSignInAt DateTime?
   deletedAt    DateTime?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  roles       UserRole[]
-  enrollments Enrollment[]
-  records     LearningRecord[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  roles        UserRole[]
+  enrollments  Enrollment[]
+  records      LearningRecord[]
   certificates Certificate[]
 
   @@index([email])
@@ -96,16 +103,52 @@ model RolePermission {
 }
 
 model Course {
-  id           String       @id @default(cuid())
-  sanityId     String       @unique
-  slug         String       @unique
+  id           String         @id @default(cuid())
+  sanityId     String         @unique
+  slug         String         @unique
   title        String
-  published    Boolean      @default(false)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  published    Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  modules      CourseModule[]
   enrollments  Enrollment[]
   records      LearningRecord[]
   certificates Certificate[]
+}
+
+model CourseModule {
+  id          String   @id @default(cuid())
+  courseId    String
+  title       String
+  description String?
+  position    Int
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+
+  @@unique([courseId, position])
+  @@index([courseId, published])
+}
+
+model Lesson {
+  id              String       @id @default(cuid())
+  moduleId        String
+  slug            String       @unique
+  title           String
+  summary         String?
+  type            LessonType   @default(ARTICLE)
+  position        Int
+  durationMinutes Int?
+  contentUrl      String?
+  published       Boolean      @default(false)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  module          CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([moduleId, position])
+  @@index([moduleId, published])
 }
 
 model Enrollment {
@@ -126,20 +169,20 @@ model Enrollment {
 }
 
 model LearningRecord {
-  id            String               @id @default(cuid())
-  userId        String
-  courseId      String
-  lessonId      String
-  status        LearningRecordStatus @default(NOT_STARTED)
-  progress      Int                  @default(0)
-  score         Decimal?             @db.Decimal(5, 2)
-  startedAt     DateTime?
-  completedAt   DateTime?
+  id             String               @id @default(cuid())
+  userId         String
+  courseId       String
+  lessonId       String
+  status         LearningRecordStatus @default(NOT_STARTED)
+  progress       Int                  @default(0)
+  score          Decimal?             @db.Decimal(5, 2)
+  startedAt      DateTime?
+  completedAt    DateTime?
   lastActivityAt DateTime             @default(now())
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
-  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course        Course                @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course         Course               @relation(fields: [courseId], references: [id], onDelete: Restrict)
 
   @@unique([userId, courseId, lessonId])
   @@index([courseId, lessonId])
