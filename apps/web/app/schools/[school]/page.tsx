@@ -55,7 +55,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             <ButtonLink href="#programs" size="lg">
               Explore programs <span aria-hidden="true">↘</span>
             </ButtonLink>
-            <ButtonLink href="/#contact" size="lg" variant="secondary">
+            <ButtonLink href="/contact" size="lg" variant="secondary">
               Start your journey
             </ButtonLink>
           </div>
@@ -97,7 +97,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               <span>{String(index + 1).padStart(2, '0')}</span>
               <h3>{program.title}</h3>
               <p>{program.description}</p>
-              <a href="/#contact">
+              <a href="/contact">
                 Ask about this program <b aria-hidden="true">→</b>
               </a>
             </article>
@@ -169,7 +169,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             and learning experience that fits.
           </p>
         </div>
-        <ButtonLink href="/#contact" size="lg">
+        <ButtonLink href="/contact" size="lg">
           Start your journey <span aria-hidden="true">→</span>
         </ButtonLink>
       </section>
