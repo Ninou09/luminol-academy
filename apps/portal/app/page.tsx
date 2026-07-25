@@ -108,6 +108,14 @@ export default async function Page() {
                           ? 'Programme completed—well done.'
                           : 'Your learning record is saved securely.'}
                     </p>
+                    {course.status !== 'PENDING' && (
+                      <Link
+                        className="course-link"
+                        href={`/courses/${course.slug}`}
+                      >
+                        Open programme <span aria-hidden="true">→</span>
+                      </Link>
+                    )}
                   </div>
                 </article>
               ))}
