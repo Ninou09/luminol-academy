@@ -12,8 +12,9 @@
   },
   "dependencies": {
     "@luminol/auth": "workspace:*",
-    "@luminol/ui": "workspace:*",
     "@luminol/config": "workspace:*",
+    "@luminol/database": "workspace:*",
+    "@luminol/ui": "workspace:*",
     "@luminol/validation": "workspace:*",
     "next": "^15.4.4",
     "react": "^19.1.0",
