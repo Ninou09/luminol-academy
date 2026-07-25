@@ -1,7 +1,7 @@
 'use server';
 
 import { requirePermission } from '@luminol/auth';
-import { db } from '@luminol/database';
+import { db, type Prisma } from '@luminol/database';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -22,7 +22,7 @@ export async function transitionEnquiryStatus(formData: FormData) {
     toStatus: formData.get('toStatus'),
   });
 
-  await db.$transaction(async (transaction) => {
+  await db.$transaction(async (transaction: Prisma.TransactionClient) => {
     const enquiry = await transaction.enquiry.findUnique({
       where: { id: input.enquiryId },
       select: { id: true, status: true },
