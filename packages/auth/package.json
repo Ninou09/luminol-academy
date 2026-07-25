@@ -1,0 +1,33 @@
+{
+  "name": "@luminol/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./authorization": "./src/authorization.ts",
+    "./server": "./src/server.ts",
+    "./sync": "./src/sync.ts",
+    "./middleware": "./src/middleware.ts",
+    "./routes": "./src/routes.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.28.1",
+    "@luminol/database": "workspace:*",
+    "zod": "^4.0.10"
+  },
+  "devDependencies": {
+    "@luminol/config": "workspace:*",
+    "eslint": "^9.32.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "@types/react": "^19.1.9",
+    "react": "^19.1.0"
+  }
+}

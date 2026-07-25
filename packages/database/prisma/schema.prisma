@@ -1,0 +1,248 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model User {
+  id             String          @id @default(cuid())
+  clerkId        String          @unique
+  email          String          @unique
+  emailVerified  Boolean         @default(false)
+  profile        Profile?
+  studentProfile StudentProfile?
+  roles          UserRole[]
+  enrollments    Enrollment[]
+  certificates   Certificate[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime?
+
+  @@index([email])
+  @@index([deletedAt])
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  firstName   String?
+  lastName    String?
+  displayName String?
+  avatarUrl   String?
+  locale      String   @default("en")
+  timezone    String   @default("UTC")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  name        String           @unique
+  description String?
+  users       UserRole[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  key         String           @unique
+  description String?
+  roles       RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model UserRole {
+  userId     String
+  roleId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+
+  @@id([userId, roleId])
+  @@index([roleId])
+}
+
+model RolePermission {
+  roleId      String
+  permissionId String
+  role        Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission  Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  grantedAt   DateTime   @default(now())
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model School {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?
+  programs    Program[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([deletedAt])
+}
+
+model Program {
+  id          String        @id @default(cuid())
+  schoolId    String
+  slug        String
+  title       String
+  description String?
+  status      ContentStatus @default(DRAFT)
+  school      School        @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  courses     Course[]
+  enrollments Enrollment[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([schoolId, slug])
+  @@index([schoolId, status])
+  @@index([deletedAt])
+}
+
+model Course {
+  id          String        @id @default(cuid())
+  programId   String
+  slug        String
+  title       String
+  description String?
+  position    Int           @default(0)
+  status      ContentStatus @default(DRAFT)
+  program     Program       @relation(fields: [programId], references: [id], onDelete: Restrict)
+  modules     Module[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([programId, slug])
+  @@unique([programId, position])
+  @@index([programId, status])
+  @@index([deletedAt])
+}
+
+model Module {
+  id        String   @id @default(cuid())
+  courseId  String
+  title     String
+  position  Int
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@unique([courseId, position])
+  @@index([courseId])
+  @@index([deletedAt])
+}
+
+model Lesson {
+  id          String     @id @default(cuid())
+  moduleId    String
+  title       String
+  slug        String
+  position    Int
+  durationMin Int?
+  module      Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress    Progress[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([moduleId, slug])
+  @@unique([moduleId, position])
+  @@index([moduleId])
+  @@index([deletedAt])
+}
+
+model Enrollment {
+  id          String           @id @default(cuid())
+  userId      String
+  programId   String
+  status      EnrollmentStatus @default(PENDING)
+  enrolledAt  DateTime         @default(now())
+  completedAt DateTime?
+  user        User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  program     Program          @relation(fields: [programId], references: [id], onDelete: Restrict)
+  progress    Progress[]
+  certificate Certificate?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([userId, programId])
+  @@index([programId, status])
+  @@index([userId, status])
+  @@index([deletedAt])
+}
+
+model Progress {
+  id           String     @id @default(cuid())
+  enrollmentId String
+  lessonId     String
+  percent      Int        @default(0)
+  completedAt  DateTime?
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson       Lesson     @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([enrollmentId, lessonId])
+  @@index([lessonId])
+}
+
+model Certificate {
+  id           String     @id @default(cuid())
+  enrollmentId String     @unique
+  userId       String
+  serialNumber String     @unique
+  issuedAt     DateTime   @default(now())
+  revokedAt    DateTime?
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Restrict)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([userId, issuedAt])
+}
+
+model StudentProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  studentNumber  String   @unique
+  dateOfBirth    DateTime?
+  phone          String?
+  emergencyName  String?
+  emergencyPhone String?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+
+  @@index([deletedAt])
+}

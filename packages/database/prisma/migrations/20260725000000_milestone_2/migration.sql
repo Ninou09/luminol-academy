@@ -1,0 +1,38 @@
+CREATE TYPE "EnrollmentStatus" AS ENUM ('PENDING', 'ACTIVE', 'COMPLETED', 'CANCELLED');
+CREATE TYPE "ContentStatus" AS ENUM ('DRAFT', 'PUBLISHED', 'ARCHIVED');
+
+CREATE TABLE "User" ("id" TEXT PRIMARY KEY, "clerkId" TEXT NOT NULL UNIQUE, "email" TEXT NOT NULL UNIQUE, "emailVerified" BOOLEAN NOT NULL DEFAULT false, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, "deletedAt" TIMESTAMP(3));
+CREATE TABLE "Profile" ("id" TEXT PRIMARY KEY, "userId" TEXT NOT NULL UNIQUE, "firstName" TEXT, "lastName" TEXT, "displayName" TEXT, "avatarUrl" TEXT, "locale" TEXT NOT NULL DEFAULT 'en', "timezone" TEXT NOT NULL DEFAULT 'UTC', "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE);
+CREATE TABLE "Role" ("id" TEXT PRIMARY KEY, "name" TEXT NOT NULL UNIQUE, "description" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "Permission" ("id" TEXT PRIMARY KEY, "key" TEXT NOT NULL UNIQUE, "description" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL);
+CREATE TABLE "UserRole" ("userId" TEXT NOT NULL, "roleId" TEXT NOT NULL, "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY ("userId", "roleId"), CONSTRAINT "UserRole_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE, CONSTRAINT "UserRole_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE);
+CREATE TABLE "RolePermission" ("roleId" TEXT NOT NULL, "permissionId" TEXT NOT NULL, "grantedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY ("roleId", "permissionId"), CONSTRAINT "RolePermission_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE, CONSTRAINT "RolePermission_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE CASCADE);
+CREATE TABLE "School" ("id" TEXT PRIMARY KEY, "slug" TEXT NOT NULL UNIQUE, "name" TEXT NOT NULL, "description" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, "deletedAt" TIMESTAMP(3));
+CREATE TABLE "Program" ("id" TEXT PRIMARY KEY, "schoolId" TEXT NOT NULL, "slug" TEXT NOT NULL, "title" TEXT NOT NULL, "description" TEXT, "status" "ContentStatus" NOT NULL DEFAULT 'DRAFT', "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, "deletedAt" TIMESTAMP(3), CONSTRAINT "Program_schoolId_fkey" FOREIGN KEY ("schoolId") REFERENCES "School"("id") ON DELETE RESTRICT, UNIQUE ("schoolId", "slug"));
+CREATE TABLE "Course" ("id" TEXT PRIMARY KEY, "programId" TEXT NOT NULL, "slug" TEXT NOT NULL, "title" TEXT NOT NULL, "description" TEXT, "position" INTEGER NOT NULL DEFAULT 0, "status" "ContentStatus" NOT NULL DEFAULT 'DRAFT', "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, "deletedAt" TIMESTAMP(3), CONSTRAINT "Course_programId_fkey" FOREIGN KEY ("programId") REFERENCES "Program"("id") ON DELETE RESTRICT, UNIQUE ("programId", "slug"), UNIQUE ("programId", "position"));
+CREATE TABLE "Module" ("id" TEXT PRIMARY KEY, "courseId" TEXT NOT NULL, "title" TEXT NOT NULL, "position" INTEGER NOT NULL, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, "deletedAt" TIMESTAMP(3), CONSTRAINT "Module_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE, UNIQUE ("courseId", "position"));
+CREATE TABLE "Lesson" ("id" TEXT PRIMARY KEY, "moduleId" TEXT NOT NULL, "title" TEXT NOT NULL, "slug" TEXT NOT NULL, "position" INTEGER NOT NULL, "durationMin" INTEGER, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, "deletedAt" TIMESTAMP(3), CONSTRAINT "Lesson_moduleId_fkey" FOREIGN KEY ("moduleId") REFERENCES "Module"("id") ON DELETE CASCADE, UNIQUE ("moduleId", "slug"), UNIQUE ("moduleId", "position"));
+CREATE TABLE "Enrollment" ("id" TEXT PRIMARY KEY, "userId" TEXT NOT NULL, "programId" TEXT NOT NULL, "status" "EnrollmentStatus" NOT NULL DEFAULT 'PENDING', "enrolledAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "completedAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, "deletedAt" TIMESTAMP(3), CONSTRAINT "Enrollment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT, CONSTRAINT "Enrollment_programId_fkey" FOREIGN KEY ("programId") REFERENCES "Program"("id") ON DELETE RESTRICT, UNIQUE ("userId", "programId"));
+CREATE TABLE "Progress" ("id" TEXT PRIMARY KEY, "enrollmentId" TEXT NOT NULL, "lessonId" TEXT NOT NULL, "percent" INTEGER NOT NULL DEFAULT 0, "completedAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Progress_enrollmentId_fkey" FOREIGN KEY ("enrollmentId") REFERENCES "Enrollment"("id") ON DELETE CASCADE, CONSTRAINT "Progress_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "Lesson"("id") ON DELETE RESTRICT, UNIQUE ("enrollmentId", "lessonId"));
+CREATE TABLE "Certificate" ("id" TEXT PRIMARY KEY, "enrollmentId" TEXT NOT NULL UNIQUE, "userId" TEXT NOT NULL, "serialNumber" TEXT NOT NULL UNIQUE, "issuedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "revokedAt" TIMESTAMP(3), "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, CONSTRAINT "Certificate_enrollmentId_fkey" FOREIGN KEY ("enrollmentId") REFERENCES "Enrollment"("id") ON DELETE RESTRICT, CONSTRAINT "Certificate_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT);
+CREATE TABLE "StudentProfile" ("id" TEXT PRIMARY KEY, "userId" TEXT NOT NULL UNIQUE, "studentNumber" TEXT NOT NULL UNIQUE, "dateOfBirth" TIMESTAMP(3), "phone" TEXT, "emergencyName" TEXT, "emergencyPhone" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP, "updatedAt" TIMESTAMP(3) NOT NULL, "deletedAt" TIMESTAMP(3), CONSTRAINT "StudentProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE);
+
+CREATE INDEX "User_deletedAt_idx" ON "User"("deletedAt");
+CREATE INDEX "User_email_idx" ON "User"("email");
+CREATE INDEX "UserRole_roleId_idx" ON "UserRole"("roleId");
+CREATE INDEX "RolePermission_permissionId_idx" ON "RolePermission"("permissionId");
+CREATE INDEX "School_deletedAt_idx" ON "School"("deletedAt");
+CREATE INDEX "Program_schoolId_status_idx" ON "Program"("schoolId", "status");
+CREATE INDEX "Program_deletedAt_idx" ON "Program"("deletedAt");
+CREATE INDEX "Course_programId_status_idx" ON "Course"("programId", "status");
+CREATE INDEX "Course_deletedAt_idx" ON "Course"("deletedAt");
+CREATE INDEX "Module_courseId_idx" ON "Module"("courseId");
+CREATE INDEX "Module_deletedAt_idx" ON "Module"("deletedAt");
+CREATE INDEX "Lesson_moduleId_idx" ON "Lesson"("moduleId");
+CREATE INDEX "Lesson_deletedAt_idx" ON "Lesson"("deletedAt");
+CREATE INDEX "Enrollment_programId_status_idx" ON "Enrollment"("programId", "status");
+CREATE INDEX "Enrollment_userId_status_idx" ON "Enrollment"("userId", "status");
+CREATE INDEX "Enrollment_deletedAt_idx" ON "Enrollment"("deletedAt");
+CREATE INDEX "Progress_lessonId_idx" ON "Progress"("lessonId");
+CREATE INDEX "Certificate_userId_issuedAt_idx" ON "Certificate"("userId", "issuedAt");
+CREATE INDEX "StudentProfile_deletedAt_idx" ON "StudentProfile"("deletedAt");
