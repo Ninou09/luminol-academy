@@ -40,6 +40,8 @@ export async function getLearnerDashboard(userId: string) {
         verificationId: true,
         issuedAt: true,
         revokedAt: true,
+        publiclyVisible: true,
+        recipientName: true,
         course: { select: { slug: true, title: true } },
       },
       orderBy: { issuedAt: 'desc' },
