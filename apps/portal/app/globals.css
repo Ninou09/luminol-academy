@@ -1,63 +1,62 @@
 @import 'tailwindcss';
-@theme {
-  --color-brand-navy: #102a43;
-  --color-brand-gold: #c79a3b;
-  --color-brand-canvas: #fafaf8;
-  --font-serif: 'Cormorant Garamond', serif;
-}
+@import '@luminol/config/tokens.css';
+@source '../../../packages/ui/src';
+
 body {
   margin: 0;
-  background: #102a43;
-  color: #fafaf8;
-  font-family: Manrope, sans-serif;
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+  font-family: var(--font-sans);
 }
 main {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: radial-gradient(circle at 80% 10%, #1d4668, #102a43 45%);
+  background: radial-gradient(
+    circle at 80% 10%,
+    var(--color-brand-ink-soft),
+    var(--color-brand-ink) 45%
+  );
 }
 nav {
-  padding: 2rem 6vw;
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #ffffff20;
+  padding: 2rem var(--luminol-page-gutter);
+  border-bottom: 1px solid rgb(255 255 255 / 0.13);
 }
 .portal-label,
 .eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
+  color: var(--color-brand-gold);
   font-size: 0.65rem;
-  color: #c79a3b;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
 .welcome {
-  margin: auto;
   width: min(580px, 85vw);
+  margin: auto;
   text-align: center;
 }
 .welcome h1 {
-  font: 500 clamp(3.5rem, 7vw, 5.5rem) 'Cormorant Garamond';
   margin: 1rem 0;
+  font: 500 clamp(3.5rem, 7vw, 5.5rem) var(--font-display);
 }
 .welcome > p:not(.eyebrow) {
-  color: #bcccdc;
+  color: var(--color-brand-line);
   line-height: 1.8;
 }
-.welcome button {
-  display: block;
-  margin: 2.5rem auto 1rem;
-  padding: 1rem 2rem;
-  border: 0;
-  background: #c79a3b;
-  color: #102a43;
-  font-weight: 700;
-}
-.welcome small {
-  color: #829ab1;
-}
 footer {
-  text-align: center;
   padding: 2rem;
-  color: #829ab1;
-  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  color: var(--color-brand-line);
+  font-family: var(--font-arabic);
+  text-align: center;
+}
+html[dir='rtl'] body {
+  font-family: var(--font-arabic);
+}
+html[dir='rtl'] main {
+  background: radial-gradient(
+    circle at 20% 10%,
+    var(--color-brand-ink-soft),
+    var(--color-brand-ink) 45%
+  );
 }

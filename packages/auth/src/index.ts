@@ -118,6 +118,11 @@ export async function synchronizeClerkUser(
   if (!primaryEmail)
     throw new Error('Clerk user does not have a primary email address');
 
+  const lastSignIn =
+    event.data.last_sign_in_at != null
+      ? { lastSignInAt: new Date(event.data.last_sign_in_at) }
+      : {};
+
   const user = await db.user.upsert({
     where: { clerkId: event.data.id },
     create: {
@@ -125,19 +130,15 @@ export async function synchronizeClerkUser(
       email: primaryEmail,
       firstName: event.data.first_name,
       lastName: event.data.last_name,
-      imageUrl: event.data.image_url,
-      lastSignInAt: event.data.last_sign_in_at
-        ? new Date(event.data.last_sign_in_at)
-        : undefined,
+      imageUrl: event.data.image_url ?? null,
+      ...lastSignIn,
     },
     update: {
       email: primaryEmail,
       firstName: event.data.first_name,
       lastName: event.data.last_name,
-      imageUrl: event.data.image_url,
-      lastSignInAt: event.data.last_sign_in_at
-        ? new Date(event.data.last_sign_in_at)
-        : undefined,
+      imageUrl: event.data.image_url ?? null,
+      ...lastSignIn,
       deletedAt: null,
     },
   });

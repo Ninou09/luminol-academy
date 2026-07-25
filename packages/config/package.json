@@ -5,7 +5,8 @@
   "exports": {
     "./typescript/*": "./typescript/*",
     "./eslint": "./eslint/index.mjs",
-    "./tailwind": "./tailwind/index.ts"
+    "./tailwind": "./tailwind/index.ts",
+    "./tokens.css": "./tailwind/tokens.css"
   },
   "scripts": {
     "lint": "eslint .",
