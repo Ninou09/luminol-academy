@@ -1,0 +1,29 @@
+{
+  "name": "@luminol/database",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate": "prisma migrate dev",
+    "studio": "prisma studio",
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.12.0"
+  },
+  "devDependencies": {
+    "@luminol/config": "workspace:*",
+    "@types/node": "^20.19.43",
+    "eslint": "^9.32.0",
+    "prisma": "^6.12.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
