@@ -190,15 +190,17 @@ model LearningRecord {
 }
 
 model Certificate {
-  id             String   @id @default(cuid())
-  verificationId String   @unique @default(cuid())
-  userId         String
-  courseId       String
-  issuedAt       DateTime @default(now())
-  revokedAt      DateTime?
-  metadata       Json?
-  user           User     @relation(fields: [userId], references: [id], onDelete: Restrict)
-  course         Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  id              String   @id @default(cuid())
+  verificationId  String   @unique @default(cuid())
+  userId          String
+  courseId        String
+  issuedAt        DateTime @default(now())
+  revokedAt       DateTime?
+  publiclyVisible Boolean  @default(false)
+  recipientName   String?
+  metadata        Json?
+  user            User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
 
   @@unique([userId, courseId])
   @@index([courseId, issuedAt])
