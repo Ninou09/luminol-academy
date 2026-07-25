@@ -1,5 +1,9 @@
 {
   "extends": "@luminol/config/typescript/base.json",
-  "compilerOptions": { "jsx": "react-jsx", "noEmit": true },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "types": ["node"]
+  },
   "include": ["**/*.ts", "**/*.tsx"]
 }
