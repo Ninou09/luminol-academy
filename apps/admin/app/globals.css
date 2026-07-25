@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+@theme {
+  --color-brand-navy: #102a43;
+  --color-brand-gold: #c79a3b;
+  --color-brand-canvas: #fafaf8;
+  --font-serif: 'Cormorant Garamond', serif;
+}
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: #f4f4f0;
+  color: #102a43;
+  font-family: Manrope, sans-serif;
+}
+aside {
+  background: #102a43;
+  color: white;
+  padding: 2.5rem 2rem;
+}
+.label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #c79a3b;
+  margin: 1rem 0 5rem;
+}
+aside nav {
+  display: grid;
+  gap: 0.5rem;
+}
+aside a {
+  padding: 0.8rem 1rem;
+  color: #bcccdc;
+}
+.active {
+  background: #ffffff12 !important;
+  color: white !important;
+  border-left: 2px solid #c79a3b;
+}
+.dashboard {
+  padding: 4rem 5vw;
+}
+.dashboard header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #a67827;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.dashboard h1 {
+  font: 500 4rem 'Cormorant Garamond';
+  margin: 0.4rem 0;
+}
+.status {
+  border: 1px solid #c79a3b;
+  padding: 0.7rem 1rem;
+  font-size: 0.75rem;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 3rem 0;
+}
+.cards article,
+.panel {
+  background: white;
+  padding: 2rem;
+  border: 1px solid #102a4312;
+}
+.cards p {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.cards strong {
+  font: 3rem 'Cormorant Garamond';
+  display: block;
+}
+.cards small {
+  color: #829ab1;
+}
+.panel h2 {
+  font: 2rem 'Cormorant Garamond';
+}
+.panel p {
+  color: #627d98;
+}
+@media (max-width: 750px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+  aside {
+    display: none;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}

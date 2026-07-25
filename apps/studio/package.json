@@ -1,0 +1,26 @@
+{
+  "name": "@luminol/studio",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "sanity dev --port 3333",
+    "build": "sanity build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@luminol/config": "workspace:*",
+    "@sanity/vision": "^3.99.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sanity": "^3.99.0",
+    "styled-components": "^6.1.19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.9",
+    "eslint": "^9.32.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
