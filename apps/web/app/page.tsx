@@ -69,7 +69,7 @@ export default function Page() {
             <ButtonLink href="#schools" size="lg">
               Explore our schools <span aria-hidden="true">↘</span>
             </ButtonLink>
-            <ButtonLink href="#about" size="lg" variant="secondary">
+            <ButtonLink href="/about" size="lg" variant="secondary">
               Discover Luminol
             </ButtonLink>
           </div>
@@ -234,8 +234,8 @@ export default function Page() {
             program and next step.
           </p>
         </div>
-        <ButtonLink href="#schools" size="lg">
-          Choose your school <span aria-hidden="true">→</span>
+        <ButtonLink href="/contact" size="lg">
+          Start a conversation <span aria-hidden="true">→</span>
         </ButtonLink>
       </section>
 
