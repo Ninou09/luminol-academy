@@ -1106,6 +1106,513 @@ footer p:last-child {
   color: var(--color-brand-gold-strong);
 }
 
+.about-page-hero {
+  min-height: calc(100svh - 6.25rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(25rem, 0.95fr);
+  border-bottom: 1px solid var(--color-brand-line);
+}
+
+.about-page-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(4rem, 8vw, 8rem) var(--luminol-page-gutter);
+}
+
+.about-page-copy h1,
+.contact-hero h1,
+.origin h2,
+.mission-vision h2,
+.ecosystem h3,
+.enquiry-context h2,
+.form-heading h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+
+.about-page-copy h1 {
+  max-width: 12ch;
+  margin: 1.5rem 0 2rem;
+  font-size: clamp(4.2rem, 7vw, 7.2rem);
+  line-height: 0.86;
+}
+
+.about-page-copy > p:last-child {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--color-brand-muted);
+  font-size: clamp(1rem, 1.4vw, 1.18rem);
+  line-height: 1.8;
+}
+
+.about-page-visual {
+  position: relative;
+  min-height: 42rem;
+  display: grid;
+  place-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--color-brand-gold) 34%, transparent),
+      transparent 35%
+    ),
+    var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+}
+
+.about-rays {
+  position: absolute;
+  width: 58rem;
+  aspect-ratio: 1;
+  inset: 50%;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgb(255 255 255 / 0.09) 0deg 1deg,
+    transparent 1deg 18deg
+  );
+  mask-image: radial-gradient(
+    circle,
+    transparent 0 22%,
+    black 22% 60%,
+    transparent 76%
+  );
+  transform: translate(-50%, -50%);
+}
+
+.about-page-visual > span {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(10rem, 22vw, 19rem);
+  line-height: 0.7;
+}
+
+.about-page-visual > p {
+  position: absolute;
+  inset-inline: 2rem;
+  inset-block-end: 2.5rem;
+  margin: 0;
+  color: var(--color-brand-gold);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.origin {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(20rem, 1.1fr);
+  gap: clamp(4rem, 10vw, 10rem);
+}
+
+.origin h2 {
+  max-width: 12ch;
+  margin: 1.25rem 0 0;
+  font-size: clamp(3.2rem, 5.5vw, 5.5rem);
+  line-height: 0.95;
+}
+
+.origin-copy {
+  align-self: end;
+}
+
+.origin-lede {
+  color: var(--color-brand-ink-soft);
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.5vw, 2.25rem);
+  line-height: 1.4;
+}
+
+.origin-copy p:not(.origin-lede) {
+  color: var(--color-brand-muted);
+  line-height: 1.8;
+}
+
+.mission-vision {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--color-brand-line);
+  border-bottom: 1px solid var(--color-brand-line);
+}
+
+.mission-vision article {
+  min-height: 31rem;
+  padding: clamp(2rem, 6vw, 5rem);
+  background: var(--color-brand-surface);
+}
+
+.mission-vision article:first-child {
+  border-inline-end: 1px solid var(--color-brand-line);
+}
+
+.mission-vision span {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.mission-vision h2 {
+  max-width: 13ch;
+  margin: 4rem 0 1.5rem;
+  font-size: clamp(2.7rem, 4.5vw, 4.5rem);
+  line-height: 0.98;
+}
+
+.mission-vision p {
+  max-width: 38rem;
+  color: var(--color-brand-muted);
+  line-height: 1.8;
+}
+
+.value-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--color-brand-line);
+  border-inline-start: 1px solid var(--color-brand-line);
+}
+
+.value-grid article {
+  min-height: 22rem;
+  padding: 2rem;
+  border-inline-end: 1px solid var(--color-brand-line);
+  border-bottom: 1px solid var(--color-brand-line);
+  background: var(--color-brand-surface);
+}
+
+.value-grid span {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.value-grid h3 {
+  margin: 4.5rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 2.6vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.value-grid p {
+  color: var(--color-brand-muted);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+.ecosystem {
+  position: relative;
+  min-height: 48rem;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    linear-gradient(rgb(16 42 67 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(16 42 67 / 0.07) 1px, transparent 1px),
+    color-mix(in srgb, var(--color-brand-gold) 7%, var(--color-brand-canvas));
+  background-size: 4.5rem 4.5rem;
+}
+
+.ecosystem-core {
+  width: 15rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  gap: 0.25rem;
+  border-radius: 50%;
+  background: var(--color-brand-ink);
+  box-shadow: var(--shadow-elevated);
+  color: var(--color-brand-canvas);
+  text-align: center;
+}
+
+.ecosystem-core span {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+}
+
+.ecosystem-core small {
+  color: var(--color-brand-gold);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ecosystem-school {
+  position: absolute;
+  width: min(17rem, 32%);
+  padding: 1.5rem;
+  border: 1px solid var(--color-brand-line);
+  background: color-mix(in srgb, var(--color-brand-surface) 90%, transparent);
+  box-shadow: 0 1rem 3rem rgb(16 42 67 / 0.09);
+}
+
+.ecosystem-school span {
+  color: var(--ecosystem-accent);
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.ecosystem-school h3 {
+  margin: 1.75rem 0 0.5rem;
+  font-size: 2rem;
+}
+
+.ecosystem-school p {
+  margin: 0;
+  color: var(--color-brand-muted);
+  font-size: 0.8rem;
+}
+
+.ecosystem-psychology {
+  --ecosystem-accent: var(--color-school-psychology);
+  inset-block-start: 12%;
+  inset-inline-start: 8%;
+}
+
+.ecosystem-languages {
+  --ecosystem-accent: var(--color-school-languages);
+  inset-block-start: 15%;
+  inset-inline-end: 7%;
+}
+
+.ecosystem-training {
+  --ecosystem-accent: var(--color-school-training);
+  inset-block-end: 10%;
+  inset-inline-start: 13%;
+}
+
+.contact-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);
+  gap: clamp(3rem, 10vw, 10rem);
+  align-items: end;
+  padding: clamp(5rem, 10vw, 9rem) var(--luminol-page-gutter);
+  border-bottom: 1px solid var(--color-brand-line);
+}
+
+.contact-hero h1 {
+  max-width: 12ch;
+  margin: 1.5rem 0 0;
+  font-size: clamp(4rem, 7vw, 7rem);
+  line-height: 0.86;
+}
+
+.contact-hero > p {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--color-brand-muted);
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.contact-path-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 2rem;
+  border-top: 1px solid var(--color-brand-line);
+  border-inline-start: 1px solid var(--color-brand-line);
+}
+
+.contact-path-grid a {
+  min-height: 18rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-content: space-between;
+  padding: 2rem;
+  border-inline-end: 1px solid var(--color-brand-line);
+  border-bottom: 1px solid var(--color-brand-line);
+  background: var(--color-brand-surface);
+  text-decoration: none;
+}
+
+.contact-path-grid span {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.contact-path-grid h2 {
+  grid-column: 1 / -1;
+  margin: 3rem 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.2vw, 3.2rem);
+  font-weight: 500;
+}
+
+.contact-path-grid p {
+  margin: 0;
+  color: var(--color-brand-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.contact-path-grid b {
+  align-self: end;
+  color: var(--color-brand-gold-strong);
+}
+
+.enquiry-section {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.75fr) minmax(0, 1.25fr);
+  gap: clamp(3rem, 10vw, 9rem);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+}
+
+.enquiry-context h2 {
+  margin: 1.25rem 0 3rem;
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 0.95;
+}
+
+.enquiry-context ol {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgb(255 255 255 / 0.18);
+  list-style: none;
+}
+
+.enquiry-context li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgb(255 255 255 / 0.18);
+  color: var(--color-brand-line);
+  line-height: 1.6;
+}
+
+.enquiry-context li span {
+  color: var(--color-brand-gold);
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.privacy-note {
+  margin-top: 2rem;
+  color: var(--color-brand-line);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+.enquiry-form {
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background: var(--color-brand-surface);
+  color: var(--color-brand-ink);
+}
+
+.form-heading h2 {
+  margin: 1.25rem 0;
+  font-size: clamp(2.8rem, 4.5vw, 4.5rem);
+  line-height: 0.95;
+}
+
+.form-heading > p:last-child {
+  max-width: 40rem;
+  color: var(--color-brand-muted);
+  line-height: 1.7;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.5rem;
+}
+
+.form-grid label,
+.consent-field {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.form-grid label > span {
+  color: var(--color-brand-ink-soft);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.form-grid small {
+  color: var(--color-brand-muted);
+  font-size: 0.62rem;
+  font-weight: 500;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--radius-control);
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+  font: inherit;
+}
+
+.form-grid textarea {
+  resize: vertical;
+}
+
+.message-field {
+  grid-column: 1 / -1;
+}
+
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.consent-field {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  margin-top: 1.5rem;
+  color: var(--color-brand-muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.consent-field input {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.15rem;
+  accent-color: var(--color-brand-gold-strong);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin-top: 1.75rem;
+}
+
+.form-status {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.form-status-success {
+  color: var(--color-brand-success);
+}
+
+.form-status-error {
+  color: var(--color-brand-danger);
+}
+
 html[dir='rtl'] body {
   font-family: var(--font-arabic);
 }
@@ -1131,6 +1638,10 @@ html[dir='rtl'] .desktop-nav a::after {
     grid-template-columns: 1fr;
   }
 
+  .about-page-hero {
+    grid-template-columns: 1fr;
+  }
+
   .hero-copy {
     min-height: 42rem;
   }
@@ -1140,6 +1651,10 @@ html[dir='rtl'] .desktop-nav a::after {
   }
 
   .school-detail-visual {
+    min-height: 38rem;
+  }
+
+  .about-page-visual {
     min-height: 38rem;
   }
 
@@ -1165,7 +1680,10 @@ html[dir='rtl'] .desktop-nav a::after {
   .pathway,
   .school-method,
   .audience,
-  .related-heading {
+  .related-heading,
+  .origin,
+  .contact-hero,
+  .enquiry-section {
     grid-template-columns: 1fr;
   }
 
@@ -1176,6 +1694,20 @@ html[dir='rtl'] .desktop-nav a::after {
 
   .program-grid {
     grid-template-columns: 1fr;
+  }
+
+  .mission-vision {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-vision article:first-child {
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--color-brand-line);
+  }
+
+  .value-grid,
+  .contact-path-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .about-visual {
@@ -1219,6 +1751,10 @@ html[dir='rtl'] .desktop-nav a::after {
     min-height: auto;
   }
 
+  .about-page-hero {
+    min-height: auto;
+  }
+
   .hero-copy {
     min-height: auto;
     padding-block: 4.5rem;
@@ -1228,11 +1764,20 @@ html[dir='rtl'] .desktop-nav a::after {
     padding-block: 4.5rem;
   }
 
+  .about-page-copy {
+    padding-block: 4.5rem;
+  }
+
   .hero h1 {
     font-size: clamp(3.5rem, 18vw, 5rem);
   }
 
   .school-detail-copy h1 {
+    font-size: clamp(3.5rem, 17vw, 5rem);
+  }
+
+  .about-page-copy h1,
+  .contact-hero h1 {
     font-size: clamp(3.5rem, 17vw, 5rem);
   }
 
@@ -1262,6 +1807,10 @@ html[dir='rtl'] .desktop-nav a::after {
     min-height: 32rem;
   }
 
+  .about-page-visual {
+    min-height: 32rem;
+  }
+
   .signal-card {
     min-width: 8.2rem;
   }
@@ -1283,7 +1832,36 @@ html[dir='rtl'] .desktop-nav a::after {
   }
 
   .audience ul,
-  .related-grid {
+  .related-grid,
+  .value-grid,
+  .contact-path-grid,
+  .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .message-field {
+    grid-column: auto;
+  }
+
+  .ecosystem {
+    min-height: auto;
+    place-items: stretch;
+    gap: 1rem;
+  }
+
+  .ecosystem-core {
+    width: 12rem;
+    justify-self: center;
+    margin-bottom: 1rem;
+  }
+
+  .ecosystem-school {
+    position: static;
+    width: 100%;
+  }
+
+  .form-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
