@@ -25,3 +25,5 @@ jobs:
       - run: pnpm build
         env:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuZXhhbXBsZS5jb20k
+          CLERK_SECRET_KEY: sk_test_placeholder

@@ -7,22 +7,141 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  STUDENT
-  CLIENT
-  STAFF
-  ADMIN
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum LearningRecordStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
 }
 
 model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique
-  email     String   @unique
-  firstName String?
-  lastName  String?
-  role      UserRole @default(STUDENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String       @id @default(cuid())
+  clerkId     String       @unique
+  email       String       @unique
+  firstName   String?
+  lastName    String?
+  imageUrl    String?
+  lastSignInAt DateTime?
+  deletedAt    DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  roles       UserRole[]
+  enrollments Enrollment[]
+  records     LearningRecord[]
+  certificates Certificate[]
 
-  @@index([role])
+  @@index([email])
+  @@index([deletedAt])
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  key         String           @unique
+  name        String
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  users       UserRole[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String           @id @default(cuid())
+  key         String           @unique
+  description String?
+  createdAt   DateTime         @default(now())
+  roles       RolePermission[]
+}
+
+model UserRole {
+  userId     String
+  roleId     String
+  assignedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+}
+
+model RolePermission {
+  roleId      String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+}
+
+model Course {
+  id           String       @id @default(cuid())
+  sanityId     String       @unique
+  slug         String       @unique
+  title        String
+  published    Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  enrollments  Enrollment[]
+  records      LearningRecord[]
+  certificates Certificate[]
+}
+
+model Enrollment {
+  id          String           @id @default(cuid())
+  userId      String
+  courseId    String
+  status      EnrollmentStatus @default(PENDING)
+  enrolledAt  DateTime         @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  expiresAt   DateTime?
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, courseId])
+  @@index([courseId, status])
+  @@index([userId, status])
+}
+
+model LearningRecord {
+  id            String               @id @default(cuid())
+  userId        String
+  courseId      String
+  lessonId      String
+  status        LearningRecordStatus @default(NOT_STARTED)
+  progress      Int                  @default(0)
+  score         Decimal?             @db.Decimal(5, 2)
+  startedAt     DateTime?
+  completedAt   DateTime?
+  lastActivityAt DateTime             @default(now())
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course        Course                @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, courseId, lessonId])
+  @@index([courseId, lessonId])
+  @@index([userId, status])
+}
+
+model Certificate {
+  id             String   @id @default(cuid())
+  verificationId String   @unique @default(cuid())
+  userId         String
+  courseId       String
+  issuedAt       DateTime @default(now())
+  revokedAt      DateTime?
+  metadata       Json?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, courseId])
+  @@index([courseId, issuedAt])
 }

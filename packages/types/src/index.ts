@@ -6,3 +6,14 @@ export interface School {
   name: string;
   description: string;
 }
+
+export const permissions = [
+  'academy:manage',
+  'course:read',
+  'course:manage',
+  'enrollment:manage',
+  'progress:read:self',
+  'progress:manage',
+  'certificate:issue',
+] as const;
+export type PermissionKey = (typeof permissions)[number];
