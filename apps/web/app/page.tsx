@@ -1,4 +1,5 @@
-import { ButtonLink, Wordmark } from '@luminol/ui';
+import { ButtonLink } from '@luminol/ui';
+import { SiteFooter, SiteHeader } from '../components/site-shell';
 
 const schools = [
   {
@@ -51,19 +52,7 @@ const principles = [
 export default function Page() {
   return (
     <main>
-      <header className="site-header">
-        <a className="brand-link" href="#top" aria-label="Luminol home">
-          <Wordmark />
-        </a>
-        <nav className="desktop-nav" aria-label="Primary navigation">
-          <a href="#schools">Our schools</a>
-          <a href="#approach">Our approach</a>
-          <a href="#about">About Luminol</a>
-        </nav>
-        <ButtonLink href="#contact" size="sm">
-          Start your journey
-        </ButtonLink>
-      </header>
+      <SiteHeader />
 
       <section id="top" className="hero" aria-labelledby="hero-title">
         <div className="hero-copy">
@@ -155,8 +144,8 @@ export default function Page() {
                   <li key={topic}>{topic}</li>
                 ))}
               </ul>
-              <a className="text-link" href="#contact">
-                Ask about programs <span aria-hidden="true">→</span>
+              <a className="text-link" href={`/schools/${school.id}`}>
+                Discover this school <span aria-hidden="true">→</span>
               </a>
             </article>
           ))}
@@ -218,17 +207,17 @@ export default function Page() {
           <h2 id="pathway-title">Begin with the growth that matters now.</h2>
         </div>
         <div className="pathway-links">
-          <a href="#psychology">
+          <a href="/schools/psychology">
             <span>01</span>
             Strengthen your wellbeing
             <b aria-hidden="true">↗</b>
           </a>
-          <a href="#languages">
+          <a href="/schools/languages">
             <span>02</span>
             Find your confident voice
             <b aria-hidden="true">↗</b>
           </a>
-          <a href="#training">
+          <a href="/schools/training">
             <span>03</span>
             Advance your professional path
             <b aria-hidden="true">↗</b>
@@ -250,13 +239,7 @@ export default function Page() {
         </ButtonLink>
       </section>
 
-      <footer>
-        <a className="footer-brand" href="#top" aria-label="Back to top">
-          <Wordmark className="footer-wordmark" />
-        </a>
-        <p>Psychology · Languages · Professional Training</p>
-        <p>© {new Date().getFullYear()} Luminol Academy</p>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

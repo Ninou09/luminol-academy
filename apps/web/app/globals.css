@@ -697,6 +697,415 @@ footer p:last-child {
   color: var(--color-brand-canvas);
 }
 
+.school-page-psychology {
+  --school-accent: var(--color-school-psychology);
+}
+
+.school-page-languages {
+  --school-accent: var(--color-school-languages);
+}
+
+.school-page-training {
+  --school-accent: var(--color-school-training);
+}
+
+.school-detail-hero {
+  min-height: calc(100svh - 6.25rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(24rem, 0.92fr);
+  border-bottom: 1px solid var(--color-brand-line);
+}
+
+.school-detail-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(4rem, 8vw, 8rem) var(--luminol-page-gutter);
+}
+
+.breadcrumb {
+  width: fit-content;
+  margin-bottom: clamp(3rem, 7vw, 6rem);
+  color: var(--color-brand-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.breadcrumb span {
+  margin-inline: 0.5rem;
+  color: var(--school-accent);
+}
+
+.school-detail-copy .eyebrow {
+  color: var(--school-accent);
+}
+
+.school-detail-copy h1 {
+  max-width: 13ch;
+  margin: 1.5rem 0 2rem;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 7vw, 7rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 0.87;
+}
+
+.school-detail-lede {
+  max-width: 43rem;
+  margin: 0;
+  color: var(--color-brand-muted);
+  font-size: clamp(1rem, 1.4vw, 1.18rem);
+  line-height: 1.8;
+}
+
+.school-detail-visual {
+  position: relative;
+  min-height: 42rem;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      color-mix(in srgb, var(--school-accent) 70%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      var(--color-brand-ink) 0%,
+      color-mix(
+          in srgb,
+          var(--school-accent) 58%,
+          var(--color-brand-ink-soft)
+        )
+        100%
+    );
+  color: var(--color-brand-canvas);
+  isolation: isolate;
+}
+
+.school-detail-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.35) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.detail-number {
+  position: absolute;
+  inset-block-start: 3rem;
+  inset-inline-end: 3rem;
+  color: rgb(255 255 255 / 0.45);
+  font-family: var(--font-display);
+  font-size: 3rem;
+}
+
+.detail-orbit,
+.detail-core {
+  position: absolute;
+  inset: 50%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.detail-orbit {
+  border: 1px solid rgb(255 255 255 / 0.28);
+}
+
+.detail-orbit-outer {
+  width: min(34rem, 78%);
+}
+
+.detail-orbit-inner {
+  width: min(23rem, 54%);
+  border-color: color-mix(in srgb, var(--color-brand-gold) 55%, transparent);
+}
+
+.detail-core {
+  width: clamp(10rem, 17vw, 14rem);
+  display: grid;
+  place-items: center;
+  background: color-mix(
+    in srgb,
+    var(--school-accent) 72%,
+    var(--color-brand-canvas)
+  );
+  box-shadow:
+    0 2rem 6rem rgb(0 0 0 / 0.28),
+    0 0 5rem color-mix(in srgb, var(--school-accent) 45%, transparent);
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 10vw, 8rem);
+  line-height: 1;
+}
+
+.detail-words {
+  position: absolute;
+  inset-inline: 2.5rem;
+  inset-block-end: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.detail-words span {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.school-promise-band {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.25fr) minmax(0, 1fr);
+  gap: clamp(2rem, 8vw, 8rem);
+  align-items: start;
+  padding: clamp(3rem, 6vw, 5rem) var(--luminol-page-gutter);
+  background: var(--school-accent);
+  color: var(--color-brand-surface);
+}
+
+.school-promise-band > p {
+  margin: 0.4rem 0 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.school-promise-band blockquote {
+  max-width: 50rem;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+
+.program-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--color-brand-line);
+  border-inline-start: 1px solid var(--color-brand-line);
+}
+
+.program-grid article {
+  min-height: 22rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border-inline-end: 1px solid var(--color-brand-line);
+  border-bottom: 1px solid var(--color-brand-line);
+  background: var(--color-brand-surface);
+}
+
+.program-grid article > span {
+  color: var(--school-accent);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.program-grid h3 {
+  margin: 3.5rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 3.5vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.program-grid p {
+  max-width: 34rem;
+  color: var(--color-brand-muted);
+  line-height: 1.75;
+}
+
+.program-grid a {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 1.25rem;
+  color: var(--school-accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.school-method {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(22rem, 1.1fr);
+  gap: clamp(4rem, 10vw, 10rem);
+  padding: var(--luminol-section-space) var(--luminol-page-gutter);
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      color-mix(in srgb, var(--school-accent) 20%, transparent),
+      transparent 30%
+    ),
+    var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+}
+
+.method-heading h2,
+.audience h2,
+.related-heading h2 {
+  margin: 1.25rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+}
+
+.school-method ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.school-method li {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1.5rem;
+  padding: 2rem 0 2.5rem;
+  border-top: 1px solid rgb(255 255 255 / 0.18);
+}
+
+.school-method li > span {
+  color: var(--color-brand-gold);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.school-method h3 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  font-weight: 500;
+}
+
+.school-method li p {
+  max-width: 35rem;
+  margin: 0;
+  color: var(--color-brand-line);
+  line-height: 1.75;
+}
+
+.audience {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(22rem, 1.2fr);
+  gap: clamp(3rem, 10vw, 10rem);
+  align-items: end;
+}
+
+.audience ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-brand-line);
+  border-inline-start: 1px solid var(--color-brand-line);
+  list-style: none;
+}
+
+.audience li {
+  min-height: 8rem;
+  display: flex;
+  align-items: end;
+  padding: 1.5rem;
+  border-inline-end: 1px solid var(--color-brand-line);
+  border-bottom: 1px solid var(--color-brand-line);
+  color: var(--color-brand-ink-soft);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.3vw, 2rem);
+}
+
+.school-note {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.22fr) minmax(0, 1fr);
+  gap: clamp(2rem, 8vw, 8rem);
+  border-top: 1px solid var(--color-brand-line);
+  border-bottom: 1px solid var(--color-brand-line);
+  background: color-mix(
+    in srgb,
+    var(--school-accent) 5%,
+    var(--color-brand-canvas)
+  );
+}
+
+.school-note span {
+  color: var(--school-accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.school-note p {
+  max-width: 52rem;
+  margin: 0;
+  color: var(--color-brand-muted);
+  line-height: 1.8;
+}
+
+.related-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.55fr);
+  gap: clamp(2rem, 8vw, 8rem);
+  align-items: end;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.related-heading p {
+  margin: 0;
+  color: var(--color-brand-muted);
+  line-height: 1.8;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--color-brand-line);
+  border-inline-start: 1px solid var(--color-brand-line);
+}
+
+.related-grid a {
+  min-height: 15rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-content: space-between;
+  padding: 2rem;
+  border-inline-end: 1px solid var(--color-brand-line);
+  border-bottom: 1px solid var(--color-brand-line);
+  background: var(--color-brand-surface);
+  text-decoration: none;
+}
+
+.related-grid span {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.related-grid h3 {
+  grid-column: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 500;
+}
+
+.related-grid b {
+  grid-column: 2;
+  align-self: end;
+  color: var(--color-brand-gold-strong);
+}
+
 html[dir='rtl'] body {
   font-family: var(--font-arabic);
 }
@@ -718,11 +1127,19 @@ html[dir='rtl'] .desktop-nav a::after {
     grid-template-columns: 1fr;
   }
 
+  .school-detail-hero {
+    grid-template-columns: 1fr;
+  }
+
   .hero-copy {
     min-height: 42rem;
   }
 
   .hero-visual {
+    min-height: 38rem;
+  }
+
+  .school-detail-visual {
     min-height: 38rem;
   }
 
@@ -745,7 +1162,19 @@ html[dir='rtl'] .desktop-nav a::after {
   .section-heading,
   .approach,
   .about,
-  .pathway {
+  .pathway,
+  .school-method,
+  .audience,
+  .related-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .school-promise-band,
+  .school-note {
+    grid-template-columns: 1fr;
+  }
+
+  .program-grid {
     grid-template-columns: 1fr;
   }
 
@@ -786,13 +1215,25 @@ html[dir='rtl'] .desktop-nav a::after {
     min-height: auto;
   }
 
+  .school-detail-hero {
+    min-height: auto;
+  }
+
   .hero-copy {
     min-height: auto;
     padding-block: 4.5rem;
   }
 
+  .school-detail-copy {
+    padding-block: 4.5rem;
+  }
+
   .hero h1 {
     font-size: clamp(3.5rem, 18vw, 5rem);
+  }
+
+  .school-detail-copy h1 {
+    font-size: clamp(3.5rem, 17vw, 5rem);
   }
 
   .hero-actions {
@@ -817,6 +1258,10 @@ html[dir='rtl'] .desktop-nav a::after {
     min-height: 32rem;
   }
 
+  .school-detail-visual {
+    min-height: 32rem;
+  }
+
   .signal-card {
     min-width: 8.2rem;
   }
@@ -835,5 +1280,10 @@ html[dir='rtl'] .desktop-nav a::after {
 
   .about-monogram {
     font-size: 11rem;
+  }
+
+  .audience ul,
+  .related-grid {
+    grid-template-columns: 1fr;
   }
 }
