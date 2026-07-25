@@ -4,6 +4,8 @@ import {
   calculateCompletionRate,
   displayPersonName,
   formatEnumLabel,
+  getEnquiryTransitions,
+  isEnquiryTransitionAllowed,
 } from './operations';
 
 describe('admin operations helpers', () => {
@@ -25,5 +27,12 @@ describe('admin operations helpers', () => {
   it('turns stored enum values into readable labels', () => {
     expect(formatEnumLabel('IN_REVIEW')).toBe('In Review');
     expect(formatEnumLabel('PSYCHOLOGY')).toBe('Psychology');
+  });
+
+  it('allows only explicit enquiry workflow transitions', () => {
+    expect(getEnquiryTransitions('NEW')).toEqual(['IN_REVIEW', 'SPAM']);
+    expect(isEnquiryTransitionAllowed('IN_REVIEW', 'CONTACTED')).toBe(true);
+    expect(isEnquiryTransitionAllowed('NEW', 'CLOSED')).toBe(false);
+    expect(isEnquiryTransitionAllowed('CLOSED', 'CLOSED')).toBe(false);
   });
 });
