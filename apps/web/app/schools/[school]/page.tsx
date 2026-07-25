@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ButtonLink } from '@luminol/ui';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { getProgrammesForSchool } from '../../../lib/sanity';
 import { isSchoolSlug, schools } from '../../../lib/schools';
 
 type SchoolPageProps = {
@@ -35,6 +36,24 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   if (!isSchoolSlug(slug)) notFound();
 
   const school = schools[slug];
+  const cmsProgrammes = await getProgrammesForSchool(slug);
+  const programmes: Array<{
+    id: string;
+    title: string;
+    description: string;
+    delivery?: string | null;
+  }> = cmsProgrammes?.length
+    ? cmsProgrammes.map((programme) => ({
+        id: programme._id,
+        title: programme.title,
+        description: programme.summary,
+        delivery: programme.delivery,
+      }))
+    : school.programs.map((programme) => ({
+        id: programme.title,
+        title: programme.title,
+        description: programme.description,
+      }));
   const relatedSchools = Object.values(schools).filter(
     (item) => item.slug !== school.slug,
   );
@@ -92,10 +111,13 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           </p>
         </div>
         <div className="program-grid">
-          {school.programs.map((program, index) => (
-            <article key={program.title}>
+          {programmes.map((program, index) => (
+            <article key={program.id}>
               <span>{String(index + 1).padStart(2, '0')}</span>
               <h3>{program.title}</h3>
+              {program.delivery ? (
+                <small className="program-delivery">{program.delivery}</small>
+              ) : null}
               <p>{program.description}</p>
               <a href="/contact">
                 Ask about this program <b aria-hidden="true">→</b>
