@@ -1,5 +1,7 @@
 import { Wordmark } from '@luminol/ui';
-export default function Page() {
+import { requirePermission } from '@luminol/auth';
+export default async function Page() {
+  await requirePermission('academy:manage');
   return (
     <main className="shell">
       <aside>

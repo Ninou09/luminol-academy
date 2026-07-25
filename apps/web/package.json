@@ -11,6 +11,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@luminol/auth": "workspace:*",
     "@luminol/ui": "workspace:*",
     "@luminol/config": "workspace:*",
     "@luminol/validation": "workspace:*",
