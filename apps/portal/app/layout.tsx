@@ -1,10 +1,14 @@
-import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
+import type { Metadata } from 'next';
+
 import './globals.css';
+
 export const metadata: Metadata = {
-  title: 'Luminol Academy',
-  description: 'Learning with purpose.',
+  title: 'Learner Portal | Luminol',
+  description:
+    'Your secure Luminol space for programmes, progress and achievements.',
 };
+
 export default function RootLayout({
   children,
 }: {
