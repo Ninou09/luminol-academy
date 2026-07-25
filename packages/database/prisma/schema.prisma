@@ -57,6 +57,7 @@ model User {
   enrollments  Enrollment[]
   records      LearningRecord[]
   certificates Certificate[]
+  enquiryStatusEvents EnquiryStatusEvent[]
 
   @@index([email])
   @@index([deletedAt])
@@ -207,19 +208,34 @@ model Certificate {
 }
 
 model Enquiry {
-  id        String        @id @default(cuid())
-  name      String
-  email     String
-  phone     String?
-  school    EnquirySchool
-  message   String
-  locale    String        @default("en")
-  consent   Boolean
-  status    EnquiryStatus @default(NEW)
-  source    String        @default("website")
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id           String               @id @default(cuid())
+  name         String
+  email        String
+  phone        String?
+  school       EnquirySchool
+  message      String
+  locale       String               @default("en")
+  consent      Boolean
+  status       EnquiryStatus        @default(NEW)
+  source       String               @default("website")
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  statusEvents EnquiryStatusEvent[]
 
   @@index([status, createdAt])
   @@index([email])
+}
+
+model EnquiryStatusEvent {
+  id          String        @id @default(cuid())
+  enquiryId   String
+  actorUserId String
+  fromStatus  EnquiryStatus
+  toStatus    EnquiryStatus
+  createdAt   DateTime      @default(now())
+  enquiry     Enquiry       @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  actor       User          @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([enquiryId, createdAt])
+  @@index([actorUserId, createdAt])
 }

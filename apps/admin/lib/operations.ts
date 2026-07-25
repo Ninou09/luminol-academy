@@ -1,3 +1,35 @@
+export const enquiryStatuses = [
+  'NEW',
+  'IN_REVIEW',
+  'CONTACTED',
+  'CLOSED',
+  'SPAM',
+] as const;
+
+export type EnquiryStatusValue = (typeof enquiryStatuses)[number];
+
+const enquiryTransitions: Record<
+  EnquiryStatusValue,
+  readonly EnquiryStatusValue[]
+> = {
+  NEW: ['IN_REVIEW', 'SPAM'],
+  IN_REVIEW: ['CONTACTED', 'NEW', 'SPAM'],
+  CONTACTED: ['CLOSED', 'IN_REVIEW'],
+  CLOSED: ['IN_REVIEW'],
+  SPAM: ['NEW'],
+};
+
+export function getEnquiryTransitions(status: EnquiryStatusValue) {
+  return enquiryTransitions[status];
+}
+
+export function isEnquiryTransitionAllowed(
+  fromStatus: EnquiryStatusValue,
+  toStatus: EnquiryStatusValue,
+) {
+  return enquiryTransitions[fromStatus].includes(toStatus);
+}
+
 export function calculateCompletionRate(
   completedEnrollments: number,
   trackedEnrollments: number,

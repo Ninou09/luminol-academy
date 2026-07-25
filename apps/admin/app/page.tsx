@@ -2,8 +2,13 @@ import { UserButton } from '@clerk/nextjs';
 import { requirePermission } from '@luminol/auth';
 import { Wordmark } from '@luminol/ui';
 
-import { displayPersonName, formatEnumLabel } from '../lib/operations';
+import {
+  displayPersonName,
+  formatEnumLabel,
+  getEnquiryTransitions,
+} from '../lib/operations';
 import { getOperationsDashboard } from '../lib/operations.server';
+import { transitionEnquiryStatus } from './enquiries/actions';
 
 const dateFormatter = new Intl.DateTimeFormat('en', {
   day: 'numeric',
@@ -143,6 +148,39 @@ export default async function Page() {
                       >
                         {formatEnumLabel(enquiry.status)}
                       </span>
+                      <form
+                        action={transitionEnquiryStatus}
+                        className="status-form"
+                      >
+                        <input
+                          type="hidden"
+                          name="enquiryId"
+                          value={enquiry.id}
+                        />
+                        <label>
+                          <span className="sr-only">
+                            Update {enquiry.name}&apos;s enquiry status
+                          </span>
+                          <select
+                            name="toStatus"
+                            defaultValue=""
+                            required
+                            aria-label={`Update ${enquiry.name}'s enquiry status`}
+                          >
+                            <option value="" disabled>
+                              Move to…
+                            </option>
+                            {getEnquiryTransitions(enquiry.status).map(
+                              (status) => (
+                                <option key={status} value={status}>
+                                  {formatEnumLabel(status)}
+                                </option>
+                              ),
+                            )}
+                          </select>
+                        </label>
+                        <button type="submit">Update</button>
+                      </form>
                     </article>
                   ))}
                 </div>
