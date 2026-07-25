@@ -1,10 +1,83 @@
 import 'server-only';
 
 import { db } from '@luminol/database';
+import type { Prisma } from '@luminol/database';
 
 import { calculateCompletionRate } from './operations';
 
-export async function getOperationsDashboard() {
+type RecentEnquiry = Prisma.EnquiryGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    email: true;
+    school: true;
+    status: true;
+    createdAt: true;
+  };
+}>;
+
+type RecentEnrollment = Prisma.EnrollmentGetPayload<{
+  select: {
+    id: true;
+    status: true;
+    enrolledAt: true;
+    user: {
+      select: {
+        firstName: true;
+        lastName: true;
+        email: true;
+      };
+    };
+    course: { select: { title: true } };
+  };
+}>;
+
+type CoursePortfolioItem = Prisma.CourseGetPayload<{
+  select: {
+    id: true;
+    title: true;
+    published: true;
+    updatedAt: true;
+    _count: {
+      select: {
+        modules: true;
+        enrollments: true;
+      };
+    };
+  };
+}>;
+
+type EligibleLearner = Prisma.UserGetPayload<{
+  select: {
+    id: true;
+    firstName: true;
+    lastName: true;
+    email: true;
+  };
+}>;
+
+type EligibleCourse = Prisma.CourseGetPayload<{
+  select: { id: true; title: true };
+}>;
+
+export type OperationsDashboard = {
+  summary: {
+    activeUsers: number;
+    activeEnrollments: number;
+    publishedCourses: number;
+    newEnquiries: number;
+    completionRate: number;
+  };
+  recentEnquiries: RecentEnquiry[];
+  recentEnrollments: RecentEnrollment[];
+  coursePortfolio: CoursePortfolioItem[];
+  enrollmentOptions: {
+    learners: EligibleLearner[];
+    courses: EligibleCourse[];
+  };
+};
+
+export async function getOperationsDashboard(): Promise<OperationsDashboard> {
   const [
     activeUsers,
     activeEnrollments,
