@@ -5,9 +5,14 @@ import { Wordmark } from '@luminol/ui';
 import {
   displayPersonName,
   formatEnumLabel,
+  getEnrollmentTransitions,
   getEnquiryTransitions,
 } from '../lib/operations';
 import { getOperationsDashboard } from '../lib/operations.server';
+import {
+  createEnrollment,
+  transitionEnrollmentStatus,
+} from './enrollments/actions';
 import { transitionEnquiryStatus } from './enquiries/actions';
 
 const dateFormatter = new Intl.DateTimeFormat('en', {
@@ -196,6 +201,51 @@ export default async function Page() {
                   <h2>Recent enrolments</h2>
                 </div>
               </div>
+              {operations.enrollmentOptions.learners.length > 0 &&
+              operations.enrollmentOptions.courses.length > 0 ? (
+                <form
+                  action={createEnrollment}
+                  className="enrollment-create-form"
+                >
+                  <label>
+                    <span>Learner</span>
+                    <select name="userId" defaultValue="" required>
+                      <option value="" disabled>
+                        Select learner
+                      </option>
+                      {operations.enrollmentOptions.learners.map((learner) => (
+                        <option key={learner.id} value={learner.id}>
+                          {displayPersonName(
+                            learner.firstName,
+                            learner.lastName,
+                            learner.email,
+                          )}{' '}
+                          · {learner.email}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    <span>Published course</span>
+                    <select name="courseId" defaultValue="" required>
+                      <option value="" disabled>
+                        Select course
+                      </option>
+                      {operations.enrollmentOptions.courses.map((course) => (
+                        <option key={course.id} value={course.id}>
+                          {course.title}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button type="submit">Create enrolment</button>
+                </form>
+              ) : (
+                <p className="enrollment-readiness">
+                  A synchronized learner and published course are required
+                  before an enrolment can be created.
+                </p>
+              )}
               {operations.recentEnrollments.length > 0 ? (
                 <div className="compact-list">
                   {operations.recentEnrollments.map((enrollment) => (
@@ -220,6 +270,39 @@ export default async function Page() {
                           {dateFormatter.format(enrollment.enrolledAt)}
                         </small>
                       </div>
+                      <form
+                        action={transitionEnrollmentStatus}
+                        className="status-form enrollment-status-form"
+                      >
+                        <input
+                          type="hidden"
+                          name="enrollmentId"
+                          value={enrollment.id}
+                        />
+                        <label>
+                          <span className="sr-only">
+                            Update {enrollment.course.title} enrolment status
+                          </span>
+                          <select
+                            name="toStatus"
+                            defaultValue=""
+                            required
+                            aria-label={`Update ${enrollment.course.title} enrolment status`}
+                          >
+                            <option value="" disabled>
+                              Move to…
+                            </option>
+                            {getEnrollmentTransitions(enrollment.status).map(
+                              (status) => (
+                                <option key={status} value={status}>
+                                  {formatEnumLabel(status)}
+                                </option>
+                              ),
+                            )}
+                          </select>
+                        </label>
+                        <button type="submit">Update</button>
+                      </form>
                     </article>
                   ))}
                 </div>
