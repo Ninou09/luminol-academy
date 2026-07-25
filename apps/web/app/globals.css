@@ -1,0 +1,142 @@
+@import 'tailwindcss';
+@theme {
+  --color-brand-navy: #102a43;
+  --color-brand-gold: #c79a3b;
+  --color-brand-canvas: #fafaf8;
+  --font-sans: Manrope, sans-serif;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-arabic: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: #fafaf8;
+  color: #102a43;
+  font-family: Manrope, sans-serif;
+}
+nav {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7vw;
+  border-bottom: 1px solid #102a4320;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.nav-links a {
+  text-decoration: none;
+  color: inherit;
+}
+.hero {
+  min-height: 680px;
+  padding: 110px 7vw 80px;
+  background: linear-gradient(90deg, #fafaf8 55%, #eeeae0 55%);
+  position: relative;
+}
+.hero:after {
+  content: 'LA';
+  position: absolute;
+  right: 8vw;
+  top: 90px;
+  font-family: 'Cormorant Garamond';
+  font-size: 24rem;
+  line-height: 1;
+  color: #102a4308;
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #a67827;
+}
+.hero h1,
+.schools h2 {
+  font-family: 'Cormorant Garamond';
+  font-weight: 500;
+  font-size: clamp(4rem, 8vw, 7.2rem);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  margin: 2rem 0;
+}
+.hero em {
+  color: #c79a3b;
+  font-weight: 400;
+}
+.lede {
+  max-width: 490px;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #486581;
+}
+.cta {
+  display: inline-flex;
+  gap: 3rem;
+  margin-top: 2rem;
+  background: #102a43;
+  color: white;
+  padding: 1.2rem 1.5rem;
+  text-decoration: none;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.schools {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 8vw;
+  padding: 120px 7vw;
+  background: #102a43;
+  color: #fafaf8;
+}
+.schools h2 {
+  font-size: 4.5rem;
+}
+.school-list article {
+  border-top: 1px solid #ffffff30;
+  padding: 2rem 0 2.5rem;
+  display: grid;
+  grid-template-columns: 50px 1fr;
+}
+.school-list span {
+  color: #c79a3b;
+}
+.school-list h3 {
+  font-family: 'Cormorant Garamond';
+  font-size: 2rem;
+  margin: 0;
+}
+.school-list p {
+  grid-column: 2;
+  color: #bcccdc;
+  margin-bottom: 0;
+}
+html[dir='rtl'] body {
+  font-family: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+}
+@media (max-width: 700px) {
+  .nav-links {
+    display: none;
+  }
+  .hero {
+    padding-top: 70px;
+    background: #fafaf8;
+  }
+  .schools {
+    grid-template-columns: 1fr;
+  }
+  .hero h1 {
+    font-size: 4.2rem;
+  }
+}

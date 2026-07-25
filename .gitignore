@@ -1,0 +1,17 @@
+node_modules
+.next
+out
+dist
+coverage
+.turbo
+.env
+.env.local
+.env.*.local
+!.env.example
+playwright-report
+test-results
+apps/studio/.sanity
+packages/database/src/generated
+.DS_Store
+
+*.tsbuildinfo
