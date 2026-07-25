@@ -1,64 +1,56 @@
 import 'server-only';
 
 import { db } from '@luminol/database';
-import type { Prisma } from '@luminol/database';
 
-import { calculateCompletionRate } from './operations';
+import {
+  calculateCompletionRate,
+  type EnrollmentStatusValue,
+  type EnquiryStatusValue,
+} from './operations';
 
-type RecentEnquiry = Prisma.EnquiryGetPayload<{
-  select: {
-    id: true;
-    name: true;
-    email: true;
-    school: true;
-    status: true;
-    createdAt: true;
+type RecentEnquiry = {
+  id: string;
+  name: string;
+  email: string;
+  school: string;
+  status: EnquiryStatusValue;
+  createdAt: Date;
+};
+
+type RecentEnrollment = {
+  id: string;
+  status: EnrollmentStatusValue;
+  enrolledAt: Date;
+  user: {
+    firstName: string | null;
+    lastName: string | null;
+    email: string;
   };
-}>;
+  course: { title: string };
+};
 
-type RecentEnrollment = Prisma.EnrollmentGetPayload<{
-  select: {
-    id: true;
-    status: true;
-    enrolledAt: true;
-    user: {
-      select: {
-        firstName: true;
-        lastName: true;
-        email: true;
-      };
-    };
-    course: { select: { title: true } };
+type CoursePortfolioItem = {
+  id: string;
+  title: string;
+  published: boolean;
+  updatedAt: Date;
+  _count: {
+    modules: number;
+    enrollments: number;
   };
-}>;
+};
 
-type CoursePortfolioItem = Prisma.CourseGetPayload<{
-  select: {
-    id: true;
-    title: true;
-    published: true;
-    updatedAt: true;
-    _count: {
-      select: {
-        modules: true;
-        enrollments: true;
-      };
-    };
-  };
-}>;
+type EligibleLearner = {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+};
 
-type EligibleLearner = Prisma.UserGetPayload<{
-  select: {
-    id: true;
-    firstName: true;
-    lastName: true;
-    email: true;
-  };
-}>;
-
-type EligibleCourse = Prisma.CourseGetPayload<{
-  select: { id: true; title: true };
-}>;
+type EligibleCourse = {
+  id: string;
+  title: string;
+};
 
 export type OperationsDashboard = {
   summary: {
@@ -177,12 +169,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
         trackedEnrollments,
       ),
     },
-    recentEnquiries,
-    recentEnrollments,
-    coursePortfolio,
+    recentEnquiries: recentEnquiries as RecentEnquiry[],
+    recentEnrollments: recentEnrollments as RecentEnrollment[],
+    coursePortfolio: coursePortfolio as CoursePortfolioItem[],
     enrollmentOptions: {
-      learners: eligibleLearners,
-      courses: eligibleCourses,
+      learners: eligibleLearners as EligibleLearner[],
+      courses: eligibleCourses as EligibleCourse[],
     },
   };
 }
