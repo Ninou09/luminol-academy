@@ -20,6 +20,21 @@ enum LearningRecordStatus {
   COMPLETED
 }
 
+enum EnquirySchool {
+  PSYCHOLOGY
+  LANGUAGES
+  TRAINING
+  GENERAL
+}
+
+enum EnquiryStatus {
+  NEW
+  IN_REVIEW
+  CONTACTED
+  CLOSED
+  SPAM
+}
+
 model User {
   id          String       @id @default(cuid())
   clerkId     String       @unique
@@ -144,4 +159,22 @@ model Certificate {
 
   @@unique([userId, courseId])
   @@index([courseId, issuedAt])
+}
+
+model Enquiry {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  school    EnquirySchool
+  message   String
+  locale    String        @default("en")
+  consent   Boolean
+  status    EnquiryStatus @default(NEW)
+  source    String        @default("website")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email])
 }
