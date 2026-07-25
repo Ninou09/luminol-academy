@@ -9,9 +9,9 @@ export function SiteHeader() {
       <nav className="desktop-nav" aria-label="Primary navigation">
         <a href="/#schools">Our schools</a>
         <a href="/#approach">Our approach</a>
-        <a href="/#about">About Luminol</a>
+        <a href="/about">About Luminol</a>
       </nav>
-      <ButtonLink href="/#contact" size="sm">
+      <ButtonLink href="/contact" size="sm">
         Start your journey
       </ButtonLink>
     </header>
