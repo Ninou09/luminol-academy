@@ -13,9 +13,10 @@
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",
     "@luminol/auth": "workspace:*",
-    "@luminol/database": "workspace:*",
-    "@luminol/ui": "workspace:*",
     "@luminol/config": "workspace:*",
+    "@luminol/database": "workspace:*",
+    "@luminol/language": "workspace:*",
+    "@luminol/ui": "workspace:*",
     "@luminol/validation": "workspace:*",
     "next": "^15.4.4",
     "react": "^19.1.0",
