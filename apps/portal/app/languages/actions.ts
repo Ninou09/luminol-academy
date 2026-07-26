@@ -49,7 +49,9 @@ export async function submitPlacement(input: unknown) {
     attemptId: parsed.attemptId,
     userId: user.id,
     scores: parsed.scores,
-    requiresManualReview: parsed.requiresManualReview,
+    ...(parsed.requiresManualReview === undefined
+      ? {}
+      : { requiresManualReview: parsed.requiresManualReview }),
   });
 
   revalidatePath('/languages');
