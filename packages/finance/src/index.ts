@@ -72,3 +72,5 @@ const allowedTransitions: Record<InvoiceStatus, readonly InvoiceStatus[]> = {
 export function canTransitionInvoiceStatus(from: InvoiceStatus, to: InvoiceStatus) {
   return allowedTransitions[from].includes(to);
 }
+
+export * from './payments';
