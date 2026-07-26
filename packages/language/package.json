@@ -1,0 +1,26 @@
+{
+  "name": "@luminol/language",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@luminol/database": "workspace:*",
+    "server-only": "^0.0.1",
+    "zod": "^4.0.10"
+  },
+  "devDependencies": {
+    "@luminol/config": "workspace:*",
+    "eslint": "^9.32.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
