@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  calculatePlacementResult,
-  determineCefrLevel,
-  recommendCourse,
-  submitPlacement,
-} from "./index";
+import { submitPlacement } from "./assessment";
+import { recommendCourse } from "./recommendations";
+import { calculatePlacementResult, determineCefrLevel } from "./scoring";
 
 const completeScores = [
   { skill: "reading", rawScore: 80, maxScore: 100, answeredItems: 20, totalItems: 20 },
