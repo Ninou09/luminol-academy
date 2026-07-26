@@ -46,7 +46,17 @@ jobs:
         with:
           name: typecheck-diagnostics
           path: typecheck.log
-      - run: pnpm test
+      - name: Run tests
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee test.log
+      - name: Upload test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-diagnostics
+          path: test.log
       - run: pnpm build
         env:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
