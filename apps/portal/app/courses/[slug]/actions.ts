@@ -3,16 +3,23 @@
 import { AuthorizationError, requireUser } from '@luminol/auth';
 import { db } from '@luminol/database';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 const completionSchema = z.object({
   lessonId: z.string().min(1).max(128),
+  redirectTo: z
+    .string()
+    .max(500)
+    .refine((value) => value.startsWith('/courses/'), 'Invalid redirect')
+    .optional(),
 });
 
 export async function completeLesson(formData: FormData) {
   const user = await requireUser();
-  const { lessonId } = completionSchema.parse({
+  const { lessonId, redirectTo } = completionSchema.parse({
     lessonId: formData.get('lessonId'),
+    redirectTo: formData.get('redirectTo') || undefined,
   });
 
   const lesson = await db.lesson.findFirst({
@@ -118,4 +125,6 @@ export async function completeLesson(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath(`/courses/${course.slug}`);
+
+  if (redirectTo) redirect(redirectTo);
 }
