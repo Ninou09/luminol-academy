@@ -84,5 +84,6 @@ export function canTransitionInvoiceStatus(from: InvoiceStatus, to: InvoiceStatu
   return allowedTransitions[from].includes(to);
 }
 
+export * from './corporate';
 export * from './payments';
 export * from './pricing';
