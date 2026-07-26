@@ -42,23 +42,51 @@ enum EnquiryStatus {
   SPAM
 }
 
+enum CefrLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
+enum LanguageSkill {
+  READING
+  LISTENING
+  SPEAKING
+  WRITING
+  GRAMMAR
+  VOCABULARY
+}
+
+enum PlacementAttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  REVIEW_REQUIRED
+  COMPLETED
+  CANCELLED
+}
+
 model User {
-  id           String           @id @default(cuid())
-  clerkId      String           @unique
-  email        String           @unique
-  firstName    String?
-  lastName     String?
-  imageUrl     String?
-  lastSignInAt DateTime?
-  deletedAt    DateTime?
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  roles        UserRole[]
-  enrollments  Enrollment[]
-  records      LearningRecord[]
-  certificates Certificate[]
-  enquiryStatusEvents EnquiryStatusEvent[]
+  id                     String             @id @default(cuid())
+  clerkId                String             @unique
+  email                  String             @unique
+  firstName              String?
+  lastName               String?
+  imageUrl               String?
+  lastSignInAt           DateTime?
+  deletedAt              DateTime?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  roles                  UserRole[]
+  enrollments            Enrollment[]
+  records                LearningRecord[]
+  certificates           Certificate[]
+  enquiryStatusEvents    EnquiryStatusEvent[]
   enrollmentStatusEvents EnrollmentStatusEvent[]
+  placementAttempts      PlacementAttempt[] @relation("PlacementLearner")
+  placementReviews       PlacementAttempt[] @relation("PlacementReviewer")
 
   @@index([email])
   @@index([deletedAt])
@@ -105,17 +133,33 @@ model RolePermission {
 }
 
 model Course {
-  id           String         @id @default(cuid())
-  sanityId     String         @unique
-  slug         String         @unique
-  title        String
-  published    Boolean        @default(false)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  modules      CourseModule[]
-  enrollments  Enrollment[]
-  records      LearningRecord[]
-  certificates Certificate[]
+  id                   String                @id @default(cuid())
+  sanityId             String                @unique
+  slug                 String                @unique
+  title                String
+  published            Boolean               @default(false)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  modules              CourseModule[]
+  enrollments          Enrollment[]
+  records              LearningRecord[]
+  certificates         Certificate[]
+  languageProfile      LanguageCourseProfile?
+  placementAssessments PlacementAssessment[]
+}
+
+model LanguageCourseProfile {
+  id                  String    @id @default(cuid())
+  courseId            String    @unique
+  targetLanguage      String
+  instructionLanguage String
+  entryLevel          CefrLevel
+  exitLevel           CefrLevel
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  course              Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([targetLanguage, entryLevel])
 }
 
 model CourseModule {
@@ -135,22 +179,81 @@ model CourseModule {
 }
 
 model Lesson {
-  id              String       @id @default(cuid())
+  id              String        @id @default(cuid())
   moduleId        String
-  slug            String       @unique
+  slug            String        @unique
   title           String
   summary         String?
-  type            LessonType   @default(ARTICLE)
+  type            LessonType    @default(ARTICLE)
+  languageSkill   LanguageSkill?
+  cefrLevel       CefrLevel?
   position        Int
   durationMinutes Int?
   contentUrl      String?
-  published       Boolean      @default(false)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  module          CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  published       Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  module          CourseModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@unique([moduleId, position])
   @@index([moduleId, published])
+  @@index([languageSkill, cefrLevel])
+}
+
+model PlacementAssessment {
+  id             String             @id @default(cuid())
+  courseId       String
+  title          String
+  targetLanguage String
+  published      Boolean            @default(false)
+  version        Int                @default(1)
+  timeLimitMinutes Int?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  course         Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attempts       PlacementAttempt[]
+
+  @@unique([courseId, version])
+  @@index([targetLanguage, published])
+}
+
+model PlacementAttempt {
+  id               String                 @id @default(cuid())
+  assessmentId     String
+  userId           String
+  status           PlacementAttemptStatus @default(IN_PROGRESS)
+  recommendedLevel CefrLevel?
+  totalScore       Decimal?               @db.Decimal(5, 2)
+  startedAt        DateTime               @default(now())
+  submittedAt      DateTime?
+  completedAt      DateTime?
+  reviewedById     String?
+  reviewedAt       DateTime?
+  reviewNote       String?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  assessment       PlacementAssessment    @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
+  user             User                   @relation("PlacementLearner", fields: [userId], references: [id], onDelete: Cascade)
+  reviewedBy       User?                  @relation("PlacementReviewer", fields: [reviewedById], references: [id], onDelete: Restrict)
+  skillResults     PlacementSkillResult[]
+
+  @@index([userId, status, startedAt])
+  @@index([assessmentId, status])
+  @@index([reviewedById, reviewedAt])
+}
+
+model PlacementSkillResult {
+  id        String        @id @default(cuid())
+  attemptId String
+  skill     LanguageSkill
+  score     Decimal       @db.Decimal(5, 2)
+  level     CefrLevel?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  attempt   PlacementAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, skill])
+  @@index([skill, level])
 }
 
 model Enrollment {
