@@ -18,13 +18,24 @@ const completeScores = [
 describe("determineCefrLevel", () => {
   it.each([
     [0, "A1"],
+    [42.99, "A1"],
     [43, "A2"],
+    [57.99, "A2"],
     [58, "B1"],
+    [71.99, "B1"],
     [72, "B2"],
+    [83.99, "B2"],
     [84, "C1"],
+    [91.99, "C1"],
     [92, "C2"],
+    [100, "C2"],
   ])("maps %s to %s", (score, level) => {
     expect(determineCefrLevel(score)).toBe(level);
+  });
+
+  it("clamps values outside the valid percentage range", () => {
+    expect(determineCefrLevel(-10)).toBe("A1");
+    expect(determineCefrLevel(140)).toBe("C2");
   });
 });
 
@@ -37,6 +48,24 @@ describe("calculatePlacementResult", () => {
     expect(result.confidence).toBeGreaterThan(0.8);
     expect(result.strengths).toContain("reading");
     expect(result.weaknesses).toEqual(["speaking", "writing"]);
+  });
+
+  it("keeps skill percentages available for per-skill CEFR persistence", () => {
+    const result = calculatePlacementResult(completeScores);
+
+    expect(
+      result.skills.map(({ skill, percentage }) => ({
+        skill,
+        level: determineCefrLevel(percentage),
+      })),
+    ).toEqual([
+      { skill: "reading", level: "B2" },
+      { skill: "listening", level: "B1" },
+      { skill: "speaking", level: "A2" },
+      { skill: "writing", level: "A2" },
+      { skill: "grammar", level: "B1" },
+      { skill: "vocabulary", level: "B1" },
+    ]);
   });
 
   it("requires every language skill exactly once", () => {
