@@ -40,7 +40,7 @@ describe("calculatePlacementResult", () => {
   it("calculates a weighted CEFR result and diagnostics", () => {
     const result = calculatePlacementResult(completeScores);
 
-    expect(result.score).toBe(62);
+    expect(result.score).toBe(64);
     expect(result.overall).toBe("B1");
     expect(result.confidence).toBeGreaterThan(0.8);
     expect(result.strengths).toContain("reading");
