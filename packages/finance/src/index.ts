@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-export const currencyCodeSchema = z.string().length(3).transform((value) => value.toUpperCase());
+import { currencyCodeSchema } from './currency';
+
+export { currencyCodeSchema } from './currency';
+export type { CurrencyCode } from './currency';
 
 export const moneySchema = z.object({
   amountMinor: z.number().int().nonnegative(),
@@ -41,7 +44,15 @@ export const invoiceSchema = z.object({
 
 export type Invoice = z.infer<typeof invoiceSchema>;
 
-export function calculateInvoiceTotals(input: Invoice) {
+export interface InvoiceTotals {
+  currency: string;
+  subtotalMinor: number;
+  discountMinor: number;
+  taxMinor: number;
+  totalMinor: number;
+}
+
+export function calculateInvoiceTotals(input: Invoice): InvoiceTotals {
   const invoice = invoiceSchema.parse(input);
   const subtotalMinor = invoice.lines.reduce(
     (total, line) => total + line.quantity * line.unitPriceMinor,
@@ -69,7 +80,7 @@ const allowedTransitions: Record<InvoiceStatus, readonly InvoiceStatus[]> = {
   refunded: [],
 };
 
-export function canTransitionInvoiceStatus(from: InvoiceStatus, to: InvoiceStatus) {
+export function canTransitionInvoiceStatus(from: InvoiceStatus, to: InvoiceStatus): boolean {
   return allowedTransitions[from].includes(to);
 }
 
