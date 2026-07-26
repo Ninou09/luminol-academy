@@ -10,6 +10,7 @@ import {
   submitPlacementAttempt,
 } from '@luminol/language';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 export async function startPlacement(input: unknown) {
   const user = await requireUser();
@@ -21,6 +22,14 @@ export async function startPlacement(input: unknown) {
 
   revalidatePath('/languages');
   return attempt;
+}
+
+export async function startPlacementFromForm(formData: FormData) {
+  const attempt = await startPlacement({
+    assessmentId: formData.get('assessmentId'),
+  });
+
+  redirect(`/languages/placement/${attempt.id}`);
 }
 
 export async function getActivePlacement(input: unknown) {
