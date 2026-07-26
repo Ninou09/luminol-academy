@@ -9,7 +9,7 @@ import {
 } from '@luminol/database';
 
 import { assertPlacementTransition } from './assessment';
-import { calculatePlacementResult } from './scoring';
+import { calculatePlacementResult, determineCefrLevel } from './scoring';
 import type { CefrLevel, LanguageSkill, SkillScoreInput } from './types';
 
 const SKILL_TO_PRISMA: Record<LanguageSkill, PrismaLanguageSkill> = {
@@ -133,7 +133,7 @@ export async function submitPlacementAttempt(input: {
         attemptId: input.attemptId,
         skill: SKILL_TO_PRISMA[skill.skill],
         score: new Prisma.Decimal(skill.percentage.toFixed(2)),
-        level: LEVEL_TO_PRISMA[skill.percentage >= 0 ? result.overall : 'A1'],
+        level: LEVEL_TO_PRISMA[determineCefrLevel(skill.percentage)],
       })),
     });
 
