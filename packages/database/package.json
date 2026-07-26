@@ -9,6 +9,7 @@
   "scripts": {
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
     "studio": "prisma studio",
     "build": "tsc --noEmit",
     "lint": "eslint .",
