@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { currencyCodeSchema } from './index';
+import { currencyCodeSchema } from './currency';
 
 export const paymentStatusSchema = z.enum([
   'requires_payment_method',
@@ -49,11 +49,11 @@ const paymentTransitions: Record<PaymentStatus, readonly PaymentStatus[]> = {
   partially_refunded: ['partially_refunded', 'refunded'],
 };
 
-export function canTransitionPaymentStatus(from: PaymentStatus, to: PaymentStatus) {
+export function canTransitionPaymentStatus(from: PaymentStatus, to: PaymentStatus): boolean {
   return paymentTransitions[from].includes(to);
 }
 
-export function calculateRefundedAmount(refunds: readonly Refund[]) {
+export function calculateRefundedAmount(refunds: readonly Refund[]): number {
   return refunds.reduce((total, refund) => total + refundSchema.parse(refund).amountMinor, 0);
 }
 
@@ -72,6 +72,6 @@ export function determineRefundStatus(payment: PaymentIntent, refunds: readonly 
   return refundedMinor === parsedPayment.amountMinor ? 'refunded' : 'partially_refunded';
 }
 
-export function isPaymentSettled(status: PaymentStatus) {
+export function isPaymentSettled(status: PaymentStatus): boolean {
   return status === 'succeeded' || status === 'partially_refunded' || status === 'refunded';
 }
