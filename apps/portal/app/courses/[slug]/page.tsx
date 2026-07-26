@@ -22,7 +22,7 @@ export default async function CoursePage({
 
   if (!enrollment) notFound();
 
-  const { course, progress } = enrollment;
+  const { course, progress, nextLesson } = enrollment;
 
   return (
     <main>
@@ -49,6 +49,15 @@ export default async function CoursePage({
               Move through each lesson at your pace. Your completed work is
               saved to your secure learner record.
             </p>
+            {nextLesson?.slug && (
+              <Link
+                className="course-link"
+                href={`/courses/${course.slug}/lessons/${nextLesson.slug}`}
+              >
+                {progress.completedLessons > 0 ? 'Resume learning' : 'Start learning'}
+                <span aria-hidden="true">→</span>
+              </Link>
+            )}
           </div>
           <div className="course-progress-card">
             <strong>{progress.percentage}%</strong>
@@ -99,7 +108,13 @@ export default async function CoursePage({
                             <span>{lesson.durationMinutes} min</span>
                           )}
                         </div>
-                        <h3>{lesson.title}</h3>
+                        <h3>
+                          <Link
+                            href={`/courses/${course.slug}/lessons/${lesson.slug}`}
+                          >
+                            {lesson.title}
+                          </Link>
+                        </h3>
                         {lesson.summary && <p>{lesson.summary}</p>}
                       </div>
                       {lesson.status === 'COMPLETED' ? (
