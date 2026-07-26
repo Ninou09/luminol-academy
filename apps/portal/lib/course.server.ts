@@ -2,7 +2,11 @@ import 'server-only';
 
 import { db } from '@luminol/database';
 
-import { calculateCourseProgress } from './course';
+import {
+  calculateCourseProgress,
+  getLessonNavigation,
+  getNextLearningLesson,
+} from './course';
 
 export async function getLearnerCourse(userId: string, slug: string) {
   const enrollment = await db.enrollment.findFirst({
@@ -68,5 +72,44 @@ export async function getLearnerCourse(userId: string, slug: string) {
     ...enrollment,
     course: { ...enrollment.course, modules },
     progress: calculateCourseProgress(modules),
+    nextLesson: getNextLearningLesson(modules),
+  };
+}
+
+export async function getLearnerLesson(
+  userId: string,
+  courseSlug: string,
+  lessonSlug: string,
+) {
+  const enrollment = await getLearnerCourse(userId, courseSlug);
+
+  if (!enrollment) return null;
+
+  const module = enrollment.course.modules.find(({ lessons }) =>
+    lessons.some(({ slug }) => slug === lessonSlug),
+  );
+  const lesson = module?.lessons.find(({ slug }) => slug === lessonSlug);
+
+  if (!module || !lesson) return null;
+
+  const navigation = getLessonNavigation(enrollment.course.modules, lesson.id);
+
+  if (!navigation) return null;
+
+  return {
+    enrollmentStatus: enrollment.status,
+    course: {
+      id: enrollment.course.id,
+      slug: enrollment.course.slug,
+      title: enrollment.course.title,
+    },
+    module: {
+      id: module.id,
+      title: module.title,
+      position: module.position,
+    },
+    lesson,
+    navigation,
+    progress: enrollment.progress,
   };
 }
