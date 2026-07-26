@@ -35,7 +35,17 @@ jobs:
       - run: pnpm install --no-frozen-lockfile
       - run: pnpm db:generate
       - run: pnpm lint
-      - run: pnpm typecheck
+      - name: Run typecheck
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee typecheck.log
+      - name: Upload typecheck diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typecheck-diagnostics
+          path: typecheck.log
       - run: pnpm test
       - run: pnpm build
         env:
