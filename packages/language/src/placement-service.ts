@@ -8,7 +8,6 @@ import {
   db,
 } from '@luminol/database';
 
-import { assertPlacementTransition } from './assessment';
 import { calculatePlacementResult, determineCefrLevel } from './scoring';
 import type { CefrLevel, LanguageSkill, SkillScoreInput } from './types';
 
@@ -115,9 +114,7 @@ export async function submitPlacementAttempt(input: {
       throw new PlacementServiceError('Placement attempt is not owned by this learner', 'ATTEMPT_NOT_OWNED');
     }
 
-    try {
-      assertPlacementTransition(attempt.status, 'SUBMITTED');
-    } catch {
+    if (attempt.status !== PlacementAttemptStatus.IN_PROGRESS) {
       throw new PlacementServiceError(
         `Cannot submit placement attempt from ${attempt.status}`,
         'INVALID_ATTEMPT_STATE',
