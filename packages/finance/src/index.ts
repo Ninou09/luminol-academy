@@ -90,3 +90,4 @@ export * from './payments';
 export * from './pricing';
 export * from './provider';
 export * from './reconciliation';
+export * from './subscriptions';
