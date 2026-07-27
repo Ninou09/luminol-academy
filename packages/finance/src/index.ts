@@ -87,4 +87,5 @@ export function canTransitionInvoiceStatus(from: InvoiceStatus, to: InvoiceStatu
 export * from './corporate';
 export * from './payments';
 export * from './pricing';
+export * from './provider';
 export * from './reconciliation';
