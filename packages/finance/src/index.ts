@@ -89,5 +89,6 @@ export * from './corporate';
 export * from './payments';
 export * from './pricing';
 export * from './provider';
+export * from './receipts';
 export * from './reconciliation';
 export * from './subscriptions';
