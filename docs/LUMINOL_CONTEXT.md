@@ -215,9 +215,9 @@ Public certificate verification uses an atomic PostgreSQL rate-limit bucket. Cer
 
 Application builds and scheduled workers never execute migrations. Apply migrations as an explicit release step with `pnpm --filter @luminol/database migrate:deploy`.
 
-The zero-cost starter deployment is `.github/workflows/notification-worker.yml`: GitHub Actions invokes `pnpm --filter @luminol/worker run:once` every 15 minutes (or manually), claims one bounded batch, processes every claimed ID with the normal idempotent retry/dead-letter logic, disconnects, and exits. Configure only the repository secrets `DATABASE_URL`, `RESEND_API_KEY`, and `NOTIFICATION_FROM_EMAIL`; `NOTIFICATION_WORKER_BATCH_SIZE` is an optional repository variable with a safe default. The production workflow never runs for pull requests or fork code, has read-only repository permissions, cannot overlap, and does not apply migrations.
+The zero-cost starter deployment is `.github/workflows/notification-worker.yml`: GitHub Actions invokes `pnpm --filter @luminol/worker run:once` every 15 minutes (or manually), claims one bounded batch, processes every claimed ID with the normal retry/dead-letter logic, disconnects, and exits. The workflow skips safely while provider credentials are not configured.
 
-If lower latency later justifies a paid continuously hosted worker, use `pnpm --filter @luminol/worker start` with the same required environment variables plus the optional batch and polling values in `.env.example`. Both modes use PostgreSQL `SKIP LOCKED`, a unique lease token, and an expiring lease for crash recovery, so existing idempotency, retries, dead-letter handling, and safe multi-worker behavior are preserved.
+Outbound email delivery is intentionally deferred until an email provider account is approved. In-app notifications remain available. Do not merge an email-provider adapter or configure provider secrets until the provider is approved and the adapter has passed review, CI, production configuration validation, and a controlled test delivery.
 
 # Development Rules
 
@@ -254,29 +254,9 @@ Completed:
 - Milestone 9 — Language Platform
 - Milestone 10 — Professional Development Platform
 - Milestone 11 — Finance and Payments
+- Milestone 12 — Notifications and Certificates
 
-Milestone 11 delivered:
-
-- finance-domain contracts and validation
-- invoices and line items
-- payment intents and transactions
-- refunds with balance and currency protections
-- pricing plans, coupons, and redemptions
-- subscriptions and receipts
-- reconciliation and corporate billing
-- finance audit events
-- additive Prisma models and migration
-- server-side transactional finance services
-- finance RBAC permissions and authorization tests
-- authenticated learner billing views
-- protected admin finance dashboard
-- provider adapter boundaries
-
-Current:
-
-## Milestone 12 — Notifications and Certificates
-
-Delivered scope:
+Milestone 12 delivered:
 
 - notification templates and typed payload contracts
 - in-app and email notification channels
@@ -291,18 +271,30 @@ Delivered scope:
 - certificate revocation, replacement, and audit history
 - printable or downloadable certificate rendering data
 - server-side RBAC, organization isolation, validation, and tests
+- production database migrations applied successfully
 
-Milestone 12 uses additive persistence for preferences, transactional outbox events, channel deliveries, attempts and audit history. Email delivery is provider-independent and retries are bounded before dead-lettering. Certificates are issued only from completed enrolments, retain immutable snapshots and public verification exposes only credential identity fields. Application builds generate Prisma Client; workers and deployments run migrations separately.
+Deferred operational item:
 
-Deployment behavior:
+- outbound email provider activation and controlled delivery test; scheduled worker remains skip-safe without provider secrets
 
-- application builds generate Prisma Client
-- database migrations do not run automatically during preview application builds
-- production migrations must be run explicitly with `pnpm --filter @luminol/database migrate:deploy`
-- notification provider credentials must come only from environment variables
-- the zero-cost starter worker runs one batch every 15 minutes in GitHub Actions; continuous hosting is an optional later upgrade
+Current:
 
-# Future Roadmap
+## Milestone 13 — Security Audit and Production Launch
 
-Milestone 13:
-Security audit and production launch
+Required scope:
+
+- comprehensive authorization, RBAC, and organization-isolation audit across web, portal, admin, API, finance, psychology, notifications, and certificates
+- production security headers and Content Security Policy compatible with Clerk, Sanity, Vercel, and required application assets
+- CSRF, open-redirect, SSRF, unsafe file handling, injection, mass-assignment, insecure direct object reference, and sensitive-data exposure review
+- rate-limit review for public and high-risk endpoints
+- privacy-safe logging, error handling, audit-event coverage, and secret scanning
+- dependency, lockfile, GitHub Actions, and supply-chain review
+- production environment validation without exposing secret values
+- PostgreSQL migration status, backup/restore readiness, and operational runbooks
+- authenticated Playwright smoke tests for critical admin and learner journeys where credentials can be safely provided through CI secrets
+- unauthenticated production smoke tests for public pages and certificate verification
+- accessibility, SEO, robots, sitemap, error-page, and mobile launch checks
+- monitoring, rollback, incident-response, and launch checklist documentation
+- final CI, Vercel preview, controlled production deployment, and post-deployment verification
+
+Outbound email provider setup is not a blocker for Milestone 13. The launch checklist must clearly mark external email delivery as deferred and verify that the worker skips safely while provider secrets are absent.
