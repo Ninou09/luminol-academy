@@ -76,6 +76,10 @@ jobs:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuZXhhbXBsZS5jb20k
           CLERK_SECRET_KEY: sk_test_placeholder
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run public launch smoke tests
+        run: pnpm test:e2e --grep-invert "authenticated launch journeys"
       - name: Check authenticated smoke configuration
         id: authenticated-smoke
         shell: bash
@@ -95,7 +99,6 @@ jobs:
         if: steps.authenticated-smoke.outputs.ready == 'true'
         shell: bash
         run: |
-          pnpm exec playwright install --with-deps chromium
           umask 077
           printf '%s' "$ADMIN_STATE" > "$RUNNER_TEMP/admin-state.json"
           printf '%s' "$PORTAL_STATE" > "$RUNNER_TEMP/portal-state.json"
