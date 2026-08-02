@@ -2,8 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { runWorker, type WorkerDependencies } from './index';
 
 const environment = {
-  RESEND_API_KEY: 're_test',
+  BREVO_API_KEY: 'xkeysib-test',
   NOTIFICATION_FROM_EMAIL: 'notifications@example.com',
+  NOTIFICATION_FROM_NAME: 'Luminol Academy',
   NOTIFICATION_WORKER_BATCH_SIZE: '10',
 };
 
