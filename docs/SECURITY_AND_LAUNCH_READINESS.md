@@ -9,13 +9,24 @@ This document records the code audit completed in Milestone 13 and the operation
 | `web` pages, robots, sitemap                                              | Public                   | Only deliberately public content is selected. Certificate records require a valid opaque identifier and opt-in visibility.                                         |
 | `POST /api/enquiries`                                                     | Public mutation          | Zod validation, bounded body, privacy-uniform errors, Vercel-bound client address rate limit.                                                                      |
 | Clerk webhook routes                                                      | Public callback          | Svix signature validation before synchronization.                                                                                                                  |
-| Admin pages                                                               | Protected                | Clerk middleware plus `requirePermission` in every page/action; database mutations re-check identifiers and state.                                                 |
-| Certificate admin actions                                                 | Protected mutation       | Permission check and Zod allow-list. Issuance treats hidden user/course IDs as untrusted and verifies the completed enrollment tuple transactionally.              |
+| Admin pages                                                               | Protected                | Clerk middleware plus server authorization in every page/action; platform-global consoles additionally require the trusted `admin` role.                           |
+| Certificate admin actions                                                 | Protected mutation       | Platform permission and Zod allow-list. Issuance derives learner/course identity from the completed enrollment instead of trusting hidden form fields.             |
 | Portal dashboard, courses, finance, language, notifications, certificates | Learner protected        | `requireUser`; reads and writes include the authenticated user ID. Learner certificate publishing uses `updateMany` with the owner ID and refuses revoked records. |
 | Notification delivery worker                                              | Scheduled high-risk job  | Workflow has read-only repository permission, bounded batches and database leases. It exits successfully before checkout when provider configuration is absent.    |
 | Studio                                                                    | Operator-only deployment | Sanity authentication and project authorization; no import from another app.                                                                                       |
 
 Organization-bearing finance and notification queries were reviewed for scoped service inputs. Psychology content currently has no therapy-note or clinical-record persistence surface in this repository; adding one requires a separate threat model and explicit organization/clinician authorization. Certificates are learner/course records and do not currently carry an organization foreign key. A future organization certificate registry must add that key and a migration rather than infer tenancy from submitted form values.
+
+The certificate registry and notification-failure console are intentionally
+platform-global operational surfaces. They require both the trusted
+server-side `admin` role and their specific permission through
+`requirePlatformPermission`. Organization roles cannot gain cross-tenant
+visibility merely by receiving a similarly named permission. Submitted
+organization, learner, and course identifiers are never authority: certificate
+issuance accepts only a completion ID and derives the learner and course from
+the verified database record. Negative tests cover missing-role and
+missing-permission access. This is a platform-operator model, not organization
+delegation.
 
 ## Findings fixed
 
@@ -60,6 +71,7 @@ Never log request headers, cookies, authorization values, provider payloads, not
 
 - [ ] CI is green; independent security review and Vercel preview are complete.
 - [ ] Production environment variables are validated by name/presence without printing values; Clerk and Sanity production origins are allowed by CSP.
+- [ ] On the Vercel preview, complete Clerk sign-in and sign-up (including the configured OAuth popup), open Sanity Studio assets, and inspect the browser console/network log for CSP or COOP violations. Record the deployment URL, UTC time, browser, and pass/fail without tokens or personal data. Do not broaden CSP to resolve an unverified report.
 - [ ] Neon backup/PITR retention and a restore drill have been verified by an operator.
 - [ ] Pending migrations were reviewed and applied manually with `pnpm --filter @luminol/database migrate:deploy`; migration status is clean.
 - [ ] Admin and learner smoke credentials exist in a restricted CI environment; authenticated Playwright journeys pass. They must skip when secrets are absent.
@@ -69,6 +81,6 @@ Never log request headers, cookies, authorization values, provider payloads, not
 
 ## Remaining blockers and deferred work
 
-- Operational Neon restore, production migration, Vercel preview, production environment/CSP, monitoring and authenticated journey checks cannot be proven from local CI and block a production-ready declaration until operators record evidence.
+- Operational Neon restore, production migration, Clerk/Sanity/OAuth CSP and COOP preview verification, monitoring and authenticated journey checks cannot be proven from local CI and block a production-ready declaration until operators record evidence.
 - Outbound email activation is deferred and is not a Milestone 13 blocker. The scheduled worker remains skip-safe when `DATABASE_URL`, `RESEND_API_KEY`, or `NOTIFICATION_FROM_EMAIL` is absent; in-app notifications remain active. Activation requires provider approval, corrected adapter idempotency review, green CI, controlled secrets, and a monitored test delivery. PR #36 is not a dependency.
 - No destructive testing is authorized against production. Any critical/high finding discovered during independent review blocks launch until fixed or explicitly risk-accepted by the accountable owner.

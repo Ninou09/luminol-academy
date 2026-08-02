@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import {
+  portalProtectedResponseSource,
   privateCacheHeaders,
   securityHeaders,
 } from '@luminol/config/security-headers';
@@ -10,7 +11,10 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: '/(.*)', headers: securityHeaders },
-      { source: '/((?!sign-in|sign-up).*)', headers: privateCacheHeaders },
+      {
+        source: portalProtectedResponseSource,
+        headers: privateCacheHeaders,
+      },
     ];
   },
 };

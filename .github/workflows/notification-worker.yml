@@ -31,16 +31,16 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: steps.configuration.outputs.ready == 'true'
       - uses: pnpm/action-setup@v4
         if: steps.configuration.outputs.ready == 'true'
         with:
           version: 10.28.1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         if: steps.configuration.outputs.ready == 'true'
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
         if: steps.configuration.outputs.ready == 'true'

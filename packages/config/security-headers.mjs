@@ -30,3 +30,8 @@ export const securityHeaders = [
 export const privateCacheHeaders = [
   { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
 ];
+
+export const adminProtectedResponseSource =
+  '/((?!_next/static|_next/image|favicon.ico|sign-in(?:/|$)).*)';
+export const portalProtectedResponseSource =
+  '/((?!_next/static|_next/image|favicon.ico|sign-in(?:/|$)|sign-up(?:/|$)).*)';

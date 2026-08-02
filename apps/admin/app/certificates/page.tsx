@@ -1,4 +1,4 @@
-import { requirePermission } from '@luminol/auth';
+import { requirePlatformPermission } from '@luminol/auth';
 import { db } from '@luminol/database';
 import Link from 'next/link';
 import {
@@ -7,7 +7,7 @@ import {
   revokeCertificateAction,
 } from './actions';
 export default async function CertificatesAdminPage() {
-  await requirePermission('certificate:audit:read');
+  await requirePlatformPermission('certificate:audit:read');
   const issued = await db.certificate.findMany({
     where: { completionId: { not: null } },
     select: { completionId: true },
@@ -24,8 +24,6 @@ export default async function CertificatesAdminPage() {
     },
     select: {
       id: true,
-      userId: true,
-      courseId: true,
       user: { select: { email: true } },
       course: { select: { title: true } },
     },
@@ -55,8 +53,6 @@ export default async function CertificatesAdminPage() {
             {eligible.map((item) => (
               <form action={issueCertificateAction} key={item.id}>
                 <input type="hidden" name="completionId" value={item.id} />
-                <input type="hidden" name="userId" value={item.userId} />
-                <input type="hidden" name="courseId" value={item.courseId} />
                 <span>
                   {item.user.email} — {item.course.title}
                 </span>{' '}

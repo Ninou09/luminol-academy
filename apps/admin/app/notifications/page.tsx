@@ -1,8 +1,8 @@
-import { requirePermission } from '@luminol/auth';
+import { requirePlatformPermission } from '@luminol/auth';
 import { db } from '@luminol/database';
 import Link from 'next/link';
 export default async function DeliveryPage() {
-  await requirePermission('notification:failures:read');
+  await requirePlatformPermission('notification:failures:read');
   const deliveries = await db.notification.findMany({
     where: { status: { in: ['RETRY_SCHEDULED', 'DEAD_LETTER'] } },
     select: {
