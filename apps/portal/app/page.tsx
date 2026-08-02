@@ -31,6 +31,7 @@ export default async function Page() {
           <Wordmark />
         </Link>
         <div className="portal-account">
+          <Link href="/finance">Billing</Link>
           <span>Learner portal</span>
           <UserButton />
         </div>

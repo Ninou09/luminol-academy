@@ -15,5 +15,8 @@ export const permissions = [
   'progress:read:self',
   'progress:manage',
   'certificate:issue',
+  'finance:manage',
+  'finance:refund',
+  'finance:reconcile',
 ] as const;
 export type PermissionKey = (typeof permissions)[number];
