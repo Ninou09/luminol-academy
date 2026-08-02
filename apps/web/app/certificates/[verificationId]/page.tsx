@@ -27,9 +27,13 @@ export default async function CertificateVerificationPage({
   const { verificationId } = await params;
   const certificate = await getPublicCertificate(verificationId);
 
-  if (!certificate || !certificate.recipientName) notFound();
+  if (
+    !certificate ||
+    !(certificate.recipientNameSnapshot ?? certificate.recipientName)
+  )
+    notFound();
 
-  const valid = !certificate.revokedAt;
+  const valid = certificate.status === 'ACTIVE' && !certificate.revokedAt;
 
   return (
     <>
@@ -52,16 +56,18 @@ export default async function CertificateVerificationPage({
             L
           </div>
           <div className={styles.heading}>
-            <span>Luminol Academy</span>
+            <span>{certificate.issuerNameSnapshot}</span>
             <p className={valid ? styles.valid : styles.revoked}>
               {valid ? 'Valid credential' : 'Revoked credential'}
             </p>
           </div>
           <div className={styles.statement}>
             <p>This certifies that</p>
-            <h2 id="certificate-title">{certificate.recipientName}</h2>
+            <h2 id="certificate-title">
+              {certificate.recipientNameSnapshot ?? certificate.recipientName}
+            </h2>
             <p>completed the Luminol programme</p>
-            <h3>{certificate.course.title}</h3>
+            <h3>{certificate.courseTitleSnapshot}</h3>
           </div>
           <dl className={styles.details}>
             <div>
@@ -73,9 +79,9 @@ export default async function CertificateVerificationPage({
               <dd>{valid ? 'Verified' : 'Revoked'}</dd>
             </div>
             <div>
-              <dt>Verification ID</dt>
+              <dt>Serial number</dt>
               <dd>
-                <code>{certificate.verificationId}</code>
+                <code>{certificate.serialNumber}</code>
               </dd>
             </div>
           </dl>
@@ -90,8 +96,8 @@ export default async function CertificateVerificationPage({
         <aside className={styles.privacy}>
           <strong>Privacy-controlled verification</strong>
           <p>
-            This page is available because the certificate holder chose to
-            make this credential public. It is excluded from search indexing.
+            This page is available because the certificate holder chose to make
+            this credential public. It is excluded from search indexing.
           </p>
         </aside>
       </main>

@@ -38,6 +38,9 @@ importers:
       '@luminol/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@luminol/certificates':
+        specifier: workspace:*
+        version: link:../../packages/certificates
       '@luminol/config':
         specifier: workspace:*
         version: link:../../packages/config
@@ -305,6 +308,31 @@ importers:
         specifier: ^3.2.4
         version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(jsdom@28.1.0)(lightningcss@1.32.0)(yaml@2.9.0)
 
+  packages/certificates:
+    dependencies:
+      '@luminol/database':
+        specifier: workspace:*
+        version: link:../database
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      zod:
+        specifier: ^4.0.10
+        version: 4.4.3
+    devDependencies:
+      '@luminol/config':
+        specifier: workspace:*
+        version: link:../config
+      eslint:
+        specifier: ^9.32.0
+        version: 9.39.5(jiti@2.7.0)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(jsdom@28.1.0)(lightningcss@1.32.0)(yaml@2.9.0)
+
   packages/config:
     devDependencies:
       '@eslint/js':
@@ -393,6 +421,31 @@ importers:
         version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(jsdom@28.1.0)(lightningcss@1.32.0)(yaml@2.9.0)
 
   packages/language:
+    dependencies:
+      '@luminol/database':
+        specifier: workspace:*
+        version: link:../database
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
+      zod:
+        specifier: ^4.0.10
+        version: 4.4.3
+    devDependencies:
+      '@luminol/config':
+        specifier: workspace:*
+        version: link:../config
+      eslint:
+        specifier: ^9.32.0
+        version: 9.39.5(jiti@2.7.0)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(jsdom@28.1.0)(lightningcss@1.32.0)(yaml@2.9.0)
+
+  packages/notifications:
     dependencies:
       '@luminol/database':
         specifier: workspace:*

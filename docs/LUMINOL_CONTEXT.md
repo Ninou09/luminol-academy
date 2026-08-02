@@ -55,15 +55,19 @@ Canvas:
 apps/
 
 web
+
 - Public-facing website
 
 admin
+
 - Internal administration platform
 
 portal
+
 - Student/client portal
 
 studio
+
 - Sanity CMS
 
 ## Shared Packages
@@ -71,36 +75,47 @@ studio
 packages/
 
 ui
+
 - Design system and reusable components
 
 database
+
 - Prisma database layer
 
 auth
+
 - Authentication and authorization
 
 validation
+
 - Zod validation schemas
 
 config
+
 - Shared configuration
 
 types
+
 - Shared TypeScript types
 
 utils
+
 - Utility functions
 
 emails
+
 - Email provider boundary and reusable email templates
 
 analytics
+
 - Tracking and analytics
 
 finance
+
 - Finance domain contracts, persistence services, authorization, payments, refunds, receipts, subscriptions, reconciliation, corporate billing, and audit events
 
 certificates
+
 - Certificate issuance, verification, revocation, rendering data, and audit contracts
 
 ## Services
@@ -108,18 +123,23 @@ certificates
 services/
 
 api
+
 - Backend API
 
 ai
+
 - AI features
 
 search
+
 - Search infrastructure
 
 notifications
+
 - Notification orchestration, preferences, delivery records, retries, and provider adapters
 
 worker
+
 - Background jobs
 
 # Technology Stack
@@ -246,7 +266,7 @@ Current:
 
 ## Milestone 12 — Notifications and Certificates
 
-Planned scope:
+Delivered scope:
 
 - notification templates and typed payload contracts
 - in-app and email notification channels
@@ -261,6 +281,8 @@ Planned scope:
 - certificate revocation, replacement, and audit history
 - printable or downloadable certificate rendering data
 - server-side RBAC, organization isolation, validation, and tests
+
+Milestone 12 uses additive persistence for preferences, transactional outbox events, channel deliveries, attempts and audit history. Email delivery is provider-independent and retries are bounded before dead-lettering. Certificates are issued only from completed enrolments, retain immutable snapshots and public verification exposes only credential identity fields. Application builds generate Prisma Client; workers and deployments run migrations separately.
 
 Deployment behavior:
 

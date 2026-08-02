@@ -31,6 +31,7 @@ export default async function Page() {
           <Wordmark />
         </Link>
         <div className="portal-account">
+          <Link href="/notifications">Notifications</Link>
           <Link href="/finance">Billing</Link>
           <span>Learner portal</span>
           <UserButton />
@@ -54,10 +55,22 @@ export default async function Page() {
         </section>
 
         <section className="summary-grid" aria-label="Learning summary">
-          <article><span>Active programmes</span><strong>{dashboard.summary.activeCourses}</strong></article>
-          <article><span>Average progress</span><strong>{dashboard.summary.averageProgress}%</strong></article>
-          <article><span>Completed</span><strong>{dashboard.summary.completedCourses}</strong></article>
-          <article><span>Certificates</span><strong>{dashboard.summary.validCertificates}</strong></article>
+          <article>
+            <span>Active programmes</span>
+            <strong>{dashboard.summary.activeCourses}</strong>
+          </article>
+          <article>
+            <span>Average progress</span>
+            <strong>{dashboard.summary.averageProgress}%</strong>
+          </article>
+          <article>
+            <span>Completed</span>
+            <strong>{dashboard.summary.completedCourses}</strong>
+          </article>
+          <article>
+            <span>Certificates</span>
+            <strong>{dashboard.summary.validCertificates}</strong>
+          </article>
         </section>
 
         <section className="dashboard-section" aria-labelledby="courses-title">
@@ -66,7 +79,9 @@ export default async function Page() {
               <p className="eyebrow">Learning</p>
               <h2 id="courses-title">My programmes</h2>
             </div>
-            {dashboard.courses.length > 0 && <span>{dashboard.courses.length} enrolled</span>}
+            {dashboard.courses.length > 0 && (
+              <span>{dashboard.courses.length} enrolled</span>
+            )}
           </div>
 
           {dashboard.courses.length > 0 ? (
@@ -78,7 +93,9 @@ export default async function Page() {
                   </div>
                   <div className="course-content">
                     <div className="course-meta">
-                      <span className={`status status-${course.status.toLowerCase()}`}>
+                      <span
+                        className={`status status-${course.status.toLowerCase()}`}
+                      >
                         {formatStatus(course.status)}
                       </span>
                       <span>
@@ -127,7 +144,9 @@ export default async function Page() {
             </div>
           ) : (
             <div className="empty-state">
-              <span className="empty-mark" aria-hidden="true">✦</span>
+              <span className="empty-mark" aria-hidden="true">
+                ✦
+              </span>
               <div>
                 <h3>Your first programme starts here.</h3>
                 <p>
@@ -142,7 +161,10 @@ export default async function Page() {
           )}
         </section>
 
-        <section className="dashboard-section certificates-section" aria-labelledby="certificates-title">
+        <section
+          className="dashboard-section certificates-section"
+          aria-labelledby="certificates-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">Achievements</p>
@@ -154,9 +176,15 @@ export default async function Page() {
             <div className="certificate-list">
               {dashboard.certificates.map((certificate) => (
                 <article key={certificate.id}>
-                  <span className="certificate-seal" aria-hidden="true">L</span>
+                  <span className="certificate-seal" aria-hidden="true">
+                    L
+                  </span>
                   <div>
-                    <h3>{certificate.course.title}</h3>
+                    <h3>
+                      <Link href={`/certificates/${certificate.id}`}>
+                        {certificate.course.title}
+                      </Link>
+                    </h3>
                     <p>Issued {dateFormatter.format(certificate.issuedAt)}</p>
                   </div>
                   <div className="certificate-verification">
@@ -190,9 +218,7 @@ export default async function Page() {
                             type="hidden"
                             name="visibility"
                             value={
-                              certificate.publiclyVisible
-                                ? 'private'
-                                : 'public'
+                              certificate.publiclyVisible ? 'private' : 'public'
                             }
                           />
                           <button type="submit">
@@ -225,7 +251,9 @@ export default async function Page() {
 
       <footer>
         <span>© Luminol</span>
-        <span lang="ar" dir="rtl">للتعلّم أثرٌ يدوم</span>
+        <span lang="ar" dir="rtl">
+          للتعلّم أثرٌ يدوم
+        </span>
         <span>Le savoir nous éclaire</span>
       </footer>
     </main>
