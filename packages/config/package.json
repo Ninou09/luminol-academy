@@ -5,6 +5,7 @@
   "exports": {
     "./typescript/*": "./typescript/*",
     "./eslint": "./eslint/index.mjs",
+    "./security-headers": "./security-headers.mjs",
     "./tailwind": "./tailwind/index.ts",
     "./tokens.css": "./tailwind/tokens.css"
   },

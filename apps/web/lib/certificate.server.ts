@@ -40,4 +40,11 @@ export async function enforceCertificateVerificationLimit(clientKey: unknown) {
     RETURNING "count"
   `;
   if ((rows[0]?.count ?? 0) > 20) throw new Error('Verification unavailable');
+
+  // Keep persistent buckets bounded without adding latency to every request.
+  if (Math.random() < 0.01) {
+    await db.rateLimitBucket.deleteMany({
+      where: { windowEnd: { lt: new Date(now.getTime() - 24 * 60 * 60_000) } },
+    });
+  }
 }
