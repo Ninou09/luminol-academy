@@ -18,7 +18,10 @@ export default async function DeliveryPage() {
     take: 100,
   });
   return (
-    <main className="admin-shell">
+    <main
+      className="admin-shell"
+      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
+    >
       <section className="admin-dashboard">
         <div className="admin-content">
           <Link href="/">← Overview</Link>
