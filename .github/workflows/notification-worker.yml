@@ -21,10 +21,10 @@ jobs:
         id: configuration
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           NOTIFICATION_FROM_EMAIL: ${{ secrets.NOTIFICATION_FROM_EMAIL }}
         run: |
-          if [ -z "$DATABASE_URL" ] || [ -z "$RESEND_API_KEY" ] || [ -z "$NOTIFICATION_FROM_EMAIL" ]; then
+          if [ -z "$DATABASE_URL" ] || [ -z "$BREVO_API_KEY" ] || [ -z "$NOTIFICATION_FROM_EMAIL" ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::notice::Notification worker skipped because one or more required repository secrets are not configured."
           else
@@ -51,6 +51,7 @@ jobs:
         run: pnpm --filter @luminol/worker run:once
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           NOTIFICATION_FROM_EMAIL: ${{ secrets.NOTIFICATION_FROM_EMAIL }}
+          NOTIFICATION_FROM_NAME: ${{ vars.NOTIFICATION_FROM_NAME || 'Luminol Academy' }}
           NOTIFICATION_WORKER_BATCH_SIZE: ${{ vars.NOTIFICATION_WORKER_BATCH_SIZE || '25' }}
