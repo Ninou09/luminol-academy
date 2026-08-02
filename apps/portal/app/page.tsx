@@ -33,6 +33,7 @@ export default async function Page() {
         <div className="portal-account">
           <Link href="/notifications">Notifications</Link>
           <Link href="/finance">Billing</Link>
+          <Link href="/account">Account</Link>
           <span>Learner portal</span>
           <UserButton />
         </div>
