@@ -1,8 +1,9 @@
 import { z } from 'zod';
 
 export const workerEnvironmentSchema = z.object({
-  RESEND_API_KEY: z.string().min(1),
+  BREVO_API_KEY: z.string().min(1),
   NOTIFICATION_FROM_EMAIL: z.email(),
+  NOTIFICATION_FROM_NAME: z.string().trim().min(1).max(100).default('Luminol Academy'),
   NOTIFICATION_WORKER_BATCH_SIZE: z.coerce
     .number()
     .int()
