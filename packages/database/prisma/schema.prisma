@@ -121,28 +121,63 @@ enum ReconciliationStatus {
   DISCREPANCY
 }
 
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+}
+
+enum NotificationCategory {
+  TRANSACTIONAL
+  MARKETING
+}
+
+enum NotificationStatus {
+  PENDING
+  PROCESSING
+  DELIVERED
+  RETRY_SCHEDULED
+  DEAD_LETTER
+  CANCELLED
+}
+
+enum NotificationAttemptStatus {
+  SUCCEEDED
+  FAILED
+}
+
+enum CertificateStatus {
+  ACTIVE
+  REVOKED
+  SUPERSEDED
+}
+
 model User {
-  id                     String                  @id @default(cuid())
-  clerkId                String                  @unique
-  email                  String                  @unique
-  firstName              String?
-  lastName               String?
-  imageUrl               String?
-  lastSignInAt           DateTime?
-  deletedAt              DateTime?
-  createdAt              DateTime                @default(now())
-  updatedAt              DateTime                @updatedAt
-  roles                  UserRole[]
-  enrollments            Enrollment[]
-  records                LearningRecord[]
-  certificates           Certificate[]
-  enquiryStatusEvents    EnquiryStatusEvent[]
-  enrollmentStatusEvents EnrollmentStatusEvent[]
-  placementAttempts      PlacementAttempt[]      @relation("PlacementLearner")
-  placementReviews       PlacementAttempt[]      @relation("PlacementReviewer")
-  invoices               Invoice[]               @relation("InvoiceCustomer")
-  subscriptions          Subscription[]
-  financeAuditEvents     FinanceAuditEvent[]     @relation("FinanceAuditActor")
+  id                      String                   @id @default(cuid())
+  clerkId                 String                   @unique
+  email                   String                   @unique
+  firstName               String?
+  lastName                String?
+  imageUrl                String?
+  lastSignInAt            DateTime?
+  deletedAt               DateTime?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  roles                   UserRole[]
+  enrollments             Enrollment[]
+  records                 LearningRecord[]
+  certificates            Certificate[]
+  enquiryStatusEvents     EnquiryStatusEvent[]
+  enrollmentStatusEvents  EnrollmentStatusEvent[]
+  placementAttempts       PlacementAttempt[]       @relation("PlacementLearner")
+  placementReviews        PlacementAttempt[]       @relation("PlacementReviewer")
+  invoices                Invoice[]                @relation("InvoiceCustomer")
+  subscriptions           Subscription[]
+  financeAuditEvents      FinanceAuditEvent[]      @relation("FinanceAuditActor")
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
+  notificationEvents      NotificationEvent[]
+  certificateAuditEvents  CertificateAuditEvent[]  @relation("CertificateAuditActor")
+  certificateRevocations  CertificateRevocation[]  @relation("CertificateRevocationActor")
 
   @@index([email])
   @@index([deletedAt])
@@ -605,20 +640,157 @@ model LearningRecord {
 }
 
 model Certificate {
-  id              String    @id @default(cuid())
-  verificationId  String    @unique @default(cuid())
-  userId          String
-  courseId        String
-  issuedAt        DateTime  @default(now())
-  revokedAt       DateTime?
-  publiclyVisible Boolean   @default(false)
-  recipientName   String?
-  metadata        Json?
-  user            User      @relation(fields: [userId], references: [id], onDelete: Restrict)
-  course          Course    @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  id                    String                  @id @default(cuid())
+  verificationId        String                  @unique @default(cuid())
+  userId                String
+  courseId              String
+  issuedAt              DateTime                @default(now())
+  revokedAt             DateTime?
+  publiclyVisible       Boolean                 @default(false)
+  recipientName         String?
+  metadata              Json?
+  serialNumber          String                  @unique @default(cuid())
+  completionId          String?                 @unique
+  status                CertificateStatus       @default(ACTIVE)
+  recipientNameSnapshot String?
+  courseTitleSnapshot   String?
+  issuerNameSnapshot    String                  @default("Luminol Academy")
+  snapshot              Json?
+  replacedById          String?                 @unique
+  replacementFor        Certificate?            @relation("CertificateReplacement", fields: [replacedById], references: [id], onDelete: Restrict)
+  replacement           Certificate?            @relation("CertificateReplacement")
+  revocation            CertificateRevocation?
+  auditEvents           CertificateAuditEvent[]
+  user                  User                    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course                Course                  @relation(fields: [courseId], references: [id], onDelete: Restrict)
 
-  @@unique([userId, courseId])
+  @@index([userId, courseId, status])
   @@index([courseId, issuedAt])
+}
+
+model NotificationPreference {
+  id                String               @id @default(cuid())
+  userId            String
+  organizationId    String?
+  channel           NotificationChannel
+  category          NotificationCategory
+  enabled           Boolean              @default(true)
+  timeZone          String               @default("UTC")
+  quietStartMinutes Int?
+  quietEndMinutes   Int?
+  consentedAt       DateTime?
+  updatedAt         DateTime             @updatedAt
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, organizationId, channel, category])
+  @@index([organizationId, userId])
+}
+
+model NotificationEvent {
+  id             String               @id @default(cuid())
+  idempotencyKey String               @unique
+  organizationId String?
+  recipientId    String
+  templateKey    String
+  category       NotificationCategory
+  payload        Json
+  createdAt      DateTime             @default(now())
+  recipient      User                 @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  notifications  Notification[]
+
+  @@index([organizationId, recipientId, createdAt])
+}
+
+model Notification {
+  id                String                        @id @default(cuid())
+  eventId           String
+  recipientId       String
+  organizationId    String?
+  channel           NotificationChannel
+  status            NotificationStatus            @default(PENDING)
+  title             String
+  preview           String
+  body              String
+  provider          String?
+  providerReference String?
+  attemptCount      Int                           @default(0)
+  scheduledAt       DateTime                      @default(now())
+  deliveredAt       DateTime?
+  readAt            DateTime?
+  lastErrorCode     String?
+  lockToken         String?                       @unique
+  lockedUntil       DateTime?
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
+  event             NotificationEvent             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  recipient         User                          @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  attempts          NotificationDeliveryAttempt[]
+  auditEvents       NotificationAuditEvent[]
+
+  @@unique([eventId, channel])
+  @@unique([provider, providerReference])
+  @@index([recipientId, readAt, createdAt])
+  @@index([status, scheduledAt])
+  @@index([organizationId, status, scheduledAt])
+}
+
+model RateLimitBucket {
+  key       String   @id
+  count     Int
+  windowEnd DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([windowEnd])
+}
+
+model NotificationDeliveryAttempt {
+  id                String                    @id @default(cuid())
+  notificationId    String
+  attemptNumber     Int
+  status            NotificationAttemptStatus
+  providerReference String?
+  errorCode         String?
+  attemptedAt       DateTime                  @default(now())
+  notification      Notification              @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, attemptNumber])
+  @@index([status, attemptedAt])
+}
+
+model NotificationAuditEvent {
+  id             String       @id @default(cuid())
+  notificationId String
+  action         String
+  metadata       Json
+  occurredAt     DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId, occurredAt])
+}
+
+model CertificateRevocation {
+  id            String      @id @default(cuid())
+  certificateId String      @unique
+  actorUserId   String
+  reasonCode    String
+  reason        String?
+  revokedAt     DateTime    @default(now())
+  certificate   Certificate @relation(fields: [certificateId], references: [id], onDelete: Restrict)
+  actor         User        @relation("CertificateRevocationActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+}
+
+model CertificateAuditEvent {
+  id            String      @id @default(cuid())
+  certificateId String
+  actorUserId   String?
+  action        String
+  metadata      Json
+  occurredAt    DateTime    @default(now())
+  certificate   Certificate @relation(fields: [certificateId], references: [id], onDelete: Restrict)
+  actor         User?       @relation("CertificateAuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([certificateId, occurredAt])
+  @@index([actorUserId, occurredAt])
 }
 
 model Enquiry {
