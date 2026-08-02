@@ -50,6 +50,9 @@ export default async function Page() {
           <a href="#programmes">
             <span>04</span> Programmes
           </a>
+          <a href="/finance">
+            <span>05</span> Finance
+          </a>
         </nav>
         <div className="admin-sidebar-note">
           <span>Protected workspace</span>

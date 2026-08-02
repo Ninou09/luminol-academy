@@ -21,7 +21,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.61.1",
-    "zod": "^4.0.10"
+    "zod": "^4.0.10",
+    "@luminol/finance": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.19.9",
