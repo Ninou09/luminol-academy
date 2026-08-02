@@ -92,13 +92,16 @@ utils
 - Utility functions
 
 emails
-- Email templates
+- Email provider boundary and reusable email templates
 
 analytics
 - Tracking and analytics
 
 finance
 - Finance domain contracts, persistence services, authorization, payments, refunds, receipts, subscriptions, reconciliation, corporate billing, and audit events
+
+certificates
+- Certificate issuance, verification, revocation, rendering data, and audit contracts
 
 ## Services
 
@@ -114,7 +117,7 @@ search
 - Search infrastructure
 
 notifications
-- Email/SMS/push notifications
+- Notification orchestration, preferences, delivery records, retries, and provider adapters
 
 worker
 - Background jobs
@@ -182,6 +185,10 @@ Financial data must use server-side authorization, idempotent mutations, integer
 
 Never store card numbers, CVV values, raw payment credentials, or payment-provider secrets in application records.
 
+Notifications must avoid exposing sensitive psychology, financial, or identity data in subject lines, lock-screen previews, delivery logs, and provider metadata.
+
+Certificate verification must expose only the minimum public information required to validate authenticity. Issued certificate snapshots and audit history must remain immutable, while revocation must be explicit and traceable.
+
 # Development Rules
 
 Every milestone must:
@@ -216,12 +223,9 @@ Completed:
 - Milestone 8 — Psychology Platform
 - Milestone 9 — Language Platform
 - Milestone 10 — Professional Development Platform
+- Milestone 11 — Finance and Payments
 
-Current:
-
-## Milestone 11 — Finance and Payments
-
-Implemented scope includes:
+Milestone 11 delivered:
 
 - finance-domain contracts and validation
 - invoices and line items
@@ -238,16 +242,34 @@ Implemented scope includes:
 - protected admin finance dashboard
 - provider adapter boundaries
 
+Current:
+
+## Milestone 12 — Notifications and Certificates
+
+Planned scope:
+
+- notification templates and typed payload contracts
+- in-app and email notification channels
+- user notification preferences, consent, and quiet-time rules
+- database-backed outbox, delivery attempts, idempotency, retries, and dead-letter handling
+- provider-independent email and notification adapters
+- secure learner notification inbox and admin delivery visibility
+- certificate eligibility and issuance workflows
+- immutable certificate issuance snapshots
+- unique certificate serials and verification codes
+- public certificate verification with minimal data exposure
+- certificate revocation, replacement, and audit history
+- printable or downloadable certificate rendering data
+- server-side RBAC, organization isolation, validation, and tests
+
 Deployment behavior:
 
 - application builds generate Prisma Client
 - database migrations do not run automatically during preview application builds
 - production migrations must be run explicitly with `pnpm --filter @luminol/database migrate:deploy`
+- notification provider credentials must come only from environment variables
 
 # Future Roadmap
-
-Milestone 12:
-Notifications and certificates
 
 Milestone 13:
 Security audit and production launch
