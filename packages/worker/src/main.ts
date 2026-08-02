@@ -27,26 +27,33 @@ const exitCode = await runWorker(
         id,
         {
           async send(input) {
-            const response = await fetch('https://api.resend.com/emails', {
+            const response = await fetch('https://api.brevo.com/v3/smtp/email', {
               method: 'POST',
               headers: {
-                Authorization: `Bearer ${environment.data.RESEND_API_KEY}`,
+                Accept: 'application/json',
+                'api-key': environment.data.BREVO_API_KEY,
                 'Content-Type': 'application/json',
-                'Idempotency-Key': input.idempotencyKey,
               },
               body: JSON.stringify({
-                from: environment.data.NOTIFICATION_FROM_EMAIL,
-                to: [input.to],
+                sender: {
+                  name: environment.data.NOTIFICATION_FROM_NAME,
+                  email: environment.data.NOTIFICATION_FROM_EMAIL,
+                },
+                to: [{ email: input.to }],
                 subject: input.subject,
-                text: input.text,
+                textContent: input.text,
+                headers: {
+                  idempotencyKey: input.idempotencyKey,
+                },
               }),
             });
             if (!response.ok)
               throw new Error(`Email provider returned ${response.status}`);
             const body: unknown = await response.json();
             return {
-              providerReference: z.object({ id: z.string().min(1) }).parse(body)
-                .id,
+              providerReference: z
+                .object({ messageId: z.string().min(1) })
+                .parse(body).messageId,
             };
           },
         },
