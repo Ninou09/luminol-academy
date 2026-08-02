@@ -9,6 +9,11 @@ export const revokeCertificateSchema = z.object({
   reasonCode: z.enum(['issued_in_error', 'misconduct', 'replaced']),
   reason: z.string().trim().max(500).optional(),
 });
+export const replaceCertificateSchema = z.object({
+  certificateId: z.string().min(1).max(128),
+  requestId: z.string().trim().min(8).max(128),
+  reason: z.string().trim().min(1).max(500),
+});
 export function createSerial(issuedAt: Date, sequence: string): string {
   return `LUM-${issuedAt.getUTCFullYear()}-${sequence
     .replace(/[^A-Za-z0-9]/g, '')

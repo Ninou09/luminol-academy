@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
-import { getPublicCertificate } from '../../../lib/certificate.server';
+import {
+  enforceCertificateVerificationLimit,
+  getPublicCertificate,
+} from '../../../lib/certificate.server';
 import styles from './verification.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -25,6 +29,16 @@ export default async function CertificateVerificationPage({
   params: Promise<{ verificationId: string }>;
 }) {
   const { verificationId } = await params;
+  const requestHeaders = await headers();
+  const clientAddress =
+    requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  try {
+    await enforceCertificateVerificationLimit(
+      `${clientAddress}:${verificationId}`,
+    );
+  } catch {
+    notFound();
+  }
   const certificate = await getPublicCertificate(verificationId);
 
   if (

@@ -1,0 +1,21 @@
+{
+  "name": "@luminol/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsc --outDir dist --noEmit false && node dist/index.js",
+    "build": "tsc --noEmit",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@luminol/database": "workspace:*",
+    "@luminol/notifications": "workspace:*",
+    "zod": "^4.0.10"
+  },
+  "devDependencies": {
+    "@luminol/config": "workspace:*"
+  }
+}

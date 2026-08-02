@@ -1,7 +1,11 @@
 import { requirePermission } from '@luminol/auth';
 import { db } from '@luminol/database';
 import Link from 'next/link';
-import { issueCertificateAction, revokeCertificateAction } from './actions';
+import {
+  issueCertificateAction,
+  replaceCertificateAction,
+  revokeCertificateAction,
+} from './actions';
 export default async function CertificatesAdminPage() {
   await requirePermission('certificate:audit:read');
   const issued = await db.certificate.findMany({
@@ -75,6 +79,21 @@ export default async function CertificatesAdminPage() {
                   </li>
                 ))}
               </ul>
+              {item.status === 'ACTIVE' && (
+                <form action={replaceCertificateAction}>
+                  <input type="hidden" name="certificateId" value={item.id} />
+                  <input
+                    type="hidden"
+                    name="requestId"
+                    value={`replacement-${item.id}`}
+                  />
+                  <label>
+                    Replacement reason
+                    <input name="reason" required maxLength={500} />
+                  </label>
+                  <button>Replace certificate</button>
+                </form>
+              )}
               {item.status === 'ACTIVE' && (
                 <form action={revokeCertificateAction}>
                   <input type="hidden" name="certificateId" value={item.id} />

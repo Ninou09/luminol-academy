@@ -1,4 +1,5 @@
 import 'server-only';
+import { randomUUID } from 'node:crypto';
 import { db, type Prisma } from '@luminol/database';
 import {
   notificationEventSchema,
@@ -61,6 +62,7 @@ export async function createNotificationEvent(input: unknown) {
 export async function deliverEmail(
   notificationId: string,
   provider: EmailProvider,
+  existingLockToken?: string,
 ) {
   const item = await db.notification.findUnique({
     where: { id: notificationId },
@@ -69,16 +71,25 @@ export async function deliverEmail(
   if (!item || item.channel !== 'EMAIL')
     throw new Error('Email notification not found');
   if (item.status === 'DELIVERED' || item.status === 'DEAD_LETTER') return item;
-  const claimed = await db.notification.updateMany({
-    where: {
-      id: item.id,
-      status: { in: ['PENDING', 'RETRY_SCHEDULED'] },
-      scheduledAt: { lte: new Date() },
-    },
-    data: { status: 'PROCESSING' },
-  });
-  if (claimed.count !== 1)
-    return db.notification.findUniqueOrThrow({ where: { id: item.id } });
+  const lockToken = existingLockToken ?? randomUUID();
+  if (!existingLockToken) {
+    const claimed = await db.notification.updateMany({
+      where: {
+        id: item.id,
+        status: { in: ['PENDING', 'RETRY_SCHEDULED'] },
+        scheduledAt: { lte: new Date() },
+      },
+      data: {
+        status: 'PROCESSING',
+        lockToken,
+        lockedUntil: new Date(Date.now() + 5 * 60_000),
+      },
+    });
+    if (claimed.count !== 1)
+      return db.notification.findUniqueOrThrow({ where: { id: item.id } });
+  } else if (item.status !== 'PROCESSING' || item.lockToken !== lockToken) {
+    return item;
+  }
   const attempt = item.attemptCount + 1;
   try {
     const result = await provider.send({
@@ -104,6 +115,8 @@ export async function deliverEmail(
           attemptCount: attempt,
           providerReference: result.providerReference,
           lastErrorCode: null,
+          lockToken: null,
+          lockedUntil: null,
         },
       });
     });
@@ -126,8 +139,37 @@ export async function deliverEmail(
             delay == null ? item.scheduledAt : new Date(Date.now() + delay),
           attemptCount: attempt,
           lastErrorCode: 'PROVIDER_ERROR',
+          lockToken: null,
+          lockedUntil: null,
         },
       });
     });
   }
+}
+
+export async function claimDueEmailDeliveries(batchSize: number) {
+  const limit = Math.max(1, Math.min(100, Math.trunc(batchSize)));
+  const lockToken = randomUUID();
+  const lockedUntil = new Date(Date.now() + 5 * 60_000);
+  const rows = await db.$queryRaw<Array<{ id: string }>>`
+    WITH candidates AS (
+      SELECT "id" FROM "Notification"
+      WHERE "channel" = 'EMAIL'
+        AND "scheduledAt" <= NOW()
+        AND (
+          "status" IN ('PENDING', 'RETRY_SCHEDULED')
+          OR ("status" = 'PROCESSING' AND "lockedUntil" < NOW())
+        )
+      ORDER BY "scheduledAt", "id"
+      LIMIT ${limit}
+      FOR UPDATE SKIP LOCKED
+    )
+    UPDATE "Notification" AS n
+    SET "status" = 'PROCESSING', "lockToken" = ${lockToken},
+        "lockedUntil" = ${lockedUntil}, "updatedAt" = NOW()
+    FROM candidates
+    WHERE n."id" = candidates."id"
+    RETURNING n."id"
+  `;
+  return { ids: rows.map(({ id }) => id), lockToken };
 }

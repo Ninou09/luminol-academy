@@ -136,7 +136,7 @@ search
 
 notifications
 
-- Notification orchestration, preferences, delivery records, retries, and provider adapters
+- Notification orchestration, preferences, delivery records, retries, provider adapters, and a separately deployed worker with PostgreSQL-backed leases
 
 worker
 
@@ -208,6 +208,12 @@ Never store card numbers, CVV values, raw payment credentials, or payment-provid
 Notifications must avoid exposing sensitive psychology, financial, or identity data in subject lines, lock-screen previews, delivery logs, and provider metadata.
 
 Certificate verification must expose only the minimum public information required to validate authenticity. Issued certificate snapshots and audit history must remain immutable, while revocation must be explicit and traceable.
+
+Public certificate verification uses an atomic PostgreSQL rate-limit bucket. Certificate replacement is a serializable transaction that supersedes the prior credential, preserves its immutable snapshot on the replacement, links both records, and audits both sides.
+
+## Deployment operations
+
+Application builds never execute migrations. Deploy migrations separately with `pnpm --filter @luminol/database migrate:deploy`, then run the notification process with `pnpm --filter @luminol/worker start`. The worker requires `DATABASE_URL`, `RESEND_API_KEY`, and `NOTIFICATION_FROM_EMAIL`; batch size and poll interval use the optional values documented in `.env.example`. Run more than one worker safely: due rows are claimed with PostgreSQL `SKIP LOCKED`, a unique lease token, and an expiring lease for crash recovery.
 
 # Development Rules
 

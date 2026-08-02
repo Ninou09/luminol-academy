@@ -1,0 +1,8 @@
+{
+  "extends": "@luminol/config/typescript/base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "typeRoots": ["../database/node_modules/@types"]
+  },
+  "include": ["src/**/*.ts"]
+}

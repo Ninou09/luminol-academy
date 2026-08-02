@@ -599,7 +599,7 @@ model Enrollment {
   course       Course                  @relation(fields: [courseId], references: [id], onDelete: Restrict)
   statusEvents EnrollmentStatusEvent[]
 
-  @@unique([userId, courseId])
+  @@index([userId, courseId, status])
   @@index([courseId, status])
   @@index([userId, status])
 }
@@ -718,6 +718,8 @@ model Notification {
   deliveredAt       DateTime?
   readAt            DateTime?
   lastErrorCode     String?
+  lockToken         String?                       @unique
+  lockedUntil       DateTime?
   createdAt         DateTime                      @default(now())
   updatedAt         DateTime                      @updatedAt
   event             NotificationEvent             @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -730,6 +732,15 @@ model Notification {
   @@index([recipientId, readAt, createdAt])
   @@index([status, scheduledAt])
   @@index([organizationId, status, scheduledAt])
+}
+
+model RateLimitBucket {
+  key       String   @id
+  count     Int
+  windowEnd DateTime
+  updatedAt DateTime @updatedAt
+
+  @@index([windowEnd])
 }
 
 model NotificationDeliveryAttempt {

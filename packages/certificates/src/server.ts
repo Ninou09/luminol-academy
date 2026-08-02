@@ -1,10 +1,11 @@
 import 'server-only';
 import { randomBytes } from 'node:crypto';
-import { db, type Prisma } from '@luminol/database';
+import { db, Prisma } from '@luminol/database';
 import {
   createSerial,
   issueCertificateSchema,
   revokeCertificateSchema,
+  replaceCertificateSchema,
 } from './index';
 export async function issueCertificate(actorUserId: string, input: unknown) {
   const parsed = issueCertificateSchema.parse(input);
@@ -60,6 +61,78 @@ export async function issueCertificate(actorUserId: string, input: unknown) {
     });
     return certificate;
   });
+}
+export async function replaceCertificate(actorUserId: string, input: unknown) {
+  const parsed = replaceCertificateSchema.parse(input);
+  return db.$transaction(
+    async (tx: Prisma.TransactionClient) => {
+      await tx.$queryRaw`SELECT "id" FROM "Certificate" WHERE "id" = ${parsed.certificateId} FOR UPDATE`;
+      const previous = await tx.certificate.findUnique({
+        where: { id: parsed.certificateId },
+        include: { replacement: true },
+      });
+      if (!previous) throw new Error('Certificate not found');
+      if (previous.replacement) return previous.replacement;
+      if (previous.status !== 'ACTIVE')
+        throw new Error('Only an active certificate can be replaced');
+      const verificationId = randomBytes(24).toString('base64url');
+      const replacement = await tx.certificate.create({
+        data: {
+          verificationId,
+          serialNumber: createSerial(previous.issuedAt, verificationId),
+          userId: previous.userId,
+          courseId: previous.courseId,
+          issuedAt: new Date(),
+          publiclyVisible: previous.publiclyVisible,
+          recipientName: previous.recipientName,
+          recipientNameSnapshot: previous.recipientNameSnapshot,
+          courseTitleSnapshot: previous.courseTitleSnapshot,
+          issuerNameSnapshot: previous.issuerNameSnapshot,
+          snapshot: previous.snapshot ?? Prisma.JsonNull,
+        },
+      });
+      const revokedAt = new Date();
+      await tx.certificate.update({
+        where: { id: previous.id },
+        data: {
+          status: 'SUPERSEDED',
+          revokedAt,
+          publiclyVisible: false,
+          replacedById: replacement.id,
+        },
+      });
+      await tx.certificateRevocation.create({
+        data: {
+          certificateId: previous.id,
+          actorUserId,
+          reasonCode: 'replaced',
+          reason: parsed.reason,
+          revokedAt,
+        },
+      });
+      await tx.certificateAuditEvent.createMany({
+        data: [
+          {
+            certificateId: previous.id,
+            actorUserId,
+            action: 'SUPERSEDED',
+            metadata: {
+              replacementId: replacement.id,
+              requestId: parsed.requestId,
+            },
+          },
+          {
+            certificateId: replacement.id,
+            actorUserId,
+            action: 'REPLACEMENT_ISSUED',
+            metadata: { previousId: previous.id, requestId: parsed.requestId },
+          },
+        ],
+      });
+      return replacement;
+    },
+    { isolationLevel: 'Serializable' },
+  );
 }
 export async function revokeCertificate(actorUserId: string, input: unknown) {
   const parsed = revokeCertificateSchema.parse(input);

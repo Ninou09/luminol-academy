@@ -3,6 +3,7 @@ import { requirePermission } from '@luminol/auth';
 import {
   issueCertificate,
   revokeCertificate,
+  replaceCertificate,
 } from '@luminol/certificates/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -19,6 +20,23 @@ export async function issueCertificateAction(formData: FormData) {
     courseId: formData.get('courseId'),
   });
   await issueCertificate(actor.id, input);
+  revalidatePath('/certificates');
+}
+const replaceFormSchema = z.object({
+  certificateId: z.string().min(1),
+  requestId: z.string().min(8),
+  reason: z.string().trim().min(1).max(500),
+});
+export async function replaceCertificateAction(formData: FormData) {
+  const actor = await requirePermission('certificate:revoke');
+  await replaceCertificate(
+    actor.id,
+    replaceFormSchema.parse({
+      certificateId: formData.get('certificateId'),
+      requestId: formData.get('requestId'),
+      reason: formData.get('reason'),
+    }),
+  );
   revalidatePath('/certificates');
 }
 const revokeFormSchema = z.object({

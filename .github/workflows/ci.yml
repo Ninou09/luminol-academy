@@ -34,6 +34,12 @@ jobs:
           cache: pnpm
       - run: pnpm install --no-frozen-lockfile
       - run: pnpm db:generate
+      - name: Validate and deploy migrations to ephemeral PostgreSQL
+        run: |
+          pnpm --filter @luminol/database exec prisma validate
+          pnpm --filter @luminol/database migrate:deploy
+        env:
+          DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - run: pnpm lint
       - name: Run typecheck
         shell: bash
@@ -51,6 +57,9 @@ jobs:
         run: |
           set -o pipefail
           pnpm test 2>&1 | tee test.log
+        env:
+          TEST_DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
+          DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - name: Upload test diagnostics
         if: always()
         uses: actions/upload-artifact@v4
