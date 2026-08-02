@@ -19,7 +19,6 @@ Luminol Academy is a premium digital ecosystem combining three educational and p
    - Corporate training
    - Skills development
 
-
 # Brand Identity
 
 Name:
@@ -38,7 +37,6 @@ Design direction:
 - Professional
 - Human-centered
 
-
 Brand colors:
 
 Primary Navy:
@@ -49,7 +47,6 @@ Gold:
 
 Canvas:
 #FAFAF8
-
 
 # Technology Architecture
 
@@ -68,7 +65,6 @@ portal
 
 studio
 - Sanity CMS
-
 
 ## Shared Packages
 
@@ -101,6 +97,8 @@ emails
 analytics
 - Tracking and analytics
 
+finance
+- Finance domain contracts, persistence services, authorization, payments, refunds, receipts, subscriptions, reconciliation, corporate billing, and audit events
 
 ## Services
 
@@ -121,7 +119,6 @@ notifications
 worker
 - Background jobs
 
-
 # Technology Stack
 
 Frontend:
@@ -131,22 +128,18 @@ Frontend:
 - TypeScript
 - Tailwind CSS
 
-
 Backend:
 
 - PostgreSQL
 - Prisma
 
-
 Authentication:
 
 - Clerk
 
-
 CMS:
 
 - Sanity
-
 
 Deployment:
 
@@ -154,12 +147,10 @@ Deployment:
 - GitHub Actions
 - Docker
 
-
 Testing:
 
 - Vitest
 - Playwright
-
 
 # Security Principles
 
@@ -177,7 +168,6 @@ Always implement:
 - Encryption where required
 - Secure secrets management
 
-
 Psychology data requires the highest confidentiality.
 
 Never expose:
@@ -188,6 +178,9 @@ Never expose:
 
 without explicit authorization.
 
+Financial data must use server-side authorization, idempotent mutations, integer minor-unit money values, validated currencies, transactional writes, and auditable state transitions.
+
+Never store card numbers, CVV values, raw payment credentials, or payment-provider secrets in application records.
 
 # Development Rules
 
@@ -201,7 +194,6 @@ Every milestone must:
 6. Pass builds.
 7. Include documentation updates.
 
-
 Never:
 
 - Commit secrets.
@@ -210,70 +202,49 @@ Never:
 - Create temporary hacks.
 - Break existing functionality.
 
-
 # Current Status
 
 Completed:
 
-## Milestone 1 — Production Monorepo Foundation
-
-Includes:
-
-- pnpm workspace
-- Turborepo
-- Next.js applications
-- Shared packages
-- Prisma foundation
-- PostgreSQL Docker setup
-- CI/CD
-- Testing infrastructure
-- Documentation
-
+- Milestone 1 — Production Monorepo Foundation
+- Milestone 2 — Database and Authentication
+- Milestone 3 — Design System and UI Foundation
+- Milestone 4 — Public Website
+- Milestone 5 — CMS Implementation
+- Milestone 6 — Admin Dashboard
+- Milestone 7 — Student Portal
+- Milestone 8 — Psychology Platform
+- Milestone 9 — Language Platform
+- Milestone 10 — Professional Development Platform
 
 Current:
 
-## Milestone 2 — Database and Authentication
+## Milestone 11 — Finance and Payments
 
-Goals:
+Implemented scope includes:
 
-- Complete Prisma domain model
-- User system
-- Roles and permissions
-- Clerk authentication
-- RBAC
-- Protected routes
-- Seed data
-- Authentication testing
+- finance-domain contracts and validation
+- invoices and line items
+- payment intents and transactions
+- refunds with balance and currency protections
+- pricing plans, coupons, and redemptions
+- subscriptions and receipts
+- reconciliation and corporate billing
+- finance audit events
+- additive Prisma models and migration
+- server-side transactional finance services
+- finance RBAC permissions and authorization tests
+- authenticated learner billing views
+- protected admin finance dashboard
+- provider adapter boundaries
 
+Deployment behavior:
+
+- application builds generate Prisma Client
+- database migrations do not run automatically during preview application builds
+- production migrations must be run explicitly with `pnpm --filter @luminol/database migrate:deploy`
 
 # Future Roadmap
-
-Milestone 3:
-Design system and UI foundation
-
-Milestone 4:
-Public website
-
-Milestone 5:
-CMS implementation
-
-Milestone 6:
-Admin dashboard
-
-Milestone 7:
-Student portal
-
-Milestone 8:
-Psychology platform
-
-Milestone 9:
-Language platform
-
-Milestone 10:
-Professional development platform
-
-Milestone 11:
-Finance and payments
 
 Milestone 12:
 Notifications and certificates
