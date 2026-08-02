@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "tsc --outDir dist --noEmit false && node dist/index.js",
+    "start": "tsc --outDir dist --noEmit false && node dist/main.js",
+    "run:once": "tsc --outDir dist --noEmit false && node dist/main.js --once",
     "build": "tsc --noEmit",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

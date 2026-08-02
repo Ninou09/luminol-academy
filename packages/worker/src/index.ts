@@ -1,11 +1,6 @@
-import { db } from '@luminol/database';
-import {
-  claimDueEmailDeliveries,
-  deliverEmail,
-} from '@luminol/notifications/server';
 import { z } from 'zod';
 
-const environmentSchema = z.object({
+export const workerEnvironmentSchema = z.object({
   RESEND_API_KEY: z.string().min(1),
   NOTIFICATION_FROM_EMAIL: z.email(),
   NOTIFICATION_WORKER_BATCH_SIZE: z.coerce
@@ -22,54 +17,68 @@ const environmentSchema = z.object({
     .default(5000),
 });
 
-const environment = environmentSchema.parse(process.env);
-const provider = {
-  async send(input: {
-    to: string;
-    subject: string;
-    text: string;
-    idempotencyKey: string;
-  }) {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${environment.RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-        'Idempotency-Key': input.idempotencyKey,
-      },
-      body: JSON.stringify({
-        from: environment.NOTIFICATION_FROM_EMAIL,
-        to: [input.to],
-        subject: input.subject,
-        text: input.text,
-      }),
-    });
-    if (!response.ok)
-      throw new Error(`Email provider returned ${response.status}`);
-    const body: unknown = await response.json();
-    return {
-      providerReference: z.object({ id: z.string().min(1) }).parse(body).id,
-    };
-  },
+export type WorkerEnvironment = z.infer<typeof workerEnvironmentSchema>;
+
+export type DeliveryClaim = { ids: string[]; lockToken: string };
+
+export type WorkerDependencies = {
+  claimDueEmailDeliveries(batchSize: number): Promise<DeliveryClaim>;
+  deliverEmail(id: string, lockToken: string): Promise<unknown>;
+  disconnect(): Promise<void>;
+  sleep(milliseconds: number): Promise<void>;
 };
 
-let stopping = false;
-const stop = () => {
-  stopping = true;
-};
-process.once('SIGINT', stop);
-process.once('SIGTERM', stop);
-
-while (!stopping) {
-  const claim = await claimDueEmailDeliveries(
-    environment.NOTIFICATION_WORKER_BATCH_SIZE,
+export async function processOneBatch(
+  batchSize: number,
+  dependencies: WorkerDependencies,
+) {
+  const claim = await dependencies.claimDueEmailDeliveries(batchSize);
+  const results = await Promise.allSettled(
+    claim.ids.map((id) => dependencies.deliverEmail(id, claim.lockToken)),
   );
-  await Promise.allSettled(
-    claim.ids.map((id) => deliverEmail(id, provider, claim.lockToken)),
+  const fatalFailures = results.filter(
+    (result) => result.status === 'rejected',
   );
-  if (!stopping && claim.ids.length === 0)
-    await new Promise((resolve) =>
-      setTimeout(resolve, environment.NOTIFICATION_WORKER_INTERVAL_MS),
+  if (fatalFailures.length > 0)
+    throw new AggregateError(
+      fatalFailures.map(({ reason }) => reason),
+      'One or more deliveries failed outside the provider retry flow',
     );
+  return claim.ids.length;
 }
-await db.$disconnect();
+
+export async function runWorker(
+  mode: 'continuous' | 'once',
+  environmentInput: unknown,
+  dependencies: WorkerDependencies,
+  shouldStop: () => boolean = () => false,
+) {
+  try {
+    const environment = workerEnvironmentSchema.parse(environmentInput);
+    do {
+      const processed = await processOneBatch(
+        environment.NOTIFICATION_WORKER_BATCH_SIZE,
+        dependencies,
+      );
+      if (mode === 'once') return 0;
+      if (!shouldStop() && processed === 0)
+        await dependencies.sleep(environment.NOTIFICATION_WORKER_INTERVAL_MS);
+    } while (!shouldStop());
+    return 0;
+  } catch (error) {
+    console.error(
+      'Notification worker failed to initialize or process a batch',
+      error,
+    );
+    return 1;
+  } finally {
+    try {
+      await dependencies.disconnect();
+    } catch (error) {
+      console.error(
+        'Notification worker failed to disconnect from the database',
+        error,
+      );
+    }
+  }
+}

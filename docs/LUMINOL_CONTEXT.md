@@ -213,7 +213,11 @@ Public certificate verification uses an atomic PostgreSQL rate-limit bucket. Cer
 
 ## Deployment operations
 
-Application builds never execute migrations. Deploy migrations separately with `pnpm --filter @luminol/database migrate:deploy`, then run the notification process with `pnpm --filter @luminol/worker start`. The worker requires `DATABASE_URL`, `RESEND_API_KEY`, and `NOTIFICATION_FROM_EMAIL`; batch size and poll interval use the optional values documented in `.env.example`. Run more than one worker safely: due rows are claimed with PostgreSQL `SKIP LOCKED`, a unique lease token, and an expiring lease for crash recovery.
+Application builds and scheduled workers never execute migrations. Apply migrations as an explicit release step with `pnpm --filter @luminol/database migrate:deploy`.
+
+The zero-cost starter deployment is `.github/workflows/notification-worker.yml`: GitHub Actions invokes `pnpm --filter @luminol/worker run:once` every 15 minutes (or manually), claims one bounded batch, processes every claimed ID with the normal idempotent retry/dead-letter logic, disconnects, and exits. Configure only the repository secrets `DATABASE_URL`, `RESEND_API_KEY`, and `NOTIFICATION_FROM_EMAIL`; `NOTIFICATION_WORKER_BATCH_SIZE` is an optional repository variable with a safe default. The production workflow never runs for pull requests or fork code, has read-only repository permissions, cannot overlap, and does not apply migrations.
+
+If lower latency later justifies a paid continuously hosted worker, use `pnpm --filter @luminol/worker start` with the same required environment variables plus the optional batch and polling values in `.env.example`. Both modes use PostgreSQL `SKIP LOCKED`, a unique lease token, and an expiring lease for crash recovery, so existing idempotency, retries, dead-letter handling, and safe multi-worker behavior are preserved.
 
 # Development Rules
 
@@ -296,6 +300,7 @@ Deployment behavior:
 - database migrations do not run automatically during preview application builds
 - production migrations must be run explicitly with `pnpm --filter @luminol/database migrate:deploy`
 - notification provider credentials must come only from environment variables
+- the zero-cost starter worker runs one batch every 15 minutes in GitHub Actions; continuous hosting is an optional later upgrade
 
 # Future Roadmap
 
