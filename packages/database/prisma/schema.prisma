@@ -599,7 +599,7 @@ model Enrollment {
   course       Course                  @relation(fields: [courseId], references: [id], onDelete: Restrict)
   statusEvents EnrollmentStatusEvent[]
 
-  @@index([userId, courseId, status])
+  @@unique([userId, courseId])
   @@index([courseId, status])
   @@index([userId, status])
 }
@@ -664,7 +664,7 @@ model Certificate {
   user                  User                    @relation(fields: [userId], references: [id], onDelete: Restrict)
   course                Course                  @relation(fields: [courseId], references: [id], onDelete: Restrict)
 
-  @@unique([userId, courseId])
+  @@index([userId, courseId, status])
   @@index([courseId, issuedAt])
 }
 
