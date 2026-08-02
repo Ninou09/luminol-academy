@@ -68,28 +68,323 @@ enum PlacementAttemptStatus {
   CANCELLED
 }
 
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  VOID
+  PAST_DUE
+  REFUNDED
+}
+
+enum PaymentIntentStatus {
+  REQUIRES_PAYMENT_METHOD
+  REQUIRES_CONFIRMATION
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  PARTIALLY_REFUNDED
+  REFUNDED
+}
+
+enum PaymentTransactionType {
+  CHARGE
+  REFUND
+}
+
+enum PaymentTransactionStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  PAUSED
+  CANCELLED
+  EXPIRED
+}
+
+enum BillingInterval {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  ONE_TIME
+}
+
+enum ReconciliationStatus {
+  PENDING
+  MATCHED
+  DISCREPANCY
+}
+
 model User {
-  id                     String             @id @default(cuid())
-  clerkId                String             @unique
-  email                  String             @unique
+  id                     String                  @id @default(cuid())
+  clerkId                String                  @unique
+  email                  String                  @unique
   firstName              String?
   lastName               String?
   imageUrl               String?
   lastSignInAt           DateTime?
   deletedAt              DateTime?
-  createdAt              DateTime           @default(now())
-  updatedAt              DateTime           @updatedAt
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
   roles                  UserRole[]
   enrollments            Enrollment[]
   records                LearningRecord[]
   certificates           Certificate[]
   enquiryStatusEvents    EnquiryStatusEvent[]
   enrollmentStatusEvents EnrollmentStatusEvent[]
-  placementAttempts      PlacementAttempt[] @relation("PlacementLearner")
-  placementReviews       PlacementAttempt[] @relation("PlacementReviewer")
+  placementAttempts      PlacementAttempt[]      @relation("PlacementLearner")
+  placementReviews       PlacementAttempt[]      @relation("PlacementReviewer")
+  invoices               Invoice[]               @relation("InvoiceCustomer")
+  subscriptions          Subscription[]
+  financeAuditEvents     FinanceAuditEvent[]     @relation("FinanceAuditActor")
 
   @@index([email])
   @@index([deletedAt])
+}
+
+model Invoice {
+  id                 String                  @id @default(cuid())
+  number             String                  @unique
+  customerId         String
+  organizationId     String?
+  status             InvoiceStatus           @default(DRAFT)
+  currency           String                  @db.Char(3)
+  discountMinor      Int                     @default(0)
+  taxRateBasisPoints Int                     @default(0)
+  subtotalMinor      Int
+  taxMinor           Int
+  totalMinor         Int
+  dueAt              DateTime?
+  paidAt             DateTime?
+  voidedAt           DateTime?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  customer           User                    @relation("InvoiceCustomer", fields: [customerId], references: [id], onDelete: Restrict)
+  lines              InvoiceLineItem[]
+  paymentIntents     PaymentIntent[]
+  receipts           Receipt[]
+  corporateBilling   CorporateBillingRecord?
+  subscriptions      Subscription[]
+
+  @@index([customerId, status, createdAt])
+  @@index([organizationId, status, createdAt])
+}
+
+model InvoiceLineItem {
+  id              String   @id @default(cuid())
+  invoiceId       String
+  description     String
+  quantity        Int
+  unitAmountMinor Int
+  lineTotalMinor  Int
+  createdAt       DateTime @default(now())
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}
+
+model PaymentIntent {
+  id                String                 @id @default(cuid())
+  invoiceId         String
+  customerId        String
+  amountMinor       Int
+  currency          String                 @db.Char(3)
+  status            PaymentIntentStatus    @default(REQUIRES_PAYMENT_METHOD)
+  provider          String
+  providerReference String?
+  idempotencyKey    String                 @unique
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  invoice           Invoice                @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  transactions      PaymentTransaction[]
+  refunds           Refund[]
+  receipts          Receipt[]
+  reconciliations   ReconciliationRecord[]
+
+  @@unique([provider, providerReference])
+  @@index([invoiceId, status])
+  @@index([customerId, createdAt])
+}
+
+model PaymentTransaction {
+  id                String                   @id @default(cuid())
+  paymentIntentId   String
+  type              PaymentTransactionType
+  status            PaymentTransactionStatus
+  amountMinor       Int
+  currency          String                   @db.Char(3)
+  providerReference String?
+  idempotencyKey    String                   @unique
+  occurredAt        DateTime                 @default(now())
+  createdAt         DateTime                 @default(now())
+  paymentIntent     PaymentIntent            @relation(fields: [paymentIntentId], references: [id], onDelete: Restrict)
+  refund            Refund?
+
+  @@unique([providerReference, type])
+  @@index([paymentIntentId, occurredAt])
+}
+
+model Refund {
+  id                String                   @id @default(cuid())
+  paymentIntentId   String
+  transactionId     String?                  @unique
+  amountMinor       Int
+  currency          String                   @db.Char(3)
+  reason            String?
+  status            PaymentTransactionStatus @default(PENDING)
+  providerReference String?                  @unique
+  idempotencyKey    String                   @unique
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+  paymentIntent     PaymentIntent            @relation(fields: [paymentIntentId], references: [id], onDelete: Restrict)
+  transaction       PaymentTransaction?      @relation(fields: [transactionId], references: [id], onDelete: Restrict)
+
+  @@index([paymentIntentId, status])
+}
+
+model Receipt {
+  id              String        @id @default(cuid())
+  receiptNumber   String        @unique
+  invoiceId       String
+  paymentIntentId String
+  customerId      String
+  currency        String        @db.Char(3)
+  subtotalMinor   Int
+  discountMinor   Int
+  taxMinor        Int
+  totalMinor      Int
+  issuedAt        DateTime      @default(now())
+  invoice         Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  paymentIntent   PaymentIntent @relation(fields: [paymentIntentId], references: [id], onDelete: Restrict)
+
+  @@unique([paymentIntentId])
+  @@index([customerId, issuedAt])
+}
+
+model PricingPlan {
+  id              String          @id @default(cuid())
+  code            String          @unique
+  name            String
+  amountMinor     Int
+  currency        String          @db.Char(3)
+  billingInterval BillingInterval
+  active          Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  subscriptions   Subscription[]
+
+  @@index([active, billingInterval])
+}
+
+model Coupon {
+  id             String             @id @default(cuid())
+  code           String             @unique
+  percentOff     Int?
+  amountOffMinor Int?
+  currency       String?            @db.Char(3)
+  maxRedemptions Int?
+  redeemedCount  Int                @default(0)
+  active         Boolean            @default(true)
+  expiresAt      DateTime?
+  createdAt      DateTime           @default(now())
+  redemptions    CouponRedemption[]
+
+  @@index([active, expiresAt])
+}
+
+model CouponRedemption {
+  id            String   @id @default(cuid())
+  couponId      String
+  customerId    String
+  invoiceId     String
+  discountMinor Int
+  redeemedAt    DateTime @default(now())
+  coupon        Coupon   @relation(fields: [couponId], references: [id], onDelete: Restrict)
+
+  @@unique([couponId, invoiceId])
+  @@index([customerId, redeemedAt])
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  customerId         String
+  pricingPlanId      String
+  latestInvoiceId    String?
+  status             SubscriptionStatus @default(TRIALING)
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean            @default(false)
+  cancelledAt        DateTime?
+  providerReference  String?            @unique
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  customer           User               @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  pricingPlan        PricingPlan        @relation(fields: [pricingPlanId], references: [id], onDelete: Restrict)
+  latestInvoice      Invoice?           @relation(fields: [latestInvoiceId], references: [id], onDelete: SetNull)
+
+  @@index([customerId, status])
+  @@index([status, currentPeriodEnd])
+}
+
+model ReconciliationRecord {
+  id                String               @id @default(cuid())
+  paymentIntentId   String
+  provider          String
+  providerReference String
+  grossMinor        Int
+  feeMinor          Int                  @default(0)
+  netMinor          Int
+  ledgerMinor       Int
+  differenceMinor   Int
+  currency          String               @db.Char(3)
+  status            ReconciliationStatus @default(PENDING)
+  settledAt         DateTime
+  reconciledAt      DateTime?
+  createdAt         DateTime             @default(now())
+  paymentIntent     PaymentIntent        @relation(fields: [paymentIntentId], references: [id], onDelete: Restrict)
+
+  @@unique([provider, providerReference])
+  @@index([status, settledAt])
+  @@index([paymentIntentId])
+}
+
+model FinanceAuditEvent {
+  id             String   @id @default(cuid())
+  entityType     String
+  entityId       String
+  action         String
+  actorUserId    String?
+  idempotencyKey String?  @unique
+  metadata       Json
+  occurredAt     DateTime @default(now())
+  actor          User?    @relation("FinanceAuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
+model CorporateBillingRecord {
+  id                     String   @id @default(cuid())
+  organizationId         String
+  invoiceId              String   @unique
+  billingContactName     String
+  billingContactEmail    String
+  purchaseOrderReference String?
+  seatCount              Int
+  pricePerSeatMinor      Int
+  paymentTermsDays       Int
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  invoice                Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, createdAt])
+  @@index([purchaseOrderReference])
 }
 
 model Role {
@@ -123,7 +418,7 @@ model UserRole {
 }
 
 model RolePermission {
-  roleId      String
+  roleId       String
   permissionId String
   role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
   permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
@@ -133,13 +428,13 @@ model RolePermission {
 }
 
 model Course {
-  id                   String                @id @default(cuid())
-  sanityId             String                @unique
-  slug                 String                @unique
+  id                   String                 @id @default(cuid())
+  sanityId             String                 @unique
+  slug                 String                 @unique
   title                String
-  published            Boolean               @default(false)
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
+  published            Boolean                @default(false)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
   modules              CourseModule[]
   enrollments          Enrollment[]
   records              LearningRecord[]
@@ -179,21 +474,21 @@ model CourseModule {
 }
 
 model Lesson {
-  id              String        @id @default(cuid())
+  id              String         @id @default(cuid())
   moduleId        String
-  slug            String        @unique
+  slug            String         @unique
   title           String
   summary         String?
-  type            LessonType    @default(ARTICLE)
+  type            LessonType     @default(ARTICLE)
   languageSkill   LanguageSkill?
   cefrLevel       CefrLevel?
   position        Int
   durationMinutes Int?
   contentUrl      String?
-  published       Boolean       @default(false)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  module          CourseModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  published       Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  module          CourseModule   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@unique([moduleId, position])
   @@index([moduleId, published])
@@ -201,17 +496,17 @@ model Lesson {
 }
 
 model PlacementAssessment {
-  id             String             @id @default(cuid())
-  courseId       String
-  title          String
-  targetLanguage String
-  published      Boolean            @default(false)
-  version        Int                @default(1)
+  id               String             @id @default(cuid())
+  courseId         String
+  title            String
+  targetLanguage   String
+  published        Boolean            @default(false)
+  version          Int                @default(1)
   timeLimitMinutes Int?
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-  course         Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  attempts       PlacementAttempt[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  course           Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  attempts         PlacementAttempt[]
 
   @@unique([courseId, version])
   @@index([targetLanguage, published])
@@ -243,13 +538,13 @@ model PlacementAttempt {
 }
 
 model PlacementSkillResult {
-  id        String        @id @default(cuid())
+  id        String           @id @default(cuid())
   attemptId String
   skill     LanguageSkill
-  score     Decimal       @db.Decimal(5, 2)
+  score     Decimal          @db.Decimal(5, 2)
   level     CefrLevel?
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
   attempt   PlacementAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
 
   @@unique([attemptId, skill])
@@ -310,17 +605,17 @@ model LearningRecord {
 }
 
 model Certificate {
-  id              String   @id @default(cuid())
-  verificationId  String   @unique @default(cuid())
+  id              String    @id @default(cuid())
+  verificationId  String    @unique @default(cuid())
   userId          String
   courseId        String
-  issuedAt        DateTime @default(now())
+  issuedAt        DateTime  @default(now())
   revokedAt       DateTime?
-  publiclyVisible Boolean  @default(false)
+  publiclyVisible Boolean   @default(false)
   recipientName   String?
   metadata        Json?
-  user            User     @relation(fields: [userId], references: [id], onDelete: Restrict)
-  course          Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course          Course    @relation(fields: [courseId], references: [id], onDelete: Restrict)
 
   @@unique([userId, courseId])
   @@index([courseId, issuedAt])
