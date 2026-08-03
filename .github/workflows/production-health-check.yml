@@ -21,12 +21,27 @@ jobs:
       PORTAL_URL: https://luminol-academy-portal.vercel.app
       ADMIN_URL: https://luminol-academy-admin.vercel.app
     steps:
-      - name: Check public website and discovery files
+      - name: Check public website and security headers
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --location --max-time 20 "$WEB_URL/" \
-            | grep --fixed-strings 'Grow with clarity.'
+          curl --fail --silent --show-error --location --max-time 20 \
+            --dump-header "$RUNNER_TEMP/web-headers.txt" \
+            --output "$RUNNER_TEMP/web-body.html" \
+            "$WEB_URL/"
+          grep --fixed-strings 'Grow with clarity.' "$RUNNER_TEMP/web-body.html"
+          grep --ignore-case '^x-content-type-options: nosniff' \
+            "$RUNNER_TEMP/web-headers.txt"
+          grep --ignore-case '^x-frame-options: DENY' \
+            "$RUNNER_TEMP/web-headers.txt"
+          grep --ignore-case '^content-security-policy:' \
+            "$RUNNER_TEMP/web-headers.txt" \
+            | grep --fixed-strings "frame-ancestors 'none'"
+
+      - name: Check public discovery files
+        shell: bash
+        run: |
+          set -euo pipefail
           curl --fail --silent --show-error --location --max-time 20 "$WEB_URL/robots.txt" \
             | grep --fixed-strings 'Sitemap:'
           curl --fail --silent --show-error --location --max-time 20 "$WEB_URL/sitemap.xml" \
@@ -37,12 +52,15 @@ jobs:
         run: |
           set -euo pipefail
           status="$(curl --silent --show-error --location --max-time 20 \
+            --dump-header "$RUNNER_TEMP/certificate-headers.txt" \
             --output "$RUNNER_TEMP/certificate-response.html" \
             --write-out '%{http_code}' \
             "$WEB_URL/certificates/short")"
           test "$status" = '404'
           grep --fixed-strings 'This page could not be found' \
             "$RUNNER_TEMP/certificate-response.html"
+          grep --ignore-case '^cache-control:.*no-store' \
+            "$RUNNER_TEMP/certificate-headers.txt"
 
       - name: Check learner and administration availability
         shell: bash
