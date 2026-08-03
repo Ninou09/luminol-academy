@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://luminol.academy';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'Luminol Academy | Psychology, Languages & Professional Training',
     template: '%s | Luminol Academy',
@@ -16,11 +19,15 @@ export const metadata: Metadata = {
     'professional training',
     'coaching',
   ],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'Luminol Academy',
     description:
       'Psychology, language learning and professional development in one thoughtful human ecosystem.',
     type: 'website',
+    url: '/',
   },
 };
 
