@@ -1,0 +1,84 @@
+name: Production health check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-health-check
+  cancel-in-progress: true
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      WEB_URL: https://luminol-academy-web.vercel.app
+      PORTAL_URL: https://luminol-academy-portal.vercel.app
+      ADMIN_URL: https://luminol-academy-admin.vercel.app
+    steps:
+      - name: Check public website and discovery files
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --max-time 20 "$WEB_URL/" \
+            | grep --fixed-strings 'Grow with clarity.'
+          curl --fail --silent --show-error --location --max-time 20 "$WEB_URL/robots.txt" \
+            | grep --fixed-strings 'Sitemap:'
+          curl --fail --silent --show-error --location --max-time 20 "$WEB_URL/sitemap.xml" \
+            | grep --fixed-strings '<urlset'
+
+      - name: Check certificate privacy failure behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          status="$(curl --silent --show-error --location --max-time 20 \
+            --output "$RUNNER_TEMP/certificate-response.html" \
+            --write-out '%{http_code}' \
+            "$WEB_URL/certificates/short")"
+          test "$status" = '404'
+          grep --fixed-strings 'This page could not be found' \
+            "$RUNNER_TEMP/certificate-response.html"
+
+      - name: Check learner and administration availability
+        shell: bash
+        run: |
+          set -euo pipefail
+          check_reachable() {
+            local name="$1"
+            local url="$2"
+            local status
+            status="$(curl --silent --show-error --location --max-time 20 \
+              --output /dev/null --write-out '%{http_code}' "$url/")"
+            case "$status" in
+              2??|3??)
+                echo "$name is reachable with HTTP $status"
+                ;;
+              *)
+                echo "::error::$name returned HTTP $status"
+                exit 1
+                ;;
+            esac
+          }
+
+          check_reachable 'Learner portal' "$PORTAL_URL"
+          check_reachable 'Administration' "$ADMIN_URL"
+
+      - name: Record check summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo '## Production health check'
+            echo
+            echo "- Public website: $WEB_URL"
+            echo "- Learner portal: $PORTAL_URL"
+            echo "- Administration: $ADMIN_URL"
+            echo "- Checked at: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            echo
+            echo 'Scheduled GitHub Actions executions are approximate and may start later than the cron time.'
+          } >> "$GITHUB_STEP_SUMMARY"
