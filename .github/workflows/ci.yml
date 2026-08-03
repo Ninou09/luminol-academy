@@ -3,6 +3,8 @@ on:
   pull_request:
   push:
     branches: [main]
+permissions:
+  contents: read
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -24,15 +26,18 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
         with:
           version: 10.28.1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm security:check
+      - name: Audit production dependencies
+        run: pnpm audit --prod --audit-level high
       - run: pnpm db:generate
       - name: Validate and deploy migrations to ephemeral PostgreSQL
         run: |
@@ -71,3 +76,37 @@ jobs:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuZXhhbXBsZS5jb20k
           CLERK_SECRET_KEY: sk_test_placeholder
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run public launch smoke tests
+        run: pnpm test:e2e --grep-invert "authenticated launch journeys"
+      - name: Check authenticated smoke configuration
+        id: authenticated-smoke
+        shell: bash
+        run: |
+          if [ -n "$ADMIN_STATE" ] && [ -n "$PORTAL_STATE" ] && [ -n "$PLAYWRIGHT_ADMIN_BASE_URL" ] && [ -n "$PLAYWRIGHT_PORTAL_BASE_URL" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Authenticated preview smoke tests remain a launch blocker because restricted state or preview configuration is absent."
+          fi
+        env:
+          ADMIN_STATE: ${{ secrets.PLAYWRIGHT_ADMIN_STORAGE_STATE }}
+          PORTAL_STATE: ${{ secrets.PLAYWRIGHT_PORTAL_STORAGE_STATE }}
+          PLAYWRIGHT_ADMIN_BASE_URL: ${{ vars.PLAYWRIGHT_ADMIN_BASE_URL }}
+          PLAYWRIGHT_PORTAL_BASE_URL: ${{ vars.PLAYWRIGHT_PORTAL_BASE_URL }}
+      - name: Run authenticated preview smoke tests
+        if: steps.authenticated-smoke.outputs.ready == 'true'
+        shell: bash
+        run: |
+          umask 077
+          printf '%s' "$ADMIN_STATE" > "$RUNNER_TEMP/admin-state.json"
+          printf '%s' "$PORTAL_STATE" > "$RUNNER_TEMP/portal-state.json"
+          PLAYWRIGHT_ADMIN_STORAGE_STATE="$RUNNER_TEMP/admin-state.json" \
+          PLAYWRIGHT_PORTAL_STORAGE_STATE="$RUNNER_TEMP/portal-state.json" \
+          pnpm test:e2e --grep "authenticated launch journeys"
+        env:
+          ADMIN_STATE: ${{ secrets.PLAYWRIGHT_ADMIN_STORAGE_STATE }}
+          PORTAL_STATE: ${{ secrets.PLAYWRIGHT_PORTAL_STORAGE_STATE }}
+          PLAYWRIGHT_ADMIN_BASE_URL: ${{ vars.PLAYWRIGHT_ADMIN_BASE_URL }}
+          PLAYWRIGHT_PORTAL_BASE_URL: ${{ vars.PLAYWRIGHT_PORTAL_BASE_URL }}

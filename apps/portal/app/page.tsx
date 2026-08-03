@@ -11,18 +11,27 @@ const dateFormatter = new Intl.DateTimeFormat('en', {
   month: 'short',
   year: 'numeric',
 });
+const fallbackWebsiteUrl = 'https://luminol-academy-web.vercel.app';
 
 function formatStatus(status: string) {
   return status.charAt(0) + status.slice(1).toLowerCase().replace('_', ' ');
+}
+
+function resolveWebsiteUrl() {
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+
+  try {
+    return new URL(configured || fallbackWebsiteUrl).origin;
+  } catch {
+    return fallbackWebsiteUrl;
+  }
 }
 
 export default async function Page() {
   const user = await requireUser();
   const dashboard = await getLearnerDashboard(user.id);
   const firstName = user.firstName?.trim() || 'there';
-  const websiteUrl = (
-    process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-  ).replace(/\/$/, '');
+  const websiteUrl = resolveWebsiteUrl();
 
   return (
     <main>
@@ -33,6 +42,7 @@ export default async function Page() {
         <div className="portal-account">
           <Link href="/notifications">Notifications</Link>
           <Link href="/finance">Billing</Link>
+          <Link href="/account">Account</Link>
           <span>Learner portal</span>
           <UserButton />
         </div>
@@ -154,9 +164,7 @@ export default async function Page() {
                   designed around meaningful, lasting growth.
                 </p>
               </div>
-              <Link href="https://luminol-academy.vercel.app/#schools">
-                Discover programmes
-              </Link>
+              <Link href={`${websiteUrl}/#schools`}>Discover programmes</Link>
             </div>
           )}
         </section>

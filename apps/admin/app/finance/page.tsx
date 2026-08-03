@@ -35,7 +35,10 @@ export default async function FinanceAdminPage() {
       }),
     ]);
   return (
-    <main className="admin-shell">
+    <main
+      className="admin-shell"
+      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
+    >
       <section className="admin-dashboard">
         <div className="admin-content">
           <section className="admin-intro">

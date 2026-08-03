@@ -22,6 +22,9 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 function getClientAddress(request: Request): string | null {
+  // Vercel removes the incoming x-forwarded-for value and supplies its trusted
+  // edge-derived value. Outside that boundary, do not trust caller headers.
+  if (process.env.VERCEL !== '1') return null;
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) return forwarded.split(',')[0]?.trim() || null;
   return request.headers.get('x-real-ip');
@@ -31,6 +34,11 @@ function isRateLimited(address: string | null, now = Date.now()): boolean {
   if (!address) return false;
 
   const current = enquiryRateLimits.get(address);
+  if (enquiryRateLimits.size > 1_000) {
+    for (const [key, entry] of enquiryRateLimits) {
+      if (entry.resetAt <= now) enquiryRateLimits.delete(key);
+    }
+  }
   if (!current || current.resetAt <= now) {
     enquiryRateLimits.set(address, {
       count: 1,

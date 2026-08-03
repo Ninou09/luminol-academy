@@ -1,8 +1,6 @@
 import { z } from 'zod';
 export const issueCertificateSchema = z.object({
   completionId: z.string().min(1).max(128),
-  userId: z.string().min(1).max(128),
-  courseId: z.string().min(1).max(128),
 });
 export const revokeCertificateSchema = z.object({
   certificateId: z.string().min(1),

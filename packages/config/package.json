@@ -5,6 +5,7 @@
   "exports": {
     "./typescript/*": "./typescript/*",
     "./eslint": "./eslint/index.mjs",
+    "./security-headers": "./security-headers.mjs",
     "./tailwind": "./tailwind/index.ts",
     "./tokens.css": "./tailwind/tokens.css"
   },
@@ -12,7 +13,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

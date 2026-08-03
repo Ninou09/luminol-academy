@@ -1,8 +1,8 @@
-import { requirePermission } from '@luminol/auth';
+import { requirePlatformPermission } from '@luminol/auth';
 import { db } from '@luminol/database';
 import Link from 'next/link';
 export default async function DeliveryPage() {
-  await requirePermission('notification:failures:read');
+  await requirePlatformPermission('notification:failures:read');
   const deliveries = await db.notification.findMany({
     where: { status: { in: ['RETRY_SCHEDULED', 'DEAD_LETTER'] } },
     select: {
@@ -18,7 +18,10 @@ export default async function DeliveryPage() {
     take: 100,
   });
   return (
-    <main className="admin-shell">
+    <main
+      className="admin-shell"
+      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
+    >
       <section className="admin-dashboard">
         <div className="admin-content">
           <Link href="/">← Overview</Link>

@@ -17,8 +17,6 @@ export async function issueCertificate(actorUserId: string, input: unknown) {
     const enrollment = await tx.enrollment.findFirst({
       where: {
         id: parsed.completionId,
-        userId: parsed.userId,
-        courseId: parsed.courseId,
         status: 'COMPLETED',
         completedAt: { not: null },
       },

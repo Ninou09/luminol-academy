@@ -31,7 +31,10 @@ export default async function CertificateVerificationPage({
   const { verificationId } = await params;
   const requestHeaders = await headers();
   const clientAddress =
-    requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    process.env.VERCEL === '1'
+      ? (requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+        'unknown')
+      : 'untrusted-proxy';
   try {
     await enforceCertificateVerificationLimit(
       `${clientAddress}:${verificationId}`,

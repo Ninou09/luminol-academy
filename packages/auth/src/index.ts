@@ -5,6 +5,9 @@ import { db } from '@luminol/database';
 import type { PermissionKey } from '@luminol/types';
 import { Webhook } from 'svix';
 import { z } from 'zod';
+import { hasPlatformPermission } from './authorization';
+
+export { hasPlatformPermission } from './authorization';
 
 export { ClerkProvider, SignIn, SignUp, UserButton } from '@clerk/nextjs';
 
@@ -73,6 +76,18 @@ export async function requirePermission(permission: PermissionKey) {
     ),
   );
   if (!allowed) throw new AuthorizationError();
+  return user;
+}
+
+/**
+ * Authorizes deliberately cross-organization administration. The trusted
+ * authority is the synchronized server-side role/permission graph, never a
+ * form field or organization identifier supplied by the browser.
+ */
+export async function requirePlatformPermission(permission: PermissionKey) {
+  const user = await requireUser();
+  if (!hasPlatformPermission(user.roles, permission))
+    throw new AuthorizationError();
   return user;
 }
 
