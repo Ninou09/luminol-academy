@@ -155,9 +155,7 @@ export default async function Page() {
                   designed around meaningful, lasting growth.
                 </p>
               </div>
-              <Link href="https://luminol-academy.vercel.app/#schools">
-                Discover programmes
-              </Link>
+              <Link href={`${websiteUrl}/#schools`}>Discover programmes</Link>
             </div>
           )}
         </section>
