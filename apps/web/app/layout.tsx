@@ -1,10 +1,18 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://luminol.academy';
+function resolveMetadataBase() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+  try {
+    return new URL(configured || 'https://luminol.academy');
+  } catch {
+    return new URL('https://luminol.academy');
+  }
+}
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: resolveMetadataBase(),
   title: {
     default: 'Luminol Academy | Psychology, Languages & Professional Training',
     template: '%s | Luminol Academy',
