@@ -1,130 +1,134 @@
 # Luminol Academy Project Status
 
-_Last updated: 2026-07-26_
+_Last updated: 2026-08-03_
 
 ## Current state
 
-Luminol Academy has a production-oriented monorepo, Clerk-backed authentication and RBAC, a shared design system, a public website, Sanity CMS integration, administration workflows, a learner portal, certificate verification, and a guided lesson experience.
+Luminol Academy is deployed as a production-oriented platform with a public website, learner portal, administration application, Sanity Studio, PostgreSQL persistence, Clerk authentication, database-backed RBAC, language learning, professional development, finance foundations, notifications, and certificate verification.
 
-The current implementation branch is:
+The canonical branch is:
 
-`codex/build-milestone-9-language-platform`
+`main`
 
-The active milestone is:
+Stable production applications:
 
-**Milestone 9 — Language Platform**
+- Public website: `https://luminol-academy-web.vercel.app`
+- Learner portal: `https://luminol-academy-portal.vercel.app`
+- Administration: `https://luminol-academy-admin.vercel.app`
 
-## Completed delivery history
+Milestones 1 through 13 are complete. Production migrations are applied and the three stable application aliases were manually verified on 2026-08-03.
+
+## Delivered milestones
 
 ### Milestone 1 — Production monorepo foundation
 
 - pnpm workspace and Turborepo
 - Next.js applications for web, admin, portal, and studio
-- shared packages
-- Prisma and PostgreSQL foundations
-- Docker, CI, testing, linting, and type checking
-- merged in PR #1
+- shared packages, Prisma, PostgreSQL, Docker, CI, linting, type checking, and tests
 
 ### Milestone 2 — Database, authentication, and authorization
 
-- production Prisma domain models
 - Clerk synchronization
 - database-backed roles and permissions
-- protected application routes
-- signed webhook handling
-- merged in PR #4
+- protected routes and signed webhook handling
 
 ### Milestone 3 — Design system
 
 - typed design tokens
-- shared UI primitives
-- accessible focus and reduced-motion foundations
-- RTL-safe application styling
-- merged in PR #5
+- shared accessible UI primitives
+- RTL-safe and reduced-motion foundations
 
 ### Milestone 4 — Public website and CMS
 
-- premium homepage in PR #6
-- dedicated school pages in PR #7
-- About page and contact enquiry flow in PR #8
-- governed Sanity CMS integration in PR #9
+- institutional website and school pages
+- About and contact enquiry flows
+- governed Sanity CMS integration
 
 ### Milestone 5 — Learner platform foundations
 
-- database-backed learner dashboard in PR #10
-- enrolment-protected course workspace in PR #11
-- public certificate verification and privacy controls in PR #12
+- learner dashboard
+- enrolment-protected course workspace
+- public privacy-controlled certificate verification
 
 ### Milestone 6 — Administration operations
 
-- operations dashboard in PR #13
-- controlled enquiry workflow in PR #14
-- secure enrolment management in PR #15
-- deployment and production build corrections in PRs #16–#25
+- operations dashboard
+- enquiry and enrolment workflows
+- deployment and production build corrections
 
 ### Milestone 7 — Learner account
 
-- protected learner account overview
+- protected account overview
 - synchronized identity and role visibility
-- merged in PR #26
 
 ### Milestone 8 — Guided learning experience
 
-- lesson viewer
-- resume learning
-- previous and next navigation across modules
-- secure external resources
+- lesson viewer and resume learning
+- module navigation and secure resources
 - server-validated completion flow
-- merged in PR #27
 
-## Current milestone — Language Platform
+### Milestone 9 — Language Platform
 
-The language platform will extend the existing course, module, lesson, enrolment, and learning-record architecture rather than duplicate it.
+- CEFR language domain
+- placement assessments
+- learner language dashboard
+- vocabulary and practice tools
+- instructor and administration workflows
 
-Planned delivery slices:
+### Milestone 10 — Professional Development Platform
 
-1. Language domain foundation
-   - CEFR levels A1–C2
-   - target and instruction languages
-   - language skill taxonomy
-   - placement assessment model
+- competency programmes, cohorts, workshops, assignments, review, and analytics
 
-2. Learner experience
-   - language dashboard
-   - skill-level progress
-   - vocabulary notebook
-   - continue-learning integration
+### Milestone 11 — Finance and Payments
 
-3. Assessment experience
-   - placement tests
-   - reading, listening, speaking, and writing exercises
-   - automatic and instructor-reviewed scoring
+- products and prices
+- checkout and payment lifecycle foundations
+- invoices, refunds, reconciliation, and finance administration
 
-4. Administration and instruction
-   - language-course configuration
-   - exercise authoring
-   - placement review
-   - learner analytics
+### Milestone 12 — Notifications and Certificates
 
-5. Completion
-   - tests and documentation
-   - accessibility and responsive review
-   - CI validation
+- in-app notification delivery
+- durable notification worker with leases, retry, and dead-letter handling
+- certificate issuance, replacement, revocation, and public verification
+- transactional email adapter retained in deferred, skip-safe mode
+
+### Milestone 13 — Production Hardening and Launch
+
+- application and dependency security review
+- hardened response headers and privacy-safe logging controls
+- migration and recovery runbooks
+- public launch smoke tests
+- controlled production deployment
+- malformed certificate identifiers corrected to return a privacy-preserving 404
+
+## Current operational phase
+
+The platform is now in post-launch stabilization. Current work is intentionally operational rather than a new feature milestone:
+
+1. Run scheduled synthetic checks against the three production applications.
+2. Complete authenticated admin and learner browser smoke tests with restricted test accounts.
+3. Perform and document a Neon restore drill without touching production data.
+4. Verify Clerk, Sanity, and OAuth browser flows and CSP behavior.
+5. Activate outbound email only after a sender domain is verified and a monitored test delivery succeeds.
+6. Assign monitoring, incident, and rollback ownership before wider public promotion.
 
 ## Quality gates
 
-Every milestone must preserve the existing architecture and pass:
+Every production change must preserve the architecture and pass:
 
-- dependency installation
-- Prisma generation
-- linting
-- strict type checking
-- unit tests
+- frozen dependency installation
+- secret and dependency security checks
+- Prisma generation and migration validation
+- linting and strict type checking
+- unit and integration tests
 - production builds
+- public launch smoke tests
+- Vercel preview verification
+- independent diff review before merge
 
-## Technical debt and follow-up
+## Known deferred work
 
-- keep the roadmap and this status file updated in every milestone PR
-- add wider end-to-end coverage once deployment environments are stable
-- add monitoring and observability before production launch
-- complete a dedicated security and accessibility audit before launch
+- Authenticated Playwright checks remain skipped until restricted storage-state secrets and preview URLs are configured.
+- Neon point-in-time recovery capability exists, but an operator restore drill still needs recorded evidence.
+- Resend email delivery is not active for real learners until Luminol verifies a sender domain.
+- GitHub scheduled workflows run approximately and are not a substitute for a dedicated paging service.
