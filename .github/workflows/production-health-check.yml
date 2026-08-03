@@ -25,18 +25,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --location --max-time 20 \
-            --dump-header "$RUNNER_TEMP/web-headers.txt" \
+          response_meta="$(curl --fail --silent --show-error --location --max-time 20 \
             --output "$RUNNER_TEMP/web-body.html" \
-            "$WEB_URL/"
+            --write-out '%{http_code}\n%header{x-content-type-options}\n%header{x-frame-options}\n%header{content-security-policy}\n' \
+            "$WEB_URL/")"
+          mapfile -t response_lines <<< "$response_meta"
+
+          test "${response_lines[0]:-}" = '200'
           grep --fixed-strings 'Grow with clarity.' "$RUNNER_TEMP/web-body.html"
-          grep --ignore-case '^x-content-type-options: nosniff' \
-            "$RUNNER_TEMP/web-headers.txt"
-          grep --ignore-case '^x-frame-options: DENY' \
-            "$RUNNER_TEMP/web-headers.txt"
-          grep --ignore-case '^content-security-policy:' \
-            "$RUNNER_TEMP/web-headers.txt" \
-            | grep --fixed-strings "frame-ancestors 'none'"
+          grep --ignore-case --line-regexp 'nosniff' \
+            <<< "${response_lines[1]:-}"
+          grep --ignore-case --line-regexp 'DENY' \
+            <<< "${response_lines[2]:-}"
+          grep --fixed-strings "frame-ancestors 'none'" \
+            <<< "${response_lines[3]:-}"
 
       - name: Check public discovery files
         shell: bash
@@ -51,16 +53,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          status="$(curl --silent --show-error --location --max-time 20 \
-            --dump-header "$RUNNER_TEMP/certificate-headers.txt" \
+          response_meta="$(curl --silent --show-error --location --max-time 20 \
             --output "$RUNNER_TEMP/certificate-response.html" \
-            --write-out '%{http_code}' \
+            --write-out '%{http_code}\n%header{cache-control}\n' \
             "$WEB_URL/certificates/short")"
-          test "$status" = '404'
+          mapfile -t response_lines <<< "$response_meta"
+
+          test "${response_lines[0]:-}" = '404'
           grep --fixed-strings 'This page could not be found' \
             "$RUNNER_TEMP/certificate-response.html"
-          grep --ignore-case '^cache-control:.*no-store' \
-            "$RUNNER_TEMP/certificate-headers.txt"
+          grep --ignore-case --fixed-strings 'no-store' \
+            <<< "${response_lines[1]:-}"
 
       - name: Check learner and administration availability
         shell: bash
@@ -90,13 +93,14 @@ jobs:
         if: always()
         shell: bash
         run: |
-          {
-            echo '## Production health check'
-            echo
-            echo "- Public website: $WEB_URL"
-            echo "- Learner portal: $PORTAL_URL"
-            echo "- Administration: $ADMIN_URL"
-            echo "- Checked at: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
-            echo
-            echo 'Scheduled GitHub Actions executions are approximate and may start later than the cron time.'
-          } >> "$GITHUB_STEP_SUMMARY"
+          checked_at="$(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          printf '%s\n' \
+            '## Production health check' \
+            '' \
+            "- Public website: $WEB_URL" \
+            "- Learner portal: $PORTAL_URL" \
+            "- Administration: $ADMIN_URL" \
+            "- Checked at: $checked_at" \
+            '' \
+            'Scheduled GitHub Actions executions are approximate and may start later than the cron time.' \
+            >> "$GITHUB_STEP_SUMMARY"
