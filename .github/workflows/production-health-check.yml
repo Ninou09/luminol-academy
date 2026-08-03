@@ -65,29 +65,38 @@ jobs:
           grep --ignore-case --fixed-strings 'no-store' \
             <<< "${response_lines[1]:-}"
 
-      - name: Check learner and administration availability
+      - name: Check learner and administration sign-in availability
         shell: bash
         run: |
           set -euo pipefail
-          check_reachable() {
+          check_sign_in() {
             local name="$1"
             local url="$2"
-            local status
-            status="$(curl --silent --show-error --location --max-time 20 \
-              --output /dev/null --write-out '%{http_code}' "$url/")"
-            case "$status" in
-              2??|3??)
-                echo "$name is reachable with HTTP $status"
-                ;;
-              *)
-                echo "::error::$name returned HTTP $status"
-                exit 1
-                ;;
-            esac
+            local title="$3"
+            local body_file="$RUNNER_TEMP/${name// /-}-sign-in.html"
+            local response_meta
+            local response_lines
+
+            response_meta="$(curl --fail --silent --show-error --location --max-time 20 \
+              --output "$body_file" \
+              --write-out '%{http_code}\n%header{cache-control}\n%header{x-content-type-options}\n%header{content-security-policy}\n' \
+              "$url/sign-in")"
+            mapfile -t response_lines <<< "$response_meta"
+
+            test "${response_lines[0]:-}" = '200'
+            grep --fixed-strings "<title>$title</title>" "$body_file"
+            grep --ignore-case --fixed-strings 'no-store' \
+              <<< "${response_lines[1]:-}"
+            grep --ignore-case --line-regexp 'nosniff' \
+              <<< "${response_lines[2]:-}"
+            grep --fixed-strings "frame-ancestors 'none'" \
+              <<< "${response_lines[3]:-}"
+
+            echo "$name sign-in is reachable with HTTP ${response_lines[0]}"
           }
 
-          check_reachable 'Learner portal' "$PORTAL_URL"
-          check_reachable 'Administration' "$ADMIN_URL"
+          check_sign_in 'Learner portal' "$PORTAL_URL" 'Learner Portal | Luminol'
+          check_sign_in 'Administration' "$ADMIN_URL" 'Administration | Luminol'
 
       - name: Record check summary
         if: always()
@@ -98,8 +107,8 @@ jobs:
             '## Production health check' \
             '' \
             "- Public website: $WEB_URL" \
-            "- Learner portal: $PORTAL_URL" \
-            "- Administration: $ADMIN_URL" \
+            "- Learner portal sign-in: $PORTAL_URL/sign-in" \
+            "- Administration sign-in: $ADMIN_URL/sign-in" \
             "- Checked at: $checked_at" \
             '' \
             'Scheduled GitHub Actions executions are approximate and may start later than the cron time.' \
