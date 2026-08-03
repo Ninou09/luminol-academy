@@ -2,15 +2,22 @@ import 'server-only';
 import { db } from '@luminol/database';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
+
 const verificationIdSchema = z
   .string()
   .min(20)
   .max(128)
   .regex(/^[A-Za-z0-9_-]+$/);
+
 export async function getPublicCertificate(input: unknown) {
-  const verificationId = verificationIdSchema.parse(input);
+  const parsedVerificationId = verificationIdSchema.safeParse(input);
+  if (!parsedVerificationId.success) return null;
+
   return db.certificate.findFirst({
-    where: { verificationId, publiclyVisible: true },
+    where: {
+      verificationId: parsedVerificationId.data,
+      publiclyVisible: true,
+    },
     select: {
       verificationId: true,
       serialNumber: true,

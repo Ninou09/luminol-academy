@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+
 test('institutional home is available', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
@@ -29,11 +30,16 @@ test('responses include launch security headers', async ({ request }) => {
   );
 });
 
-test('certificate verification does not reveal an unknown record', async ({
-  page,
+test('certificate verification does not reveal unknown or malformed records', async ({
+  request,
 }) => {
-  await page.goto('/certificates/unknown-certificate-identifier');
-  await expect(page.getByText('This page could not be found')).toBeVisible();
+  const unknown = await request.get(
+    '/certificates/unknown-certificate-identifier',
+  );
+  expect(unknown.status()).toBe(404);
+
+  const malformed = await request.get('/certificates/short');
+  expect(malformed.status()).toBe(404);
 });
 
 test.describe('authenticated launch journeys', () => {
