@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
+
 function resolveMetadataBase() {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
   try {
-    return new URL(configured || 'https://luminol.academy');
+    return new URL(configured || fallbackSiteUrl);
   } catch {
-    return new URL('https://luminol.academy');
+    return new URL(fallbackSiteUrl);
   }
 }
 
