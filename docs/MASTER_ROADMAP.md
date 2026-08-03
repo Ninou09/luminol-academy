@@ -10,7 +10,7 @@ This document is the canonical delivery sequence for Luminol Academy. `PROJECT_S
 - Sensitive psychology information must never be exposed through general learning or administration views.
 - Every milestone includes tests, documentation, accessibility, and production build validation.
 
-## Delivered platform foundation
+## Delivered platform
 
 ### Milestone 1 — Production monorepo foundation
 
@@ -44,105 +44,77 @@ Status: Complete
 
 Status: Complete
 
-## Active delivery
-
 ### Milestone 9 — Language Platform
 
-Status: In progress
+Status: Complete
 
-#### 9A — Language domain foundation
-
-- CEFR level support from A1 through C2
-- target language and instruction-language metadata
-- reading, listening, speaking, writing, grammar, and vocabulary taxonomy
-- language-specific course configuration
-- placement-assessment persistence
-- additive database migration and tests
-
-#### 9B — Placement experience
-
-- protected placement entry point
-- bounded and validated assessment attempts
-- objective-question scoring
-- instructor-review path for productive skills
-- recommended CEFR level and learning path
-- attempt history and result visibility
-
-#### 9C — Language learner dashboard
-
-- active language programmes
-- CEFR and skill progress
-- continue learning
-- weekly learning activity
-- intentional empty states
-
-#### 9D — Vocabulary and practice
-
-- personal vocabulary notebook
-- lesson-linked vocabulary
-- confidence and review state
-- grammar and vocabulary practice exercises
-- secure server-side ownership checks
-
-#### 9E — Instructor and administration tools
-
-- language programme configuration
-- assessment authoring
-- attempt review
-- learner placement overrides with audit history
-- language analytics
-
-#### 9F — Completion and quality
-
-- responsive and accessibility review
-- unit and integration coverage
-- documentation updates
-- CI and production build validation
-
-## Planned delivery
+Delivered capabilities include the CEFR language domain, placement assessments, learner progress, vocabulary practice, instructor review, administration tools, tests, and production validation.
 
 ### Milestone 10 — Professional Development Platform
 
-- competency-based programmes
-- workshops and cohorts
-- practical assignments
-- instructor review
-- professional-development analytics
+Status: Complete
+
+Delivered capabilities include competency-based programmes, workshops and cohorts, practical assignments, instructor review, and professional-development analytics.
 
 ### Milestone 11 — Finance and Payments
 
-- product and price model
-- checkout integration
-- payment and refund lifecycle
-- invoices and receipts
-- finance administration
-- webhook idempotency and reconciliation
+Status: Complete
+
+Delivered capabilities include products and prices, checkout and payment lifecycle foundations, invoices and receipts, refund and reconciliation support, and finance administration.
 
 ### Milestone 12 — Notifications and Certificates
 
-- transactional email pipeline
-- enrolment and learning notifications
-- scheduled reminders
-- certificate delivery
-- delivery preferences and audit history
+Status: Complete
+
+Delivered capabilities include in-app notifications, durable worker claims and leases, retry and dead-letter handling, certificate issuance and lifecycle controls, and privacy-controlled public verification. External email activation remains operationally deferred until a sender domain is verified.
 
 ### Milestone 13 — Production Hardening and Launch
 
-- security audit
-- privacy review
-- accessibility audit
-- performance optimization
-- monitoring, alerting, and observability
-- backup and recovery validation
-- launch runbook and production deployment
+Status: Complete
+
+Delivered capabilities include the security and privacy audit, response hardening, dependency checks, migration and recovery runbooks, public smoke tests, controlled production deployment, and production verification.
+
+## Active operational phase — Post-launch stabilization
+
+This phase is not a new product milestone. Its purpose is to prove and maintain the operational controls required for wider use.
+
+### Availability and monitoring
+
+- scheduled synthetic checks for the public website, learner portal, and administration application
+- public metadata, sitemap, robots, security-header, and certificate-privacy checks
+- clear failure evidence in GitHub Actions
+- assigned monitoring and incident ownership before public promotion
+
+### Authenticated production verification
+
+- restricted admin and learner smoke accounts
+- authenticated Playwright storage-state configuration
+- protected administration and learner journey verification
+- Clerk, Sanity, and OAuth CSP and browser checks
+
+### Data recovery and operations
+
+- Neon point-in-time recovery and restore drill
+- documented row, constraint, and critical-journey validation
+- rollback target and incident lead assignment
+- production migration evidence retained without exposing secrets
+
+### Outbound email activation
+
+- verified Luminol sender domain
+- controlled Resend API key and From address
+- monitored delivery to an approved test recipient
+- worker retry and dead-letter verification
+- gradual enablement for real learners
 
 ## Future platform opportunities
 
-These are not committed milestones and must not displace launch-critical work:
+These are not committed milestones and must not displace operational stabilization:
 
-- multilingual content and interface localization
+- multilingual content and full interface localization
 - search infrastructure
-- background-job processing
+- richer background-job processing
 - approved AI-assisted learning tools
 - corporate accounts and team learning
 - native mobile applications
+- dedicated external uptime and paging service

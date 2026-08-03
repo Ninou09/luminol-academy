@@ -1,0 +1,106 @@
+name: Production health check
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-health-check
+  cancel-in-progress: true
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      WEB_URL: https://luminol-academy-web.vercel.app
+      PORTAL_URL: https://luminol-academy-portal.vercel.app
+      ADMIN_URL: https://luminol-academy-admin.vercel.app
+    steps:
+      - name: Check public website and security headers
+        shell: bash
+        run: |
+          set -euo pipefail
+          response_meta="$(curl --fail --silent --show-error --location --max-time 20 \
+            --output "$RUNNER_TEMP/web-body.html" \
+            --write-out '%{http_code}\n%header{x-content-type-options}\n%header{x-frame-options}\n%header{content-security-policy}\n' \
+            "$WEB_URL/")"
+          mapfile -t response_lines <<< "$response_meta"
+
+          test "${response_lines[0]:-}" = '200'
+          grep --fixed-strings 'Grow with clarity.' "$RUNNER_TEMP/web-body.html"
+          grep --ignore-case --line-regexp 'nosniff' \
+            <<< "${response_lines[1]:-}"
+          grep --ignore-case --line-regexp 'DENY' \
+            <<< "${response_lines[2]:-}"
+          grep --fixed-strings "frame-ancestors 'none'" \
+            <<< "${response_lines[3]:-}"
+
+      - name: Check public discovery files
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --max-time 20 "$WEB_URL/robots.txt" \
+            | grep --fixed-strings 'Sitemap:'
+          curl --fail --silent --show-error --location --max-time 20 "$WEB_URL/sitemap.xml" \
+            | grep --fixed-strings '<urlset'
+
+      - name: Check certificate privacy failure behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          response_meta="$(curl --silent --show-error --location --max-time 20 \
+            --output "$RUNNER_TEMP/certificate-response.html" \
+            --write-out '%{http_code}\n%header{cache-control}\n' \
+            "$WEB_URL/certificates/short")"
+          mapfile -t response_lines <<< "$response_meta"
+
+          test "${response_lines[0]:-}" = '404'
+          grep --fixed-strings 'This page could not be found' \
+            "$RUNNER_TEMP/certificate-response.html"
+          grep --ignore-case --fixed-strings 'no-store' \
+            <<< "${response_lines[1]:-}"
+
+      - name: Check learner and administration availability
+        shell: bash
+        run: |
+          set -euo pipefail
+          check_reachable() {
+            local name="$1"
+            local url="$2"
+            local status
+            status="$(curl --silent --show-error --location --max-time 20 \
+              --output /dev/null --write-out '%{http_code}' "$url/")"
+            case "$status" in
+              2??|3??)
+                echo "$name is reachable with HTTP $status"
+                ;;
+              *)
+                echo "::error::$name returned HTTP $status"
+                exit 1
+                ;;
+            esac
+          }
+
+          check_reachable 'Learner portal' "$PORTAL_URL"
+          check_reachable 'Administration' "$ADMIN_URL"
+
+      - name: Record check summary
+        if: always()
+        shell: bash
+        run: |
+          checked_at="$(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          printf '%s\n' \
+            '## Production health check' \
+            '' \
+            "- Public website: $WEB_URL" \
+            "- Learner portal: $PORTAL_URL" \
+            "- Administration: $ADMIN_URL" \
+            "- Checked at: $checked_at" \
+            '' \
+            'Scheduled GitHub Actions executions are approximate and may start later than the cron time.' \
+            >> "$GITHUB_STEP_SUMMARY"
