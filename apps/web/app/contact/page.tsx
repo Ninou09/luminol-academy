@@ -2,10 +2,26 @@ import type { Metadata } from 'next';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { EnquiryForm } from '../../components/enquiry-form';
 
+const contactDescription =
+  'Tell Luminol about your psychology, language-learning or professional-development goals and find the right next step.';
+
 export const metadata: Metadata = {
   title: 'Contact',
-  description:
-    'Tell Luminol about your psychology, language-learning or professional-development goals and find the right next step.',
+  description: contactDescription,
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    title: 'Contact Luminol',
+    description: contactDescription,
+    type: 'website',
+    url: '/contact',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Contact Luminol',
+    description: contactDescription,
+  },
 };
 
 const contactPaths = [
