@@ -33,7 +33,7 @@ describe('getProgrammesForSchool', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('returns validated published programmes', async () => {
+  it('returns validated published programmes with governed image data', async () => {
     vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123xy');
     vi.stubEnv('NEXT_PUBLIC_SANITY_DATASET', 'production');
     vi.stubGlobal(
@@ -50,6 +50,10 @@ describe('getProgrammesForSchool', () => {
                 slug: { current: 'confident-communication' },
                 delivery: 'Hybrid',
                 featured: true,
+                image: {
+                  url: 'https://cdn.sanity.io/images/abc123xy/production/programme.jpg',
+                  alt: 'Learners practising confident communication together',
+                },
               },
             ],
           }),
@@ -67,8 +71,93 @@ describe('getProgrammesForSchool', () => {
         slug: { current: 'confident-communication' },
         delivery: 'Hybrid',
         featured: true,
+        image: {
+          url: 'https://cdn.sanity.io/images/abc123xy/production/programme.jpg',
+          alt: 'Learners practising confident communication together',
+        },
       },
     ]);
+  });
+
+  it('accepts published programmes without an image', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123xy');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            result: [
+              {
+                _id: 'programme-2',
+                title: 'Leadership Foundations',
+                summary:
+                  'A practical introduction to thoughtful leadership habits.',
+                slug: { current: 'leadership-foundations' },
+                delivery: 'In person',
+                featured: false,
+                image: null,
+              },
+            ],
+          }),
+          { status: 200 },
+        ),
+      ),
+    );
+
+    await expect(getProgrammesForSchool('training')).resolves.toEqual([
+      {
+        _id: 'programme-2',
+        title: 'Leadership Foundations',
+        summary: 'A practical introduction to thoughtful leadership habits.',
+        slug: { current: 'leadership-foundations' },
+        delivery: 'In person',
+        featured: false,
+        image: null,
+      },
+    ]);
+  });
+
+  it.each([
+    {
+      image: {
+        url: 'https://example.com/programme.jpg',
+        alt: 'Approved programme image',
+      },
+      caseName: 'an image outside the Sanity CDN',
+    },
+    {
+      image: {
+        url: 'https://cdn.sanity.io/images/abc123xy/production/programme.jpg',
+        alt: '  ',
+      },
+      caseName: 'an image without meaningful alternative text',
+    },
+  ])('fails closed for $caseName', async ({ image }) => {
+    vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123xy');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            result: [
+              {
+                _id: 'programme-3',
+                title: 'Stress Management',
+                summary:
+                  'Practical learning for recognising and managing everyday stress.',
+                slug: { current: 'stress-management' },
+                delivery: 'Flexible',
+                featured: false,
+                image,
+              },
+            ],
+          }),
+          { status: 200 },
+        ),
+      ),
+    );
+
+    await expect(getProgrammesForSchool('psychology')).resolves.toBeNull();
   });
 
   it('fails closed when CMS data does not match the public contract', async () => {
