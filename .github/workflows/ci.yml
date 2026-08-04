@@ -81,6 +81,7 @@ jobs:
       - name: Run public launch smoke tests
         run: pnpm test:e2e --grep-invert "authenticated launch journeys"
       - name: Check authenticated smoke configuration
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: authenticated-smoke
         shell: bash
         run: |
@@ -88,15 +89,15 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::Authenticated preview smoke tests remain a launch blocker because restricted state or preview configuration is absent."
+            echo "::notice::Authenticated production smoke tests remain blocked because restricted state or stable URL configuration is absent."
           fi
         env:
           ADMIN_STATE: ${{ secrets.PLAYWRIGHT_ADMIN_STORAGE_STATE }}
           PORTAL_STATE: ${{ secrets.PLAYWRIGHT_PORTAL_STORAGE_STATE }}
           PLAYWRIGHT_ADMIN_BASE_URL: ${{ vars.PLAYWRIGHT_ADMIN_BASE_URL }}
           PLAYWRIGHT_PORTAL_BASE_URL: ${{ vars.PLAYWRIGHT_PORTAL_BASE_URL }}
-      - name: Run authenticated preview smoke tests
-        if: steps.authenticated-smoke.outputs.ready == 'true'
+      - name: Run authenticated production smoke tests
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.authenticated-smoke.outputs.ready == 'true'
         shell: bash
         run: |
           umask 077
