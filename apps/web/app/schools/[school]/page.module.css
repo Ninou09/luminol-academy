@@ -1,0 +1,15 @@
+.programImage {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: 1.5rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: 0.75rem;
+  background: var(--color-brand-canvas);
+  object-fit: cover;
+  object-position: center;
+}
+
+.programTitleWithImage.programTitleWithImage {
+  margin-top: 1.5rem;
+}
