@@ -22,22 +22,13 @@ const target = targets[targetName];
 
 if (!target) {
   console.error(
-    'Usage: pnpm auth:capture <admin|portal> [base-url]\n' +
+    'Usage: pnpm auth:capture <admin|portal>\n' +
       'Example: pnpm auth:capture portal',
   );
   process.exit(1);
 }
 
-const baseUrl = process.argv[3] || target.baseUrl;
-let appOrigin;
-
-try {
-  appOrigin = new URL(baseUrl).origin;
-} catch {
-  console.error(`Invalid base URL: ${baseUrl}`);
-  process.exit(1);
-}
-
+const appOrigin = new URL(target.baseUrl).origin;
 const signInUrl = new URL('/sign-in', appOrigin).toString();
 const authDirectory = resolve('.auth');
 const statePath = resolve(authDirectory, target.fileName);
@@ -57,6 +48,7 @@ try {
   const page = await context.newPage();
 
   console.log(`Opening the production ${target.label} sign-in page...`);
+  console.log(`Allowed origin: ${appOrigin}`);
   console.log('Sign in manually with the restricted smoke account.');
   console.log('Never paste the password, cookies, or saved state into chat or an issue.');
 
