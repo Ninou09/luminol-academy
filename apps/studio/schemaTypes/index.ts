@@ -82,7 +82,15 @@ const programme = defineType({
           name: 'alt',
           title: 'Alternative text',
           type: 'string',
-          validation: (rule) => rule.required().max(180),
+          validation: (rule) =>
+            rule
+              .required()
+              .max(180)
+              .custom((value) =>
+                typeof value === 'string' && value.trim().length >= 3
+                  ? true
+                  : 'Alternative text must contain at least 3 non-whitespace characters.',
+              ),
         }),
       ],
     }),
