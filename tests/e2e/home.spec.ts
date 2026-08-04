@@ -22,10 +22,12 @@ test('public metadata and error behavior are available', async ({
   expect(missing.status()).toBe(404);
 });
 
-test('school pages publish route-specific canonical and Open Graph URLs', async ({
+test('public pages publish route-specific canonical and Open Graph URLs', async ({
   page,
 }) => {
   for (const route of [
+    '/about',
+    '/contact',
     '/schools/psychology',
     '/schools/languages',
     '/schools/training',
