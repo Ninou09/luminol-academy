@@ -4,6 +4,7 @@ import { ButtonLink } from '@luminol/ui';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { getProgrammesForSchool } from '../../../lib/sanity';
 import { isSchoolSlug, schools } from '../../../lib/schools';
+import styles from './page.module.css';
 
 type SchoolPageProps = {
   params: Promise<{ school: string }>;
@@ -48,12 +49,14 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     title: string;
     description: string;
     delivery?: string | null;
+    image?: { url: string; alt: string } | null;
   }> = cmsProgrammes?.length
     ? cmsProgrammes.map((programme) => ({
         id: programme._id,
         title: programme.title,
         description: programme.summary,
         delivery: programme.delivery ?? null,
+        image: programme.image ?? null,
       }))
     : school.programs.map((programme) => ({
         id: programme.title,
@@ -120,7 +123,24 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           {programmes.map((program, index) => (
             <article key={program.id}>
               <span>{String(index + 1).padStart(2, '0')}</span>
-              <h3>{program.title}</h3>
+              {program.image ? (
+                <img
+                  className={styles.programImage}
+                  src={program.image.url}
+                  alt={program.image.alt}
+                  width={1200}
+                  height={675}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : null}
+              <h3
+                className={
+                  program.image ? styles.programTitleWithImage : undefined
+                }
+              >
+                {program.title}
+              </h3>
               {program.delivery ? (
                 <small className="program-delivery">{program.delivery}</small>
               ) : null}
