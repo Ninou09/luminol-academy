@@ -88,15 +88,20 @@ const cmsProgrammeImageSchema = z
   })
   .superRefine((image, context) => {
     const crop = image.crop ?? { top: 0, bottom: 0, left: 0, right: 0 };
-    const visibleWidth =
-      (1 - crop.left - crop.right) * image.dimensions.width;
-    const visibleHeight =
-      (1 - crop.top - crop.bottom) * image.dimensions.height;
+    const editorLeft = Math.ceil(crop.left * image.dimensions.width);
+    const editorTop = Math.ceil(crop.top * image.dimensions.height);
+    const editorRight = Math.floor(
+      (1 - crop.right) * image.dimensions.width,
+    );
+    const editorBottom = Math.floor(
+      (1 - crop.bottom) * image.dimensions.height,
+    );
 
-    if (visibleWidth < 1 || visibleHeight < 1) {
+    if (editorRight <= editorLeft || editorBottom <= editorTop) {
       context.addIssue({
         code: 'custom',
-        message: 'Programme image crop must leave at least one visible pixel.',
+        message:
+          'Programme image crop must leave a non-empty integer pixel rectangle.',
       });
     }
   });
