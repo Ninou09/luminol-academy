@@ -208,6 +208,16 @@ describe('getProgrammesForSchool', () => {
     },
     {
       image: {
+        url: 'https://cdn.sanity.io/images/abc123xy/production/programme-100x100.jpg',
+        alt: 'Approved programme image',
+        crop: { top: 0, bottom: 0, left: 0.001, right: 0.988 },
+        hotspot: null,
+        dimensions: { width: 100, height: 100 },
+      },
+      caseName: 'a fractional crop that rounds to an empty pixel rectangle',
+    },
+    {
+      image: {
         url: 'https://cdn.sanity.io/images/abc123xy/production/programme-1200x675.jpg',
         alt: 'Approved programme image',
         crop: null,
