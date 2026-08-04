@@ -2,10 +2,26 @@ import type { Metadata } from 'next';
 import { ButtonLink } from '@luminol/ui';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 
+const aboutDescription =
+  'Discover the founder-led vision, philosophy and human-development mission behind Luminol Academy.';
+
 export const metadata: Metadata = {
   title: 'About Luminol',
-  description:
-    'Discover the founder-led vision, philosophy and human-development mission behind Luminol Academy.',
+  description: aboutDescription,
+  alternates: {
+    canonical: '/about',
+  },
+  openGraph: {
+    title: 'About Luminol',
+    description: aboutDescription,
+    type: 'website',
+    url: '/about',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'About Luminol',
+    description: aboutDescription,
+  },
 };
 
 const values = [
