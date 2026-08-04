@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ButtonLink } from '@luminol/ui';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
-import { getProgrammesForSchool } from '../../../lib/sanity';
+import {
+  buildSanityProgrammeImageUrl,
+  getProgrammesForSchool,
+} from '../../../lib/sanity';
 import { isSchoolSlug, schools } from '../../../lib/schools';
 import styles from './page.module.css';
 
@@ -56,7 +59,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         title: programme.title,
         description: programme.summary,
         delivery: programme.delivery ?? null,
-        image: programme.image ?? null,
+        image: programme.image
+          ? {
+              url: buildSanityProgrammeImageUrl(programme.image),
+              alt: programme.image.alt,
+            }
+          : null,
       }))
     : school.programs.map((programme) => ({
         id: programme.title,
