@@ -22,6 +22,28 @@ test('public metadata and error behavior are available', async ({
   expect(missing.status()).toBe(404);
 });
 
+test('school pages publish route-specific canonical and Open Graph URLs', async ({
+  request,
+}) => {
+  const siteUrl = 'https://luminol-academy-web.vercel.app';
+
+  for (const route of [
+    '/schools/psychology',
+    '/schools/languages',
+    '/schools/training',
+  ]) {
+    const response = await request.get(route);
+    expect(response.ok()).toBeTruthy();
+    const html = await response.text();
+    expect(html).toContain(
+      `rel="canonical" href="${siteUrl}${route}"`,
+    );
+    expect(html).toContain(
+      `property="og:url" content="${siteUrl}${route}"`,
+    );
+  }
+});
+
 test('responses include launch security headers', async ({ request }) => {
   const response = await request.get('/');
   expect(response.headers()['x-content-type-options']).toBe('nosniff');
