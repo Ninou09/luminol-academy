@@ -9,6 +9,7 @@
     "typecheck": "turbo typecheck",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "auth:capture": "node scripts/capture-playwright-storage-state.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "security:check": "node scripts/security-check.mjs",
