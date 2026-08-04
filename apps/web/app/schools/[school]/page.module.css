@@ -7,7 +7,6 @@
   border-radius: 0.75rem;
   background: var(--color-brand-canvas);
   object-fit: cover;
-  object-position: center;
 }
 
 .programTitleWithImage.programTitleWithImage {
