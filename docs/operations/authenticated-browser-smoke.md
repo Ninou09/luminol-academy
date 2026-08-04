@@ -18,6 +18,8 @@ pnpm install --frozen-lockfile
 pnpm exec playwright install chromium
 ```
 
+The helper accepts only the two hard-coded stable production origins. It does not accept a custom URL, so credentials cannot be entered into an arbitrary host through this command.
+
 ## Capture the learner state
 
 Run:
@@ -26,7 +28,7 @@ Run:
 pnpm auth:capture portal
 ```
 
-A Chromium window opens on the production learner sign-in page. Sign in manually with the restricted learner smoke account. After the learner dashboard is fully visible, return to the terminal and press Enter.
+A Chromium window opens on the stable production learner sign-in page. Sign in manually with the restricted learner smoke account. After the learner dashboard is fully visible, return to the terminal and press Enter.
 
 The helper saves:
 
@@ -42,7 +44,7 @@ Run:
 pnpm auth:capture admin
 ```
 
-A Chromium window opens on the production administration sign-in page. Sign in manually with the restricted administration smoke account. After the administration overview is fully visible, return to the terminal and press Enter.
+A Chromium window opens on the stable production administration sign-in page. Sign in manually with the restricted administration smoke account. After the administration overview is fully visible, return to the terminal and press Enter.
 
 The helper saves:
 
@@ -50,7 +52,7 @@ The helper saves:
 .auth/admin-state.json
 ```
 
-The `.auth` directory is ignored by Git. Confirm both files remain untracked before continuing:
+The `.auth` directory is ignored by Git. On Unix systems, the helper enforces owner-only permissions on the directory and files. Confirm both state files remain untracked before continuing:
 
 ```bash
 git status --short
@@ -60,7 +62,7 @@ The command must not list either state file.
 
 ## Configure GitHub Actions
 
-Use stable production URLs for the current operational smoke test:
+Use stable production URLs for the operational smoke test:
 
 ```text
 PLAYWRIGHT_ADMIN_BASE_URL=https://luminol-academy-admin.vercel.app
@@ -84,6 +86,8 @@ Get-Content -Raw .auth/portal-state.json | gh secret set PLAYWRIGHT_PORTAL_STORA
 gh variable set PLAYWRIGHT_ADMIN_BASE_URL --body "https://luminol-academy-admin.vercel.app"
 gh variable set PLAYWRIGHT_PORTAL_BASE_URL --body "https://luminol-academy-portal.vercel.app"
 ```
+
+The authenticated smoke-test steps run only after code reaches `main`. They are skipped for every `pull_request` workflow, so production browser sessions are not injected into code proposed by a pull request.
 
 ## Rotation and cleanup
 
