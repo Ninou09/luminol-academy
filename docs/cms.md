@@ -20,10 +20,13 @@ school page. Images require meaningful alternative text.
 
 When a programme image is present, the public website accepts only the
 published `https://cdn.sanity.io` asset URL together with its approved
-alternative text. A programme without an image keeps the reviewed text-only
-card layout. Missing alternative text, a non-Sanity image host or malformed CMS
-data causes the complete external programme response to fail closed and the
-school page to use its reviewed fallback programmes.
+alternative text, source dimensions, crop and hotspot. The card image URL is
+generated at a stable 16:9 size while preserving the editor-selected crop and
+keeping the selected hotspot in frame. A programme without an image keeps the
+reviewed text-only card layout. Missing alternative text, a non-Sanity image
+host, invalid framing metadata or malformed CMS data causes the complete
+external programme response to fail closed and the school page to use its
+reviewed fallback programmes.
 
 ### Site Settings
 
@@ -71,12 +74,15 @@ authenticated session.
 1. Create or update the document in Studio.
 2. Confirm the school, public summary, ordering and delivery format.
 3. Check image purpose, permission and meaningful alternative text.
-4. Review all claims, names and consent-sensitive information.
-5. Set `active` to true only when the content is ready.
-6. Publish the document.
-7. Verify the matching school page after the website cache refreshes.
-8. For an image-bearing programme, confirm the rendered asset comes from
-   `cdn.sanity.io` and that its alternative text matches the approved content.
+4. Adjust the image crop and hotspot so the important subject remains visible
+   in the programme card's 16:9 frame.
+5. Review all claims, names and consent-sensitive information.
+6. Set `active` to true only when the content is ready.
+7. Publish the document.
+8. Verify the matching school page after the website cache refreshes.
+9. For an image-bearing programme, confirm the rendered asset comes from
+   `cdn.sanity.io`, reflects the approved crop and hotspot, and uses the
+   approved alternative text.
 
 The public website revalidates CMS programme data every five minutes.
 
