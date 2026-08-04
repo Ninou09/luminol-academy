@@ -8,6 +8,24 @@ const placeholderProjectIds = new Set([
   'replace-me',
 ]);
 
+function isApprovedSanityImageUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' && url.hostname === 'cdn.sanity.io';
+  } catch {
+    return false;
+  }
+}
+
+const cmsProgrammeImageSchema = z.object({
+  url: z
+    .string()
+    .trim()
+    .url()
+    .refine(isApprovedSanityImageUrl, 'Programme images must use Sanity CDN.'),
+  alt: z.string().trim().min(3).max(180),
+});
+
 const cmsProgrammeSchema = z.object({
   _id: z.string().min(1),
   title: z.string().trim().min(1).max(120),
@@ -15,6 +33,7 @@ const cmsProgrammeSchema = z.object({
   slug: z.object({ current: z.string().min(1) }).nullish(),
   delivery: z.string().trim().max(80).nullish(),
   featured: z.boolean().default(false),
+  image: cmsProgrammeImageSchema.nullish(),
 });
 
 const cmsProgrammeListSchema = z.array(cmsProgrammeSchema).max(100);
@@ -59,7 +78,14 @@ export async function getProgrammesForSchool(
     summary,
     slug,
     delivery,
-    "featured": coalesce(featured, false)
+    "featured": coalesce(featured, false),
+    "image": select(
+      defined(image.asset) => {
+        "url": image.asset->url,
+        "alt": image.alt
+      },
+      null
+    )
   }`;
 
   const endpoint = new URL(
