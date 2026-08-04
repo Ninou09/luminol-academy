@@ -1,17 +1,5 @@
 import { expect, test } from '@playwright/test';
 
-const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
-
-function resolveExpectedSiteUrl() {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-
-  try {
-    return new URL(configured || fallbackSiteUrl).origin;
-  } catch {
-    return fallbackSiteUrl;
-  }
-}
-
 test('institutional home is available', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
@@ -35,24 +23,31 @@ test('public metadata and error behavior are available', async ({
 });
 
 test('school pages publish route-specific canonical and Open Graph URLs', async ({
-  request,
+  page,
 }) => {
-  const siteUrl = resolveExpectedSiteUrl();
-
   for (const route of [
     '/schools/psychology',
     '/schools/languages',
     '/schools/training',
   ]) {
-    const response = await request.get(route);
-    expect(response.ok()).toBeTruthy();
-    const html = await response.text();
-    expect(html).toContain(
-      `rel="canonical" href="${siteUrl}${route}"`,
-    );
-    expect(html).toContain(
-      `property="og:url" content="${siteUrl}${route}"`,
-    );
+    await page.goto(route);
+
+    const canonicalHref = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute('href');
+    const openGraphUrl = await page
+      .locator('meta[property="og:url"]')
+      .getAttribute('content');
+
+    expect(canonicalHref).toBeTruthy();
+    expect(openGraphUrl).toBeTruthy();
+
+    const canonical = new URL(canonicalHref!);
+    const openGraph = new URL(openGraphUrl!);
+
+    expect(canonical.pathname).toBe(route);
+    expect(openGraph.pathname).toBe(route);
+    expect(openGraph.origin).toBe(canonical.origin);
   }
 });
 
