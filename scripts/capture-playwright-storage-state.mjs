@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { mkdir } from 'node:fs/promises';
+import { chmod, mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { stdin as input, stdout as output } from 'node:process';
 import { createInterface } from 'node:readline/promises';
@@ -42,11 +42,17 @@ const signInUrl = new URL('/sign-in', appOrigin).toString();
 const authDirectory = resolve('.auth');
 const statePath = resolve(authDirectory, target.fileName);
 const readline = createInterface({ input, output });
-const browser = await chromium.launch({ headless: false });
+const previousUmask = process.umask(0o077);
+let browser;
 
 try {
-  await mkdir(authDirectory, { recursive: true });
+  await mkdir(authDirectory, { recursive: true, mode: 0o700 });
 
+  if (process.platform !== 'win32') {
+    await chmod(authDirectory, 0o700);
+  }
+
+  browser = await chromium.launch({ headless: false });
   const context = await browser.newContext();
   const page = await context.newPage();
 
@@ -73,6 +79,11 @@ try {
   }
 
   await context.storageState({ path: statePath });
+
+  if (process.platform !== 'win32') {
+    await chmod(statePath, 0o600);
+  }
+
   await context.close();
 
   console.log(`\nSaved restricted ${targetName} browser state to:`);
@@ -84,5 +95,6 @@ try {
   process.exitCode = 1;
 } finally {
   readline.close();
-  await browser.close();
+  await browser?.close();
+  process.umask(previousUmask);
 }
