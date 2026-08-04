@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getProgrammesForSchool, getSanityConfig } from './sanity';
+import {
+  buildSanityProgrammeImageUrl,
+  getProgrammesForSchool,
+  getSanityConfig,
+} from './sanity';
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -20,6 +24,40 @@ describe('Sanity configuration', () => {
       projectId: 'abc123xy',
       dataset: 'production',
     });
+  });
+});
+
+describe('buildSanityProgrammeImageUrl', () => {
+  it('builds a centered card crop when no editor crop or hotspot exists', () => {
+    const url = new URL(
+      buildSanityProgrammeImageUrl({
+        url: 'https://cdn.sanity.io/images/abc123xy/production/programme-1600x1200.jpg',
+        alt: 'Learners taking part in a programme',
+        crop: null,
+        hotspot: null,
+        dimensions: { width: 1600, height: 1200 },
+      }),
+    );
+
+    expect(url.searchParams.get('rect')).toBe('0,150,1600,900');
+    expect(url.searchParams.get('w')).toBe('1200');
+    expect(url.searchParams.get('h')).toBe('675');
+    expect(url.searchParams.get('fit')).toBe('crop');
+    expect(url.searchParams.get('auto')).toBe('format');
+  });
+
+  it('preserves the editor crop and keeps the hotspot in frame', () => {
+    const url = new URL(
+      buildSanityProgrammeImageUrl({
+        url: 'https://cdn.sanity.io/images/abc123xy/production/programme-2000x1000.jpg',
+        alt: 'Facilitator leading a professional workshop',
+        crop: { top: 0.1, bottom: 0.1, left: 0.1, right: 0.1 },
+        hotspot: { x: 0.8, y: 0.5, width: 0.1, height: 0.2 },
+        dimensions: { width: 2000, height: 1000 },
+      }),
+    );
+
+    expect(url.searchParams.get('rect')).toBe('378,100,1422,800');
   });
 });
 
@@ -51,8 +89,25 @@ describe('getProgrammesForSchool', () => {
                 delivery: 'Hybrid',
                 featured: true,
                 image: {
-                  url: 'https://cdn.sanity.io/images/abc123xy/production/programme.jpg',
+                  url: 'https://cdn.sanity.io/images/abc123xy/production/programme-2000x1000.jpg',
                   alt: 'Learners practising confident communication together',
+                  crop: {
+                    top: 0.1,
+                    bottom: 0.1,
+                    left: 0.1,
+                    right: 0.1,
+                  },
+                  hotspot: {
+                    x: 0.8,
+                    y: 0.5,
+                    width: 0.1,
+                    height: 0.2,
+                  },
+                  dimensions: {
+                    width: 2000,
+                    height: 1000,
+                    aspectRatio: 2,
+                  },
                 },
               },
             ],
@@ -72,8 +127,11 @@ describe('getProgrammesForSchool', () => {
         delivery: 'Hybrid',
         featured: true,
         image: {
-          url: 'https://cdn.sanity.io/images/abc123xy/production/programme.jpg',
+          url: 'https://cdn.sanity.io/images/abc123xy/production/programme-2000x1000.jpg',
           alt: 'Learners practising confident communication together',
+          crop: { top: 0.1, bottom: 0.1, left: 0.1, right: 0.1 },
+          hotspot: { x: 0.8, y: 0.5, width: 0.1, height: 0.2 },
+          dimensions: { width: 2000, height: 1000 },
         },
       },
     ]);
@@ -122,15 +180,41 @@ describe('getProgrammesForSchool', () => {
       image: {
         url: 'https://example.com/programme.jpg',
         alt: 'Approved programme image',
+        crop: null,
+        hotspot: null,
+        dimensions: { width: 1200, height: 675 },
       },
       caseName: 'an image outside the Sanity CDN',
     },
     {
       image: {
-        url: 'https://cdn.sanity.io/images/abc123xy/production/programme.jpg',
+        url: 'https://cdn.sanity.io/images/abc123xy/production/programme-1200x675.jpg',
         alt: '  ',
+        crop: null,
+        hotspot: null,
+        dimensions: { width: 1200, height: 675 },
       },
       caseName: 'an image without meaningful alternative text',
+    },
+    {
+      image: {
+        url: 'https://cdn.sanity.io/images/abc123xy/production/programme-1200x675.jpg',
+        alt: 'Approved programme image',
+        crop: { top: 0, bottom: 0, left: 0.6, right: 0.4 },
+        hotspot: null,
+        dimensions: { width: 1200, height: 675 },
+      },
+      caseName: 'a crop that removes the full image width',
+    },
+    {
+      image: {
+        url: 'https://cdn.sanity.io/images/abc123xy/production/programme-1200x675.jpg',
+        alt: 'Approved programme image',
+        crop: null,
+        hotspot: null,
+        dimensions: { width: 0, height: 675 },
+      },
+      caseName: 'invalid source dimensions',
     },
   ])('fails closed for $caseName', async ({ image }) => {
     vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123xy');
