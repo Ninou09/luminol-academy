@@ -20,13 +20,19 @@ export async function generateMetadata({
   if (!isSchoolSlug(slug)) return {};
 
   const school = schools[slug];
+  const route = `/schools/${school.slug}`;
+
   return {
     title: school.name,
     description: school.introduction,
+    alternates: {
+      canonical: route,
+    },
     openGraph: {
       title: `Luminol ${school.name}`,
       description: school.introduction,
       type: 'website',
+      url: route,
     },
   };
 }

@@ -22,6 +22,35 @@ test('public metadata and error behavior are available', async ({
   expect(missing.status()).toBe(404);
 });
 
+test('school pages publish route-specific canonical and Open Graph URLs', async ({
+  page,
+}) => {
+  for (const route of [
+    '/schools/psychology',
+    '/schools/languages',
+    '/schools/training',
+  ]) {
+    await page.goto(route);
+
+    const canonicalHref = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute('href');
+    const openGraphUrl = await page
+      .locator('meta[property="og:url"]')
+      .getAttribute('content');
+
+    expect(canonicalHref).toBeTruthy();
+    expect(openGraphUrl).toBeTruthy();
+
+    const canonical = new URL(canonicalHref!);
+    const openGraph = new URL(openGraphUrl!);
+
+    expect(canonical.pathname).toBe(route);
+    expect(openGraph.pathname).toBe(route);
+    expect(openGraph.origin).toBe(canonical.origin);
+  }
+});
+
 test('responses include launch security headers', async ({ request }) => {
   const response = await request.get('/');
   expect(response.headers()['x-content-type-options']).toBe('nosniff');
