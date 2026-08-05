@@ -60,9 +60,9 @@ export async function getLearnerCourse(userId: string, slug: string) {
   const statusByLesson = new Map(
     records.map(({ lessonId, status }) => [lessonId, status]),
   );
-  const modules = enrollment.course.modules.map((module) => ({
-    ...module,
-    lessons: module.lessons.map((lesson) => ({
+  const modules = enrollment.course.modules.map((courseModule) => ({
+    ...courseModule,
+    lessons: courseModule.lessons.map((lesson) => ({
       ...lesson,
       status: statusByLesson.get(lesson.id) ?? ('NOT_STARTED' as const),
     })),
@@ -85,12 +85,14 @@ export async function getLearnerLesson(
 
   if (!enrollment) return null;
 
-  const module = enrollment.course.modules.find(({ lessons }) =>
+  const courseModule = enrollment.course.modules.find(({ lessons }) =>
     lessons.some(({ slug }) => slug === lessonSlug),
   );
-  const lesson = module?.lessons.find(({ slug }) => slug === lessonSlug);
+  const lesson = courseModule?.lessons.find(
+    ({ slug }) => slug === lessonSlug,
+  );
 
-  if (!module || !lesson) return null;
+  if (!courseModule || !lesson) return null;
 
   const navigation = getLessonNavigation(enrollment.course.modules, lesson.id);
 
@@ -104,9 +106,9 @@ export async function getLearnerLesson(
       title: enrollment.course.title,
     },
     module: {
-      id: module.id,
-      title: module.title,
-      position: module.position,
+      id: courseModule.id,
+      title: courseModule.title,
+      position: courseModule.position,
     },
     lesson,
     navigation,

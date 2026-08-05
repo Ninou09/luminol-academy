@@ -1,1 +1,1 @@
-export { default } from '@luminol/config/eslint';
+export { default } from '@luminol/config/eslint/next';

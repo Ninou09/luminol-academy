@@ -1,4 +1,5 @@
 import { UserButton } from '@clerk/nextjs';
+import Link from 'next/link';
 import { requirePermission } from '@luminol/auth';
 import { Wordmark } from '@luminol/ui';
 
@@ -33,9 +34,9 @@ export default async function Page() {
   return (
     <main className="admin-shell">
       <aside className="admin-sidebar">
-        <a className="admin-brand" href="/" aria-label="Luminol administration">
+        <Link className="admin-brand" href="/" aria-label="Luminol administration">
           <Wordmark />
-        </a>
+        </Link>
         <p className="admin-label">Administration</p>
         <nav aria-label="Administration navigation">
           <a className="active" href="#overview">
@@ -50,9 +51,9 @@ export default async function Page() {
           <a href="#programmes">
             <span>04</span> Programmes
           </a>
-          <a href="/finance">
+          <Link href="/finance">
             <span>05</span> Finance
-          </a>
+          </Link>
         </nav>
         <div className="admin-sidebar-note">
           <span>Protected workspace</span>
