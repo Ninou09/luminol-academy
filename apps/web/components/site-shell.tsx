@@ -73,8 +73,8 @@ export function SiteFooter() {
             <Wordmark className="footer-wordmark" />
           </Link>
           <p>
-            A connected academy for emotional wellbeing, confident
-            communication and practical professional growth.
+            A connected academy for emotional wellbeing, confident communication
+            and practical professional growth.
           </p>
         </div>
 

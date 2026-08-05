@@ -32,7 +32,8 @@
   min-height: 5.5rem;
   grid-template-columns: minmax(14rem, 1fr) auto minmax(14rem, 1fr);
   gap: clamp(1.25rem, 3vw, 3rem);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-brand-line) 78%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-brand-line) 78%, transparent);
   background: color-mix(in srgb, var(--color-brand-canvas) 88%, transparent);
   box-shadow: 0 0.25rem 1.5rem rgb(16 42 67 / 0.03);
   backdrop-filter: blur(1.25rem) saturate(130%);
@@ -183,7 +184,8 @@ html[data-scrolled='true'] .site-header.premium-header {
   align-items: center;
   min-height: 3.2rem;
   padding: 0.7rem 0.85rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-brand-line) 70%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-brand-line) 70%, transparent);
   color: var(--color-brand-ink-soft);
   font-size: 0.78rem;
   font-weight: 750;

@@ -121,9 +121,7 @@ export default function Page() {
         <div className={styles.heroGlow} aria-hidden="true" />
         <div className={styles.heroInner}>
           <div className={styles.heroCopy} data-reveal="left">
-            <p className={styles.eyebrow}>
-              Luminol Academy · Blida, Algeria
-            </p>
+            <p className={styles.eyebrow}>Luminol Academy · Blida, Algeria</p>
             <h1 id="hero-title">
               Develop your mind.
               <span>Strengthen your voice.</span>
@@ -135,7 +133,11 @@ export default function Page() {
               and practical impact.
             </p>
             <div className={styles.heroActions}>
-              <ButtonLink className={styles.primaryAction} href="#schools" size="lg">
+              <ButtonLink
+                className={styles.primaryAction}
+                href="#schools"
+                size="lg"
+              >
                 Explore our schools <span aria-hidden="true">↘</span>
               </ButtonLink>
               <ButtonLink
@@ -170,9 +172,18 @@ export default function Page() {
             style={{ '--reveal-delay': '120ms' } as CSSProperties}
           >
             <div className={styles.visualGrid} aria-hidden="true" />
-            <div className={`${styles.orbit} ${styles.orbitOuter}`} aria-hidden="true" />
-            <div className={`${styles.orbit} ${styles.orbitMiddle}`} aria-hidden="true" />
-            <div className={`${styles.orbit} ${styles.orbitInner}`} aria-hidden="true" />
+            <div
+              className={`${styles.orbit} ${styles.orbitOuter}`}
+              aria-hidden="true"
+            />
+            <div
+              className={`${styles.orbit} ${styles.orbitMiddle}`}
+              aria-hidden="true"
+            />
+            <div
+              className={`${styles.orbit} ${styles.orbitInner}`}
+              aria-hidden="true"
+            />
             <div className={styles.heroCore} aria-hidden="true">
               <span>L</span>
               <small>Potential illuminated</small>
@@ -283,8 +294,14 @@ export default function Page() {
       <section id="approach" className={styles.experienceSection}>
         <div className={styles.experienceVisual} data-reveal="left">
           <div className={styles.experienceGrid} aria-hidden="true" />
-          <div className={`${styles.experienceRing} ${styles.ringOne}`} aria-hidden="true" />
-          <div className={`${styles.experienceRing} ${styles.ringTwo}`} aria-hidden="true" />
+          <div
+            className={`${styles.experienceRing} ${styles.ringOne}`}
+            aria-hidden="true"
+          />
+          <div
+            className={`${styles.experienceRing} ${styles.ringTwo}`}
+            aria-hidden="true"
+          />
           <div className={styles.experienceCore}>
             <span>Whole-person</span>
             <strong>Learning</strong>
@@ -314,7 +331,11 @@ export default function Page() {
         </div>
       </section>
 
-      <section className={styles.statBand} aria-label="Luminol structure" data-reveal>
+      <section
+        className={styles.statBand}
+        aria-label="Luminol structure"
+        data-reveal
+      >
         <div>
           <strong data-count="3">3</strong>
           <span>Specialized schools</span>
@@ -356,7 +377,9 @@ export default function Page() {
               className={`${styles.programmeCard} ${styles[programme.school]}`}
               data-reveal
               key={`${programme.school}-${programme.title}`}
-              style={{ '--reveal-delay': `${(index % 3) * 80}ms` } as CSSProperties}
+              style={
+                { '--reveal-delay': `${(index % 3) * 80}ms` } as CSSProperties
+              }
             >
               <div className={styles.programmeArtwork} aria-hidden="true">
                 <span>{programme.number}</span>
@@ -382,8 +405,8 @@ export default function Page() {
           <p className={styles.eyebrow}>A clear learning journey</p>
           <h2>From intention to meaningful progress.</h2>
           <p>
-            The experience stays structured without becoming rigid, and
-            personal without losing academic or professional depth.
+            The experience stays structured without becoming rigid, and personal
+            without losing academic or professional depth.
           </p>
           <ButtonLink href="/contact" size="lg">
             Discuss your goal <span aria-hidden="true">→</span>
@@ -407,15 +430,24 @@ export default function Page() {
             <p>Experience balance</p>
             <div>
               <span>Clarity</span>
-              <i data-progress style={{ '--progress-scale': 0.92 } as CSSProperties} />
+              <i
+                data-progress
+                style={{ '--progress-scale': 0.92 } as CSSProperties}
+              />
             </div>
             <div>
               <span>Practice</span>
-              <i data-progress style={{ '--progress-scale': 0.86 } as CSSProperties} />
+              <i
+                data-progress
+                style={{ '--progress-scale': 0.86 } as CSSProperties}
+              />
             </div>
             <div>
               <span>Application</span>
-              <i data-progress style={{ '--progress-scale': 0.96 } as CSSProperties} />
+              <i
+                data-progress
+                style={{ '--progress-scale': 0.96 } as CSSProperties}
+              />
             </div>
           </div>
         </div>

@@ -7,9 +7,11 @@ const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 function revealImmediately(elements: HTMLElement[]) {
   for (const element of elements) {
     element.dataset.revealed = 'true';
-    element.querySelectorAll<HTMLElement>('[data-progress]').forEach((progress) => {
-      progress.dataset.progressReady = 'true';
-    });
+    element
+      .querySelectorAll<HTMLElement>('[data-progress]')
+      .forEach((progress) => {
+        progress.dataset.progressReady = 'true';
+      });
   }
 }
 
@@ -100,9 +102,12 @@ export function HomeMotion() {
     const standaloneCounters = counters.filter(
       (counter) => !counter.closest('[data-reveal]'),
     );
-    standaloneCounters.forEach((counter) => animateCounter(counter, reducedMotion));
+    standaloneCounters.forEach((counter) =>
+      animateCounter(counter, reducedMotion),
+    );
 
-    const heroVisual = document.querySelector<HTMLElement>('[data-hero-visual]');
+    const heroVisual =
+      document.querySelector<HTMLElement>('[data-hero-visual]');
     const updatePointer = (event: PointerEvent) => {
       if (!heroVisual || reducedMotion || window.innerWidth < 900) return;
 
@@ -117,7 +122,9 @@ export function HomeMotion() {
       heroVisual?.style.setProperty('--pointer-y', '0px');
     };
 
-    heroVisual?.addEventListener('pointermove', updatePointer, { passive: true });
+    heroVisual?.addEventListener('pointermove', updatePointer, {
+      passive: true,
+    });
     heroVisual?.addEventListener('pointerleave', resetPointer);
 
     return () => {

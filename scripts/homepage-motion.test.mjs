@@ -15,7 +15,7 @@ const shellSource = readFileSync(
 
 describe('premium public homepage', () => {
   it('keeps the three governed school routes and contact journey', () => {
-    expect(pageSource).toContain("href={`/schools/${school.slug}`}");
+    expect(pageSource).toContain('href={`/schools/${school.slug}`}');
     expect(pageSource).toContain('schools.psychology.programs');
     expect(pageSource).toContain('schools.languages.programs');
     expect(pageSource).toContain('schools.training.programs');
@@ -29,12 +29,14 @@ describe('premium public homepage', () => {
     expect(motionSource).toContain('IntersectionObserver');
     expect(motionSource).toContain("'(prefers-reduced-motion: reduce)'");
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(motionStyles).toContain('[data-revealed=\'true\']');
+    expect(motionStyles).toContain("[data-revealed='true']");
   });
 
   it('provides responsive navigation without requiring JavaScript', () => {
     expect(shellSource).toContain('<details className="mobile-menu">');
     expect(shellSource).toContain('aria-label="Mobile navigation"');
-    expect(shellSource).toContain('Psychology · Languages · Professional Training');
+    expect(shellSource).toContain(
+      'Psychology · Languages · Professional Training',
+    );
   });
 });

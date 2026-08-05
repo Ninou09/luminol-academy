@@ -105,7 +105,11 @@
 }
 
 .secondaryAction {
-  border-color: color-mix(in srgb, var(--color-brand-ink) 32%, transparent) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--color-brand-ink) 32%,
+    transparent
+  ) !important;
   background: color-mix(in srgb, white 70%, transparent) !important;
   backdrop-filter: blur(0.6rem);
 }
@@ -153,7 +157,12 @@
   background:
     radial-gradient(circle at 52% 45%, rgb(199 154 59 / 0.36), transparent 24%),
     radial-gradient(circle at 20% 80%, rgb(49 130 206 / 0.22), transparent 27%),
-    linear-gradient(145deg, #0b2035 0%, var(--color-brand-ink) 48%, #173f5e 100%);
+    linear-gradient(
+      145deg,
+      #0b2035 0%,
+      var(--color-brand-ink) 48%,
+      #173f5e 100%
+    );
   box-shadow:
     0 3rem 7rem rgb(16 42 67 / 0.24),
     inset 0 0 0 1px rgb(255 255 255 / 0.04);
@@ -174,7 +183,12 @@
     rgb(255 255 255 / 0.08) 0deg 1deg,
     transparent 1deg 12deg
   );
-  mask-image: radial-gradient(circle, transparent 0 23%, black 24% 65%, transparent 72%);
+  mask-image: radial-gradient(
+    circle,
+    transparent 0 23%,
+    black 24% 65%,
+    transparent 72%
+  );
   transform: translate(-50%, -50%);
   animation: slowSpin 40s linear infinite;
 }
@@ -184,9 +198,18 @@
   position: absolute;
   inset: 0;
   opacity: 0.22;
-  background-image: radial-gradient(rgb(255 255 255 / 0.55) 0.8px, transparent 0.8px);
+  background-image: radial-gradient(
+    rgb(255 255 255 / 0.55) 0.8px,
+    transparent 0.8px
+  );
   background-size: 1.8rem 1.8rem;
-  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 18%,
+    black 82%,
+    transparent
+  );
   animation: starDrift 18s linear infinite;
 }
 
@@ -555,8 +578,16 @@
   place-items: center;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--accent) 64%, white), transparent 26%),
-    linear-gradient(145deg, var(--color-brand-ink), color-mix(in srgb, var(--accent) 45%, var(--color-brand-ink)));
+    radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--accent) 64%, white),
+      transparent 26%
+    ),
+    linear-gradient(
+      145deg,
+      var(--color-brand-ink),
+      color-mix(in srgb, var(--accent) 45%, var(--color-brand-ink))
+    );
   color: var(--color-brand-canvas);
 }
 
@@ -564,6 +595,8 @@
   content: '';
   position: absolute;
   width: 18rem;
+  inset: 50%;
+  transform: translate(-50%, -50%);
   aspect-ratio: 1;
   border: 1px solid rgb(255 255 255 / 0.28);
   border-radius: 50%;
@@ -574,6 +607,8 @@
   content: '';
   position: absolute;
   width: 11rem;
+  inset: 50%;
+  transform: translate(-50%, -50%);
   aspect-ratio: 1;
   border: 1px solid color-mix(in srgb, var(--accent) 70%, white);
   border-radius: 50%;
@@ -949,8 +984,16 @@
   height: 12rem;
   overflow: hidden;
   background:
-    radial-gradient(circle at 65% 35%, color-mix(in srgb, var(--accent) 75%, white), transparent 24%),
-    linear-gradient(145deg, var(--color-brand-ink), color-mix(in srgb, var(--accent) 42%, var(--color-brand-ink)));
+    radial-gradient(
+      circle at 65% 35%,
+      color-mix(in srgb, var(--accent) 75%, white),
+      transparent 24%
+    ),
+    linear-gradient(
+      145deg,
+      var(--color-brand-ink),
+      color-mix(in srgb, var(--accent) 42%, var(--color-brand-ink))
+    );
 }
 
 .programmeArtwork::before {
@@ -1180,7 +1223,10 @@
 .platformSection {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(16rem, 0.65fr) minmax(20rem, 0.8fr);
+  grid-template-columns: minmax(0, 0.9fr) minmax(16rem, 0.65fr) minmax(
+      20rem,
+      0.8fr
+    );
   gap: clamp(2.5rem, 7vw, 7rem);
   align-items: center;
   padding: clamp(6rem, 10vw, 10rem) var(--home-gutter);
@@ -1212,7 +1258,9 @@
 .platformOrbit::after {
   content: '';
   position: absolute;
+  inset: 50%;
   aspect-ratio: 1;
+  transform: translate(-50%, -50%);
   border: 1px solid color-mix(in srgb, var(--color-brand-ink) 22%, transparent);
   border-radius: 50%;
 }
