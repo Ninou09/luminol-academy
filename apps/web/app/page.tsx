@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 
@@ -144,9 +145,9 @@ export default function Page() {
                   <li key={topic}>{topic}</li>
                 ))}
               </ul>
-              <a className="text-link" href={`/schools/${school.id}`}>
+              <Link className="text-link" href={`/schools/${school.id}`}>
                 Discover this school <span aria-hidden="true">→</span>
-              </a>
+              </Link>
             </article>
           ))}
         </div>
@@ -207,21 +208,21 @@ export default function Page() {
           <h2 id="pathway-title">Begin with the growth that matters now.</h2>
         </div>
         <div className="pathway-links">
-          <a href="/schools/psychology">
+          <Link href="/schools/psychology">
             <span>01</span>
             Strengthen your wellbeing
             <b aria-hidden="true">↗</b>
-          </a>
-          <a href="/schools/languages">
+          </Link>
+          <Link href="/schools/languages">
             <span>02</span>
             Find your confident voice
             <b aria-hidden="true">↗</b>
-          </a>
-          <a href="/schools/training">
+          </Link>
+          <Link href="/schools/training">
             <span>03</span>
             Advance your professional path
             <b aria-hidden="true">↗</b>
-          </a>
+          </Link>
         </div>
       </section>
 
