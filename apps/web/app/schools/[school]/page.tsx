@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ButtonLink } from '@luminol/ui';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
@@ -82,9 +83,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
       <section className="school-detail-hero">
         <div className="school-detail-copy">
-          <a className="breadcrumb" href="/#schools">
+          <Link className="breadcrumb" href="/#schools">
             Luminol schools <span aria-hidden="true">/</span> {school.name}
-          </a>
+          </Link>
           <p className="eyebrow">{school.eyebrow}</p>
           <h1>{school.headline}</h1>
           <p className="school-detail-lede">{school.introduction}</p>
@@ -153,9 +154,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 <small className="program-delivery">{program.delivery}</small>
               ) : null}
               <p>{program.description}</p>
-              <a href="/contact">
+              <Link href="/contact">
                 Ask about this program <b aria-hidden="true">→</b>
-              </a>
+              </Link>
             </article>
           ))}
         </div>
@@ -207,11 +208,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </div>
         <div className="related-grid">
           {relatedSchools.map((related) => (
-            <a href={`/schools/${related.slug}`} key={related.slug}>
+            <Link href={`/schools/${related.slug}`} key={related.slug}>
               <span>{related.number}</span>
               <h3>{related.name}</h3>
               <b aria-hidden="true">↗</b>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
