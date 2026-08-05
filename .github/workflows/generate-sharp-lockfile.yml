@@ -1,0 +1,56 @@
+name: Generate reviewed Sharp lockfile
+
+on:
+  push:
+    branches:
+      - ops/generate-sharp-lockfile
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Update reviewed package pins
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          packageJson.packageManager = 'pnpm@10.34.0';
+          packageJson.pnpm.overrides['next>sharp'] = '0.35.3';
+          fs.writeFileSync('package.json', `${JSON.stringify(packageJson, null, 2)}\n`);
+          NODE
+      - name: Regenerate lockfile from the public registry
+        shell: bash
+        run: |
+          pnpm config set registry https://registry.npmjs.org/
+          pnpm install --lockfile-only --update-checksums
+      - name: Validate targeted dependency result
+        shell: bash
+        run: |
+          node -e "const p=require('./package.json'); if(p.packageManager!=='pnpm@10.34.0'||p.pnpm.overrides['next>sharp']!=='0.35.3') process.exit(1)"
+          grep -F 'next>sharp: 0.35.3' pnpm-lock.yaml
+          grep -F 'sharp@0.35.3' pnpm-lock.yaml
+          if grep -F 'sharp@0.35.0' pnpm-lock.yaml; then
+            echo 'Unexpected Sharp 0.35.0 entry remains' >&2
+            exit 1
+          fi
+          git diff --exit-code -- . ':!package.json' ':!pnpm-lock.yaml'
+          git diff --stat -- package.json pnpm-lock.yaml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reviewed-sharp-lockfile
+          path: |
+            package.json
+            pnpm-lock.yaml
+          if-no-files-found: error
+          retention-days: 1
