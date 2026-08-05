@@ -1,4 +1,4 @@
-name: Publish reviewed pnpm and Sharp upgrade
+name: Publish reviewed Sharp lockfile
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10.28.1
-      - name: Generate the reviewed dependency files
+      - name: Generate the reviewed Sharp dependency files
         shell: bash
         run: |
           node <<'NODE'
@@ -40,15 +40,8 @@ jobs:
           pnpm config set registry https://registry.npmjs.org/
           pnpm install --lockfile-only --no-frozen-lockfile
 
-          node <<'NODE'
-          const fs = require('node:fs');
-          const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          packageJson.packageManager = 'pnpm@10.34.0';
-          fs.writeFileSync('package.json', `${JSON.stringify(packageJson, null, 2)}\n`);
-          NODE
-
           printf '%s  %s\n' \
-            '9295cf88efe4b86760b1f0a49ca2785fc9a99c9deefd58672dad12376a57a4fc' package.json \
+            '1d22c768b09626326e9abc21210fe5760dcf25499bb587483028f3b1e74ec43e' package.json \
             '59666ab68bac4b1a0b037328e57c781d286d0aa15bd0364cdd7d089effe33f8b' pnpm-lock.yaml \
             | sha256sum --check --strict
 
@@ -57,50 +50,29 @@ jobs:
           test "${#changed[@]}" -eq 2
           test "${changed[0]}" = 'package.json'
           test "${changed[1]}" = 'pnpm-lock.yaml'
-      - name: Update pinned workflow package-manager versions
-        shell: bash
-        run: |
-          python <<'PY'
-          from pathlib import Path
-
-          paths = [
-              Path('.github/workflows/ci.yml'),
-              Path('.github/workflows/notification-worker.yml'),
-              Path('.github/workflows/production-migrations.yml'),
-          ]
-          for path in paths:
-              text = path.read_text()
-              old = '          version: 10.28.1'
-              new = '          version: 10.34.0'
-              if text.count(old) != 1:
-                  raise SystemExit(f'{path}: expected exactly one old pnpm version')
-              path.write_text(text.replace(old, new))
-          PY
-      - name: Verify strict install and production audit
+      - name: Verify frozen installation and production audit
         shell: bash
         run: |
           rm -rf node_modules
-          npx --yes pnpm@10.34.0 install --frozen-lockfile 2>&1 | tee frozen-install.log
+          pnpm install --frozen-lockfile 2>&1 | tee frozen-install.log
           if grep -F 'ERR_PNPM_TARBALL_INTEGRITY' frozen-install.log; then
-            echo 'Integrity failure remains' >&2
+            echo 'Integrity warning remains' >&2
             exit 1
           fi
-          npx --yes pnpm@10.34.0 audit --prod --audit-level high
+          pnpm audit --prod --audit-level high
           rm frozen-install.log
-      - name: Commit the atomic implementation
+      - name: Commit and push the Sharp lockfile update
         shell: bash
         run: |
           git diff --check
-          git add package.json pnpm-lock.yaml \
-            .github/workflows/ci.yml \
-            .github/workflows/notification-worker.yml \
-            .github/workflows/production-migrations.yml
-
+          git add package.json pnpm-lock.yaml
           mapfile -t staged < <(git diff --cached --name-only)
           printf '%s\n' "${staged[@]}"
-          test "${#staged[@]}" -eq 5
+          test "${#staged[@]}" -eq 2
+          test "${staged[0]}" = 'package.json'
+          test "${staged[1]}" = 'pnpm-lock.yaml'
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'Upgrade pnpm and Sharp integrity enforcement'
+          git commit -m 'Upgrade Sharp integrity metadata'
           git push origin HEAD:ops/upgrade-pnpm-sharp-integrity
