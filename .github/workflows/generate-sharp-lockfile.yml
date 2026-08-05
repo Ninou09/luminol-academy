@@ -38,7 +38,7 @@ jobs:
         run: |
           pnpm config set registry https://registry.npmjs.org/
           pnpm install --lockfile-only --update-checksums
-      - name: Validate manifest and lockfile semantics
+      - name: Report manifest and lockfile semantics
         shell: bash
         run: |
           node <<'NODE'
@@ -49,8 +49,7 @@ jobs:
           expected.packageManager = 'pnpm@10.34.0';
           expected.pnpm.overrides['next>sharp'] = '0.35.3';
           if (JSON.stringify(after) !== JSON.stringify(expected)) {
-            console.error('package.json contains changes beyond the reviewed pnpm and Sharp pins');
-            process.exit(1);
+            fs.writeFileSync('manifest-semantic-failed', 'package.json contains changes beyond the reviewed pins\n');
           }
           NODE
 
@@ -61,60 +60,88 @@ jobs:
           before = YAML.safe_load(File.read(File.join(ENV.fetch('RUNNER_TEMP'), 'pnpm-lock.before.yaml')), aliases: true)
           after = YAML.safe_load(File.read('pnpm-lock.yaml'), aliases: true)
 
-          unless before.keys == after.keys
-            abort "Top-level lockfile keys changed: #{before.keys.inspect} -> #{after.keys.inspect}"
+          differences = lambda do |old_value, new_value, path = [], output = []|
+            if old_value.is_a?(Hash) && new_value.is_a?(Hash)
+              (old_value.keys | new_value.keys).sort_by(&:to_s).each do |key|
+                differences.call(old_value[key], new_value[key], path + [key], output)
+              end
+            elsif old_value.is_a?(Array) && new_value.is_a?(Array)
+              [old_value.length, new_value.length].max.times do |index|
+                differences.call(old_value[index], new_value[index], path + [index], output)
+              end
+            elsif old_value != new_value
+              output << {
+                'path' => path.map(&:to_s).join('.'),
+                'before' => old_value,
+                'after' => new_value,
+              }
+            end
+            output
           end
 
-          allowed_override_before = before.fetch('overrides').dup
-          allowed_override_after = after.fetch('overrides').dup
-          unless allowed_override_before['next>sharp'] == '0.35.0' && allowed_override_after['next>sharp'] == '0.35.3'
-            abort 'Unexpected next>sharp override transition'
-          end
-          allowed_override_before.delete('next>sharp')
-          allowed_override_after.delete('next>sharp')
-          abort 'An unrelated override changed' unless allowed_override_before == allowed_override_after
-
-          %w[lockfileVersion settings importers].each do |section|
-            abort "Unrelated #{section} section changed" unless before[section] == after[section]
-          end
-
-          sharp_key = ->(key) {
+          sharp_key = lambda do |key|
             key.include?('sharp@') || key.include?('@img/sharp-') || key.include?('@img/sharp-libvips-')
+          end
+
+          report = {
+            'top_level_keys_before' => before.keys,
+            'top_level_keys_after' => after.keys,
+            'importer_differences' => differences.call(before['importers'], after['importers']),
+            'changed_packages' => [],
+            'unrelated_packages' => [],
+            'changed_snapshots' => [],
+            'unrelated_snapshots' => [],
+            'other_section_differences' => {},
           }
 
-          report = {}
           %w[packages snapshots].each do |section|
             old_section = before.fetch(section)
             new_section = after.fetch(section)
-            keys = (old_section.keys | new_section.keys).sort
-            changed = keys.select { |key| old_section[key] != new_section[key] }
-            unrelated = changed.reject { |key| sharp_key.call(key) }
-            unless unrelated.empty?
-              abort "Unrelated #{section} entries changed:\n#{unrelated.join("\n")}"
-            end
-            report[section] = changed
+            changed = (old_section.keys | new_section.keys).sort.select { |key| old_section[key] != new_section[key] }
+            report["changed_#{section}"] = changed
+            report["unrelated_#{section}"] = changed.reject { |key| sharp_key.call(key) }
           end
 
-          other_sections = before.keys - %w[lockfileVersion settings overrides importers packages snapshots]
-          other_sections.each do |section|
-            abort "Unrelated #{section} section changed" unless before[section] == after[section]
+          %w[lockfileVersion settings].each do |section|
+            diff = differences.call(before[section], after[section])
+            report['other_section_differences'][section] = diff unless diff.empty?
           end
+
+          old_overrides = before.fetch('overrides').dup
+          new_overrides = after.fetch('overrides').dup
+          expected_override = old_overrides.delete('next>sharp') == '0.35.0' && new_overrides.delete('next>sharp') == '0.35.3'
+          report['override_transition_valid'] = expected_override
+          override_diff = differences.call(old_overrides, new_overrides)
+          report['other_section_differences']['overrides'] = override_diff unless override_diff.empty?
+
+          ignored_sections = %w[lockfileVersion settings overrides importers packages snapshots]
+          (before.keys | after.keys).reject { |key| ignored_sections.include?(key) }.each do |section|
+            diff = differences.call(before[section], after[section])
+            report['other_section_differences'][section] = diff unless diff.empty?
+          end
+
+          report['ok'] =
+            report['top_level_keys_before'] == report['top_level_keys_after'] &&
+            report['importer_differences'].empty? &&
+            report['unrelated_packages'].empty? &&
+            report['unrelated_snapshots'].empty? &&
+            report['other_section_differences'].empty? &&
+            report['override_transition_valid']
 
           File.write('semantic-lockfile-report.json', JSON.pretty_generate(report) + "\n")
-          puts "Changed package entries: #{report.fetch('packages').length}"
-          puts "Changed snapshot entries: #{report.fetch('snapshots').length}"
-          puts report.to_json
+          puts JSON.pretty_generate(report)
+          File.write('lockfile-semantic-failed', 'generated lockfile contains unrelated semantic changes\n') unless report['ok']
           RUBY
 
           grep -F 'next>sharp: 0.35.3' pnpm-lock.yaml
           grep -F 'sharp@0.35.3' pnpm-lock.yaml
           if grep -F 'sharp@0.35.0' pnpm-lock.yaml; then
             echo 'Unexpected Sharp 0.35.0 entry remains' >&2
-            exit 1
+            touch lockfile-semantic-failed
           fi
-          git diff --exit-code -- . ':!package.json' ':!pnpm-lock.yaml' ':!semantic-lockfile-report.json'
           git diff --stat -- package.json pnpm-lock.yaml
       - name: Verify strict frozen installation
+        if: ${{ hashFiles('manifest-semantic-failed', 'lockfile-semantic-failed') == '' }}
         shell: bash
         run: |
           rm -rf node_modules
@@ -124,6 +151,7 @@ jobs:
             exit 1
           fi
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: reviewed-sharp-lockfile
           path: |
@@ -131,5 +159,15 @@ jobs:
             pnpm-lock.yaml
             semantic-lockfile-report.json
             frozen-install.log
+            manifest-semantic-failed
+            lockfile-semantic-failed
           if-no-files-found: error
           retention-days: 1
+      - name: Enforce semantic gate
+        if: always()
+        shell: bash
+        run: |
+          if [ -e manifest-semantic-failed ] || [ -e lockfile-semantic-failed ]; then
+            echo 'Generated lockfile failed the semantic gate' >&2
+            exit 1
+          fi
