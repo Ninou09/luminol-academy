@@ -32,7 +32,7 @@
   "pnpm": {
     "overrides": {
       "next>postcss": "8.5.23",
-      "next>sharp": "0.35.0"
+      "next>sharp": "0.35.3"
     },
     "onlyBuiltDependencies": [
       "@clerk/shared",
