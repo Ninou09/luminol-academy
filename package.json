@@ -1,7 +1,7 @@
 {
   "name": "luminol-academy",
   "private": true,
-  "packageManager": "pnpm@10.34.0",
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
     "dev": "turbo dev",
     "build": "pnpm db:generate && turbo build",
