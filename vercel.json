@@ -1,5 +1,6 @@
 {
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm build"
+  "buildCommand": "pnpm build",
+  "ignoreCommand": "node \"$(git rev-parse --show-toplevel)/scripts/vercel-ignore-build.mjs\""
 }
