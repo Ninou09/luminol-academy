@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './motion.css';
+import './site-shell.css';
 
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
