@@ -13,24 +13,24 @@
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",
     "@luminol/auth": "workspace:*",
-    "@luminol/database": "workspace:*",
-    "@luminol/ui": "workspace:*",
+    "@luminol/certificates": "workspace:*",
     "@luminol/config": "workspace:*",
+    "@luminol/database": "workspace:*",
+    "@luminol/finance": "workspace:*",
+    "@luminol/ui": "workspace:*",
     "@luminol/validation": "workspace:*",
     "next": "^15.5.21",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.84.0",
-    "zod": "^4.0.10",
-    "@luminol/finance": "workspace:*",
-    "@luminol/certificates": "workspace:*"
+    "zod": "^4.0.10"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^20.19.9",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
-    "@tailwindcss/postcss": "^4.1.11",
-    "eslint": "^9.32.0",
+    "eslint": "^10.8.0",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
