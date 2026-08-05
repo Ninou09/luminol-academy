@@ -7,6 +7,9 @@ const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 function revealImmediately(elements: HTMLElement[]) {
   for (const element of elements) {
     element.dataset.revealed = 'true';
+    element.querySelectorAll<HTMLElement>('[data-progress]').forEach((progress) => {
+      progress.dataset.progressReady = 'true';
+    });
   }
 }
 
@@ -92,7 +95,6 @@ export function HomeMotion() {
             { rootMargin: '0px 0px -12% 0px', threshold: 0.12 },
           );
 
-    observer?.takeRecords();
     revealElements.forEach((element) => observer?.observe(element));
 
     const standaloneCounters = counters.filter(
@@ -105,22 +107,24 @@ export function HomeMotion() {
       if (!heroVisual || reducedMotion || window.innerWidth < 900) return;
 
       const bounds = heroVisual.getBoundingClientRect();
-      const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-      const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-      heroVisual.style.setProperty('--pointer-x', x.toFixed(3));
-      heroVisual.style.setProperty('--pointer-y', y.toFixed(3));
+      const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 14;
+      const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 10;
+      heroVisual.style.setProperty('--pointer-x', `${x.toFixed(2)}px`);
+      heroVisual.style.setProperty('--pointer-y', `${y.toFixed(2)}px`);
+    };
+    const resetPointer = () => {
+      heroVisual?.style.setProperty('--pointer-x', '0px');
+      heroVisual?.style.setProperty('--pointer-y', '0px');
     };
 
     heroVisual?.addEventListener('pointermove', updatePointer, { passive: true });
-    heroVisual?.addEventListener('pointerleave', () => {
-      heroVisual.style.setProperty('--pointer-x', '0');
-      heroVisual.style.setProperty('--pointer-y', '0');
-    });
+    heroVisual?.addEventListener('pointerleave', resetPointer);
 
     return () => {
       observer?.disconnect();
       window.removeEventListener('scroll', updateScrolledState);
       heroVisual?.removeEventListener('pointermove', updatePointer);
+      heroVisual?.removeEventListener('pointerleave', resetPointer);
       root.classList.remove('motion-enabled');
       delete root.dataset.scrolled;
     };
