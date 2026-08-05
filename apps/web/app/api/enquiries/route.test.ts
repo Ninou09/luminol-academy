@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { createEnquiry } = vi.hoisted(() => ({
   createEnquiry: vi.fn(),
@@ -34,8 +34,13 @@ function createRequest(body: unknown, address = '203.0.113.10') {
 
 describe('POST /api/enquiries', () => {
   beforeEach(() => {
+    vi.stubEnv('VERCEL', '1');
     createEnquiry.mockReset();
     createEnquiry.mockResolvedValue({ id: 'enquiry_1' });
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it('stores a valid enquiry without retaining request metadata', async () => {
@@ -84,7 +89,7 @@ describe('POST /api/enquiries', () => {
     });
   });
 
-  it('limits repeated submissions from one address', async () => {
+  it('limits repeated submissions from one trusted edge address', async () => {
     const address = '203.0.113.14';
     const responses = [];
     for (let index = 0; index < 6; index += 1) {
