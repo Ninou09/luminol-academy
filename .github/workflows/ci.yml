@@ -86,6 +86,11 @@ jobs:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuZXhhbXBsZS5jb20k
           CLERK_SECRET_KEY: sk_test_placeholder
+      - name: Restore Playwright browser cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps --only-shell chromium
       - name: Run public launch smoke tests
