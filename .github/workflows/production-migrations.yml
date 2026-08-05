@@ -39,7 +39,7 @@ jobs:
           fi
 
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6.0.10
         with:
           version: 10.34.5
       - uses: actions/setup-node@v5
