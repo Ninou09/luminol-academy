@@ -29,7 +29,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Upgrade the coordinated Studio dependency set
-        run: pnpm --filter @luminol/studio update sanity@6.8.0 @sanity/vision@6.8.0 --save-exact
+        run: >-
+          pnpm --filter @luminol/studio add --save-dev --save-exact
+          sanity@6.8.0 @sanity/vision@6.8.0
+          @sanity/sdk@2.18.0 vite@8.1.5
       - name: Record the Studio runtime requirement
         run: |
           node <<'NODE'
@@ -54,18 +57,24 @@ jobs:
           node <<'NODE'
           const fs = require('node:fs');
           const manifest = JSON.parse(fs.readFileSync('apps/studio/package.json', 'utf8'));
-          if (manifest.devDependencies?.sanity !== '6.8.0') {
-            throw new Error('Sanity Studio did not resolve exactly to 6.8.0');
-          }
-          if (manifest.devDependencies?.['@sanity/vision'] !== '6.8.0') {
-            throw new Error('@sanity/vision did not resolve exactly to 6.8.0');
+          const expected = {
+            sanity: '6.8.0',
+            '@sanity/vision': '6.8.0',
+            '@sanity/sdk': '2.18.0',
+            vite: '8.1.5',
+          };
+          for (const [name, version] of Object.entries(expected)) {
+            if (manifest.devDependencies?.[name] !== version) {
+              throw new Error(`${name} did not resolve exactly to ${version}`);
+            }
           }
           if (manifest.engines?.node !== '>=22.12.0') {
             throw new Error('Studio Node.js requirement is missing');
           }
           NODE
 
-          pnpm --filter @luminol/studio list sanity @sanity/vision --depth 0
+          pnpm --filter @luminol/studio install --frozen-lockfile --strict-peer-dependencies
+          pnpm --filter @luminol/studio list sanity @sanity/vision @sanity/sdk vite --depth 0
           pnpm --filter @luminol/studio typecheck
           pnpm --filter @luminol/studio build
       - name: Commit the coordinated migration
