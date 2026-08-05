@@ -22,22 +22,32 @@ jobs:
         run: |
           cp package.json "$RUNNER_TEMP/package.before.json"
           cp pnpm-lock.yaml "$RUNNER_TEMP/pnpm-lock.before.yaml"
-      - name: Update reviewed package pins
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.1
+      - name: Update only the reviewed Sharp override
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          packageJson.pnpm.overrides['next>sharp'] = '0.35.3';
+          fs.writeFileSync('package.json', `${JSON.stringify(packageJson, null, 2)}\n`);
+          NODE
+      - name: Regenerate only the affected lockfile graph
+        shell: bash
+        run: |
+          pnpm config set registry https://registry.npmjs.org/
+          pnpm install --lockfile-only --no-frozen-lockfile
+      - name: Apply the reviewed pnpm pin after lockfile generation
         shell: bash
         run: |
           node <<'NODE'
           const fs = require('node:fs');
           const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
           packageJson.packageManager = 'pnpm@10.34.0';
-          packageJson.pnpm.overrides['next>sharp'] = '0.35.3';
           fs.writeFileSync('package.json', `${JSON.stringify(packageJson, null, 2)}\n`);
           NODE
-      - uses: pnpm/action-setup@v4
-      - name: Regenerate lockfile from the public registry
-        shell: bash
-        run: |
-          pnpm config set registry https://registry.npmjs.org/
-          pnpm install --lockfile-only --update-checksums
       - name: Report manifest and lockfile semantics
         shell: bash
         run: |
@@ -140,12 +150,13 @@ jobs:
             touch lockfile-semantic-failed
           fi
           git diff --stat -- package.json pnpm-lock.yaml
-      - name: Verify strict frozen installation
+      - name: Verify strict pnpm 10.34 frozen installation
         if: ${{ hashFiles('manifest-semantic-failed', 'lockfile-semantic-failed') == '' }}
         shell: bash
         run: |
           rm -rf node_modules
-          pnpm install --frozen-lockfile 2>&1 | tee frozen-install.log
+          npx --yes pnpm@10.34.0 install --frozen-lockfile 2>&1 | tee frozen-install.log
+          grep -F 'Done in' frozen-install.log
           if grep -F 'ERR_PNPM_TARBALL_INTEGRITY' frozen-install.log; then
             echo 'Sharp integrity retry remains' >&2
             exit 1
