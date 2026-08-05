@@ -1,7 +1,7 @@
 {
   "name": "luminol-academy",
   "private": true,
-  "packageManager": "pnpm@10.28.1",
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
     "dev": "turbo dev",
     "build": "pnpm db:generate && turbo build",
@@ -27,12 +27,12 @@
   },
   "engines": {
     "node": ">=20.0.0",
-    "pnpm": ">=10.0.0"
+    "pnpm": ">=10.34.5 <11"
   },
   "pnpm": {
     "overrides": {
       "next>postcss": "8.5.23",
-      "next>sharp": "0.35.0"
+      "next>sharp": "0.35.3"
     },
     "onlyBuiltDependencies": [
       "@clerk/shared",
