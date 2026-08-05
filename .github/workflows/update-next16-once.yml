@@ -29,10 +29,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Regenerate Next.js 16 dependencies from current main
-        run: pnpm --recursive update "next@^16.2.12" "@next/eslint-plugin-next@16.2.12"
+        run: pnpm --recursive update next@16.2.12 @next/eslint-plugin-next@16.2.12 --save-exact
       - name: Verify controlled dependency diff
         shell: bash
         run: |
+          set -euo pipefail
           cat > "$RUNNER_TEMP/expected-files.txt" <<'EOF'
           apps/admin/package.json
           apps/portal/package.json
@@ -48,17 +49,46 @@ jobs:
           echo 'Actual dependency files:'
           cat "$RUNNER_TEMP/actual-files.txt"
           diff -u "$RUNNER_TEMP/expected-files-sorted.txt" "$RUNNER_TEMP/actual-files.txt"
-          grep -F '"next": "^16.2.12"' apps/admin/package.json
-          grep -F '"next": "^16.2.12"' apps/portal/package.json
-          grep -F '"next": "^16.2.12"' apps/web/package.json
-          grep -F '"@next/eslint-plugin-next": "16.2.12"' packages/config/package.json
+
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          for (const path of [
+            'apps/admin/package.json',
+            'apps/portal/package.json',
+            'apps/web/package.json',
+          ]) {
+            const manifest = JSON.parse(fs.readFileSync(path, 'utf8'));
+            if (manifest.dependencies?.next !== '16.2.12') {
+              throw new Error(`${path} did not resolve Next.js exactly to 16.2.12`);
+            }
+          }
+
+          const configManifest = JSON.parse(
+            fs.readFileSync('packages/config/package.json', 'utf8'),
+          );
+          if (
+            configManifest.devDependencies?.['@next/eslint-plugin-next'] !==
+            '16.2.12'
+          ) {
+            throw new Error(
+              'packages/config/package.json did not resolve @next/eslint-plugin-next exactly to 16.2.12',
+            );
+          }
+          NODE
       - name: Commit regenerated framework graph
         shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          while IFS= read -r file; do
-            git add -- "$file"
-          done < "$RUNNER_TEMP/expected-files.txt"
+          rm .github/workflows/update-next16-once.yml
+          git add \
+            apps/admin/package.json \
+            apps/portal/package.json \
+            apps/web/package.json \
+            packages/config/package.json \
+            pnpm-lock.yaml \
+            .github/workflows/update-next16-once.yml
           git commit -m "Upgrade Next.js applications to 16.2.12"
           git push origin HEAD:deps/upgrade-next-16
