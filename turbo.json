@@ -16,6 +16,66 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
+    "@luminol/analytics#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/auth#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/certificates#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/config#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/database#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/emails#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/finance#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/language#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/notifications#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/professional#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/types#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/ui#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/utils#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/validation#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/worker#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "lint": { "dependsOn": ["^lint"] },
     "typecheck": { "dependsOn": ["^typecheck"] },
     "test": { "dependsOn": ["^build"], "outputs": ["coverage/**"] },
