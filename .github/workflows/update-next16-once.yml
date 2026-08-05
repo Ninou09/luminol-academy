@@ -43,6 +43,10 @@ jobs:
 
           git diff --name-only | sort > "$RUNNER_TEMP/actual-files.txt"
           sort "$RUNNER_TEMP/expected-files.txt" > "$RUNNER_TEMP/expected-files-sorted.txt"
+          echo 'Expected dependency files:'
+          cat "$RUNNER_TEMP/expected-files-sorted.txt"
+          echo 'Actual dependency files:'
+          cat "$RUNNER_TEMP/actual-files.txt"
           diff -u "$RUNNER_TEMP/expected-files-sorted.txt" "$RUNNER_TEMP/actual-files.txt"
           grep -F '"next": "^16.2.12"' apps/admin/package.json
           grep -F '"next": "^16.2.12"' apps/portal/package.json
