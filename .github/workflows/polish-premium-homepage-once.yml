@@ -1,0 +1,95 @@
+name: Polish premium homepage once
+
+on:
+  push:
+    branches:
+      - design/premium-motion-homepage
+
+permissions:
+  contents: write
+
+concurrency:
+  group: polish-premium-homepage-once
+  cancel-in-progress: true
+
+jobs:
+  polish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: design/premium-motion-homepage
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Correct decorative orbit positioning
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = 'apps/web/app/home.module.css';
+          let source = fs.readFileSync(path, 'utf8');
+
+          const replacements = [
+            [
+              `.schoolVisual::before {\n  content: '';\n  position: absolute;\n  width: 18rem;`,
+              `.schoolVisual::before {\n  content: '';\n  position: absolute;\n  width: 18rem;\n  inset: 50%;\n  transform: translate(-50%, -50%);`,
+            ],
+            [
+              `.schoolVisual::after {\n  content: '';\n  position: absolute;\n  width: 11rem;`,
+              `.schoolVisual::after {\n  content: '';\n  position: absolute;\n  width: 11rem;\n  inset: 50%;\n  transform: translate(-50%, -50%);`,
+            ],
+            [
+              `.platformOrbit::before,\n.platformOrbit::after {\n  content: '';\n  position: absolute;\n  aspect-ratio: 1;`,
+              `.platformOrbit::before,\n.platformOrbit::after {\n  content: '';\n  position: absolute;\n  inset: 50%;\n  aspect-ratio: 1;\n  transform: translate(-50%, -50%);`,
+            ],
+          ];
+
+          for (const [before, after] of replacements) {
+            if (!source.includes(before)) {
+              throw new Error(`Expected CSS fragment was not found: ${before}`);
+            }
+            source = source.replace(before, after);
+          }
+
+          fs.writeFileSync(path, source);
+          NODE
+      - name: Format changed files
+        run: >-
+          pnpm exec prettier --write
+          apps/web/app/home.module.css
+          apps/web/app/layout.tsx
+          apps/web/app/motion.css
+          apps/web/app/page.tsx
+          apps/web/app/site-shell.css
+          apps/web/components/home-motion.tsx
+          apps/web/components/site-shell.tsx
+          scripts/homepage-motion.test.mjs
+      - name: Validate public web changes
+        run: |
+          pnpm --filter @luminol/web lint
+          pnpm --filter @luminol/web typecheck
+          pnpm test
+      - name: Commit polished implementation
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/polish-premium-homepage-once.yml
+          git add \
+            apps/web/app/home.module.css \
+            apps/web/app/layout.tsx \
+            apps/web/app/motion.css \
+            apps/web/app/page.tsx \
+            apps/web/app/site-shell.css \
+            apps/web/components/home-motion.tsx \
+            apps/web/components/site-shell.tsx \
+            scripts/homepage-motion.test.mjs \
+            .github/workflows/polish-premium-homepage-once.yml
+          git commit -m "Polish premium motion homepage"
+          git push origin HEAD:design/premium-motion-homepage
