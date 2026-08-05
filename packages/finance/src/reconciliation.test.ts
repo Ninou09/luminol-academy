@@ -83,7 +83,9 @@ describe('payment reconciliation', () => {
       recordedAt: new Date(),
     });
 
-    expect(() => reconcileSettlement(settlement, [entry])).toThrow(/currencies must match/);
+    expect(() => reconcileSettlement(settlement, [entry])).toThrow(
+      /currencies must match/,
+    );
   });
 
   it('detects duplicate provider references', () => {
@@ -100,6 +102,8 @@ describe('payment reconciliation', () => {
       settlementRecordSchema.parse({ id: 'settlement_5', ...base }),
     ];
 
-    expect(findDuplicateProviderReferences(settlements)).toEqual(['stripe:po_duplicate']);
+    expect(findDuplicateProviderReferences(settlements)).toEqual([
+      'stripe:po_duplicate',
+    ]);
   });
 });

@@ -125,8 +125,7 @@ export function isNonDeployablePath(path) {
 
 export function isGlobalBuildPath(path) {
   return (
-    GLOBAL_BUILD_FILES.has(path) ||
-    path === 'scripts/vercel-ignore-build.mjs'
+    GLOBAL_BUILD_FILES.has(path) || path === 'scripts/vercel-ignore-build.mjs'
   );
 }
 
@@ -222,10 +221,7 @@ export function getChangedFiles(env, cwd = process.cwd()) {
     return null;
   }
 
-  return result.stdout
-    .split('\n')
-    .map(normalizePath)
-    .filter(Boolean);
+  return result.stdout.split('\n').map(normalizePath).filter(Boolean);
 }
 
 export function run(env = process.env, cwd = process.cwd()) {

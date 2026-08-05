@@ -222,8 +222,8 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <p className="eyebrow eyebrow-light">Your next step</p>
           <h2>Let&apos;s find the right path forward.</h2>
           <p>
-            Begin with your goal. Luminol will help you identify the program
-            and learning experience that fits.
+            Begin with your goal. Luminol will help you identify the program and
+            learning experience that fits.
           </p>
         </div>
         <ButtonLink href="/contact" size="lg">

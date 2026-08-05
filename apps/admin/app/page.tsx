@@ -34,7 +34,11 @@ export default async function Page() {
   return (
     <main className="admin-shell">
       <aside className="admin-sidebar">
-        <Link className="admin-brand" href="/" aria-label="Luminol administration">
+        <Link
+          className="admin-brand"
+          href="/"
+          aria-label="Luminol administration"
+        >
           <Wordmark />
         </Link>
         <p className="admin-label">Administration</p>

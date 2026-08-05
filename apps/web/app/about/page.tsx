@@ -62,8 +62,8 @@ export default function AboutPage() {
           <h1>Human potential deserves a brighter kind of education.</h1>
           <p>
             Luminol is a founder-led ecosystem for mental wellbeing, language
-            learning and professional development—built around the whole
-            person, not only one skill.
+            learning and professional development—built around the whole person,
+            not only one skill.
           </p>
         </div>
         <div className="about-page-visual" aria-hidden="true">
@@ -167,8 +167,7 @@ export default function AboutPage() {
           <p className="eyebrow eyebrow-light">Find your place at Luminol</p>
           <h2>Which kind of growth matters most today?</h2>
           <p>
-            Explore the three schools or tell the team what you want to
-            achieve.
+            Explore the three schools or tell the team what you want to achieve.
           </p>
         </div>
         <ButtonLink href="/contact" size="lg">

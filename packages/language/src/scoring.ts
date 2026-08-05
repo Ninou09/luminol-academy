@@ -1,31 +1,29 @@
-import {
-  CEFR_THRESHOLDS,
-  LANGUAGE_SKILLS,
-  SKILL_WEIGHTS,
-} from "./constants";
+import { CEFR_THRESHOLDS, LANGUAGE_SKILLS, SKILL_WEIGHTS } from './constants';
 import type {
   CefrLevel,
   LanguageSkill,
   PlacementResult,
   SkillScore,
   SkillScoreInput,
-} from "./types";
+} from './types';
 
 const clamp = (value: number, minimum: number, maximum: number) =>
   Math.min(Math.max(value, minimum), maximum);
 
 export function determineCefrLevel(score: number): CefrLevel {
   const normalized = clamp(score, 0, 100);
-  return CEFR_THRESHOLDS.find(({ minimum }) => normalized >= minimum)?.level ?? "A1";
+  return (
+    CEFR_THRESHOLDS.find(({ minimum }) => normalized >= minimum)?.level ?? 'A1'
+  );
 }
 
 export function normalizeSkillScore(input: SkillScoreInput): SkillScore {
   if (input.maxScore <= 0) {
-    throw new Error("maxScore must be greater than zero");
+    throw new Error('maxScore must be greater than zero');
   }
 
   if (input.rawScore < 0 || input.rawScore > input.maxScore) {
-    throw new Error("rawScore must be between zero and maxScore");
+    throw new Error('rawScore must be between zero and maxScore');
   }
 
   if (
@@ -33,7 +31,7 @@ export function normalizeSkillScore(input: SkillScoreInput): SkillScore {
     input.answeredItems < 0 ||
     input.answeredItems > input.totalItems
   ) {
-    throw new Error("answeredItems must be between zero and totalItems");
+    throw new Error('answeredItems must be between zero and totalItems');
   }
 
   const percentage = (input.rawScore / input.maxScore) * 100;
@@ -69,19 +67,25 @@ export function calculatePlacementResult(
   inputs: readonly SkillScoreInput[],
 ): PlacementResult {
   const inputSkills = new Set(inputs.map(({ skill }) => skill));
-  const missingSkills = LANGUAGE_SKILLS.filter((skill) => !inputSkills.has(skill));
+  const missingSkills = LANGUAGE_SKILLS.filter(
+    (skill) => !inputSkills.has(skill),
+  );
 
   if (inputs.length !== LANGUAGE_SKILLS.length || missingSkills.length > 0) {
-    throw new Error(`Scores are required for every language skill: ${missingSkills.join(", ")}`);
+    throw new Error(
+      `Scores are required for every language skill: ${missingSkills.join(', ')}`,
+    );
   }
 
   if (inputSkills.size !== inputs.length) {
-    throw new Error("Each language skill may appear only once");
+    throw new Error('Each language skill may appear only once');
   }
 
   const skills = inputs.map(normalizeSkillScore);
   const score = Number(
-    skills.reduce((sum, skill) => sum + skill.weightedContribution, 0).toFixed(2),
+    skills
+      .reduce((sum, skill) => sum + skill.weightedContribution, 0)
+      .toFixed(2),
   );
 
   const strengths = skills

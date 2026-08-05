@@ -24,7 +24,11 @@ a {
 main {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 88% 0%, rgb(198 169 113 / 0.2), transparent 28rem),
+    radial-gradient(
+      circle at 88% 0%,
+      rgb(198 169 113 / 0.2),
+      transparent 28rem
+    ),
     var(--color-brand-canvas);
 }
 

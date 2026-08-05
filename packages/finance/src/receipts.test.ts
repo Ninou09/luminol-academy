@@ -46,9 +46,9 @@ describe('finance receipts', () => {
   });
 
   it('formats deterministic yearly receipt numbers', () => {
-    expect(formatReceiptNumber('rec', 42, new Date('2026-07-27T12:00:00.000Z'))).toBe(
-      'REC-2026-000042',
-    );
+    expect(
+      formatReceiptNumber('rec', 42, new Date('2026-07-27T12:00:00.000Z')),
+    ).toBe('REC-2026-000042');
   });
 
   it('rejects unsafe prefixes and invalid sequences', () => {

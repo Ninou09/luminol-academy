@@ -60,7 +60,9 @@ export function calculateInvoiceTotals(input: Invoice): InvoiceTotals {
   );
   const discountMinor = Math.min(invoice.discountMinor, subtotalMinor);
   const taxableMinor = subtotalMinor - discountMinor;
-  const taxMinor = Math.round((taxableMinor * invoice.taxRateBasisPoints) / 10_000);
+  const taxMinor = Math.round(
+    (taxableMinor * invoice.taxRateBasisPoints) / 10_000,
+  );
 
   return {
     currency: invoice.currency,
@@ -80,7 +82,10 @@ const allowedTransitions: Record<InvoiceStatus, readonly InvoiceStatus[]> = {
   refunded: [],
 };
 
-export function canTransitionInvoiceStatus(from: InvoiceStatus, to: InvoiceStatus): boolean {
+export function canTransitionInvoiceStatus(
+  from: InvoiceStatus,
+  to: InvoiceStatus,
+): boolean {
   return allowedTransitions[from].includes(to);
 }
 

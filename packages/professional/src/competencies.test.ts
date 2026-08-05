@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { calculateCompetencyProfile, determineCompetencyLevel } from './competencies';
+import {
+  calculateCompetencyProfile,
+  determineCompetencyLevel,
+} from './competencies';
 
 describe('determineCompetencyLevel', () => {
   it.each([
@@ -33,8 +36,16 @@ describe('calculateCompetencyProfile', () => {
 
     expect(profile.averageScore).toBe(70);
     expect(profile.overallLevel).toBe('ADVANCED');
-    expect(profile.strengths).toEqual(['presenting', 'team-leadership', 'planning']);
-    expect(profile.developmentPriorities).toEqual(['spreadsheets', 'planning', 'team-leadership']);
+    expect(profile.strengths).toEqual([
+      'presenting',
+      'team-leadership',
+      'planning',
+    ]);
+    expect(profile.developmentPriorities).toEqual([
+      'spreadsheets',
+      'planning',
+      'team-leadership',
+    ]);
   });
 
   it('requires at least one competency rating', () => {

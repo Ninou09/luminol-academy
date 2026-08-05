@@ -50,8 +50,7 @@ export const schools = {
       },
     ],
     audiences: ['Individuals', 'Parents and families', 'Young people', 'Teams'],
-    note:
-      'Luminol Psychology programs are educational and supportive. They do not replace emergency, psychiatric or medical care. Appropriate professional referral should always be used when a person needs a different level of support.',
+    note: 'Luminol Psychology programs are educational and supportive. They do not replace emergency, psychiatric or medical care. Appropriate professional referral should always be used when a person needs a different level of support.',
   },
   languages: {
     slug: 'languages',
@@ -103,9 +102,13 @@ export const schools = {
           'Build the confidence and flexibility to communicate beyond the classroom.',
       },
     ],
-    audiences: ['Young learners', 'University students', 'Professionals', 'Organizations'],
-    note:
-      'Program levels, schedules and language options are confirmed during enrolment so every learner enters the most appropriate pathway.',
+    audiences: [
+      'Young learners',
+      'University students',
+      'Professionals',
+      'Organizations',
+    ],
+    note: 'Program levels, schedules and language options are confirmed during enrolment so every learner enters the most appropriate pathway.',
   },
   training: {
     slug: 'training',
@@ -157,9 +160,13 @@ export const schools = {
           'Leave with useful tools, clearer decisions and an actionable way forward.',
       },
     ],
-    audiences: ['Early-career professionals', 'Managers', 'Teams', 'Organizations'],
-    note:
-      'Corporate programs can be adapted to the audience, format and business objective after a focused needs conversation.',
+    audiences: [
+      'Early-career professionals',
+      'Managers',
+      'Teams',
+      'Organizations',
+    ],
+    note: 'Corporate programs can be adapted to the audience, format and business objective after a focused needs conversation.',
   },
 } as const;
 

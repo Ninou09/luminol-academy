@@ -40,7 +40,10 @@ describe('subscription lifecycle', () => {
 
   it('schedules cancellation without prematurely changing status', () => {
     const cancelledAt = new Date('2026-07-27T12:00:00.000Z');
-    const scheduled = scheduleSubscriptionCancellation(activeSubscription, cancelledAt);
+    const scheduled = scheduleSubscriptionCancellation(
+      activeSubscription,
+      cancelledAt,
+    );
 
     expect(scheduled).toMatchObject({
       status: 'active',

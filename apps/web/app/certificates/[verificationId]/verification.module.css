@@ -53,8 +53,7 @@
 .certificate::before {
   position: absolute;
   inset: 0.75rem;
-  border: 1px solid
-    color-mix(in srgb, var(--color-brand-gold) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand-gold) 45%, transparent);
   content: '';
   pointer-events: none;
 }

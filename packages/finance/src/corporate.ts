@@ -8,7 +8,9 @@ export const corporateBillingContactSchema = z.object({
   purchaseOrderReference: z.string().min(1).optional(),
 });
 
-export type CorporateBillingContact = z.infer<typeof corporateBillingContactSchema>;
+export type CorporateBillingContact = z.infer<
+  typeof corporateBillingContactSchema
+>;
 
 export const corporateInvoiceRequestSchema = z.object({
   organizationId: z.string().min(1),
@@ -22,7 +24,9 @@ export const corporateInvoiceRequestSchema = z.object({
   paymentTermsDays: z.number().int().min(0).max(365).default(30),
 });
 
-export type CorporateInvoiceRequest = z.infer<typeof corporateInvoiceRequestSchema>;
+export type CorporateInvoiceRequest = z.infer<
+  typeof corporateInvoiceRequestSchema
+>;
 
 export interface CorporateInvoiceSummary {
   currency: string;
@@ -42,7 +46,9 @@ export function calculateCorporateInvoice(
   const subtotalMinor = request.seatCount * request.pricePerSeatMinor;
   const creditMinor = Math.min(request.creditMinor, subtotalMinor);
   const taxableMinor = subtotalMinor - creditMinor;
-  const taxMinor = Math.round((taxableMinor * request.taxRateBasisPoints) / 10_000);
+  const taxMinor = Math.round(
+    (taxableMinor * request.taxRateBasisPoints) / 10_000,
+  );
 
   return {
     currency: request.currency,
@@ -62,10 +68,20 @@ export interface CorporateAccountBalance {
   creditedMinor: number;
 }
 
-export function calculateCorporateBalance(balance: CorporateAccountBalance): number {
-  const invoicedMinor = z.number().int().nonnegative().parse(balance.invoicedMinor);
+export function calculateCorporateBalance(
+  balance: CorporateAccountBalance,
+): number {
+  const invoicedMinor = z
+    .number()
+    .int()
+    .nonnegative()
+    .parse(balance.invoicedMinor);
   const paidMinor = z.number().int().nonnegative().parse(balance.paidMinor);
-  const creditedMinor = z.number().int().nonnegative().parse(balance.creditedMinor);
+  const creditedMinor = z
+    .number()
+    .int()
+    .nonnegative()
+    .parse(balance.creditedMinor);
 
   return Math.max(0, invoicedMinor - paidMinor - creditedMinor);
 }

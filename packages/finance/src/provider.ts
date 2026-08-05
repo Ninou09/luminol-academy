@@ -48,10 +48,14 @@ export interface PaymentProviderAdapter {
   retrievePayment(providerReference: string): Promise<ProviderPaymentResult>;
 }
 
-export function parseProviderPaymentResult(input: unknown): ProviderPaymentResult {
+export function parseProviderPaymentResult(
+  input: unknown,
+): ProviderPaymentResult {
   return providerPaymentResultSchema.parse(input);
 }
 
-export function parseProviderRefundResult(input: unknown): ProviderRefundResult {
+export function parseProviderRefundResult(
+  input: unknown,
+): ProviderRefundResult {
   return providerRefundResultSchema.parse(input);
 }

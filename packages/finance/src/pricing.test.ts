@@ -1,10 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { applyCoupon, buildInstallmentSchedule, couponSchema, isCouponRedeemable } from './pricing';
+import {
+  applyCoupon,
+  buildInstallmentSchedule,
+  couponSchema,
+  isCouponRedeemable,
+} from './pricing';
 
 describe('finance pricing', () => {
   it('applies percentage coupons', () => {
-    const coupon = couponSchema.parse({ id: 'coupon_1', code: 'save20', percentOff: 20 });
+    const coupon = couponSchema.parse({
+      id: 'coupon_1',
+      code: 'save20',
+      percentOff: 20,
+    });
     expect(applyCoupon(10_000, 'usd', coupon)).toBe(8_000);
   });
 
@@ -40,6 +49,11 @@ describe('finance pricing', () => {
       { sequence: 2, amountMinor: 3_333 },
       { sequence: 3, amountMinor: 3_333 },
     ]);
-    expect(schedule.reduce((total, installment) => total + installment.amountMinor, 0)).toBe(10_000);
+    expect(
+      schedule.reduce(
+        (total, installment) => total + installment.amountMinor,
+        0,
+      ),
+    ).toBe(10_000);
   });
 });

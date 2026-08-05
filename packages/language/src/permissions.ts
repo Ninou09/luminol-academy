@@ -1,16 +1,19 @@
-import type { PlacementActor } from "./types";
+import type { PlacementActor } from './types';
 
 export const LANGUAGE_PERMISSIONS = {
-  manage: "language:manage",
-  reviewPlacement: "language:placement:review",
-  overridePlacement: "language:placement:override",
+  manage: 'language:manage',
+  reviewPlacement: 'language:placement:review',
+  overridePlacement: 'language:placement:override',
 } as const;
 
 export function hasPermission(
   actor: PlacementActor,
   permission: string,
 ): boolean {
-  return actor.permissions.includes(permission) || actor.permissions.includes(LANGUAGE_PERMISSIONS.manage);
+  return (
+    actor.permissions.includes(permission) ||
+    actor.permissions.includes(LANGUAGE_PERMISSIONS.manage)
+  );
 }
 
 export function canReviewPlacement(actor: PlacementActor): boolean {
@@ -30,6 +33,6 @@ export function canViewAttempt(
 
 export function assertCanReviewPlacement(actor: PlacementActor): void {
   if (!canReviewPlacement(actor)) {
-    throw new Error("The current user cannot review placement attempts");
+    throw new Error('The current user cannot review placement attempts');
   }
 }

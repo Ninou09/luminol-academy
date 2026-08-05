@@ -107,11 +107,17 @@ export async function submitPlacementAttempt(input: {
     });
 
     if (!attempt) {
-      throw new PlacementServiceError('Placement attempt not found', 'ATTEMPT_NOT_FOUND');
+      throw new PlacementServiceError(
+        'Placement attempt not found',
+        'ATTEMPT_NOT_FOUND',
+      );
     }
 
     if (attempt.userId !== input.userId) {
-      throw new PlacementServiceError('Placement attempt is not owned by this learner', 'ATTEMPT_NOT_OWNED');
+      throw new PlacementServiceError(
+        'Placement attempt is not owned by this learner',
+        'ATTEMPT_NOT_OWNED',
+      );
     }
 
     if (attempt.status !== PlacementAttemptStatus.IN_PROGRESS) {
@@ -164,7 +170,10 @@ export async function reviewPlacementAttempt(input: {
     });
 
     if (!attempt) {
-      throw new PlacementServiceError('Placement attempt not found', 'ATTEMPT_NOT_FOUND');
+      throw new PlacementServiceError(
+        'Placement attempt not found',
+        'ATTEMPT_NOT_FOUND',
+      );
     }
 
     if (attempt.status !== PlacementAttemptStatus.REVIEW_REQUIRED) {
@@ -205,11 +214,17 @@ export async function getPlacementResult(input: {
   });
 
   if (!attempt) {
-    throw new PlacementServiceError('Placement attempt not found', 'ATTEMPT_NOT_FOUND');
+    throw new PlacementServiceError(
+      'Placement attempt not found',
+      'ATTEMPT_NOT_FOUND',
+    );
   }
 
   if (attempt.userId !== input.userId) {
-    throw new PlacementServiceError('Placement attempt is not owned by this learner', 'ATTEMPT_NOT_OWNED');
+    throw new PlacementServiceError(
+      'Placement attempt is not owned by this learner',
+      'ATTEMPT_NOT_OWNED',
+    );
   }
 
   return attempt;

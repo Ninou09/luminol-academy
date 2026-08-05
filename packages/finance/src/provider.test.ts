@@ -19,7 +19,10 @@ describe('payment provider contracts', () => {
     });
 
     expect(request.currency).toBe('USD');
-    expect(request.metadata).toEqual({ invoiceId: 'inv_1', courseId: 'course_1' });
+    expect(request.metadata).toEqual({
+      invoiceId: 'inv_1',
+      courseId: 'course_1',
+    });
   });
 
   it('rejects short idempotency keys and invalid redirect URLs', () => {
@@ -46,7 +49,10 @@ describe('payment provider contracts', () => {
 
     expect(refund.amountMinor).toBe(5_000);
     expect(
-      parseProviderRefundResult({ providerReference: 'provider_refund_1', status: 'pending' }),
+      parseProviderRefundResult({
+        providerReference: 'provider_refund_1',
+        status: 'pending',
+      }),
     ).toEqual({ providerReference: 'provider_refund_1', status: 'pending' });
   });
 

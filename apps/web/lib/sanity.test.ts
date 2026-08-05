@@ -121,8 +121,7 @@ describe('getProgrammesForSchool', () => {
       {
         _id: 'programme-1',
         title: 'Confident Communication',
-        summary:
-          'A practical pathway for clear and confident communication.',
+        summary: 'A practical pathway for clear and confident communication.',
         slug: { current: 'confident-communication' },
         delivery: 'Hybrid',
         featured: true,

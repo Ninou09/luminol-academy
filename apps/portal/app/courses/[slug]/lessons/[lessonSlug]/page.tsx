@@ -77,7 +77,10 @@ export default async function LessonPage({
               {lesson.summary && <p>{lesson.summary}</p>}
             </header>
 
-            <section className={styles.content} aria-labelledby="lesson-content">
+            <section
+              className={styles.content}
+              aria-labelledby="lesson-content"
+            >
               <h2 id="lesson-content">Learning material</h2>
               {resourceUrl ? (
                 <>
@@ -91,7 +94,8 @@ export default async function LessonPage({
                     target="_blank"
                     rel="noreferrer noopener"
                   >
-                    Open {formatLessonType(lesson.type).toLowerCase()} resource ↗
+                    Open {formatLessonType(lesson.type).toLowerCase()} resource
+                    ↗
                   </a>
                 </>
               ) : (

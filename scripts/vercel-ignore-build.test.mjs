@@ -1,10 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import {
-  mkdirSync,
-  mkdtempSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -144,7 +139,9 @@ describe('Vercel ignored build classifier', () => {
 
   it('builds only administration for certificate changes', () => {
     expect(builds('web', ['packages/certificates/src/index.ts'])).toBe(false);
-    expect(builds('portal', ['packages/certificates/src/index.ts'])).toBe(false);
+    expect(builds('portal', ['packages/certificates/src/index.ts'])).toBe(
+      false,
+    );
     expect(builds('admin', ['packages/certificates/src/index.ts'])).toBe(true);
   });
 
@@ -182,7 +179,10 @@ describe('Vercel ignored build classifier', () => {
     temporaryDirectories.push(cwd);
     mkdirSync(join(cwd, 'apps/web'), { recursive: true });
     mkdirSync(join(cwd, 'docs'), { recursive: true });
-    writeFileSync(join(cwd, 'apps/web/example.ts'), 'export const value = 1;\n');
+    writeFileSync(
+      join(cwd, 'apps/web/example.ts'),
+      'export const value = 1;\n',
+    );
 
     git(cwd, ['init', '--quiet']);
     git(cwd, ['config', 'user.email', 'tests@example.com']);
@@ -218,9 +218,7 @@ describe('Vercel ignored build classifier', () => {
   });
 
   it('accepts only hexadecimal Git SHAs', () => {
-    expect(isValidSha('9525df2d6c8181bf700499974cffdaf7604493ff')).toBe(
-      true,
-    );
+    expect(isValidSha('9525df2d6c8181bf700499974cffdaf7604493ff')).toBe(true);
     expect(isValidSha('HEAD')).toBe(false);
     expect(isValidSha('9525df2; rm -rf /')).toBe(false);
   });

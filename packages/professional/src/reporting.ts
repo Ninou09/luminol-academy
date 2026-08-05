@@ -38,9 +38,14 @@ export function evaluateCompletionEligibility(
   );
 
   const missingRequirements: string[] = [];
-  if (!modulesComplete) missingRequirements.push('Complete all required modules');
-  if (!projectsComplete) missingRequirements.push('Obtain approval for all required projects');
-  if (!assessmentPassed) missingRequirements.push(`Achieve an assessment score of at least ${passingScore}`);
+  if (!modulesComplete)
+    missingRequirements.push('Complete all required modules');
+  if (!projectsComplete)
+    missingRequirements.push('Obtain approval for all required projects');
+  if (!assessmentPassed)
+    missingRequirements.push(
+      `Achieve an assessment score of at least ${passingScore}`,
+    );
 
   return {
     eligible: modulesComplete && projectsComplete && assessmentPassed,
@@ -54,8 +59,12 @@ export function evaluateCompletionEligibility(
   };
 }
 
-export function summarizeCohortCompletion(records: readonly CompletionRecord[]) {
-  const validated = records.map((record) => completionRecordSchema.parse(record));
+export function summarizeCohortCompletion(
+  records: readonly CompletionRecord[],
+) {
+  const validated = records.map((record) =>
+    completionRecordSchema.parse(record),
+  );
   if (validated.length === 0) {
     return {
       learnerCount: 0,
@@ -65,11 +74,15 @@ export function summarizeCohortCompletion(records: readonly CompletionRecord[]) 
     };
   }
 
-  const evaluations = validated.map((record) => evaluateCompletionEligibility(record));
+  const evaluations = validated.map((record) =>
+    evaluateCompletionEligibility(record),
+  );
   const eligibleCount = evaluations.filter(({ eligible }) => eligible).length;
   const averageModuleCompletion = Math.round(
-    evaluations.reduce((total, result) => total + result.completionPercentage, 0) /
-      evaluations.length,
+    evaluations.reduce(
+      (total, result) => total + result.completionPercentage,
+      0,
+    ) / evaluations.length,
   );
 
   return {

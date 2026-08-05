@@ -50,10 +50,16 @@ export function calculateReceiptTotals(input: Receipt): ReceiptTotals {
   };
 }
 
-export function formatReceiptNumber(prefix: string, sequence: number, issuedAt: Date): string {
+export function formatReceiptNumber(
+  prefix: string,
+  sequence: number,
+  issuedAt: Date,
+): string {
   const normalizedPrefix = prefix.trim().toUpperCase();
   if (!/^[A-Z0-9-]{1,20}$/.test(normalizedPrefix)) {
-    throw new Error('Receipt prefix must contain only letters, numbers, or hyphens');
+    throw new Error(
+      'Receipt prefix must contain only letters, numbers, or hyphens',
+    );
   }
   if (!Number.isInteger(sequence) || sequence <= 0) {
     throw new Error('Receipt sequence must be a positive integer');

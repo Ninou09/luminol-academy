@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { calculateInvoiceTotals, canTransitionInvoiceStatus, invoiceSchema } from './index';
+import {
+  calculateInvoiceTotals,
+  canTransitionInvoiceStatus,
+  invoiceSchema,
+} from './index';
 
 describe('finance domain', () => {
   it('calculates subtotal, discount, tax, and total in minor units', () => {
@@ -10,8 +14,18 @@ describe('finance domain', () => {
       currency: 'usd',
       status: 'draft',
       lines: [
-        { id: 'line_1', description: 'Course seat', quantity: 2, unitPriceMinor: 12_500 },
-        { id: 'line_2', description: 'Assessment', quantity: 1, unitPriceMinor: 5_000 },
+        {
+          id: 'line_1',
+          description: 'Course seat',
+          quantity: 2,
+          unitPriceMinor: 12_500,
+        },
+        {
+          id: 'line_2',
+          description: 'Assessment',
+          quantity: 1,
+          unitPriceMinor: 5_000,
+        },
       ],
       discountMinor: 3_000,
       taxRateBasisPoints: 1_000,
@@ -32,7 +46,14 @@ describe('finance domain', () => {
       customerId: 'customer_2',
       currency: 'eur',
       status: 'open',
-      lines: [{ id: 'line_1', description: 'Program', quantity: 1, unitPriceMinor: 10_000 }],
+      lines: [
+        {
+          id: 'line_1',
+          description: 'Program',
+          quantity: 1,
+          unitPriceMinor: 10_000,
+        },
+      ],
       discountMinor: 20_000,
     });
 

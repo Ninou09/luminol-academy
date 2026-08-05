@@ -43,7 +43,9 @@ export const financeAuditEventSchema = z.object({
   actorUserId: z.string().min(1).optional(),
   occurredAt: z.coerce.date(),
   idempotencyKey: z.string().min(1).optional(),
-  metadata: z.record(z.string().min(1).max(100), safeMetadataValueSchema).default({}),
+  metadata: z
+    .record(z.string().min(1).max(100), safeMetadataValueSchema)
+    .default({}),
 });
 
 export type FinanceAuditEvent = z.infer<typeof financeAuditEventSchema>;
@@ -59,7 +61,9 @@ export interface CreateFinanceAuditEventInput {
   metadata?: Record<string, string | number | boolean | null>;
 }
 
-export function createFinanceAuditEvent(input: CreateFinanceAuditEventInput): FinanceAuditEvent {
+export function createFinanceAuditEvent(
+  input: CreateFinanceAuditEventInput,
+): FinanceAuditEvent {
   return financeAuditEventSchema.parse({
     ...input,
     occurredAt: input.occurredAt ?? new Date(),

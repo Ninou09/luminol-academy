@@ -33,12 +33,19 @@ export default async function PlacementResultPage({
   return (
     <main>
       <div className="dashboard-shell">
-        <Link className="course-link" href="/languages">← Back to languages</Link>
-        <section className="dashboard-intro mt-12" aria-labelledby="result-title">
+        <Link className="course-link" href="/languages">
+          ← Back to languages
+        </Link>
+        <section
+          className="dashboard-intro mt-12"
+          aria-labelledby="result-title"
+        >
           <div>
             <p className="eyebrow">Placement result</p>
             <h1 id="result-title">
-              {attempt.recommendedLevel ? `Your level is ${attempt.recommendedLevel}.` : 'Result pending.'}
+              {attempt.recommendedLevel
+                ? `Your level is ${attempt.recommendedLevel}.`
+                : 'Result pending.'}
             </h1>
             <p>
               {attempt.assessment.title} · {attempt.assessment.targetLanguage}
@@ -67,12 +74,16 @@ export default async function PlacementResultPage({
 
         {pending ? (
           <div className="empty-state">
-            <span className="empty-mark" aria-hidden="true">…</span>
+            <span className="empty-mark" aria-hidden="true">
+              …
+            </span>
             <div>
               <h3>This assessment is still in progress.</h3>
               <p>Complete and submit the assessment before viewing a result.</p>
             </div>
-            <Link href={`/languages/placement/${attempt.id}`}>Resume assessment</Link>
+            <Link href={`/languages/placement/${attempt.id}`}>
+              Resume assessment
+            </Link>
           </div>
         ) : (
           <section className="dashboard-section" aria-labelledby="skills-title">
@@ -87,8 +98,8 @@ export default async function PlacementResultPage({
               <div className="mb-6 border border-black/10 bg-white/60 p-5">
                 <strong>Instructor review in progress</strong>
                 <p className="course-note">
-                  Productive skills such as speaking or writing may require a qualified
-                  instructor before your final level is confirmed.
+                  Productive skills such as speaking or writing may require a
+                  qualified instructor before your final level is confirmed.
                 </p>
               </div>
             )}
@@ -100,8 +111,12 @@ export default async function PlacementResultPage({
                   <article className="course-card" key={result.id}>
                     <div className="course-content">
                       <div className="course-meta">
-                        <span className="status status-active">{label(result.skill)}</span>
-                        <span>{result.level ? `CEFR ${result.level}` : 'Diagnostic'}</span>
+                        <span className="status status-active">
+                          {label(result.skill)}
+                        </span>
+                        <span>
+                          {result.level ? `CEFR ${result.level}` : 'Diagnostic'}
+                        </span>
                       </div>
                       <h3>{score}%</h3>
                       <div
@@ -112,7 +127,11 @@ export default async function PlacementResultPage({
                         aria-valuemax={100}
                         aria-valuenow={score}
                       >
-                        <span style={{ width: `${Math.min(100, Math.max(0, score))}%` }} />
+                        <span
+                          style={{
+                            width: `${Math.min(100, Math.max(0, score))}%`,
+                          }}
+                        />
                       </div>
                     </div>
                   </article>
@@ -122,8 +141,12 @@ export default async function PlacementResultPage({
 
             {attempt.status === 'COMPLETED' && (
               <div className="mt-8">
-                <Link className="course-link" href={`/courses/${attempt.assessment.course.slug}`}>
-                  Explore {attempt.assessment.course.title} <span aria-hidden="true">→</span>
+                <Link
+                  className="course-link"
+                  href={`/courses/${attempt.assessment.course.slug}`}
+                >
+                  Explore {attempt.assessment.course.title}{' '}
+                  <span aria-hidden="true">→</span>
                 </Link>
               </div>
             )}

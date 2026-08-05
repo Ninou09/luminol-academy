@@ -67,8 +67,12 @@ describe('corporate training seat allocation', () => {
   });
 
   it('allows valid seat lifecycle transitions', () => {
-    expect(() => assertCorporateSeatTransition('INVITED', 'ACTIVE')).not.toThrow();
-    expect(() => assertCorporateSeatTransition('ACTIVE', 'COMPLETED')).not.toThrow();
+    expect(() =>
+      assertCorporateSeatTransition('INVITED', 'ACTIVE'),
+    ).not.toThrow();
+    expect(() =>
+      assertCorporateSeatTransition('ACTIVE', 'COMPLETED'),
+    ).not.toThrow();
   });
 
   it('rejects reopening terminal seat states', () => {

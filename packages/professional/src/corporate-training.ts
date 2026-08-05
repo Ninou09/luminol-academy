@@ -35,10 +35,19 @@ export function summarizeSeatAllocation(
   const organizationSeats = validatedSeats.filter(
     (seat) => seat.organizationId === validatedOrganization.organizationId,
   );
-  const allocatedSeats = organizationSeats.filter((seat) => seat.status !== 'REVOKED').length;
-  const activeSeats = organizationSeats.filter((seat) => seat.status === 'ACTIVE').length;
-  const completedSeats = organizationSeats.filter((seat) => seat.status === 'COMPLETED').length;
-  const availableSeats = Math.max(0, validatedOrganization.seatLimit - allocatedSeats);
+  const allocatedSeats = organizationSeats.filter(
+    (seat) => seat.status !== 'REVOKED',
+  ).length;
+  const activeSeats = organizationSeats.filter(
+    (seat) => seat.status === 'ACTIVE',
+  ).length;
+  const completedSeats = organizationSeats.filter(
+    (seat) => seat.status === 'COMPLETED',
+  ).length;
+  const availableSeats = Math.max(
+    0,
+    validatedOrganization.seatLimit - allocatedSeats,
+  );
 
   return {
     seatLimit: validatedOrganization.seatLimit,
@@ -46,7 +55,9 @@ export function summarizeSeatAllocation(
     activeSeats,
     completedSeats,
     availableSeats,
-    utilizationPercent: Math.round((allocatedSeats / validatedOrganization.seatLimit) * 100),
+    utilizationPercent: Math.round(
+      (allocatedSeats / validatedOrganization.seatLimit) * 100,
+    ),
     isAtCapacity: allocatedSeats >= validatedOrganization.seatLimit,
   };
 }
@@ -62,7 +73,10 @@ export function assertCorporateSeatTransition(
   current: CorporateSeatStatus,
   next: CorporateSeatStatus,
 ) {
-  const allowedTransitions: Record<CorporateSeatStatus, readonly CorporateSeatStatus[]> = {
+  const allowedTransitions: Record<
+    CorporateSeatStatus,
+    readonly CorporateSeatStatus[]
+  > = {
     INVITED: ['ACTIVE', 'REVOKED'],
     ACTIVE: ['COMPLETED', 'REVOKED'],
     COMPLETED: [],

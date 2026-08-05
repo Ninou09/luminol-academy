@@ -28,7 +28,9 @@ function averageCategoryScore(
   ratings: readonly CompetencyRating[],
   category: ProfessionalCompetencyCategory,
 ): number {
-  const matchingRatings = ratings.filter((rating) => rating.category === category);
+  const matchingRatings = ratings.filter(
+    (rating) => rating.category === category,
+  );
 
   if (matchingRatings.length === 0) return 0;
 
@@ -49,7 +51,9 @@ export function buildTrainingPlan(input: {
   ratings: readonly CompetencyRating[];
 }): TrainingRecommendation[] {
   const goal = careerGoalSchema.parse(input.goal);
-  const ratings = input.ratings.map((rating) => competencyRatingSchema.parse(rating));
+  const ratings = input.ratings.map((rating) =>
+    competencyRatingSchema.parse(rating),
+  );
 
   return goal.targetCategories
     .map((category) => {
