@@ -205,6 +205,7 @@ export function getChangedFiles(env, cwd = process.cwd()) {
     [
       'diff',
       '--name-only',
+      '--no-renames',
       '--diff-filter=ACDMRTUXB',
       previousSha,
       currentSha,

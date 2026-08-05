@@ -1,6 +1,16 @@
-import { describe, expect, it } from 'vitest';
+import { spawnSync } from 'node:child_process';
+import {
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
   decideBuild,
+  getChangedFiles,
   isValidSha,
   normalizePath,
 } from './vercel-ignore-build.mjs';
@@ -10,6 +20,14 @@ const projectIds = {
   portal: 'prj_NOUhe9K3m1QDvCpo3WIqjZaVMSVy',
   admin: 'prj_R9pQi9j8KjaNEYiVyjXE2TS5hvBt',
 };
+
+const temporaryDirectories = [];
+
+afterEach(() => {
+  for (const directory of temporaryDirectories.splice(0)) {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
 
 function builds(project, changedFiles, environment = {}) {
   return decideBuild({
@@ -21,6 +39,16 @@ function builds(project, changedFiles, environment = {}) {
     },
     changedFiles,
   }).build;
+}
+
+function git(cwd, args) {
+  const result = spawnSync('git', args, { cwd, encoding: 'utf8' });
+  if (result.status !== 0 || result.error) {
+    throw new Error(
+      `git ${args.join(' ')} failed: ${result.error?.message ?? result.stderr}`,
+    );
+  }
+  return result.stdout.trim();
 }
 
 describe('Vercel ignored build classifier', () => {
@@ -147,6 +175,39 @@ describe('Vercel ignored build classifier', () => {
   it('builds on classifier changes and unknown paths', () => {
     expect(builds('web', ['scripts/vercel-ignore-build.mjs'])).toBe(true);
     expect(builds('portal', ['infrastructure/unknown.yml'])).toBe(true);
+  });
+
+  it('reports both sides of a rename so moving runtime code cannot look docs-only', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'luminol-vercel-ignore-'));
+    temporaryDirectories.push(cwd);
+    mkdirSync(join(cwd, 'apps/web'), { recursive: true });
+    mkdirSync(join(cwd, 'docs'), { recursive: true });
+    writeFileSync(join(cwd, 'apps/web/example.ts'), 'export const value = 1;\n');
+
+    git(cwd, ['init', '--quiet']);
+    git(cwd, ['config', 'user.email', 'tests@example.com']);
+    git(cwd, ['config', 'user.name', 'Luminol Tests']);
+    git(cwd, ['add', '.']);
+    git(cwd, ['commit', '--quiet', '-m', 'initial']);
+    const previousSha = git(cwd, ['rev-parse', 'HEAD']);
+
+    git(cwd, ['mv', 'apps/web/example.ts', 'docs/example.ts']);
+    git(cwd, ['commit', '--quiet', '-m', 'move runtime file']);
+    const currentSha = git(cwd, ['rev-parse', 'HEAD']);
+
+    const changedFiles = getChangedFiles(
+      {
+        VERCEL_GIT_PREVIOUS_SHA: previousSha,
+        VERCEL_GIT_COMMIT_SHA: currentSha,
+      },
+      cwd,
+    );
+
+    expect(changedFiles?.sort()).toEqual([
+      'apps/web/example.ts',
+      'docs/example.ts',
+    ]);
+    expect(builds('web', changedFiles)).toBe(true);
   });
 
   it('skips an empty comparison and normalizes Git paths', () => {
