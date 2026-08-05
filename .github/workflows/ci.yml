@@ -27,7 +27,7 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6.0.10
         with:
           version: 10.34.5
       - uses: actions/setup-node@v5
@@ -53,7 +53,7 @@ jobs:
           pnpm typecheck 2>&1 | tee typecheck.log
       - name: Upload typecheck diagnostics
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: typecheck-diagnostics
           path: typecheck.log
@@ -67,7 +67,7 @@ jobs:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - name: Upload test diagnostics
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: test-diagnostics
           path: test.log
