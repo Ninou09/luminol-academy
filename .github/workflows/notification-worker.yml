@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/checkout@v5
         if: steps.configuration.outputs.ready == 'true'
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6.0.10
         if: steps.configuration.outputs.ready == 'true'
         with:
           version: 10.34.5
