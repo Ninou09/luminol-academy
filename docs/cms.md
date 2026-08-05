@@ -86,6 +86,16 @@ authenticated session.
 
 The public website revalidates CMS programme data every five minutes.
 
+## Release verification
+
+Before merging a change to the public programme contract or rendering path,
+confirm that the exact pull-request head has a successful public-web preview.
+Do not rely on a preview from an earlier commit on the same branch. After the
+production deployment is Ready, verify the text-only fallback cards before
+publishing an approved image-bearing programme. Record the production asset
+URL, alternative text, crop and hotspot outcome without recording private
+content or credentials.
+
 ## Availability and validation
 
 CMS responses are validated before use. If Sanity is unconfigured, unavailable
