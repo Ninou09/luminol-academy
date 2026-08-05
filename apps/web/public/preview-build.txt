@@ -1,4 +1,0 @@
-Luminol premium motion homepage preview
-Pull request: #94
-Branch: design/premium-motion-homepage
-Purpose: exact-head visual review after Vercel quota reset
