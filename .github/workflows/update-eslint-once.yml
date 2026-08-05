@@ -1,0 +1,74 @@
+name: Update ESLint once
+
+on:
+  push:
+    branches:
+      - deps/upgrade-eslint-10
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-eslint-once
+  cancel-in-progress: true
+
+jobs:
+  update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: deps/upgrade-eslint-10
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Regenerate the ESLint 10 toolchain from current main
+        run: pnpm --recursive update "eslint@^10.8.0" "@eslint/js@^10.0.1"
+      - name: Verify controlled dependency diff
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/expected-files.txt" <<'EOF'
+          apps/admin/package.json
+          apps/portal/package.json
+          apps/studio/package.json
+          apps/web/package.json
+          package.json
+          packages/analytics/package.json
+          packages/auth/package.json
+          packages/certificates/package.json
+          packages/config/package.json
+          packages/database/package.json
+          packages/emails/package.json
+          packages/finance/package.json
+          packages/language/package.json
+          packages/notifications/package.json
+          packages/professional/package.json
+          packages/types/package.json
+          packages/ui/package.json
+          packages/utils/package.json
+          packages/validation/package.json
+          pnpm-lock.yaml
+          EOF
+
+          git diff --name-only | sort > "$RUNNER_TEMP/actual-files.txt"
+          sort "$RUNNER_TEMP/expected-files.txt" > "$RUNNER_TEMP/expected-files-sorted.txt"
+          diff -u "$RUNNER_TEMP/expected-files-sorted.txt" "$RUNNER_TEMP/actual-files.txt"
+          grep -F '"eslint": "^10.8.0"' package.json
+          grep -F '"@eslint/js": "^10.0.1"' packages/config/package.json
+          grep -F '"node": "^20.19.0 || ^22.13.0 || >=24"' package.json
+      - name: Commit regenerated toolchain
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          while IFS= read -r file; do
+            git add -- "$file"
+          done < "$RUNNER_TEMP/expected-files.txt"
+          git commit -m "Upgrade the ESLint toolchain to v10"
+          git push origin HEAD:deps/upgrade-eslint-10
