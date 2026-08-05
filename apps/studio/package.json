@@ -16,12 +16,17 @@
     "styled-components": "^6.1.19"
   },
   "devDependencies": {
-    "@sanity/vision": "^3.99.0",
+    "@sanity/sdk": "2.18.0",
+    "@sanity/vision": "6.8.0",
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.18",
     "eslint": "^10.8.0",
-    "sanity": "^3.99.0",
+    "sanity": "6.8.0",
     "typescript": "^5.8.3",
+    "vite": "8.1.5",
     "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

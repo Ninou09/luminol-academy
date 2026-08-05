@@ -69,6 +69,42 @@ Add each deployed website and Studio origin to the Sanity project's approved
 CORS origins. Enable credentials only for Studio origins that require an
 authenticated session.
 
+## Studio runtime and dependency policy
+
+Sanity Studio 6 requires Node.js 22.12 or newer. The repository and Studio
+package both declare that minimum, and CI uses Node.js 22. The coordinated
+Studio dependency set is pinned to compatible versions of `sanity`,
+`@sanity/vision`, `@sanity/sdk` and Vite rather than accepting an isolated
+plugin major upgrade.
+
+The Studio 6 migration does not change schemas, project identifiers, datasets,
+permissions or published content. It must be validated with a frozen strict-peer
+install, Studio type checking, a production Studio build and the complete
+repository CI before deployment.
+
+Local verification:
+
+```bash
+pnpm install --frozen-lockfile --strict-peer-dependencies
+pnpm --filter @luminol/studio typecheck
+pnpm --filter @luminol/studio build
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
+### Studio rollback
+
+If the upgraded Studio fails after deployment, stop editorial changes and
+redeploy the last known-good Studio build. Revert the migration commit so the
+Studio manifest and lockfile return together to their previous compatible
+versions, then rerun the full quality gates before redeploying. No content
+rollback or dataset mutation is required because the migration does not modify
+published documents or schemas. Do not downgrade only `@sanity/vision` or only
+`sanity`; the Studio and plugin must remain on a mutually compatible major
+version.
+
 ## Publishing workflow
 
 1. Create or update the document in Studio.
