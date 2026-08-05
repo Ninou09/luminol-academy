@@ -26,7 +26,10 @@ export const projectReviewSchema = z.object({
   requiresRevision: z.boolean(),
 });
 
-const allowedTransitions: Record<ProfessionalSubmissionStatus, readonly ProfessionalSubmissionStatus[]> = {
+const allowedTransitions: Record<
+  ProfessionalSubmissionStatus,
+  readonly ProfessionalSubmissionStatus[]
+> = {
   DRAFT: ['SUBMITTED'],
   SUBMITTED: ['IN_REVIEW', 'REJECTED'],
   IN_REVIEW: ['REVISION_REQUIRED', 'APPROVED', 'REJECTED'],
@@ -44,7 +47,9 @@ export function assertSubmissionTransition(
   }
 }
 
-export function determineReviewOutcome(input: z.input<typeof projectReviewSchema>) {
+export function determineReviewOutcome(
+  input: z.input<typeof projectReviewSchema>,
+) {
   const review = projectReviewSchema.parse(input);
 
   if (review.requiresRevision) {

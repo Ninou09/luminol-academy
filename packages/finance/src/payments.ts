@@ -49,15 +49,24 @@ const paymentTransitions: Record<PaymentStatus, readonly PaymentStatus[]> = {
   partially_refunded: ['partially_refunded', 'refunded'],
 };
 
-export function canTransitionPaymentStatus(from: PaymentStatus, to: PaymentStatus): boolean {
+export function canTransitionPaymentStatus(
+  from: PaymentStatus,
+  to: PaymentStatus,
+): boolean {
   return paymentTransitions[from].includes(to);
 }
 
 export function calculateRefundedAmount(refunds: readonly Refund[]): number {
-  return refunds.reduce((total, refund) => total + refundSchema.parse(refund).amountMinor, 0);
+  return refunds.reduce(
+    (total, refund) => total + refundSchema.parse(refund).amountMinor,
+    0,
+  );
 }
 
-export function determineRefundStatus(payment: PaymentIntent, refunds: readonly Refund[]): PaymentStatus {
+export function determineRefundStatus(
+  payment: PaymentIntent,
+  refunds: readonly Refund[],
+): PaymentStatus {
   const parsedPayment = paymentIntentSchema.parse(payment);
   const refundedMinor = calculateRefundedAmount(refunds);
 
@@ -69,9 +78,15 @@ export function determineRefundStatus(payment: PaymentIntent, refunds: readonly 
     return parsedPayment.status;
   }
 
-  return refundedMinor === parsedPayment.amountMinor ? 'refunded' : 'partially_refunded';
+  return refundedMinor === parsedPayment.amountMinor
+    ? 'refunded'
+    : 'partially_refunded';
 }
 
 export function isPaymentSettled(status: PaymentStatus): boolean {
-  return status === 'succeeded' || status === 'partially_refunded' || status === 'refunded';
+  return (
+    status === 'succeeded' ||
+    status === 'partially_refunded' ||
+    status === 'refunded'
+  );
 }

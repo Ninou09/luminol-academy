@@ -101,13 +101,10 @@ export function EnquiryForm() {
           />
         </label>
         <label>
-          <span>Phone number <small>Optional</small></span>
-          <input
-            autoComplete="tel"
-            maxLength={30}
-            name="phone"
-            type="tel"
-          />
+          <span>
+            Phone number <small>Optional</small>
+          </span>
+          <input autoComplete="tel" maxLength={30} name="phone" type="tel" />
         </label>
         <label>
           <span>Area of interest</span>
@@ -132,12 +129,7 @@ export function EnquiryForm() {
 
       <label className="honeypot" aria-hidden="true">
         Website
-        <input
-          autoComplete="off"
-          name="website"
-          tabIndex={-1}
-          type="text"
-        />
+        <input autoComplete="off" name="website" tabIndex={-1} type="text" />
       </label>
 
       <label className="consent-field">
@@ -154,9 +146,7 @@ export function EnquiryForm() {
           size="lg"
           type="submit"
         >
-          {submission.status === 'submitting'
-            ? 'Sending…'
-            : 'Send my enquiry'}
+          {submission.status === 'submitting' ? 'Sending…' : 'Send my enquiry'}
         </Button>
         <p
           className={`form-status form-status-${submission.status}`}

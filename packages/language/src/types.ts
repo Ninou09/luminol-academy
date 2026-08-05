@@ -1,13 +1,9 @@
-import type { CEFR_LEVELS, LANGUAGE_SKILLS } from "./constants";
+import type { CEFR_LEVELS, LANGUAGE_SKILLS } from './constants';
 
 export type CefrLevel = (typeof CEFR_LEVELS)[number];
 export type LanguageSkill = (typeof LANGUAGE_SKILLS)[number];
 
-export type PlacementStatus =
-  | "draft"
-  | "submitted"
-  | "reviewing"
-  | "completed";
+export type PlacementStatus = 'draft' | 'submitted' | 'reviewing' | 'completed';
 
 export interface SkillScoreInput {
   skill: LanguageSkill;

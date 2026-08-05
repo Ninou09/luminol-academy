@@ -39,7 +39,9 @@ export default async function LanguagesPage() {
           <Wordmark />
         </Link>
         <div className="portal-account">
-          <Link href="/" className="text-sm no-underline">Dashboard</Link>
+          <Link href="/" className="text-sm no-underline">
+            Dashboard
+          </Link>
           <UserButton />
         </div>
       </header>
@@ -50,13 +52,17 @@ export default async function LanguagesPage() {
             <p className="eyebrow">Language learning</p>
             <h1 id="language-title">Find your starting level.</h1>
             <p>
-              Take a secure CEFR placement assessment and receive a clear view of
-              your reading, listening, speaking, writing, grammar and vocabulary.
+              Take a secure CEFR placement assessment and receive a clear view
+              of your reading, listening, speaking, writing, grammar and
+              vocabulary.
             </p>
           </div>
         </section>
 
-        <section className="dashboard-section" aria-labelledby="assessments-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="assessments-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">Placement</p>
@@ -67,10 +73,15 @@ export default async function LanguagesPage() {
 
           {assessments.length === 0 ? (
             <div className="empty-state">
-              <span className="empty-mark" aria-hidden="true">A1</span>
+              <span className="empty-mark" aria-hidden="true">
+                A1
+              </span>
               <div>
                 <h3>Placement assessments are being prepared.</h3>
-                <p>Your language programmes will appear here as soon as they are published.</p>
+                <p>
+                  Your language programmes will appear here as soon as they are
+                  published.
+                </p>
               </div>
             </div>
           ) : (
@@ -78,16 +89,22 @@ export default async function LanguagesPage() {
               {assessments.map((assessment, index) => {
                 const latest = assessment.attempts[0];
                 const isActive = latest?.status === 'IN_PROGRESS';
-                const hasResult = latest?.status === 'COMPLETED' || latest?.status === 'REVIEW_REQUIRED';
+                const hasResult =
+                  latest?.status === 'COMPLETED' ||
+                  latest?.status === 'REVIEW_REQUIRED';
 
                 return (
                   <article className="course-card" key={assessment.id}>
                     <div className={`course-symbol course-symbol-${index % 3}`}>
-                      <span aria-hidden="true">{assessment.targetLanguage.slice(0, 2).toUpperCase()}</span>
+                      <span aria-hidden="true">
+                        {assessment.targetLanguage.slice(0, 2).toUpperCase()}
+                      </span>
                     </div>
                     <div className="course-content">
                       <div className="course-meta">
-                        <span className="status status-active">CEFR placement</span>
+                        <span className="status status-active">
+                          CEFR placement
+                        </span>
                         <span>Version {assessment.version}</span>
                       </div>
                       <h3>{assessment.title}</h3>
@@ -101,21 +118,33 @@ export default async function LanguagesPage() {
                       {latest && (
                         <p className="course-note">
                           Latest attempt: {formatStatus(latest.status)}
-                          {latest.recommendedLevel ? ` · Level ${latest.recommendedLevel}` : ''}
+                          {latest.recommendedLevel
+                            ? ` · Level ${latest.recommendedLevel}`
+                            : ''}
                         </p>
                       )}
 
                       {hasResult && latest ? (
-                        <Link className="course-link" href={`/languages/results/${latest.id}`}>
+                        <Link
+                          className="course-link"
+                          href={`/languages/results/${latest.id}`}
+                        >
                           View result <span aria-hidden="true">→</span>
                         </Link>
                       ) : isActive && latest ? (
-                        <Link className="course-link" href={`/languages/placement/${latest.id}`}>
+                        <Link
+                          className="course-link"
+                          href={`/languages/placement/${latest.id}`}
+                        >
                           Resume assessment <span aria-hidden="true">→</span>
                         </Link>
                       ) : (
                         <form action={startPlacementFromForm}>
-                          <input type="hidden" name="assessmentId" value={assessment.id} />
+                          <input
+                            type="hidden"
+                            name="assessmentId"
+                            value={assessment.id}
+                          />
                           <button className="course-link" type="submit">
                             Start assessment <span aria-hidden="true">→</span>
                           </button>

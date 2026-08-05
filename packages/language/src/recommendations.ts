@@ -2,7 +2,7 @@ import type {
   CourseCandidate,
   CourseRecommendation,
   PlacementResult,
-} from "./types";
+} from './types';
 
 export function recommendCourse(
   result: PlacementResult,
@@ -14,8 +14,8 @@ export function recommendCourse(
   const prioritySkills = result.weaknesses.slice(0, 3);
   const skillReason =
     prioritySkills.length > 0
-      ? `Priority development areas: ${prioritySkills.join(", ")}.`
-      : "The learner demonstrated balanced performance across all assessed skills.";
+      ? `Priority development areas: ${prioritySkills.join(', ')}.`
+      : 'The learner demonstrated balanced performance across all assessed skills.';
 
   return {
     courseId: course?.id ?? null,

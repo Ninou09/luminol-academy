@@ -37,7 +37,9 @@ export function listWorkflowFiles() {
     .filter(Boolean);
 }
 
-export function checkTrackedWorkflowActionPins(workflowFiles = listWorkflowFiles()) {
+export function checkTrackedWorkflowActionPins(
+  workflowFiles = listWorkflowFiles(),
+) {
   return workflowFiles.flatMap((file) =>
     findUnpinnedActionReferences(readFileSync(file, 'utf8'), file),
   );

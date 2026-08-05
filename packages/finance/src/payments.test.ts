@@ -27,7 +27,12 @@ describe('payment lifecycle', () => {
   });
 
   it('allows only guarded payment status transitions', () => {
-    expect(canTransitionPaymentStatus('requires_payment_method', 'requires_confirmation')).toBe(true);
+    expect(
+      canTransitionPaymentStatus(
+        'requires_payment_method',
+        'requires_confirmation',
+      ),
+    ).toBe(true);
     expect(canTransitionPaymentStatus('processing', 'succeeded')).toBe(true);
     expect(canTransitionPaymentStatus('succeeded', 'failed')).toBe(false);
     expect(canTransitionPaymentStatus('cancelled', 'processing')).toBe(false);
@@ -45,8 +50,12 @@ describe('payment lifecycle', () => {
       amountMinor: 15_000,
     });
 
-    expect(determineRefundStatus(payment, [partialRefund])).toBe('partially_refunded');
-    expect(determineRefundStatus(payment, [partialRefund, finalRefund])).toBe('refunded');
+    expect(determineRefundStatus(payment, [partialRefund])).toBe(
+      'partially_refunded',
+    );
+    expect(determineRefundStatus(payment, [partialRefund, finalRefund])).toBe(
+      'refunded',
+    );
   });
 
   it('rejects refunds beyond the original payment', () => {

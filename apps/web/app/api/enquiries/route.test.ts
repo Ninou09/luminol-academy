@@ -79,9 +79,7 @@ describe('POST /api/enquiries', () => {
   it('returns a safe error when persistence fails', async () => {
     createEnquiry.mockRejectedValueOnce(new Error('database unavailable'));
 
-    const response = await POST(
-      createRequest(validEnquiry, '203.0.113.13'),
-    );
+    const response = await POST(createRequest(validEnquiry, '203.0.113.13'));
 
     expect(response.status).toBe(500);
     await expect(response.json()).resolves.toEqual({

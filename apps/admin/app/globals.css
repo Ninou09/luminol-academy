@@ -32,7 +32,11 @@ body {
   flex-direction: column;
   padding: 2.2rem 1.5rem;
   background:
-    radial-gradient(circle at 20% 0%, rgb(198 169 113 / 0.14), transparent 18rem),
+    radial-gradient(
+      circle at 20% 0%,
+      rgb(198 169 113 / 0.14),
+      transparent 18rem
+    ),
     var(--color-brand-ink);
   color: var(--color-brand-surface);
 }

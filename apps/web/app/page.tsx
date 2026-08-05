@@ -57,7 +57,9 @@ export default function Page() {
 
       <section id="top" className="hero" aria-labelledby="hero-title">
         <div className="hero-copy">
-          <p className="eyebrow">Psychology · Languages · Professional growth</p>
+          <p className="eyebrow">
+            Psychology · Languages · Professional growth
+          </p>
           <h1 id="hero-title">
             Grow with clarity.
             <span>Learn with purpose.</span>
@@ -121,8 +123,8 @@ export default function Page() {
           </div>
           <p>
             People thrive when emotional wellbeing, communication and
-            professional capability develop together. Luminol connects all
-            three without losing the depth of each discipline.
+            professional capability develop together. Luminol connects all three
+            without losing the depth of each discipline.
           </p>
         </div>
 
@@ -158,8 +160,8 @@ export default function Page() {
           <p className="eyebrow eyebrow-light">The Luminol approach</p>
           <h2>Knowledge becomes powerful when it changes how you live.</h2>
           <p>
-            We connect scientific thinking with warmth, structure and
-            real-world practice—so learning feels personal and progress becomes
+            We connect scientific thinking with warmth, structure and real-world
+            practice—so learning feels personal and progress becomes
             sustainable.
           </p>
         </div>
@@ -202,7 +204,10 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="pathway section-shell" aria-labelledby="pathway-title">
+      <section
+        className="pathway section-shell"
+        aria-labelledby="pathway-title"
+      >
         <div>
           <p className="eyebrow">Your next chapter</p>
           <h2 id="pathway-title">Begin with the growth that matters now.</h2>

@@ -54,7 +54,9 @@ export default async function CoursePage({
                 className="course-link"
                 href={`/courses/${course.slug}/lessons/${nextLesson.slug}`}
               >
-                {progress.completedLessons > 0 ? 'Resume learning' : 'Start learning'}
+                {progress.completedLessons > 0
+                  ? 'Resume learning'
+                  : 'Start learning'}
                 <span aria-hidden="true">→</span>
               </Link>
             )}

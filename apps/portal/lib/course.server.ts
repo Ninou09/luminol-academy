@@ -88,9 +88,7 @@ export async function getLearnerLesson(
   const courseModule = enrollment.course.modules.find(({ lessons }) =>
     lessons.some(({ slug }) => slug === lessonSlug),
   );
-  const lesson = courseModule?.lessons.find(
-    ({ slug }) => slug === lessonSlug,
-  );
+  const lesson = courseModule?.lessons.find(({ slug }) => slug === lessonSlug);
 
   if (!courseModule || !lesson) return null;
 

@@ -5,9 +5,7 @@ import type {
   ReactNode,
 } from 'react';
 
-function classes(
-  ...values: Array<string | false | null | undefined>
-): string {
+function classes(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(' ');
 }
 
@@ -105,10 +103,7 @@ export function Section({
 }: HTMLAttributes<HTMLElement>) {
   return (
     <section
-      className={classes(
-        'py-[var(--luminol-section-space)]',
-        className,
-      )}
+      className={classes('py-[var(--luminol-section-space)]', className)}
       {...props}
     >
       {children}
@@ -136,7 +131,7 @@ export function Card({
   return (
     <article
       className={classes(
-        'rounded-card border border-brand-line bg-brand-surface p-6 text-start shadow-elevated',
+        'rounded-card border-brand-line bg-brand-surface shadow-elevated border p-6 text-start',
         className,
       )}
       {...props}
@@ -154,7 +149,7 @@ export function Badge({
   return (
     <span
       className={classes(
-        'inline-flex rounded-pill border border-brand-gold px-3 py-1 text-xs font-semibold tracking-wide text-brand-gold-strong',
+        'rounded-pill border-brand-gold text-brand-gold-strong inline-flex border px-3 py-1 text-xs font-semibold tracking-wide',
         className,
       )}
       {...props}
@@ -168,7 +163,7 @@ export function Wordmark({ className }: { className?: string }) {
   return (
     <span
       className={classes(
-        'font-display text-2xl tracking-wide text-brand-ink',
+        'font-display text-brand-ink text-2xl tracking-wide',
         className,
       )}
     >

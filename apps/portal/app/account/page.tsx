@@ -11,7 +11,8 @@ const dateFormatter = new Intl.DateTimeFormat('en', {
 
 export default async function AccountPage() {
   const user = await requireUser();
-  const name = [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Learner';
+  const name =
+    [user.firstName, user.lastName].filter(Boolean).join(' ') || 'Learner';
   const roles = user.roles.map(({ role }) => role.name);
 
   return (
@@ -36,14 +37,16 @@ export default async function AccountPage() {
             <p className="eyebrow">Secure learner account</p>
             <h1 id="account-title">{name}</h1>
             <p>
-              Review the identity synchronized with Luminol and the access assigned
-              to your learner account.
+              Review the identity synchronized with Luminol and the access
+              assigned to your learner account.
             </p>
           </div>
           <aside className="course-progress-card" aria-label="Account status">
             <strong>Active</strong>
             <span>Account status</span>
-            <p>Your Clerk identity is synchronized with the Luminol database.</p>
+            <p>
+              Your Clerk identity is synchronized with the Luminol database.
+            </p>
           </aside>
         </section>
 
@@ -52,11 +55,15 @@ export default async function AccountPage() {
             <div className="module-heading">
               <span>Identity</span>
               <h2>Profile details</h2>
-              <p>Identity changes are managed securely through your account menu.</p>
+              <p>
+                Identity changes are managed securely through your account menu.
+              </p>
             </div>
             <dl className="lesson-list">
               <div className="lesson">
-                <dt className="lesson-number" aria-hidden="true">01</dt>
+                <dt className="lesson-number" aria-hidden="true">
+                  01
+                </dt>
                 <dd className="lesson-copy">
                   <div>Email</div>
                   <h3>{user.email}</h3>
@@ -64,7 +71,9 @@ export default async function AccountPage() {
                 </dd>
               </div>
               <div className="lesson">
-                <dt className="lesson-number" aria-hidden="true">02</dt>
+                <dt className="lesson-number" aria-hidden="true">
+                  02
+                </dt>
                 <dd className="lesson-copy">
                   <div>Access</div>
                   <h3>{roles.length > 0 ? roles.join(', ') : 'Learner'}</h3>
@@ -72,7 +81,9 @@ export default async function AccountPage() {
                 </dd>
               </div>
               <div className="lesson">
-                <dt className="lesson-number" aria-hidden="true">03</dt>
+                <dt className="lesson-number" aria-hidden="true">
+                  03
+                </dt>
                 <dd className="lesson-copy">
                   <div>Last sign-in</div>
                   <h3>
@@ -90,7 +101,9 @@ export default async function AccountPage() {
 
       <footer>
         <span>© Luminol</span>
-        <span lang="ar" dir="rtl">للتعلّم أثرٌ يدوم</span>
+        <span lang="ar" dir="rtl">
+          للتعلّم أثرٌ يدوم
+        </span>
         <span>Le savoir nous éclaire</span>
       </footer>
     </main>

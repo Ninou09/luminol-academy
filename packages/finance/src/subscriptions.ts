@@ -49,7 +49,10 @@ export function validateSubscriptionPeriod(input: Subscription): Subscription {
   if (subscription.currentPeriodEnd <= subscription.currentPeriodStart) {
     throw new Error('Subscription period end must be after its start');
   }
-  if (subscription.status === 'cancelled' && subscription.cancelledAt === undefined) {
+  if (
+    subscription.status === 'cancelled' &&
+    subscription.cancelledAt === undefined
+  ) {
     throw new Error('Cancelled subscriptions require a cancellation timestamp');
   }
   return subscription;
@@ -60,8 +63,13 @@ export function scheduleSubscriptionCancellation(
   cancelledAt: Date = new Date(),
 ): Subscription {
   const subscription = validateSubscriptionPeriod(input);
-  if (subscription.status === 'cancelled' || subscription.status === 'expired') {
-    throw new Error('Terminal subscriptions cannot be scheduled for cancellation');
+  if (
+    subscription.status === 'cancelled' ||
+    subscription.status === 'expired'
+  ) {
+    throw new Error(
+      'Terminal subscriptions cannot be scheduled for cancellation',
+    );
   }
 
   return subscriptionSchema.parse({

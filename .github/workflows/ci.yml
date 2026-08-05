@@ -56,6 +56,8 @@ jobs:
         env:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - run: pnpm lint
+      - name: Check repository formatting
+        run: pnpm format:check
       - name: Run typecheck
         shell: bash
         run: |

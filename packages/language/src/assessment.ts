@@ -1,11 +1,12 @@
-import type { PlacementStatus } from "./types";
+import type { PlacementStatus } from './types';
 
-const ALLOWED_TRANSITIONS: Record<PlacementStatus, readonly PlacementStatus[]> = {
-  draft: ["submitted"],
-  submitted: ["reviewing", "completed"],
-  reviewing: ["completed"],
-  completed: [],
-};
+const ALLOWED_TRANSITIONS: Record<PlacementStatus, readonly PlacementStatus[]> =
+  {
+    draft: ['submitted'],
+    submitted: ['reviewing', 'completed'],
+    reviewing: ['completed'],
+    completed: [],
+  };
 
 export function canTransitionPlacement(
   current: PlacementStatus,
@@ -24,16 +25,18 @@ export function assertPlacementTransition(
 }
 
 export function submitPlacement(current: PlacementStatus): PlacementStatus {
-  assertPlacementTransition(current, "submitted");
-  return "submitted";
+  assertPlacementTransition(current, 'submitted');
+  return 'submitted';
 }
 
-export function startPlacementReview(current: PlacementStatus): PlacementStatus {
-  assertPlacementTransition(current, "reviewing");
-  return "reviewing";
+export function startPlacementReview(
+  current: PlacementStatus,
+): PlacementStatus {
+  assertPlacementTransition(current, 'reviewing');
+  return 'reviewing';
 }
 
 export function completePlacement(current: PlacementStatus): PlacementStatus {
-  assertPlacementTransition(current, "completed");
-  return "completed";
+  assertPlacementTransition(current, 'completed');
+  return 'completed';
 }

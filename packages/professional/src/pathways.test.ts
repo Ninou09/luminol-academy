@@ -13,8 +13,16 @@ describe('career pathway planning', () => {
       },
       ratings: [
         { competencyId: 'leadership-1', category: 'leadership', score: 35 },
-        { competencyId: 'communication-1', category: 'communication', score: 60 },
-        { competencyId: 'project-1', category: 'project-management', score: 70 },
+        {
+          competencyId: 'communication-1',
+          category: 'communication',
+          score: 60,
+        },
+        {
+          competencyId: 'project-1',
+          category: 'project-management',
+          score: 70,
+        },
       ],
     });
 

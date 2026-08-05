@@ -29,7 +29,9 @@ export const competencyRatingSchema = z.object({
 
 export type CompetencyRating = z.infer<typeof competencyRatingSchema>;
 
-export function determineCompetencyLevel(score: number): ProfessionalCompetencyLevel {
+export function determineCompetencyLevel(
+  score: number,
+): ProfessionalCompetencyLevel {
   const normalizedScore = Math.min(100, Math.max(0, score));
 
   if (normalizedScore >= 85) return 'EXPERT';
@@ -38,23 +40,31 @@ export function determineCompetencyLevel(score: number): ProfessionalCompetencyL
   return 'FOUNDATIONAL';
 }
 
-export function calculateCompetencyProfile(ratings: readonly CompetencyRating[]) {
+export function calculateCompetencyProfile(
+  ratings: readonly CompetencyRating[],
+) {
   if (ratings.length === 0) {
     throw new Error('At least one competency rating is required');
   }
 
-  const validatedRatings = ratings.map((rating) => competencyRatingSchema.parse(rating));
+  const validatedRatings = ratings.map((rating) =>
+    competencyRatingSchema.parse(rating),
+  );
   const averageScore = Math.round(
     validatedRatings.reduce((total, rating) => total + rating.score, 0) /
       validatedRatings.length,
   );
 
-  const sortedRatings = [...validatedRatings].sort((left, right) => right.score - left.score);
+  const sortedRatings = [...validatedRatings].sort(
+    (left, right) => right.score - left.score,
+  );
 
   return {
     averageScore,
     overallLevel: determineCompetencyLevel(averageScore),
-    strengths: sortedRatings.slice(0, 3).map(({ competencyId }) => competencyId),
+    strengths: sortedRatings
+      .slice(0, 3)
+      .map(({ competencyId }) => competencyId),
     developmentPriorities: sortedRatings
       .slice(-3)
       .reverse()

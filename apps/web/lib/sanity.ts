@@ -4,11 +4,7 @@ import type { SchoolSlug } from './schools';
 const SANITY_API_VERSION = '2024-01-01';
 const PROGRAMME_IMAGE_WIDTH = 1200;
 const PROGRAMME_IMAGE_HEIGHT = 675;
-const placeholderProjectIds = new Set([
-  'example',
-  'placeholder',
-  'replace-me',
-]);
+const placeholderProjectIds = new Set(['example', 'placeholder', 'replace-me']);
 
 function isApprovedSanityImageUrl(value: string) {
   try {
@@ -77,7 +73,10 @@ const cmsProgrammeImageSchema = z
       .string()
       .trim()
       .url()
-      .refine(isApprovedSanityImageUrl, 'Programme images must use Sanity CDN.'),
+      .refine(
+        isApprovedSanityImageUrl,
+        'Programme images must use Sanity CDN.',
+      ),
     alt: z.string().trim().min(3).max(180),
     crop: imageCropSchema.nullish(),
     hotspot: imageHotspotSchema.nullish(),
@@ -90,9 +89,7 @@ const cmsProgrammeImageSchema = z
     const crop = image.crop ?? { top: 0, bottom: 0, left: 0, right: 0 };
     const editorLeft = Math.ceil(crop.left * image.dimensions.width);
     const editorTop = Math.ceil(crop.top * image.dimensions.height);
-    const editorRight = Math.floor(
-      (1 - crop.right) * image.dimensions.width,
-    );
+    const editorRight = Math.floor((1 - crop.right) * image.dimensions.width);
     const editorBottom = Math.floor(
       (1 - crop.bottom) * image.dimensions.height,
     );
@@ -239,10 +236,7 @@ export function buildSanityProgrammeImageUrl(image: ProgrammeImage) {
 
   const url = new URL(image.url);
   url.search = '';
-  url.searchParams.set(
-    'rect',
-    `${left},${top},${outputWidth},${outputHeight}`,
-  );
+  url.searchParams.set('rect', `${left},${top},${outputWidth},${outputHeight}`);
   url.searchParams.set('w', String(PROGRAMME_IMAGE_WIDTH));
   url.searchParams.set('h', String(PROGRAMME_IMAGE_HEIGHT));
   url.searchParams.set('fit', 'crop');

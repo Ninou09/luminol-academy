@@ -40,7 +40,9 @@ export function reconcileSettlement(
   ledgerEntriesInput: readonly LedgerEntry[],
 ): ReconciliationResult {
   const settlement = settlementRecordSchema.parse(settlementInput);
-  const ledgerEntries = ledgerEntriesInput.map((entry) => ledgerEntrySchema.parse(entry));
+  const ledgerEntries = ledgerEntriesInput.map((entry) =>
+    ledgerEntrySchema.parse(entry),
+  );
 
   for (const entry of ledgerEntries) {
     if (entry.currency !== settlement.currency) {
@@ -51,7 +53,10 @@ export function reconcileSettlement(
     }
   }
 
-  const ledgerMinor = ledgerEntries.reduce((total, entry) => total + entry.amountMinor, 0);
+  const ledgerMinor = ledgerEntries.reduce(
+    (total, entry) => total + entry.amountMinor,
+    0,
+  );
   const settlementNetMinor = settlement.amountMinor - settlement.feeMinor;
   const differenceMinor = ledgerMinor - settlementNetMinor;
 

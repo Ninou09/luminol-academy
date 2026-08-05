@@ -40,10 +40,10 @@ the original affected application.
 
 ## Dependency matrix
 
-| Project | Direct and transitive workspace inputs |
-| --- | --- |
-| Web | `apps/web`, auth, config, database, types, UI, validation |
-| Portal | `apps/portal`, auth, config, database, finance, language, types, UI, validation |
+| Project        | Direct and transitive workspace inputs                                             |
+| -------------- | ---------------------------------------------------------------------------------- |
+| Web            | `apps/web`, auth, config, database, types, UI, validation                          |
+| Portal         | `apps/portal`, auth, config, database, finance, language, types, UI, validation    |
 | Administration | `apps/admin`, auth, certificates, config, database, finance, types, UI, validation |
 
 A new workspace dependency must be added to the matching project map in

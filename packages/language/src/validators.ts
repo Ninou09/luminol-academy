@@ -42,6 +42,8 @@ export const ReviewPlacementSchema = z.object({
 });
 
 export type StartPlacementInput = z.infer<typeof StartPlacementSchema>;
-export type SavePlacementAnswerInput = z.infer<typeof SavePlacementAnswerSchema>;
+export type SavePlacementAnswerInput = z.infer<
+  typeof SavePlacementAnswerSchema
+>;
 export type SubmitPlacementInput = z.infer<typeof SubmitPlacementSchema>;
 export type ReviewPlacementInput = z.infer<typeof ReviewPlacementSchema>;

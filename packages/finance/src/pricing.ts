@@ -2,7 +2,12 @@ import { z } from 'zod';
 
 import { currencyCodeSchema } from './currency';
 
-export const billingIntervalSchema = z.enum(['one_time', 'monthly', 'quarterly', 'yearly']);
+export const billingIntervalSchema = z.enum([
+  'one_time',
+  'monthly',
+  'quarterly',
+  'yearly',
+]);
 export type BillingInterval = z.infer<typeof billingIntervalSchema>;
 
 export const priceSchema = z.object({
@@ -18,7 +23,11 @@ export type Price = z.infer<typeof priceSchema>;
 export const couponSchema = z
   .object({
     id: z.string().min(1),
-    code: z.string().trim().min(1).transform((value) => value.toUpperCase()),
+    code: z
+      .string()
+      .trim()
+      .min(1)
+      .transform((value) => value.toUpperCase()),
     percentOff: z.number().int().min(1).max(100).optional(),
     amountOffMinor: z.number().int().positive().optional(),
     currency: currencyCodeSchema.optional(),
@@ -27,7 +36,9 @@ export const couponSchema = z
     active: z.boolean().default(true),
   })
   .superRefine((coupon, context) => {
-    const discountKinds = Number(coupon.percentOff !== undefined) + Number(coupon.amountOffMinor !== undefined);
+    const discountKinds =
+      Number(coupon.percentOff !== undefined) +
+      Number(coupon.amountOffMinor !== undefined);
     if (discountKinds !== 1) {
       context.addIssue({
         code: 'custom',
@@ -47,10 +58,18 @@ export type Coupon = z.infer<typeof couponSchema>;
 
 export function isCouponRedeemable(input: Coupon): boolean {
   const coupon = couponSchema.parse(input);
-  return coupon.active && (coupon.maxRedemptions === undefined || coupon.redeemedCount < coupon.maxRedemptions);
+  return (
+    coupon.active &&
+    (coupon.maxRedemptions === undefined ||
+      coupon.redeemedCount < coupon.maxRedemptions)
+  );
 }
 
-export function applyCoupon(amountMinor: number, currency: string, input: Coupon): number {
+export function applyCoupon(
+  amountMinor: number,
+  currency: string,
+  input: Coupon,
+): number {
   if (!Number.isInteger(amountMinor) || amountMinor < 0) {
     throw new Error('Amount must be a non-negative integer in minor units');
   }
@@ -66,7 +85,7 @@ export function applyCoupon(amountMinor: number, currency: string, input: Coupon
     coupon.percentOff !== undefined
       ? Math.round((amountMinor * coupon.percentOff) / 100)
       : coupon.currency === normalizedCurrency
-        ? coupon.amountOffMinor ?? 0
+        ? (coupon.amountOffMinor ?? 0)
         : (() => {
             throw new Error('Coupon currency does not match price currency');
           })();
@@ -79,7 +98,10 @@ export interface Installment {
   amountMinor: number;
 }
 
-export function buildInstallmentSchedule(totalMinor: number, installments: number): Installment[] {
+export function buildInstallmentSchedule(
+  totalMinor: number,
+  installments: number,
+): Installment[] {
   if (!Number.isInteger(totalMinor) || totalMinor < 0) {
     throw new Error('Total must be a non-negative integer in minor units');
   }
