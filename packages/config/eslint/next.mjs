@@ -1,16 +1,15 @@
 import nextPlugin from '@next/eslint-plugin-next';
 import baseConfig from './index.mjs';
 
-const { flatConfig } = nextPlugin;
-
 export default [
   ...baseConfig,
-  flatConfig.coreWebVitals,
   {
-    settings: {
-      next: {
-        rootDir: '.',
-      },
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: { '@next/next': nextPlugin },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
     },
+    settings: { next: { rootDir: '.' } },
   },
 ];
