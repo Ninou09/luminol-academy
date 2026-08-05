@@ -1,0 +1,119 @@
+name: Format baseline once
+
+on:
+  push:
+    branches:
+      - ci/enforce-format-check
+
+permissions:
+  contents: write
+
+concurrency:
+  group: format-baseline-once
+  cancel-in-progress: true
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ci/enforce-format-check
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format only the reported baseline files
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/expected-files.txt" <<'EOF'
+          .github/dependabot.yml
+          apps/admin/app/globals.css
+          apps/admin/app/page.tsx
+          apps/portal/app/account/page.tsx
+          apps/portal/app/courses/[slug]/lessons/[lessonSlug]/page.tsx
+          apps/portal/app/courses/[slug]/page.tsx
+          apps/portal/app/globals.css
+          apps/portal/app/languages/page.tsx
+          apps/portal/app/languages/placement/[attemptId]/page.tsx
+          apps/portal/app/languages/results/[attemptId]/page.tsx
+          apps/portal/lib/course.server.ts
+          apps/portal/lib/dashboard.ts
+          apps/web/app/about/page.tsx
+          apps/web/app/api/enquiries/route.test.ts
+          apps/web/app/certificates/[verificationId]/verification.module.css
+          apps/web/app/globals.css
+          apps/web/app/page.tsx
+          apps/web/app/schools/[school]/page.tsx
+          apps/web/components/enquiry-form.tsx
+          apps/web/lib/sanity.test.ts
+          apps/web/lib/sanity.ts
+          apps/web/lib/schools.ts
+          docs/deployments.md
+          packages/finance/src/audit.ts
+          packages/finance/src/corporate.ts
+          packages/finance/src/index.test.ts
+          packages/finance/src/index.ts
+          packages/finance/src/payments.test.ts
+          packages/finance/src/payments.ts
+          packages/finance/src/pricing.test.ts
+          packages/finance/src/pricing.ts
+          packages/finance/src/provider.test.ts
+          packages/finance/src/provider.ts
+          packages/finance/src/receipts.test.ts
+          packages/finance/src/receipts.ts
+          packages/finance/src/reconciliation.test.ts
+          packages/finance/src/reconciliation.ts
+          packages/finance/src/subscriptions.test.ts
+          packages/finance/src/subscriptions.ts
+          packages/language/package.json
+          packages/language/src/assessment.ts
+          packages/language/src/constants.ts
+          packages/language/src/index.ts
+          packages/language/src/permissions.ts
+          packages/language/src/placement-service.ts
+          packages/language/src/recommendations.ts
+          packages/language/src/scoring.test.ts
+          packages/language/src/scoring.ts
+          packages/language/src/types.ts
+          packages/language/src/validators.ts
+          packages/professional/src/competencies.test.ts
+          packages/professional/src/competencies.ts
+          packages/professional/src/corporate-training.test.ts
+          packages/professional/src/corporate-training.ts
+          packages/professional/src/pathways.test.ts
+          packages/professional/src/pathways.ts
+          packages/professional/src/reporting.ts
+          packages/professional/src/submissions.test.ts
+          packages/professional/src/submissions.ts
+          packages/ui/src/index.tsx
+          playwright.config.ts
+          scripts/check-action-pins.mjs
+          scripts/vercel-ignore-build.mjs
+          scripts/vercel-ignore-build.test.mjs
+          EOF
+
+          mapfile -t files < "$RUNNER_TEMP/expected-files.txt"
+          pnpm exec prettier --write -- "${files[@]}"
+
+          git diff --name-only | sort > "$RUNNER_TEMP/actual-files.txt"
+          sort "$RUNNER_TEMP/expected-files.txt" > "$RUNNER_TEMP/expected-files-sorted.txt"
+          if ! diff -u "$RUNNER_TEMP/expected-files-sorted.txt" "$RUNNER_TEMP/actual-files.txt"; then
+            echo "Formatter changed a file outside the reviewed 64-file baseline." >&2
+            exit 1
+          fi
+      - name: Commit deterministic formatting changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          while IFS= read -r file; do
+            git add -- "$file"
+          done < "$RUNNER_TEMP/expected-files.txt"
+          git commit -m "Normalize existing Prettier baseline"
+          git push origin HEAD:ci/enforce-format-check
