@@ -52,30 +52,26 @@ jobs:
 
           node <<'NODE'
           const fs = require('node:fs');
-
           for (const path of [
             'apps/admin/package.json',
             'apps/portal/package.json',
             'apps/web/package.json',
           ]) {
             const manifest = JSON.parse(fs.readFileSync(path, 'utf8'));
-            if (manifest.dependencies?.next !== '16.2.12') {
-              throw new Error(`${path} did not resolve Next.js exactly to 16.2.12`);
-            }
+            console.log(`${path}: next=${manifest.dependencies?.next}`);
           }
-
           const configManifest = JSON.parse(
             fs.readFileSync('packages/config/package.json', 'utf8'),
           );
-          if (
-            configManifest.devDependencies?.['@next/eslint-plugin-next'] !==
-            '16.2.12'
-          ) {
-            throw new Error(
-              'packages/config/package.json did not resolve @next/eslint-plugin-next exactly to 16.2.12',
-            );
-          }
+          console.log(
+            `packages/config/package.json: @next/eslint-plugin-next=${configManifest.devDependencies?.['@next/eslint-plugin-next']}`,
+          );
           NODE
+
+          pnpm --filter @luminol/admin exec next --version | grep -F 'Next.js v16.2.12'
+          pnpm --filter @luminol/portal exec next --version | grep -F 'Next.js v16.2.12'
+          pnpm --filter @luminol/web exec next --version | grep -F 'Next.js v16.2.12'
+          pnpm --filter @luminol/config list @next/eslint-plugin-next --depth 0 | grep -F '16.2.12'
       - name: Commit regenerated framework graph
         shell: bash
         run: |
