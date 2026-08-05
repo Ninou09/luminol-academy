@@ -19,7 +19,7 @@
     "@sanity/vision": "^3.99.0",
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.18",
-    "eslint": "^9.32.0",
+    "eslint": "^10.8.0",
     "sanity": "^3.99.0",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
