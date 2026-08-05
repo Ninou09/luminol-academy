@@ -1,0 +1,37 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { describe, expect, it } from 'vitest';
+
+const cases = [
+  {
+    app: 'admin',
+    publicRoutes: ["'/sign-in(.*)'", "'/api/webhooks/clerk'"],
+  },
+  {
+    app: 'portal',
+    publicRoutes: ["'/sign-in(.*)'", "'/sign-up(.*)'"],
+  },
+];
+
+describe('Next.js 16 Clerk proxy conventions', () => {
+  for (const { app, publicRoutes } of cases) {
+    it(`preserves ${app} route protection in proxy.ts`, () => {
+      const appRoot = resolve(`apps/${app}`);
+      const proxyPath = resolve(appRoot, 'proxy.ts');
+      const middlewarePath = resolve(appRoot, 'middleware.ts');
+
+      expect(existsSync(proxyPath)).toBe(true);
+      expect(existsSync(middlewarePath)).toBe(false);
+
+      const source = readFileSync(proxyPath, 'utf8');
+      expect(source).toContain('clerkMiddleware');
+      expect(source).toContain('createRouteMatcher');
+      expect(source).toContain('await auth.protect()');
+      expect(source).toContain("'/(api|trpc)(.*)'");
+
+      for (const route of publicRoutes) {
+        expect(source).toContain(route);
+      }
+    });
+  }
+});
