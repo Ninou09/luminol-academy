@@ -13,7 +13,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "resend": "^4.7.0"
+    "resend": "^6.18.1"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",
