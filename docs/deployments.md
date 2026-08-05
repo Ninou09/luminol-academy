@@ -33,6 +33,11 @@ not have `VERCEL_GIT_PREVIOUS_SHA`. That deployment must build through the
 fail-open path. Verify skipping only on a later commit after each project has a
 successful preview baseline for the branch.
 
+Git rename detection is disabled for the comparison so moved files are
+reported as a deletion at the old path and an addition at the new path. This
+prevents moving deployable source into a non-deployable directory from hiding
+the original affected application.
+
 ## Dependency matrix
 
 | Project | Direct and transitive workspace inputs |
