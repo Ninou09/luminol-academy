@@ -72,6 +72,7 @@ jobs:
           scripts/homepage-motion.test.mjs
       - name: Validate public web changes
         run: |
+          pnpm db:generate
           pnpm --filter @luminol/web lint
           pnpm --filter @luminol/web typecheck
           pnpm test
