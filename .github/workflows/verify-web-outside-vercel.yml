@@ -1,0 +1,169 @@
+name: Verify web outside Vercel
+
+on:
+  push:
+    branches: [ops/verify-web-outside-vercel]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: luminol
+          POSTGRES_PASSWORD: luminol
+          POSTGRES_DB: luminol
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U luminol -d luminol"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuZXhhbXBsZS5jb20k
+      CLERK_SECRET_KEY: sk_test_placeholder
+    steps:
+      - name: Check out exact PR head
+        uses: actions/checkout@v5
+        with:
+          ref: eaf52067fb8be75c43ee8cf327aa865bf713aeec
+
+      - name: Set up pnpm 10.34.5
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Frozen install
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare database
+        run: |
+          pnpm --filter @luminol/database generate
+          pnpm --filter @luminol/database migrate:deploy
+
+      - name: Build exact-head public website
+        run: pnpm --filter @luminol/web build
+
+      - name: Start production server
+        run: |
+          nohup pnpm --filter @luminol/web start > web-server.log 2>&1 &
+          echo $! > web-server.pid
+          for attempt in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat web-server.log
+          exit 1
+
+      - name: Start public Cloudflare quick tunnel
+        id: tunnel
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x cloudflared
+          nohup ./cloudflared tunnel --url http://127.0.0.1:3000 --no-autoupdate > cloudflared.log 2>&1 &
+          echo $! > cloudflared.pid
+          url=""
+          for attempt in {1..90}; do
+            url=$(grep -Eo 'https://[a-z0-9-]+\.trycloudflare.com' cloudflared.log | head -n 1 || true)
+            if [ -n "$url" ]; then
+              break
+            fi
+            sleep 1
+          done
+          if [ -z "$url" ]; then
+            cat cloudflared.log
+            exit 1
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Public verification URL: $url"
+
+      - name: Probe public tunnel
+        shell: bash
+        env:
+          PUBLIC_URL: ${{ steps.tunnel.outputs.url }}
+        run: |
+          set -euo pipefail
+          status=""
+          for attempt in {1..60}; do
+            status=$(curl -sS -L -D response-headers.txt -o response-body.html -w '%{http_code}' "$PUBLIC_URL/" || true)
+            if [ "$status" = "200" ]; then
+              break
+            fi
+            sleep 1
+          done
+          test "$status" = "200"
+          grep -Eqi '<html|<!doctype' response-body.html
+          grep -Eqi 'Luminol|لومينول' response-body.html
+          echo "Public HTTP verification passed at $PUBLIC_URL with status $status"
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Browser-check public tunnel
+        shell: bash
+        env:
+          PUBLIC_URL: ${{ steps.tunnel.outputs.url }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from '@playwright/test';
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage();
+          const pageErrors = [];
+          const consoleErrors = [];
+          page.on('pageerror', (error) => pageErrors.push(error.message));
+          page.on('console', (message) => {
+            if (message.type() === 'error') consoleErrors.push(message.text());
+          });
+          const response = await page.goto(`${process.env.PUBLIC_URL}/`, {
+            waitUntil: 'networkidle',
+            timeout: 60000,
+          });
+          if (!response || !response.ok()) {
+            throw new Error(`Public page returned ${response?.status() ?? 'no response'}`);
+          }
+          const bodyText = (await page.locator('body').innerText()).trim();
+          if (bodyText.length < 100) {
+            throw new Error(`Public page body was unexpectedly short: ${bodyText.length}`);
+          }
+          await page.screenshot({ path: 'public-web-verification.png', fullPage: true });
+          if (pageErrors.length > 0) {
+            throw new Error(`Page errors: ${pageErrors.join(' | ')}`);
+          }
+          console.log(JSON.stringify({
+            url: process.env.PUBLIC_URL,
+            status: response.status(),
+            title: await page.title(),
+            bodyLength: bodyText.length,
+            consoleErrors,
+          }, null, 2));
+          await browser.close();
+          NODE
+
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exact-head-public-web-verification
+          path: |
+            web-server.log
+            cloudflared.log
+            response-headers.txt
+            response-body.html
+            public-web-verification.png
