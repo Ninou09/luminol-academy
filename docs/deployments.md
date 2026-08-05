@@ -28,6 +28,11 @@ The command uses Vercel's `VERCEL_PROJECT_ID`, `VERCEL_GIT_PREVIOUS_SHA` and
 command exits with status `1` and skips it when the command exits with status
 `0`.
 
+The first preview after introducing or restoring the ignored-build command may
+not have `VERCEL_GIT_PREVIOUS_SHA`. That deployment must build through the
+fail-open path. Verify skipping only on a later commit after each project has a
+successful preview baseline for the branch.
+
 ## Dependency matrix
 
 | Project | Direct and transitive workspace inputs |
