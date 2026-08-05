@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ButtonLink } from '@luminol/ui';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
@@ -132,14 +133,13 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             <article key={program.id}>
               <span>{String(index + 1).padStart(2, '0')}</span>
               {program.image ? (
-                <img
+                <Image
                   className={styles.programImage}
                   src={program.image.url}
                   alt={program.image.alt}
                   width={1200}
                   height={675}
-                  loading="lazy"
-                  decoding="async"
+                  sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
                 />
               ) : null}
               <h3
