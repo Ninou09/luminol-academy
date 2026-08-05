@@ -7,7 +7,7 @@ export default [
   {
     settings: {
       next: {
-        rootDir: ['apps/web/', 'apps/admin/', 'apps/portal/'],
+        rootDir: '.',
       },
     },
   },
