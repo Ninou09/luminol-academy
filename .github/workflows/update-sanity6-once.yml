@@ -1,0 +1,80 @@
+name: Update Sanity Studio 6 once
+
+on:
+  push:
+    branches:
+      - deps/upgrade-sanity-6
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-sanity6-once
+  cancel-in-progress: true
+
+jobs:
+  update:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: deps/upgrade-sanity-6
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22.13.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Upgrade the coordinated Studio dependency set
+        run: pnpm --filter @luminol/studio update sanity@6.8.0 @sanity/vision@6.8.0 --save-exact
+      - name: Record the Studio runtime requirement
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = 'apps/studio/package.json';
+          const manifest = JSON.parse(fs.readFileSync(path, 'utf8'));
+          manifest.engines = { node: '>=22.12.0' };
+          fs.writeFileSync(path, `${JSON.stringify(manifest, null, 2)}\n`);
+          NODE
+      - name: Verify the controlled migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/expected-files.txt" <<'EOF'
+          apps/studio/package.json
+          pnpm-lock.yaml
+          EOF
+          git diff --name-only | sort > "$RUNNER_TEMP/actual-files.txt"
+          sort "$RUNNER_TEMP/expected-files.txt" > "$RUNNER_TEMP/expected-files-sorted.txt"
+          diff -u "$RUNNER_TEMP/expected-files-sorted.txt" "$RUNNER_TEMP/actual-files.txt"
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const manifest = JSON.parse(fs.readFileSync('apps/studio/package.json', 'utf8'));
+          if (manifest.devDependencies?.sanity !== '6.8.0') {
+            throw new Error('Sanity Studio did not resolve exactly to 6.8.0');
+          }
+          if (manifest.devDependencies?.['@sanity/vision'] !== '6.8.0') {
+            throw new Error('@sanity/vision did not resolve exactly to 6.8.0');
+          }
+          if (manifest.engines?.node !== '>=22.12.0') {
+            throw new Error('Studio Node.js requirement is missing');
+          }
+          NODE
+
+          pnpm --filter @luminol/studio list sanity @sanity/vision --depth 0
+          pnpm --filter @luminol/studio typecheck
+          pnpm --filter @luminol/studio build
+      - name: Commit the coordinated migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/update-sanity6-once.yml
+          git add apps/studio/package.json pnpm-lock.yaml .github/workflows/update-sanity6-once.yml
+          git commit -m "Upgrade Sanity Studio to 6.8.0"
+          git push origin HEAD:deps/upgrade-sanity-6
