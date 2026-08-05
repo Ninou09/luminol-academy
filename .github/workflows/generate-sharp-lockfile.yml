@@ -17,6 +17,11 @@ jobs:
         with:
           node-version: 22
           package-manager-cache: false
+      - name: Preserve reviewed baseline
+        shell: bash
+        run: |
+          cp package.json "$RUNNER_TEMP/package.before.json"
+          cp pnpm-lock.yaml "$RUNNER_TEMP/pnpm-lock.before.yaml"
       - name: Update reviewed package pins
         shell: bash
         run: |
@@ -33,23 +38,98 @@ jobs:
         run: |
           pnpm config set registry https://registry.npmjs.org/
           pnpm install --lockfile-only --update-checksums
-      - name: Validate targeted dependency result
+      - name: Validate manifest and lockfile semantics
         shell: bash
         run: |
-          node -e "const p=require('./package.json'); if(p.packageManager!=='pnpm@10.34.0'||p.pnpm.overrides['next>sharp']!=='0.35.3') process.exit(1)"
+          node <<'NODE'
+          const fs = require('node:fs');
+          const before = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + '/package.before.json', 'utf8'));
+          const after = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const expected = structuredClone(before);
+          expected.packageManager = 'pnpm@10.34.0';
+          expected.pnpm.overrides['next>sharp'] = '0.35.3';
+          if (JSON.stringify(after) !== JSON.stringify(expected)) {
+            console.error('package.json contains changes beyond the reviewed pnpm and Sharp pins');
+            process.exit(1);
+          }
+          NODE
+
+          ruby <<'RUBY'
+          require 'yaml'
+          require 'json'
+
+          before = YAML.safe_load(File.read(File.join(ENV.fetch('RUNNER_TEMP'), 'pnpm-lock.before.yaml')), aliases: true)
+          after = YAML.safe_load(File.read('pnpm-lock.yaml'), aliases: true)
+
+          unless before.keys == after.keys
+            abort "Top-level lockfile keys changed: #{before.keys.inspect} -> #{after.keys.inspect}"
+          end
+
+          allowed_override_before = before.fetch('overrides').dup
+          allowed_override_after = after.fetch('overrides').dup
+          unless allowed_override_before['next>sharp'] == '0.35.0' && allowed_override_after['next>sharp'] == '0.35.3'
+            abort 'Unexpected next>sharp override transition'
+          end
+          allowed_override_before.delete('next>sharp')
+          allowed_override_after.delete('next>sharp')
+          abort 'An unrelated override changed' unless allowed_override_before == allowed_override_after
+
+          %w[lockfileVersion settings importers].each do |section|
+            abort "Unrelated #{section} section changed" unless before[section] == after[section]
+          end
+
+          sharp_key = ->(key) {
+            key.include?('sharp@') || key.include?('@img/sharp-') || key.include?('@img/sharp-libvips-')
+          }
+
+          report = {}
+          %w[packages snapshots].each do |section|
+            old_section = before.fetch(section)
+            new_section = after.fetch(section)
+            keys = (old_section.keys | new_section.keys).sort
+            changed = keys.select { |key| old_section[key] != new_section[key] }
+            unrelated = changed.reject { |key| sharp_key.call(key) }
+            unless unrelated.empty?
+              abort "Unrelated #{section} entries changed:\n#{unrelated.join("\n")}"
+            end
+            report[section] = changed
+          end
+
+          other_sections = before.keys - %w[lockfileVersion settings overrides importers packages snapshots]
+          other_sections.each do |section|
+            abort "Unrelated #{section} section changed" unless before[section] == after[section]
+          end
+
+          File.write('semantic-lockfile-report.json', JSON.pretty_generate(report) + "\n")
+          puts "Changed package entries: #{report.fetch('packages').length}"
+          puts "Changed snapshot entries: #{report.fetch('snapshots').length}"
+          puts report.to_json
+          RUBY
+
           grep -F 'next>sharp: 0.35.3' pnpm-lock.yaml
           grep -F 'sharp@0.35.3' pnpm-lock.yaml
           if grep -F 'sharp@0.35.0' pnpm-lock.yaml; then
             echo 'Unexpected Sharp 0.35.0 entry remains' >&2
             exit 1
           fi
-          git diff --exit-code -- . ':!package.json' ':!pnpm-lock.yaml'
+          git diff --exit-code -- . ':!package.json' ':!pnpm-lock.yaml' ':!semantic-lockfile-report.json'
           git diff --stat -- package.json pnpm-lock.yaml
+      - name: Verify strict frozen installation
+        shell: bash
+        run: |
+          rm -rf node_modules
+          pnpm install --frozen-lockfile 2>&1 | tee frozen-install.log
+          if grep -F 'ERR_PNPM_TARBALL_INTEGRITY' frozen-install.log; then
+            echo 'Sharp integrity retry remains' >&2
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: reviewed-sharp-lockfile
           path: |
             package.json
             pnpm-lock.yaml
+            semantic-lockfile-report.json
+            frozen-install.log
           if-no-files-found: error
           retention-days: 1
