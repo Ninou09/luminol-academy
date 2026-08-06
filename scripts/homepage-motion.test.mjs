@@ -15,11 +15,13 @@ const schoolSource = readFileSync(
   resolve('apps/web/app/schools/[school]/page.tsx'),
   'utf8',
 );
+const layoutSource = readFileSync(resolve('apps/web/app/layout.tsx'), 'utf8');
 const motionSource = readFileSync(
   resolve('apps/web/components/home-motion.tsx'),
   'utf8',
 );
 const motionStyles = readFileSync(resolve('apps/web/app/motion.css'), 'utf8');
+const arabicStyles = readFileSync(resolve('apps/web/app/arabic.css'), 'utf8');
 const shellSource = readFileSync(
   resolve('apps/web/components/site-shell.tsx'),
   'utf8',
@@ -33,7 +35,7 @@ const nextConfigSource = readFileSync(
   'utf8',
 );
 
-describe('premium public flagship', () => {
+describe('Arabic premium public flagship', () => {
   it('keeps governed school and contact journeys', () => {
     expect(pageSource).toContain('href={`/schools/${school.slug}`}');
     expect(pageSource).toContain('href="/contact"');
@@ -41,17 +43,20 @@ describe('premium public flagship', () => {
     expect(contactSource).toContain('<EnquiryForm />');
   });
 
-  it('uses purposeful human photography without fake proof claims', () => {
-    expect(pageSource).toContain('<EditorialImage');
+  it('publishes the public experience in Arabic RTL', () => {
+    expect(layoutSource).toContain('<html lang="ar" dir="rtl">');
+    expect(pageSource).toContain('طوّر عقلك');
+    expect(aboutSource).toContain('من نحن');
+    expect(contactSource).toContain('تواصل معنا');
+    expect(arabicStyles).toContain('direction: rtl');
+  });
+
+  it('uses the official Luminol mark and purposeful human photography', () => {
+    expect(shellSource).toContain('/brand/luminol-mark.svg');
+    expect(pageSource).toContain('editorialImages.hero.src');
     expect(pageSource).not.toContain('12+');
     expect(pageSource).not.toContain('100%');
     expect(nextConfigSource).toContain("hostname: 'images.unsplash.com'");
-  });
-
-  it('applies one flagship system across public routes', () => {
-    expect(aboutSource).toContain("from '../flagship.module.css'");
-    expect(contactSource).toContain("from '../flagship.module.css'");
-    expect(schoolSource).toContain("from '../../flagship.module.css'");
   });
 
   it('publishes only governed team members and consent-confirmed testimonials', () => {
@@ -67,12 +72,12 @@ describe('premium public flagship', () => {
     expect(motionSource).toContain('IntersectionObserver');
     expect(motionSource).toContain("'(prefers-reduced-motion: reduce)'");
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(motionStyles).toContain("[data-revealed='true']");
+    expect(arabicStyles).toContain('@media (prefers-reduced-motion: reduce)');
   });
 
-  it('provides responsive navigation without requiring JavaScript', () => {
+  it('provides responsive Arabic navigation without requiring JavaScript', () => {
     expect(shellSource).toContain('<details className="mobile-menu">');
-    expect(shellSource).toContain('aria-label="Mobile navigation"');
-    expect(shellSource).toContain('Professional Training');
+    expect(shellSource).toContain('aria-label="التنقل عبر الهاتف"');
+    expect(shellSource).toContain('التكوين المهني');
   });
 });

@@ -22,7 +22,7 @@ export function EnquiryForm() {
 
     setSubmission({
       status: 'submitting',
-      message: 'Sending your enquiry…',
+      message: 'جارٍ إرسال استفسارك…',
     });
 
     try {
@@ -35,7 +35,7 @@ export function EnquiryForm() {
           phone: formData.get('phone'),
           school: formData.get('school'),
           message: formData.get('message'),
-          locale: 'en',
+          locale: 'ar',
           consent: formData.get('consent') === 'on',
           website: formData.get('website'),
         }),
@@ -43,18 +43,16 @@ export function EnquiryForm() {
 
       const payload = (await response.json()) as {
         submitted?: boolean;
-        error?: string;
       };
 
       if (!response.ok || !payload.submitted) {
-        throw new Error(payload.error || 'Unable to submit the enquiry.');
+        throw new Error('تعذر إرسال الاستفسار الآن. حاول مرة أخرى.');
       }
 
       form.reset();
       setSubmission({
         status: 'success',
-        message:
-          'Thank you. Your enquiry is safely with Luminol, and the team will review it.',
+        message: 'شكرًا لك. تم استلام استفسارك وسيقوم فريق لومينول بمراجعته.',
       });
     } catch (error) {
       setSubmission({
@@ -62,25 +60,25 @@ export function EnquiryForm() {
         message:
           error instanceof Error
             ? error.message
-            : 'Unable to submit the enquiry. Please try again.',
+            : 'تعذر إرسال الاستفسار الآن. حاول مرة أخرى.',
       });
     }
   }
 
   return (
-    <form className="enquiry-form" onSubmit={submitEnquiry}>
+    <form className="enquiry-form ar-enquiry-form" onSubmit={submitEnquiry}>
       <div className="form-heading">
-        <p className="eyebrow">Tell us about your goal</p>
-        <h2>Start your Luminol journey.</h2>
+        <p className="eyebrow">أخبرنا عن هدفك</p>
+        <h2>ابدأ رحلتك مع لومينول.</h2>
         <p>
-          Share what you are looking for. The Luminol team will use these
-          details only to understand and respond to your enquiry.
+          شارك معنا ما تبحث عنه. سنستخدم هذه المعلومات فقط لفهم استفسارك
+          والتواصل معك بشأنه.
         </p>
       </div>
 
       <div className="form-grid">
         <label>
-          <span>Full name</span>
+          <span>الاسم الكامل</span>
           <input
             autoComplete="name"
             maxLength={100}
@@ -91,32 +89,39 @@ export function EnquiryForm() {
           />
         </label>
         <label>
-          <span>Email address</span>
+          <span>البريد الإلكتروني</span>
           <input
             autoComplete="email"
             maxLength={254}
             name="email"
             required
             type="email"
+            dir="ltr"
           />
         </label>
         <label>
           <span>
-            Phone number <small>Optional</small>
+            رقم الهاتف <small>اختياري</small>
           </span>
-          <input autoComplete="tel" maxLength={30} name="phone" type="tel" />
+          <input
+            autoComplete="tel"
+            maxLength={30}
+            name="phone"
+            type="tel"
+            dir="ltr"
+          />
         </label>
         <label>
-          <span>Area of interest</span>
+          <span>مجال الاهتمام</span>
           <select defaultValue="GENERAL" name="school" required>
-            <option value="GENERAL">Help me choose</option>
-            <option value="PSYCHOLOGY">Psychology</option>
-            <option value="LANGUAGES">Languages</option>
-            <option value="TRAINING">Professional Training</option>
+            <option value="GENERAL">ساعدني على الاختيار</option>
+            <option value="PSYCHOLOGY">علم النفس</option>
+            <option value="LANGUAGES">اللغات</option>
+            <option value="TRAINING">التكوين المهني</option>
           </select>
         </label>
         <label className="message-field">
-          <span>How can Luminol help?</span>
+          <span>كيف يمكن للومينول مساعدتك؟</span>
           <textarea
             maxLength={2000}
             minLength={10}
@@ -135,8 +140,8 @@ export function EnquiryForm() {
       <label className="consent-field">
         <input name="consent" required type="checkbox" />
         <span>
-          I agree that Luminol may store and use these details to respond to my
-          enquiry.
+          أوافق على أن تقوم أكاديمية لومينول بحفظ هذه المعلومات واستخدامها للرد
+          على استفساري.
         </span>
       </label>
 
@@ -146,7 +151,7 @@ export function EnquiryForm() {
           size="lg"
           type="submit"
         >
-          {submission.status === 'submitting' ? 'Sending…' : 'Send my enquiry'}
+          {submission.status === 'submitting' ? 'جارٍ الإرسال…' : 'أرسل استفساري'}
         </Button>
         <p
           className={`form-status form-status-${submission.status}`}

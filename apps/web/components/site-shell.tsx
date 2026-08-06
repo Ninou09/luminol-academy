@@ -1,39 +1,52 @@
+import Image from 'next/image';
 import Link from 'next/link';
-import { ButtonLink, Wordmark } from '@luminol/ui';
+import { ButtonLink } from '@luminol/ui';
 
 const navigation = [
-  { href: '/', label: 'Home' },
-  { href: '/schools/psychology', label: 'Psychology' },
-  { href: '/schools/languages', label: 'Languages' },
-  { href: '/schools/training', label: 'Professional Training' },
-  { href: '/about', label: 'About' },
+  { href: '/', label: 'الرئيسية' },
+  { href: '/schools/psychology', label: 'علم النفس' },
+  { href: '/schools/languages', label: 'اللغات' },
+  { href: '/schools/training', label: 'التكوين المهني' },
+  { href: '/about', label: 'من نحن' },
 ] as const;
+
+function Brand({ footer = false }: { footer?: boolean }) {
+  return (
+    <span className={footer ? 'brand-lockup brand-lockup-footer' : 'brand-lockup'}>
+      <Image
+        className="brand-logo"
+        src="/brand/luminol-mark.svg"
+        alt=""
+        aria-hidden="true"
+        width={74}
+        height={82}
+        priority={!footer}
+      />
+      <span className="brand-copy">
+        <strong>أكاديمية لومينول</strong>
+        <small>LUMINOL ACADEMY</small>
+      </span>
+    </span>
+  );
+}
 
 export function SiteHeader() {
   return (
     <>
       <div className="utility-bar">
-        <p>Human development, language learning and professional capability</p>
+        <p>تعليم إنساني يجمع بين الوعي واللغة والمهارة</p>
         <div>
-          <span>Blida, Algeria</span>
-          <Link href="/contact">Contact</Link>
+          <span>البليدة، الجزائر</span>
+          <Link href="/contact">تواصل معنا</Link>
         </div>
       </div>
+
       <header className="site-header premium-header">
-        <Link className="brand-link" href="/" aria-label="Luminol Academy home">
-          <span className="brand-symbol" aria-hidden="true">
-            <b>L</b>
-            <i />
-            <i />
-            <i />
-          </span>
-          <span className="brand-text">
-            <Wordmark />
-            <small>Human potential, illuminated</small>
-          </span>
+        <Link className="brand-link" href="/" aria-label="الصفحة الرئيسية لأكاديمية لومينول">
+          <Brand />
         </Link>
 
-        <nav className="desktop-nav" aria-label="Primary navigation">
+        <nav className="desktop-nav" aria-label="التنقل الرئيسي">
           {navigation.map((item) => (
             <Link href={item.href} key={item.href}>
               {item.label}
@@ -43,20 +56,20 @@ export function SiteHeader() {
 
         <div className="header-actions">
           <ButtonLink className="header-cta" href="/contact" size="sm">
-            Find your path
+            سجّل اهتمامك
           </ButtonLink>
         </div>
 
         <details className="mobile-menu">
-          <summary aria-label="Open navigation menu">Menu</summary>
-          <nav aria-label="Mobile navigation">
+          <summary aria-label="فتح قائمة التنقل">القائمة</summary>
+          <nav aria-label="التنقل عبر الهاتف">
             {navigation.map((item) => (
               <Link href={item.href} key={item.href}>
-                {item.label} <span aria-hidden="true">→</span>
+                {item.label} <span aria-hidden="true">←</span>
               </Link>
             ))}
             <Link href="/contact">
-              Speak with the team <span aria-hidden="true">→</span>
+              تحدّث مع الفريق <span aria-hidden="true">←</span>
             </Link>
           </nav>
         </details>
@@ -69,10 +82,10 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="footer-lead">
-        <p>Mind · Voice · Future</p>
-        <h2>A connected academy for meaningful human development.</h2>
+        <p>العقل · اللغة · المستقبل</p>
+        <h2>أكاديمية واحدة لمسارات تعليمية مترابطة تصنع تقدّمًا حقيقيًا.</h2>
         <Link href="/contact">
-          Begin a conversation <span aria-hidden="true">→</span>
+          ابدأ محادثتك <span aria-hidden="true">←</span>
         </Link>
       </div>
 
@@ -81,55 +94,48 @@ export function SiteFooter() {
           <Link
             className="footer-brand"
             href="/"
-            aria-label="Luminol Academy home"
+            aria-label="الصفحة الرئيسية لأكاديمية لومينول"
           >
-            <span className="brand-symbol" aria-hidden="true">
-              <b>L</b>
-              <i />
-              <i />
-              <i />
-            </span>
-            <Wordmark className="footer-wordmark" />
+            <Brand footer />
           </Link>
           <p>
-            Psychology, languages and professional training in one thoughtful,
-            human-centred ecosystem.
+            علم النفس، تعلّم اللغات والتكوين المهني ضمن تجربة تعليمية واضحة،
+            إنسانية وعملية.
           </p>
-          <span className="footer-location">Blida, Algeria</span>
+          <span className="footer-location">البليدة، الجزائر</span>
         </div>
 
         <div className="footer-column">
-          <h2>Our schools</h2>
-          <Link href="/schools/psychology">Psychology</Link>
-          <Link href="/schools/languages">Languages</Link>
-          <Link href="/schools/training">Professional Training</Link>
+          <h2>فروع الأكاديمية</h2>
+          <Link href="/schools/psychology">علم النفس</Link>
+          <Link href="/schools/languages">اللغات</Link>
+          <Link href="/schools/training">التكوين المهني</Link>
         </div>
 
         <div className="footer-column">
-          <h2>Academy</h2>
-          <Link href="/about">About Luminol</Link>
-          <Link href="/contact">Contact the team</Link>
-          <Link href="/contact">Register your interest</Link>
+          <h2>الأكاديمية</h2>
+          <Link href="/about">من نحن</Link>
+          <Link href="/contact">تواصل مع الفريق</Link>
+          <Link href="/contact">سجّل اهتمامك</Link>
         </div>
 
         <div className="footer-column">
-          <h2>Start here</h2>
-          <Link href="/schools/psychology">Explore wellbeing support</Link>
-          <Link href="/schools/languages">Find a language pathway</Link>
-          <Link href="/schools/training">Build professional skills</Link>
+          <h2>ابدأ من هنا</h2>
+          <Link href="/schools/psychology">اكتشف برامج علم النفس</Link>
+          <Link href="/schools/languages">اختر مسارك اللغوي</Link>
+          <Link href="/schools/training">طوّر مهاراتك المهنية</Link>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <p>© {new Date().getFullYear()} Luminol Academy</p>
+        <p>© {new Date().getFullYear()} أكاديمية لومينول</p>
         <p className="footer-note">
-          Psychology content is educational and supportive, not emergency or
-          medical care.
+          محتوى علم النفس تعليمي وداعم ولا يعوّض خدمات الطوارئ أو الرعاية الطبية.
         </p>
         <div className="footer-bottom-links">
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms</Link>
-          <Link href="/cookies">Cookies</Link>
+          <Link href="/privacy">الخصوصية</Link>
+          <Link href="/terms">الشروط</Link>
+          <Link href="/cookies">ملفات الارتباط</Link>
         </div>
       </div>
     </footer>

@@ -3,6 +3,7 @@ import './globals.css';
 import './motion.css';
 import './site-shell.css';
 import './flagship-polish.css';
+import './arabic.css';
 
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
@@ -21,54 +22,57 @@ const metadataBase = resolveMetadataBase();
 export const metadata: Metadata = {
   metadataBase,
   title: {
-    default: 'Luminol Academy | Psychology, Languages & Professional Training',
-    template: '%s | Luminol Academy',
+    default: 'أكاديمية لومينول | علم النفس واللغات والتكوين المهني',
+    template: '%s | أكاديمية لومينول',
   },
   description:
-    'Grow mentally, linguistically and professionally with Luminol Academy—one human-centered ecosystem for psychology, languages and professional training.',
+    'أكاديمية لومينول في البليدة: مسارات متكاملة في علم النفس، تعلّم اللغات والتكوين المهني ضمن تجربة إنسانية وعملية.',
   keywords: [
-    'Luminol Academy',
-    'psychology',
-    'mental wellness',
-    'language learning',
-    'professional training',
-    'coaching',
+    'أكاديمية لومينول',
+    'علم النفس',
+    'الدعم النفسي',
+    'تعلم اللغات',
+    'التكوين المهني',
+    'التدريب',
+    'البليدة',
   ],
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Luminol Academy',
+    title: 'أكاديمية لومينول',
     description:
-      'Psychology, language learning and professional development in one thoughtful human ecosystem.',
+      'علم النفس، تعلّم اللغات والتكوين المهني ضمن منظومة واحدة تهتم بالإنسان وقدراته.',
     type: 'website',
     url: '/',
+    locale: 'ar_DZ',
   },
   twitter: {
     card: 'summary',
-    title: 'Luminol Academy',
+    title: 'أكاديمية لومينول',
     description:
-      'Psychology, language learning and professional development in one thoughtful human ecosystem.',
+      'علم النفس، تعلّم اللغات والتكوين المهني ضمن منظومة واحدة تهتم بالإنسان وقدراته.',
   },
 };
 
 const organisationStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'EducationalOrganization',
-  name: 'Luminol Academy',
+  name: 'أكاديمية لومينول',
+  alternateName: 'Luminol Academy',
   url: metadataBase.toString(),
   description:
-    'A connected academy for psychology, language learning and professional training.',
+    'أكاديمية متكاملة لعلم النفس وتعلّم اللغات والتكوين المهني في البليدة، الجزائر.',
   address: {
     '@type': 'PostalAddress',
-    addressLocality: 'Blida',
+    addressLocality: 'البليدة',
     addressCountry: 'DZ',
   },
-  areaServed: 'Algeria',
+  areaServed: 'الجزائر',
   knowsAbout: [
-    'Psychology education and mental wellness',
-    'Language learning and communication',
-    'Professional development and training',
+    'التثقيف النفسي والتنمية الشخصية',
+    'تعلم اللغات والتواصل',
+    'التكوين والتطوير المهني',
   ],
 };
 
@@ -78,7 +82,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="ltr">
+    <html lang="ar" dir="rtl">
       <body>
         {children}
         <script

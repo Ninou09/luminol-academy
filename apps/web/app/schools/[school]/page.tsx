@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ButtonLink } from '@luminol/ui';
-import { EditorialImage } from '../../../components/editorial-image';
 import { HomeMotion } from '../../../components/home-motion';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { branchExperience } from '../../../lib/flagship';
@@ -17,7 +16,6 @@ import {
   getPublicTestimonials,
 } from '../../../lib/sanity-public';
 import { isSchoolSlug, schools } from '../../../lib/schools';
-import styles from '../../flagship.module.css';
 
 type SchoolPageProps = {
   params: Promise<{ school: string }>;
@@ -43,14 +41,15 @@ export async function generateMetadata({
       canonical: route,
     },
     openGraph: {
-      title: `Luminol ${school.name}`,
+      title: `${school.name} | أكاديمية لومينول`,
       description: school.introduction,
       type: 'website',
       url: route,
+      locale: 'ar_DZ',
     },
     twitter: {
       card: 'summary',
-      title: `Luminol ${school.name}`,
+      title: `${school.name} | أكاديمية لومينول`,
       description: school.introduction,
     },
   };
@@ -67,6 +66,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     getPublicTeamMembers(slug),
     getPublicTestimonials(slug),
   ]);
+
   const programmes: Array<{
     id: string;
     title: string;
@@ -91,87 +91,87 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         title: programme.title,
         description: programme.description,
       }));
+
   const relatedSchools = Object.values(schools).filter(
     (item) => item.slug !== school.slug,
   );
 
   return (
-    <main
-      className={`${styles.page} ${styles.branchPage} ${styles[school.slug]}`}
-    >
+    <main className={`ar-page ar-school-page ar-theme-${school.slug}`}>
       <HomeMotion />
       <SiteHeader />
 
-      <section className={styles.branchHero}>
-        <div className={styles.branchHeroCopy} data-reveal="left">
-          <Link className={styles.breadcrumb} href="/#schools">
-            Luminol schools <span aria-hidden="true">/</span> {school.name}
+      <section className="ar-school-hero">
+        <div className="ar-school-hero-media" aria-hidden="true">
+          <Image
+            src={experience.image.src}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+          />
+        </div>
+        <div className="ar-school-hero-shade" />
+        <div className="ar-school-hero-content" data-reveal="right">
+          <Link className="ar-breadcrumb" href="/#schools">
+            أقسام لومينول <span aria-hidden="true">/</span> {school.name}
           </Link>
-          <p className={styles.kicker}>{experience.themeLabel}</p>
+          <p className="ar-kicker">{experience.themeLabel}</p>
           <h1>{school.headline}</h1>
           <p>{experience.positioning}</p>
-          <div className={styles.branchHeroActions}>
+          <div className="ar-hero-actions">
             <ButtonLink href="#programmes" size="lg">
-              Explore {school.name.toLowerCase()} programmes
+              اكتشف البرامج
             </ButtonLink>
             <ButtonLink href="/contact" size="lg" variant="secondary">
-              Register your interest
+              سجّل اهتمامك
             </ButtonLink>
           </div>
         </div>
-        <div className={styles.branchHeroMedia} data-reveal="scale">
-          <EditorialImage
-            className={styles.branchHeroFigure}
-            image={experience.image}
-            priority
-            sizes="(max-width: 72rem) 100vw, 52vw"
-            caption={`${school.name} imagery selected for the purpose and mood of this school.`}
-          />
-          <div className={styles.branchHeroNote}>
-            <small>
-              {school.number} · {school.name}
-            </small>
-            <p>{school.promise}</p>
-          </div>
+        <div className="ar-school-hero-badge">
+          <span>{school.number}</span>
+          <strong>{school.name}</strong>
         </div>
       </section>
 
-      <section className={styles.branchPromise}>
-        <span>What this school is designed to do</span>
+      <nav className="ar-section-nav" aria-label="التنقل داخل القسم">
+        <a href="#programmes">البرامج</a>
+        <a href="#outcomes">النتائج المستهدفة</a>
+        <a href="#method">طريقة العمل</a>
+        <a href="#faq">الأسئلة الشائعة</a>
+      </nav>
+
+      <section className="ar-school-promise">
+        <span>ما الذي صُمم هذا القسم لتحقيقه؟</span>
         <blockquote>{school.promise}</blockquote>
       </section>
 
-      <section id="programmes" className={styles.branchProgrammeSection}>
-        <div className={styles.branchSectionHeading} data-reveal>
+      <section id="programmes" className="ar-programmes-section">
+        <div className="ar-section-heading" data-reveal>
           <div>
-            <p className={styles.kicker}>Programmes and support</p>
-            <h2>Choose a pathway with a clear purpose.</h2>
+            <p className="ar-kicker">البرامج والمسارات</p>
+            <h2>اختر مسارًا له هدف واضح.</h2>
           </div>
           <p>
-            Published CMS programmes take priority. The reviewed Luminol
-            pathways remain available when no approved CMS content is active.
+            يتم عرض البرامج المعتمدة من نظام المحتوى عند توفرها، وتبقى المسارات
+            الأساسية المراجعة متاحة عندما لا يوجد محتوى منشور جديد.
           </p>
         </div>
-        <div className={styles.programGrid}>
+        <div className="ar-program-grid">
           {programmes.map((programme, index) => (
             <article
-              className={styles.programCard}
               data-reveal
               key={programme.id}
-              style={
-                {
-                  '--reveal-delay': `${(index % 2) * 65}ms`,
-                } as CSSProperties
-              }
+              style={{ '--reveal-delay': `${(index % 2) * 65}ms` } as CSSProperties}
             >
               <span>{String(index + 1).padStart(2, '0')}</span>
               {programme.image ? (
-                <div className={styles.programCardImage}>
+                <div className="ar-program-image">
                   <Image
                     src={programme.image.url}
                     alt={programme.image.alt}
                     fill
-                    sizes="(max-width: 44rem) 100vw, 50vw"
+                    sizes="(max-width: 700px) 100vw, 50vw"
                   />
                 </div>
               ) : null}
@@ -179,31 +179,30 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               {programme.delivery ? <small>{programme.delivery}</small> : null}
               <p>{programme.description}</p>
               <Link href="/contact">
-                Ask about this programme <b aria-hidden="true">→</b>
+                اسأل عن هذا البرنامج <b aria-hidden="true">←</b>
               </Link>
             </article>
           ))}
         </div>
       </section>
 
-      <section className={styles.branchSplit}>
-        <div className={styles.branchSplitCopy} data-reveal="left">
-          <p className={styles.kicker}>Benefits and outcomes</p>
-          <h2>Progress should be understandable and usable.</h2>
-          <p className={styles.storyLead}>
-            The experience is designed around the learner’s context—not a
-            one-size-fits-all promise.
+      <section id="outcomes" className="ar-school-split">
+        <div className="ar-school-split-copy" data-reveal="right">
+          <p className="ar-kicker">الفوائد والنتائج المستهدفة</p>
+          <h2>التقدّم يجب أن يكون مفهومًا وقابلًا للاستخدام.</h2>
+          <p className="ar-story-lead">
+            لا نقدّم وعودًا عامة للجميع؛ التجربة تتغير حسب الشخص، المستوى،
+            البرنامج والمشاركة.
           </p>
           <p>
-            Outcomes vary by programme, level and participation. These
-            principles describe what the school is designed to support without
-            making exaggerated guarantees.
+            هذه النقاط توضّح ما صُمم القسم لدعمه من دون ادعاء نتائج مضمونة أو
+            أرقام غير موثقة.
           </p>
         </div>
-        <ol className={styles.outcomeList}>
+        <ol className="ar-outcome-list">
           {experience.outcomes.map((outcome, index) => (
             <li
-              data-reveal="right"
+              data-reveal="left"
               key={outcome}
               style={{ '--reveal-delay': `${index * 55}ms` } as CSSProperties}
             >
@@ -214,15 +213,15 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </ol>
       </section>
 
-      <section className={styles.branchMethod}>
-        <div data-reveal="left">
-          <p className={styles.kicker}>How the journey works</p>
-          <h2>A clear method, adapted to the person and goal.</h2>
+      <section id="method" className="ar-method-section">
+        <div data-reveal="right">
+          <p className="ar-kicker">كيف تسير التجربة؟</p>
+          <h2>طريقة واضحة، تتكيف مع الشخص والهدف.</h2>
         </div>
-        <ol className={styles.methodList}>
+        <ol className="ar-method-list">
           {school.approach.map((step, index) => (
             <li
-              data-reveal="right"
+              data-reveal="left"
               key={step.title}
               style={{ '--reveal-delay': `${index * 60}ms` } as CSSProperties}
             >
@@ -236,18 +235,18 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </ol>
       </section>
 
-      <section className={styles.branchAudience}>
-        <div className={styles.branchSectionHeading} data-reveal>
+      <section className="ar-audience-section">
+        <div className="ar-section-heading" data-reveal>
           <div>
-            <p className={styles.kicker}>Designed around people</p>
-            <h2>Who this school supports.</h2>
+            <p className="ar-kicker">مصمم حول الناس</p>
+            <h2>لمن يمكن أن يكون هذا القسم مناسبًا؟</h2>
           </div>
           <p>
-            The enquiry conversation helps confirm whether the current
-            programme, group and format are appropriate.
+            تساعد محادثة الاستفسار على التأكد من أن البرنامج، المجموعة والصيغة
+            مناسبة للحالة والهدف الحاليين.
           </p>
         </div>
-        <div className={styles.audienceGrid}>
+        <div className="ar-audience-grid">
           {school.audiences.map((audience, index) => (
             <article
               data-reveal
@@ -261,26 +260,26 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </div>
       </section>
 
-      <section className={styles.branchSplit}>
-        <div className={styles.branchSplitCopy} data-reveal="left">
-          <p className={styles.kicker}>Instructor credibility</p>
-          <h2>Expertise that fits the discipline.</h2>
+      <section className="ar-school-split ar-expertise-section">
+        <div className="ar-school-split-copy" data-reveal="right">
+          <p className="ar-kicker">خبرة تناسب التخصص</p>
+          <h2>المصداقية تبدأ من الشخص والطريقة.</h2>
           <p>
-            Luminol’s content system publishes individual profiles only after
-            their role, biography and portrait have been approved.
+            لا ينشر نظام لومينول ملف أي مدرب أو مختص إلا بعد اعتماد الدور،
+            السيرة والصورة للنشر.
           </p>
         </div>
         {teamMembers?.length ? (
-          <div className={styles.peopleGrid}>
+          <div className="ar-people-grid ar-school-people-grid">
             {teamMembers.map((member) => (
               <article data-reveal key={member._id}>
                 {member.portrait ? (
-                  <div className={styles.personPortrait}>
+                  <div className="ar-person-image">
                     <Image
                       src={member.portrait.url}
                       alt={member.portrait.alt}
                       fill
-                      sizes="(max-width: 44rem) 100vw, 25vw"
+                      sizes="(max-width: 700px) 100vw, 25vw"
                     />
                   </div>
                 ) : null}
@@ -291,9 +290,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             ))}
           </div>
         ) : (
-          <ol className={styles.expertiseList}>
+          <ol className="ar-expertise-list">
             {experience.expertise.map((item, index) => (
-              <li data-reveal="right" key={item}>
+              <li data-reveal="left" key={item}>
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 {item}
               </li>
@@ -303,37 +302,31 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
       </section>
 
       {testimonials?.length ? (
-        <section className={styles.branchEvidence}>
-          <div className={styles.branchEvidenceInner}>
-            <div data-reveal="left">
-              <p className={styles.kicker}>Approved voices</p>
-              <h2>Evidence published with consent.</h2>
-              <p>
-                Only testimonials marked active with confirmed publication
-                consent are displayed.
-              </p>
-            </div>
-            <div className={styles.branchEvidenceQuotes}>
-              {testimonials.map((testimonial) => (
-                <figure data-reveal="right" key={testimonial._id}>
-                  <blockquote>“{testimonial.quote}”</blockquote>
-                  <figcaption>
-                    <strong>{testimonial.personName}</strong>
-                    <span>{testimonial.context ?? school.name}</span>
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
+        <section className="ar-school-evidence">
+          <div>
+            <p className="ar-kicker">آراء منشورة بموافقة أصحابها</p>
+            <h2>دليل حقيقي بدل العبارات التسويقية المصطنعة.</h2>
+          </div>
+          <div className="ar-testimonial-grid">
+            {testimonials.map((testimonial) => (
+              <figure data-reveal key={testimonial._id}>
+                <blockquote>«{testimonial.quote}»</blockquote>
+                <figcaption>
+                  <strong>{testimonial.personName}</strong>
+                  <span>{testimonial.context ?? school.name}</span>
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </section>
       ) : null}
 
-      <section className={styles.branchFaq}>
-        <div data-reveal="left">
-          <p className={styles.kicker}>Frequently asked questions</p>
-          <h2>Useful answers before you enquire.</h2>
+      <section id="faq" className="ar-faq-section">
+        <div data-reveal="right">
+          <p className="ar-kicker">الأسئلة الشائعة</p>
+          <h2>إجابات مهمة قبل الاستفسار.</h2>
         </div>
-        <div className={styles.faqList}>
+        <div className="ar-faq-list">
           {experience.faq.map((item) => (
             <details key={item.question}>
               <summary>{item.question}</summary>
@@ -343,47 +336,41 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </div>
       </section>
 
-      <aside
-        className={styles.safetyNote}
-        aria-label="Important programme note"
-      >
-        <span>Important</span>
+      <aside className="ar-safety-note" aria-label="ملاحظة مهمة حول البرنامج">
+        <span>مهم</span>
         <p>{school.note}</p>
       </aside>
 
-      <section className={styles.relatedSection}>
-        <div className={styles.branchSectionHeading} data-reveal>
+      <section className="ar-related-section">
+        <div className="ar-section-heading" data-reveal>
           <div>
-            <p className={styles.kicker}>Continue exploring</p>
-            <h2>Growth connects across every Luminol school.</h2>
+            <p className="ar-kicker">واصل الاستكشاف</p>
+            <h2>التطور يتصل بين كل أقسام لومينول.</h2>
           </div>
-          <p>
-            Explore another dimension of personal, linguistic or professional
-            development.
-          </p>
+          <p>اكتشف جانبًا آخر من التطور النفسي، اللغوي أو المهني.</p>
         </div>
-        <div className={styles.relatedGrid}>
+        <div className="ar-related-grid">
           {relatedSchools.map((related) => (
             <Link href={`/schools/${related.slug}`} key={related.slug}>
               <span>{related.number}</span>
               <h3>{related.name}</h3>
-              <b aria-hidden="true">↗</b>
+              <b aria-hidden="true">←</b>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className={styles.finalCta}>
-        <div data-reveal="left">
-          <p className={styles.kicker}>Your next step</p>
-          <h2>Find the {school.name.toLowerCase()} pathway that fits.</h2>
+      <section className="ar-final-cta">
+        <div data-reveal="right">
+          <p className="ar-kicker">خطوتك التالية</p>
+          <h2>ابحث عن المسار الذي يناسب هدفك.</h2>
           <p>
-            Begin with your goal. The Luminol team will help confirm the
-            programme, level and format that are currently appropriate.
+            ابدأ بهدفك، وسيساعدك فريق لومينول على تأكيد البرنامج، المستوى
+            والصيغة المتاحة والأنسب.
           </p>
         </div>
-        <ButtonLink data-reveal="right" href="/contact" size="lg">
-          Register your interest <span aria-hidden="true">→</span>
+        <ButtonLink data-reveal="left" href="/contact" size="lg">
+          سجّل اهتمامك <span aria-hidden="true">←</span>
         </ButtonLink>
       </section>
 

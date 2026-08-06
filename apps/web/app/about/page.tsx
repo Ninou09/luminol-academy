@@ -2,31 +2,30 @@ import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { ButtonLink } from '@luminol/ui';
-import { EditorialImage } from '../../components/editorial-image';
 import { HomeMotion } from '../../components/home-motion';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { credibilityPrinciples, editorialImages } from '../../lib/flagship';
 import { getPublicTeamMembers } from '../../lib/sanity-public';
-import styles from '../flagship.module.css';
 
 const aboutDescription =
-  'Discover the founder-led vision, philosophy and human-development mission behind Luminol Academy.';
+  'تعرّف على رؤية أكاديمية لومينول ورسالتها في ربط علم النفس، اللغات والتطوير المهني ضمن تجربة تعليمية إنسانية وعملية.';
 
 export const metadata: Metadata = {
-  title: 'About Luminol',
+  title: 'من نحن',
   description: aboutDescription,
   alternates: {
     canonical: '/about',
   },
   openGraph: {
-    title: 'About Luminol',
+    title: 'من نحن | أكاديمية لومينول',
     description: aboutDescription,
     type: 'website',
     url: '/about',
+    locale: 'ar_DZ',
   },
   twitter: {
     card: 'summary',
-    title: 'About Luminol',
+    title: 'من نحن | أكاديمية لومينول',
     description: aboutDescription,
   },
 };
@@ -34,27 +33,27 @@ export const metadata: Metadata = {
 const values = [
   {
     number: '01',
-    title: 'Intellectual depth',
+    title: 'معرفة بعمق ووضوح',
     description:
-      'Serious knowledge is translated with clarity, integrity and respect for the learner.',
+      'نحوّل المعرفة الجادة إلى لغة مفهومة تحترم عقل المتعلم وتساعده على استخدامها.',
   },
   {
     number: '02',
-    title: 'Human warmth',
+    title: 'تجربة إنسانية',
     description:
-      'Premium education should still feel personal, supportive and approachable.',
+      'الجودة لا تعني أن تصبح التجربة باردة؛ نريدها منظمة، محترمة، وقريبة من الإنسان.',
   },
   {
     number: '03',
-    title: 'Purposeful progress',
+    title: 'تقدّم له معنى',
     description:
-      'Learning is designed around choices, communication, wellbeing and useful capability.',
+      'نصمم التعلم حول قرار، مهارة، تواصل أو تغيير يمكن أن ينعكس في الحياة اليومية.',
   },
   {
     number: '04',
-    title: 'Connected growth',
+    title: 'نمو مترابط',
     description:
-      'The academy connects the dimensions that shape how people live, communicate and work.',
+      'نربط بين الأبعاد التي تؤثر في طريقة تفكير الإنسان، تواصله، وتقدّمه المهني.',
   },
 ] as const;
 
@@ -62,36 +61,32 @@ export default async function AboutPage() {
   const teamMembers = await getPublicTeamMembers();
 
   return (
-    <main className={styles.page}>
+    <main className="ar-page">
       <HomeMotion />
       <SiteHeader />
 
-      <section className={styles.internalHero}>
-        <div className={styles.internalHeroCopy} data-reveal="left">
-          <p className={styles.kicker}>About Luminol</p>
-          <h1>Human potential deserves a more connected kind of education.</h1>
-          <p>
-            Luminol is a founder-led academy for psychology, language learning
-            and professional development—built around the whole person, not only
-            one skill.
-          </p>
-        </div>
-        <div className={styles.internalHeroMedia} data-reveal="scale">
-          <EditorialImage
-            className={styles.internalHeroFigure}
-            image={editorialImages.learning}
+      <section className="ar-internal-hero ar-about-hero">
+        <div className="ar-internal-hero-media" aria-hidden="true">
+          <Image
+            src={editorialImages.learning.src}
+            alt=""
+            fill
             priority
-            sizes="(max-width: 72rem) 100vw, 52vw"
-            caption="Knowledge becomes meaningful when people can use it."
+            sizes="100vw"
           />
-          <div className={styles.internalHeroNote}>
-            <small>The founding idea</small>
-            <p>Mind, voice and future continually shape one another.</p>
-          </div>
+        </div>
+        <div className="ar-internal-hero-shade" />
+        <div className="ar-internal-hero-content" data-reveal="right">
+          <p className="ar-kicker">من نحن</p>
+          <h1>نؤمن أن الإنسان لا يتطور في جانب واحد فقط.</h1>
+          <p>
+            لومينول أكاديمية تجمع بين علم النفس، تعلّم اللغات، والتكوين المهني
+            ضمن رؤية واحدة: معرفة واضحة تتحول إلى قدرة يمكن استخدامها.
+          </p>
         </div>
       </section>
 
-      <section className={styles.editorialBand}>
+      <section className="ar-purpose-strip" aria-label="مبادئ الأكاديمية">
         {credibilityPrinciples.slice(0, 3).map((principle, index) => (
           <article
             data-reveal
@@ -105,67 +100,79 @@ export default async function AboutPage() {
         ))}
       </section>
 
-      <section className={styles.storySection}>
-        <div data-reveal="left">
-          <p className={styles.kicker}>Why Luminol exists</p>
-          <h2>Growth becomes more useful when knowledge connects.</h2>
+      <section className="ar-story-section">
+        <div className="ar-story-heading" data-reveal="right">
+          <p className="ar-kicker">لماذا توجد لومينول؟</p>
+          <h2>لأن المعرفة تصبح أقوى عندما تتصل بما يحتاجه الإنسان فعلًا.</h2>
         </div>
-        <div className={styles.storyCopy} data-reveal="right">
-          <p className={styles.storyLead}>
-            Emotional strength, communication and professional capability are
-            often taught separately, even though they continuously influence one
-            another.
+        <div className="ar-story-copy" data-reveal="left">
+          <p className="ar-story-lead">
+            القوة النفسية، التواصل، والقدرة المهنية تُدرّس غالبًا كمواضيع منفصلة،
+            رغم أنها تؤثر في بعضها كل يوم.
           </p>
           <p>
-            Luminol brings these needs into one coherent academy while
-            protecting the language, ethics and standards of every discipline.
-            The result is intellectually serious, emotionally intelligent and
-            practical enough to support everyday progress.
+            تجمع لومينول هذه الاحتياجات داخل أكاديمية واحدة من دون إلغاء هوية
+            أي تخصص. لكل قسم لغته، حدوده، وطرق عمله، لكن التجربة العامة تبقى
+            واضحة ومترابطة للمتعلم.
           </p>
           <p>
-            The platform is designed to help individuals, families,
-            professionals and organisations find a relevant starting point and
-            continue developing as their goals evolve.
+            الهدف ليس ملء الوقت بالمحتوى، بل مساعدة الأشخاص والعائلات والمهنيين
+            والمؤسسات على إيجاد نقطة بداية مفيدة ثم الاستمرار في التطور مع تغير
+            احتياجاتهم.
           </p>
         </div>
       </section>
 
-      <section className={styles.storySection}>
-        <EditorialImage
-          className={styles.editorialIntroImage}
-          image={editorialImages.hero}
-          caption="Dialogue and active participation are central to the Luminol experience."
-        />
-        <div className={styles.storyCopy} data-reveal="right">
-          <p className={styles.kicker}>Mission and vision</p>
-          <h2>Clear learning. Human experience. Lasting capability.</h2>
-          <p className={styles.storyLead}>
-            Make meaningful human development understandable, approachable and
-            connected to real life.
+      <section className="ar-split-feature">
+        <figure className="ar-feature-image" data-reveal="right">
+          <div>
+            <Image
+              src={editorialImages.hero.src}
+              alt={editorialImages.hero.alt}
+              fill
+              sizes="(max-width: 900px) 100vw, 48vw"
+            />
+          </div>
+          <figcaption>
+            <span>الحوار والمشاركة جزء أساسي من تجربة لومينول.</span>
+            <a
+              href={editorialImages.hero.creditUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              الصورة: {editorialImages.hero.credit}
+            </a>
+          </figcaption>
+        </figure>
+        <div className="ar-section-copy" data-reveal="left">
+          <p className="ar-kicker">الرسالة والرؤية</p>
+          <h2>تعلّم واضح. تجربة إنسانية. قدرة تدوم بعد نهاية البرنامج.</h2>
+          <p className="ar-large-copy">
+            نجعل التطور الشخصي واللغوي والمهني أكثر وضوحًا، أكثر قربًا، وأكثر
+            ارتباطًا بالحياة الواقعية.
           </p>
           <p>
-            Luminol’s long-term vision is a trusted ecosystem where people can
-            strengthen emotional awareness, communication and professional
-            capability across different stages of life.
+            رؤيتنا طويلة المدى هي بناء منظومة موثوقة يستطيع فيها الشخص أن يطوّر
+            وعيه النفسي، تواصله، وقدرته المهنية عبر مراحل مختلفة من حياته.
           </p>
           <ButtonLink href="/contact" size="lg">
-            Speak with the Luminol team
+            تواصل مع فريق لومينول
           </ButtonLink>
         </div>
       </section>
 
-      <section className={styles.branchSection}>
-        <div className={styles.sectionHeading} data-reveal>
+      <section className="ar-values-section">
+        <div className="ar-section-heading" data-reveal>
           <div>
-            <p className={styles.kicker}>What guides the academy</p>
-            <h2>Premium standards without losing humanity.</h2>
+            <p className="ar-kicker">ما الذي يوجّهنا؟</p>
+            <h2>معايير عالية من دون أن نفقد البعد الإنساني.</h2>
           </div>
           <p>
-            These principles shape programme design, content, communication and
-            every interaction with the Luminol community.
+            هذه المبادئ تؤثر في تصميم البرامج، المحتوى، التواصل، وطريقة استقبال
+            كل شخص يتعامل مع الأكاديمية.
           </p>
         </div>
-        <div className={styles.valuesGrid}>
+        <div className="ar-values-grid">
           {values.map((value, index) => (
             <article
               data-reveal
@@ -181,31 +188,31 @@ export default async function AboutPage() {
       </section>
 
       {teamMembers?.length ? (
-        <section className={styles.peopleSection}>
-          <div className={styles.sectionHeading} data-reveal>
+        <section className="ar-people-section">
+          <div className="ar-section-heading" data-reveal>
             <div>
-              <p className={styles.kicker}>The people behind Luminol</p>
-              <h2>Approved expertise, presented clearly.</h2>
+              <p className="ar-kicker">فريق الأكاديمية</p>
+              <h2>خبرات معتمدة، معروضة بوضوح.</h2>
             </div>
             <p>
-              Profiles appear only after Luminol has approved the biography,
-              role and portrait for publication.
+              لا يظهر أي ملف مهني هنا إلا بعد اعتماد الاسم، الدور، السيرة والصورة
+              للنشر.
             </p>
           </div>
-          <div className={styles.peopleGrid}>
+          <div className="ar-people-grid">
             {teamMembers.map((member) => (
               <article data-reveal key={member._id}>
                 {member.portrait ? (
-                  <div className={styles.personPortrait}>
+                  <div className="ar-person-image">
                     <Image
                       src={member.portrait.url}
                       alt={member.portrait.alt}
                       fill
-                      sizes="(max-width: 44rem) 100vw, (max-width: 72rem) 50vw, 25vw"
+                      sizes="(max-width: 700px) 100vw, 25vw"
                     />
                   </div>
                 ) : null}
-                <small>{member.school ?? 'Luminol Academy'}</small>
+                <small>{member.school ?? 'أكاديمية لومينول'}</small>
                 <h3>{member.name}</h3>
                 <p>{member.role}</p>
               </article>
@@ -214,17 +221,17 @@ export default async function AboutPage() {
         </section>
       ) : null}
 
-      <section className={styles.finalCta}>
-        <div data-reveal="left">
-          <p className={styles.kicker}>Find your place at Luminol</p>
-          <h2>Which kind of growth matters most today?</h2>
+      <section className="ar-final-cta">
+        <div data-reveal="right">
+          <p className="ar-kicker">مكانك في لومينول</p>
+          <h2>أي جانب تريد أن تطوره الآن؟</h2>
           <p>
-            Explore the three schools or tell the team what you want to
-            understand, strengthen or achieve.
+            استكشف الأقسام الثلاثة أو أخبر الفريق بما تريد فهمه، تعلمه أو
+            تطويره.
           </p>
         </div>
-        <ButtonLink data-reveal="right" href="/contact" size="lg">
-          Start a conversation <span aria-hidden="true">→</span>
+        <ButtonLink data-reveal="left" href="/contact" size="lg">
+          ابدأ محادثة <span aria-hidden="true">←</span>
         </ButtonLink>
       </section>
 

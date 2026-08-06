@@ -30,7 +30,7 @@ export function EditorialImage({
       <figcaption>
         {caption ? <span>{caption}</span> : <span />}
         <a href={image.creditUrl} target="_blank" rel="noreferrer">
-          Photo: {image.credit}
+          الصورة: {image.credit}
         </a>
       </figcaption>
     </figure>

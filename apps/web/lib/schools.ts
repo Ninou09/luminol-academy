@@ -1,172 +1,162 @@
 export const schools = {
   psychology: {
     slug: 'psychology',
-    number: '01',
-    name: 'Psychology',
-    eyebrow: 'Wellbeing · Awareness · Personal development',
-    headline: 'Understand what you feel. Build what helps you thrive.',
+    number: '٠١',
+    name: 'علم النفس',
+    eyebrow: 'الرفاه النفسي · الوعي · التطور الشخصي',
+    headline: 'افهم ما تشعر به. وابنِ ما يساعدك على الازدهار.',
     introduction:
-      'Luminol Psychology creates a thoughtful space for emotional awareness, supportive guidance and meaningful personal development across different stages of life.',
+      'يقدّم فرع علم النفس في لومينول مساحة مدروسة لفهم المشاعر، تنمية الوعي ودعم التطور الشخصي في مراحل الحياة المختلفة.',
     promise:
-      'Scientific thinking, human warmth and practical tools—brought together with care.',
-    visualWords: ['Awareness', 'Balance', 'Connection'],
+      'تفكير علمي، إنصات إنساني وأدوات عملية تُقدَّم بمسؤولية ووضوح.',
+    visualWords: ['وعي', 'توازن', 'تواصل'],
     programs: [
       {
-        title: 'Individual support',
+        title: 'الدعم الفردي',
         description:
-          'Structured conversations and practical guidance for people navigating stress, change, confidence and emotional growth.',
+          'حوارات منظّمة وتوجيه عملي للأشخاص الذين يواجهون الضغط، التغيير، ضعف الثقة أو تحديات النمو العاطفي.',
       },
       {
-        title: 'Child and family guidance',
+        title: 'إرشاد الطفل والأسرة',
         description:
-          'Educational support that helps parents and families better understand development, communication and everyday challenges.',
+          'دعم تربوي يساعد الأولياء والأسر على فهم النمو، التواصل والتحديات اليومية بصورة أفضل.',
       },
       {
-        title: 'Coaching programs',
+        title: 'برامج الكوتشينغ',
         description:
-          'Goal-oriented development for habits, self-awareness, relationships and the next meaningful chapter.',
+          'مسارات موجّهة نحو الأهداف لتطوير العادات، الوعي بالذات، العلاقات والخطوات القادمة.',
       },
       {
-        title: 'Workshops',
+        title: 'الورشات الجماعية',
         description:
-          'Accessible group learning around emotional intelligence, stress management, parenting and self-development.',
+          'تعلّم مبسّط وتفاعلي حول الذكاء العاطفي، إدارة الضغط، التربية والتطور الشخصي.',
       },
     ],
     approach: [
       {
-        title: 'Listen deeply',
+        title: 'نستمع بعمق',
         description:
-          'Begin with the person, their context and what meaningful progress looks like for them.',
+          'نبدأ بالإنسان وسياقه وما يعنيه التقدّم الحقيقي بالنسبة إليه.',
       },
       {
-        title: 'Create clarity',
+        title: 'نصنع الوضوح',
         description:
-          'Turn complex experiences into understandable patterns, language and practical direction.',
+          'نحوّل التجارب المعقّدة إلى أنماط مفهومة ولغة واضحة واتجاه عملي.',
       },
       {
-        title: 'Build forward',
+        title: 'نبني الخطوة التالية',
         description:
-          'Translate insight into supportive actions that can be practiced in everyday life.',
+          'نترجم الفهم إلى ممارسات داعمة يمكن تطبيقها في الحياة اليومية.',
       },
     ],
-    audiences: ['Individuals', 'Parents and families', 'Young people', 'Teams'],
-    note: 'Luminol Psychology programs are educational and supportive. They do not replace emergency, psychiatric or medical care. Appropriate professional referral should always be used when a person needs a different level of support.',
+    audiences: ['الأفراد', 'الأولياء والأسر', 'الشباب', 'الفرق والمؤسسات'],
+    note: 'برامج علم النفس في لومينول تعليمية وداعمة، ولا تعوّض خدمات الطوارئ أو العلاج النفسي والطبي. تتم الإحالة إلى المختصين المناسبين عندما تتطلب الحالة مستوى آخر من الرعاية.',
   },
   languages: {
     slug: 'languages',
-    number: '02',
-    name: 'Languages',
-    eyebrow: 'Language · Culture · Confident communication',
-    headline: 'Find your voice. Use it with confidence.',
+    number: '٠٢',
+    name: 'اللغات',
+    eyebrow: 'اللغة · الثقافة · التواصل الواثق',
+    headline: 'اكتشف صوتك. واستخدمه بثقة.',
     introduction:
-      'Luminol Languages turns language knowledge into real communication through structured learning, thoughtful practice and meaningful cultural connection.',
+      'يحوّل فرع اللغات المعرفة النظرية إلى تواصل حقيقي من خلال مسارات واضحة، ممارسة منتظمة وتغذية راجعة تساعد المتعلم على التقدم.',
     promise:
-      'Clear pathways from foundations to fluency, designed around how people actually communicate.',
-    visualWords: ['Learn', 'Express', 'Connect'],
+      'مسارات من الأساسيات إلى الطلاقة، مصممة حول الطريقة التي يتواصل بها الناس فعليًا.',
+    visualWords: ['تعلّم', 'عبّر', 'تواصل'],
     programs: [
       {
-        title: 'English programs',
+        title: 'برامج اللغة الإنجليزية',
         description:
-          'Progressive learning for foundations, academic goals, confident conversation and professional communication.',
+          'تعلّم تدريجي للأساسيات، الأهداف الأكاديمية، المحادثة والتواصل المهني.',
       },
       {
-        title: 'French programs',
+        title: 'برامج اللغة الفرنسية',
         description:
-          'Structured language development that balances grammar, comprehension, pronunciation and expression.',
+          'تطوير متوازن للقواعد، الفهم، النطق والقدرة على التعبير.',
       },
       {
-        title: 'Fluency pathways',
+        title: 'مسارات الطلاقة',
         description:
-          'Focused practice for learners ready to move from knowing the language to using it naturally.',
+          'ممارسة مركّزة للمتعلمين المستعدين للانتقال من معرفة اللغة إلى استخدامها بصورة طبيعية.',
       },
       {
-        title: 'Communication skills',
+        title: 'مهارات التواصل',
         description:
-          'Practical speaking, presentation and workplace communication for real personal and professional situations.',
+          'تدريب عملي على التحدث، العرض والتواصل في المواقف الشخصية والدراسية والمهنية.',
       },
     ],
     approach: [
       {
-        title: 'Know your level',
+        title: 'نحدّد مستواك',
         description:
-          'Start from a clear understanding of current ability, goals and the situations where the language matters.',
+          'نبدأ بفهم قدرتك الحالية، أهدافك والمواقف التي تحتاج فيها إلى اللغة.',
       },
       {
-        title: 'Practice meaningfully',
+        title: 'نمارس بواقعية',
         description:
-          'Learn through useful language, guided feedback and communication—not memorization alone.',
+          'تعلّم من خلال لغة مفيدة، حوار موجّه وتغذية راجعة، وليس الحفظ وحده.',
       },
       {
-        title: 'Use your voice',
+        title: 'نمنح صوتك مساحة',
         description:
-          'Build the confidence and flexibility to communicate beyond the classroom.',
+          'نبني الثقة والمرونة للتواصل داخل القسم وخارجه.',
       },
     ],
-    audiences: [
-      'Young learners',
-      'University students',
-      'Professionals',
-      'Organizations',
-    ],
-    note: 'Program levels, schedules and language options are confirmed during enrolment so every learner enters the most appropriate pathway.',
+    audiences: ['الأطفال واليافعون', 'طلبة الجامعة', 'المهنيون', 'المؤسسات'],
+    note: 'يتم تأكيد المستوى، البرنامج، التوقيت وصيغة الدراسة أثناء التسجيل حتى يلتحق كل متعلم بالمسار الأنسب.',
   },
   training: {
     slug: 'training',
-    number: '03',
-    name: 'Professional Training',
-    eyebrow: 'Capability · Leadership · Career growth',
-    headline: 'Develop the skills that move work forward.',
+    number: '٠٣',
+    name: 'التكوين المهني',
+    eyebrow: 'المهارة · القيادة · التطور الوظيفي',
+    headline: 'طوّر المهارات التي تدفع عملك إلى الأمام.',
     introduction:
-      'Luminol Professional Training helps individuals and organizations turn ambition into capability through practical, relevant and thoughtfully designed learning.',
+      'يساعد التكوين المهني في لومينول الأفراد والمؤسسات على تحويل الطموح إلى قدرة عملية من خلال تعلم واضح ومرتبط بواقع العمل.',
     promise:
-      'Professional development that respects your time and connects directly to how work gets done.',
-    visualWords: ['Lead', 'Create', 'Advance'],
+      'تطوير مهني يحترم وقتك ويرتبط مباشرة بما تحتاج إلى إنجازه في العمل.',
+    visualWords: ['قد', 'أنجز', 'تقدّم'],
     programs: [
       {
-        title: 'Leadership',
+        title: 'القيادة',
         description:
-          'Develop self-awareness, sound decision-making and the communication needed to guide people well.',
+          'تطوير الوعي بالذات، اتخاذ القرار والتواصل اللازم لقيادة الأشخاص بفعالية.',
       },
       {
-        title: 'Professional communication',
+        title: 'التواصل المهني',
         description:
-          'Strengthen presentations, collaboration, feedback and confident communication across the workplace.',
+          'تقوية العروض، التعاون، التغذية الراجعة والتواصل الواثق داخل بيئة العمل.',
       },
       {
-        title: 'Productivity and digital skills',
+        title: 'الإنتاجية والمهارات الرقمية',
         description:
-          'Build practical systems and modern capabilities for focused, effective and adaptable work.',
+          'بناء أنظمة عمل وقدرات حديثة تساعد على التركيز، الفعالية والتكيف.',
       },
       {
-        title: 'Corporate workshops',
+        title: 'ورشات المؤسسات',
         description:
-          'Purpose-built learning experiences aligned with team needs, organizational context and desired outcomes.',
+          'تجارب تكوين مصممة حسب احتياجات الفريق، سياق المؤسسة والنتائج المطلوبة.',
       },
     ],
     approach: [
       {
-        title: 'Define the outcome',
+        title: 'نحدّد النتيجة',
         description:
-          'Clarify the capability, behavior or workplace result the learning experience needs to support.',
+          'نوضّح المهارة أو السلوك أو النتيجة المهنية التي يجب أن يدعمها التكوين.',
       },
       {
-        title: 'Learn by doing',
+        title: 'نتعلّم بالممارسة',
         description:
-          'Use practical examples, active exercises and feedback that connect learning to real work.',
+          'نستخدم أمثلة واقعية، تمارين تطبيقية وتغذية راجعة مرتبطة بالعمل.',
       },
       {
-        title: 'Apply with confidence',
+        title: 'نطبّق بثقة',
         description:
-          'Leave with useful tools, clearer decisions and an actionable way forward.',
+          'يغادر المتعلم بأدوات عملية وقرارات أوضح وخطة قابلة للتنفيذ.',
       },
     ],
-    audiences: [
-      'Early-career professionals',
-      'Managers',
-      'Teams',
-      'Organizations',
-    ],
-    note: 'Corporate programs can be adapted to the audience, format and business objective after a focused needs conversation.',
+    audiences: ['حديثو التخرج', 'المسيرون', 'الفرق', 'المؤسسات'],
+    note: 'يمكن تكييف برامج المؤسسات حسب الجمهور، الصيغة والهدف المهني بعد جلسة قصيرة لتحديد الاحتياجات.',
   },
 } as const;
 

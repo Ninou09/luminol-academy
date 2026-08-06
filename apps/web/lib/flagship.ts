@@ -13,35 +13,35 @@ const unsplash = (id: string) =>
 export const editorialImages = {
   hero: {
     src: unsplash('photo-1758270705696-ec9caffc73dd'),
-    alt: 'Adult learners taking part in an interactive classroom discussion.',
+    alt: 'متعلمون بالغون يشاركون في نقاش تفاعلي داخل قاعة دراسية.',
     credit: 'Vitaly Gariev / Unsplash',
     creditUrl:
       'https://unsplash.com/photos/teacher-interacting-with-students-in-a-classroom-setting-c6QLJhezaYs',
   },
   psychology: {
     src: unsplash('photo-1758273241086-f3585ef8c2f8'),
-    alt: 'A psychologist listening attentively during a private support conversation.',
+    alt: 'مختص يصغي باهتمام خلال جلسة دعم خاصة.',
     credit: 'Vitaly Gariev / Unsplash',
     creditUrl:
       'https://unsplash.com/photos/therapist-listens-to-patient-in-a-counseling-session-tw-mAZXr6H4',
   },
   languages: {
     src: unsplash('photo-1758270705482-cee87ea98738'),
-    alt: 'A diverse group of adult learners talking together between lessons.',
+    alt: 'مجموعة متنوعة من المتعلمين البالغين يتحدثون داخل قاعة تعليم.',
     credit: 'Vitaly Gariev / Unsplash',
     creditUrl:
       'https://unsplash.com/photos/students-talking-in-a-lecture-hall-classroom-T9yehHSvLL4',
   },
   training: {
     src: unsplash('photo-1758691737124-05c5bffe46f0'),
-    alt: 'A diverse professional team collaborating around a laptop.',
+    alt: 'فريق مهني متنوع يتعاون حول حاسوب محمول.',
     credit: 'Vitaly Gariev / Unsplash',
     creditUrl:
       'https://unsplash.com/photos/diverse-team-collaborating-around-a-laptop-in-office-yd_RKGH_RH4',
   },
   learning: {
     src: unsplash('photo-1758270703813-2ecf235a6462'),
-    alt: 'Adult learners listening and writing during a guided session.',
+    alt: 'متعلمون بالغون يصغون ويدوّنون خلال حصة موجّهة.',
     credit: 'Vitaly Gariev / Unsplash',
     creditUrl:
       'https://unsplash.com/photos/students-listen-to-a-lecture-in-a-classroom-8c0ndhIXDzQ',
@@ -60,107 +60,107 @@ export const branchExperience: Record<
   }
 > = {
   psychology: {
-    themeLabel: 'Calm intelligence',
+    themeLabel: 'فهم هادئ وعملي',
     image: editorialImages.psychology,
     positioning:
-      'A thoughtful environment for understanding emotions, strengthening relationships and developing practical ways forward.',
+      'بيئة مدروسة لفهم المشاعر، تقوية العلاقات وبناء خطوات عملية تناسب الشخص وسياقه.',
     outcomes: [
-      'Language for understanding difficult experiences',
-      'Practical tools that can be used outside the session',
-      'Supportive guidance shaped around the person and context',
-      'Clear referral boundaries when another level of care is appropriate',
+      'لغة أوضح لفهم التجارب الصعبة',
+      'أدوات عملية يمكن استخدامها خارج الجلسة',
+      'توجيه داعم يتكيف مع الشخص والسياق',
+      'حدود واضحة وإحالة مناسبة عند الحاجة إلى رعاية أخرى',
     ],
     expertise: [
-      'Human-centred listening',
-      'Developmentally aware guidance',
-      'Ethical boundaries and referral',
-      'Practical psychoeducation',
+      'إنصات إنساني مسؤول',
+      'توجيه يراعي المرحلة العمرية',
+      'حدود أخلاقية وإحالة مناسبة',
+      'تثقيف نفسي عملي',
     ],
     faq: [
       {
-        question: 'Is Luminol Psychology a medical or emergency service?',
+        question: 'هل فرع علم النفس خدمة طبية أو خدمة طوارئ؟',
         answer:
-          'No. Luminol programmes are educational and supportive. They do not replace emergency, psychiatric or medical care, and the team uses appropriate referral when a different level of support is needed.',
+          'لا. برامج لومينول تعليمية وداعمة ولا تعوّض الرعاية الطبية أو النفسية أو خدمات الطوارئ. تتم الإحالة عندما يحتاج الشخص إلى مستوى مختلف من الرعاية.',
       },
       {
-        question: 'Can parents ask about support for children or families?',
+        question: 'هل يمكن للأولياء طلب توجيه يخص الأطفال أو الأسرة؟',
         answer:
-          'Yes. The first conversation helps clarify the family context, the learner’s age and the most suitable educational or supportive pathway.',
+          'نعم. تساعد المحادثة الأولى على فهم السياق الأسري، عمر المتعلم والمسار التربوي أو الداعم الأكثر ملاءمة.',
       },
       {
-        question: 'Are group workshops available?',
+        question: 'هل تتوفر ورشات جماعية؟',
         answer:
-          'Workshops can be organised around themes such as emotional intelligence, stress, communication, parenting and personal development. Availability is confirmed by the team.',
+          'يمكن تنظيم ورشات حول الذكاء العاطفي، الضغط، التواصل، التربية والتطور الشخصي. يؤكد الفريق المواضيع والمواعيد المتاحة.',
       },
     ],
   },
   languages: {
-    themeLabel: 'Confident connection',
+    themeLabel: 'تواصل واثق',
     image: editorialImages.languages,
     positioning:
-      'Language learning built around conversation, useful feedback and the confidence to communicate beyond the classroom.',
+      'تعلّم لغوي مبني على المحادثة، الممارسة المفيدة والتغذية الراجعة التي تبني الثقة خارج القسم.',
     outcomes: [
-      'A clear starting level and progression path',
-      'Stronger listening, speaking and comprehension',
-      'Practice connected to real academic, social and professional situations',
-      'Feedback that helps learners communicate more naturally',
+      'تحديد واضح للمستوى ومسار التقدم',
+      'تحسين الاستماع والتحدث والفهم',
+      'ممارسة مرتبطة بالمواقف الدراسية والاجتماعية والمهنية',
+      'تغذية راجعة تساعد على تواصل أكثر طبيعية',
     ],
     expertise: [
-      'Level-aware progression',
-      'Conversation-led practice',
-      'Pronunciation and comprehension',
-      'Academic and workplace communication',
+      'تدرج مناسب للمستوى',
+      'ممارسة قائمة على المحادثة',
+      'النطق والفهم',
+      'التواصل الأكاديمي والمهني',
     ],
     faq: [
       {
-        question: 'How is the right level selected?',
+        question: 'كيف يتم اختيار المستوى المناسب؟',
         answer:
-          'The team reviews the learner’s current ability, goals and practical communication needs before confirming the most appropriate group or pathway.',
+          'يراجع الفريق القدرة الحالية، الهدف واحتياجات التواصل العملية قبل تأكيد المجموعة أو المسار الأنسب.',
       },
       {
-        question: 'Are programmes only for beginners?',
+        question: 'هل البرامج مخصصة للمبتدئين فقط؟',
         answer:
-          'No. The pathways cover foundations, continued development, fluency practice and communication for academic or professional contexts.',
+          'لا. تشمل المسارات الأساسيات، التطوير المستمر، ممارسة الطلاقة والتواصل للأغراض الدراسية أو المهنية.',
       },
       {
-        question: 'Are online or flexible formats available?',
+        question: 'هل تتوفر صيغ حضورية أو عن بُعد؟',
         answer:
-          'Delivery options depend on the programme and schedule. The contact team confirms the currently available in-person, online or hybrid formats.',
+          'تعتمد الصيغة على البرنامج والجدول. يؤكد فريق التواصل الخيارات الحضورية أو عن بُعد أو الهجينة المتاحة حاليًا.',
       },
     ],
   },
   training: {
-    themeLabel: 'Applied ambition',
+    themeLabel: 'طموح قابل للتطبيق',
     image: editorialImages.training,
     positioning:
-      'Focused professional development that connects learning with decisions, communication, leadership and everyday work.',
+      'تطوير مهني يربط التعلم بالقرار، التواصل، القيادة والمهام اليومية داخل العمل.',
     outcomes: [
-      'A clear capability or workplace outcome',
-      'Active practice rather than passive presentation',
-      'Tools and frameworks that transfer to real work',
-      'A next-step plan for individuals or teams',
+      'هدف مهني أو قدرة واضحة',
+      'ممارسة نشطة بدل العرض النظري فقط',
+      'أدوات وأطر قابلة للاستخدام في العمل',
+      'خطة خطوة تالية للفرد أو الفريق',
     ],
     expertise: [
-      'Leadership and decision-making',
-      'Professional communication',
-      'Productivity and digital capability',
-      'Needs-led corporate workshops',
+      'القيادة واتخاذ القرار',
+      'التواصل المهني',
+      'الإنتاجية والمهارات الرقمية',
+      'ورشات مؤسسات مبنية على الاحتياج',
     ],
     faq: [
       {
-        question: 'Can training be adapted for an organisation?',
+        question: 'هل يمكن تكييف التكوين لمؤسسة؟',
         answer:
-          'Yes. Corporate workshops begin with a focused needs conversation so the audience, format and desired workplace outcome are clear.',
+          'نعم. تبدأ ورشات المؤسسات بمحادثة مركزة لتحديد الجمهور، الصيغة والنتيجة المهنية المطلوبة.',
       },
       {
-        question: 'Who are the individual programmes designed for?',
+        question: 'لمن صُممت البرامج الفردية؟',
         answer:
-          'They can support early-career professionals, managers and people building practical communication, leadership or modern workplace skills.',
+          'يمكنها دعم حديثي التخرج، المسيرين والأشخاص الذين يطوّرون مهارات التواصل، القيادة أو العمل الحديث.',
       },
       {
-        question: 'Does every programme include a certificate?',
+        question: 'هل يحصل كل متعلم على شهادة؟',
         answer:
-          'Certificate availability depends on the programme requirements and completion criteria. The team confirms this before registration.',
+          'تعتمد الشهادة على متطلبات البرنامج ومعايير الإتمام. يؤكد الفريق ذلك قبل التسجيل.',
       },
     ],
   },
@@ -168,43 +168,43 @@ export const branchExperience: Record<
 
 export const credibilityPrinciples = [
   {
-    title: 'Discipline-specific',
-    text: 'Each school keeps the standards, language and methods appropriate to its field.',
+    title: 'تخصص واضح',
+    text: 'يحافظ كل فرع على المعايير واللغة والأساليب المناسبة لمجاله.',
   },
   {
-    title: 'Human-centred',
-    text: 'Programmes begin with the person, their context and the outcome that matters.',
+    title: 'الإنسان أولًا',
+    text: 'تبدأ البرامج من الشخص وسياقه والنتيجة التي تهمه فعلًا.',
   },
   {
-    title: 'Applied learning',
-    text: 'Knowledge is connected to guided practice, feedback and useful next steps.',
+    title: 'تعلّم تطبيقي',
+    text: 'ترتبط المعرفة بالممارسة الموجّهة والتغذية الراجعة والخطوات المفيدة.',
   },
   {
-    title: 'Bilingual by design',
-    text: 'The system is built for high-quality Latin and Arabic typography, direction and readability.',
+    title: 'تجربة عربية أصيلة',
+    text: 'تم تصميم الموقع والمحتوى والاتجاه الطباعي للعربية من البداية.',
   },
 ] as const;
 
 export const learningOpportunities = [
   {
     school: 'psychology' as const,
-    label: 'Psychology',
-    title: 'Support, coaching and group learning',
-    text: 'Explore individual guidance, family-focused pathways, coaching and educational workshops.',
-    cta: 'Explore psychology programmes',
+    label: 'علم النفس',
+    title: 'دعم وتوجيه وورشات جماعية',
+    text: 'اكتشف الدعم الفردي، إرشاد الأسرة، الكوتشينغ والورشات التثقيفية.',
+    cta: 'اكتشف برامج علم النفس',
   },
   {
     school: 'languages' as const,
-    label: 'Languages',
-    title: 'Foundations, fluency and communication',
-    text: 'Find a level-aware path for English, French and confident real-world communication.',
-    cta: 'Find a language course',
+    label: 'اللغات',
+    title: 'من الأساسيات إلى الطلاقة',
+    text: 'اختر مسارًا مناسبًا لمستواك في الإنجليزية، الفرنسية والتواصل الواقعي.',
+    cta: 'اختر برنامج اللغة',
   },
   {
     school: 'training' as const,
-    label: 'Professional Training',
-    title: 'Skills for people, teams and organisations',
-    text: 'Build practical capability through leadership, communication and workplace learning.',
-    cta: 'View professional training',
+    label: 'التكوين المهني',
+    title: 'مهارات للأفراد والفرق والمؤسسات',
+    text: 'طوّر قدرات عملية في القيادة، التواصل والتعلم المرتبط بالعمل.',
+    cta: 'استكشف التكوين المهني',
   },
 ] as const;
