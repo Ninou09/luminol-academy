@@ -47,6 +47,10 @@ const nextConfigSource = readFileSync(
   resolve('apps/web/next.config.ts'),
   'utf8',
 );
+const securityHeadersSource = readFileSync(
+  resolve('packages/config/security-headers.mjs'),
+  'utf8',
+);
 
 describe('Arabic premium public flagship', () => {
   it('keeps governed school and contact journeys', () => {
@@ -74,13 +78,17 @@ describe('Arabic premium public flagship', () => {
     expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");
   });
 
-  it('adds lazy editorial video without pretending the footage is Luminol photography', () => {
+  it('adds lazy editorial video with tight media security and honest attribution', () => {
     expect(pageSource).toContain('<CinematicMediaWall />');
     expect(flagshipSource).toContain('videos.pexels.com');
     expect(cinematicMediaSource).toContain('IntersectionObserver');
     expect(cinematicMediaSource).toContain('preload="none"');
+    expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
     expect(cinematicMediaSource).toContain('وليست صورًا');
     expect(cinematicMediaSource).toContain('prefers-reduced-motion: reduce');
+    expect(securityHeadersSource).toContain(
+      "media-src 'self' https://videos.pexels.com",
+    );
   });
 
   it('publishes only governed team members and consent-confirmed testimonials', () => {
