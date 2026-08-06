@@ -24,6 +24,14 @@ const cinematicMediaSource = readFileSync(
   resolve('apps/web/components/cinematic-media.tsx'),
   'utf8',
 );
+const immersiveHeroSource = readFileSync(
+  resolve('apps/web/components/immersive-hero-media.tsx'),
+  'utf8',
+);
+const branchStageSource = readFileSync(
+  resolve('apps/web/components/branch-stage.tsx'),
+  'utf8',
+);
 const motionStyles = readFileSync(resolve('apps/web/app/motion.css'), 'utf8');
 const arabicStyles = readFileSync(resolve('apps/web/app/arabic.css'), 'utf8');
 const cinematicStyles = readFileSync(
@@ -34,6 +42,7 @@ const cinematicMediaStyles = readFileSync(
   resolve('apps/web/app/cinematic-media.css'),
   'utf8',
 );
+const v4HomeStyles = readFileSync(resolve('apps/web/app/v4-home.css'), 'utf8');
 const flagshipSource = readFileSync(resolve('apps/web/lib/flagship.ts'), 'utf8');
 const shellSource = readFileSync(
   resolve('apps/web/components/site-shell.tsx'),
@@ -54,7 +63,7 @@ const securityHeadersSource = readFileSync(
 
 describe('Arabic premium public flagship', () => {
   it('keeps governed school and contact journeys', () => {
-    expect(pageSource).toContain('href={`/schools/${school.slug}`}');
+    expect(branchStageSource).toContain('href={`/schools/${school.slug}`}');
     expect(pageSource).toContain('href="/contact"');
     expect(schoolSource).toContain('getProgrammesForSchool(slug)');
     expect(contactSource).toContain('<EnquiryForm />');
@@ -70,7 +79,8 @@ describe('Arabic premium public flagship', () => {
 
   it('uses the official Luminol mark and curated human photography', () => {
     expect(shellSource).toContain('/brand/luminol-mark.svg');
-    expect(pageSource).toContain('editorialImages.hero.src');
+    expect(pageSource).toContain('<ImmersiveHeroMedia video={editorialVideos[0]} />');
+    expect(branchStageSource).toContain('editorialImages.psychology');
     expect(flagshipSource).toContain('Pexels');
     expect(flagshipSource).toContain('editorialGallery');
     expect(pageSource).not.toContain('12+');
@@ -78,13 +88,14 @@ describe('Arabic premium public flagship', () => {
     expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");
   });
 
-  it('adds lazy editorial video with tight media security and honest attribution', () => {
+  it('adds editorial video with tight media security and honest attribution', () => {
     expect(pageSource).toContain('<CinematicMediaWall />');
     expect(flagshipSource).toContain('videos.pexels.com');
+    expect(immersiveHeroSource).toContain('<video');
     expect(cinematicMediaSource).toContain('IntersectionObserver');
     expect(cinematicMediaSource).toContain('preload="none"');
     expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
-    expect(cinematicMediaSource).toContain('وليست صورًا');
+    expect(cinematicMediaSource).toContain('ليست توثيقًا');
     expect(cinematicMediaSource).toContain('prefers-reduced-motion: reduce');
     expect(securityHeadersSource).toContain(
       "media-src 'self' https://videos.pexels.com",
@@ -104,13 +115,15 @@ describe('Arabic premium public flagship', () => {
     expect(motionSource).toContain('IntersectionObserver');
     expect(motionSource).toContain('requestAnimationFrame');
     expect(motionSource).toContain('--motion-progress');
-    expect(motionSource).toContain('.cinematic-video-card');
-    expect(motionSource).toContain('.cinematic-still');
+    expect(motionSource).toContain('.v5-film-media');
+    expect(motionSource).toContain('.v5-still');
     expect(motionSource).toContain("'(prefers-reduced-motion: reduce)'");
     expect(cinematicStyles).toContain('.motion-cursor');
     expect(cinematicStyles).toContain('--motion-tilt-x');
-    expect(cinematicMediaStyles).toContain('cinematic-orbit-spin');
+    expect(cinematicMediaStyles).toContain('v5-ticker-move');
     expect(cinematicMediaStyles).toContain('scroll-snap-type');
+    expect(v4HomeStyles).toContain('.v4-branch-stage');
+    expect(v4HomeStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(arabicStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(cinematicStyles).toContain('@media (prefers-reduced-motion: reduce)');
