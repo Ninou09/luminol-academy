@@ -51,7 +51,8 @@
   backdrop-filter: blur(12px);
 }
 
-html[data-scrolled='true'] .v4-home > .site-header.premium-header {
+html[data-scrolled='true'] .v4-home > .site-header.premium-header,
+html:not(.motion-enabled) .v4-home > .site-header.premium-header {
   min-height: 5.35rem;
   border-bottom-color: rgb(14 76 100 / 0.12);
   background: rgb(255 255 255 / 0.96);
@@ -59,23 +60,32 @@ html[data-scrolled='true'] .v4-home > .site-header.premium-header {
   backdrop-filter: blur(18px);
 }
 
+html:not(.motion-enabled) .v4-home > .site-header.premium-header {
+  margin-bottom: 0;
+}
+
 html[data-scrolled='true'] .v4-home > .premium-header .brand-copy strong,
-html[data-scrolled='true'] .v4-home > .premium-header .desktop-nav a {
+html[data-scrolled='true'] .v4-home > .premium-header .desktop-nav a,
+html:not(.motion-enabled) .v4-home > .premium-header .brand-copy strong,
+html:not(.motion-enabled) .v4-home > .premium-header .desktop-nav a {
   color: #173f52;
 }
 
-html[data-scrolled='true'] .v4-home > .premium-header .brand-copy small {
+html[data-scrolled='true'] .v4-home > .premium-header .brand-copy small,
+html:not(.motion-enabled) .v4-home > .premium-header .brand-copy small {
   color: #2099d0;
 }
 
-html[data-scrolled='true'] .v4-home > .premium-header .header-cta {
+html[data-scrolled='true'] .v4-home > .premium-header .header-cta,
+html:not(.motion-enabled) .v4-home > .premium-header .header-cta {
   border-color: transparent !important;
   background: #0e4c64 !important;
   color: #fff !important;
   box-shadow: 0 0.7rem 1.7rem rgb(14 76 100 / 0.14);
 }
 
-html[data-scrolled='true'] .v4-home > .premium-header .mobile-menu summary {
+html[data-scrolled='true'] .v4-home > .premium-header .mobile-menu summary,
+html:not(.motion-enabled) .v4-home > .premium-header .mobile-menu summary {
   border-color: rgb(14 76 100 / 0.24);
   color: #0e4c64;
   background: #fff;
@@ -85,6 +95,10 @@ html[data-scrolled='true'] .v4-home > .premium-header .mobile-menu summary {
   .v4-home > .site-header.premium-header {
     min-height: 5.8rem;
     margin-bottom: -5.8rem;
+  }
+
+  html:not(.motion-enabled) .v4-home > .site-header.premium-header {
+    margin-bottom: 0;
   }
 }
 
