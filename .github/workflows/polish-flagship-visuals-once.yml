@@ -1,0 +1,105 @@
+name: Polish flagship visuals once
+
+on:
+  push:
+    branches:
+      - design/premium-motion-homepage
+    paths:
+      - .github/workflows/polish-flagship-visuals-once.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: polish-flagship-visuals-once
+  cancel-in-progress: false
+
+jobs:
+  polish:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: design/premium-motion-homepage
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply visual QA fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          flagship = Path('apps/web/app/flagship.module.css')
+          text = flagship.read_text()
+          if 'overflow-x: clip;' not in text.split('}', 1)[0]:
+              text = text.replace('.page {\n', '.page {\n  overflow-x: clip;\n', 1)
+          text = text.replace(
+              '.hero {\n  position: relative;\n',
+              '.hero {\n  position: relative;\n  overflow: clip;\n',
+              1,
+          )
+          button_fix = '''\n\n/* Explicit contrast protects shared button text from stylesheet ordering. */\n.heroActions > a:first-child,\n.programmeIntro > a,\n.storyCopy > a,\n.branchHeroActions > a:first-child {\n  background: var(--color-brand-ink) !important;\n  color: var(--color-brand-canvas) !important;\n}\n\n.finalCta > a {\n  background: var(--color-brand-gold) !important;\n  color: var(--color-brand-ink) !important;\n}\n\n.formWrap :global(.enquiry-form button) {\n  color: var(--color-brand-canvas) !important;\n}\n'''
+          if 'Explicit contrast protects shared button text' not in text:
+              text += button_fix
+          flagship.write_text(text)
+
+          shell = Path('apps/web/app/site-shell.css')
+          shell_text = shell.read_text()
+          shell_text = shell_text.replace(
+              '.header-cta {\n',
+              '.header-cta {\n  background: var(--color-brand-ink) !important;\n  color: var(--color-brand-canvas) !important;\n',
+              1,
+          )
+          shell.write_text(shell_text)
+
+          capture = Path('scripts/capture-flagship.mjs')
+          capture_text = capture.read_text()
+          old = '''      await page.evaluate(async () => {\n        await document.fonts.ready;\n      });\n      await page.waitForTimeout(750);\n'''
+          new = '''      await page.evaluate(async () => {\n        await document.fonts.ready;\n        const step = Math.max(320, Math.floor(window.innerHeight * 0.72));\n        for (let y = 0; y < document.documentElement.scrollHeight; y += step) {\n          window.scrollTo(0, y);\n          await new Promise((resolve) => window.setTimeout(resolve, 90));\n        }\n        window.scrollTo(0, 0);\n      });\n      await page.waitForTimeout(900);\n'''
+          if old not in capture_text:
+              raise SystemExit('Expected capture marker was not found')
+          capture.write_text(capture_text.replace(old, new, 1))
+
+          workflow = Path('.github/workflows/capture-flagship-preview-once.yml')
+          workflow_text = workflow.read_text()
+          if '# Triggered after visual QA fixes' not in workflow_text:
+              workflow.write_text(workflow_text + '\n# Triggered after visual QA fixes\n')
+          PY
+
+      - name: Format changed source
+        run: |
+          pnpm exec prettier --write \
+            apps/web/app/flagship.module.css \
+            apps/web/app/site-shell.css \
+            scripts/capture-flagship.mjs \
+            .github/workflows/capture-flagship-preview-once.yml
+
+      - name: Remove one-time workflow
+        run: rm .github/workflows/polish-flagship-visuals-once.yml
+
+      - name: Commit visual QA fixes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            apps/web/app/flagship.module.css \
+            apps/web/app/site-shell.css \
+            scripts/capture-flagship.mjs \
+            .github/workflows/capture-flagship-preview-once.yml \
+            .github/workflows/polish-flagship-visuals-once.yml
+          git commit -m 'Polish flagship visual contrast and mobile overflow'
+          git push origin HEAD:design/premium-motion-homepage
