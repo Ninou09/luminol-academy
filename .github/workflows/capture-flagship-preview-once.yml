@@ -44,24 +44,25 @@ jobs:
       - name: Wait for branch preview
         run: |
           for attempt in {1..90}; do
-            if curl --fail --silent --show-error "$FLAGSHIP_BASE_URL" > /dev/null; then
+            if curl --fail --silent --show-error --location "$FLAGSHIP_ACCESS_URL" > /dev/null; then
               exit 0
             fi
             sleep 2
           done
           exit 1
         env:
-          FLAGSHIP_BASE_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app
+          FLAGSHIP_ACCESS_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app/?_vercel_share=UOthRH1xg7y1gK3EzZdFKsyyI1Rx9NZw
 
       - name: Capture desktop and mobile pages
         run: node scripts/capture-flagship.mjs
         env:
           FLAGSHIP_BASE_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app
+          FLAGSHIP_ACCESS_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app/?_vercel_share=UOthRH1xg7y1gK3EzZdFKsyyI1Rx9NZw
 
       - name: Upload flagship screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: flagship-screenshots
+          name: flagship-screenshots-authenticated
           path: artifacts/flagship-screenshots
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 1
