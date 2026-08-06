@@ -14,6 +14,11 @@ const remotePatterns: Exclude<
     hostname: 'images.unsplash.com',
     pathname: '/**',
   },
+  {
+    protocol: 'https',
+    hostname: 'images.pexels.com',
+    pathname: '/**',
+  },
 ];
 
 if (sanityProjectId) {

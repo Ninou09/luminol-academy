@@ -4,6 +4,7 @@ import './motion.css';
 import './site-shell.css';
 import './flagship-polish.css';
 import './arabic.css';
+import './cinematic-motion.css';
 
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 

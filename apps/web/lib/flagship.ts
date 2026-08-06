@@ -7,44 +7,40 @@ export type EditorialImage = {
   creditUrl: string;
 };
 
-const unsplash = (id: string) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&q=82&w=2200`;
-
 export const editorialImages = {
   hero: {
-    src: unsplash('photo-1758270705696-ec9caffc73dd'),
-    alt: 'متعلمون بالغون يشاركون في نقاش تفاعلي داخل قاعة دراسية.',
-    credit: 'Vitaly Gariev / Unsplash',
-    creditUrl:
-      'https://unsplash.com/photos/teacher-interacting-with-students-in-a-classroom-setting-c6QLJhezaYs',
+    src: 'https://images.pexels.com/photos/20184571/pexels-photo-20184571/free-photo-of-people-during-course.jpeg',
+    alt: 'مجموعة متنوعة من البالغين يشاركون باهتمام في ورشة تعليمية داخلية.',
+    credit: 'Matheus Bertelli / Pexels',
+    creditUrl: 'https://www.pexels.com/photo/people-during-course-20184571/',
   },
   psychology: {
-    src: unsplash('photo-1758273241086-f3585ef8c2f8'),
-    alt: 'مختص يصغي باهتمام خلال جلسة دعم خاصة.',
-    credit: 'Vitaly Gariev / Unsplash',
+    src: 'https://images.pexels.com/photos/7176296/pexels-photo-7176296.jpeg',
+    alt: 'امرأتان تخوضان حوارًا هادئًا ومدروسًا في جلسة دعم.',
+    credit: 'SHVETS production / Pexels',
     creditUrl:
-      'https://unsplash.com/photos/therapist-listens-to-patient-in-a-counseling-session-tw-mAZXr6H4',
+      'https://www.pexels.com/photo/female-talking-with-psychologist-during-session-7176296/',
   },
   languages: {
-    src: unsplash('photo-1758270705482-cee87ea98738'),
-    alt: 'مجموعة متنوعة من المتعلمين البالغين يتحدثون داخل قاعة تعليم.',
-    credit: 'Vitaly Gariev / Unsplash',
+    src: 'https://images.pexels.com/photos/6683485/pexels-photo-6683485.jpeg',
+    alt: 'متعلمات بالغات يتبادلن الحديث داخل قاعة دراسية حديثة.',
+    credit: 'Andy Barbour / Pexels',
     creditUrl:
-      'https://unsplash.com/photos/students-talking-in-a-lecture-hall-classroom-T9yehHSvLL4',
+      'https://www.pexels.com/photo/students-having-conversation-inside-the-classroom-6683485/',
   },
   training: {
-    src: unsplash('photo-1758691737124-05c5bffe46f0'),
-    alt: 'فريق مهني متنوع يتعاون حول حاسوب محمول.',
-    credit: 'Vitaly Gariev / Unsplash',
+    src: 'https://images.pexels.com/photos/18999455/pexels-photo-18999455/free-photo-of-people-during-presentation.jpeg',
+    alt: 'مجموعة متنوعة من البالغين تتابع عرضًا مهنيًا داخل فضاء عمل حديث.',
+    credit: 'Matheus Bertelli / Pexels',
     creditUrl:
-      'https://unsplash.com/photos/diverse-team-collaborating-around-a-laptop-in-office-yd_RKGH_RH4',
+      'https://www.pexels.com/photo/people-during-presentation-18999455/',
   },
   learning: {
-    src: unsplash('photo-1758270703813-2ecf235a6462'),
-    alt: 'متعلمون بالغون يصغون ويدوّنون خلال حصة موجّهة.',
-    credit: 'Vitaly Gariev / Unsplash',
+    src: 'https://images.pexels.com/photos/6502730/pexels-photo-6502730.jpeg',
+    alt: 'مدرّسة ومتعلّم يتفاعلان مباشرة حول مواد دراسية في جلسة تعليم موجّهة.',
+    credit: 'Thirdman / Pexels',
     creditUrl:
-      'https://unsplash.com/photos/students-listen-to-a-lecture-in-a-classroom-8c0ndhIXDzQ',
+      'https://www.pexels.com/photo/a-female-teacher-tutoring-her-male-student-6502730/',
   },
 } satisfies Record<string, EditorialImage>;
 

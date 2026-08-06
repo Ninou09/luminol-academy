@@ -22,6 +22,11 @@ const motionSource = readFileSync(
 );
 const motionStyles = readFileSync(resolve('apps/web/app/motion.css'), 'utf8');
 const arabicStyles = readFileSync(resolve('apps/web/app/arabic.css'), 'utf8');
+const cinematicStyles = readFileSync(
+  resolve('apps/web/app/cinematic-motion.css'),
+  'utf8',
+);
+const flagshipSource = readFileSync(resolve('apps/web/lib/flagship.ts'), 'utf8');
 const shellSource = readFileSync(
   resolve('apps/web/components/site-shell.tsx'),
   'utf8',
@@ -51,12 +56,13 @@ describe('Arabic premium public flagship', () => {
     expect(arabicStyles).toContain('direction: rtl');
   });
 
-  it('uses the official Luminol mark and purposeful human photography', () => {
+  it('uses the official Luminol mark and newly curated human photography', () => {
     expect(shellSource).toContain('/brand/luminol-mark.svg');
     expect(pageSource).toContain('editorialImages.hero.src');
+    expect(flagshipSource).toContain('Pexels');
     expect(pageSource).not.toContain('12+');
     expect(pageSource).not.toContain('100%');
-    expect(nextConfigSource).toContain("hostname: 'images.unsplash.com'");
+    expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");
   });
 
   it('publishes only governed team members and consent-confirmed testimonials', () => {
@@ -66,13 +72,18 @@ describe('Arabic premium public flagship', () => {
     expect(pageSource).toContain('teamMembers?.length');
   });
 
-  it('uses progressive enhancement and reduced-motion behavior', () => {
+  it('uses cinematic progressive enhancement with reduced-motion behavior', () => {
     expect(pageSource).toContain('<HomeMotion />');
     expect(pageSource).toContain('data-reveal');
     expect(motionSource).toContain('IntersectionObserver');
+    expect(motionSource).toContain('requestAnimationFrame');
+    expect(motionSource).toContain('--motion-progress');
     expect(motionSource).toContain("'(prefers-reduced-motion: reduce)'");
+    expect(cinematicStyles).toContain('.motion-cursor');
+    expect(cinematicStyles).toContain('--motion-tilt-x');
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(arabicStyles).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(cinematicStyles).toContain('@media (prefers-reduced-motion: reduce)');
   });
 
   it('provides responsive Arabic navigation without requiring JavaScript', () => {
