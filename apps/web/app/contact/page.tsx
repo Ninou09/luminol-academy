@@ -1,6 +1,12 @@
+import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
-import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import Link from 'next/link';
+import { EditorialImage } from '../../components/editorial-image';
 import { EnquiryForm } from '../../components/enquiry-form';
+import { HomeMotion } from '../../components/home-motion';
+import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import { editorialImages } from '../../lib/flagship';
+import styles from '../flagship.module.css';
 
 const contactDescription =
   'Tell Luminol about your psychology, language-learning or professional-development goals and find the right next step.';
@@ -47,40 +53,71 @@ const contactPaths = [
 
 export default function ContactPage() {
   return (
-    <main>
+    <main className={styles.page}>
+      <HomeMotion />
       <SiteHeader />
 
-      <section className="contact-hero">
-        <div>
-          <p className="eyebrow">Contact Luminol</p>
-          <h1>Your next step starts with a conversation.</h1>
+      <section className={styles.internalHero}>
+        <div className={styles.internalHeroCopy} data-reveal="left">
+          <p className={styles.kicker}>Contact Luminol</p>
+          <h1>Your next step starts with a thoughtful conversation.</h1>
+          <p>
+            Share what you want to understand, learn or strengthen. The team
+            will help you find the most relevant school, programme and format.
+          </p>
         </div>
-        <p>
-          Whether you already know what you need or want help choosing, share
-          your goal and Luminol will guide you toward the right school and
-          program.
-        </p>
+        <div className={styles.internalHeroMedia} data-reveal="scale">
+          <EditorialImage
+            className={styles.internalHeroFigure}
+            image={editorialImages.hero}
+            priority
+            sizes="(max-width: 72rem) 100vw, 52vw"
+            caption="A clear first conversation helps shape the right pathway."
+          />
+          <div className={styles.internalHeroNote}>
+            <small>Start clearly</small>
+            <p>You do not need to know the exact programme before contacting us.</p>
+          </div>
+        </div>
       </section>
 
-      <section className="contact-paths section-shell">
-        <p className="eyebrow">Explore before you enquire</p>
-        <div className="contact-path-grid">
-          {contactPaths.map((path) => (
-            <a href={path.href} key={path.name}>
+      <section className={styles.contactPaths}>
+        <div className={styles.internalSectionHeading} data-reveal>
+          <div>
+            <p className={styles.kicker}>Explore before you enquire</p>
+            <h2>Choose a direction or ask the team to guide you.</h2>
+          </div>
+          <p>
+            Each branch has a distinct purpose. You can review the options
+            first or go directly to the enquiry form.
+          </p>
+        </div>
+        <div className={styles.contactPathGrid}>
+          {contactPaths.map((path, index) => (
+            <Link
+              data-reveal
+              href={path.href}
+              key={path.name}
+              style={{ '--reveal-delay': `${index * 65}ms` } as CSSProperties}
+            >
               <span>{path.number}</span>
               <h2>{path.name}</h2>
               <p>{path.description}</p>
               <b aria-hidden="true">↗</b>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
 
-      <section className="enquiry-section section-shell">
-        <div className="enquiry-context">
-          <p className="eyebrow eyebrow-light">A thoughtful first step</p>
-          <h2>What happens next?</h2>
-          <ol>
+      <section className={styles.contactSection}>
+        <div className={styles.contactContext} data-reveal="left">
+          <p className={styles.kicker}>A thoughtful first step</p>
+          <h2>What happens after you send the form?</h2>
+          <p>
+            The enquiry pathway is intentionally simple and does not ask for
+            unnecessary sensitive information.
+          </p>
+          <ol className={styles.contactSteps}>
             <li>
               <span>01</span>
               Your enquiry is securely recorded.
@@ -94,12 +131,14 @@ export default function ContactPage() {
               Luminol follows up with the most suitable next step.
             </li>
           </ol>
-          <p className="privacy-note">
+          <p>
             Please do not include highly sensitive medical, financial or
             identity information in this form.
           </p>
         </div>
-        <EnquiryForm />
+        <div className={styles.formWrap} data-reveal="right">
+          <EnquiryForm />
+        </div>
       </section>
 
       <SiteFooter />
