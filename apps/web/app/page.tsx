@@ -18,6 +18,10 @@ import {
   getPublicTestimonials,
 } from '../lib/sanity-public';
 
+const heroVideo = editorialVideos[0]!;
+const manifestoPrimary = editorialGallery[0]!;
+const manifestoSecondary = editorialGallery[4]!;
+
 const quickLinks = [
   {
     label: 'علم النفس',
@@ -80,7 +84,7 @@ export default async function Page() {
       <SiteHeader />
 
       <section className="v4-hero" aria-labelledby="hero-title">
-        <ImmersiveHeroMedia video={editorialVideos[0]} />
+        <ImmersiveHeroMedia video={heroVideo} />
         <div className="v4-hero-gradient" aria-hidden="true" />
         <div className="v4-hero-brand-shape" aria-hidden="true">
           <Image src="/brand/luminol-mark.svg" alt="" width={520} height={570} priority />
@@ -157,21 +161,21 @@ export default async function Page() {
         <div className="v4-manifesto-collage" data-reveal="left">
           <figure className="v4-collage-main">
             <Image
-              src={editorialGallery[0].src}
-              alt={editorialGallery[0].alt}
+              src={manifestoPrimary.src}
+              alt={manifestoPrimary.alt}
               fill
               sizes="(max-width: 900px) 88vw, 48vw"
             />
-            <figcaption>{editorialGallery[0].caption}</figcaption>
+            <figcaption>{manifestoPrimary.caption}</figcaption>
           </figure>
           <figure className="v4-collage-float">
             <Image
-              src={editorialGallery[4].src}
-              alt={editorialGallery[4].alt}
+              src={manifestoSecondary.src}
+              alt={manifestoSecondary.alt}
               fill
               sizes="(max-width: 900px) 44vw, 18vw"
             />
-            <figcaption>{editorialGallery[4].caption}</figcaption>
+            <figcaption>{manifestoSecondary.caption}</figcaption>
           </figure>
           <div className="v4-collage-word" aria-hidden="true">LUMINOL</div>
         </div>
