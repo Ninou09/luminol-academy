@@ -174,7 +174,11 @@ export default async function Page() {
 
         <div className={styles.branchGrid}>
           {schoolList.map((school, index) => {
-            const opportunity = learningOpportunities[index];
+            const opportunity = learningOpportunities.find(
+              (item) => item.school === school.slug,
+            );
+            if (!opportunity) return null;
+
             return (
               <article
                 className={`${styles.branchCard} ${styles[school.slug]}`}
