@@ -1,6 +1,13 @@
 import type { MetadataRoute } from 'next';
 
-const routes = ['', '/about', '/contact'];
+const routes = [
+  '',
+  '/about',
+  '/contact',
+  '/schools/psychology',
+  '/schools/languages',
+  '/schools/training',
+] as const;
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
 function resolveSiteOrigin() {
@@ -19,6 +26,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return routes.map((route) => ({
     url: `${origin}${route}`,
     changeFrequency: route === '' ? 'weekly' : 'monthly',
-    priority: route === '' ? 1 : 0.7,
+    priority: route === '' ? 1 : route.startsWith('/schools/') ? 0.85 : 0.7,
   }));
 }
