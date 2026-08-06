@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import '../app/cinematic-media.css';
 import { editorialGallery, editorialVideos } from '../lib/flagship';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
@@ -75,7 +76,10 @@ function CinematicVideoCard({
   };
 
   return (
-    <article className={`cinematic-video-card cinematic-video-card-${index + 1}`} data-reveal>
+    <article
+      className={`cinematic-video-card cinematic-video-card-${index + 1}`}
+      data-reveal
+    >
       <div ref={shellRef} className="cinematic-video-shell">
         <Image
           className="cinematic-video-poster"
