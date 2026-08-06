@@ -28,17 +28,17 @@ export function HomeMotion() {
     );
     const parallaxLayers = Array.from(
       document.querySelectorAll<HTMLElement>(
-        '.ar-home-hero-media, .ar-internal-hero-media, .ar-school-hero-media, .ar-feature-image > div, .ar-school-image, .ar-person-image, .cinematic-video-shell, .cinematic-still-media',
+        '.ar-home-hero-media, .ar-internal-hero-media, .ar-school-hero-media, .ar-feature-image > div, .ar-school-image, .ar-person-image, .v5-film-media, .v5-still-media',
       ),
     );
     const depthCards = Array.from(
       document.querySelectorAll<HTMLElement>(
-        '.ar-quick-access a, .ar-school-card, .ar-trust-grid article, .ar-journey-grid li, .cinematic-video-card, .cinematic-still',
+        '.ar-quick-access a, .ar-school-card, .ar-trust-grid article, .ar-journey-grid li, .v5-film-media, .v5-still',
       ),
     );
     const magneticTargets = Array.from(
       document.querySelectorAll<HTMLElement>(
-        '.ar-hero-actions a, .header-cta, .ar-final-cta > a, .ar-section-copy > a, .cinematic-video-control',
+        '.ar-hero-actions a, .header-cta, .ar-final-cta > a, .ar-section-copy > a, .v5-film-control, .v4-hero-actions a, .v4-final-cta > a, .v4-hero-play',
       ),
     );
 
