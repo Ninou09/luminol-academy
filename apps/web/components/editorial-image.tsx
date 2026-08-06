@@ -3,10 +3,10 @@ import type { EditorialImage as EditorialImageData } from '../lib/flagship';
 
 type EditorialImageProps = {
   image: EditorialImageData;
-  className?: string;
-  priority?: boolean;
-  sizes?: string;
-  caption?: string;
+  className?: string | undefined;
+  priority?: boolean | undefined;
+  sizes?: string | undefined;
+  caption?: string | undefined;
 };
 
 export function EditorialImage({
