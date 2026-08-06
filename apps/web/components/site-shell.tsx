@@ -3,22 +3,29 @@ import { ButtonLink, Wordmark } from '@luminol/ui';
 
 const navigation = [
   { href: '/', label: 'Home' },
-  { href: '/#schools', label: 'Our schools' },
-  { href: '/#approach', label: 'Our approach' },
-  { href: '/about', label: 'About Luminol' },
+  { href: '/schools/psychology', label: 'Psychology' },
+  { href: '/schools/languages', label: 'Languages' },
+  { href: '/schools/training', label: 'Professional Training' },
+  { href: '/about', label: 'About' },
 ] as const;
 
 export function SiteHeader() {
   return (
     <>
-      <div className="announcement-bar">
-        Psychology · Languages · Professional Training · One human development
-        ecosystem
+      <div className="utility-bar">
+        <p>Human development, language learning and professional capability</p>
+        <div>
+          <span>Blida, Algeria</span>
+          <Link href="/contact">Contact</Link>
+        </div>
       </div>
       <header className="site-header premium-header">
-        <Link className="brand-link" href="/" aria-label="Luminol home">
+        <Link className="brand-link" href="/" aria-label="Luminol Academy home">
           <span className="brand-symbol" aria-hidden="true">
-            L
+            <b>L</b>
+            <i />
+            <i />
+            <i />
           </span>
           <span className="brand-text">
             <Wordmark />
@@ -35,11 +42,8 @@ export function SiteHeader() {
         </nav>
 
         <div className="header-actions">
-          <span className="language-note" aria-label="Available languages">
-            EN · AR
-          </span>
           <ButtonLink className="header-cta" href="/contact" size="sm">
-            Start your journey
+            Find your path
           </ButtonLink>
         </div>
 
@@ -52,7 +56,7 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link href="/contact">
-              Start your journey <span aria-hidden="true">→</span>
+              Speak with the team <span aria-hidden="true">→</span>
             </Link>
           </nav>
         </details>
@@ -64,25 +68,34 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="site-footer">
+      <div className="footer-lead">
+        <p>Mind · Voice · Future</p>
+        <h2>A connected academy for meaningful human development.</h2>
+        <Link href="/contact">
+          Begin a conversation <span aria-hidden="true">→</span>
+        </Link>
+      </div>
+
       <div className="footer-main">
         <div className="footer-intro">
-          <Link className="footer-brand" href="/" aria-label="Luminol home">
+          <Link
+            className="footer-brand"
+            href="/"
+            aria-label="Luminol Academy home"
+          >
             <span className="brand-symbol" aria-hidden="true">
-              L
+              <b>L</b>
+              <i />
+              <i />
+              <i />
             </span>
             <Wordmark className="footer-wordmark" />
           </Link>
           <p>
-            A connected academy for emotional wellbeing, confident communication
-            and practical professional growth.
+            Psychology, languages and professional training in one thoughtful,
+            human-centred ecosystem.
           </p>
-        </div>
-
-        <div className="footer-column">
-          <h2>Explore</h2>
-          <Link href="/">Home</Link>
-          <Link href="/about">About Luminol</Link>
-          <Link href="/contact">Contact</Link>
+          <span className="footer-location">Blida, Algeria</span>
         </div>
 
         <div className="footer-column">
@@ -93,15 +106,26 @@ export function SiteFooter() {
         </div>
 
         <div className="footer-column">
-          <h2>Begin</h2>
-          <span>Blida, Algeria</span>
-          <Link href="/contact">Ask about a program</Link>
-          <Link href="/contact">Start an enquiry</Link>
+          <h2>Academy</h2>
+          <Link href="/about">About Luminol</Link>
+          <Link href="/contact">Contact the team</Link>
+          <Link href="/contact">Register your interest</Link>
+        </div>
+
+        <div className="footer-column">
+          <h2>Start here</h2>
+          <Link href="/schools/psychology">Explore wellbeing support</Link>
+          <Link href="/schools/languages">Find a language pathway</Link>
+          <Link href="/schools/training">Build professional skills</Link>
         </div>
       </div>
 
       <div className="footer-bottom">
         <p>© {new Date().getFullYear()} Luminol Academy</p>
+        <p className="footer-note">
+          Psychology content is educational and supportive, not emergency or
+          medical care.
+        </p>
         <div className="footer-bottom-links">
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
