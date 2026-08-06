@@ -3,22 +3,37 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import '../app/cinematic-media.css';
-import { editorialGallery, editorialVideos } from '../lib/flagship';
+import {
+  editorialGallery,
+  editorialImages,
+  editorialVideos,
+  type EditorialVideo,
+} from '../lib/flagship';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
-type VideoEntry = (typeof editorialVideos)[number];
+const trainingFilm: EditorialVideo = {
+  id: 'professional-momentum',
+  src: 'https://videos.pexels.com/video-files/5762301/5762301-uhd_3840_2160_24fps.mp4',
+  eyebrow: 'التطور المهني',
+  title: 'أفضل تدريب هو الذي يغيّر ما تفعله بعد أن تغادر القاعة.',
+  description:
+    'مشهد تحريري لورشة تعلم للكبار يعبّر عن المشاركة، تبادل الخبرة وتحويل الأفكار إلى ممارسة.',
+  credit: 'RDNE Stock project / Pexels',
+  creditUrl: 'https://www.pexels.com/video/man-being-interviewed-5762301/',
+  poster: editorialImages.training,
+};
 
-function CinematicVideoCard({
+function EditorialFilm({
   video,
-  index,
+  variant,
 }: {
-  video: VideoEntry;
-  index: number;
+  video: EditorialVideo;
+  variant: 'wide' | 'portrait';
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [active, setActive] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [inView, setInView] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [manualPause, setManualPause] = useState(false);
@@ -31,7 +46,7 @@ function CinematicVideoCard({
     if (reducedMotion) return;
 
     if (!('IntersectionObserver' in window)) {
-      setActive(true);
+      setMounted(true);
       setInView(true);
       return;
     }
@@ -40,9 +55,9 @@ function CinematicVideoCard({
       ([entry]) => {
         if (!entry) return;
         setInView(entry.isIntersecting);
-        if (entry.isIntersecting) setActive(true);
+        if (entry.isIntersecting) setMounted(true);
       },
-      { rootMargin: '18% 0px', threshold: 0.18 },
+      { rootMargin: '22% 0px', threshold: 0.2 },
     );
 
     observer.observe(shell);
@@ -51,23 +66,22 @@ function CinematicVideoCard({
 
   useEffect(() => {
     const node = videoRef.current;
-    if (!active || !node) return;
+    if (!mounted || !node) return;
 
-    if (!inView || manualPause) {
+    if (!inView || manualPause || document.hidden) {
       node.pause();
       return;
     }
 
-    const attempt = node.play();
-    if (attempt) void attempt.catch(() => setPlaying(false));
-  }, [active, inView, manualPause]);
+    void node.play().catch(() => setPlaying(false));
+  }, [inView, manualPause, mounted]);
 
-  const togglePlayback = () => {
+  const toggle = () => {
     const node = videoRef.current;
-    if (!active) {
-      setManualPause(false);
-      setActive(true);
+    if (!mounted) {
+      setMounted(true);
       setInView(true);
+      setManualPause(false);
       return;
     }
     if (!node) return;
@@ -82,19 +96,16 @@ function CinematicVideoCard({
   };
 
   return (
-    <article
-      className={`cinematic-video-card cinematic-video-card-${index + 1}`}
-      data-reveal
-    >
-      <div ref={shellRef} className="cinematic-video-shell">
+    <article className={`v5-film v5-film-${variant}`} data-reveal>
+      <div ref={shellRef} className="v5-film-media">
         <Image
-          className="cinematic-video-poster"
+          className="v5-film-poster"
           src={video.poster.src}
           alt={video.poster.alt}
           fill
-          sizes="(max-width: 900px) 100vw, 58vw"
+          sizes={variant === 'wide' ? '(max-width: 900px) 100vw, 82vw' : '(max-width: 900px) 100vw, 38vw'}
         />
-        {active ? (
+        {mounted ? (
           <video
             ref={videoRef}
             muted
@@ -108,27 +119,22 @@ function CinematicVideoCard({
             <source src={video.src} type="video/mp4" />
           </video>
         ) : null}
-        <div className="cinematic-video-vignette" aria-hidden="true" />
-        <span className="cinematic-video-index" aria-hidden="true">
-          0{index + 1}
-        </span>
+        <div className="v5-film-shade" aria-hidden="true" />
         <button
           type="button"
-          className="cinematic-video-control"
-          onClick={togglePlayback}
+          className="v5-film-control"
+          onClick={toggle}
           aria-label={playing ? `إيقاف فيديو ${video.title}` : `تشغيل فيديو ${video.title}`}
         >
           <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span>
         </button>
-      </div>
-      <div className="cinematic-video-copy">
-        <div>
+        <div className="v5-film-copy">
           <p>{video.eyebrow}</p>
           <h3>{video.title}</h3>
           <span>{video.description}</span>
         </div>
-        <a href={video.creditUrl} target="_blank" rel="noreferrer">
-          فيديو: {video.credit}
+        <a className="v5-film-credit" href={video.creditUrl} target="_blank" rel="noreferrer">
+          فيديو تحريري: {video.credit}
         </a>
       </div>
     </article>
@@ -137,58 +143,63 @@ function CinematicVideoCard({
 
 export function CinematicMediaWall() {
   return (
-    <section className="cinematic-media-section" aria-labelledby="cinematic-media-title">
-      <div className="cinematic-media-orbit" aria-hidden="true">
-        <span />
-        <span />
-        <Image src="/brand/luminol-mark.svg" alt="" width={180} height={180} />
+    <section className="cinematic-media-section v5-media" aria-labelledby="cinematic-media-title">
+      <div className="v5-media-mark" aria-hidden="true">
+        <Image src="/brand/luminol-mark.svg" alt="" width={320} height={350} />
       </div>
 
-      <div className="cinematic-media-heading" data-reveal="right">
+      <header className="v5-media-heading" data-reveal="right">
         <div>
-          <p className="ar-kicker">تعلّم يتحرّك</p>
-          <h2 id="cinematic-media-title">ليس مجرد موقع. نافذة حيّة على تجربة لومينول.</h2>
+          <p className="v4-overline">الحركة جزء من القصة</p>
+          <h2 id="cinematic-media-title">الموقع يجب أن يجعلك تشعر بالتجربة قبل أن تدخل القاعة.</h2>
         </div>
         <p>
-          نستخدم الحركة والصورة لتقريب نوع التفاعل الذي نريد أن يشعر به المتعلم:
-          حضور، حوار، ممارسة وتقدّم. اللقطات التالية تحريرية توضيحية وليست صورًا
-          من داخل الأكاديمية.
+          لذلك لا نستخدم الفيديو كزينة. كل مشهد هنا يشرح فكرة: الإصغاء، المشاركة،
+          الحوار أو التطبيق. المواد مؤقتة وتحريرية إلى أن نستبدلها بلقطات لومينول
+          الأصلية والمصرّح بنشرها.
         </p>
+      </header>
+
+      <div className="v5-feature-film">
+        <span className="v5-feature-index" aria-hidden="true">02 / HUMAN</span>
+        <EditorialFilm video={editorialVideos[1]} variant="wide" />
       </div>
 
-      <div className="cinematic-video-grid">
-        {editorialVideos.map((video, index) => (
-          <CinematicVideoCard key={video.id} video={video} index={index} />
-        ))}
+      <div className="v5-film-split">
+        <div className="v5-film-statement" data-reveal="right">
+          <span aria-hidden="true">03</span>
+          <p className="v4-overline">من الفكرة إلى الفعل</p>
+          <h3>التعلم الجيد لا ينتهي عند آخر شريحة في العرض.</h3>
+          <p>
+            تصميم التجربة يضع الإنسان داخل المشهد: يسأل، يجرّب، يشرح، يستمع ثم
+            يعود إلى حياته أو عمله بشيء يمكن تطبيقه. هذا هو الإيقاع الذي نريد أن
+            تملكه لومينول بصريًا وتعليميًا.
+          </p>
+        </div>
+        <EditorialFilm video={trainingFilm} variant="portrait" />
       </div>
 
-      <div className="cinematic-film-line" aria-hidden="true">
-        <span>وعي</span>
-        <i>◆</i>
-        <span>لغة</span>
-        <i>◆</i>
-        <span>مهارة</span>
-        <i>◆</i>
-        <span>تطبيق</span>
-        <i>◆</i>
-        <span>تقدّم</span>
-        <i>◆</i>
-        <span>لومينول</span>
+      <div className="v5-ticker" aria-hidden="true">
+        <div className="v5-ticker-track">
+          <span>وعي · لغة · مهارة · تطبيق · تواصل · تقدّم · LUMINOL ·</span>
+          <span>وعي · لغة · مهارة · تطبيق · تواصل · تقدّم · LUMINOL ·</span>
+        </div>
       </div>
 
-      <div className="cinematic-gallery" aria-label="مجموعة صور تحريرية توضيحية">
+      <div className="v5-gallery-heading" data-reveal="right">
+        <p className="v4-overline">لقطات من نوع التجربة التي نبنيها</p>
+        <h3>أشخاص حقيقيون. تفاعل حقيقي. صور لا تبدو كخلفية جاهزة.</h3>
+      </div>
+
+      <div className="v5-gallery" aria-label="مجموعة صور تحريرية توضيحية">
         {editorialGallery.map((image, index) => (
-          <figure
-            className={`cinematic-still cinematic-still-${index + 1}`}
-            data-reveal
-            key={image.src}
-          >
-            <div className="cinematic-still-media">
+          <figure className={`v5-still v5-still-${index + 1}`} data-reveal key={image.src}>
+            <div className="v5-still-media">
               <Image
                 src={image.src}
                 alt={image.alt}
                 fill
-                sizes="(max-width: 760px) 82vw, 34vw"
+                sizes="(max-width: 760px) 82vw, 30vw"
               />
               <span aria-hidden="true">0{index + 1}</span>
             </div>
@@ -201,6 +212,11 @@ export function CinematicMediaWall() {
           </figure>
         ))}
       </div>
+
+      <p className="v5-media-note">
+        جميع الصور والفيديوهات أعلاه مواد تحريرية توضيحية مرخّصة من Pexels، وليست
+        توثيقًا لطلاب أو حصص أكاديمية لومينول.
+      </p>
     </section>
   );
 }
