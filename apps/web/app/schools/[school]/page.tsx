@@ -1,15 +1,23 @@
+import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ButtonLink } from '@luminol/ui';
+import { EditorialImage } from '../../../components/editorial-image';
+import { HomeMotion } from '../../../components/home-motion';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { branchExperience } from '../../../lib/flagship';
 import {
   buildSanityProgrammeImageUrl,
   getProgrammesForSchool,
 } from '../../../lib/sanity';
+import {
+  getPublicTeamMembers,
+  getPublicTestimonials,
+} from '../../../lib/sanity-public';
 import { isSchoolSlug, schools } from '../../../lib/schools';
-import styles from './page.module.css';
+import styles from '../../flagship.module.css';
 
 type SchoolPageProps = {
   params: Promise<{ school: string }>;
@@ -40,6 +48,11 @@ export async function generateMetadata({
       type: 'website',
       url: route,
     },
+    twitter: {
+      card: 'summary',
+      title: `Luminol ${school.name}`,
+      description: school.introduction,
+    },
   };
 }
 
@@ -48,7 +61,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   if (!isSchoolSlug(slug)) notFound();
 
   const school = schools[slug];
-  const cmsProgrammes = await getProgrammesForSchool(slug);
+  const experience = branchExperience[slug];
+  const [cmsProgrammes, teamMembers, testimonials] = await Promise.all([
+    getProgrammesForSchool(slug),
+    getPublicTeamMembers(slug),
+    getPublicTestimonials(slug),
+  ]);
   const programmes: Array<{
     id: string;
     title: string;
@@ -78,98 +96,136 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   );
 
   return (
-    <main className={`school-page school-page-${school.slug}`}>
+    <main
+      className={`${styles.page} ${styles.branchPage} ${styles[school.slug]}`}
+    >
+      <HomeMotion />
       <SiteHeader />
 
-      <section className="school-detail-hero">
-        <div className="school-detail-copy">
-          <Link className="breadcrumb" href="/#schools">
+      <section className={styles.branchHero}>
+        <div className={styles.branchHeroCopy} data-reveal="left">
+          <Link className={styles.breadcrumb} href="/#schools">
             Luminol schools <span aria-hidden="true">/</span> {school.name}
           </Link>
-          <p className="eyebrow">{school.eyebrow}</p>
+          <p className={styles.kicker}>{experience.themeLabel}</p>
           <h1>{school.headline}</h1>
-          <p className="school-detail-lede">{school.introduction}</p>
-          <div className="hero-actions">
-            <ButtonLink href="#programs" size="lg">
-              Explore programs <span aria-hidden="true">↘</span>
+          <p>{experience.positioning}</p>
+          <div className={styles.branchHeroActions}>
+            <ButtonLink href="#programmes" size="lg">
+              Explore {school.name.toLowerCase()} programmes
             </ButtonLink>
             <ButtonLink href="/contact" size="lg" variant="secondary">
-              Start your journey
+              Register your interest
             </ButtonLink>
           </div>
         </div>
-
-        <div className="school-detail-visual" aria-hidden="true">
-          <span className="detail-number">{school.number}</span>
-          <div className="detail-orbit detail-orbit-outer" />
-          <div className="detail-orbit detail-orbit-inner" />
-          <div className="detail-core">{school.name.charAt(0)}</div>
-          <div className="detail-words">
-            {school.visualWords.map((word) => (
-              <span key={word}>{word}</span>
-            ))}
+        <div className={styles.branchHeroMedia} data-reveal="scale">
+          <EditorialImage
+            className={styles.branchHeroFigure}
+            image={experience.image}
+            priority
+            sizes="(max-width: 72rem) 100vw, 52vw"
+            caption={`${school.name} imagery selected for the purpose and mood of this school.`}
+          />
+          <div className={styles.branchHeroNote}>
+            <small>
+              {school.number} · {school.name}
+            </small>
+            <p>{school.promise}</p>
           </div>
         </div>
       </section>
 
-      <section className="school-promise-band">
-        <p>Our promise</p>
+      <section className={styles.branchPromise}>
+        <span>What this school is designed to do</span>
         <blockquote>{school.promise}</blockquote>
       </section>
 
-      <section id="programs" className="programs section-shell">
-        <div className="section-heading">
+      <section id="programmes" className={styles.branchProgrammeSection}>
+        <div className={styles.branchSectionHeading} data-reveal>
           <div>
-            <p className="eyebrow">Programs and support</p>
-            <h2>Choose the pathway that fits your next step.</h2>
+            <p className={styles.kicker}>Programmes and support</p>
+            <h2>Choose a pathway with a clear purpose.</h2>
           </div>
           <p>
-            Each program is shaped around a clear purpose, thoughtful
-            progression and an experience that respects the person behind the
-            goal.
+            Published CMS programmes take priority. The reviewed Luminol
+            pathways remain available when no approved CMS content is active.
           </p>
         </div>
-        <div className="program-grid">
-          {programmes.map((program, index) => (
-            <article key={program.id}>
+        <div className={styles.programGrid}>
+          {programmes.map((programme, index) => (
+            <article
+              className={styles.programCard}
+              data-reveal
+              key={programme.id}
+              style={
+                {
+                  '--reveal-delay': `${(index % 2) * 65}ms`,
+                } as CSSProperties
+              }
+            >
               <span>{String(index + 1).padStart(2, '0')}</span>
-              {program.image ? (
-                <Image
-                  className={styles.programImage}
-                  src={program.image.url}
-                  alt={program.image.alt}
-                  width={1200}
-                  height={675}
-                  sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                />
+              {programme.image ? (
+                <div className={styles.programCardImage}>
+                  <Image
+                    src={programme.image.url}
+                    alt={programme.image.alt}
+                    fill
+                    sizes="(max-width: 44rem) 100vw, 50vw"
+                  />
+                </div>
               ) : null}
-              <h3
-                className={
-                  program.image ? styles.programTitleWithImage : undefined
-                }
-              >
-                {program.title}
-              </h3>
-              {program.delivery ? (
-                <small className="program-delivery">{program.delivery}</small>
-              ) : null}
-              <p>{program.description}</p>
+              <h3>{programme.title}</h3>
+              {programme.delivery ? <small>{programme.delivery}</small> : null}
+              <p>{programme.description}</p>
               <Link href="/contact">
-                Ask about this program <b aria-hidden="true">→</b>
+                Ask about this programme <b aria-hidden="true">→</b>
               </Link>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="school-method">
-        <div className="method-heading">
-          <p className="eyebrow eyebrow-light">How the journey works</p>
-          <h2>A clear path from intention to meaningful progress.</h2>
+      <section className={styles.branchSplit}>
+        <div className={styles.branchSplitCopy} data-reveal="left">
+          <p className={styles.kicker}>Benefits and outcomes</p>
+          <h2>Progress should be understandable and usable.</h2>
+          <p className={styles.storyLead}>
+            The experience is designed around the learner’s context—not a
+            one-size-fits-all promise.
+          </p>
+          <p>
+            Outcomes vary by programme, level and participation. These
+            principles describe what the school is designed to support without
+            making exaggerated guarantees.
+          </p>
         </div>
-        <ol>
+        <ol className={styles.outcomeList}>
+          {experience.outcomes.map((outcome, index) => (
+            <li
+              data-reveal="right"
+              key={outcome}
+              style={{ '--reveal-delay': `${index * 55}ms` } as CSSProperties}
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              {outcome}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className={styles.branchMethod}>
+        <div data-reveal="left">
+          <p className={styles.kicker}>How the journey works</p>
+          <h2>A clear method, adapted to the person and goal.</h2>
+        </div>
+        <ol className={styles.methodList}>
           {school.approach.map((step, index) => (
-            <li key={step.title}>
+            <li
+              data-reveal="right"
+              key={step.title}
+              style={{ '--reveal-delay': `${index * 60}ms` } as CSSProperties}
+            >
               <span>{String(index + 1).padStart(2, '0')}</span>
               <div>
                 <h3>{step.title}</h3>
@@ -180,33 +236,130 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </ol>
       </section>
 
-      <section className="audience section-shell">
-        <div>
-          <p className="eyebrow">Designed around people</p>
-          <h2>Who this school supports</h2>
+      <section className={styles.branchAudience}>
+        <div className={styles.branchSectionHeading} data-reveal>
+          <div>
+            <p className={styles.kicker}>Designed around people</p>
+            <h2>Who this school supports.</h2>
+          </div>
+          <p>
+            The enquiry conversation helps confirm whether the current
+            programme, group and format are appropriate.
+          </p>
         </div>
-        <ul>
-          {school.audiences.map((audience) => (
-            <li key={audience}>{audience}</li>
+        <div className={styles.audienceGrid}>
+          {school.audiences.map((audience, index) => (
+            <article
+              data-reveal
+              key={audience}
+              style={{ '--reveal-delay': `${index * 55}ms` } as CSSProperties}
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <h3>{audience}</h3>
+            </article>
           ))}
-        </ul>
+        </div>
       </section>
 
-      <aside className="school-note section-shell" aria-label="Program note">
+      <section className={styles.branchSplit}>
+        <div className={styles.branchSplitCopy} data-reveal="left">
+          <p className={styles.kicker}>Instructor credibility</p>
+          <h2>Expertise that fits the discipline.</h2>
+          <p>
+            Luminol’s content system publishes individual profiles only after
+            their role, biography and portrait have been approved.
+          </p>
+        </div>
+        {teamMembers?.length ? (
+          <div className={styles.peopleGrid}>
+            {teamMembers.map((member) => (
+              <article data-reveal key={member._id}>
+                {member.portrait ? (
+                  <div className={styles.personPortrait}>
+                    <Image
+                      src={member.portrait.url}
+                      alt={member.portrait.alt}
+                      fill
+                      sizes="(max-width: 44rem) 100vw, 25vw"
+                    />
+                  </div>
+                ) : null}
+                <small>{member.role}</small>
+                <h3>{member.name}</h3>
+                {member.bio ? <p>{member.bio}</p> : null}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <ol className={styles.expertiseList}>
+            {experience.expertise.map((item, index) => (
+              <li data-reveal="right" key={item}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                {item}
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+
+      {testimonials?.length ? (
+        <section className={styles.branchEvidence}>
+          <div className={styles.branchEvidenceInner}>
+            <div data-reveal="left">
+              <p className={styles.kicker}>Approved voices</p>
+              <h2>Evidence published with consent.</h2>
+              <p>
+                Only testimonials marked active with confirmed publication
+                consent are displayed.
+              </p>
+            </div>
+            <div className={styles.branchEvidenceQuotes}>
+              {testimonials.map((testimonial) => (
+                <figure data-reveal="right" key={testimonial._id}>
+                  <blockquote>“{testimonial.quote}”</blockquote>
+                  <figcaption>
+                    <strong>{testimonial.personName}</strong>
+                    <span>{testimonial.context ?? school.name}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <section className={styles.branchFaq}>
+        <div data-reveal="left">
+          <p className={styles.kicker}>Frequently asked questions</p>
+          <h2>Useful answers before you enquire.</h2>
+        </div>
+        <div className={styles.faqList}>
+          {experience.faq.map((item) => (
+            <details key={item.question}>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <aside className={styles.safetyNote} aria-label="Important programme note">
         <span>Important</span>
         <p>{school.note}</p>
       </aside>
 
-      <section className="related-schools section-shell">
-        <p className="eyebrow">Continue exploring Luminol</p>
-        <div className="related-heading">
-          <h2>Growth connects across every school.</h2>
+      <section className={styles.relatedSection}>
+        <div className={styles.branchSectionHeading} data-reveal>
+          <div>
+            <p className={styles.kicker}>Continue exploring</p>
+            <h2>Growth connects across every Luminol school.</h2>
+          </div>
           <p>
-            Explore another dimension of your personal, linguistic or
-            professional development.
+            Explore another dimension of personal, linguistic or professional
+            development.
           </p>
         </div>
-        <div className="related-grid">
+        <div className={styles.relatedGrid}>
           {relatedSchools.map((related) => (
             <Link href={`/schools/${related.slug}`} key={related.slug}>
               <span>{related.number}</span>
@@ -217,17 +370,17 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </div>
       </section>
 
-      <section className="final-cta">
-        <div>
-          <p className="eyebrow eyebrow-light">Your next step</p>
-          <h2>Let&apos;s find the right path forward.</h2>
+      <section className={styles.finalCta}>
+        <div data-reveal="left">
+          <p className={styles.kicker}>Your next step</p>
+          <h2>Find the {school.name.toLowerCase()} pathway that fits.</h2>
           <p>
-            Begin with your goal. Luminol will help you identify the program and
-            learning experience that fits.
+            Begin with your goal. The Luminol team will help confirm the
+            programme, level and format that are currently appropriate.
           </p>
         </div>
-        <ButtonLink href="/contact" size="lg">
-          Start your journey <span aria-hidden="true">→</span>
+        <ButtonLink data-reveal="right" href="/contact" size="lg">
+          Register your interest <span aria-hidden="true">→</span>
         </ButtonLink>
       </section>
 
