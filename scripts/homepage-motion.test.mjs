@@ -43,6 +43,11 @@ const cinematicMediaStyles = readFileSync(
   'utf8',
 );
 const v4HomeStyles = readFileSync(resolve('apps/web/app/v4-home.css'), 'utf8');
+const v4GlobalStyles = readFileSync(resolve('apps/web/app/v4-global.css'), 'utf8');
+const v4InteractionStyles = readFileSync(
+  resolve('apps/web/app/v4-interactions.css'),
+  'utf8',
+);
 const flagshipSource = readFileSync(resolve('apps/web/lib/flagship.ts'), 'utf8');
 const shellSource = readFileSync(
   resolve('apps/web/components/site-shell.tsx'),
@@ -69,12 +74,15 @@ describe('Arabic premium public flagship', () => {
     expect(contactSource).toContain('<EnquiryForm />');
   });
 
-  it('publishes the public experience in Arabic RTL', () => {
-    expect(layoutSource).toContain('<html lang="ar" dir="rtl">');
+  it('publishes the public experience in Arabic RTL with a production Arabic typeface', () => {
+    expect(layoutSource).toContain('Noto_Sans_Arabic');
+    expect(layoutSource).toContain('lang="ar" dir="rtl"');
+    expect(layoutSource).toContain('className={arabicFont.variable}');
     expect(pageSource).toContain('طوّر عقلك');
     expect(aboutSource).toContain('من نحن');
     expect(contactSource).toContain('تواصل معنا');
     expect(arabicStyles).toContain('direction: rtl');
+    expect(v4GlobalStyles).toContain('var(--font-arabic)');
   });
 
   it('uses the official Luminol mark and curated human photography', () => {
@@ -123,7 +131,12 @@ describe('Arabic premium public flagship', () => {
     expect(cinematicMediaStyles).toContain('v5-ticker-move');
     expect(cinematicMediaStyles).toContain('scroll-snap-type');
     expect(v4HomeStyles).toContain('.v4-branch-stage');
+    expect(v4GlobalStyles).toContain('.ar-method-section');
+    expect(v4InteractionStyles).toContain('v4-hero-line-in');
+    expect(v4InteractionStyles).toContain('--magnetic-x');
     expect(v4HomeStyles).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(v4GlobalStyles).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(v4InteractionStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(arabicStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(cinematicStyles).toContain('@media (prefers-reduced-motion: reduce)');
