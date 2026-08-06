@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
+import { CinematicMediaWall } from '../components/cinematic-media';
 import { HomeMotion } from '../components/home-motion';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import {
@@ -143,6 +144,8 @@ export default async function Page() {
           </Link>
         ))}
       </nav>
+
+      <CinematicMediaWall />
 
       <section className="ar-intro-section">
         <div className="ar-section-copy" data-reveal="right">
