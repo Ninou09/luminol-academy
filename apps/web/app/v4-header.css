@@ -1,0 +1,96 @@
+/* Homepage-only transparent-to-solid navigation treatment. */
+.v4-home > .utility-bar {
+  display: none;
+}
+
+.v4-home > .site-header.premium-header {
+  min-height: 6.4rem;
+  margin-bottom: -6.4rem;
+  border-bottom-color: rgb(255 255 255 / 0.16);
+  background: linear-gradient(180deg, rgb(4 19 29 / 0.52), rgb(4 19 29 / 0.08));
+  box-shadow: none;
+  backdrop-filter: blur(4px);
+}
+
+.v4-home > .premium-header .brand-copy strong,
+.v4-home > .premium-header .desktop-nav a {
+  color: #fff;
+}
+
+.v4-home > .premium-header .brand-copy small {
+  color: #62c9ef;
+}
+
+.v4-home > .premium-header .brand-logo {
+  filter: drop-shadow(0 0.4rem 1rem rgb(0 0 0 / 0.18));
+}
+
+.v4-home > .premium-header .desktop-nav a::after {
+  background: linear-gradient(90deg, #62c9ef, #f1c86a);
+}
+
+.v4-home > .premium-header .header-cta {
+  border: 1px solid rgb(255 255 255 / 0.6) !important;
+  background: rgb(255 255 255 / 0.1) !important;
+  color: #fff !important;
+  box-shadow: none;
+  backdrop-filter: blur(12px);
+}
+
+.v4-home > .premium-header .header-cta:hover,
+.v4-home > .premium-header .header-cta:focus-visible {
+  border-color: #fff !important;
+  background: #fff !important;
+  color: #071f2d !important;
+}
+
+.v4-home > .premium-header .mobile-menu summary {
+  border-color: rgb(255 255 255 / 0.42);
+  color: #fff;
+  background: rgb(4 19 29 / 0.18);
+  backdrop-filter: blur(12px);
+}
+
+html[data-scrolled='true'] .v4-home > .site-header.premium-header {
+  min-height: 5.35rem;
+  border-bottom-color: rgb(14 76 100 / 0.12);
+  background: rgb(255 255 255 / 0.96);
+  box-shadow: 0 0.9rem 2.3rem rgb(14 76 100 / 0.12);
+  backdrop-filter: blur(18px);
+}
+
+html[data-scrolled='true'] .v4-home > .premium-header .brand-copy strong,
+html[data-scrolled='true'] .v4-home > .premium-header .desktop-nav a {
+  color: #173f52;
+}
+
+html[data-scrolled='true'] .v4-home > .premium-header .brand-copy small {
+  color: #2099d0;
+}
+
+html[data-scrolled='true'] .v4-home > .premium-header .header-cta {
+  border-color: transparent !important;
+  background: #0e4c64 !important;
+  color: #fff !important;
+  box-shadow: 0 0.7rem 1.7rem rgb(14 76 100 / 0.14);
+}
+
+html[data-scrolled='true'] .v4-home > .premium-header .mobile-menu summary {
+  border-color: rgb(14 76 100 / 0.24);
+  color: #0e4c64;
+  background: #fff;
+}
+
+@media (max-width: 70rem) {
+  .v4-home > .site-header.premium-header {
+    min-height: 5.8rem;
+    margin-bottom: -5.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-home > .site-header.premium-header,
+  .v4-home > .premium-header .header-cta {
+    transition: none !important;
+  }
+}
