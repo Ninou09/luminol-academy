@@ -1,480 +1,400 @@
 import type { CSSProperties } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
+import { EditorialImage } from '../components/editorial-image';
 import { HomeMotion } from '../components/home-motion';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
+import {
+  credibilityPrinciples,
+  editorialImages,
+  learningOpportunities,
+} from '../lib/flagship';
+import {
+  getPublicTeamMembers,
+  getPublicTestimonials,
+} from '../lib/sanity-public';
 import { schools } from '../lib/schools';
-import styles from './home.module.css';
+import styles from './flagship.module.css';
 
 const schoolList = Object.values(schools);
 
-const highlights = [
+const learningSteps = [
   {
     number: '01',
-    title: 'Human-centered',
-    text: 'Every pathway begins with the person, their context and their goal.',
-  },
-  {
-    number: '02',
-    title: 'Expert-led',
-    text: 'Serious knowledge is translated into clear, useful learning experiences.',
-  },
-  {
-    number: '03',
-    title: 'Practical by design',
-    text: 'Insight becomes action through guided practice and real application.',
-  },
-  {
-    number: '04',
-    title: 'One ecosystem',
-    text: 'Mind, communication and professional capability grow together.',
-  },
-] as const;
-
-const principles = [
-  {
-    number: '01',
-    title: 'Understand deeply',
-    text: 'Create clarity around the person, the challenge and the outcome that matters.',
-  },
-  {
-    number: '02',
-    title: 'Practice meaningfully',
-    text: 'Use guided experience, feedback and reflection instead of passive information.',
-  },
-  {
-    number: '03',
-    title: 'Progress sustainably',
-    text: 'Build confidence and capability that can continue beyond the classroom.',
-  },
-] as const;
-
-const featuredProgrammes = [
-  {
-    school: 'psychology',
-    schoolName: schools.psychology.name,
-    number: '01',
-    ...schools.psychology.programs[0],
-  },
-  {
-    school: 'psychology',
-    schoolName: schools.psychology.name,
-    number: '02',
-    ...schools.psychology.programs[2],
-  },
-  {
-    school: 'languages',
-    schoolName: schools.languages.name,
-    number: '03',
-    ...schools.languages.programs[0],
-  },
-  {
-    school: 'languages',
-    schoolName: schools.languages.name,
-    number: '04',
-    ...schools.languages.programs[2],
-  },
-  {
-    school: 'training',
-    schoolName: schools.training.name,
-    number: '05',
-    ...schools.training.programs[0],
-  },
-  {
-    school: 'training',
-    schoolName: schools.training.name,
-    number: '06',
-    ...schools.training.programs[2],
-  },
-] as const;
-
-const journeySteps = [
-  {
-    number: '01',
-    title: 'Choose your direction',
-    text: 'Begin with the dimension of growth that matters most right now.',
+    title: 'Begin with your goal',
+    text: 'Tell us what you want to understand, strengthen or achieve.',
   },
   {
     number: '02',
     title: 'Find the right pathway',
-    text: 'We connect your goal with the most appropriate school, level and format.',
+    text: 'The team helps identify the appropriate school, level and format.',
   },
   {
     number: '03',
     title: 'Learn through experience',
-    text: 'Move through structured guidance, practice and useful feedback.',
+    text: 'Structured guidance, useful practice and thoughtful feedback keep progress active.',
   },
   {
     number: '04',
-    title: 'Carry progress forward',
-    text: 'Apply what you learn in everyday life, communication and work.',
+    title: 'Carry it forward',
+    text: 'Apply what you learn in communication, wellbeing, study or work.',
   },
 ] as const;
 
-export default function Page() {
+export default async function Page() {
+  const [testimonials, teamMembers] = await Promise.all([
+    getPublicTestimonials(),
+    getPublicTeamMembers(),
+  ]);
+
   return (
     <main className={styles.page}>
       <HomeMotion />
       <SiteHeader />
 
       <section className={styles.hero} aria-labelledby="hero-title">
-        <div className={styles.heroGlow} aria-hidden="true" />
-        <div className={styles.heroInner}>
-          <div className={styles.heroCopy} data-reveal="left">
-            <p className={styles.eyebrow}>Luminol Academy · Blida, Algeria</p>
-            <h1 id="hero-title">
-              Develop your mind.
-              <span>Strengthen your voice.</span>
-              Advance your future.
-            </h1>
-            <p className={styles.heroLede}>
-              One premium human-development ecosystem connecting psychology,
-              language learning and professional training with clarity, warmth
-              and practical impact.
-            </p>
-            <div className={styles.heroActions}>
-              <ButtonLink
-                className={styles.primaryAction}
-                href="#schools"
-                size="lg"
-              >
-                Explore our schools <span aria-hidden="true">↘</span>
-              </ButtonLink>
-              <ButtonLink
-                className={styles.secondaryAction}
-                href="/contact"
-                size="lg"
-                variant="secondary"
-              >
-                Start your journey
-              </ButtonLink>
-            </div>
-            <div className={styles.heroProof} aria-label="Luminol overview">
-              <div>
-                <strong data-count="3">3</strong>
-                <span>Connected schools</span>
-              </div>
-              <div>
-                <strong data-count="1">1</strong>
-                <span>Human ecosystem</span>
-              </div>
-              <div>
-                <strong data-count="2">2</strong>
-                <span>Language foundations</span>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className={styles.heroVisual}
-            data-hero-visual
-            data-reveal="scale"
-            style={{ '--reveal-delay': '120ms' } as CSSProperties}
-          >
-            <div className={styles.visualGrid} aria-hidden="true" />
-            <div
-              className={`${styles.orbit} ${styles.orbitOuter}`}
-              aria-hidden="true"
-            />
-            <div
-              className={`${styles.orbit} ${styles.orbitMiddle}`}
-              aria-hidden="true"
-            />
-            <div
-              className={`${styles.orbit} ${styles.orbitInner}`}
-              aria-hidden="true"
-            />
-            <div className={styles.heroCore} aria-hidden="true">
-              <span>L</span>
-              <small>Potential illuminated</small>
-            </div>
-
-            {schoolList.map((school, index) => (
-              <Link
-                className={`${styles.heroSchoolCard} ${styles[school.slug]}`}
-                href={`/schools/${school.slug}`}
-                key={school.slug}
-                style={{ '--card-index': index } as CSSProperties}
-              >
-                <span>{school.number}</span>
-                <small>{school.eyebrow.split(' · ')[0]}</small>
-                <strong>{school.name}</strong>
-                <b aria-hidden="true">↗</b>
-              </Link>
-            ))}
-
-            <div className={styles.heroLocation}>
-              <span aria-hidden="true">✦</span>
-              <div>
-                <small>Learning from Blida</small>
-                <strong>Built for meaningful growth</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.highlightGrid}>
-          {highlights.map((highlight, index) => (
-            <article
-              data-reveal
-              key={highlight.number}
-              style={{ '--reveal-delay': `${index * 70}ms` } as CSSProperties}
-            >
-              <span>{highlight.number}</span>
-              <h2>{highlight.title}</h2>
-              <p>{highlight.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <div className={styles.marquee} aria-label="Luminol areas of growth">
-        <div aria-hidden="true">
-          <span>Understand yourself</span>
-          <b>✦</b>
-          <span>Communicate confidently</span>
-          <b>✦</b>
-          <span>Build practical capability</span>
-          <b>✦</b>
-          <span>Understand yourself</span>
-          <b>✦</b>
-          <span>Communicate confidently</span>
-          <b>✦</b>
-          <span>Build practical capability</span>
-        </div>
-      </div>
-
-      <section id="schools" className={styles.schoolSection}>
-        <div className={styles.sectionHeading} data-reveal>
-          <div>
-            <p className={styles.eyebrow}>Three schools · One vision</p>
-            <h2>Choose the path that fits your next chapter.</h2>
-          </div>
-          <p>
-            Each school has its own depth, methods and outcomes. Together they
-            form a connected journey for the whole person.
+        <div className={styles.heroCopy} data-reveal="left">
+          <p className={styles.kicker}>Luminol Academy · Blida</p>
+          <h1 id="hero-title">
+            Knowledge for the person you are.
+            <span>Capability for who you are becoming.</span>
+          </h1>
+          <p className={styles.heroLede}>
+            Psychology, language learning and professional development brought
+            together in one intellectually serious, human-centred academy.
           </p>
+          <div className={styles.heroActions}>
+            <ButtonLink href="#schools" size="lg">
+              Find your Luminol path <span aria-hidden="true">↘</span>
+            </ButtonLink>
+            <ButtonLink href="/contact" size="lg" variant="secondary">
+              Speak with the team
+            </ButtonLink>
+          </div>
+          <div className={styles.heroSignals} aria-label="Luminol qualities">
+            <span>Human-centred</span>
+            <span>Practice-led</span>
+            <span>Arabic-ready</span>
+          </div>
         </div>
 
-        <div className={styles.schoolGrid}>
+        <div className={styles.heroMedia} data-reveal="scale">
+          <EditorialImage
+            className={styles.heroFigure}
+            image={editorialImages.hero}
+            priority
+            sizes="(max-width: 72rem) 100vw, 52vw"
+            caption="Learning designed around dialogue, practice and progress."
+          />
+          <div className={styles.heroEditorialCard}>
+            <span>One academy</span>
+            <strong>Three connected schools</strong>
+            <p>Mind · Voice · Future</p>
+          </div>
+          <div className={styles.heroIndex} aria-hidden="true">
+            <span>01</span>
+            <i />
+            <span>03</span>
+          </div>
+        </div>
+
+        <nav
+          id="schools"
+          className={styles.heroBranches}
+          aria-label="Luminol schools"
+        >
           {schoolList.map((school, index) => (
             <Link
-              className={`${styles.schoolCard} ${styles[school.slug]}`}
+              className={`${styles.heroBranch} ${styles[school.slug]}`}
               data-reveal
               href={`/schools/${school.slug}`}
               key={school.slug}
-              style={{ '--reveal-delay': `${index * 90}ms` } as CSSProperties}
+              style={{ '--reveal-delay': `${index * 70}ms` } as CSSProperties}
             >
-              <div className={styles.schoolVisual} aria-hidden="true">
-                <span>{school.name.charAt(0)}</span>
-                <i />
-                <i />
+              <span>{school.number}</span>
+              <div>
+                <small>{school.eyebrow.split(' · ')[0]}</small>
+                <strong>{school.name}</strong>
               </div>
-              <div className={styles.schoolCardBody}>
-                <div className={styles.schoolMeta}>
-                  <span>{school.number}</span>
-                  <small>{school.eyebrow}</small>
-                </div>
-                <h3>{school.name}</h3>
-                <p>{school.introduction}</p>
-                <div className={styles.schoolTopics}>
-                  {school.visualWords.map((word) => (
-                    <span key={word}>{word}</span>
-                  ))}
-                </div>
-                <strong>
-                  Discover this school <b aria-hidden="true">→</b>
-                </strong>
-              </div>
+              <b aria-hidden="true">↗</b>
             </Link>
           ))}
-        </div>
+        </nav>
       </section>
 
-      <section id="approach" className={styles.experienceSection}>
-        <div className={styles.experienceVisual} data-reveal="left">
-          <div className={styles.experienceGrid} aria-hidden="true" />
-          <div
-            className={`${styles.experienceRing} ${styles.ringOne}`}
-            aria-hidden="true"
-          />
-          <div
-            className={`${styles.experienceRing} ${styles.ringTwo}`}
-            aria-hidden="true"
-          />
-          <div className={styles.experienceCore}>
-            <span>Whole-person</span>
-            <strong>Learning</strong>
-            <small>Mind · Voice · Future</small>
-          </div>
-          <p>Scientific depth with human warmth and real-world application.</p>
-        </div>
+      <section className={styles.credibility} aria-label="How Luminol works">
+        {credibilityPrinciples.map((principle, index) => (
+          <article
+            data-reveal
+            key={principle.title}
+            style={{ '--reveal-delay': `${index * 55}ms` } as CSSProperties}
+          >
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <h2>{principle.title}</h2>
+            <p>{principle.text}</p>
+          </article>
+        ))}
+      </section>
 
-        <div className={styles.experienceCopy} data-reveal="right">
-          <p className={styles.eyebrow}>The Luminol experience</p>
-          <h2>Education should change more than what you know.</h2>
-          <p className={styles.experienceLede}>
-            It should strengthen how you understand, communicate, decide and
-            move forward.
+      <section className={styles.editorialIntro}>
+        <div className={styles.editorialIntroCopy} data-reveal="left">
+          <p className={styles.kicker}>A connected view of human development</p>
+          <h2>People do not grow in separate boxes.</h2>
+          <p className={styles.largeCopy}>
+            Emotional awareness shapes communication. Communication shapes
+            opportunity. Professional confidence grows when both are stronger.
           </p>
-          <ol className={styles.principleList}>
-            {principles.map((principle) => (
-              <li key={principle.number}>
-                <span>{principle.number}</span>
-                <div>
-                  <h3>{principle.title}</h3>
-                  <p>{principle.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <p>
+            Luminol protects the depth of each discipline while making the
+            overall journey clearer, more personal and more useful.
+          </p>
+          <Link className={styles.textLink} href="/about">
+            Discover the Luminol philosophy <span aria-hidden="true">→</span>
+          </Link>
         </div>
+        <EditorialImage
+          className={styles.editorialIntroImage}
+          image={editorialImages.learning}
+          caption="Serious learning should still feel personal."
+        />
       </section>
 
-      <section
-        className={styles.statBand}
-        aria-label="Luminol structure"
-        data-reveal
-      >
-        <div>
-          <strong data-count="3">3</strong>
-          <span>Specialized schools</span>
+      <section className={styles.branchSection}>
+        <div className={styles.sectionHeading} data-reveal>
+          <div>
+            <p className={styles.kicker}>Explore the academy</p>
+            <h2>Three distinct schools. One standard of care.</h2>
+          </div>
+          <p>
+            Each branch has its own mood, methods and outcomes. Choose the area
+            that best matches what matters now.
+          </p>
         </div>
-        <div>
-          <strong data-count="12" data-count-suffix="+">
-            12+
-          </strong>
-          <span>Structured pathways</span>
-        </div>
-        <div>
-          <strong data-count="1">1</strong>
-          <span>Connected platform</span>
-        </div>
-        <div>
-          <strong data-count="100" data-count-suffix="%">
-            100%
-          </strong>
-          <span>Purpose-led design</span>
+
+        <div className={styles.branchGrid}>
+          {schoolList.map((school, index) => {
+            const opportunity = learningOpportunities[index];
+            return (
+              <article
+                className={`${styles.branchCard} ${styles[school.slug]}`}
+                data-reveal
+                key={school.slug}
+                style={{ '--reveal-delay': `${index * 80}ms` } as CSSProperties}
+              >
+                <EditorialImage
+                  className={styles.branchImage}
+                  image={
+                    opportunity.school === 'psychology'
+                      ? editorialImages.psychology
+                      : opportunity.school === 'languages'
+                        ? editorialImages.languages
+                        : editorialImages.training
+                  }
+                  sizes="(max-width: 760px) 100vw, 33vw"
+                />
+                <div className={styles.branchCardBody}>
+                  <div className={styles.branchMeta}>
+                    <span>{school.number}</span>
+                    <small>{school.eyebrow}</small>
+                  </div>
+                  <h3>{school.name}</h3>
+                  <p>{school.introduction}</p>
+                  <ul>
+                    {school.visualWords.map((word) => (
+                      <li key={word}>{word}</li>
+                    ))}
+                  </ul>
+                  <Link href={`/schools/${school.slug}`}>
+                    {opportunity.cta} <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
 
       <section className={styles.programmeSection}>
-        <div className={styles.sectionHeading} data-reveal>
-          <div>
-            <p className={styles.eyebrow}>Programs and pathways</p>
-            <h2>Serious learning, designed to be used.</h2>
-          </div>
+        <div className={styles.programmeIntro} data-reveal="left">
+          <p className={styles.kicker}>Selected pathways</p>
+          <h2>Start with a clear, useful next step.</h2>
           <p>
-            Explore representative pathways from each school. Published Sanity
-            content can extend these cards without weakening the reviewed
-            fallback experience.
-          </p>
-        </div>
-
-        <div className={styles.programmeGrid}>
-          {featuredProgrammes.map((programme, index) => (
-            <article
-              className={`${styles.programmeCard} ${styles[programme.school]}`}
-              data-reveal
-              key={`${programme.school}-${programme.title}`}
-              style={
-                { '--reveal-delay': `${(index % 3) * 80}ms` } as CSSProperties
-              }
-            >
-              <div className={styles.programmeArtwork} aria-hidden="true">
-                <span>{programme.number}</span>
-                <i />
-                <i />
-                <b>{programme.schoolName.charAt(0)}</b>
-              </div>
-              <div className={styles.programmeBody}>
-                <small>{programme.schoolName}</small>
-                <h3>{programme.title}</h3>
-                <p>{programme.description}</p>
-                <Link href={`/schools/${programme.school}`}>
-                  View school pathways <span aria-hidden="true">→</span>
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className={styles.journeySection}>
-        <div className={styles.journeyIntro} data-reveal="left">
-          <p className={styles.eyebrow}>A clear learning journey</p>
-          <h2>From intention to meaningful progress.</h2>
-          <p>
-            The experience stays structured without becoming rigid, and personal
-            without losing academic or professional depth.
+            These representative programmes show how the three schools turn
+            broad goals into focused learning experiences.
           </p>
           <ButtonLink href="/contact" size="lg">
-            Discuss your goal <span aria-hidden="true">→</span>
+            Discuss your goal
           </ButtonLink>
         </div>
-
-        <div className={styles.journeyPanel} data-reveal="right">
-          <ol>
-            {journeySteps.map((step) => (
-              <li key={step.number}>
-                <span>{step.number}</span>
+        <div className={styles.programmeList}>
+          {schoolList.map((school, index) => {
+            const programme = school.programs[0];
+            return (
+              <Link
+                className={`${styles.programmeRow} ${styles[school.slug]}`}
+                data-reveal="right"
+                href={`/schools/${school.slug}`}
+                key={school.slug}
+                style={{ '--reveal-delay': `${index * 75}ms` } as CSSProperties}
+              >
+                <span>{school.number}</span>
                 <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.text}</p>
+                  <small>{school.name}</small>
+                  <h3>{programme.title}</h3>
+                  <p>{programme.description}</p>
                 </div>
-              </li>
-            ))}
-          </ol>
-
-          <div className={styles.progressPanel}>
-            <p>Experience balance</p>
-            <div>
-              <span>Clarity</span>
-              <i
-                data-progress
-                style={{ '--progress-scale': 0.92 } as CSSProperties}
-              />
-            </div>
-            <div>
-              <span>Practice</span>
-              <i
-                data-progress
-                style={{ '--progress-scale': 0.86 } as CSSProperties}
-              />
-            </div>
-            <div>
-              <span>Application</span>
-              <i
-                data-progress
-                style={{ '--progress-scale': 0.96 } as CSSProperties}
-              />
-            </div>
-          </div>
+                <b aria-hidden="true">↗</b>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
-      <section className={styles.platformSection} data-reveal="scale">
-        <div className={styles.platformCopy}>
-          <p className={styles.eyebrow}>One Luminol ecosystem</p>
-          <h2>Growth connects across every dimension of life.</h2>
+      <section className={styles.expertiseSection}>
+        <div className={styles.expertiseImageWrap} data-reveal="left">
+          <EditorialImage
+            className={styles.expertiseImage}
+            image={editorialImages.training}
+            caption="Expertise is visible in how learning is designed and guided."
+          />
+          <div className={styles.expertiseStamp}>
+            <span>L</span>
+            <small>Thoughtful by design</small>
+          </div>
+        </div>
+        <div className={styles.expertiseCopy} data-reveal="right">
+          <p className={styles.kicker}>Instructor and programme standards</p>
+          <h2>Credibility should be experienced, not merely claimed.</h2>
           <p>
-            Begin with one need and continue across the academy as your goals
-            evolve—from emotional awareness to confident communication and
-            professional capability.
+            Luminol’s public experience is built to show the standards behind
+            each programme: relevant expertise, clear purpose, appropriate
+            boundaries, active learning and useful feedback.
+          </p>
+          <dl>
+            <div>
+              <dt>Relevant expertise</dt>
+              <dd>People and methods matched to the discipline and audience.</dd>
+            </div>
+            <div>
+              <dt>Clear learning purpose</dt>
+              <dd>Every programme begins with an outcome, not a generic topic.</dd>
+            </div>
+            <div>
+              <dt>Responsible practice</dt>
+              <dd>Ethical boundaries, accessibility and referral are respected.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      {teamMembers?.length ? (
+        <section className={styles.peopleSection}>
+          <div className={styles.sectionHeading} data-reveal>
+            <div>
+              <p className={styles.kicker}>People behind the experience</p>
+              <h2>Meet the Luminol team.</h2>
+            </div>
+            <p>
+              Only approved, active profiles from the Luminol content system
+              appear here.
+            </p>
+          </div>
+          <div className={styles.peopleGrid}>
+            {teamMembers.slice(0, 4).map((member) => (
+              <article data-reveal key={member._id}>
+                {member.portrait ? (
+                  <div className={styles.personPortrait}>
+                    <Image
+                      src={member.portrait.url}
+                      alt={member.portrait.alt}
+                      fill
+                      sizes="(max-width: 44rem) 100vw, (max-width: 72rem) 50vw, 25vw"
+                    />
+                  </div>
+                ) : null}
+                <small>{member.school ?? 'Luminol Academy'}</small>
+                <h3>{member.name}</h3>
+                <p>{member.role}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {testimonials?.length ? (
+        <section className={styles.testimonialSection}>
+          <div className={styles.testimonialIntro}>
+            <p className={styles.kicker}>Approved learner voices</p>
+            <h2>What the experience felt like.</h2>
+          </div>
+          <div className={styles.testimonialGrid}>
+            {testimonials.slice(0, 3).map((testimonial) => (
+              <figure data-reveal key={testimonial._id}>
+                <blockquote>“{testimonial.quote}”</blockquote>
+                <figcaption>
+                  <strong>{testimonial.personName}</strong>
+                  <span>{testimonial.context ?? testimonial.school}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className={styles.journeySection}>
+        <div className={styles.journeyHeading} data-reveal="left">
+          <p className={styles.kicker}>A clear experience</p>
+          <h2>From first question to meaningful progress.</h2>
+          <p>
+            The journey stays structured without becoming impersonal, and
+            flexible without losing purpose.
           </p>
         </div>
-        <div className={styles.platformOrbit} aria-hidden="true">
-          <div className={styles.platformCore}>L</div>
-          <span>Mind</span>
-          <span>Voice</span>
-          <span>Future</span>
+        <ol className={styles.journeySteps}>
+          {learningSteps.map((step, index) => (
+            <li
+              data-reveal="right"
+              key={step.number}
+              style={{ '--reveal-delay': `${index * 55}ms` } as CSSProperties}
+            >
+              <span>{step.number}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className={styles.opportunitiesSection}>
+        <div className={styles.sectionHeading} data-reveal>
+          <div>
+            <p className={styles.kicker}>Learning opportunities</p>
+            <h2>Find what is relevant now.</h2>
+          </div>
+          <p>
+            Current dates and delivery formats are confirmed by the Luminol
+            team so visitors never see invented or stale event information.
+          </p>
         </div>
-        <div className={styles.platformLinks}>
-          {schoolList.map((school) => (
-            <Link href={`/schools/${school.slug}`} key={school.slug}>
-              <span>{school.number}</span>
-              <strong>{school.name}</strong>
-              <b aria-hidden="true">↗</b>
+        <div className={styles.opportunityGrid}>
+          {learningOpportunities.map((opportunity, index) => (
+            <Link
+              className={`${styles.opportunityCard} ${styles[opportunity.school]}`}
+              data-reveal
+              href={`/schools/${opportunity.school}`}
+              key={opportunity.school}
+              style={{ '--reveal-delay': `${index * 70}ms` } as CSSProperties}
+            >
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <small>{opportunity.label}</small>
+              <h3>{opportunity.title}</h3>
+              <p>{opportunity.text}</p>
+              <strong>
+                {opportunity.cta} <b aria-hidden="true">→</b>
+              </strong>
             </Link>
           ))}
         </div>
@@ -482,15 +402,15 @@ export default function Page() {
 
       <section className={styles.finalCta}>
         <div data-reveal="left">
-          <p className={styles.eyebrow}>Your next chapter</p>
-          <h2>Ready to grow with clarity and purpose?</h2>
+          <p className={styles.kicker}>Begin with a conversation</p>
+          <h2>What would you like to strengthen next?</h2>
           <p>
-            Tell us what you want to strengthen. We will help you identify the
-            right school, program and next step.
+            Share your goal and the Luminol team will help you identify the
+            right school, programme and first step.
           </p>
         </div>
         <ButtonLink data-reveal="right" href="/contact" size="lg">
-          Start a conversation <span aria-hidden="true">→</span>
+          Speak with the Luminol team <span aria-hidden="true">→</span>
         </ButtonLink>
       </section>
 
