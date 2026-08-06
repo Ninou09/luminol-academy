@@ -38,8 +38,14 @@ try {
       await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
       await page.evaluate(async () => {
         await document.fonts.ready;
+        const step = Math.max(320, Math.floor(window.innerHeight * 0.72));
+        for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+          window.scrollTo(0, y);
+          await new Promise((resolve) => window.setTimeout(resolve, 90));
+        }
+        window.scrollTo(0, 0);
       });
-      await page.waitForTimeout(750);
+      await page.waitForTimeout(900);
       await page.screenshot({
         path: `${outputDirectory}/${name}-${capture.name}.jpg`,
         fullPage: true,
