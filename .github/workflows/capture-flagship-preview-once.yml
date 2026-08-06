@@ -62,7 +62,9 @@ jobs:
       - name: Upload flagship screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: flagship-screenshots-authenticated
+          name: flagship-screenshots-final-review
           path: artifacts/flagship-screenshots
           if-no-files-found: error
           retention-days: 1
+
+# Trigger final visual QA after contrast and overflow fixes.
