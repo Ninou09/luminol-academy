@@ -7,6 +7,7 @@ const csp = [
   "script-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev https://*.clerk.com https://*.sanity.io https://vercel.live",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
+  "media-src 'self' https://videos.pexels.com",
   "font-src 'self' data:",
   "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.sanity.io https://*.api.sanity.io https://vercel.live wss://*.clerk.com",
   'frame-src https://*.clerk.accounts.dev https://*.clerk.com https://vercel.live',
