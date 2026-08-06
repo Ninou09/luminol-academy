@@ -17,6 +17,20 @@ concurrency:
 jobs:
   capture:
     runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: luminol
+          POSTGRES_PASSWORD: luminol
+          POSTGRES_DB: luminol
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U luminol -d luminol"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Check out exact branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -38,33 +52,40 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
+      - name: Build exact public website
+        run: pnpm --filter @luminol/web build
+        env:
+          DATABASE_URL: postgresql://luminol:luminol@127.0.0.1:5432/luminol
+
       - name: Install Chromium
         run: pnpm exec playwright install --with-deps --only-shell chromium
 
-      - name: Wait for branch preview
+      - name: Start exact public website
         run: |
-          for attempt in {1..90}; do
-            if curl --fail --silent --show-error --location "$FLAGSHIP_ACCESS_URL" > /dev/null; then
+          pnpm --dir apps/web exec next start --hostname 127.0.0.1 --port 3000 > /tmp/luminol-web.log 2>&1 &
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
               exit 0
             fi
-            sleep 2
+            sleep 1
           done
+          cat /tmp/luminol-web.log
           exit 1
         env:
-          FLAGSHIP_ACCESS_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app/?_vercel_share=UOthRH1xg7y1gK3EzZdFKsyyI1Rx9NZw
+          DATABASE_URL: postgresql://luminol:luminol@127.0.0.1:5432/luminol
 
       - name: Capture desktop and mobile pages
         run: node scripts/capture-flagship.mjs
         env:
-          FLAGSHIP_BASE_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app
-          FLAGSHIP_ACCESS_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app/?_vercel_share=UOthRH1xg7y1gK3EzZdFKsyyI1Rx9NZw
+          FLAGSHIP_BASE_URL: http://127.0.0.1:3000
 
       - name: Upload flagship screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: flagship-screenshots-final-review
+          name: flagship-screenshots-exact-head
           path: artifacts/flagship-screenshots
           if-no-files-found: error
           retention-days: 1
-
-# Trigger final visual QA after contrast and overflow fixes.
