@@ -8,6 +8,7 @@ import './arabic.css';
 import './cinematic-motion.css';
 import './v4-global.css';
 import './v4-interactions.css';
+import './v4-header.css';
 
 const arabicFont = Noto_Sans_Arabic({
   subsets: ['arabic'],
