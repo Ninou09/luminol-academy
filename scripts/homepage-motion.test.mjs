@@ -103,7 +103,8 @@ describe('Arabic premium public flagship', () => {
     expect(cinematicMediaSource).toContain('IntersectionObserver');
     expect(cinematicMediaSource).toContain('preload="none"');
     expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
-    expect(cinematicMediaSource).toContain('ليست توثيقًا');
+    expect(cinematicMediaSource).toContain('مواد تحريرية توضيحية');
+    expect(cinematicMediaSource).toContain('توثيقًا لطلاب');
     expect(cinematicMediaSource).toContain('prefers-reduced-motion: reduce');
     expect(securityHeadersSource).toContain(
       "media-src 'self' https://videos.pexels.com",
