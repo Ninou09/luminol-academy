@@ -1,0 +1,67 @@
+name: Capture flagship preview once
+
+on:
+  push:
+    branches:
+      - design/premium-motion-homepage
+    paths:
+      - .github/workflows/capture-flagship-preview-once.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: capture-flagship-preview-once
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: design/premium-motion-homepage
+          fetch-depth: 1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps --only-shell chromium
+
+      - name: Wait for branch preview
+        run: |
+          for attempt in {1..90}; do
+            if curl --fail --silent --show-error "$FLAGSHIP_BASE_URL" > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+        env:
+          FLAGSHIP_BASE_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app
+
+      - name: Capture desktop and mobile pages
+        run: node scripts/capture-flagship.mjs
+        env:
+          FLAGSHIP_BASE_URL: https://luminol-academy-web-git-design-premium-motion-homepage-luminol.vercel.app
+
+      - name: Upload flagship screenshots
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: flagship-screenshots
+          path: artifacts/flagship-screenshots
+          if-no-files-found: error
+          retention-days: 7
