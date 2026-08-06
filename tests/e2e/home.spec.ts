@@ -3,8 +3,46 @@ import { expect, test } from '@playwright/test';
 test('institutional home is available', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Develop your mind.',
+    'Knowledge for the person you are.',
   );
+  await expect(
+    page.getByRole('navigation', { name: 'Luminol schools' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /Explore psychology programmes/i }),
+  ).toBeVisible();
+});
+
+test('all three schools expose a specific conversion path and FAQ', async ({
+  page,
+}) => {
+  for (const route of [
+    '/schools/psychology',
+    '/schools/languages',
+    '/schools/training',
+  ]) {
+    await page.goto(route);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Register your interest/i }).first(),
+    ).toBeVisible();
+    await expect(page.getByText('Frequently asked questions')).toBeVisible();
+  }
+});
+
+test('contact retains the working enquiry experience', async ({ page }) => {
+  await page.goto('/contact');
+  await expect(
+    page.getByRole('heading', {
+      level: 1,
+      name: /Your next step starts with a thoughtful conversation/i,
+    }),
+  ).toBeVisible();
+  await expect(page.getByLabel('Full name')).toBeVisible();
+  await expect(page.getByLabel('Area of interest')).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Send my enquiry' }),
+  ).toBeVisible();
 });
 
 test('public metadata and error behavior are available', async ({
