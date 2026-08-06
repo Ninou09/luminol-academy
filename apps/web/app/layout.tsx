@@ -15,8 +15,10 @@ function resolveMetadataBase() {
   }
 }
 
+const metadataBase = resolveMetadataBase();
+
 export const metadata: Metadata = {
-  metadataBase: resolveMetadataBase(),
+  metadataBase,
   title: {
     default: 'Luminol Academy | Psychology, Languages & Professional Training',
     template: '%s | Luminol Academy',
@@ -41,6 +43,32 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/',
   },
+  twitter: {
+    card: 'summary',
+    title: 'Luminol Academy',
+    description:
+      'Psychology, language learning and professional development in one thoughtful human ecosystem.',
+  },
+};
+
+const organisationStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: 'Luminol Academy',
+  url: metadataBase.toString(),
+  description:
+    'A connected academy for psychology, language learning and professional training.',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Blida',
+    addressCountry: 'DZ',
+  },
+  areaServed: 'Algeria',
+  knowsAbout: [
+    'Psychology education and mental wellness',
+    'Language learning and communication',
+    'Professional development and training',
+  ],
 };
 
 export default function RootLayout({
@@ -50,7 +78,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" dir="ltr">
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organisationStructuredData),
+          }}
+        />
+      </body>
     </html>
   );
 }
