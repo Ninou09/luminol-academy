@@ -1,0 +1,50 @@
+import { mkdir } from 'node:fs/promises';
+import { chromium } from '@playwright/test';
+
+const baseUrl = process.env.FLAGSHIP_BASE_URL ?? 'http://127.0.0.1:3000';
+const outputDirectory = 'artifacts/flagship-screenshots';
+const routes = {
+  home: '/',
+  about: '/about',
+  contact: '/contact',
+  psychology: '/schools/psychology',
+  languages: '/schools/languages',
+  training: '/schools/training',
+};
+const captures = [
+  { name: 'desktop', viewport: { width: 1440, height: 1000 } },
+  { name: 'mobile', viewport: { width: 390, height: 844 } },
+];
+
+await mkdir(outputDirectory, { recursive: true });
+const browser = await chromium.launch({ headless: true });
+
+try {
+  for (const capture of captures) {
+    const context = await browser.newContext({
+      viewport: capture.viewport,
+      deviceScaleFactor: 1,
+      colorScheme: 'light',
+      reducedMotion: 'reduce',
+    });
+    const page = await context.newPage();
+
+    for (const [name, route] of Object.entries(routes)) {
+      await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
+      await page.evaluate(async () => {
+        await document.fonts.ready;
+      });
+      await page.waitForTimeout(750);
+      await page.screenshot({
+        path: `${outputDirectory}/${name}-${capture.name}.jpg`,
+        fullPage: true,
+        type: 'jpeg',
+        quality: 84,
+      });
+    }
+
+    await context.close();
+  }
+} finally {
+  await browser.close();
+}
