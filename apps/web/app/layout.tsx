@@ -6,6 +6,7 @@ import './site-shell.css';
 import './flagship-polish.css';
 import './arabic.css';
 import './cinematic-motion.css';
+import './v4-global.css';
 
 const arabicFont = Noto_Sans_Arabic({
   subsets: ['arabic'],
