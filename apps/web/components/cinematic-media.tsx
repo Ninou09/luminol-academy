@@ -11,6 +11,7 @@ import {
 } from '../lib/flagship';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+const supportFilm = editorialVideos[1]!;
 
 const trainingFilm: EditorialVideo = {
   id: 'professional-momentum',
@@ -162,7 +163,7 @@ export function CinematicMediaWall() {
 
       <div className="v5-feature-film">
         <span className="v5-feature-index" aria-hidden="true">02 / HUMAN</span>
-        <EditorialFilm video={editorialVideos[1]} variant="wide" />
+        <EditorialFilm video={supportFilm} variant="wide" />
       </div>
 
       <div className="v5-film-split">
