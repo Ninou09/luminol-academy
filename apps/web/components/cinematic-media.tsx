@@ -19,6 +19,7 @@ function CinematicVideoCard({
   const shellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [active, setActive] = useState(false);
+  const [inView, setInView] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [manualPause, setManualPause] = useState(false);
 
@@ -31,16 +32,15 @@ function CinematicVideoCard({
 
     if (!('IntersectionObserver' in window)) {
       setActive(true);
+      setInView(true);
       return;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return;
+        setInView(entry.isIntersecting);
         if (entry.isIntersecting) setActive(true);
-        if (!entry.isIntersecting && videoRef.current) {
-          videoRef.current.pause();
-        }
       },
       { rootMargin: '18% 0px', threshold: 0.18 },
     );
@@ -51,17 +51,23 @@ function CinematicVideoCard({
 
   useEffect(() => {
     const node = videoRef.current;
-    if (!active || !node || manualPause) return;
+    if (!active || !node) return;
+
+    if (!inView || manualPause) {
+      node.pause();
+      return;
+    }
 
     const attempt = node.play();
     if (attempt) void attempt.catch(() => setPlaying(false));
-  }, [active, manualPause]);
+  }, [active, inView, manualPause]);
 
   const togglePlayback = () => {
     const node = videoRef.current;
     if (!active) {
       setManualPause(false);
       setActive(true);
+      setInView(true);
       return;
     }
     if (!node) return;
