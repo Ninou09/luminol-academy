@@ -87,7 +87,8 @@ describe('Arabic premium public flagship', () => {
 
   it('uses the official Luminol mark and curated human photography', () => {
     expect(shellSource).toContain('/brand/luminol-mark.svg');
-    expect(pageSource).toContain('<ImmersiveHeroMedia video={editorialVideos[0]} />');
+    expect(pageSource).toContain('const heroVideo = editorialVideos[0]!;');
+    expect(pageSource).toContain('<ImmersiveHeroMedia video={heroVideo} />');
     expect(branchStageSource).toContain('editorialImages.psychology');
     expect(flagshipSource).toContain('Pexels');
     expect(flagshipSource).toContain('editorialGallery');
@@ -99,7 +100,9 @@ describe('Arabic premium public flagship', () => {
   it('adds editorial video with tight media security and honest attribution', () => {
     expect(pageSource).toContain('<CinematicMediaWall />');
     expect(flagshipSource).toContain('videos.pexels.com');
+    expect(immersiveHeroSource).toContain('8419413-hd_1920_1080_30fps.mp4');
     expect(immersiveHeroSource).toContain('<video');
+    expect(cinematicMediaSource).toContain('const supportFilm = editorialVideos[1]!;');
     expect(cinematicMediaSource).toContain('IntersectionObserver');
     expect(cinematicMediaSource).toContain('preload="none"');
     expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
