@@ -20,10 +20,18 @@ const motionSource = readFileSync(
   resolve('apps/web/components/home-motion.tsx'),
   'utf8',
 );
+const cinematicMediaSource = readFileSync(
+  resolve('apps/web/components/cinematic-media.tsx'),
+  'utf8',
+);
 const motionStyles = readFileSync(resolve('apps/web/app/motion.css'), 'utf8');
 const arabicStyles = readFileSync(resolve('apps/web/app/arabic.css'), 'utf8');
 const cinematicStyles = readFileSync(
   resolve('apps/web/app/cinematic-motion.css'),
+  'utf8',
+);
+const cinematicMediaStyles = readFileSync(
+  resolve('apps/web/app/cinematic-media.css'),
   'utf8',
 );
 const flagshipSource = readFileSync(resolve('apps/web/lib/flagship.ts'), 'utf8');
@@ -56,13 +64,23 @@ describe('Arabic premium public flagship', () => {
     expect(arabicStyles).toContain('direction: rtl');
   });
 
-  it('uses the official Luminol mark and newly curated human photography', () => {
+  it('uses the official Luminol mark and curated human photography', () => {
     expect(shellSource).toContain('/brand/luminol-mark.svg');
     expect(pageSource).toContain('editorialImages.hero.src');
     expect(flagshipSource).toContain('Pexels');
+    expect(flagshipSource).toContain('editorialGallery');
     expect(pageSource).not.toContain('12+');
     expect(pageSource).not.toContain('100%');
     expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");
+  });
+
+  it('adds lazy editorial video without pretending the footage is Luminol photography', () => {
+    expect(pageSource).toContain('<CinematicMediaWall />');
+    expect(flagshipSource).toContain('videos.pexels.com');
+    expect(cinematicMediaSource).toContain('IntersectionObserver');
+    expect(cinematicMediaSource).toContain('preload="none"');
+    expect(cinematicMediaSource).toContain('وليست صورًا');
+    expect(cinematicMediaSource).toContain('prefers-reduced-motion: reduce');
   });
 
   it('publishes only governed team members and consent-confirmed testimonials', () => {
@@ -78,12 +96,17 @@ describe('Arabic premium public flagship', () => {
     expect(motionSource).toContain('IntersectionObserver');
     expect(motionSource).toContain('requestAnimationFrame');
     expect(motionSource).toContain('--motion-progress');
+    expect(motionSource).toContain('.cinematic-video-card');
+    expect(motionSource).toContain('.cinematic-still');
     expect(motionSource).toContain("'(prefers-reduced-motion: reduce)'");
     expect(cinematicStyles).toContain('.motion-cursor');
     expect(cinematicStyles).toContain('--motion-tilt-x');
+    expect(cinematicMediaStyles).toContain('cinematic-orbit-spin');
+    expect(cinematicMediaStyles).toContain('scroll-snap-type');
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(arabicStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(cinematicStyles).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(cinematicMediaStyles).toContain('@media (prefers-reduced-motion: reduce)');
   });
 
   it('provides responsive Arabic navigation without requiring JavaScript', () => {
