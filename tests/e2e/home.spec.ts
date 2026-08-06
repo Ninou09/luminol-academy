@@ -9,7 +9,10 @@ test('institutional home is available', async ({ page }) => {
     page.getByRole('navigation', { name: 'Luminol schools' }),
   ).toBeVisible();
   await expect(
-    page.getByRole('link', { name: /Explore psychology programmes/i }),
+    page.getByRole('link', {
+      name: 'Explore psychology programmes',
+      exact: true,
+    }),
   ).toBeVisible();
 });
 
