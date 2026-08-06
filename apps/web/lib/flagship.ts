@@ -7,42 +7,136 @@ export type EditorialImage = {
   creditUrl: string;
 };
 
+export type EditorialGalleryImage = EditorialImage & {
+  caption: string;
+};
+
+export type EditorialVideo = {
+  id: string;
+  src: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  credit: string;
+  creditUrl: string;
+  poster: EditorialImage;
+};
+
 export const editorialImages = {
   hero: {
-    src: 'https://images.pexels.com/photos/20184571/pexels-photo-20184571/free-photo-of-people-during-course.jpeg',
-    alt: 'مجموعة متنوعة من البالغين يشاركون باهتمام في ورشة تعليمية داخلية.',
-    credit: 'Matheus Bertelli / Pexels',
-    creditUrl: 'https://www.pexels.com/photo/people-during-course-20184571/',
+    src: 'https://images.pexels.com/photos/5905527/pexels-photo-5905527.jpeg',
+    alt: 'مدرّسة وطلاب من خلفيات متنوعة يناقشون درسًا داخل قاعة تعليم حديثة.',
+    credit: 'Katerina Holmes / Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/diverse-people-discussing-lesson-in-classroom-5905527/',
   },
   psychology: {
-    src: 'https://images.pexels.com/photos/7176296/pexels-photo-7176296.jpeg',
-    alt: 'امرأتان تخوضان حوارًا هادئًا ومدروسًا في جلسة دعم.',
+    src: 'https://images.pexels.com/photos/7176050/pexels-photo-7176050.jpeg',
+    alt: 'مختصة تتحدث بهدوء مع شخص في جلسة إرشاد ودعم فردية.',
     credit: 'SHVETS production / Pexels',
     creditUrl:
-      'https://www.pexels.com/photo/female-talking-with-psychologist-during-session-7176296/',
+      'https://www.pexels.com/photo/a-therapist-talking-to-her-patient-7176050/',
   },
   languages: {
+    src: 'https://images.pexels.com/photos/8199134/pexels-photo-8199134.jpeg',
+    alt: 'طلاب جامعيون متنوعون يشاركون في نقاش تفاعلي داخل الفصل.',
+    credit: 'Yan Krukau / Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/a-class-having-a-discussion-8199134/',
+  },
+  training: {
+    src: 'https://images.pexels.com/photos/34046709/pexels-photo-34046709.jpeg',
+    alt: 'فريق متنوع يشارك في ورشة تدريب مهني باستخدام الحواسيب والعرض التقديمي.',
+    credit: 'Beniam / Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/diverse-team-engaged-in-business-training-workshop-34046709/',
+  },
+  learning: {
+    src: 'https://images.pexels.com/photos/6683894/pexels-photo-6683894.jpeg',
+    alt: 'طلاب ومدرّس يتعاونون حول مهمة تعليمية داخل بيئة دراسية حديثة.',
+    credit: 'Andy Barbour / Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/student-and-teacher-having-a-conversation-6683894/',
+  },
+} satisfies Record<string, EditorialImage>;
+
+export const editorialVideos = [
+  {
+    id: 'active-learning',
+    src: 'https://videos.pexels.com/video-files/6671805/6671805-uhd_3840_2160_24fps.mp4',
+    eyebrow: 'التعلّم النشط',
+    title: 'المعرفة تصبح أقوى عندما تتحول إلى حوار.',
+    description:
+      'لقطة تحريرية توضح بيئة تعليمية قائمة على الشرح، التفاعل والأسئلة بدل المشاهدة السلبية فقط.',
+    credit: 'Andy Barbour / Pexels',
+    creditUrl:
+      'https://www.pexels.com/video/video-of-a-teacher-teaching-students-6671805/',
+    poster: editorialImages.hero,
+  },
+  {
+    id: 'human-support',
+    src: 'https://videos.pexels.com/video-files/5697627/5697627-uhd_3840_2160_24fps.mp4',
+    eyebrow: 'الحضور الإنساني',
+    title: 'الإنصات جزء من التصميم، وليس مجرد رسالة مكتوبة.',
+    description:
+      'لقطة تحريرية لحوار داعم تعبّر عن الهدوء، التركيز والاحترام الذي نريد أن تنقله تجربة قسم علم النفس.',
+    credit: 'Alex Green / Pexels',
+    creditUrl:
+      'https://www.pexels.com/video/therapist-consulting-5697627/',
+    poster: editorialImages.psychology,
+  },
+] satisfies readonly EditorialVideo[];
+
+export const editorialGallery = [
+  {
+    src: 'https://images.pexels.com/photos/6238013/pexels-photo-6238013.jpeg',
+    alt: 'مجموعة طلاب متنوعين يتعاونون حول طاولة في قاعة دراسية مضيئة.',
+    caption: 'تعاون ومشاركة',
+    credit: 'Monstera Production / Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/positive-diverse-students-studying-in-modern-classroom-6238013/',
+  },
+  {
+    src: 'https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg',
+    alt: 'طالبان يتبادلان الحديث داخل قاعة دراسية حديثة ومضيئة.',
+    caption: 'لغة تُستخدم فعليًا',
+    credit: 'Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/students-having-a-conversation-in-a-classroom-8419252/',
+  },
+  {
+    src: 'https://images.pexels.com/photos/7176052/pexels-photo-7176052.jpeg',
+    alt: 'مختصة تتحدث مع شخص في جلسة دعم هادئة داخل فضاء مريح.',
+    caption: 'إنصات ووضوح',
+    credit: 'SHVETS production / Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/a-patient-talking-to-a-therapist-7176052/',
+  },
+  {
+    src: 'https://images.pexels.com/photos/18999540/pexels-photo-18999540/free-photo-of-people-during-training-course.jpeg',
+    alt: 'مجموعة متنوعة تحضر ورشة تدريبية وتتابع متحدثًا داخل فضاء مهني.',
+    caption: 'تكوين مرتبط بالواقع',
+    credit: 'Matheus Bertelli / Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/people-during-training-course-18999540/',
+  },
+  {
+    src: 'https://images.pexels.com/photos/7234414/pexels-photo-7234414.jpeg',
+    alt: 'مهنيون متنوعون يتابعون عرضًا تقديميًا داخل قاعة حديثة.',
+    caption: 'خبرة تُشارك',
+    credit: 'Pavel Danilyuk / Pexels',
+    creditUrl:
+      'https://www.pexels.com/photo/group-of-people-watching-a-speaker-doing-a-presentation-7234414/',
+  },
+  {
     src: 'https://images.pexels.com/photos/6683485/pexels-photo-6683485.jpeg',
-    alt: 'متعلمات بالغات يتبادلن الحديث داخل قاعة دراسية حديثة.',
+    alt: 'متعلمات يتبادلن الحديث في نشاط تعليمي داخل قاعة دراسية.',
+    caption: 'ثقة في التواصل',
     credit: 'Andy Barbour / Pexels',
     creditUrl:
       'https://www.pexels.com/photo/students-having-conversation-inside-the-classroom-6683485/',
   },
-  training: {
-    src: 'https://images.pexels.com/photos/18999455/pexels-photo-18999455/free-photo-of-people-during-presentation.jpeg',
-    alt: 'مجموعة متنوعة من البالغين تتابع عرضًا مهنيًا داخل فضاء عمل حديث.',
-    credit: 'Matheus Bertelli / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/people-during-presentation-18999455/',
-  },
-  learning: {
-    src: 'https://images.pexels.com/photos/6502730/pexels-photo-6502730.jpeg',
-    alt: 'مدرّسة ومتعلّم يتفاعلان مباشرة حول مواد دراسية في جلسة تعليم موجّهة.',
-    credit: 'Thirdman / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/a-female-teacher-tutoring-her-male-student-6502730/',
-  },
-} satisfies Record<string, EditorialImage>;
+] satisfies readonly EditorialGalleryImage[];
 
 export const branchExperience: Record<
   SchoolSlug,
