@@ -5,6 +5,11 @@ import { useEffect, useRef, useState } from 'react';
 import type { EditorialVideo } from '../lib/flagship';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+const HERO_VIDEO_SRC =
+  'https://videos.pexels.com/video-files/8419413/8419413-hd_1920_1080_30fps.mp4';
+const HERO_VIDEO_CREDIT = 'RDNE Stock project / Pexels';
+const HERO_VIDEO_CREDIT_URL =
+  'https://www.pexels.com/video/a-teacher-in-discussion-with-his-students-8419413/';
 
 export function ImmersiveHeroMedia({ video }: { video: EditorialVideo }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -72,7 +77,7 @@ export function ImmersiveHeroMedia({ video }: { video: EditorialVideo }) {
         onPause={() => setPlaying(false)}
         aria-hidden="true"
       >
-        <source src={video.src} type="video/mp4" />
+        <source src={HERO_VIDEO_SRC} type="video/mp4" />
       </video>
       <div className="v4-hero-media-wash" aria-hidden="true" />
       <div className="v4-hero-media-grid" aria-hidden="true" />
@@ -87,11 +92,11 @@ export function ImmersiveHeroMedia({ video }: { video: EditorialVideo }) {
       </button>
       <a
         className="v4-hero-credit"
-        href={video.creditUrl}
+        href={HERO_VIDEO_CREDIT_URL}
         target="_blank"
         rel="noreferrer"
       >
-        فيديو تحريري: {video.credit}
+        فيديو تحريري: {HERO_VIDEO_CREDIT}
       </a>
     </div>
   );
