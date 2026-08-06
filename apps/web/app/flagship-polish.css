@@ -1,0 +1,21 @@
+main {
+  overflow-x: clip;
+}
+
+/* Tailwind utilities are layered; these unlayered rules preserve intended
+   button contrast after the global anchor inheritance rule. */
+.text-brand-canvas {
+  color: var(--color-brand-canvas);
+}
+
+.text-brand-ink {
+  color: var(--color-brand-ink);
+}
+
+.hover\:text-brand-ink:hover {
+  color: var(--color-brand-ink);
+}
+
+.hover\:text-brand-canvas:hover {
+  color: var(--color-brand-canvas);
+}
