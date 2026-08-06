@@ -2,77 +2,71 @@ import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
+import './v4-home.css';
+import { BranchStage } from '../components/branch-stage';
 import { CinematicMediaWall } from '../components/cinematic-media';
 import { HomeMotion } from '../components/home-motion';
+import { ImmersiveHeroMedia } from '../components/immersive-hero-media';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import {
   credibilityPrinciples,
-  editorialImages,
-  learningOpportunities,
+  editorialGallery,
+  editorialVideos,
 } from '../lib/flagship';
 import {
   getPublicTeamMembers,
   getPublicTestimonials,
 } from '../lib/sanity-public';
-import { schools } from '../lib/schools';
-
-const schoolList = Object.values(schools);
 
 const quickLinks = [
   {
-    label: 'التسجيل والاستفسار',
-    description: 'أخبرنا بهدفك وسنساعدك على اختيار المسار المناسب.',
-    href: '/contact',
+    label: 'علم النفس',
+    description: 'وعي، دعم وتطوّر شخصي بمسؤولية.',
+    href: '/schools/psychology',
     index: '01',
   },
   {
-    label: 'علم النفس',
-    description: 'دعم وتطوير نفسي، إرشاد وورشات عملية.',
-    href: '/schools/psychology',
+    label: 'اللغات',
+    description: 'لغة تُستخدم، لا تُحفظ فقط.',
+    href: '/schools/languages',
     index: '02',
   },
   {
-    label: 'اللغات',
-    description: 'الإنجليزية، الفرنسية ومسارات التواصل بطلاقة.',
-    href: '/schools/languages',
+    label: 'التكوين المهني',
+    description: 'مهارات عملية للأفراد والفرق.',
+    href: '/schools/training',
     index: '03',
   },
   {
-    label: 'التكوين المهني',
-    description: 'قيادة، تواصل، إنتاجية وبرامج للمؤسسات.',
-    href: '/schools/training',
-    index: '04',
+    label: 'ابدأ محادثتك',
+    description: 'سنساعدك على تحديد نقطة البداية.',
+    href: '/contact',
+    index: '→',
   },
 ] as const;
 
 const journey = [
   {
     number: '01',
-    title: 'ابدأ بهدفك',
-    text: 'أخبرنا بما تريد أن تفهمه، تتعلمه أو تطوره.',
+    title: 'ابدأ بالسؤال',
+    text: 'ما الذي تريد أن تفهمه، تتعلمه أو تطوره الآن؟',
   },
   {
     number: '02',
-    title: 'اختر المسار الأنسب',
-    text: 'نساعدك على تحديد القسم، المستوى والصيغة المناسبة.',
+    title: 'نحدّد المسار',
+    text: 'القسم، المستوى والصيغة تُختار حول الهدف لا حول قالب جاهز.',
   },
   {
     number: '03',
-    title: 'تعلّم بالممارسة',
-    text: 'تجربة منظمة، تمارين مفيدة، وتغذية راجعة واضحة.',
+    title: 'تعلّم بالمشاركة',
+    text: 'حوار، ممارسة، أمثلة وتغذية راجعة تجعل المعرفة قابلة للاستخدام.',
   },
   {
     number: '04',
-    title: 'طبّق ما تعلّمته',
-    text: 'حوّل المعرفة إلى تواصل أفضل، توازن أكبر أو قدرة مهنية أقوى.',
+    title: 'حوّلها إلى قدرة',
+    text: 'الخطوة الأخيرة ليست معرفة أكثر؛ بل تصرّف أو تواصل أو قرار أفضل.',
   },
 ] as const;
-
-const branchImage = {
-  psychology: editorialImages.psychology,
-  languages: editorialImages.languages,
-  training: editorialImages.training,
-} as const;
 
 export default async function Page() {
   const [testimonials, teamMembers] = await Promise.all([
@@ -81,53 +75,53 @@ export default async function Page() {
   ]);
 
   return (
-    <main className="ar-page">
+    <main className="ar-page v4-home">
       <HomeMotion />
       <SiteHeader />
 
-      <section className="ar-home-hero" aria-labelledby="hero-title">
-        <div className="ar-home-hero-media" aria-hidden="true">
-          <Image
-            src={editorialImages.hero.src}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-          />
+      <section className="v4-hero" aria-labelledby="hero-title">
+        <ImmersiveHeroMedia video={editorialVideos[0]} />
+        <div className="v4-hero-gradient" aria-hidden="true" />
+        <div className="v4-hero-brand-shape" aria-hidden="true">
+          <Image src="/brand/luminol-mark.svg" alt="" width={520} height={570} priority />
         </div>
-        <div className="ar-home-hero-shade" />
-        <div className="ar-home-hero-content" data-reveal="right">
-          <p className="ar-kicker">أكاديمية لومينول · البليدة</p>
+
+        <div className="v4-hero-content" data-reveal="right">
+          <p className="v4-overline">أكاديمية لومينول · البليدة</p>
           <h1 id="hero-title">
-            طوّر عقلك.
+            <span>طوّر عقلك.</span>
             <span>عزّز صوتك.</span>
-            <em>تقدّم نحو مستقبلك.</em>
+            <em>وابنِ ما يأتي بعد ذلك.</em>
           </h1>
-          <p className="ar-home-hero-lede">
-            علم النفس، تعلّم اللغات، والتكوين والتطوير المهني ضمن أكاديمية
-            واحدة حديثة، إنسانية، ومبنية على التعلم الذي يمكن استخدامه في
-            الحياة الواقعية.
+          <p className="v4-hero-lede">
+            علم النفس، اللغات والتكوين المهني في تجربة عربية واحدة صُممت لتجعل
+            المعرفة أكثر إنسانية، أكثر تطبيقًا، وأكثر تأثيرًا في الحياة اليومية.
           </p>
-          <div className="ar-hero-actions">
+          <div className="v4-hero-actions">
             <ButtonLink href="#schools" size="lg">
-              اكتشف أقسام الأكاديمية
+              اكتشف عالم لومينول
             </ButtonLink>
             <ButtonLink href="/contact" size="lg" variant="secondary">
-              تواصل مع الفريق
+              تحدّث مع الفريق
             </ButtonLink>
           </div>
         </div>
-        <a
-          className="ar-photo-credit"
-          href={editorialImages.hero.creditUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
-          الصورة: {editorialImages.hero.credit}
+
+        <div className="v4-hero-side" aria-hidden="true">
+          <span>PSYCHOLOGY</span>
+          <i />
+          <span>LANGUAGES</span>
+          <i />
+          <span>PROFESSIONAL</span>
+        </div>
+
+        <a className="v4-scroll-cue" href="#v4-start">
+          <span>اكتشف التجربة</span>
+          <b aria-hidden="true">↓</b>
         </a>
       </section>
 
-      <nav className="ar-quick-access" aria-label="الوصول السريع">
+      <nav className="v4-quick-access" aria-label="الوصول السريع">
         {quickLinks.map((item, index) => (
           <Link
             href={item.href}
@@ -140,182 +134,119 @@ export default async function Page() {
               <strong>{item.label}</strong>
               <small>{item.description}</small>
             </div>
-            <b aria-hidden="true">←</b>
+            <b aria-hidden="true">↙</b>
           </Link>
         ))}
       </nav>
 
-      <CinematicMediaWall />
-
-      <section className="ar-intro-section">
-        <div className="ar-section-copy" data-reveal="right">
-          <p className="ar-kicker">تعليم يربط بين الإنسان والمهارة</p>
-          <h2>لأن التطور الحقيقي لا يحدث في مسارات منفصلة.</h2>
-          <p className="ar-large-copy">
-            فهم النفس يؤثر في التواصل. التواصل يفتح فرصًا جديدة. والمهارات
-            المهنية تصبح أقوى عندما يعرف الشخص كيف يفكر، يعبّر ويتصرف بثقة.
+      <section id="v4-start" className="v4-manifesto">
+        <div className="v4-manifesto-number" aria-hidden="true">01</div>
+        <div className="v4-manifesto-copy" data-reveal="right">
+          <p className="v4-overline">الفكرة التي تجمع كل شيء</p>
+          <h2>لا نبني ثلاث مدارس منفصلة. نبني إنسانًا أكثر قدرة.</h2>
+          <p className="v4-manifesto-lead">
+            عندما تفهم نفسك بوضوح، تتواصل بصورة أفضل. وعندما تملك لغة وصوتًا
+            أقوى، تصبح المهارات المهنية أكثر تأثيرًا. لهذا صُممت لومينول كمنظومة
+            مترابطة، لا كمجموعة دورات متجاورة.
           </p>
-          <p>
-            لهذا تجمع لومينول بين ثلاثة مجالات مختلفة داخل تجربة واحدة واضحة،
-            مع الحفاظ على عمق كل تخصص وحدوده المهنية.
-          </p>
-          <Link className="ar-text-link" href="/about">
-            اكتشف فلسفة لومينول <span aria-hidden="true">←</span>
+          <Link className="v4-arrow-link" href="/about">
+            تعرّف على فلسفة لومينول <span aria-hidden="true">←</span>
           </Link>
         </div>
-        <figure className="ar-feature-image" data-reveal="left">
-          <div>
+
+        <div className="v4-manifesto-collage" data-reveal="left">
+          <figure className="v4-collage-main">
             <Image
-              src={editorialImages.learning.src}
-              alt={editorialImages.learning.alt}
+              src={editorialGallery[0].src}
+              alt={editorialGallery[0].alt}
               fill
-              sizes="(max-width: 900px) 100vw, 48vw"
+              sizes="(max-width: 900px) 88vw, 48vw"
             />
-          </div>
-          <figcaption>
-            <span>تعلّم جاد، واضح، ومبني على المشاركة.</span>
-            <a
-              href={editorialImages.learning.creditUrl}
-              target="_blank"
-              rel="noreferrer"
+            <figcaption>{editorialGallery[0].caption}</figcaption>
+          </figure>
+          <figure className="v4-collage-float">
+            <Image
+              src={editorialGallery[4].src}
+              alt={editorialGallery[4].alt}
+              fill
+              sizes="(max-width: 900px) 44vw, 18vw"
+            />
+            <figcaption>{editorialGallery[4].caption}</figcaption>
+          </figure>
+          <div className="v4-collage-word" aria-hidden="true">LUMINOL</div>
+        </div>
+      </section>
+
+      <BranchStage />
+
+      <CinematicMediaWall />
+
+      <section className="v4-principles" aria-labelledby="v4-principles-title">
+        <header data-reveal="right">
+          <p className="v4-overline">ما الذي يجب أن تشعر به التجربة؟</p>
+          <h2 id="v4-principles-title">واضحة في الفكرة. إنسانية في الأسلوب. قوية في التطبيق.</h2>
+        </header>
+        <div className="v4-principle-grid">
+          {credibilityPrinciples.map((principle, index) => (
+            <article
+              data-reveal
+              key={principle.title}
+              style={{ '--reveal-delay': `${index * 65}ms` } as CSSProperties}
             >
-              الصورة: {editorialImages.learning.credit}
-            </a>
-          </figcaption>
-        </figure>
+              <span>0{index + 1}</span>
+              <h3>{principle.title}</h3>
+              <p>{principle.text}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
-      <section id="schools" className="ar-schools-section">
-        <div className="ar-section-heading" data-reveal>
-          <div>
-            <p className="ar-kicker">أقسام أكاديمية لومينول</p>
-            <h2>ثلاثة أقسام. هدف واحد: أن يتحول التعلم إلى قدرة.</h2>
-          </div>
+      <section className="v4-journey" aria-labelledby="v4-journey-title">
+        <div className="v4-journey-heading" data-reveal="right">
+          <p className="v4-overline">رحلة بدون تعقيد</p>
+          <h2 id="v4-journey-title">من سؤال صغير إلى خطوة واضحة.</h2>
           <p>
-            اختر المجال الأقرب إلى هدفك الحالي، أو تواصل معنا وسيساعدك الفريق
-            على تحديد نقطة البداية المناسبة.
+            لا تحتاج إلى معرفة اسم البرنامج المناسب قبل أن تبدأ. يكفي أن تعرف ما
+            الذي تريد تغييره أو تطويره.
           </p>
         </div>
-
-        <div className="ar-school-grid" role="list">
-          {schoolList.map((school, index) => {
-            const opportunity = learningOpportunities.find(
-              (item) => item.school === school.slug,
-            );
-            if (!opportunity) return null;
-            const image = branchImage[school.slug];
-
-            return (
-              <article
-                className={`ar-school-card ar-school-${school.slug}`}
-                data-reveal
-                key={school.slug}
-                role="listitem"
-                style={{ '--reveal-delay': `${index * 70}ms` } as CSSProperties}
-              >
-                <Link
-                  className="ar-school-image"
-                  href={`/schools/${school.slug}`}
-                  aria-label={`فتح صفحة قسم ${school.name}`}
-                >
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes="(max-width: 780px) 100vw, 33vw"
-                  />
-                </Link>
-                <div className="ar-school-card-body">
-                  <div className="ar-school-meta">
-                    <span>{school.number}</span>
-                    <small>{school.eyebrow}</small>
-                  </div>
-                  <h3>{school.name}</h3>
-                  <p>{school.introduction}</p>
-                  <ul>
-                    {school.visualWords.map((word) => (
-                      <li key={word}>{word}</li>
-                    ))}
-                  </ul>
-                  <Link href={`/schools/${school.slug}`}>
-                    {opportunity.cta} <span aria-hidden="true">←</span>
-                  </Link>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="ar-trust-band" aria-label="مبادئ لومينول">
-        <div className="ar-trust-band-inner">
-          <div className="ar-trust-intro" data-reveal="right">
-            <p className="ar-kicker">لماذا لومينول؟</p>
-            <h2>تجربة تعليمية مبنية على الوضوح، التطبيق والاحترام.</h2>
-          </div>
-          <div className="ar-trust-grid">
-            {credibilityPrinciples.map((principle, index) => (
-              <article
-                data-reveal
-                key={principle.title}
-                style={{ '--reveal-delay': `${index * 55}ms` } as CSSProperties}
-              >
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                <h3>{principle.title}</h3>
-                <p>{principle.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="ar-journey-section">
-        <div className="ar-section-heading" data-reveal>
-          <div>
-            <p className="ar-kicker">من أول سؤال إلى خطوة واضحة</p>
-            <h2>رحلة بسيطة، منظمة، ومبنية حول هدفك.</h2>
-          </div>
-          <p>
-            لا تحتاج إلى معرفة اسم البرنامج المناسب قبل التواصل معنا. ابدأ بما
-            تريد الوصول إليه، وسنبني من هناك.
-          </p>
-        </div>
-        <ol className="ar-journey-grid">
+        <ol className="v4-journey-track">
           {journey.map((step, index) => (
             <li
-              data-reveal
+              data-reveal="left"
               key={step.number}
-              style={{ '--reveal-delay': `${index * 55}ms` } as CSSProperties}
+              style={{ '--reveal-delay': `${index * 60}ms` } as CSSProperties}
             >
               <span>{step.number}</span>
-              <h3>{step.title}</h3>
-              <p>{step.text}</p>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
             </li>
           ))}
         </ol>
       </section>
 
       {teamMembers?.length ? (
-        <section className="ar-people-section">
-          <div className="ar-section-heading" data-reveal>
-            <div>
-              <p className="ar-kicker">فريق لومينول</p>
-              <h2>خبرات معتمدة تظهر فقط بعد الموافقة على النشر.</h2>
-            </div>
-            <p>
-              نعرض هنا الملفات المهنية النشطة والمعتمدة فقط من نظام المحتوى.
-            </p>
-          </div>
-          <div className="ar-people-grid">
-            {teamMembers.slice(0, 4).map((member) => (
-              <article data-reveal key={member._id}>
+        <section className="v4-governed-section v4-team-section">
+          <header data-reveal="right">
+            <p className="v4-overline">الناس خلف التجربة</p>
+            <h2>فريق يظهر بالاسم والصورة فقط بعد اعتماد النشر.</h2>
+          </header>
+          <div className="v4-team-grid">
+            {teamMembers.slice(0, 4).map((member, index) => (
+              <article
+                data-reveal
+                key={member._id}
+                style={{ '--reveal-delay': `${index * 65}ms` } as CSSProperties}
+              >
                 {member.portrait ? (
-                  <div className="ar-person-image">
+                  <div className="v4-team-image">
                     <Image
                       src={member.portrait.url}
                       alt={member.portrait.alt}
                       fill
-                      sizes="(max-width: 700px) 100vw, 25vw"
+                      sizes="(max-width: 760px) 88vw, 25vw"
                     />
                   </div>
                 ) : null}
@@ -329,19 +260,18 @@ export default async function Page() {
       ) : null}
 
       {testimonials?.length ? (
-        <section className="ar-testimonials-section">
-          <div className="ar-section-heading" data-reveal>
-            <div>
-              <p className="ar-kicker">آراء منشورة بموافقة أصحابها</p>
-              <h2>تجارب حقيقية، بلا شهادات مختلقة.</h2>
-            </div>
-            <p>
-              لا تظهر أي شهادة إلا إذا كانت نشطة وتم تأكيد الموافقة على نشرها.
-            </p>
-          </div>
-          <div className="ar-testimonial-grid">
-            {testimonials.slice(0, 3).map((testimonial) => (
-              <figure data-reveal key={testimonial._id}>
+        <section className="v4-governed-section v4-testimonial-section">
+          <header data-reveal="right">
+            <p className="v4-overline">أصوات حقيقية</p>
+            <h2>لا نملأ الفراغ بشهادات مصطنعة.</h2>
+          </header>
+          <div className="v4-testimonial-grid">
+            {testimonials.slice(0, 3).map((testimonial, index) => (
+              <figure
+                data-reveal
+                key={testimonial._id}
+                style={{ '--reveal-delay': `${index * 65}ms` } as CSSProperties}
+              >
                 <blockquote>«{testimonial.quote}»</blockquote>
                 <figcaption>
                   <strong>{testimonial.personName}</strong>
@@ -353,17 +283,20 @@ export default async function Page() {
         </section>
       ) : null}
 
-      <section className="ar-final-cta">
+      <section className="v4-final-cta">
+        <div className="v4-final-mark" aria-hidden="true">
+          <Image src="/brand/luminol-mark.svg" alt="" width={420} height={460} />
+        </div>
         <div data-reveal="right">
-          <p className="ar-kicker">ابدأ بخطوة واضحة</p>
-          <h2>ما الذي تريد تطويره الآن؟</h2>
+          <p className="v4-overline">ابدأ من هدفك، لا من اسم الدورة</p>
+          <h2>ما الشيء الذي تريد أن يصبح أقوى في حياتك الآن؟</h2>
           <p>
-            أرسل لنا هدفك وسيساعدك فريق لومينول على تحديد القسم، البرنامج ونقطة
-            البداية الأنسب.
+            أخبرنا بهدفك. سنساعدك على تحديد القسم، المستوى والصيغة الأقرب لما
+            تحتاجه فعلًا.
           </p>
         </div>
         <ButtonLink data-reveal="left" href="/contact" size="lg">
-          تواصل مع فريق لومينول <span aria-hidden="true">←</span>
+          ابدأ محادثتك <span aria-hidden="true">←</span>
         </ButtonLink>
       </section>
 
