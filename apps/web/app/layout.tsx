@@ -1,10 +1,17 @@
 import type { Metadata } from 'next';
+import { Noto_Sans_Arabic } from 'next/font/google';
 import './globals.css';
 import './motion.css';
 import './site-shell.css';
 import './flagship-polish.css';
 import './arabic.css';
 import './cinematic-motion.css';
+
+const arabicFont = Noto_Sans_Arabic({
+  subsets: ['arabic'],
+  variable: '--font-arabic',
+  display: 'swap',
+});
 
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
@@ -83,7 +90,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" className={arabicFont.variable}>
       <body>
         {children}
         <script
