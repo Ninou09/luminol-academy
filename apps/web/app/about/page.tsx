@@ -72,8 +72,8 @@ export default async function AboutPage() {
           <h1>Human potential deserves a more connected kind of education.</h1>
           <p>
             Luminol is a founder-led academy for psychology, language learning
-            and professional development—built around the whole person, not
-            only one skill.
+            and professional development—built around the whole person, not only
+            one skill.
           </p>
         </div>
         <div className={styles.internalHeroMedia} data-reveal="scale">
@@ -113,8 +113,8 @@ export default async function AboutPage() {
         <div className={styles.storyCopy} data-reveal="right">
           <p className={styles.storyLead}>
             Emotional strength, communication and professional capability are
-            often taught separately, even though they continuously influence
-            one another.
+            often taught separately, even though they continuously influence one
+            another.
           </p>
           <p>
             Luminol brings these needs into one coherent academy while

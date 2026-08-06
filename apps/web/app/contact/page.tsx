@@ -76,7 +76,9 @@ export default function ContactPage() {
           />
           <div className={styles.internalHeroNote}>
             <small>Start clearly</small>
-            <p>You do not need to know the exact programme before contacting us.</p>
+            <p>
+              You do not need to know the exact programme before contacting us.
+            </p>
           </div>
         </div>
       </section>
@@ -88,8 +90,8 @@ export default function ContactPage() {
             <h2>Choose a direction or ask the team to guide you.</h2>
           </div>
           <p>
-            Each branch has a distinct purpose. You can review the options
-            first or go directly to the enquiry form.
+            Each branch has a distinct purpose. You can review the options first
+            or go directly to the enquiry form.
           </p>
         </div>
         <div className={styles.contactPathGrid}>

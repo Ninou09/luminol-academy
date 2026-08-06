@@ -343,7 +343,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </div>
       </section>
 
-      <aside className={styles.safetyNote} aria-label="Important programme note">
+      <aside
+        className={styles.safetyNote}
+        aria-label="Important programme note"
+      >
         <span>Important</span>
         <p>{school.note}</p>
       </aside>

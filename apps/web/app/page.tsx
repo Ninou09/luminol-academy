@@ -278,15 +278,21 @@ export default async function Page() {
           <dl>
             <div>
               <dt>Relevant expertise</dt>
-              <dd>People and methods matched to the discipline and audience.</dd>
+              <dd>
+                People and methods matched to the discipline and audience.
+              </dd>
             </div>
             <div>
               <dt>Clear learning purpose</dt>
-              <dd>Every programme begins with an outcome, not a generic topic.</dd>
+              <dd>
+                Every programme begins with an outcome, not a generic topic.
+              </dd>
             </div>
             <div>
               <dt>Responsible practice</dt>
-              <dd>Ethical boundaries, accessibility and referral are respected.</dd>
+              <dd>
+                Ethical boundaries, accessibility and referral are respected.
+              </dd>
             </div>
           </dl>
         </div>
@@ -379,8 +385,8 @@ export default async function Page() {
             <h2>Find what is relevant now.</h2>
           </div>
           <p>
-            Current dates and delivery formats are confirmed by the Luminol
-            team so visitors never see invented or stale event information.
+            Current dates and delivery formats are confirmed by the Luminol team
+            so visitors never see invented or stale event information.
           </p>
         </div>
         <div className={styles.opportunityGrid}>
