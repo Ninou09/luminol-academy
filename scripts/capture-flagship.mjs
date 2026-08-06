@@ -2,6 +2,7 @@ import { mkdir } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
 
 const baseUrl = process.env.FLAGSHIP_BASE_URL ?? 'http://127.0.0.1:3000';
+const accessUrl = process.env.FLAGSHIP_ACCESS_URL;
 const outputDirectory = 'artifacts/flagship-screenshots';
 const routes = {
   home: '/',
@@ -28,6 +29,10 @@ try {
       reducedMotion: 'reduce',
     });
     const page = await context.newPage();
+
+    if (accessUrl) {
+      await page.goto(accessUrl, { waitUntil: 'networkidle' });
+    }
 
     for (const [name, route] of Object.entries(routes)) {
       await page.goto(`${baseUrl}${route}`, { waitUntil: 'networkidle' });
