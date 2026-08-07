@@ -28,17 +28,17 @@ export function HomeMotion() {
     );
     const parallaxLayers = Array.from(
       document.querySelectorAll<HTMLElement>(
-        '.ar-home-hero-media, .ar-internal-hero-media, .ar-school-hero-media, .ar-feature-image > div, .ar-school-image, .ar-person-image, .v5-film-media, .v5-still-media',
+        '.ar-home-hero-media, .ar-internal-hero-media, .ar-school-hero-media, .ar-feature-image > div, .ar-school-image, .ar-person-image, .v5-film-media, .v5-still-media, .v6-branch-video, .v4-manifesto-collage',
       ),
     );
     const depthCards = Array.from(
       document.querySelectorAll<HTMLElement>(
-        '.ar-quick-access a, .ar-school-card, .ar-trust-grid article, .ar-journey-grid li, .v5-film-media, .v5-still',
+        '.ar-quick-access a, .ar-school-card, .ar-trust-grid article, .ar-journey-grid li, .v5-film-media, .v5-still, .v4-principle-grid article, .v6-conversion-rail',
       ),
     );
     const magneticTargets = Array.from(
       document.querySelectorAll<HTMLElement>(
-        '.ar-hero-actions a, .header-cta, .ar-final-cta > a, .ar-section-copy > a, .v5-film-control, .v4-hero-actions a, .v4-final-cta > a, .v4-hero-play',
+        '.ar-hero-actions a, .header-cta, .ar-final-cta > a, .ar-section-copy > a, .v5-film-control, .v4-hero-actions a, .v4-final-cta > a, .v4-hero-play, .v6-primary-action, .v6-floating-cta a',
       ),
     );
 
@@ -49,17 +49,29 @@ export function HomeMotion() {
     let cursorFrame = 0;
     let cursorX = -80;
     let cursorY = -80;
+    let previousScrollY = window.scrollY;
+    let previousScrollTime = performance.now();
 
     const updateScrollState = () => {
       scrollFrame = 0;
+      const now = performance.now();
+      const scrollY = window.scrollY;
+      const deltaY = scrollY - previousScrollY;
+      const deltaTime = Math.max(now - previousScrollTime, 16);
+      const velocity = clamp(Math.abs(deltaY / deltaTime) * 16, 0, 24);
       const maxScroll = Math.max(
         document.documentElement.scrollHeight - window.innerHeight,
         1,
       );
-      const progress = clamp(window.scrollY / maxScroll, 0, 1);
+      const progress = clamp(scrollY / maxScroll, 0, 1);
 
-      root.dataset.scrolled = window.scrollY > 18 ? 'true' : 'false';
+      root.dataset.scrolled = scrollY > 18 ? 'true' : 'false';
+      root.dataset.scrollDirection = deltaY > 0 ? 'down' : deltaY < 0 ? 'up' : 'still';
       root.style.setProperty('--motion-progress', progress.toFixed(4));
+      root.style.setProperty('--scroll-velocity', velocity.toFixed(3));
+
+      previousScrollY = scrollY;
+      previousScrollTime = now;
 
       if (reducedMotion) return;
 
@@ -117,17 +129,21 @@ export function HomeMotion() {
       const onPointerMove = (event: PointerEvent) => {
         cursorX = event.clientX;
         cursorY = event.clientY;
+        const normalizedX = event.clientX / window.innerWidth;
+        const normalizedY = event.clientY / window.innerHeight;
+
         root.style.setProperty(
           '--pointer-shift-x',
-          `${((event.clientX / window.innerWidth - 0.5) * 14).toFixed(2)}px`,
+          `${((normalizedX - 0.5) * 14).toFixed(2)}px`,
         );
         root.style.setProperty(
           '--pointer-shift-y',
-          `${((event.clientY / window.innerHeight - 0.5) * 10).toFixed(2)}px`,
+          `${((normalizedY - 0.5) * 10).toFixed(2)}px`,
         );
+        root.style.setProperty('--pointer-x', `${(normalizedX * 100).toFixed(2)}%`);
+        root.style.setProperty('--pointer-y', `${(normalizedY * 100).toFixed(2)}%`);
         if (cursor) cursor.dataset.visible = 'true';
-        if (!cursorFrame)
-          cursorFrame = window.requestAnimationFrame(renderCursor);
+        if (!cursorFrame) cursorFrame = window.requestAnimationFrame(renderCursor);
       };
 
       const onPointerOver = (event: PointerEvent) => {
@@ -145,9 +161,7 @@ export function HomeMotion() {
       };
 
       window.addEventListener('pointermove', onPointerMove, { passive: true });
-      document.addEventListener('pointerover', onPointerOver, {
-        passive: true,
-      });
+      document.addEventListener('pointerover', onPointerOver, { passive: true });
       document.addEventListener('mouseleave', onPointerLeaveWindow);
 
       cleanups.push(() => {
@@ -205,9 +219,7 @@ export function HomeMotion() {
           target.style.setProperty('--magnetic-y', '0px');
         };
 
-        target.addEventListener('pointermove', onMagneticMove, {
-          passive: true,
-        });
+        target.addEventListener('pointermove', onMagneticMove, { passive: true });
         target.addEventListener('pointerleave', onMagneticLeave);
         cleanups.push(() => {
           target.removeEventListener('pointermove', onMagneticMove);
@@ -223,9 +235,7 @@ export function HomeMotion() {
       window.removeEventListener('resize', requestScrollUpdate);
       if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
       if (cursorFrame) window.cancelAnimationFrame(cursorFrame);
-      parallaxLayers.forEach((layer) =>
-        layer.style.removeProperty('--parallax-y'),
-      );
+      parallaxLayers.forEach((layer) => layer.style.removeProperty('--parallax-y'));
       depthCards.forEach((card) => {
         card.style.removeProperty('--motion-tilt-x');
         card.style.removeProperty('--motion-tilt-y');
@@ -237,10 +247,14 @@ export function HomeMotion() {
         target.style.removeProperty('--magnetic-y');
       });
       root.style.removeProperty('--motion-progress');
+      root.style.removeProperty('--scroll-velocity');
       root.style.removeProperty('--pointer-shift-x');
       root.style.removeProperty('--pointer-shift-y');
+      root.style.removeProperty('--pointer-x');
+      root.style.removeProperty('--pointer-y');
       root.classList.remove('motion-enabled');
       delete root.dataset.scrolled;
+      delete root.dataset.scrollDirection;
       delete root.dataset.reducedMotion;
     };
   }, []);
