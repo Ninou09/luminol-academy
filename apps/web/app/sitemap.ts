@@ -31,7 +31,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return routes.map((route) => ({
     url: `${origin}${route}`,
-    changeFrequency: route === '' || route === '/fr' || route === '/en' ? 'weekly' : 'monthly',
+    changeFrequency:
+      route === '' || route === '/fr' || route === '/en' ? 'weekly' : 'monthly',
     priority:
       route === '' || route === '/fr' || route === '/en'
         ? 1

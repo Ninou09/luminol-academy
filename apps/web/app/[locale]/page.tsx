@@ -13,12 +13,15 @@ export function generateStaticParams() {
   return translatedLocales.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { locale } = await params;
 
   if (locale === 'fr') {
     return {
-      title: 'Luminol Academy | Psychologie, langues et formation professionnelle',
+      title:
+        'Luminol Academy | Psychologie, langues et formation professionnelle',
       description:
         'Luminol Academy à Blida relie psychologie, apprentissage des langues et formation professionnelle dans une expérience humaine et pratique.',
       alternates: {

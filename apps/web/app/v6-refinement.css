@@ -81,9 +81,15 @@ html[data-scrolled='true'] .premium-header .language-switcher,
   color: var(--v6-navy);
 }
 
-html[data-scrolled='true'] .premium-header .language-switcher a[data-active='true'],
+html[data-scrolled='true']
+  .premium-header
+  .language-switcher
+  a[data-active='true'],
 .ar-page:not(.v4-home) .premium-header .language-switcher a[data-active='true'],
-.localized-page:not(.v4-home) .premium-header .language-switcher a[data-active='true'] {
+.localized-page:not(.v4-home)
+  .premium-header
+  .language-switcher
+  a[data-active='true'] {
   background: var(--v6-navy);
   color: #fff;
 }
@@ -97,7 +103,13 @@ html[data-scrolled='true'] .premium-header .language-switcher a[data-active='tru
   background:
     radial-gradient(circle at 74% 28%, rgb(69 199 232 / 0.2), transparent 32%),
     radial-gradient(circle at 18% 72%, rgb(210 166 75 / 0.16), transparent 35%),
-    linear-gradient(90deg, rgb(4 23 32 / 0.95) 0%, rgb(4 23 32 / 0.72) 42%, rgb(4 23 32 / 0.2) 78%, rgb(4 23 32 / 0.08) 100%);
+    linear-gradient(
+      90deg,
+      rgb(4 23 32 / 0.95) 0%,
+      rgb(4 23 32 / 0.72) 42%,
+      rgb(4 23 32 / 0.2) 78%,
+      rgb(4 23 32 / 0.08) 100%
+    );
 }
 
 .v4-hero::after {
@@ -106,14 +118,25 @@ html[data-scrolled='true'] .premium-header .language-switcher a[data-active='tru
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(110deg, transparent 18%, rgb(255 255 255 / 0.07) 42%, transparent 64%);
+  background: linear-gradient(
+    110deg,
+    transparent 18%,
+    rgb(255 255 255 / 0.07) 42%,
+    transparent 64%
+  );
   transform: translateX(-125%);
   animation: v6-hero-light 8s cubic-bezier(0.22, 1, 0.36, 1) 1.2s infinite;
 }
 
 @keyframes v6-hero-light {
-  0%, 55% { transform: translateX(-125%); }
-  78%, 100% { transform: translateX(135%); }
+  0%,
+  55% {
+    transform: translateX(-125%);
+  }
+  78%,
+  100% {
+    transform: translateX(135%);
+  }
 }
 
 .v4-hero-content h1 {
@@ -179,7 +202,12 @@ html[data-scrolled='true'] .premium-header .language-switcher a[data-active='tru
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(110deg, transparent 20%, rgb(255 255 255 / 0.24) 45%, transparent 70%);
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgb(255 255 255 / 0.24) 45%,
+    transparent 70%
+  );
   transform: translateX(-140%);
   transition: transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -201,7 +229,11 @@ html[data-scrolled='true'] .premium-header .language-switcher a[data-active='tru
 .v6-primary-action:hover,
 .v6-secondary-action:hover,
 .form-actions button:hover {
-  transform: translate3d(var(--magnetic-x, 0), calc(var(--magnetic-y, 0) - 3px), 0);
+  transform: translate3d(
+    var(--magnetic-x, 0),
+    calc(var(--magnetic-y, 0) - 3px),
+    0
+  );
   box-shadow: 0 1.3rem 3.4rem rgb(7 25 35 / 0.24);
 }
 
@@ -304,8 +336,14 @@ html[data-scrolled='true'] .premium-header .language-switcher a[data-active='tru
 }
 
 @keyframes v6-video-enter {
-  from { opacity: 0; transform: scale(1.035); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(1.035);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .v4-branch-image-word,
@@ -403,7 +441,9 @@ html[data-scrolled='true'] .premium-header .language-switcher a[data-active='tru
   inset-inline-end: -2%;
   bottom: -0.22em;
   color: rgb(255 255 255 / 0.045);
-  font: 800 clamp(5rem, 13vw, 12rem) / 0.8 var(--font-latin), sans-serif;
+  font:
+    800 clamp(5rem, 13vw, 12rem) / 0.8 var(--font-latin),
+    sans-serif;
   letter-spacing: -0.06em;
   pointer-events: none;
 }
@@ -467,7 +507,9 @@ html[data-scrolled='true'] .premium-header .language-switcher a[data-active='tru
   font-size: 0.82rem;
   font-weight: 800;
   text-decoration: none;
-  transition: transform 200ms ease, background 200ms ease;
+  transition:
+    transform 200ms ease,
+    background 200ms ease;
 }
 
 .v6-floating-cta a:hover,
@@ -486,7 +528,10 @@ html[data-scrolled='true'] .premium-header .language-switcher a[data-active='tru
 .ar-enquiry-form select {
   border-color: rgb(8 44 58 / 0.16) !important;
   background: #fff !important;
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
 .ar-enquiry-form input:focus,

@@ -3,44 +3,112 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const pageSource = readFileSync(resolve('apps/web/app/page.tsx'), 'utf8');
-const aboutSource = readFileSync(resolve('apps/web/app/about/page.tsx'), 'utf8');
-const contactSource = readFileSync(resolve('apps/web/app/contact/page.tsx'), 'utf8');
-const schoolSource = readFileSync(resolve('apps/web/app/schools/[school]/page.tsx'), 'utf8');
+const aboutSource = readFileSync(
+  resolve('apps/web/app/about/page.tsx'),
+  'utf8',
+);
+const contactSource = readFileSync(
+  resolve('apps/web/app/contact/page.tsx'),
+  'utf8',
+);
+const schoolSource = readFileSync(
+  resolve('apps/web/app/schools/[school]/page.tsx'),
+  'utf8',
+);
 const layoutSource = readFileSync(resolve('apps/web/app/layout.tsx'), 'utf8');
 const proxySource = readFileSync(resolve('apps/web/proxy.ts'), 'utf8');
-const motionSource = readFileSync(resolve('apps/web/components/home-motion.tsx'), 'utf8');
-const cinematicMediaSource = readFileSync(resolve('apps/web/components/cinematic-media.tsx'), 'utf8');
-const immersiveHeroSource = readFileSync(resolve('apps/web/components/immersive-hero-media.tsx'), 'utf8');
-const branchStageSource = readFileSync(resolve('apps/web/components/branch-stage.tsx'), 'utf8');
-const localizedHomeSource = readFileSync(resolve('apps/web/components/localized-home.tsx'), 'utf8');
-const localizedAboutSource = readFileSync(resolve('apps/web/components/localized-about.tsx'), 'utf8');
-const localizedContactSource = readFileSync(resolve('apps/web/components/localized-contact.tsx'), 'utf8');
-const localizedSchoolSource = readFileSync(resolve('apps/web/components/localized-school.tsx'), 'utf8');
-const languageSwitcherSource = readFileSync(resolve('apps/web/components/language-switcher.tsx'), 'utf8');
-const enquiryFormSource = readFileSync(resolve('apps/web/components/enquiry-form.tsx'), 'utf8');
+const motionSource = readFileSync(
+  resolve('apps/web/components/home-motion.tsx'),
+  'utf8',
+);
+const cinematicMediaSource = readFileSync(
+  resolve('apps/web/components/cinematic-media.tsx'),
+  'utf8',
+);
+const immersiveHeroSource = readFileSync(
+  resolve('apps/web/components/immersive-hero-media.tsx'),
+  'utf8',
+);
+const branchStageSource = readFileSync(
+  resolve('apps/web/components/branch-stage.tsx'),
+  'utf8',
+);
+const localizedHomeSource = readFileSync(
+  resolve('apps/web/components/localized-home.tsx'),
+  'utf8',
+);
+const localizedAboutSource = readFileSync(
+  resolve('apps/web/components/localized-about.tsx'),
+  'utf8',
+);
+const localizedContactSource = readFileSync(
+  resolve('apps/web/components/localized-contact.tsx'),
+  'utf8',
+);
+const localizedSchoolSource = readFileSync(
+  resolve('apps/web/components/localized-school.tsx'),
+  'utf8',
+);
+const languageSwitcherSource = readFileSync(
+  resolve('apps/web/components/language-switcher.tsx'),
+  'utf8',
+);
+const enquiryFormSource = readFileSync(
+  resolve('apps/web/components/enquiry-form.tsx'),
+  'utf8',
+);
 const i18nSource = readFileSync(resolve('apps/web/lib/i18n.ts'), 'utf8');
 const mediaV6Source = readFileSync(resolve('apps/web/lib/media-v6.ts'), 'utf8');
 const motionStyles = readFileSync(resolve('apps/web/app/motion.css'), 'utf8');
 const arabicStyles = readFileSync(resolve('apps/web/app/arabic.css'), 'utf8');
-const cinematicStyles = readFileSync(resolve('apps/web/app/cinematic-motion.css'), 'utf8');
-const cinematicMediaStyles = readFileSync(resolve('apps/web/app/cinematic-media.css'), 'utf8');
+const cinematicStyles = readFileSync(
+  resolve('apps/web/app/cinematic-motion.css'),
+  'utf8',
+);
+const cinematicMediaStyles = readFileSync(
+  resolve('apps/web/app/cinematic-media.css'),
+  'utf8',
+);
 const v4HomeStyles = readFileSync(resolve('apps/web/app/v4-home.css'), 'utf8');
-const v4GlobalStyles = readFileSync(resolve('apps/web/app/v4-global.css'), 'utf8');
-const v4InteractionStyles = readFileSync(resolve('apps/web/app/v4-interactions.css'), 'utf8');
-const v6Styles = readFileSync(resolve('apps/web/app/v6-refinement.css'), 'utf8');
-const shellSource = readFileSync(resolve('apps/web/components/site-shell.tsx'), 'utf8');
-const publicSanitySource = readFileSync(resolve('apps/web/lib/sanity-public.ts'), 'utf8');
-const nextConfigSource = readFileSync(resolve('apps/web/next.config.ts'), 'utf8');
-const securityHeadersSource = readFileSync(resolve('packages/config/security-headers.mjs'), 'utf8');
+const v4GlobalStyles = readFileSync(
+  resolve('apps/web/app/v4-global.css'),
+  'utf8',
+);
+const v4InteractionStyles = readFileSync(
+  resolve('apps/web/app/v4-interactions.css'),
+  'utf8',
+);
+const v6Styles = readFileSync(
+  resolve('apps/web/app/v6-refinement.css'),
+  'utf8',
+);
+const shellSource = readFileSync(
+  resolve('apps/web/components/site-shell.tsx'),
+  'utf8',
+);
+const publicSanitySource = readFileSync(
+  resolve('apps/web/lib/sanity-public.ts'),
+  'utf8',
+);
+const nextConfigSource = readFileSync(
+  resolve('apps/web/next.config.ts'),
+  'utf8',
+);
+const securityHeadersSource = readFileSync(
+  resolve('packages/config/security-headers.mjs'),
+  'utf8',
+);
 const sitemapSource = readFileSync(resolve('apps/web/app/sitemap.ts'), 'utf8');
 
 describe('multilingual premium public flagship', () => {
   it('keeps governed school and contact journeys', () => {
-    expect(branchStageSource).toContain('localePath(locale, `/schools/${slug}`)');
+    expect(branchStageSource).toContain(
+      'localePath(locale, `/schools/${slug}`)',
+    );
     expect(pageSource).toContain('href="/contact"');
     expect(schoolSource).toContain('getProgrammesForSchool(slug)');
     expect(contactSource).toContain('<EnquiryForm />');
-    expect(enquiryFormSource).toContain("locale,");
+    expect(enquiryFormSource).toContain('locale,');
   });
 
   it('publishes Arabic RTL plus French and English LTR experiences', () => {
@@ -48,7 +116,9 @@ describe('multilingual premium public flagship', () => {
     expect(layoutSource).toContain('Manrope');
     expect(layoutSource).toContain("requestHeaders.get('x-luminol-locale')");
     expect(layoutSource).toContain('dir={meta.dir}');
-    expect(proxySource).toContain("firstSegment === 'fr' || firstSegment === 'en'");
+    expect(proxySource).toContain(
+      "firstSegment === 'fr' || firstSegment === 'en'",
+    );
     expect(i18nSource).toContain("publicLocales = ['ar', 'fr', 'en']");
     expect(localizedHomeSource).toContain('Develop your mind.');
     expect(localizedHomeSource).toContain('Développez votre esprit.');
@@ -85,7 +155,9 @@ describe('multilingual premium public flagship', () => {
     expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
     expect(cinematicMediaSource).toContain('مواد تحريرية توضيحية');
     expect(cinematicMediaSource).toContain('Luminol Academy students');
-    expect(securityHeadersSource).toContain("media-src 'self' https://videos.pexels.com");
+    expect(securityHeadersSource).toContain(
+      "media-src 'self' https://videos.pexels.com",
+    );
   });
 
   it('publishes only governed team members and consent-confirmed testimonials', () => {
@@ -122,7 +194,7 @@ describe('multilingual premium public flagship', () => {
   it('provides responsive navigation and route-preserving language switching', () => {
     expect(shellSource).toContain('<details className="mobile-menu">');
     expect(shellSource).toContain('<LanguageSwitcher locale={locale} />');
-    expect(languageSwitcherSource).toContain("pathname.replace(/^\\/(fr|en)");
+    expect(languageSwitcherSource).toContain('pathname.replace(/^\\/(fr|en)');
     expect(i18nSource).toContain("fr: { label: 'Français'");
     expect(i18nSource).toContain("en: { label: 'English'");
   });

@@ -23,8 +23,7 @@ const mediaCopy = {
     galleryOverline: 'إيقاع بصري أكثر إنسانية',
     galleryTitle: 'صور تضع الأشخاص والتفاعل في قلب التجربة.',
     galleryAria: 'مجموعة صور تحريرية توضيحية',
-    note:
-      'جميع الصور والفيديوهات مواد تحريرية توضيحية مرخّصة من Pexels، وليست توثيقًا لطلاب أو حصص أكاديمية لومينول.',
+    note: 'جميع الصور والفيديوهات مواد تحريرية توضيحية مرخّصة من Pexels، وليست توثيقًا لطلاب أو حصص أكاديمية لومينول.',
     play: 'تشغيل الفيديو',
     pause: 'إيقاف الفيديو',
     credit: 'فيديو تحريري',
@@ -38,12 +37,13 @@ const mediaCopy = {
     statementTitle: 'Un bon apprentissage ne s’arrête pas à la dernière slide.',
     statementBody:
       'L’expérience place la personne dans l’action: questionner, essayer, expliquer, écouter puis repartir avec quelque chose d’utilisable.',
-    ticker: 'CONSCIENCE · LANGUE · COMPÉTENCE · ACTION · LIEN · PROGRÈS · LUMINOL ·',
+    ticker:
+      'CONSCIENCE · LANGUE · COMPÉTENCE · ACTION · LIEN · PROGRÈS · LUMINOL ·',
     galleryOverline: 'Un rythme visuel plus humain',
-    galleryTitle: 'Des images où les personnes et l’interaction restent au centre.',
+    galleryTitle:
+      'Des images où les personnes et l’interaction restent au centre.',
     galleryAria: 'Galerie éditoriale illustrative',
-    note:
-      'Toutes les photos et vidéos sont des médias éditoriaux illustratifs sous licence Pexels. Elles ne représentent pas des étudiants ou des séances réelles de Luminol Academy.',
+    note: 'Toutes les photos et vidéos sont des médias éditoriaux illustratifs sous licence Pexels. Elles ne représentent pas des étudiants ou des séances réelles de Luminol Academy.',
     play: 'Lire la vidéo',
     pause: 'Mettre la vidéo en pause',
     credit: 'Vidéo éditoriale',
@@ -57,12 +57,12 @@ const mediaCopy = {
     statementTitle: 'Good learning does not end on the final slide.',
     statementBody:
       'The experience puts people inside the action: asking, trying, explaining, listening and leaving with something they can actually use.',
-    ticker: 'AWARENESS · LANGUAGE · SKILL · ACTION · CONNECTION · PROGRESS · LUMINOL ·',
+    ticker:
+      'AWARENESS · LANGUAGE · SKILL · ACTION · CONNECTION · PROGRESS · LUMINOL ·',
     galleryOverline: 'A more human visual rhythm',
     galleryTitle: 'Images that keep people and interaction at the centre.',
     galleryAria: 'Illustrative editorial gallery',
-    note:
-      'All photos and videos are illustrative editorial media licensed from Pexels. They do not depict real Luminol Academy students or sessions.',
+    note: 'All photos and videos are illustrative editorial media licensed from Pexels. They do not depict real Luminol Academy students or sessions.',
     play: 'Play video',
     pause: 'Pause video',
     credit: 'Editorial video',

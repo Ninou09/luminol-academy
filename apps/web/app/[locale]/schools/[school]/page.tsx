@@ -12,10 +12,14 @@ type PageProps = {
 export function generateStaticParams() {
   const locales = ['fr', 'en'] as const;
   const schools: SchoolSlug[] = ['psychology', 'languages', 'training'];
-  return locales.flatMap((locale) => schools.map((school) => ({ locale, school })));
+  return locales.flatMap((locale) =>
+    schools.map((school) => ({ locale, school })),
+  );
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { locale, school } = await params;
   if ((locale !== 'fr' && locale !== 'en') || !isSchoolSlug(school)) return {};
 
@@ -46,6 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function Page({ params }: PageProps) {
   const { locale, school } = await params;
-  if (!isPublicLocale(locale) || locale === 'ar' || !isSchoolSlug(school)) notFound();
+  if (!isPublicLocale(locale) || locale === 'ar' || !isSchoolSlug(school))
+    notFound();
   return <LocalizedSchool locale={locale} slug={school} />;
 }

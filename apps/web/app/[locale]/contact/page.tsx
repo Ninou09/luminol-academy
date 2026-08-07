@@ -9,24 +9,48 @@ export function generateStaticParams() {
   return [{ locale: 'fr' }, { locale: 'en' }];
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { locale } = await params;
 
   if (locale === 'fr') {
     return {
       title: 'Nous contacter',
-      description: 'Contactez Luminol Academy pour la psychologie, les langues ou la formation professionnelle et clarifiez votre prochaine étape.',
-      alternates: { canonical: '/fr/contact', languages: { ar: '/contact', fr: '/fr/contact', en: '/en/contact' } },
-      openGraph: { title: 'Nous contacter | Luminol Academy', description: 'Commencez par votre objectif et laissez l’équipe vous aider à identifier le bon parcours.', url: '/fr/contact', locale: 'fr_DZ', type: 'website' },
+      description:
+        'Contactez Luminol Academy pour la psychologie, les langues ou la formation professionnelle et clarifiez votre prochaine étape.',
+      alternates: {
+        canonical: '/fr/contact',
+        languages: { ar: '/contact', fr: '/fr/contact', en: '/en/contact' },
+      },
+      openGraph: {
+        title: 'Nous contacter | Luminol Academy',
+        description:
+          'Commencez par votre objectif et laissez l’équipe vous aider à identifier le bon parcours.',
+        url: '/fr/contact',
+        locale: 'fr_DZ',
+        type: 'website',
+      },
     };
   }
 
   if (locale === 'en') {
     return {
       title: 'Contact',
-      description: 'Contact Luminol Academy about psychology, languages or professional training and clarify your next step.',
-      alternates: { canonical: '/en/contact', languages: { ar: '/contact', fr: '/fr/contact', en: '/en/contact' } },
-      openGraph: { title: 'Contact | Luminol Academy', description: 'Start with your goal and let the team help identify the right path.', url: '/en/contact', locale: 'en_DZ', type: 'website' },
+      description:
+        'Contact Luminol Academy about psychology, languages or professional training and clarify your next step.',
+      alternates: {
+        canonical: '/en/contact',
+        languages: { ar: '/contact', fr: '/fr/contact', en: '/en/contact' },
+      },
+      openGraph: {
+        title: 'Contact | Luminol Academy',
+        description:
+          'Start with your goal and let the team help identify the right path.',
+        url: '/en/contact',
+        locale: 'en_DZ',
+        type: 'website',
+      },
     };
   }
 

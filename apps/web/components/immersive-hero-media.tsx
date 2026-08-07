@@ -89,7 +89,10 @@ export function ImmersiveHeroMedia({
   };
 
   return (
-    <div className="v4-hero-media v6-hero-media" data-playing={playing ? 'true' : 'false'}>
+    <div
+      className="v4-hero-media v6-hero-media"
+      data-playing={playing ? 'true' : 'false'}
+    >
       <Image
         className="v4-hero-poster"
         src={video.poster.src}

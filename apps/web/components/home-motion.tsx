@@ -66,7 +66,8 @@ export function HomeMotion() {
       const progress = clamp(scrollY / maxScroll, 0, 1);
 
       root.dataset.scrolled = scrollY > 18 ? 'true' : 'false';
-      root.dataset.scrollDirection = deltaY > 0 ? 'down' : deltaY < 0 ? 'up' : 'still';
+      root.dataset.scrollDirection =
+        deltaY > 0 ? 'down' : deltaY < 0 ? 'up' : 'still';
       root.style.setProperty('--motion-progress', progress.toFixed(4));
       root.style.setProperty('--scroll-velocity', velocity.toFixed(3));
 
@@ -140,10 +141,17 @@ export function HomeMotion() {
           '--pointer-shift-y',
           `${((normalizedY - 0.5) * 10).toFixed(2)}px`,
         );
-        root.style.setProperty('--pointer-x', `${(normalizedX * 100).toFixed(2)}%`);
-        root.style.setProperty('--pointer-y', `${(normalizedY * 100).toFixed(2)}%`);
+        root.style.setProperty(
+          '--pointer-x',
+          `${(normalizedX * 100).toFixed(2)}%`,
+        );
+        root.style.setProperty(
+          '--pointer-y',
+          `${(normalizedY * 100).toFixed(2)}%`,
+        );
         if (cursor) cursor.dataset.visible = 'true';
-        if (!cursorFrame) cursorFrame = window.requestAnimationFrame(renderCursor);
+        if (!cursorFrame)
+          cursorFrame = window.requestAnimationFrame(renderCursor);
       };
 
       const onPointerOver = (event: PointerEvent) => {
@@ -161,7 +169,9 @@ export function HomeMotion() {
       };
 
       window.addEventListener('pointermove', onPointerMove, { passive: true });
-      document.addEventListener('pointerover', onPointerOver, { passive: true });
+      document.addEventListener('pointerover', onPointerOver, {
+        passive: true,
+      });
       document.addEventListener('mouseleave', onPointerLeaveWindow);
 
       cleanups.push(() => {
@@ -219,7 +229,9 @@ export function HomeMotion() {
           target.style.setProperty('--magnetic-y', '0px');
         };
 
-        target.addEventListener('pointermove', onMagneticMove, { passive: true });
+        target.addEventListener('pointermove', onMagneticMove, {
+          passive: true,
+        });
         target.addEventListener('pointerleave', onMagneticLeave);
         cleanups.push(() => {
           target.removeEventListener('pointermove', onMagneticMove);
@@ -235,7 +247,9 @@ export function HomeMotion() {
       window.removeEventListener('resize', requestScrollUpdate);
       if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
       if (cursorFrame) window.cancelAnimationFrame(cursorFrame);
-      parallaxLayers.forEach((layer) => layer.style.removeProperty('--parallax-y'));
+      parallaxLayers.forEach((layer) =>
+        layer.style.removeProperty('--parallax-y'),
+      );
       depthCards.forEach((card) => {
         card.style.removeProperty('--motion-tilt-x');
         card.style.removeProperty('--motion-tilt-y');
