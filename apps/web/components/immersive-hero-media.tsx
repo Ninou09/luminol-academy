@@ -6,6 +6,7 @@ import type { EditorialVideo } from '../lib/flagship';
 import type { PublicLocale } from '../lib/i18n';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
+const ACADEMY_POSTER = '/media/academy/classroom-digital.webp';
 
 const controlCopy = {
   ar: {
@@ -14,6 +15,8 @@ const controlCopy = {
     playAria: 'تشغيل فيديو الواجهة',
     pauseAria: 'إيقاف فيديو الواجهة',
     credit: 'فيديو تحريري',
+    archive: 'من داخل أكاديمية لومينول',
+    archiveNote: 'صورة حقيقية من فضاء الأكاديمية',
   },
   fr: {
     play: 'Lire la scène',
@@ -21,6 +24,8 @@ const controlCopy = {
     playAria: 'Lire la vidéo d’introduction',
     pauseAria: 'Mettre en pause la vidéo d’introduction',
     credit: 'Vidéo éditoriale',
+    archive: 'Au cœur de Luminol Academy',
+    archiveNote: "Photo réelle d'un espace de l'académie",
   },
   en: {
     play: 'Play scene',
@@ -28,6 +33,8 @@ const controlCopy = {
     playAria: 'Play hero video',
     pauseAria: 'Pause hero video',
     credit: 'Editorial video',
+    archive: 'Inside Luminol Academy',
+    archiveNote: 'Authentic photo from the academy',
   },
 } as const;
 
@@ -90,11 +97,11 @@ export function ImmersiveHeroMedia({
     >
       <Image
         className="v4-hero-poster"
-        src={video.poster.src}
-        alt=""
+        src={ACADEMY_POSTER}
+        alt={copy.archiveNote}
         fill
         priority
-        sizes="100vw"
+        sizes="(max-width: 900px) 100vw, 44vw"
       />
       <video
         ref={videoRef}
@@ -102,7 +109,7 @@ export function ImmersiveHeroMedia({
         loop
         playsInline
         preload="metadata"
-        poster={video.poster.src}
+        poster={ACADEMY_POSTER}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         aria-hidden="true"
@@ -111,6 +118,13 @@ export function ImmersiveHeroMedia({
       </video>
       <div className="v4-hero-media-wash" aria-hidden="true" />
       <div className="v4-hero-media-grid" aria-hidden="true" />
+      <div className="v11-hero-authenticity" aria-hidden="true">
+        <span>01</span>
+        <div>
+          <strong>{copy.archive}</strong>
+          <small>{copy.archiveNote}</small>
+        </div>
+      </div>
       <button
         className="v4-hero-play"
         type="button"
