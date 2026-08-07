@@ -26,6 +26,12 @@ const branchVideo = {
   training: premiumVideos.training,
 } as const;
 
+const branchGlyph = {
+  psychology: '◌',
+  languages: 'A',
+  training: '↗',
+} as const;
+
 const stageCopy = {
   ar: {
     overline: 'ثلاثة عوالم داخل أكاديمية واحدة',
@@ -70,6 +76,9 @@ export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
   const copy = stageCopy[locale];
   const activeVideo = branchVideo[active];
   const activeImage = branchImage[active];
+  const activeSchool =
+    locale === 'ar' ? schools[active] : localizedSchools[locale][active];
+  const activeIndex = branchOrder.indexOf(active) + 1;
 
   return (
     <section
@@ -86,48 +95,56 @@ export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
       </header>
 
       <div className="v4-branch-experience">
-        <div className="v4-branch-visual v6-branch-visual" aria-live="polite">
-          <Image
-            className="v6-branch-poster"
-            src={activeImage.src}
-            alt={activeImage.alt}
-            fill
-            sizes="(max-width: 900px) 100vw, 56vw"
-          />
-          <video
-            key={activeVideo.id}
-            className="v6-branch-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={activeImage.src}
-            aria-hidden="true"
-          >
-            <source src={activeVideo.src} type="video/mp4" />
-          </video>
-          <div className="v6-branch-shade" aria-hidden="true" />
-          <span className="v4-branch-image-word" aria-hidden="true">
-            {locale === 'ar'
-              ? schools[active].visualWords[1]
-              : localizedSchools[locale][active].visualWords[1]}
-          </span>
-          <a
-            className="v4-branch-credit"
-            href={activeVideo.creditUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {activeVideo.credit}
-          </a>
-          <div className="v4-branch-mark" aria-hidden="true">
+        <div className="v9-branch-media-column">
+          <div className="v4-branch-visual v6-branch-visual" aria-live="polite">
             <Image
-              src="/brand/luminol-mark.svg"
-              alt=""
-              width={280}
-              height={310}
+              className="v6-branch-poster"
+              src={activeImage.src}
+              alt={activeImage.alt}
+              fill
+              sizes="(max-width: 900px) 100vw, 52vw"
             />
+            <video
+              key={activeVideo.id}
+              className="v6-branch-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={activeImage.src}
+              aria-hidden="true"
+            >
+              <source src={activeVideo.src} type="video/mp4" />
+            </video>
+            <div className="v6-branch-shade" aria-hidden="true" />
+            <a
+              className="v4-branch-credit"
+              href={activeVideo.creditUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {activeVideo.credit}
+            </a>
+            <div className="v4-branch-mark" aria-hidden="true">
+              <Image
+                src="/brand/luminol-mark.svg"
+                alt=""
+                width={280}
+                height={310}
+              />
+            </div>
+          </div>
+
+          <div className="v9-branch-meta" aria-hidden="true">
+            <span className="v9-branch-meta-icon">{branchGlyph[active]}</span>
+            <div>
+              <strong>{activeSchool.name}</strong>
+              <small>{activeSchool.eyebrow}</small>
+            </div>
+            <b>
+              0{activeIndex} / 03
+            </b>
           </div>
         </div>
 
