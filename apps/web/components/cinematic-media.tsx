@@ -3,34 +3,80 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import '../app/cinematic-media.css';
-import {
-  editorialGallery,
-  editorialImages,
-  editorialVideos,
-  type EditorialVideo,
-} from '../lib/flagship';
+import type { EditorialVideo } from '../lib/flagship';
+import type { PublicLocale } from '../lib/i18n';
+import { premiumGallery, premiumVideos } from '../lib/media-v6';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
-const supportFilm = editorialVideos[1]!;
 
-const trainingFilm: EditorialVideo = {
-  id: 'professional-momentum',
-  src: 'https://videos.pexels.com/video-files/5762301/5762301-uhd_3840_2160_24fps.mp4',
-  eyebrow: 'التطور المهني',
-  title: 'التقدّم المهني يبدأ حين تتحول الخبرة إلى حوار واضح.',
-  description:
-    'مشهد تحريري لحوار مهني يرمز إلى مشاركة الخبرة، التفكير بصوت مسموع وتحويل الأفكار إلى قرارات أكثر وضوحًا.',
-  credit: 'RDNE Stock project / Pexels',
-  creditUrl: 'https://www.pexels.com/video/man-being-interviewed-5762301/',
-  poster: editorialImages.training,
-};
+const mediaCopy = {
+  ar: {
+    overline: 'الحركة جزء من القصة',
+    title: 'شاهد نوع التجربة قبل أن تدخل القاعة.',
+    intro:
+      'الفيديو هنا ليس زينة. كل مشهد يشرح فكرة: الإصغاء، المشاركة، الحوار أو التطبيق. المواد تحريرية مؤقتة إلى أن نستبدلها بلقطات لومينول الأصلية والمصرّح بنشرها.',
+    statementOverline: 'من الفكرة إلى الفعل',
+    statementTitle: 'التعلم الجيد لا ينتهي عند آخر شريحة في العرض.',
+    statementBody:
+      'التجربة تضع الإنسان داخل المشهد: يسأل، يجرّب، يشرح، يستمع ثم يعود إلى حياته أو عمله بشيء يمكن تطبيقه.',
+    ticker: 'وعي · لغة · مهارة · تطبيق · تواصل · تقدّم · LUMINOL ·',
+    galleryOverline: 'إيقاع بصري أكثر إنسانية',
+    galleryTitle: 'صور تضع الأشخاص والتفاعل في قلب التجربة.',
+    galleryAria: 'مجموعة صور تحريرية توضيحية',
+    note:
+      'جميع الصور والفيديوهات مواد تحريرية توضيحية مرخّصة من Pexels، وليست توثيقًا لطلاب أو حصص أكاديمية لومينول.',
+    play: 'تشغيل الفيديو',
+    pause: 'إيقاف الفيديو',
+    credit: 'فيديو تحريري',
+  },
+  fr: {
+    overline: 'Le mouvement raconte aussi',
+    title: 'Ressentez le type d’expérience avant même d’entrer en salle.',
+    intro:
+      'La vidéo n’est pas décorative. Chaque scène exprime une idée: écoute, participation, dialogue ou mise en pratique. Ces médias éditoriaux sont temporaires jusqu’à leur remplacement par des images Luminol authentiques et autorisées.',
+    statementOverline: 'De l’idée à l’action',
+    statementTitle: 'Un bon apprentissage ne s’arrête pas à la dernière slide.',
+    statementBody:
+      'L’expérience place la personne dans l’action: questionner, essayer, expliquer, écouter puis repartir avec quelque chose d’utilisable.',
+    ticker: 'CONSCIENCE · LANGUE · COMPÉTENCE · ACTION · LIEN · PROGRÈS · LUMINOL ·',
+    galleryOverline: 'Un rythme visuel plus humain',
+    galleryTitle: 'Des images où les personnes et l’interaction restent au centre.',
+    galleryAria: 'Galerie éditoriale illustrative',
+    note:
+      'Toutes les photos et vidéos sont des médias éditoriaux illustratifs sous licence Pexels. Elles ne représentent pas des étudiants ou des séances réelles de Luminol Academy.',
+    play: 'Lire la vidéo',
+    pause: 'Mettre la vidéo en pause',
+    credit: 'Vidéo éditoriale',
+  },
+  en: {
+    overline: 'Motion carries the story',
+    title: 'Feel the kind of experience before you enter the room.',
+    intro:
+      'Video is not decoration here. Each scene communicates an idea: listening, participation, dialogue or application. These editorial assets are temporary until approved authentic Luminol footage replaces them.',
+    statementOverline: 'From idea to action',
+    statementTitle: 'Good learning does not end on the final slide.',
+    statementBody:
+      'The experience puts people inside the action: asking, trying, explaining, listening and leaving with something they can actually use.',
+    ticker: 'AWARENESS · LANGUAGE · SKILL · ACTION · CONNECTION · PROGRESS · LUMINOL ·',
+    galleryOverline: 'A more human visual rhythm',
+    galleryTitle: 'Images that keep people and interaction at the centre.',
+    galleryAria: 'Illustrative editorial gallery',
+    note:
+      'All photos and videos are illustrative editorial media licensed from Pexels. They do not depict real Luminol Academy students or sessions.',
+    play: 'Play video',
+    pause: 'Pause video',
+    credit: 'Editorial video',
+  },
+} as const;
 
 function EditorialFilm({
   video,
   variant,
+  locale,
 }: {
   video: EditorialVideo;
   variant: 'wide' | 'portrait';
+  locale: PublicLocale;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -38,6 +84,7 @@ function EditorialFilm({
   const [inView, setInView] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [manualPause, setManualPause] = useState(false);
+  const copy = mediaCopy[locale];
 
   useEffect(() => {
     const shell = shellRef.current;
@@ -98,7 +145,7 @@ function EditorialFilm({
 
   return (
     <article className={`v5-film v5-film-${variant}`} data-reveal>
-      <div ref={shellRef} className="v5-film-media">
+      <div ref={shellRef} className="v5-film-media v6-film-media">
         <Image
           className="v5-film-poster"
           src={video.poster.src}
@@ -129,11 +176,7 @@ function EditorialFilm({
           type="button"
           className="v5-film-control"
           onClick={toggle}
-          aria-label={
-            playing
-              ? `إيقاف فيديو ${video.title}`
-              : `تشغيل فيديو ${video.title}`
-          }
+          aria-label={`${playing ? copy.pause : copy.play}: ${video.title}`}
         >
           <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span>
         </button>
@@ -148,17 +191,23 @@ function EditorialFilm({
           target="_blank"
           rel="noreferrer"
         >
-          فيديو تحريري: {video.credit}
+          {copy.credit}: {video.credit}
         </a>
       </div>
     </article>
   );
 }
 
-export function CinematicMediaWall() {
+export function CinematicMediaWall({
+  locale = 'ar',
+}: {
+  locale?: PublicLocale;
+}) {
+  const copy = mediaCopy[locale];
+
   return (
     <section
-      className="cinematic-media-section v5-media"
+      className="cinematic-media-section v5-media v6-media"
       aria-labelledby="cinematic-media-title"
     >
       <div className="v5-media-mark" aria-hidden="true">
@@ -167,53 +216,51 @@ export function CinematicMediaWall() {
 
       <header className="v5-media-heading" data-reveal="right">
         <div>
-          <p className="v4-overline">الحركة جزء من القصة</p>
-          <h2 id="cinematic-media-title">
-            الموقع يجب أن يجعلك تشعر بالتجربة قبل أن تدخل القاعة.
-          </h2>
+          <p className="v4-overline">{copy.overline}</p>
+          <h2 id="cinematic-media-title">{copy.title}</h2>
         </div>
-        <p>
-          لذلك لا نستخدم الفيديو كزينة. كل مشهد هنا يشرح فكرة: الإصغاء،
-          المشاركة، الحوار أو التطبيق. المواد مؤقتة وتحريرية إلى أن نستبدلها
-          بلقطات لومينول الأصلية والمصرّح بنشرها.
-        </p>
+        <p>{copy.intro}</p>
       </header>
 
       <div className="v5-feature-film">
         <span className="v5-feature-index" aria-hidden="true">
           02 / HUMAN
         </span>
-        <EditorialFilm video={supportFilm} variant="wide" />
+        <EditorialFilm
+          video={premiumVideos.psychology}
+          variant="wide"
+          locale={locale}
+        />
       </div>
 
       <div className="v5-film-split">
         <div className="v5-film-statement" data-reveal="right">
           <span aria-hidden="true">03</span>
-          <p className="v4-overline">من الفكرة إلى الفعل</p>
-          <h3>التعلم الجيد لا ينتهي عند آخر شريحة في العرض.</h3>
-          <p>
-            تصميم التجربة يضع الإنسان داخل المشهد: يسأل، يجرّب، يشرح، يستمع ثم
-            يعود إلى حياته أو عمله بشيء يمكن تطبيقه. هذا هو الإيقاع الذي نريد أن
-            تملكه لومينول بصريًا وتعليميًا.
-          </p>
+          <p className="v4-overline">{copy.statementOverline}</p>
+          <h3>{copy.statementTitle}</h3>
+          <p>{copy.statementBody}</p>
         </div>
-        <EditorialFilm video={trainingFilm} variant="portrait" />
+        <EditorialFilm
+          video={premiumVideos.training}
+          variant="portrait"
+          locale={locale}
+        />
       </div>
 
       <div className="v5-ticker" aria-hidden="true">
         <div className="v5-ticker-track">
-          <span>وعي · لغة · مهارة · تطبيق · تواصل · تقدّم · LUMINOL ·</span>
-          <span>وعي · لغة · مهارة · تطبيق · تواصل · تقدّم · LUMINOL ·</span>
+          <span>{copy.ticker}</span>
+          <span>{copy.ticker}</span>
         </div>
       </div>
 
       <div className="v5-gallery-heading" data-reveal="right">
-        <p className="v4-overline">لقطات من نوع التجربة التي نبنيها</p>
-        <h3>أشخاص حقيقيون. تفاعل حقيقي. صور لا تبدو كخلفية جاهزة.</h3>
+        <p className="v4-overline">{copy.galleryOverline}</p>
+        <h3>{copy.galleryTitle}</h3>
       </div>
 
-      <div className="v5-gallery" aria-label="مجموعة صور تحريرية توضيحية">
-        {editorialGallery.map((image, index) => (
+      <div className="v5-gallery" aria-label={copy.galleryAria}>
+        {premiumGallery.map((image, index) => (
           <figure
             className={`v5-still v5-still-${index + 1}`}
             data-reveal
@@ -238,10 +285,7 @@ export function CinematicMediaWall() {
         ))}
       </div>
 
-      <p className="v5-media-note">
-        جميع الصور والفيديوهات أعلاه مواد تحريرية توضيحية مرخّصة من Pexels،
-        وليست توثيقًا لطلاب أو حصص أكاديمية لومينول.
-      </p>
+      <p className="v5-media-note">{copy.note}</p>
     </section>
   );
 }
