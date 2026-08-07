@@ -1,0 +1,78 @@
+name: Format flagship once
+
+on:
+  push:
+    branches:
+      - design/premium-motion-homepage
+
+permissions:
+  contents: write
+
+concurrency:
+  group: format-flagship-once
+  cancel-in-progress: false
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: design/premium-motion-homepage
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format public flagship files and remove this one-time workflow
+        run: |
+          pnpm exec prettier --write \
+            apps/web/app/about/page.tsx \
+            apps/web/app/arabic.css \
+            apps/web/app/cinematic-media.css \
+            apps/web/app/cinematic-motion.css \
+            apps/web/app/layout.tsx \
+            apps/web/app/page.tsx \
+            'apps/web/app/schools/[school]/page.tsx' \
+            apps/web/app/v4-arabic-type.css \
+            apps/web/app/v4-global.css \
+            apps/web/app/v4-header.css \
+            apps/web/app/v4-home.css \
+            apps/web/app/v4-interactions.css \
+            apps/web/components/branch-stage.tsx \
+            apps/web/components/cinematic-media.tsx \
+            apps/web/components/enquiry-form.tsx \
+            apps/web/components/home-motion.tsx \
+            apps/web/components/immersive-hero-media.tsx \
+            apps/web/components/site-shell.tsx \
+            apps/web/lib/flagship.ts \
+            apps/web/lib/schools.ts \
+            docs/flagship-motion-direction.md \
+            packages/config/security-headers.mjs \
+            scripts/homepage-motion.test.mjs \
+            tests/e2e/home.spec.ts
+          rm .github/workflows/format-flagship-once.yml
+
+      - name: Commit formatting
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No formatting changes required.'
+          else
+            git commit -m 'Format cinematic flagship'
+            git push origin HEAD:design/premium-motion-homepage
+          fi
