@@ -124,7 +124,11 @@
   border: 1px solid rgb(8 118 138 / 0.14);
   border-radius: 1rem;
   background:
-    radial-gradient(circle at 94% 14%, rgb(70 198 232 / 0.12), transparent 14rem),
+    radial-gradient(
+      circle at 94% 14%,
+      rgb(70 198 232 / 0.12),
+      transparent 14rem
+    ),
     linear-gradient(140deg, #f8fcfb, #f5f2e9) !important;
   color: #062533 !important;
   box-shadow: 0 0.75rem 2.1rem rgb(4 31 43 / 0.055);
