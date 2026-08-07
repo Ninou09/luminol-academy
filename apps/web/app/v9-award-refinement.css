@@ -1,0 +1,1007 @@
+/* V9 — award-inspired institutional refinement.
+   High-level inspiration: contemporary award-winning education sites.
+   The implementation remains original to Luminol and preserves native scrolling. */
+
+:root {
+  --v9-ink: #062533;
+  --v9-ink-2: #0a3a4b;
+  --v9-teal: #08768a;
+  --v9-cyan: #46c6e8;
+  --v9-cyan-soft: #d6f3f9;
+  --v9-gold: #d2aa57;
+  --v9-paper: #fbfaf5;
+  --v9-white: #fff;
+  --v9-line: rgb(6 37 51 / 0.12);
+  --v9-line-light: rgb(255 255 255 / 0.14);
+  --v9-shadow: 0 1.6rem 4rem rgb(4 31 43 / 0.11);
+  --v9-shadow-soft: 0 0.8rem 2.3rem rgb(4 31 43 / 0.075);
+  --v9-radius: 1.25rem;
+  --v9-radius-small: 0.72rem;
+}
+
+/* Compact institutional header. */
+.utility-bar {
+  min-height: 1.95rem;
+  padding-block: 0.25rem;
+  background: #0a5368;
+  font-size: 0.67rem;
+}
+
+.site-header.premium-header {
+  min-height: 4.85rem;
+  grid-template-columns: minmax(14rem, auto) minmax(0, 1fr) auto;
+  gap: clamp(1rem, 2vw, 2.2rem);
+}
+
+html[data-scrolled='true'] .site-header.premium-header {
+  min-height: 4.35rem;
+}
+
+.brand-lockup {
+  gap: 0.7rem;
+}
+
+.brand-logo {
+  width: 2.8rem;
+}
+
+.brand-copy strong {
+  font-size: clamp(1.02rem, 1.5vw, 1.28rem);
+}
+
+.brand-copy small {
+  font-size: 0.5rem;
+  letter-spacing: 0.13em;
+}
+
+.premium-header .desktop-nav {
+  gap: clamp(0.75rem, 1.6vw, 1.45rem);
+}
+
+.premium-header .desktop-nav a {
+  padding-block: 0.62rem;
+  font-size: 0.75rem;
+}
+
+.header-cta {
+  min-height: 2.6rem !important;
+  padding-inline: 1rem !important;
+  font-size: 0.7rem !important;
+}
+
+/* Typography: less billboard scale, more editorial rhythm. */
+.v4-hero h1 {
+  font-size: clamp(2rem, 3.2vw, 3.2rem) !important;
+  line-height: 1.08 !important;
+}
+
+.v4-hero h1 em {
+  font-size: 0.61em !important;
+}
+
+.v4-hero-lede {
+  max-width: 31rem !important;
+  font-size: clamp(0.78rem, 0.82vw, 0.9rem) !important;
+  line-height: 1.75 !important;
+}
+
+.v4-manifesto h2,
+.v4-branch-heading h2,
+.v4-principles h2,
+.v4-journey h2,
+.v4-governed-section h2,
+.v4-final-cta h2,
+.v5-media-heading h2,
+.ar-section-copy h2,
+.ar-section-heading h2,
+.ar-trust-intro h2,
+.ar-story-heading h2,
+.ar-school-split-copy h2,
+.ar-method-section h2,
+.ar-faq-section h2,
+.ar-contact-context h2,
+.ar-final-cta h2 {
+  font-size: clamp(1.7rem, 2.75vw, 2.85rem) !important;
+  line-height: 1.22 !important;
+}
+
+.ar-large-copy,
+.ar-story-lead {
+  font-size: clamp(1rem, 1.45vw, 1.28rem) !important;
+}
+
+/* Hero: a refined framed film, never a full-screen crop. */
+@media (min-width: 901px) {
+  .v4-hero {
+    min-height: min(64svh, 39rem) !important;
+  }
+
+  .v4-hero-media {
+    width: min(43vw, 38rem) !important;
+    aspect-ratio: 16 / 9;
+    border-radius: 1.35rem 1.35rem 3.25rem 1.35rem !important;
+    border: 1px solid rgb(255 255 255 / 0.17) !important;
+    box-shadow: 0 2.1rem 5.8rem rgb(0 0 0 / 0.32) !important;
+  }
+
+  html[dir='rtl'] .v4-hero-media {
+    border-radius: 1.35rem 1.35rem 1.35rem 3.25rem !important;
+  }
+
+  .v4-hero-content {
+    padding-block: clamp(5.6rem, 7vw, 6.7rem) clamp(3.8rem, 5vw, 4.8rem) !important;
+  }
+}
+
+.v4-hero-media video,
+.v4-hero-poster,
+.v6-branch-video,
+.v6-branch-poster,
+.v5-film-media video,
+.v5-film-poster,
+.v4-manifesto-collage img,
+.v5-gallery img,
+.ar-feature-image img,
+.ar-program-image img,
+.ar-school-hero-media img,
+.ar-internal-hero-media img {
+  object-position: center center !important;
+  transform: none !important;
+}
+
+.v4-hero-media-grid {
+  opacity: 0.06 !important;
+}
+
+/* Quick access: denser, icon-led and symmetrical. */
+.v4-quick-access {
+  width: min(calc(100% - 2rem), 74rem) !important;
+  border: 1px solid var(--v9-line);
+  border-radius: 1rem !important;
+  box-shadow: var(--v9-shadow-soft) !important;
+}
+
+.v4-quick-access a {
+  min-height: 5.4rem !important;
+  padding: 0.85rem 0.95rem !important;
+}
+
+.v4-quick-access a > div {
+  padding-inline-start: 2.15rem !important;
+}
+
+.v4-quick-access a > div::before {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  border-radius: 0.45rem !important;
+  background: linear-gradient(145deg, rgb(70 198 232 / 0.13), rgb(8 118 138 / 0.05)) !important;
+}
+
+.v4-quick-access strong {
+  font-size: 0.76rem !important;
+}
+
+.v4-quick-access small {
+  font-size: 0.56rem !important;
+}
+
+/* Manifesto: smaller media with architectural framing. */
+.v4-manifesto {
+  max-width: 82rem;
+  margin-inline: auto;
+  padding-block: clamp(4.2rem, 6vw, 5.7rem) !important;
+}
+
+.v4-manifesto-collage {
+  min-height: clamp(20rem, 27vw, 25rem) !important;
+  max-width: 30rem !important;
+}
+
+.v4-collage-main,
+.v4-collage-float {
+  border-radius: 1.2rem !important;
+  box-shadow: var(--v9-shadow-soft) !important;
+}
+
+.v4-collage-main {
+  inset: 0 0 2.4rem 8% !important;
+}
+
+.v4-collage-float {
+  width: 27% !important;
+}
+
+.v4-collage-word {
+  inset-inline-end: -1rem !important;
+  inset-block-end: -1.5rem !important;
+  color: rgb(6 37 51 / 0.055) !important;
+  font-size: clamp(2.6rem, 5vw, 5.5rem) !important;
+  pointer-events: none;
+}
+
+/* Branch stage: media and text remain separate. */
+.v4-branch-stage {
+  padding-block: clamp(4rem, 5.5vw, 5.4rem) !important;
+  background:
+    radial-gradient(circle at 10% 5%, rgb(70 198 232 / 0.08), transparent 22rem),
+    var(--v9-paper);
+}
+
+.v4-branch-heading {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+
+.v4-branch-experience {
+  width: min(calc(100% - 2rem), 76rem) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.08fr) minmax(19rem, 0.92fr) !important;
+  gap: 1rem !important;
+  padding: 0.85rem !important;
+  border: 1px solid var(--v9-line) !important;
+  border-radius: 1.45rem !important;
+  background: #fff !important;
+  box-shadow: var(--v9-shadow) !important;
+}
+
+.v9-branch-media-column {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+}
+
+.v4-branch-visual,
+.v6-branch-visual {
+  min-height: clamp(20rem, 32vw, 28rem) !important;
+  border-radius: 1.05rem 1.05rem 2.6rem 1.05rem !important;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+
+html[dir='rtl'] .v4-branch-visual,
+html[dir='rtl'] .v6-branch-visual {
+  border-radius: 1.05rem 1.05rem 1.05rem 2.6rem !important;
+}
+
+.v6-branch-shade {
+  background: linear-gradient(180deg, transparent 68%, rgb(3 28 38 / 0.38)) !important;
+}
+
+.v4-branch-image-word {
+  display: none !important;
+}
+
+.v9-branch-meta {
+  min-height: 3.5rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--v9-line);
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, #fbfdfd, #f5faf9);
+}
+
+.v9-branch-meta-icon {
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--v9-ink);
+  color: var(--v9-cyan);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.v9-branch-meta strong {
+  display: block;
+  color: var(--v9-ink);
+  font-size: 0.77rem;
+}
+
+.v9-branch-meta small {
+  display: block;
+  margin-top: 0.1rem;
+  color: #70828a;
+  font-size: 0.57rem;
+}
+
+.v9-branch-meta b {
+  color: var(--v9-teal);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+}
+
+.v4-branch-list {
+  min-width: 0;
+  border-radius: 1rem !important;
+  overflow: hidden;
+  border: 1px solid var(--v9-line);
+}
+
+.v4-branch-link {
+  min-height: 0 !important;
+  padding: 0.9rem 1rem !important;
+}
+
+.v4-branch-link h3 {
+  font-size: clamp(1.05rem, 1.4vw, 1.38rem) !important;
+}
+
+.v4-branch-link p {
+  font-size: 0.62rem !important;
+  line-height: 1.58 !important;
+}
+
+.v4-branch-link strong {
+  font-size: 0.62rem !important;
+}
+
+/* Cinematic chapter: text never sits on top of people. */
+.v5-media {
+  padding-block: clamp(4.3rem, 6vw, 6rem) !important;
+}
+
+.v5-media-heading,
+.v5-feature-film,
+.v5-film-split,
+.v5-gallery-heading,
+.v5-gallery,
+.v5-media-note {
+  width: min(100%, 76rem) !important;
+  margin-inline: auto !important;
+}
+
+.v5-media-heading {
+  margin-bottom: 2.6rem !important;
+}
+
+.v5-media-heading h2 {
+  font-size: clamp(1.9rem, 3vw, 3.05rem) !important;
+}
+
+.v9-film-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.35fr) minmax(15rem, 0.65fr);
+  gap: 0.8rem;
+  align-items: stretch;
+  padding: 0.8rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 1.35rem;
+  background: rgb(255 255 255 / 0.045);
+  box-shadow: 0 1.6rem 4.8rem rgb(0 0 0 / 0.14);
+}
+
+.v9-film-card.v5-film-portrait {
+  grid-template-columns: 1fr;
+}
+
+.v5-film-media,
+.v6-film-media {
+  min-height: clamp(19rem, 29vw, 26rem) !important;
+  border-radius: 1rem 1rem 2.4rem 1rem !important;
+  overflow: hidden;
+}
+
+html[dir='rtl'] .v5-film-media,
+html[dir='rtl'] .v6-film-media {
+  border-radius: 1rem 1rem 1rem 2.4rem !important;
+}
+
+.v5-film-portrait .v5-film-media {
+  min-height: clamp(18rem, 27vw, 24rem) !important;
+}
+
+.v5-film-shade {
+  background: linear-gradient(180deg, transparent 72%, rgb(2 18 26 / 0.3)) !important;
+}
+
+.v5-film-copy {
+  display: none !important;
+}
+
+.v9-film-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1rem, 2.3vw, 2rem);
+  color: #fff;
+}
+
+.v9-film-copy > span {
+  color: var(--v9-cyan);
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.v9-film-copy h3 {
+  margin: 0.55rem 0 0.7rem;
+  color: #fff;
+  font-size: clamp(1.25rem, 2vw, 2rem);
+  line-height: 1.25;
+}
+
+.v9-film-copy p {
+  margin: 0;
+  color: rgb(255 255 255 / 0.72);
+  font-size: 0.7rem;
+  line-height: 1.8;
+}
+
+.v9-film-copy a {
+  width: fit-content;
+  margin-top: 1rem;
+  color: rgb(255 255 255 / 0.52);
+  font-size: 0.56rem;
+}
+
+.v5-film-credit {
+  display: none !important;
+}
+
+.v5-film-control {
+  width: 2.65rem !important;
+  height: 2.65rem !important;
+  inset: auto 0.8rem 0.8rem auto !important;
+  border-radius: 50% !important;
+  backdrop-filter: blur(14px);
+}
+
+html[dir='rtl'] .v5-film-control {
+  inset: auto auto 0.8rem 0.8rem !important;
+}
+
+.v5-film-split {
+  gap: clamp(1.5rem, 4vw, 3rem) !important;
+  margin-top: clamp(3rem, 5vw, 4.4rem) !important;
+}
+
+.v5-film-statement h3 {
+  font-size: clamp(1.55rem, 2.5vw, 2.45rem) !important;
+}
+
+.v5-gallery-heading h3 {
+  font-size: clamp(1.55rem, 2.5vw, 2.5rem) !important;
+}
+
+.v5-gallery {
+  gap: 0.85rem !important;
+}
+
+.v5-gallery figure {
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 1rem !important;
+  background: rgb(255 255 255 / 0.045);
+}
+
+.v5-still-media {
+  border-radius: 0.85rem !important;
+  overflow: hidden;
+}
+
+.v5-still-media > span {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(5 32 44 / 0.72);
+  font-size: 0.54rem;
+  backdrop-filter: blur(10px);
+}
+
+.v5-gallery figcaption {
+  padding: 0.75rem 0.8rem 0.85rem !important;
+}
+
+/* Internal pages: split copy and photo so headings do not cover faces. */
+@media (min-width: 901px) {
+  .ar-internal-hero,
+  .ar-school-hero {
+    width: min(calc(100% - 2.5rem), 82rem);
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(1.5rem, 3vw, 2.6rem);
+    align-items: center;
+    margin: 1rem auto 0;
+    padding: clamp(1rem, 2vw, 1.45rem);
+    border: 1px solid var(--v9-line);
+    border-radius: 1.5rem;
+    background:
+      radial-gradient(circle at 94% 16%, rgb(70 198 232 / 0.12), transparent 18rem),
+      linear-gradient(145deg, #071f2b, #0a3545);
+    box-shadow: var(--v9-shadow);
+  }
+
+  .ar-internal-hero-media,
+  .ar-school-hero-media {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 0 !important;
+    min-height: 22rem;
+    grid-column: 1;
+    grid-row: 1;
+    overflow: hidden;
+    border-radius: 1.05rem 1.05rem 2.8rem 1.05rem;
+  }
+
+  html[dir='rtl'] .ar-internal-hero-media,
+  html[dir='rtl'] .ar-school-hero-media {
+    border-radius: 1.05rem 1.05rem 1.05rem 2.8rem;
+  }
+
+  .ar-internal-hero-content,
+  .ar-school-hero-content,
+  .ar-school-hero-copy {
+    position: relative;
+    z-index: 2;
+    width: auto !important;
+    margin: 0 !important;
+    padding: clamp(1.6rem, 3vw, 2.6rem) !important;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .ar-internal-hero-shade,
+  .ar-school-hero-shade {
+    display: none !important;
+  }
+
+  .ar-internal-hero h1,
+  .ar-school-hero h1 {
+    max-width: 14ch;
+    margin: 0.55rem 0 0.8rem !important;
+    font-size: clamp(2rem, 3.1vw, 3.1rem) !important;
+    line-height: 1.14 !important;
+  }
+
+  .ar-internal-hero-content > p:last-child,
+  .ar-school-hero-content > p,
+  .ar-school-hero-copy > p {
+    max-width: 39rem;
+    font-size: 0.82rem !important;
+    line-height: 1.85 !important;
+  }
+
+  .ar-school-hero-badge {
+    inset: auto 1.5rem 1.5rem auto !important;
+    z-index: 4;
+    min-width: 6rem;
+    padding: 0.55rem 0.7rem !important;
+    border-radius: 0.65rem !important;
+    background: rgb(5 34 46 / 0.84) !important;
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* Contained, refined media throughout internal pages. */
+.ar-feature-image > div {
+  min-height: clamp(20rem, 35vw, 30rem) !important;
+  border-radius: 1rem 1rem 2.6rem 1rem !important;
+}
+
+html[dir='rtl'] .ar-feature-image > div {
+  border-radius: 1rem 1rem 1rem 2.6rem !important;
+}
+
+.ar-school-image,
+.ar-program-image,
+.ar-person-image {
+  border-radius: 0.9rem !important;
+  overflow: hidden;
+}
+
+.ar-school-card:hover .ar-school-image img,
+.ar-program-image:hover img,
+.ar-feature-image:hover img {
+  transform: none !important;
+}
+
+.ar-purpose-strip article,
+.ar-values-grid article,
+.ar-program-grid article,
+.v4-principle-grid article {
+  border-radius: 0.95rem !important;
+}
+
+/* Fine details inspired by award sites without copying their layouts. */
+.v4-home section,
+.ar-page section {
+  position: relative;
+}
+
+.v4-manifesto::before,
+.v4-branch-stage::before,
+.v4-principles::before,
+.ar-story-section::before,
+.ar-programmes-section::before,
+.ar-values-section::before {
+  content: '';
+  position: absolute;
+  width: 4.5rem;
+  height: 4.5rem;
+  pointer-events: none;
+  opacity: 0.18;
+  background-image:
+    radial-gradient(circle, var(--v9-teal) 1.2px, transparent 1.3px);
+  background-size: 0.75rem 0.75rem;
+}
+
+.v4-manifesto::before,
+.ar-story-section::before,
+.ar-values-section::before {
+  inset: 1.5rem auto auto 1.2rem;
+}
+
+.v4-branch-stage::before,
+.v4-principles::before,
+.ar-programmes-section::before {
+  inset: 1.5rem 1.2rem auto auto;
+}
+
+.v4-overline,
+.ar-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.v4-overline::after,
+.ar-kicker::after {
+  content: '';
+  width: 0.34rem;
+  height: 0.34rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0.28rem color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.v6-primary-action,
+.v4-hero-actions a,
+.header-cta,
+.ar-hero-actions a,
+.ar-final-cta > a,
+.form-actions button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.v6-primary-action::after,
+.v4-hero-actions a::after,
+.header-cta::after,
+.ar-hero-actions a::after,
+.ar-final-cta > a::after,
+.form-actions button::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -60% auto -60% -25%;
+  width: 18%;
+  background: rgb(255 255 255 / 0.26);
+  transform: rotate(16deg) translateX(-230%);
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.v6-primary-action:hover::after,
+.v4-hero-actions a:hover::after,
+.header-cta:hover::after,
+.ar-hero-actions a:hover::after,
+.ar-final-cta > a:hover::after,
+.form-actions button:hover::after {
+  transform: rotate(16deg) translateX(760%);
+}
+
+/* Motion: atmospheric, object-based, and intentionally bounded. */
+@media (prefers-reduced-motion: no-preference) {
+  .v4-hero-media-grid {
+    animation: v9-grid-drift 18s linear infinite;
+  }
+
+  .v4-hero-brand-shape,
+  .v5-media-mark {
+    animation: v9-orbit-breathe 8s ease-in-out infinite alternate !important;
+  }
+
+  .v9-branch-meta-icon,
+  .v4-principle-grid article::before {
+    animation: v9-icon-breathe 4.2s ease-in-out infinite alternate;
+  }
+
+  .v9-film-card,
+  .v4-branch-experience,
+  .v4-manifesto-collage,
+  .ar-feature-image > div,
+  .ar-school-card {
+    transition:
+      transform 440ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 440ms ease,
+      border-color 440ms ease;
+  }
+
+  .v9-film-card:hover,
+  .v4-branch-experience:hover,
+  .ar-school-card:hover {
+    transform: translateY(-0.28rem);
+  }
+
+  .v4-manifesto-collage:hover,
+  .ar-feature-image > div:hover {
+    transform: translateY(-0.18rem);
+  }
+
+  .v5-gallery figure {
+    transition:
+      transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 380ms ease;
+  }
+
+  .v5-gallery figure:hover {
+    transform: translateY(-0.3rem) rotate(0.25deg);
+    border-color: rgb(70 198 232 / 0.42);
+  }
+
+  .v5-still-media img,
+  .v4-branch-visual img,
+  .v4-branch-visual video {
+    transition: filter 500ms ease, opacity 500ms ease !important;
+  }
+
+  .v5-gallery figure:hover img {
+    filter: saturate(1.08) contrast(1.02);
+  }
+
+  [data-revealed='true'] .v9-film-copy h3,
+  [data-revealed='true'] .v9-film-copy p {
+    animation: v9-copy-arrive 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes v9-grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 5.5rem 5.5rem, 5.5rem 5.5rem; }
+}
+
+@keyframes v9-orbit-breathe {
+  from { transform: translate3d(0, -0.18rem, 0) rotate(-1deg) scale(0.99); }
+  to { transform: translate3d(0, 0.28rem, 0) rotate(1deg) scale(1.015); }
+}
+
+@keyframes v9-icon-breathe {
+  from { transform: translateY(-50%) scale(1); }
+  to { transform: translateY(calc(-50% - 0.12rem)) scale(1.045); }
+}
+
+@keyframes v9-copy-arrive {
+  from { opacity: 0; transform: translateY(0.8rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile: keep hierarchy compact and never hide faces under text. */
+@media (max-width: 900px) {
+  .utility-bar {
+    display: none !important;
+  }
+
+  .site-header.premium-header {
+    min-height: 4.25rem;
+    padding-inline: 0.85rem;
+  }
+
+  .brand-logo {
+    width: 2.45rem;
+  }
+
+  .brand-copy strong {
+    font-size: 0.94rem;
+  }
+
+  .brand-copy small {
+    font-size: 0.44rem;
+  }
+
+  .v4-hero {
+    min-height: auto !important;
+    padding-bottom: 1.1rem;
+  }
+
+  .v4-hero-content {
+    padding: 4.9rem 1rem 1.2rem !important;
+  }
+
+  .v4-hero h1 {
+    max-width: 14ch !important;
+    font-size: clamp(1.75rem, 8.8vw, 2.55rem) !important;
+  }
+
+  .v4-hero-media {
+    position: relative !important;
+    z-index: 1 !important;
+    inset: auto !important;
+    width: calc(100% - 2rem) !important;
+    aspect-ratio: 16 / 10;
+    margin: 0 auto 1rem;
+    border-radius: 1rem 1rem 2rem 1rem !important;
+    transform: none !important;
+  }
+
+  html[dir='rtl'] .v4-hero-media {
+    border-radius: 1rem 1rem 1rem 2rem !important;
+  }
+
+  .v4-hero-gradient,
+  .v4-hero-brand-shape,
+  .v4-scroll-cue {
+    display: none !important;
+  }
+
+  .v4-quick-access {
+    width: calc(100% - 1.25rem) !important;
+    margin-top: 0.5rem !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .v4-quick-access a {
+    min-height: 5rem !important;
+  }
+
+  .v4-manifesto {
+    padding-inline: 1rem !important;
+  }
+
+  .v4-manifesto-collage {
+    min-height: 18rem !important;
+    width: min(100%, 25rem);
+    margin-inline: auto;
+  }
+
+  .v4-branch-experience {
+    width: calc(100% - 1.25rem) !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .v4-branch-visual,
+  .v6-branch-visual {
+    min-height: 16.5rem !important;
+  }
+
+  .v4-branch-list {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .v5-media-heading,
+  .v5-feature-film,
+  .v5-film-split,
+  .v5-gallery-heading,
+  .v5-gallery,
+  .v5-media-note {
+    width: 100% !important;
+  }
+
+  .v9-film-card,
+  .v9-film-card.v5-film-portrait {
+    grid-template-columns: 1fr !important;
+  }
+
+  .v5-film-media,
+  .v6-film-media,
+  .v5-film-portrait .v5-film-media {
+    min-height: 15.5rem !important;
+  }
+
+  .v9-film-copy {
+    padding: 0.8rem 0.35rem 0.45rem;
+  }
+
+  .v9-film-copy h3 {
+    font-size: 1.2rem;
+  }
+
+  .v5-gallery {
+    display: flex !important;
+    gap: 0.75rem !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.75rem;
+  }
+
+  .v5-gallery figure {
+    flex: 0 0 min(78vw, 19rem);
+    scroll-snap-align: center;
+  }
+
+  .ar-internal-hero,
+  .ar-school-hero {
+    width: calc(100% - 1rem);
+    margin: 0.5rem auto 0;
+    display: flex !important;
+    flex-direction: column;
+    padding: 0.65rem 0.65rem 1rem;
+    border-radius: 1.15rem;
+    background: linear-gradient(145deg, #071f2b, #0a3545);
+  }
+
+  .ar-internal-hero-media,
+  .ar-school-hero-media {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 0 !important;
+    width: 100%;
+    min-height: 13rem;
+    order: 2;
+    border-radius: 0.85rem 0.85rem 1.8rem 0.85rem;
+    overflow: hidden;
+  }
+
+  html[dir='rtl'] .ar-internal-hero-media,
+  html[dir='rtl'] .ar-school-hero-media {
+    border-radius: 0.85rem 0.85rem 0.85rem 1.8rem;
+  }
+
+  .ar-internal-hero-content,
+  .ar-school-hero-content,
+  .ar-school-hero-copy {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    order: 1;
+    padding: 1.15rem 0.55rem !important;
+  }
+
+  .ar-internal-hero-shade,
+  .ar-school-hero-shade {
+    display: none !important;
+  }
+
+  .ar-internal-hero h1,
+  .ar-school-hero h1 {
+    margin: 0.45rem 0 0.65rem !important;
+    font-size: clamp(1.7rem, 8.2vw, 2.35rem) !important;
+    line-height: 1.18 !important;
+  }
+
+  .ar-school-hero-badge {
+    display: none !important;
+  }
+
+  .ar-feature-image > div {
+    min-height: 17rem !important;
+  }
+
+  .ar-section-copy h2,
+  .ar-section-heading h2,
+  .ar-story-heading h2,
+  .ar-school-split-copy h2,
+  .ar-method-section h2,
+  .ar-faq-section h2,
+  .ar-contact-context h2,
+  .ar-final-cta h2 {
+    font-size: clamp(1.6rem, 8vw, 2.25rem) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-hero-media-grid,
+  .v4-hero-brand-shape,
+  .v5-media-mark,
+  .v9-branch-meta-icon,
+  .v4-principle-grid article::before,
+  .v9-film-card,
+  .v4-branch-experience,
+  .v4-manifesto-collage,
+  .v5-gallery figure,
+  .ar-feature-image > div,
+  .ar-school-card {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
