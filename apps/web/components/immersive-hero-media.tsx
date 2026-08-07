@@ -6,11 +6,6 @@ import type { EditorialVideo } from '../lib/flagship';
 import type { PublicLocale } from '../lib/i18n';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
-const HERO_VIDEO_SRC =
-  'https://videos.pexels.com/video-files/8419413/8419413-hd_1920_1080_30fps.mp4';
-const HERO_VIDEO_CREDIT = 'RDNE Stock project / Pexels';
-const HERO_VIDEO_CREDIT_URL =
-  'https://www.pexels.com/video/a-teacher-in-discussion-with-his-students-8419413/';
 
 const controlCopy = {
   ar: {
@@ -112,7 +107,7 @@ export function ImmersiveHeroMedia({
         onPause={() => setPlaying(false)}
         aria-hidden="true"
       >
-        <source src={HERO_VIDEO_SRC} type="video/mp4" />
+        <source src={video.src} type="video/mp4" />
       </video>
       <div className="v4-hero-media-wash" aria-hidden="true" />
       <div className="v4-hero-media-grid" aria-hidden="true" />
@@ -127,11 +122,11 @@ export function ImmersiveHeroMedia({
       </button>
       <a
         className="v4-hero-credit"
-        href={HERO_VIDEO_CREDIT_URL}
+        href={video.creditUrl}
         target="_blank"
         rel="noreferrer"
       >
-        {copy.credit}: {HERO_VIDEO_CREDIT}
+        {copy.credit}: {video.credit}
       </a>
     </div>
   );
