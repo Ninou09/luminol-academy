@@ -17,9 +17,9 @@ const trainingFilm: EditorialVideo = {
   id: 'professional-momentum',
   src: 'https://videos.pexels.com/video-files/5762301/5762301-uhd_3840_2160_24fps.mp4',
   eyebrow: 'التطور المهني',
-  title: 'أفضل تدريب هو الذي يغيّر ما تفعله بعد أن تغادر القاعة.',
+  title: 'التقدّم المهني يبدأ حين تتحول الخبرة إلى حوار واضح.',
   description:
-    'مشهد تحريري لورشة تعلم للكبار يعبّر عن المشاركة، تبادل الخبرة وتحويل الأفكار إلى ممارسة.',
+    'مشهد تحريري لحوار مهني يرمز إلى مشاركة الخبرة، التفكير بصوت مسموع وتحويل الأفكار إلى قرارات أكثر وضوحًا.',
   credit: 'RDNE Stock project / Pexels',
   creditUrl: 'https://www.pexels.com/video/man-being-interviewed-5762301/',
   poster: editorialImages.training,
