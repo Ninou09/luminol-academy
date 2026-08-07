@@ -1,2 +1,2 @@
 V11 redeploy trigger after Vercel quota reset. Authentic academy media is included in this branch.
-Retry after the previous build-rate window at 2026-08-07T23:38Z.
+Final current-head preview refresh after dependency-audit and validation cleanup at 2026-08-07T23:54Z.
