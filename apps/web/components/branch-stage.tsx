@@ -3,7 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { editorialImages } from '../lib/flagship';
+import { localePath, type PublicLocale } from '../lib/i18n';
+import { localizedSchools } from '../lib/localized-schools';
+import { premiumImages, premiumVideos } from '../lib/media-v6';
 import { schools, type SchoolSlug } from '../lib/schools';
 
 const branchOrder: readonly SchoolSlug[] = [
@@ -13,69 +15,112 @@ const branchOrder: readonly SchoolSlug[] = [
 ];
 
 const branchImage = {
-  psychology: editorialImages.psychology,
-  languages: editorialImages.languages,
-  training: editorialImages.training,
+  psychology: premiumImages.psychology,
+  languages: premiumImages.languages,
+  training: premiumImages.training,
 } as const;
 
-const branchCta = {
-  psychology: 'اكتشف برامج علم النفس',
-  languages: 'اكتشف برامج اللغات',
-  training: 'اكتشف برامج التكوين المهني',
+const branchVideo = {
+  psychology: premiumVideos.psychology,
+  languages: premiumVideos.languages,
+  training: premiumVideos.training,
 } as const;
 
-export function BranchStage() {
+const stageCopy = {
+  ar: {
+    overline: 'ثلاثة عوالم داخل أكاديمية واحدة',
+    title: 'اختر المساحة التي تحتاجها الآن.',
+    intro:
+      'لكل قسم إيقاعه وطريقته وشخصيته البصرية. ما يجمعها هو نفس المبدأ: معرفة جادة تتحول إلى قدرة يمكن استخدامها خارج القاعة.',
+    nav: 'أقسام أكاديمية لومينول',
+    cta: {
+      psychology: 'اكتشف برامج علم النفس',
+      languages: 'اكتشف برامج اللغات',
+      training: 'اكتشف برامج التكوين المهني',
+    },
+  },
+  fr: {
+    overline: 'Trois univers, une seule académie',
+    title: 'Choisissez l’espace dont vous avez besoin maintenant.',
+    intro:
+      'Chaque pôle possède son rythme, sa méthode et sa personnalité visuelle. Tous partagent la même idée: transformer un apprentissage sérieux en capacité utile hors de la salle.',
+    nav: 'Pôles de Luminol Academy',
+    cta: {
+      psychology: 'Découvrir la psychologie',
+      languages: 'Découvrir les langues',
+      training: 'Découvrir la formation',
+    },
+  },
+  en: {
+    overline: 'Three worlds inside one academy',
+    title: 'Choose the space you need right now.',
+    intro:
+      'Each school has its own rhythm, method and visual personality. They share one principle: serious learning should become capability you can use beyond the classroom.',
+    nav: 'Luminol Academy schools',
+    cta: {
+      psychology: 'Explore Psychology',
+      languages: 'Explore Languages',
+      training: 'Explore Professional Training',
+    },
+  },
+} as const;
+
+export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
   const [active, setActive] = useState<SchoolSlug>('psychology');
+  const copy = stageCopy[locale];
+  const activeVideo = branchVideo[active];
+  const activeImage = branchImage[active];
 
   return (
     <section
       id="schools"
-      className={`v4-branch-stage v4-branch-stage-${active}`}
+      className={`v4-branch-stage v4-branch-stage-${active} v6-branch-stage`}
       aria-labelledby="v4-schools-title"
     >
       <header className="v4-branch-heading" data-reveal="right">
         <div>
-          <p className="v4-overline">ثلاثة عوالم داخل أكاديمية واحدة</p>
-          <h2 id="v4-schools-title">اختر المساحة التي تحتاجها الآن.</h2>
+          <p className="v4-overline">{copy.overline}</p>
+          <h2 id="v4-schools-title">{copy.title}</h2>
         </div>
-        <p>
-          لكل قسم إيقاعه وطريقته وشخصيته البصرية. ما يجمعها هو نفس المبدأ: معرفة
-          جادة تتحول إلى قدرة يمكن استخدامها خارج القاعة.
-        </p>
+        <p>{copy.intro}</p>
       </header>
 
       <div className="v4-branch-experience">
-        <div className="v4-branch-visual" aria-live="polite">
-          {branchOrder.map((slug) => {
-            const image = branchImage[slug];
-            const school = schools[slug];
-
-            return (
-              <div
-                className="v4-branch-image"
-                data-active={active === slug ? 'true' : 'false'}
-                key={slug}
-              >
-                <Image
-                  src={image.src}
-                  alt={active === slug ? image.alt : ''}
-                  fill
-                  sizes="(max-width: 900px) 100vw, 56vw"
-                />
-                <span className="v4-branch-image-word" aria-hidden="true">
-                  {school.visualWords[1]}
-                </span>
-                <a
-                  className="v4-branch-credit"
-                  href={image.creditUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {image.credit}
-                </a>
-              </div>
-            );
-          })}
+        <div className="v4-branch-visual v6-branch-visual" aria-live="polite">
+          <Image
+            className="v6-branch-poster"
+            src={activeImage.src}
+            alt={activeImage.alt}
+            fill
+            sizes="(max-width: 900px) 100vw, 56vw"
+          />
+          <video
+            key={activeVideo.id}
+            className="v6-branch-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={activeImage.src}
+            aria-hidden="true"
+          >
+            <source src={activeVideo.src} type="video/mp4" />
+          </video>
+          <div className="v6-branch-shade" aria-hidden="true" />
+          <span className="v4-branch-image-word" aria-hidden="true">
+            {locale === 'ar'
+              ? schools[active].visualWords[1]
+              : localizedSchools[locale][active].visualWords[1]}
+          </span>
+          <a
+            className="v4-branch-credit"
+            href={activeVideo.creditUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {activeVideo.credit}
+          </a>
           <div className="v4-branch-mark" aria-hidden="true">
             <Image
               src="/brand/luminol-mark.svg"
@@ -86,16 +131,17 @@ export function BranchStage() {
           </div>
         </div>
 
-        <nav className="v4-branch-list" aria-label="أقسام أكاديمية لومينول">
+        <nav className="v4-branch-list" aria-label={copy.nav}>
           {branchOrder.map((slug, index) => {
-            const school = schools[slug];
+            const school =
+              locale === 'ar' ? schools[slug] : localizedSchools[locale][slug];
             const isActive = active === slug;
 
             return (
               <Link
                 className="v4-branch-link"
                 data-active={isActive ? 'true' : 'false'}
-                href={`/schools/${school.slug}`}
+                href={localePath(locale, `/schools/${slug}`)}
                 key={slug}
                 onMouseEnter={() => setActive(slug)}
                 onFocus={() => setActive(slug)}
@@ -106,7 +152,7 @@ export function BranchStage() {
                   <h3>{school.name}</h3>
                   <p>{school.introduction}</p>
                   <strong>
-                    {branchCta[slug]} <b aria-hidden="true">←</b>
+                    {copy.cta[slug]} <b aria-hidden="true">→</b>
                   </strong>
                 </div>
               </Link>
