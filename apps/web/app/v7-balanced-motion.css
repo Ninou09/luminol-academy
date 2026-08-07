@@ -18,8 +18,7 @@
 }
 
 .v4-hero-content {
-  padding: clamp(6.2rem, 9vw, 7.6rem) var(--v4-gutter)
-    clamp(5.8rem, 8vw, 7rem);
+  padding: clamp(6.2rem, 9vw, 7.6rem) var(--v4-gutter) clamp(5.8rem, 8vw, 7rem);
 }
 
 .v4-hero-content > * {
@@ -413,7 +412,11 @@
   inset-block-start: 4.5rem;
   opacity: 0.22;
   pointer-events: none;
-  background-image: radial-gradient(circle, var(--v6-teal) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(
+    circle,
+    var(--v6-teal) 1.5px,
+    transparent 1.5px
+  );
   background-size: 0.9rem 0.9rem;
   animation: v7-dot-drift 8s ease-in-out infinite alternate;
 }
@@ -455,7 +458,12 @@
   height: 180%;
   inset-block-start: -40%;
   inset-inline-start: -55%;
-  background: linear-gradient(90deg, transparent, rgb(69 199 232 / 0.09), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(69 199 232 / 0.09),
+    transparent
+  );
   transform: rotate(16deg);
   transition: inset-inline-start 680ms var(--v7-ease);
   pointer-events: none;
