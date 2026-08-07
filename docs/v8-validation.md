@@ -1,4 +1,4 @@
-# V8 / V9 validation
+# V8 / V9 / V10 validation
 
 The institutional visual pass has been formatted with the repository formatter and is ready for the full CI and preview validation gates.
 
@@ -6,4 +6,6 @@ V8 converted the desktop hero from a full-bleed crop into a balanced split compo
 
 V9 further reduces header and heading scale, separates copy from people in branch and cinematic media, frames internal-page photography instead of using full-screen image backgrounds, adds refined icon and micro-motion detail, and refreshes the education, psychology and professional media set against current award-winning education-site patterns.
 
-The final visual QA correction keeps each school’s curated still photograph visible by default and starts its motion preview only after intentional desktop hover, while internal school navigation and the programme promise are compact light editorial surfaces rather than a large dark band.
+The final V9 visual QA correction keeps each school’s curated still photograph visible by default and starts its motion preview only after intentional desktop hover, while internal school navigation and the programme promise are compact light editorial surfaces rather than a large dark band.
+
+V10 increases desktop reading text slightly, tightens oversized vertical gaps, strengthens navy/teal/cyan/gold contrast, makes primary and secondary calls to action more tactile, aligns major section widths and card grids, adds subtle orbit/grid geometry to otherwise empty negative space, and keeps all decorative movement bounded and reduced-motion aware.
