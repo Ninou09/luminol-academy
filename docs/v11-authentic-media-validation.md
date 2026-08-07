@@ -3,6 +3,7 @@
 This commit triggers a complete repository validation after the authentic Luminol Academy photography pass and binary asset repair.
 
 Validation target:
+
 - verified WebP academy media for the classroom, language space, training workshop and psychology activity imagery
 - authentic academy imagery leading the homepage and school pathways before optional editorial motion
 - conservative image crops that preserve people, classroom context and academy details
