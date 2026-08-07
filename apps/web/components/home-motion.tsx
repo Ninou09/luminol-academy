@@ -126,7 +126,8 @@ export function HomeMotion() {
           `${((event.clientY / window.innerHeight - 0.5) * 10).toFixed(2)}px`,
         );
         if (cursor) cursor.dataset.visible = 'true';
-        if (!cursorFrame) cursorFrame = window.requestAnimationFrame(renderCursor);
+        if (!cursorFrame)
+          cursorFrame = window.requestAnimationFrame(renderCursor);
       };
 
       const onPointerOver = (event: PointerEvent) => {
@@ -144,7 +145,9 @@ export function HomeMotion() {
       };
 
       window.addEventListener('pointermove', onPointerMove, { passive: true });
-      document.addEventListener('pointerover', onPointerOver, { passive: true });
+      document.addEventListener('pointerover', onPointerOver, {
+        passive: true,
+      });
       document.addEventListener('mouseleave', onPointerLeaveWindow);
 
       cleanups.push(() => {
@@ -202,7 +205,9 @@ export function HomeMotion() {
           target.style.setProperty('--magnetic-y', '0px');
         };
 
-        target.addEventListener('pointermove', onMagneticMove, { passive: true });
+        target.addEventListener('pointermove', onMagneticMove, {
+          passive: true,
+        });
         target.addEventListener('pointerleave', onMagneticLeave);
         cleanups.push(() => {
           target.removeEventListener('pointermove', onMagneticMove);
@@ -218,7 +223,9 @@ export function HomeMotion() {
       window.removeEventListener('resize', requestScrollUpdate);
       if (scrollFrame) window.cancelAnimationFrame(scrollFrame);
       if (cursorFrame) window.cancelAnimationFrame(cursorFrame);
-      parallaxLayers.forEach((layer) => layer.style.removeProperty('--parallax-y'));
+      parallaxLayers.forEach((layer) =>
+        layer.style.removeProperty('--parallax-y'),
+      );
       depthCards.forEach((card) => {
         card.style.removeProperty('--motion-tilt-x');
         card.style.removeProperty('--motion-tilt-y');

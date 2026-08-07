@@ -108,8 +108,14 @@
 }
 
 @keyframes v4-overline-in {
-  from { opacity: 0; transform: translate3d(1.2rem, 0, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(1.2rem, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes v4-hero-line-in {
@@ -126,18 +132,36 @@
 }
 
 @keyframes v4-copy-in {
-  from { opacity: 0; transform: translate3d(0, 1rem, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes v4-branch-photo-arrive {
-  from { transform: scale(1.07); filter: saturate(0.72) contrast(1.04); }
-  to { transform: scale(1); filter: saturate(1) contrast(1); }
+  from {
+    transform: scale(1.07);
+    filter: saturate(0.72) contrast(1.04);
+  }
+  to {
+    transform: scale(1);
+    filter: saturate(1) contrast(1);
+  }
 }
 
 @keyframes v4-collage-line {
-  from { transform: scaleY(0.3); opacity: 0.35; }
-  to { transform: scaleY(1); opacity: 0.9; }
+  from {
+    transform: scaleY(0.3);
+    opacity: 0.35;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 0.9;
+  }
 }
 
 @media (hover: none), (pointer: coarse), (max-width: 62rem) {

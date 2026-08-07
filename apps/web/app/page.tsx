@@ -87,7 +87,13 @@ export default async function Page() {
         <ImmersiveHeroMedia video={heroVideo} />
         <div className="v4-hero-gradient" aria-hidden="true" />
         <div className="v4-hero-brand-shape" aria-hidden="true">
-          <Image src="/brand/luminol-mark.svg" alt="" width={520} height={570} priority />
+          <Image
+            src="/brand/luminol-mark.svg"
+            alt=""
+            width={520}
+            height={570}
+            priority
+          />
         </div>
 
         <div className="v4-hero-content" data-reveal="right">
@@ -144,7 +150,9 @@ export default async function Page() {
       </nav>
 
       <section id="v4-start" className="v4-manifesto">
-        <div className="v4-manifesto-number" aria-hidden="true">01</div>
+        <div className="v4-manifesto-number" aria-hidden="true">
+          01
+        </div>
         <div className="v4-manifesto-copy" data-reveal="right">
           <p className="v4-overline">الفكرة التي تجمع كل شيء</p>
           <h2>لا نبني ثلاث مدارس منفصلة. نبني إنسانًا أكثر قدرة.</h2>
@@ -177,7 +185,9 @@ export default async function Page() {
             />
             <figcaption>{manifestoSecondary.caption}</figcaption>
           </figure>
-          <div className="v4-collage-word" aria-hidden="true">LUMINOL</div>
+          <div className="v4-collage-word" aria-hidden="true">
+            LUMINOL
+          </div>
         </div>
       </section>
 
@@ -188,7 +198,9 @@ export default async function Page() {
       <section className="v4-principles" aria-labelledby="v4-principles-title">
         <header data-reveal="right">
           <p className="v4-overline">ما الذي يجب أن تشعر به التجربة؟</p>
-          <h2 id="v4-principles-title">واضحة في الفكرة. إنسانية في الأسلوب. قوية في التطبيق.</h2>
+          <h2 id="v4-principles-title">
+            واضحة في الفكرة. إنسانية في الأسلوب. قوية في التطبيق.
+          </h2>
         </header>
         <div className="v4-principle-grid">
           {credibilityPrinciples.map((principle, index) => (
@@ -289,7 +301,12 @@ export default async function Page() {
 
       <section className="v4-final-cta">
         <div className="v4-final-mark" aria-hidden="true">
-          <Image src="/brand/luminol-mark.svg" alt="" width={420} height={460} />
+          <Image
+            src="/brand/luminol-mark.svg"
+            alt=""
+            width={420}
+            height={460}
+          />
         </div>
         <div data-reveal="right">
           <p className="v4-overline">ابدأ من هدفك، لا من اسم الدورة</p>

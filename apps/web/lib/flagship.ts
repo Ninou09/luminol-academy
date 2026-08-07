@@ -81,8 +81,7 @@ export const editorialVideos = [
     description:
       'لقطة تحريرية لحوار داعم تعبّر عن الهدوء، التركيز والاحترام الذي نريد أن تنقله تجربة قسم علم النفس.',
     credit: 'Alex Green / Pexels',
-    creditUrl:
-      'https://www.pexels.com/video/therapist-consulting-5697627/',
+    creditUrl: 'https://www.pexels.com/video/therapist-consulting-5697627/',
     poster: editorialImages.psychology,
   },
 ] satisfies readonly EditorialVideo[];

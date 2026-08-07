@@ -12,7 +12,9 @@ const navigation = [
 
 function Brand({ footer = false }: { footer?: boolean }) {
   return (
-    <span className={footer ? 'brand-lockup brand-lockup-footer' : 'brand-lockup'}>
+    <span
+      className={footer ? 'brand-lockup brand-lockup-footer' : 'brand-lockup'}
+    >
       <Image
         className="brand-logo"
         src="/brand/luminol-mark.svg"
@@ -42,7 +44,11 @@ export function SiteHeader() {
       </div>
 
       <header className="site-header premium-header">
-        <Link className="brand-link" href="/" aria-label="الصفحة الرئيسية لأكاديمية لومينول">
+        <Link
+          className="brand-link"
+          href="/"
+          aria-label="الصفحة الرئيسية لأكاديمية لومينول"
+        >
           <Brand />
         </Link>
 
@@ -130,7 +136,8 @@ export function SiteFooter() {
       <div className="footer-bottom">
         <p>© {new Date().getFullYear()} أكاديمية لومينول</p>
         <p className="footer-note">
-          محتوى علم النفس تعليمي وداعم ولا يعوّض خدمات الطوارئ أو الرعاية الطبية.
+          محتوى علم النفس تعليمي وداعم ولا يعوّض خدمات الطوارئ أو الرعاية
+          الطبية.
         </p>
         <div className="footer-bottom-links">
           <Link href="/privacy">الخصوصية</Link>

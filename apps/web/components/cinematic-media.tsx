@@ -104,7 +104,11 @@ function EditorialFilm({
           src={video.poster.src}
           alt={video.poster.alt}
           fill
-          sizes={variant === 'wide' ? '(max-width: 900px) 100vw, 82vw' : '(max-width: 900px) 100vw, 38vw'}
+          sizes={
+            variant === 'wide'
+              ? '(max-width: 900px) 100vw, 82vw'
+              : '(max-width: 900px) 100vw, 38vw'
+          }
         />
         {mounted ? (
           <video
@@ -125,7 +129,11 @@ function EditorialFilm({
           type="button"
           className="v5-film-control"
           onClick={toggle}
-          aria-label={playing ? `إيقاف فيديو ${video.title}` : `تشغيل فيديو ${video.title}`}
+          aria-label={
+            playing
+              ? `إيقاف فيديو ${video.title}`
+              : `تشغيل فيديو ${video.title}`
+          }
         >
           <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span>
         </button>
@@ -134,7 +142,12 @@ function EditorialFilm({
           <h3>{video.title}</h3>
           <span>{video.description}</span>
         </div>
-        <a className="v5-film-credit" href={video.creditUrl} target="_blank" rel="noreferrer">
+        <a
+          className="v5-film-credit"
+          href={video.creditUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
           فيديو تحريري: {video.credit}
         </a>
       </div>
@@ -144,7 +157,10 @@ function EditorialFilm({
 
 export function CinematicMediaWall() {
   return (
-    <section className="cinematic-media-section v5-media" aria-labelledby="cinematic-media-title">
+    <section
+      className="cinematic-media-section v5-media"
+      aria-labelledby="cinematic-media-title"
+    >
       <div className="v5-media-mark" aria-hidden="true">
         <Image src="/brand/luminol-mark.svg" alt="" width={320} height={350} />
       </div>
@@ -152,17 +168,21 @@ export function CinematicMediaWall() {
       <header className="v5-media-heading" data-reveal="right">
         <div>
           <p className="v4-overline">الحركة جزء من القصة</p>
-          <h2 id="cinematic-media-title">الموقع يجب أن يجعلك تشعر بالتجربة قبل أن تدخل القاعة.</h2>
+          <h2 id="cinematic-media-title">
+            الموقع يجب أن يجعلك تشعر بالتجربة قبل أن تدخل القاعة.
+          </h2>
         </div>
         <p>
-          لذلك لا نستخدم الفيديو كزينة. كل مشهد هنا يشرح فكرة: الإصغاء، المشاركة،
-          الحوار أو التطبيق. المواد مؤقتة وتحريرية إلى أن نستبدلها بلقطات لومينول
-          الأصلية والمصرّح بنشرها.
+          لذلك لا نستخدم الفيديو كزينة. كل مشهد هنا يشرح فكرة: الإصغاء،
+          المشاركة، الحوار أو التطبيق. المواد مؤقتة وتحريرية إلى أن نستبدلها
+          بلقطات لومينول الأصلية والمصرّح بنشرها.
         </p>
       </header>
 
       <div className="v5-feature-film">
-        <span className="v5-feature-index" aria-hidden="true">02 / HUMAN</span>
+        <span className="v5-feature-index" aria-hidden="true">
+          02 / HUMAN
+        </span>
         <EditorialFilm video={supportFilm} variant="wide" />
       </div>
 
@@ -194,7 +214,11 @@ export function CinematicMediaWall() {
 
       <div className="v5-gallery" aria-label="مجموعة صور تحريرية توضيحية">
         {editorialGallery.map((image, index) => (
-          <figure className={`v5-still v5-still-${index + 1}`} data-reveal key={image.src}>
+          <figure
+            className={`v5-still v5-still-${index + 1}`}
+            data-reveal
+            key={image.src}
+          >
             <div className="v5-still-media">
               <Image
                 src={image.src}
@@ -215,8 +239,8 @@ export function CinematicMediaWall() {
       </div>
 
       <p className="v5-media-note">
-        جميع الصور والفيديوهات أعلاه مواد تحريرية توضيحية مرخّصة من Pexels، وليست
-        توثيقًا لطلاب أو حصص أكاديمية لومينول.
+        جميع الصور والفيديوهات أعلاه مواد تحريرية توضيحية مرخّصة من Pexels،
+        وليست توثيقًا لطلاب أو حصص أكاديمية لومينول.
       </p>
     </section>
   );

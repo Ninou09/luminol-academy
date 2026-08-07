@@ -35,7 +35,9 @@ test('all three schools expose a specific Arabic conversion path and FAQ', async
   }
 });
 
-test('contact retains the working Arabic enquiry experience', async ({ page }) => {
+test('contact retains the working Arabic enquiry experience', async ({
+  page,
+}) => {
   await page.goto('/contact');
   await expect(
     page.getByRole('heading', {
@@ -50,7 +52,9 @@ test('contact retains the working Arabic enquiry experience', async ({ page }) =
   ).toBeVisible();
 });
 
-test('public metadata and error behavior are available', async ({ request }) => {
+test('public metadata and error behavior are available', async ({
+  request,
+}) => {
   const robots = await request.get('/robots.txt');
   expect(robots.ok()).toBeTruthy();
   expect(await robots.text()).toContain('Sitemap:');

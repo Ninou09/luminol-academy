@@ -39,8 +39,8 @@ export function BranchStage() {
           <h2 id="v4-schools-title">اختر المساحة التي تحتاجها الآن.</h2>
         </div>
         <p>
-          لكل قسم إيقاعه وطريقته وشخصيته البصرية. ما يجمعها هو نفس المبدأ:
-          معرفة جادة تتحول إلى قدرة يمكن استخدامها خارج القاعة.
+          لكل قسم إيقاعه وطريقته وشخصيته البصرية. ما يجمعها هو نفس المبدأ: معرفة
+          جادة تتحول إلى قدرة يمكن استخدامها خارج القاعة.
         </p>
       </header>
 
@@ -77,7 +77,12 @@ export function BranchStage() {
             );
           })}
           <div className="v4-branch-mark" aria-hidden="true">
-            <Image src="/brand/luminol-mark.svg" alt="" width={280} height={310} />
+            <Image
+              src="/brand/luminol-mark.svg"
+              alt=""
+              width={280}
+              height={310}
+            />
           </div>
         </div>
 

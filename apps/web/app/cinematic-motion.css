@@ -177,8 +177,7 @@
 .ar-trust-grid article,
 .ar-journey-grid li {
   position: relative;
-  transform: perspective(1000px)
-    rotateX(var(--motion-tilt-x, 0deg))
+  transform: perspective(1000px) rotateX(var(--motion-tilt-x, 0deg))
     rotateY(var(--motion-tilt-y, 0deg))
     translate3d(0, var(--motion-lift, 0px), 0);
   transform-style: preserve-3d;
@@ -296,7 +295,12 @@
   height: 180%;
   inset-block-start: -40%;
   inset-inline-start: -55%;
-  background: linear-gradient(90deg, transparent, rgb(86 192 235 / 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(86 192 235 / 0.1),
+    transparent
+  );
   transform: rotate(14deg);
   animation: luminol-sheen 11s ease-in-out infinite;
   pointer-events: none;
@@ -361,33 +365,70 @@
 }
 
 @keyframes luminol-kicker-in {
-  from { opacity: 0; transform: translate3d(1rem, 0, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(1rem, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes luminol-copy-in {
-  from { opacity: 0; transform: translate3d(0, 1rem, 0); }
-  to { opacity: 1; transform: translate3d(0, 0, 0); }
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes luminol-ambient-drift {
-  from { transform: translate3d(0, 0, 0) scale(0.94); opacity: 0.62; }
-  to { transform: translate3d(-3rem, 2rem, 0) scale(1.08); opacity: 1; }
+  from {
+    transform: translate3d(0, 0, 0) scale(0.94);
+    opacity: 0.62;
+  }
+  to {
+    transform: translate3d(-3rem, 2rem, 0) scale(1.08);
+    opacity: 1;
+  }
 }
 
 @keyframes luminol-orbit-breathe {
-  0%, 100% { transform: scale(0.92) rotate(0deg); opacity: 0.45; }
-  50% { transform: scale(1.05) rotate(-7deg); opacity: 0.8; }
+  0%,
+  100% {
+    transform: scale(0.92) rotate(0deg);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.05) rotate(-7deg);
+    opacity: 0.8;
+  }
 }
 
 @keyframes luminol-sheen {
-  0%, 28% { transform: translateX(0) rotate(14deg); opacity: 0; }
-  42% { opacity: 1; }
-  66%, 100% { transform: translateX(-340%) rotate(14deg); opacity: 0; }
+  0%,
+  28% {
+    transform: translateX(0) rotate(14deg);
+    opacity: 0;
+  }
+  42% {
+    opacity: 1;
+  }
+  66%,
+  100% {
+    transform: translateX(-340%) rotate(14deg);
+    opacity: 0;
+  }
 }
 
 @media (hover: none), (pointer: coarse), (max-width: 62rem) {
-  .motion-cursor { display: none; }
+  .motion-cursor {
+    display: none;
+  }
 
   .ar-quick-access a,
   .ar-school-card,
@@ -408,7 +449,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .motion-cursor { display: none !important; }
+  .motion-cursor {
+    display: none !important;
+  }
 
   .site-header.premium-header::after,
   .ar-home-hero::before,

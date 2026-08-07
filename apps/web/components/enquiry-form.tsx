@@ -151,7 +151,9 @@ export function EnquiryForm() {
           size="lg"
           type="submit"
         >
-          {submission.status === 'submitting' ? 'جارٍ الإرسال…' : 'أرسل استفساري'}
+          {submission.status === 'submitting'
+            ? 'جارٍ الإرسال…'
+            : 'أرسل استفساري'}
         </Button>
         <p
           className={`form-status form-status-${submission.status}`}

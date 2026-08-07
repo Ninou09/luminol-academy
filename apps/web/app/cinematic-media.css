@@ -4,8 +4,16 @@
   overflow: hidden;
   padding: clamp(7rem, 11vw, 12rem) var(--v4-gutter, var(--ar-gutter));
   background:
-    radial-gradient(circle at 10% 14%, rgb(21 155 208 / 0.18), transparent 28rem),
-    radial-gradient(circle at 88% 76%, rgb(199 154 59 / 0.13), transparent 30rem),
+    radial-gradient(
+      circle at 10% 14%,
+      rgb(21 155 208 / 0.18),
+      transparent 28rem
+    ),
+    radial-gradient(
+      circle at 88% 76%,
+      rgb(199 154 59 / 0.13),
+      transparent 30rem
+    ),
     #061923;
   color: #fff;
 }
@@ -120,8 +128,7 @@
   border: 1px solid rgb(255 255 255 / 0.12);
   background: #0b3548;
   box-shadow: 0 2.8rem 7rem rgb(0 0 0 / 0.24);
-  transform: perspective(1400px)
-    rotateX(var(--motion-tilt-x, 0deg))
+  transform: perspective(1400px) rotateX(var(--motion-tilt-x, 0deg))
     rotateY(var(--motion-tilt-y, 0deg))
     translate3d(0, var(--motion-lift, 0px), 0);
   transform-style: preserve-3d;
@@ -174,7 +181,12 @@
   z-index: 2;
   inset: 0;
   background:
-    linear-gradient(180deg, transparent 32%, rgb(4 19 29 / 0.12) 55%, rgb(4 19 29 / 0.92)),
+    linear-gradient(
+      180deg,
+      transparent 32%,
+      rgb(4 19 29 / 0.12) 55%,
+      rgb(4 19 29 / 0.92)
+    ),
     linear-gradient(90deg, rgb(4 19 29 / 0.15), transparent 54%);
   pointer-events: none;
 }
@@ -380,8 +392,7 @@
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 0.1);
   background: #0b3548;
-  transform: perspective(1200px)
-    rotateX(var(--motion-tilt-x, 0deg))
+  transform: perspective(1200px) rotateX(var(--motion-tilt-x, 0deg))
     rotateY(var(--motion-tilt-y, 0deg))
     translate3d(0, var(--motion-lift, 0px), 0);
   transform-style: preserve-3d;
@@ -397,12 +408,27 @@
   box-shadow: 0 2rem 5rem rgb(0 0 0 / 0.24);
 }
 
-.v5-still-1 { grid-column: span 5; grid-row: span 2; min-height: 42rem; }
-.v5-still-2 { grid-column: span 3; }
-.v5-still-3 { grid-column: span 4; }
-.v5-still-4 { grid-column: span 4; }
-.v5-still-5 { grid-column: span 3; }
-.v5-still-6 { grid-column: span 5; min-height: 28rem; }
+.v5-still-1 {
+  grid-column: span 5;
+  grid-row: span 2;
+  min-height: 42rem;
+}
+.v5-still-2 {
+  grid-column: span 3;
+}
+.v5-still-3 {
+  grid-column: span 4;
+}
+.v5-still-4 {
+  grid-column: span 4;
+}
+.v5-still-5 {
+  grid-column: span 3;
+}
+.v5-still-6 {
+  grid-column: span 5;
+  min-height: 28rem;
+}
 
 .v5-still-media {
   position: absolute;
@@ -478,18 +504,33 @@
 }
 
 @keyframes v5-ring-pulse {
-  0%, 100% { transform: scale(0.95); opacity: 0.55; }
-  50% { transform: scale(1.05); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(0.95);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
 }
 
 @keyframes v5-mark-drift {
-  from { transform: translate3d(0, 0, 0) rotate(-5deg); }
-  to { transform: translate3d(-1.4rem, 1.5rem, 0) rotate(3deg); }
+  from {
+    transform: translate3d(0, 0, 0) rotate(-5deg);
+  }
+  to {
+    transform: translate3d(-1.4rem, 1.5rem, 0) rotate(3deg);
+  }
 }
 
 @keyframes v5-ticker-move {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @media (max-width: 70rem) {

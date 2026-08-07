@@ -162,7 +162,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             <article
               data-reveal
               key={programme.id}
-              style={{ '--reveal-delay': `${(index % 2) * 65}ms` } as CSSProperties}
+              style={
+                { '--reveal-delay': `${(index % 2) * 65}ms` } as CSSProperties
+              }
             >
               <span>{String(index + 1).padStart(2, '0')}</span>
               {programme.image ? (

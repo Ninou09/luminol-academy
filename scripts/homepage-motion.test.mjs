@@ -43,12 +43,18 @@ const cinematicMediaStyles = readFileSync(
   'utf8',
 );
 const v4HomeStyles = readFileSync(resolve('apps/web/app/v4-home.css'), 'utf8');
-const v4GlobalStyles = readFileSync(resolve('apps/web/app/v4-global.css'), 'utf8');
+const v4GlobalStyles = readFileSync(
+  resolve('apps/web/app/v4-global.css'),
+  'utf8',
+);
 const v4InteractionStyles = readFileSync(
   resolve('apps/web/app/v4-interactions.css'),
   'utf8',
 );
-const flagshipSource = readFileSync(resolve('apps/web/lib/flagship.ts'), 'utf8');
+const flagshipSource = readFileSync(
+  resolve('apps/web/lib/flagship.ts'),
+  'utf8',
+);
 const shellSource = readFileSync(
   resolve('apps/web/components/site-shell.tsx'),
   'utf8',
@@ -102,7 +108,9 @@ describe('Arabic premium public flagship', () => {
     expect(flagshipSource).toContain('videos.pexels.com');
     expect(immersiveHeroSource).toContain('8419413-hd_1920_1080_30fps.mp4');
     expect(immersiveHeroSource).toContain('<video');
-    expect(cinematicMediaSource).toContain('const supportFilm = editorialVideos[1]!;');
+    expect(cinematicMediaSource).toContain(
+      'const supportFilm = editorialVideos[1]!;',
+    );
     expect(cinematicMediaSource).toContain('IntersectionObserver');
     expect(cinematicMediaSource).toContain('preload="none"');
     expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
@@ -140,11 +148,17 @@ describe('Arabic premium public flagship', () => {
     expect(v4InteractionStyles).toContain('--magnetic-x');
     expect(v4HomeStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(v4GlobalStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(v4InteractionStyles).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(v4InteractionStyles).toContain(
+      '@media (prefers-reduced-motion: reduce)',
+    );
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(arabicStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(cinematicStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(cinematicMediaStyles).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(cinematicStyles).toContain(
+      '@media (prefers-reduced-motion: reduce)',
+    );
+    expect(cinematicMediaStyles).toContain(
+      '@media (prefers-reduced-motion: reduce)',
+    );
   });
 
   it('provides responsive Arabic navigation without requiring JavaScript', () => {
