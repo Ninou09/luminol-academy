@@ -86,6 +86,14 @@ const v8Styles = readFileSync(
   resolve('apps/web/app/v8-institutional-polish.css'),
   'utf8',
 );
+const v9Styles = readFileSync(
+  resolve('apps/web/app/v9-award-refinement.css'),
+  'utf8',
+);
+const v9DetailStyles = readFileSync(
+  resolve('apps/web/app/v9-detail-fixes.css'),
+  'utf8',
+);
 const shellSource = readFileSync(
   resolve('apps/web/components/site-shell.tsx'),
   'utf8',
@@ -134,16 +142,17 @@ describe('multilingual premium public flagship', () => {
     expect(arabicStyles).toContain('direction: rtl');
   });
 
-  it('uses the official Luminol mark and refreshed premium human media', () => {
+  it('uses the official Luminol mark and newly curated education media', () => {
     expect(shellSource).toContain('/brand/luminol-mark.svg');
     expect(pageSource).toContain('premiumVideos.hero');
     expect(pageSource).toContain('<ImmersiveHeroMedia video={heroVideo} />');
     expect(branchStageSource).toContain('<video');
     expect(branchStageSource).toContain('premiumVideos.training');
-    expect(mediaV6Source).toContain('Yan Krukau / Pexels');
-    expect(mediaV6Source).toContain('Keyla Brito / Pexels');
-    expect(mediaV6Source).toContain('Matheus Bertelli / Pexels');
-    expect(mediaV6Source).toContain('Mica Bassa / Pexels');
+    expect(branchStageSource).toContain('v9-branch-meta');
+    expect(mediaV6Source).toContain('Monstera Production / Pexels');
+    expect(mediaV6Source).toContain('Vitaly Gariev / Pexels');
+    expect(mediaV6Source).toContain('Kampus Production / Pexels');
+    expect(mediaV6Source).toContain('Eduard Perez / Pexels');
     expect(pageSource).not.toContain('12+');
     expect(pageSource).not.toContain('100%');
     expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");
@@ -152,13 +161,16 @@ describe('multilingual premium public flagship', () => {
   it('adds video with tight media security and honest attribution', () => {
     expect(pageSource).toContain('<CinematicMediaWall />');
     expect(mediaV6Source).toContain('videos.pexels.com');
-    expect(mediaV6Source).toContain('6671805-uhd_3840_2160_24fps.mp4');
+    expect(mediaV6Source).toContain('8196801-hd_1920_1080_25fps.mp4');
+    expect(mediaV6Source).toContain('8428200-uhd_3840_2160_25fps.mp4');
+    expect(mediaV6Source).toContain('8461012-uhd_3840_2160_25fps.mp4');
     expect(immersiveHeroSource).toContain('<source src={video.src}');
     expect(immersiveHeroSource).toContain('<video');
     expect(cinematicMediaSource).toContain('premiumVideos.psychology');
     expect(cinematicMediaSource).toContain('IntersectionObserver');
     expect(cinematicMediaSource).toContain('preload="none"');
     expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
+    expect(cinematicMediaSource).toContain('v9-film-copy');
     expect(cinematicMediaSource).toContain('مواد تحريرية توضيحية');
     expect(cinematicMediaSource).toContain('Luminol Academy students');
     expect(securityHeadersSource).toContain(
@@ -195,8 +207,14 @@ describe('multilingual premium public flagship', () => {
     expect(v6Styles).toContain('.v6-conversion-rail');
     expect(v6Styles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(v8Styles).toContain('.v4-quick-access a > div::before');
-    expect(v8Styles).toContain('@keyframes v8-icon-float');
-    expect(v8Styles).toContain('scale(1.025)');
+    expect(v9Styles).toContain('.v9-film-card');
+    expect(v9Styles).toContain('.ar-internal-hero');
+    expect(v9Styles).toContain('@keyframes v9-grid-drift');
+    expect(v9Styles).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(v9DetailStyles).toContain('@keyframes v9-detail-float');
+    expect(v9DetailStyles).toContain('.footer-lead h2');
+    expect(layoutSource).toContain("import './v9-award-refinement.css'");
+    expect(layoutSource).toContain("import './v9-detail-fixes.css'");
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
   });
 
