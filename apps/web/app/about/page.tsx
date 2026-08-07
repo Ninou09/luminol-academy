@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { ButtonLink } from '@luminol/ui';
 import { HomeMotion } from '../../components/home-motion';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
-import { credibilityPrinciples, editorialImages } from '../../lib/flagship';
+import { credibilityPrinciples } from '../../lib/flagship';
+import { premiumImages } from '../../lib/media-v6';
 import { getPublicTeamMembers } from '../../lib/sanity-public';
 
 const aboutDescription =
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
   description: aboutDescription,
   alternates: {
     canonical: '/about',
+    languages: { ar: '/about', fr: '/fr/about', en: '/en/about' },
   },
   openGraph: {
     title: 'من نحن | أكاديمية لومينول',
@@ -22,6 +24,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/about',
     locale: 'ar_DZ',
+    alternateLocale: ['fr_DZ', 'en_DZ'],
   },
   twitter: {
     card: 'summary',
@@ -63,12 +66,12 @@ export default async function AboutPage() {
   return (
     <main className="ar-page">
       <HomeMotion />
-      <SiteHeader />
+      <SiteHeader currentPath="/about" />
 
       <section className="ar-internal-hero ar-about-hero">
         <div className="ar-internal-hero-media" aria-hidden="true">
           <Image
-            src={editorialImages.learning.src}
+            src={premiumImages.learning.src}
             alt=""
             fill
             priority
@@ -127,8 +130,8 @@ export default async function AboutPage() {
         <figure className="ar-feature-image" data-reveal="right">
           <div>
             <Image
-              src={editorialImages.hero.src}
-              alt={editorialImages.hero.alt}
+              src={premiumImages.hero.src}
+              alt={premiumImages.hero.alt}
               fill
               sizes="(max-width: 900px) 100vw, 48vw"
             />
@@ -136,11 +139,11 @@ export default async function AboutPage() {
           <figcaption>
             <span>الحوار والمشاركة جزء أساسي من تجربة لومينول.</span>
             <a
-              href={editorialImages.hero.creditUrl}
+              href={premiumImages.hero.creditUrl}
               target="_blank"
               rel="noreferrer"
             >
-              الصورة: {editorialImages.hero.credit}
+              الصورة: {premiumImages.hero.credit}
             </a>
           </figcaption>
         </figure>
