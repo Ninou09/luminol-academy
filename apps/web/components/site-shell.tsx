@@ -1,13 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
-import {
-  localeMeta,
-  localePath,
-  publicLocales,
-  shellCopy,
-  type PublicLocale,
-} from '../lib/i18n';
+import { LanguageSwitcher } from './language-switcher';
+import { localePath, shellCopy, type PublicLocale } from '../lib/i18n';
 
 function localizedNavigation(locale: PublicLocale) {
   const copy = shellCopy[locale];
@@ -60,34 +55,8 @@ function Brand({
   );
 }
 
-function LanguageSwitcher({
-  locale,
-  currentPath,
-}: {
-  locale: PublicLocale;
-  currentPath: string;
-}) {
-  return (
-    <nav className="language-switcher" aria-label="Language selection">
-      {publicLocales.map((targetLocale) => (
-        <Link
-          aria-current={targetLocale === locale ? 'page' : undefined}
-          data-active={targetLocale === locale ? 'true' : 'false'}
-          href={localePath(targetLocale, currentPath)}
-          hrefLang={localeMeta[targetLocale].htmlLang}
-          key={targetLocale}
-          lang={localeMeta[targetLocale].htmlLang}
-        >
-          {localeMeta[targetLocale].short}
-        </Link>
-      ))}
-    </nav>
-  );
-}
-
 export function SiteHeader({
   locale = 'ar',
-  currentPath = '/',
 }: {
   locale?: PublicLocale;
   currentPath?: string;
@@ -123,7 +92,7 @@ export function SiteHeader({
         </nav>
 
         <div className="header-actions">
-          <LanguageSwitcher locale={locale} currentPath={currentPath} />
+          <LanguageSwitcher locale={locale} />
           <ButtonLink
             className="header-cta"
             href={localePath(locale, '/contact')}
@@ -136,7 +105,7 @@ export function SiteHeader({
         <details className="mobile-menu">
           <summary aria-label={copy.menu}>{copy.menu}</summary>
           <nav aria-label="Mobile navigation">
-            <LanguageSwitcher locale={locale} currentPath={currentPath} />
+            <LanguageSwitcher locale={locale} />
             {navigation.map((item) => (
               <Link href={item.href} key={item.href}>
                 {item.label} <span aria-hidden="true">→</span>
@@ -213,7 +182,9 @@ export function SiteFooter({ locale = 'ar' }: { locale?: PublicLocale }) {
       </div>
 
       <div className="footer-bottom">
-        <p>© {new Date().getFullYear()} {copy.brand}</p>
+        <p>
+          © {new Date().getFullYear()} {copy.brand}
+        </p>
         <p className="footer-note">{copy.footerNote}</p>
         <div className="footer-bottom-links">
           <Link href="/privacy">{copy.privacy}</Link>
