@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import type { EditorialVideo } from '../lib/flagship';
+import type { PublicLocale } from '../lib/i18n';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 const HERO_VIDEO_SRC =
@@ -11,10 +12,41 @@ const HERO_VIDEO_CREDIT = 'RDNE Stock project / Pexels';
 const HERO_VIDEO_CREDIT_URL =
   'https://www.pexels.com/video/a-teacher-in-discussion-with-his-students-8419413/';
 
-export function ImmersiveHeroMedia({ video }: { video: EditorialVideo }) {
+const controlCopy = {
+  ar: {
+    play: 'تشغيل المشهد',
+    pause: 'إيقاف المشهد',
+    playAria: 'تشغيل فيديو الواجهة',
+    pauseAria: 'إيقاف فيديو الواجهة',
+    credit: 'فيديو تحريري',
+  },
+  fr: {
+    play: 'Lire la scène',
+    pause: 'Mettre en pause',
+    playAria: 'Lire la vidéo d’introduction',
+    pauseAria: 'Mettre en pause la vidéo d’introduction',
+    credit: 'Vidéo éditoriale',
+  },
+  en: {
+    play: 'Play scene',
+    pause: 'Pause scene',
+    playAria: 'Play hero video',
+    pauseAria: 'Pause hero video',
+    credit: 'Editorial video',
+  },
+} as const;
+
+export function ImmersiveHeroMedia({
+  video,
+  locale = 'ar',
+}: {
+  video: EditorialVideo;
+  locale?: PublicLocale;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [manualPause, setManualPause] = useState(false);
+  const copy = controlCopy[locale];
 
   useEffect(() => {
     const node = videoRef.current;
@@ -57,7 +89,7 @@ export function ImmersiveHeroMedia({ video }: { video: EditorialVideo }) {
   };
 
   return (
-    <div className="v4-hero-media" data-playing={playing ? 'true' : 'false'}>
+    <div className="v4-hero-media v6-hero-media" data-playing={playing ? 'true' : 'false'}>
       <Image
         className="v4-hero-poster"
         src={video.poster.src}
@@ -85,10 +117,10 @@ export function ImmersiveHeroMedia({ video }: { video: EditorialVideo }) {
         className="v4-hero-play"
         type="button"
         onClick={togglePlayback}
-        aria-label={playing ? 'إيقاف فيديو الواجهة' : 'تشغيل فيديو الواجهة'}
+        aria-label={playing ? copy.pauseAria : copy.playAria}
       >
         <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span>
-        <b>{playing ? 'إيقاف المشهد' : 'تشغيل المشهد'}</b>
+        <b>{playing ? copy.pause : copy.play}</b>
       </button>
       <a
         className="v4-hero-credit"
@@ -96,7 +128,7 @@ export function ImmersiveHeroMedia({ video }: { video: EditorialVideo }) {
         target="_blank"
         rel="noreferrer"
       >
-        فيديو تحريري: {HERO_VIDEO_CREDIT}
+        {copy.credit}: {HERO_VIDEO_CREDIT}
       </a>
     </div>
   );
