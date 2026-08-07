@@ -82,6 +82,10 @@ const v6Styles = readFileSync(
   resolve('apps/web/app/v6-refinement.css'),
   'utf8',
 );
+const v8Styles = readFileSync(
+  resolve('apps/web/app/v8-institutional-polish.css'),
+  'utf8',
+);
 const shellSource = readFileSync(
   resolve('apps/web/components/site-shell.tsx'),
   'utf8',
@@ -136,9 +140,10 @@ describe('multilingual premium public flagship', () => {
     expect(pageSource).toContain('<ImmersiveHeroMedia video={heroVideo} />');
     expect(branchStageSource).toContain('<video');
     expect(branchStageSource).toContain('premiumVideos.training');
-    expect(mediaV6Source).toContain('Monstera Production / Pexels');
-    expect(mediaV6Source).toContain('Pavel Danilyuk / Pexels');
-    expect(mediaV6Source).toContain('SHVETS production / Pexels');
+    expect(mediaV6Source).toContain('Yan Krukau / Pexels');
+    expect(mediaV6Source).toContain('Keyla Brito / Pexels');
+    expect(mediaV6Source).toContain('Matheus Bertelli / Pexels');
+    expect(mediaV6Source).toContain('Mica Bassa / Pexels');
     expect(pageSource).not.toContain('12+');
     expect(pageSource).not.toContain('100%');
     expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");
@@ -147,7 +152,8 @@ describe('multilingual premium public flagship', () => {
   it('adds video with tight media security and honest attribution', () => {
     expect(pageSource).toContain('<CinematicMediaWall />');
     expect(mediaV6Source).toContain('videos.pexels.com');
-    expect(immersiveHeroSource).toContain('8419413-hd_1920_1080_30fps.mp4');
+    expect(mediaV6Source).toContain('6671805-uhd_3840_2160_24fps.mp4');
+    expect(immersiveHeroSource).toContain('<source src={video.src}');
     expect(immersiveHeroSource).toContain('<video');
     expect(cinematicMediaSource).toContain('premiumVideos.psychology');
     expect(cinematicMediaSource).toContain('IntersectionObserver');
@@ -188,6 +194,9 @@ describe('multilingual premium public flagship', () => {
     expect(v6Styles).toContain('.v6-branch-video');
     expect(v6Styles).toContain('.v6-conversion-rail');
     expect(v6Styles).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(v8Styles).toContain('.v4-quick-access a > div::before');
+    expect(v8Styles).toContain('@keyframes v8-icon-float');
+    expect(v8Styles).toContain('scale(1.025)');
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
   });
 
