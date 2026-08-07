@@ -1,0 +1,71 @@
+name: Format multilingual flagship once
+
+on:
+  push:
+    branches:
+      - design/premium-motion-homepage
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: design/premium-motion-homepage
+          fetch-depth: 0
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Format multilingual flagship and remove this workflow
+        run: |
+          pnpm exec prettier --write \
+            apps/web/app/layout.tsx \
+            apps/web/app/page.tsx \
+            apps/web/app/about/page.tsx \
+            apps/web/app/contact/page.tsx \
+            apps/web/app/sitemap.ts \
+            'apps/web/app/[locale]/page.tsx' \
+            'apps/web/app/[locale]/about/page.tsx' \
+            'apps/web/app/[locale]/contact/page.tsx' \
+            'apps/web/app/[locale]/schools/[school]/page.tsx' \
+            apps/web/app/v6-refinement.css \
+            apps/web/components/branch-stage.tsx \
+            apps/web/components/cinematic-media.tsx \
+            apps/web/components/enquiry-form.tsx \
+            apps/web/components/home-motion.tsx \
+            apps/web/components/immersive-hero-media.tsx \
+            apps/web/components/language-switcher.tsx \
+            apps/web/components/localized-about.tsx \
+            apps/web/components/localized-contact.tsx \
+            apps/web/components/localized-home.tsx \
+            apps/web/components/localized-school.tsx \
+            apps/web/components/site-shell.tsx \
+            apps/web/lib/i18n.ts \
+            apps/web/lib/localized-schools.ts \
+            apps/web/lib/media-v6.ts \
+            apps/web/proxy.ts \
+            scripts/homepage-motion.test.mjs \
+            tests/e2e/home.spec.ts
+          rm .github/workflows/format-v6-once.yml
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Format multilingual flagship"
+          git push origin HEAD:design/premium-motion-homepage
