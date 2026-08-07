@@ -4,8 +4,16 @@
     min-height: min(68svh, 42rem);
     align-items: center;
     background:
-      radial-gradient(circle at 18% 16%, rgb(53 185 221 / 0.13), transparent 25rem),
-      radial-gradient(circle at 86% 86%, rgb(212 165 72 / 0.09), transparent 22rem),
+      radial-gradient(
+        circle at 18% 16%,
+        rgb(53 185 221 / 0.13),
+        transparent 25rem
+      ),
+      radial-gradient(
+        circle at 86% 86%,
+        rgb(212 165 72 / 0.09),
+        transparent 22rem
+      ),
       linear-gradient(135deg, #061923, #082f3e 62%, #07232f);
   }
 
@@ -79,7 +87,11 @@
   .v4-hero-gradient {
     z-index: 1;
     background:
-      radial-gradient(circle at 48% 45%, rgb(53 185 221 / 0.12), transparent 19rem),
+      radial-gradient(
+        circle at 48% 45%,
+        rgb(53 185 221 / 0.12),
+        transparent 19rem
+      ),
       linear-gradient(90deg, rgb(3 20 29 / 0.03), rgb(3 20 29 / 0.12));
   }
 
