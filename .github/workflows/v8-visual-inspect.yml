@@ -1,0 +1,68 @@
+name: V8 Visual Inspect
+
+on:
+  push:
+    branches:
+      - preview/v8-visual-inspect
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: luminol
+          POSTGRES_PASSWORD: luminol
+          POSTGRES_DB: luminol
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U luminol -d luminol"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Check out preview
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Prepare database
+        run: |
+          pnpm db:generate
+          pnpm --filter @luminol/database migrate:deploy
+        env:
+          DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
+      - name: Build web
+        run: pnpm --filter @luminol/web build
+        env:
+          DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuZXhhbXBsZS5jb20k
+          CLERK_SECRET_KEY: sk_test_placeholder
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps --only-shell chromium
+      - name: Capture
+        run: |
+          pnpm --filter @luminol/web start > /tmp/luminol-v8.log 2>&1 &
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/capture-flagship.mjs
+      - name: Upload captures
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: v8-visual-inspect
+          path: artifacts/flagship-screenshots
