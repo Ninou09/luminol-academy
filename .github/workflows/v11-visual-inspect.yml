@@ -1,0 +1,97 @@
+name: V11 visual inspect
+
+on:
+  push:
+    branches:
+      - preview/v11-visual-inspect
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: luminol
+          POSTGRES_PASSWORD: luminol
+          POSTGRES_DB: luminol
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U luminol -d luminol"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+    steps:
+      - name: Check out preview
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Prepare database
+        run: |
+          pnpm --filter @luminol/database generate
+          pnpm --filter @luminol/database migrate:deploy
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Capture exact V11 pages
+        run: |
+          mkdir -p v11-captures
+          pnpm --filter @luminol/web dev > /tmp/luminol-v11.log 2>&1 &
+          APP_PID=$!
+          trap 'kill $APP_PID || true' EXIT
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then break; fi
+            sleep 2
+          done
+          node <<'NODE'
+          const { chromium } = require('@playwright/test');
+          const fs = require('node:fs');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const pages = [
+              ['home', '/'],
+              ['psychology', '/schools/psychology'],
+              ['languages', '/schools/languages'],
+              ['training', '/schools/training'],
+              ['about', '/about'],
+              ['fr-home', '/fr'],
+              ['en-home', '/en'],
+            ];
+            for (const [name, path] of pages) {
+              const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+              await page.goto(`http://127.0.0.1:3000${path}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+              await page.waitForTimeout(2600);
+              await page.screenshot({ path: `v11-captures/${name}-desktop.jpg`, fullPage: true, type: 'jpeg', quality: 82 });
+              await page.close();
+            }
+            for (const [name, path] of [['home','/'], ['psychology','/schools/psychology']]) {
+              const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+              await page.goto(`http://127.0.0.1:3000${path}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+              await page.waitForTimeout(2200);
+              await page.screenshot({ path: `v11-captures/${name}-mobile.jpg`, fullPage: true, type: 'jpeg', quality: 82 });
+              await page.close();
+            }
+            await browser.close();
+          })().catch((error) => { console.error(error); process.exit(1); });
+          NODE
+      - name: Upload captures
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: v11-authentic-academy-visual-inspect
+          path: v11-captures
+          if-no-files-found: error
