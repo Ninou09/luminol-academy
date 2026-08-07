@@ -8,19 +8,16 @@ import { CinematicMediaWall } from '../components/cinematic-media';
 import { HomeMotion } from '../components/home-motion';
 import { ImmersiveHeroMedia } from '../components/immersive-hero-media';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
-import {
-  credibilityPrinciples,
-  editorialGallery,
-  editorialVideos,
-} from '../lib/flagship';
+import { credibilityPrinciples } from '../lib/flagship';
+import { premiumGallery, premiumVideos } from '../lib/media-v6';
 import {
   getPublicTeamMembers,
   getPublicTestimonials,
 } from '../lib/sanity-public';
 
-const heroVideo = editorialVideos[0]!;
-const manifestoPrimary = editorialGallery[0]!;
-const manifestoSecondary = editorialGallery[4]!;
+const heroVideo = premiumVideos.hero;
+const manifestoPrimary = premiumGallery[0]!;
+const manifestoSecondary = premiumGallery[4]!;
 
 const quickLinks = [
   {
@@ -42,10 +39,10 @@ const quickLinks = [
     index: '03',
   },
   {
-    label: 'ابدأ محادثتك',
-    description: 'سنساعدك على تحديد نقطة البداية.',
+    label: 'ابدأ من هدفك',
+    description: 'سنساعدك على تحديد نقطة البداية المناسبة.',
     href: '/contact',
-    index: '→',
+    index: '04',
   },
 ] as const;
 
@@ -81,7 +78,7 @@ export default async function Page() {
   return (
     <main className="ar-page v4-home">
       <HomeMotion />
-      <SiteHeader />
+      <SiteHeader currentPath="/" />
 
       <section className="v4-hero" aria-labelledby="hero-title">
         <ImmersiveHeroMedia video={heroVideo} />
@@ -104,16 +101,21 @@ export default async function Page() {
             <em>وابنِ ما يأتي بعد ذلك.</em>
           </h1>
           <p className="v4-hero-lede">
-            علم النفس، اللغات والتكوين المهني في تجربة عربية واحدة صُممت لتجعل
-            المعرفة أكثر إنسانية، أكثر تطبيقًا، وأكثر تأثيرًا في الحياة اليومية.
+            علم النفس، اللغات والتكوين المهني في تجربة واحدة مصممة لتحوّل
+            المعرفة إلى قدرة حقيقية يمكن استخدامها في الحياة، الدراسة والعمل.
           </p>
           <div className="v4-hero-actions">
-            <ButtonLink href="#schools" size="lg">
-              اكتشف عالم لومينول
+            <ButtonLink href="/contact" size="lg">
+              ابدأ من هدفك
             </ButtonLink>
-            <ButtonLink href="/contact" size="lg" variant="secondary">
-              تحدّث مع الفريق
+            <ButtonLink href="#schools" size="lg" variant="secondary">
+              استكشف أقسام الأكاديمية
             </ButtonLink>
+          </div>
+          <div className="v6-hero-proof">
+            <span>ثلاثة أقسام مترابطة</span>
+            <span>تعلم إنساني وتطبيقي</span>
+            <span>العربية · Français · English</span>
           </div>
         </div>
 
@@ -192,6 +194,19 @@ export default async function Page() {
       </section>
 
       <BranchStage />
+
+      <section className="v6-conversion-rail" data-reveal>
+        <div>
+          <p className="v4-overline">غير متأكد من أين تبدأ؟</p>
+          <h2>أخبرنا بما تريد تقويته. سنساعدك على تحديد نقطة البداية.</h2>
+          <p>
+            لا تحتاج إلى معرفة اسم الدورة أو المستوى. ابدأ بالهدف الذي يهمك الآن.
+          </p>
+        </div>
+        <Link className="v6-primary-action" href="/contact">
+          صف لنا هدفك ←
+        </Link>
+      </section>
 
       <CinematicMediaWall />
 
@@ -309,18 +324,22 @@ export default async function Page() {
           />
         </div>
         <div data-reveal="right">
-          <p className="v4-overline">ابدأ من هدفك، لا من اسم الدورة</p>
-          <h2>ما الشيء الذي تريد أن يصبح أقوى في حياتك الآن؟</h2>
+          <p className="v4-overline">خطوتك التالية يمكن أن تبدأ الآن</p>
+          <h2>ما الشيء الذي تريد أن يصبح أقوى في حياتك؟</h2>
           <p>
             أخبرنا بهدفك. سنساعدك على تحديد القسم، المستوى والصيغة الأقرب لما
             تحتاجه فعلًا.
           </p>
         </div>
         <ButtonLink data-reveal="left" href="/contact" size="lg">
-          ابدأ محادثتك <span aria-hidden="true">←</span>
+          ابدأ استفسارك <span aria-hidden="true">←</span>
         </ButtonLink>
       </section>
 
+      <div className="v6-floating-cta">
+        <span>تحتاج مساعدة في اختيار المسار؟</span>
+        <Link href="/contact">اسأل فريق لومينول ←</Link>
+      </div>
       <SiteFooter />
     </main>
   );
