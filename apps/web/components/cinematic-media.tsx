@@ -144,8 +144,8 @@ function EditorialFilm({
   };
 
   return (
-    <article className={`v5-film v5-film-${variant}`} data-reveal>
-      <div ref={shellRef} className="v5-film-media v6-film-media">
+    <article className={`v5-film v5-film-${variant} v9-film-card`} data-reveal>
+      <div ref={shellRef} className="v5-film-media v6-film-media v9-film-visual">
         <Image
           className="v5-film-poster"
           src={video.poster.src}
@@ -153,8 +153,8 @@ function EditorialFilm({
           fill
           sizes={
             variant === 'wide'
-              ? '(max-width: 900px) 100vw, 82vw'
-              : '(max-width: 900px) 100vw, 38vw'
+              ? '(max-width: 900px) 100vw, 60vw'
+              : '(max-width: 900px) 100vw, 34vw'
           }
         />
         {mounted ? (
@@ -180,17 +180,13 @@ function EditorialFilm({
         >
           <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span>
         </button>
-        <div className="v5-film-copy">
-          <p>{video.eyebrow}</p>
-          <h3>{video.title}</h3>
-          <span>{video.description}</span>
-        </div>
-        <a
-          className="v5-film-credit"
-          href={video.creditUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
+      </div>
+
+      <div className="v9-film-copy">
+        <span>{video.eyebrow}</span>
+        <h3>{video.title}</h3>
+        <p>{video.description}</p>
+        <a href={video.creditUrl} target="_blank" rel="noreferrer">
           {copy.credit}: {video.credit}
         </a>
       </div>
