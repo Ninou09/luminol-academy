@@ -362,15 +362,30 @@ html[lang^='en'] .v4-collage-float::after {
   letter-spacing: 0.08em;
 }
 
-.ar-about-hero + .ar-purpose-strip + .ar-story-section + .ar-split-feature .ar-feature-image > div {
+.ar-about-hero
+  + .ar-purpose-strip
+  + .ar-story-section
+  + .ar-split-feature
+  .ar-feature-image
+  > div {
   background-image: url('/media/academy/workshop-training.webp') !important;
   background-position: center 42% !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
 }
 
-.ar-about-hero + .ar-purpose-strip + .ar-story-section + .ar-split-feature .ar-feature-image img,
-.ar-about-hero + .ar-purpose-strip + .ar-story-section + .ar-split-feature .ar-feature-image a {
+.ar-about-hero
+  + .ar-purpose-strip
+  + .ar-story-section
+  + .ar-split-feature
+  .ar-feature-image
+  img,
+.ar-about-hero
+  + .ar-purpose-strip
+  + .ar-story-section
+  + .ar-split-feature
+  .ar-feature-image
+  a {
   opacity: 0 !important;
 }
 
