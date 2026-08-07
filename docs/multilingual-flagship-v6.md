@@ -20,4 +20,4 @@ Motion respects `prefers-reduced-motion`, video remains muted by default, editor
 
 ## Validation gate
 
-The branch must pass the complete repository CI suite and receive an exact-head Ready Vercel preview before this visual pass is considered deployment-verified.
+The multilingual public code has been normalized with the repository formatter. The branch must pass the complete repository CI suite and receive an exact-head Ready Vercel preview before this visual pass is considered deployment-verified.
