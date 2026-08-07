@@ -142,9 +142,7 @@ export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
               <strong>{activeSchool.name}</strong>
               <small>{activeSchool.eyebrow}</small>
             </div>
-            <b>
-              0{activeIndex} / 03
-            </b>
+            <b>0{activeIndex} / 03</b>
           </div>
         </div>
 

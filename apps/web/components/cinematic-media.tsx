@@ -145,7 +145,10 @@ function EditorialFilm({
 
   return (
     <article className={`v5-film v5-film-${variant} v9-film-card`} data-reveal>
-      <div ref={shellRef} className="v5-film-media v6-film-media v9-film-visual">
+      <div
+        ref={shellRef}
+        className="v5-film-media v6-film-media v9-film-visual"
+      >
         <Image
           className="v5-film-poster"
           src={video.poster.src}
