@@ -73,12 +73,18 @@ const stageCopy = {
 
 export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
   const [active, setActive] = useState<SchoolSlug>('psychology');
+  const [previewing, setPreviewing] = useState(false);
   const copy = stageCopy[locale];
   const activeVideo = branchVideo[active];
   const activeImage = branchImage[active];
   const activeSchool =
     locale === 'ar' ? schools[active] : localizedSchools[locale][active];
   const activeIndex = branchOrder.indexOf(active) + 1;
+
+  const activate = (slug: SchoolSlug) => {
+    setActive(slug);
+    setPreviewing(false);
+  };
 
   return (
     <section
@@ -96,7 +102,12 @@ export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
 
       <div className="v4-branch-experience">
         <div className="v9-branch-media-column">
-          <div className="v4-branch-visual v6-branch-visual" aria-live="polite">
+          <div
+            className="v4-branch-visual v6-branch-visual"
+            aria-live="polite"
+            onMouseEnter={() => setPreviewing(true)}
+            onMouseLeave={() => setPreviewing(false)}
+          >
             <Image
               className="v6-branch-poster"
               src={activeImage.src}
@@ -104,27 +115,29 @@ export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
               fill
               sizes="(max-width: 900px) 100vw, 52vw"
             />
-            <video
-              key={activeVideo.id}
-              className="v6-branch-video"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster={activeImage.src}
-              aria-hidden="true"
-            >
-              <source src={activeVideo.src} type="video/mp4" />
-            </video>
+            {previewing ? (
+              <video
+                key={activeVideo.id}
+                className="v6-branch-video"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster={activeImage.src}
+                aria-hidden="true"
+              >
+                <source src={activeVideo.src} type="video/mp4" />
+              </video>
+            ) : null}
             <div className="v6-branch-shade" aria-hidden="true" />
             <a
               className="v4-branch-credit"
-              href={activeVideo.creditUrl}
+              href={activeImage.creditUrl}
               target="_blank"
               rel="noreferrer"
             >
-              {activeVideo.credit}
+              {activeImage.credit}
             </a>
             <div className="v4-branch-mark" aria-hidden="true">
               <Image
@@ -158,8 +171,8 @@ export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
                 data-active={isActive ? 'true' : 'false'}
                 href={localePath(locale, `/schools/${slug}`)}
                 key={slug}
-                onMouseEnter={() => setActive(slug)}
-                onFocus={() => setActive(slug)}
+                onMouseEnter={() => activate(slug)}
+                onFocus={() => activate(slug)}
               >
                 <span className="v4-branch-number">0{index + 1}</span>
                 <div>
