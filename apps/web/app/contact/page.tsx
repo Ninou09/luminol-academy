@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { EnquiryForm } from '../../components/enquiry-form';
 import { HomeMotion } from '../../components/home-motion';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
-import { editorialImages } from '../../lib/flagship';
+import { premiumImages } from '../../lib/media-v6';
 
 const contactDescription =
   'تواصل مع أكاديمية لومينول للاستفسار عن علم النفس، اللغات أو التكوين والتطوير المهني وتحديد المسار الأنسب لهدفك.';
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   description: contactDescription,
   alternates: {
     canonical: '/contact',
+    languages: { ar: '/contact', fr: '/fr/contact', en: '/en/contact' },
   },
   openGraph: {
     title: 'تواصل مع أكاديمية لومينول',
@@ -22,6 +23,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/contact',
     locale: 'ar_DZ',
+    alternateLocale: ['fr_DZ', 'en_DZ'],
   },
   twitter: {
     card: 'summary',
@@ -55,12 +57,12 @@ export default function ContactPage() {
   return (
     <main className="ar-page">
       <HomeMotion />
-      <SiteHeader />
+      <SiteHeader currentPath="/contact" />
 
       <section className="ar-internal-hero ar-contact-hero">
         <div className="ar-internal-hero-media" aria-hidden="true">
           <Image
-            src={editorialImages.hero.src}
+            src={premiumImages.hero.src}
             alt=""
             fill
             priority
