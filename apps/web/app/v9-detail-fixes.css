@@ -1,0 +1,155 @@
+/* V9 detail corrections after visual QA. */
+
+.footer-lead {
+  padding-block: clamp(2.8rem, 5vw, 4.4rem) !important;
+}
+
+.footer-lead h2 {
+  max-width: 40rem !important;
+  font-size: clamp(1.6rem, 2.9vw, 2.8rem) !important;
+  line-height: 1.2 !important;
+}
+
+.footer-lead > p,
+.footer-lead > a {
+  font-size: 0.68rem !important;
+}
+
+.v4-hero-play {
+  min-height: 2.3rem !important;
+  padding: 0.42rem 0.62rem !important;
+  font-size: 0.62rem !important;
+}
+
+.v4-hero-credit,
+.v4-branch-credit {
+  max-width: 60%;
+  overflow: hidden;
+  color: rgb(255 255 255 / 0.62) !important;
+  font-size: 0.5rem !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.v4-branch-mark {
+  width: clamp(4rem, 8vw, 7rem) !important;
+  opacity: 0.08 !important;
+}
+
+.v5-feature-index,
+.v5-film-statement > span:first-child {
+  font-size: 0.62rem !important;
+  letter-spacing: 0.12em;
+}
+
+.v5-ticker {
+  opacity: 0.78;
+}
+
+.v5-ticker-track span {
+  font-size: clamp(1rem, 1.8vw, 1.55rem) !important;
+}
+
+.v5-media-note {
+  font-size: 0.58rem !important;
+  line-height: 1.7 !important;
+}
+
+.ar-purpose-strip article h2,
+.ar-values-grid article h3,
+.ar-program-grid article h3 {
+  font-size: clamp(1rem, 1.55vw, 1.35rem) !important;
+}
+
+.ar-purpose-strip article p,
+.ar-values-grid article p,
+.ar-program-grid article p {
+  font-size: 0.72rem !important;
+  line-height: 1.75 !important;
+}
+
+.ar-section-nav a {
+  font-size: 0.68rem !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .v9-branch-meta-icon,
+  .v4-principle-grid article::before {
+    animation: v9-detail-float 4.2s ease-in-out infinite alternate !important;
+  }
+
+  .v9-branch-meta-icon {
+    animation-duration: 3.6s !important;
+  }
+
+  .v9-film-control {
+    transition:
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      background 260ms ease;
+  }
+
+  .v5-film-control:hover,
+  .v5-film-control:focus-visible {
+    transform: scale(1.08) rotate(3deg);
+  }
+
+  .v9-branch-meta {
+    transition:
+      border-color 320ms ease,
+      background 320ms ease,
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .v4-branch-experience:hover .v9-branch-meta {
+    border-color: rgb(8 118 138 / 0.25);
+    background: linear-gradient(135deg, #fff, #f1faf9);
+    transform: translateY(-0.08rem);
+  }
+
+  .v4-overline::after,
+  .ar-kicker::after {
+    animation: v9-dot-pulse 2.8s ease-in-out infinite;
+  }
+}
+
+@keyframes v9-detail-float {
+  from {
+    transform: translateY(0) scale(1);
+  }
+  to {
+    transform: translateY(-0.12rem) scale(1.045);
+  }
+}
+
+@keyframes v9-dot-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0.22rem color-mix(in srgb, currentColor 10%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 0.38rem color-mix(in srgb, currentColor 5%, transparent);
+  }
+}
+
+@media (max-width: 900px) {
+  .footer-lead {
+    padding-block: 2.5rem !important;
+  }
+
+  .footer-lead h2 {
+    font-size: clamp(1.5rem, 7vw, 2.1rem) !important;
+  }
+
+  .v4-hero-credit {
+    max-width: 48%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v9-branch-meta-icon,
+  .v4-principle-grid article::before,
+  .v4-overline::after,
+  .ar-kicker::after {
+    animation: none !important;
+  }
+}
