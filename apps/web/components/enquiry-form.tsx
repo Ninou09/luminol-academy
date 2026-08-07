@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { Button } from '@luminol/ui';
+import { formCopy, type PublicLocale } from '../lib/i18n';
 
 type SubmissionState =
   | { status: 'idle'; message: '' }
@@ -9,7 +10,8 @@ type SubmissionState =
   | { status: 'success'; message: string }
   | { status: 'error'; message: string };
 
-export function EnquiryForm() {
+export function EnquiryForm({ locale = 'ar' }: { locale?: PublicLocale }) {
+  const copy = formCopy[locale];
   const [submission, setSubmission] = useState<SubmissionState>({
     status: 'idle',
     message: '',
@@ -20,10 +22,7 @@ export function EnquiryForm() {
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    setSubmission({
-      status: 'submitting',
-      message: 'جارٍ إرسال استفسارك…',
-    });
+    setSubmission({ status: 'submitting', message: copy.sending });
 
     try {
       const response = await fetch('/api/enquiries', {
@@ -35,32 +34,24 @@ export function EnquiryForm() {
           phone: formData.get('phone'),
           school: formData.get('school'),
           message: formData.get('message'),
-          locale: 'ar',
+          locale,
           consent: formData.get('consent') === 'on',
           website: formData.get('website'),
         }),
       });
 
-      const payload = (await response.json()) as {
-        submitted?: boolean;
-      };
+      const payload = (await response.json()) as { submitted?: boolean };
 
       if (!response.ok || !payload.submitted) {
-        throw new Error('تعذر إرسال الاستفسار الآن. حاول مرة أخرى.');
+        throw new Error(copy.error);
       }
 
       form.reset();
-      setSubmission({
-        status: 'success',
-        message: 'شكرًا لك. تم استلام استفسارك وسيقوم فريق لومينول بمراجعته.',
-      });
+      setSubmission({ status: 'success', message: copy.success });
     } catch (error) {
       setSubmission({
         status: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : 'تعذر إرسال الاستفسار الآن. حاول مرة أخرى.',
+        message: error instanceof Error ? error.message : copy.error,
       });
     }
   }
@@ -68,17 +59,14 @@ export function EnquiryForm() {
   return (
     <form className="enquiry-form ar-enquiry-form" onSubmit={submitEnquiry}>
       <div className="form-heading">
-        <p className="eyebrow">أخبرنا عن هدفك</p>
-        <h2>ابدأ رحلتك مع لومينول.</h2>
-        <p>
-          شارك معنا ما تبحث عنه. سنستخدم هذه المعلومات فقط لفهم استفسارك
-          والتواصل معك بشأنه.
-        </p>
+        <p className="eyebrow">{copy.eyebrow}</p>
+        <h2>{copy.title}</h2>
+        <p>{copy.intro}</p>
       </div>
 
       <div className="form-grid">
         <label>
-          <span>الاسم الكامل</span>
+          <span>{copy.name}</span>
           <input
             autoComplete="name"
             maxLength={100}
@@ -89,7 +77,7 @@ export function EnquiryForm() {
           />
         </label>
         <label>
-          <span>البريد الإلكتروني</span>
+          <span>{copy.email}</span>
           <input
             autoComplete="email"
             maxLength={254}
@@ -101,7 +89,7 @@ export function EnquiryForm() {
         </label>
         <label>
           <span>
-            رقم الهاتف <small>اختياري</small>
+            {copy.phone} <small>{copy.optional}</small>
           </span>
           <input
             autoComplete="tel"
@@ -112,16 +100,16 @@ export function EnquiryForm() {
           />
         </label>
         <label>
-          <span>مجال الاهتمام</span>
+          <span>{copy.school}</span>
           <select defaultValue="GENERAL" name="school" required>
-            <option value="GENERAL">ساعدني على الاختيار</option>
-            <option value="PSYCHOLOGY">علم النفس</option>
-            <option value="LANGUAGES">اللغات</option>
-            <option value="TRAINING">التكوين المهني</option>
+            <option value="GENERAL">{copy.helpChoose}</option>
+            <option value="PSYCHOLOGY">{copy.psychology}</option>
+            <option value="LANGUAGES">{copy.languages}</option>
+            <option value="TRAINING">{copy.training}</option>
           </select>
         </label>
         <label className="message-field">
-          <span>كيف يمكن للومينول مساعدتك؟</span>
+          <span>{copy.message}</span>
           <textarea
             maxLength={2000}
             minLength={10}
@@ -139,10 +127,7 @@ export function EnquiryForm() {
 
       <label className="consent-field">
         <input name="consent" required type="checkbox" />
-        <span>
-          أوافق على أن تقوم أكاديمية لومينول بحفظ هذه المعلومات واستخدامها للرد
-          على استفساري.
-        </span>
+        <span>{copy.consent}</span>
       </label>
 
       <div className="form-actions">
@@ -151,9 +136,7 @@ export function EnquiryForm() {
           size="lg"
           type="submit"
         >
-          {submission.status === 'submitting'
-            ? 'جارٍ الإرسال…'
-            : 'أرسل استفساري'}
+          {submission.status === 'submitting' ? copy.sending : copy.submit}
         </Button>
         <p
           className={`form-status form-status-${submission.status}`}
