@@ -3,9 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { academySchoolMedia } from '../lib/academy-media';
 import { localePath, type PublicLocale } from '../lib/i18n';
 import { localizedSchools } from '../lib/localized-schools';
-import { premiumImages, premiumVideos } from '../lib/media-v6';
+import { premiumVideos } from '../lib/media-v6';
 import { schools, type SchoolSlug } from '../lib/schools';
 
 const branchOrder: readonly SchoolSlug[] = [
@@ -13,12 +14,6 @@ const branchOrder: readonly SchoolSlug[] = [
   'languages',
   'training',
 ];
-
-const branchImage = {
-  psychology: premiumImages.psychology,
-  languages: premiumImages.languages,
-  training: premiumImages.training,
-} as const;
 
 const branchVideo = {
   psychology: premiumVideos.psychology,
@@ -39,6 +34,7 @@ const stageCopy = {
     intro:
       'لكل قسم إيقاعه وطريقته وشخصيته البصرية. ما يجمعها هو نفس المبدأ: معرفة جادة تتحول إلى قدرة يمكن استخدامها خارج القاعة.',
     nav: 'أقسام أكاديمية لومينول',
+    archive: 'صورة من أرشيف أكاديمية لومينول',
     cta: {
       psychology: 'اكتشف برامج علم النفس',
       languages: 'اكتشف برامج اللغات',
@@ -51,6 +47,7 @@ const stageCopy = {
     intro:
       'Chaque pôle possède son rythme, sa méthode et sa personnalité visuelle. Tous partagent la même idée: transformer un apprentissage sérieux en capacité utile hors de la salle.',
     nav: 'Pôles de Luminol Academy',
+    archive: 'Photo des archives de Luminol Academy',
     cta: {
       psychology: 'Découvrir la psychologie',
       languages: 'Découvrir les langues',
@@ -63,6 +60,7 @@ const stageCopy = {
     intro:
       'Each school has its own rhythm, method and visual personality. They share one principle: serious learning should become capability you can use beyond the classroom.',
     nav: 'Luminol Academy schools',
+    archive: 'Photo from the Luminol Academy archive',
     cta: {
       psychology: 'Explore Psychology',
       languages: 'Explore Languages',
@@ -76,7 +74,7 @@ export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
   const [previewing, setPreviewing] = useState(false);
   const copy = stageCopy[locale];
   const activeVideo = branchVideo[active];
-  const activeImage = branchImage[active];
+  const activeImage = academySchoolMedia[active];
   const activeSchool =
     locale === 'ar' ? schools[active] : localizedSchools[locale][active];
   const activeIndex = branchOrder.indexOf(active) + 1;
@@ -131,14 +129,9 @@ export function BranchStage({ locale = 'ar' }: { locale?: PublicLocale }) {
               </video>
             ) : null}
             <div className="v6-branch-shade" aria-hidden="true" />
-            <a
-              className="v4-branch-credit"
-              href={activeImage.creditUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {activeImage.credit}
-            </a>
+            <span className="v4-branch-credit v11-archive-credit">
+              {copy.archive}
+            </span>
             <div className="v4-branch-mark" aria-hidden="true">
               <Image
                 src="/brand/luminol-mark.svg"
