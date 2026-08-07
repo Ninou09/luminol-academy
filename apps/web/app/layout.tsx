@@ -12,6 +12,7 @@ import './v4-interactions.css';
 import './v4-header.css';
 import './v4-arabic-type.css';
 import './v6-refinement.css';
+import './v7-balanced-motion.css';
 import { isPublicLocale, localeMeta, type PublicLocale } from '../lib/i18n';
 
 const arabicFont = Noto_Sans_Arabic({
