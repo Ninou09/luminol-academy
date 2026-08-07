@@ -3,123 +3,89 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const pageSource = readFileSync(resolve('apps/web/app/page.tsx'), 'utf8');
-const aboutSource = readFileSync(
-  resolve('apps/web/app/about/page.tsx'),
-  'utf8',
-);
-const contactSource = readFileSync(
-  resolve('apps/web/app/contact/page.tsx'),
-  'utf8',
-);
-const schoolSource = readFileSync(
-  resolve('apps/web/app/schools/[school]/page.tsx'),
-  'utf8',
-);
+const aboutSource = readFileSync(resolve('apps/web/app/about/page.tsx'), 'utf8');
+const contactSource = readFileSync(resolve('apps/web/app/contact/page.tsx'), 'utf8');
+const schoolSource = readFileSync(resolve('apps/web/app/schools/[school]/page.tsx'), 'utf8');
 const layoutSource = readFileSync(resolve('apps/web/app/layout.tsx'), 'utf8');
-const motionSource = readFileSync(
-  resolve('apps/web/components/home-motion.tsx'),
-  'utf8',
-);
-const cinematicMediaSource = readFileSync(
-  resolve('apps/web/components/cinematic-media.tsx'),
-  'utf8',
-);
-const immersiveHeroSource = readFileSync(
-  resolve('apps/web/components/immersive-hero-media.tsx'),
-  'utf8',
-);
-const branchStageSource = readFileSync(
-  resolve('apps/web/components/branch-stage.tsx'),
-  'utf8',
-);
+const proxySource = readFileSync(resolve('apps/web/proxy.ts'), 'utf8');
+const motionSource = readFileSync(resolve('apps/web/components/home-motion.tsx'), 'utf8');
+const cinematicMediaSource = readFileSync(resolve('apps/web/components/cinematic-media.tsx'), 'utf8');
+const immersiveHeroSource = readFileSync(resolve('apps/web/components/immersive-hero-media.tsx'), 'utf8');
+const branchStageSource = readFileSync(resolve('apps/web/components/branch-stage.tsx'), 'utf8');
+const localizedHomeSource = readFileSync(resolve('apps/web/components/localized-home.tsx'), 'utf8');
+const localizedAboutSource = readFileSync(resolve('apps/web/components/localized-about.tsx'), 'utf8');
+const localizedContactSource = readFileSync(resolve('apps/web/components/localized-contact.tsx'), 'utf8');
+const localizedSchoolSource = readFileSync(resolve('apps/web/components/localized-school.tsx'), 'utf8');
+const languageSwitcherSource = readFileSync(resolve('apps/web/components/language-switcher.tsx'), 'utf8');
+const enquiryFormSource = readFileSync(resolve('apps/web/components/enquiry-form.tsx'), 'utf8');
+const i18nSource = readFileSync(resolve('apps/web/lib/i18n.ts'), 'utf8');
+const mediaV6Source = readFileSync(resolve('apps/web/lib/media-v6.ts'), 'utf8');
 const motionStyles = readFileSync(resolve('apps/web/app/motion.css'), 'utf8');
 const arabicStyles = readFileSync(resolve('apps/web/app/arabic.css'), 'utf8');
-const cinematicStyles = readFileSync(
-  resolve('apps/web/app/cinematic-motion.css'),
-  'utf8',
-);
-const cinematicMediaStyles = readFileSync(
-  resolve('apps/web/app/cinematic-media.css'),
-  'utf8',
-);
+const cinematicStyles = readFileSync(resolve('apps/web/app/cinematic-motion.css'), 'utf8');
+const cinematicMediaStyles = readFileSync(resolve('apps/web/app/cinematic-media.css'), 'utf8');
 const v4HomeStyles = readFileSync(resolve('apps/web/app/v4-home.css'), 'utf8');
-const v4GlobalStyles = readFileSync(
-  resolve('apps/web/app/v4-global.css'),
-  'utf8',
-);
-const v4InteractionStyles = readFileSync(
-  resolve('apps/web/app/v4-interactions.css'),
-  'utf8',
-);
-const flagshipSource = readFileSync(
-  resolve('apps/web/lib/flagship.ts'),
-  'utf8',
-);
-const shellSource = readFileSync(
-  resolve('apps/web/components/site-shell.tsx'),
-  'utf8',
-);
-const publicSanitySource = readFileSync(
-  resolve('apps/web/lib/sanity-public.ts'),
-  'utf8',
-);
-const nextConfigSource = readFileSync(
-  resolve('apps/web/next.config.ts'),
-  'utf8',
-);
-const securityHeadersSource = readFileSync(
-  resolve('packages/config/security-headers.mjs'),
-  'utf8',
-);
+const v4GlobalStyles = readFileSync(resolve('apps/web/app/v4-global.css'), 'utf8');
+const v4InteractionStyles = readFileSync(resolve('apps/web/app/v4-interactions.css'), 'utf8');
+const v6Styles = readFileSync(resolve('apps/web/app/v6-refinement.css'), 'utf8');
+const shellSource = readFileSync(resolve('apps/web/components/site-shell.tsx'), 'utf8');
+const publicSanitySource = readFileSync(resolve('apps/web/lib/sanity-public.ts'), 'utf8');
+const nextConfigSource = readFileSync(resolve('apps/web/next.config.ts'), 'utf8');
+const securityHeadersSource = readFileSync(resolve('packages/config/security-headers.mjs'), 'utf8');
+const sitemapSource = readFileSync(resolve('apps/web/app/sitemap.ts'), 'utf8');
 
-describe('Arabic premium public flagship', () => {
+describe('multilingual premium public flagship', () => {
   it('keeps governed school and contact journeys', () => {
-    expect(branchStageSource).toContain('href={`/schools/${school.slug}`}');
+    expect(branchStageSource).toContain('localePath(locale, `/schools/${slug}`)');
     expect(pageSource).toContain('href="/contact"');
     expect(schoolSource).toContain('getProgrammesForSchool(slug)');
     expect(contactSource).toContain('<EnquiryForm />');
+    expect(enquiryFormSource).toContain("locale,");
   });
 
-  it('publishes the public experience in Arabic RTL with a production Arabic typeface', () => {
+  it('publishes Arabic RTL plus French and English LTR experiences', () => {
     expect(layoutSource).toContain('Noto_Sans_Arabic');
-    expect(layoutSource).toContain('lang="ar" dir="rtl"');
-    expect(layoutSource).toContain('className={arabicFont.variable}');
-    expect(pageSource).toContain('طوّر عقلك');
-    expect(aboutSource).toContain('من نحن');
-    expect(contactSource).toContain('تواصل معنا');
+    expect(layoutSource).toContain('Manrope');
+    expect(layoutSource).toContain("requestHeaders.get('x-luminol-locale')");
+    expect(layoutSource).toContain('dir={meta.dir}');
+    expect(proxySource).toContain("firstSegment === 'fr' || firstSegment === 'en'");
+    expect(i18nSource).toContain("publicLocales = ['ar', 'fr', 'en']");
+    expect(localizedHomeSource).toContain('Develop your mind.');
+    expect(localizedHomeSource).toContain('Développez votre esprit.');
+    expect(localizedAboutSource).toContain('À propos');
+    expect(localizedContactSource).toContain('Nous contacter');
+    expect(localizedSchoolSource).toContain('Programmes and paths');
+    expect(languageSwitcherSource).toContain('usePathname');
+    expect(sitemapSource).toContain("['fr', 'en']");
     expect(arabicStyles).toContain('direction: rtl');
-    expect(v4GlobalStyles).toContain('var(--font-arabic)');
   });
 
-  it('uses the official Luminol mark and curated human photography', () => {
+  it('uses the official Luminol mark and refreshed premium human media', () => {
     expect(shellSource).toContain('/brand/luminol-mark.svg');
-    expect(pageSource).toContain('const heroVideo = editorialVideos[0]!;');
+    expect(pageSource).toContain('premiumVideos.hero');
     expect(pageSource).toContain('<ImmersiveHeroMedia video={heroVideo} />');
-    expect(branchStageSource).toContain('editorialImages.psychology');
-    expect(flagshipSource).toContain('Pexels');
-    expect(flagshipSource).toContain('editorialGallery');
+    expect(branchStageSource).toContain('<video');
+    expect(branchStageSource).toContain('premiumVideos.training');
+    expect(mediaV6Source).toContain('Monstera Production / Pexels');
+    expect(mediaV6Source).toContain('Pavel Danilyuk / Pexels');
+    expect(mediaV6Source).toContain('SHVETS production / Pexels');
     expect(pageSource).not.toContain('12+');
     expect(pageSource).not.toContain('100%');
     expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");
   });
 
-  it('adds editorial video with tight media security and honest attribution', () => {
+  it('adds video with tight media security and honest attribution', () => {
     expect(pageSource).toContain('<CinematicMediaWall />');
-    expect(flagshipSource).toContain('videos.pexels.com');
+    expect(mediaV6Source).toContain('videos.pexels.com');
     expect(immersiveHeroSource).toContain('8419413-hd_1920_1080_30fps.mp4');
     expect(immersiveHeroSource).toContain('<video');
-    expect(cinematicMediaSource).toContain(
-      'const supportFilm = editorialVideos[1]!;',
-    );
+    expect(cinematicMediaSource).toContain('premiumVideos.psychology');
     expect(cinematicMediaSource).toContain('IntersectionObserver');
     expect(cinematicMediaSource).toContain('preload="none"');
     expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
     expect(cinematicMediaSource).toContain('مواد تحريرية توضيحية');
-    expect(cinematicMediaSource).toContain('توثيقًا لطلاب');
-    expect(cinematicMediaSource).toContain('prefers-reduced-motion: reduce');
-    expect(securityHeadersSource).toContain(
-      "media-src 'self' https://videos.pexels.com",
-    );
+    expect(cinematicMediaSource).toContain('Luminol Academy students');
+    expect(securityHeadersSource).toContain("media-src 'self' https://videos.pexels.com");
   });
 
   it('publishes only governed team members and consent-confirmed testimonials', () => {
@@ -129,41 +95,35 @@ describe('Arabic premium public flagship', () => {
     expect(pageSource).toContain('teamMembers?.length');
   });
 
-  it('uses cinematic progressive enhancement with reduced-motion behavior', () => {
+  it('uses cinematic progressive enhancement with stronger CTA motion', () => {
     expect(pageSource).toContain('<HomeMotion />');
     expect(pageSource).toContain('data-reveal');
+    expect(pageSource).toContain('v6-conversion-rail');
+    expect(pageSource).toContain('v6-floating-cta');
     expect(motionSource).toContain('IntersectionObserver');
     expect(motionSource).toContain('requestAnimationFrame');
-    expect(motionSource).toContain('--motion-progress');
-    expect(motionSource).toContain('.v5-film-media');
-    expect(motionSource).toContain('.v5-still');
+    expect(motionSource).toContain('--scroll-velocity');
+    expect(motionSource).toContain('--pointer-x');
+    expect(motionSource).toContain('.v6-primary-action');
     expect(motionSource).toContain("'(prefers-reduced-motion: reduce)'");
     expect(cinematicStyles).toContain('.motion-cursor');
-    expect(cinematicStyles).toContain('--motion-tilt-x');
     expect(cinematicMediaStyles).toContain('v5-ticker-move');
     expect(cinematicMediaStyles).toContain('scroll-snap-type');
     expect(v4HomeStyles).toContain('.v4-branch-stage');
     expect(v4GlobalStyles).toContain('.ar-method-section');
     expect(v4InteractionStyles).toContain('v4-hero-line-in');
-    expect(v4InteractionStyles).toContain('--magnetic-x');
-    expect(v4HomeStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(v4GlobalStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(v4InteractionStyles).toContain(
-      '@media (prefers-reduced-motion: reduce)',
-    );
+    expect(v6Styles).toContain('.language-switcher');
+    expect(v6Styles).toContain('.v6-branch-video');
+    expect(v6Styles).toContain('.v6-conversion-rail');
+    expect(v6Styles).toContain('@media (prefers-reduced-motion: reduce)');
     expect(motionStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(arabicStyles).toContain('@media (prefers-reduced-motion: reduce)');
-    expect(cinematicStyles).toContain(
-      '@media (prefers-reduced-motion: reduce)',
-    );
-    expect(cinematicMediaStyles).toContain(
-      '@media (prefers-reduced-motion: reduce)',
-    );
   });
 
-  it('provides responsive Arabic navigation without requiring JavaScript', () => {
+  it('provides responsive navigation and route-preserving language switching', () => {
     expect(shellSource).toContain('<details className="mobile-menu">');
-    expect(shellSource).toContain('aria-label="التنقل عبر الهاتف"');
-    expect(shellSource).toContain('التكوين المهني');
+    expect(shellSource).toContain('<LanguageSwitcher locale={locale} />');
+    expect(languageSwitcherSource).toContain("pathname.replace(/^\\/(fr|en)");
+    expect(i18nSource).toContain("fr: { label: 'Français'");
+    expect(i18nSource).toContain("en: { label: 'English'");
   });
 });
