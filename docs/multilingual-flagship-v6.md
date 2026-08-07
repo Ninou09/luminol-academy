@@ -1,4 +1,4 @@
-# Multilingual Flagship V6
+# Multilingual Flagship V7
 
 This validation marker records the public-site refinement scope on PR #94.
 
@@ -12,7 +12,7 @@ Each locale includes Home, About, Contact, Psychology, Languages, and Profession
 
 ## Visual refinement
 
-The V6 pass refreshes the licensed editorial photography, adds video-led school discovery, strengthens the cinematic media sequence, refines the navy/teal/cyan/gold palette, and introduces clearer conversion calls to action without replacing native scrolling.
+The V7 pass keeps the multilingual film-led direction while reducing oversized typography and media, tightening section spacing, balancing major layouts around a more symmetrical grid, and adding restrained education-site motion such as floating geometry, pulse cues, animated sweeps, refined reveals, and compact interactive media.
 
 ## Accessibility and governance
 
@@ -20,4 +20,4 @@ Motion respects `prefers-reduced-motion`, video remains muted by default, editor
 
 ## Validation gate
 
-The multilingual public code has been normalized with the repository formatter. The branch must pass the complete repository CI suite and receive an exact-head Ready Vercel preview before this visual pass is considered deployment-verified.
+The V7 public code has been normalized with the repository formatter. The branch must pass the complete repository CI suite and receive an exact-head Ready Vercel preview before this visual pass is considered deployment-verified.
