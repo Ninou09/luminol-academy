@@ -14,11 +14,39 @@ test('Arabic institutional home is available', async ({ page }) => {
       exact: true,
     }),
   ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'FR' }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'EN' }).first()).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
 });
 
-test('all three schools expose a specific Arabic conversion path and FAQ', async ({
+test('French and English homes are localized LTR experiences', async ({ page }) => {
+  await page.goto('/fr');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'Développez votre esprit',
+  );
+  await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+  await expect(page.getByRole('link', { name: 'Commencer' }).first()).toBeVisible();
+
+  await page.goto('/en');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'Develop your mind',
+  );
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+  await expect(page.getByRole('link', { name: 'Get started' }).first()).toBeVisible();
+});
+
+test('language switcher preserves the current public route', async ({ page }) => {
+  await page.goto('/schools/languages');
+  const frenchHref = await page.getByRole('link', { name: 'FR' }).first().getAttribute('href');
+  const englishHref = await page.getByRole('link', { name: 'EN' }).first().getAttribute('href');
+  expect(frenchHref).toBe('/fr/schools/languages');
+  expect(englishHref).toBe('/en/schools/languages');
+});
+
+test('all three Arabic schools expose a conversion path and FAQ', async ({
   page,
 }) => {
   for (const route of [
@@ -35,9 +63,18 @@ test('all three schools expose a specific Arabic conversion path and FAQ', async
   }
 });
 
-test('contact retains the working Arabic enquiry experience', async ({
-  page,
-}) => {
+test('French and English school routes are complete', async ({ page }) => {
+  for (const locale of ['fr', 'en']) {
+    for (const school of ['psychology', 'languages', 'training']) {
+      await page.goto(`/${locale}/schools/${school}`);
+      await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+      await expect(page.locator('html')).toHaveAttribute('lang', locale);
+      await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+    }
+  }
+});
+
+test('contact retains working localized enquiry experiences', async ({ page }) => {
   await page.goto('/contact');
   await expect(
     page.getByRole('heading', {
@@ -46,22 +83,28 @@ test('contact retains the working Arabic enquiry experience', async ({
     }),
   ).toBeVisible();
   await expect(page.getByLabel('الاسم الكامل')).toBeVisible();
-  await expect(page.getByLabel('مجال الاهتمام')).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: 'أرسل استفساري' }),
-  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'أرسل استفساري' })).toBeVisible();
+
+  await page.goto('/fr/contact');
+  await expect(page.getByLabel('Nom complet')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Envoyer ma demande' })).toBeVisible();
+
+  await page.goto('/en/contact');
+  await expect(page.getByLabel('Full name')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Send my enquiry' })).toBeVisible();
 });
 
-test('public metadata and error behavior are available', async ({
-  request,
-}) => {
+test('public metadata and error behavior are available', async ({ request }) => {
   const robots = await request.get('/robots.txt');
   expect(robots.ok()).toBeTruthy();
   expect(await robots.text()).toContain('Sitemap:');
 
   const sitemap = await request.get('/sitemap.xml');
   expect(sitemap.ok()).toBeTruthy();
-  expect(await sitemap.text()).toContain('<urlset');
+  const sitemapText = await sitemap.text();
+  expect(sitemapText).toContain('<urlset');
+  expect(sitemapText).toContain('/fr/schools/psychology');
+  expect(sitemapText).toContain('/en/schools/training');
 
   const missing = await request.get('/definitely-not-a-launch-route');
   expect(missing.status()).toBe(404);
@@ -76,6 +119,12 @@ test('public pages publish route-specific canonical and Open Graph URLs', async 
     '/schools/psychology',
     '/schools/languages',
     '/schools/training',
+    '/fr/about',
+    '/fr/contact',
+    '/fr/schools/psychology',
+    '/en/about',
+    '/en/contact',
+    '/en/schools/training',
   ]) {
     await page.goto(route);
 
