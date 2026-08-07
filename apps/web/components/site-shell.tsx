@@ -1,16 +1,44 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
+import {
+  localeMeta,
+  localePath,
+  publicLocales,
+  shellCopy,
+  type PublicLocale,
+} from '../lib/i18n';
 
-const navigation = [
-  { href: '/', label: 'الرئيسية' },
-  { href: '/schools/psychology', label: 'علم النفس' },
-  { href: '/schools/languages', label: 'اللغات' },
-  { href: '/schools/training', label: 'التكوين المهني' },
-  { href: '/about', label: 'من نحن' },
-] as const;
+function localizedNavigation(locale: PublicLocale) {
+  const copy = shellCopy[locale];
 
-function Brand({ footer = false }: { footer?: boolean }) {
+  return [
+    { href: localePath(locale, '/'), label: copy.home },
+    {
+      href: localePath(locale, '/schools/psychology'),
+      label: copy.psychology,
+    },
+    {
+      href: localePath(locale, '/schools/languages'),
+      label: copy.languages,
+    },
+    {
+      href: localePath(locale, '/schools/training'),
+      label: copy.training,
+    },
+    { href: localePath(locale, '/about'), label: copy.about },
+  ] as const;
+}
+
+function Brand({
+  footer = false,
+  locale = 'ar',
+}: {
+  footer?: boolean;
+  locale?: PublicLocale;
+}) {
+  const copy = shellCopy[locale];
+
   return (
     <span
       className={footer ? 'brand-lockup brand-lockup-footer' : 'brand-lockup'}
@@ -25,34 +53,68 @@ function Brand({ footer = false }: { footer?: boolean }) {
         priority={!footer}
       />
       <span className="brand-copy">
-        <strong>أكاديمية لومينول</strong>
+        <strong>{copy.brand}</strong>
         <small>LUMINOL ACADEMY</small>
       </span>
     </span>
   );
 }
 
-export function SiteHeader() {
+function LanguageSwitcher({
+  locale,
+  currentPath,
+}: {
+  locale: PublicLocale;
+  currentPath: string;
+}) {
+  return (
+    <nav className="language-switcher" aria-label="Language selection">
+      {publicLocales.map((targetLocale) => (
+        <Link
+          aria-current={targetLocale === locale ? 'page' : undefined}
+          data-active={targetLocale === locale ? 'true' : 'false'}
+          href={localePath(targetLocale, currentPath)}
+          hrefLang={localeMeta[targetLocale].htmlLang}
+          key={targetLocale}
+          lang={localeMeta[targetLocale].htmlLang}
+        >
+          {localeMeta[targetLocale].short}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+export function SiteHeader({
+  locale = 'ar',
+  currentPath = '/',
+}: {
+  locale?: PublicLocale;
+  currentPath?: string;
+}) {
+  const copy = shellCopy[locale];
+  const navigation = localizedNavigation(locale);
+
   return (
     <>
       <div className="utility-bar">
-        <p>تعليم إنساني يجمع بين الوعي واللغة والمهارة</p>
+        <p>{copy.utility}</p>
         <div>
-          <span>البليدة، الجزائر</span>
-          <Link href="/contact">تواصل معنا</Link>
+          <span>{copy.location}</span>
+          <Link href={localePath(locale, '/contact')}>{copy.contact}</Link>
         </div>
       </div>
 
       <header className="site-header premium-header">
         <Link
           className="brand-link"
-          href="/"
-          aria-label="الصفحة الرئيسية لأكاديمية لومينول"
+          href={localePath(locale, '/')}
+          aria-label={copy.brandAria}
         >
-          <Brand />
+          <Brand locale={locale} />
         </Link>
 
-        <nav className="desktop-nav" aria-label="التنقل الرئيسي">
+        <nav className="desktop-nav" aria-label="Primary navigation">
           {navigation.map((item) => (
             <Link href={item.href} key={item.href}>
               {item.label}
@@ -61,21 +123,27 @@ export function SiteHeader() {
         </nav>
 
         <div className="header-actions">
-          <ButtonLink className="header-cta" href="/contact" size="sm">
-            سجّل اهتمامك
+          <LanguageSwitcher locale={locale} currentPath={currentPath} />
+          <ButtonLink
+            className="header-cta"
+            href={localePath(locale, '/contact')}
+            size="sm"
+          >
+            {copy.interest}
           </ButtonLink>
         </div>
 
         <details className="mobile-menu">
-          <summary aria-label="فتح قائمة التنقل">القائمة</summary>
-          <nav aria-label="التنقل عبر الهاتف">
+          <summary aria-label={copy.menu}>{copy.menu}</summary>
+          <nav aria-label="Mobile navigation">
+            <LanguageSwitcher locale={locale} currentPath={currentPath} />
             {navigation.map((item) => (
               <Link href={item.href} key={item.href}>
-                {item.label} <span aria-hidden="true">←</span>
+                {item.label} <span aria-hidden="true">→</span>
               </Link>
             ))}
-            <Link href="/contact">
-              تحدّث مع الفريق <span aria-hidden="true">←</span>
+            <Link href={localePath(locale, '/contact')}>
+              {copy.talk} <span aria-hidden="true">→</span>
             </Link>
           </nav>
         </details>
@@ -84,14 +152,16 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ locale = 'ar' }: { locale?: PublicLocale }) {
+  const copy = shellCopy[locale];
+
   return (
     <footer className="site-footer">
       <div className="footer-lead">
-        <p>العقل · اللغة · المستقبل</p>
-        <h2>أكاديمية واحدة لمسارات تعليمية مترابطة تصنع تقدّمًا حقيقيًا.</h2>
-        <Link href="/contact">
-          ابدأ محادثتك <span aria-hidden="true">←</span>
+        <p>{copy.footerKicker}</p>
+        <h2>{copy.footerTitle}</h2>
+        <Link href={localePath(locale, '/contact')}>
+          {copy.interest} <span aria-hidden="true">→</span>
         </Link>
       </div>
 
@@ -99,50 +169,56 @@ export function SiteFooter() {
         <div className="footer-intro">
           <Link
             className="footer-brand"
-            href="/"
-            aria-label="الصفحة الرئيسية لأكاديمية لومينول"
+            href={localePath(locale, '/')}
+            aria-label={copy.brandAria}
           >
-            <Brand footer />
+            <Brand footer locale={locale} />
           </Link>
-          <p>
-            علم النفس، تعلّم اللغات والتكوين المهني ضمن تجربة تعليمية واضحة،
-            إنسانية وعملية.
-          </p>
-          <span className="footer-location">البليدة، الجزائر</span>
+          <p>{copy.footerIntro}</p>
+          <span className="footer-location">{copy.location}</span>
         </div>
 
         <div className="footer-column">
-          <h2>فروع الأكاديمية</h2>
-          <Link href="/schools/psychology">علم النفس</Link>
-          <Link href="/schools/languages">اللغات</Link>
-          <Link href="/schools/training">التكوين المهني</Link>
+          <h2>{copy.schools}</h2>
+          <Link href={localePath(locale, '/schools/psychology')}>
+            {copy.psychology}
+          </Link>
+          <Link href={localePath(locale, '/schools/languages')}>
+            {copy.languages}
+          </Link>
+          <Link href={localePath(locale, '/schools/training')}>
+            {copy.training}
+          </Link>
         </div>
 
         <div className="footer-column">
-          <h2>الأكاديمية</h2>
-          <Link href="/about">من نحن</Link>
-          <Link href="/contact">تواصل مع الفريق</Link>
-          <Link href="/contact">سجّل اهتمامك</Link>
+          <h2>{copy.academy}</h2>
+          <Link href={localePath(locale, '/about')}>{copy.about}</Link>
+          <Link href={localePath(locale, '/contact')}>{copy.talk}</Link>
+          <Link href={localePath(locale, '/contact')}>{copy.interest}</Link>
         </div>
 
         <div className="footer-column">
-          <h2>ابدأ من هنا</h2>
-          <Link href="/schools/psychology">اكتشف برامج علم النفس</Link>
-          <Link href="/schools/languages">اختر مسارك اللغوي</Link>
-          <Link href="/schools/training">طوّر مهاراتك المهنية</Link>
+          <h2>{copy.startHere}</h2>
+          <Link href={localePath(locale, '/schools/psychology')}>
+            {copy.explorePsychology}
+          </Link>
+          <Link href={localePath(locale, '/schools/languages')}>
+            {copy.exploreLanguages}
+          </Link>
+          <Link href={localePath(locale, '/schools/training')}>
+            {copy.exploreTraining}
+          </Link>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <p>© {new Date().getFullYear()} أكاديمية لومينول</p>
-        <p className="footer-note">
-          محتوى علم النفس تعليمي وداعم ولا يعوّض خدمات الطوارئ أو الرعاية
-          الطبية.
-        </p>
+        <p>© {new Date().getFullYear()} {copy.brand}</p>
+        <p className="footer-note">{copy.footerNote}</p>
         <div className="footer-bottom-links">
-          <Link href="/privacy">الخصوصية</Link>
-          <Link href="/terms">الشروط</Link>
-          <Link href="/cookies">ملفات الارتباط</Link>
+          <Link href="/privacy">{copy.privacy}</Link>
+          <Link href="/terms">{copy.terms}</Link>
+          <Link href="/cookies">{copy.cookies}</Link>
         </div>
       </div>
     </footer>
