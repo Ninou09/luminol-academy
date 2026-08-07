@@ -1,0 +1,42 @@
+name: Format V9 detail once
+
+on:
+  push:
+    branches:
+      - design/premium-motion-homepage
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: design/premium-motion-homepage
+          fetch-depth: 0
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Format detail file and remove workflow
+        run: |
+          pnpm exec prettier --write apps/web/app/v9-detail-fixes.css
+          rm .github/workflows/format-v9-detail-once.yml
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/app/v9-detail-fixes.css .github/workflows/format-v9-detail-once.yml
+          git commit -m "Format final V9 detail polish" || exit 0
+          git push origin HEAD:design/premium-motion-homepage
