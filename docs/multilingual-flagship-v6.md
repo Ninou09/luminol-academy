@@ -1,6 +1,6 @@
-# Multilingual Flagship V7
+# Multilingual Flagship V8
 
-This validation marker records the public-site refinement scope on PR #94.
+This validation marker records the current public-site refinement scope on PR #94.
 
 ## Public locales
 
@@ -12,7 +12,11 @@ Each locale includes Home, About, Contact, Psychology, Languages, and Profession
 
 ## Visual refinement
 
-The V7 pass keeps the multilingual film-led direction while reducing oversized typography and media, tightening section spacing, balancing major layouts around a more symmetrical grid, and adding restrained education-site motion such as floating geometry, pulse cues, animated sweeps, refined reveals, and compact interactive media.
+The V8 pass reduces headline and media scale again, keeps a more symmetrical institutional grid, replaces the primary editorial photography with wider education-focused scenes, changes the hero and language video treatment, reduces over-cropping across video and photography, strengthens the official navy/cyan/gold palette, and adds compact icon-led detail, richer hover states and restrained ambient motion.
+
+## Reference audit
+
+The homepage architecture was compared against high-performing education experiences including Avenues and Punahou plus the Eduka education-template reference. The implementation adopts high-level patterns such as clearer information hierarchy, compact quick-access navigation, small icon cues, narrative learning sections, restrained media scale and strong conversion actions without copying proprietary layout or assets.
 
 ## Accessibility and governance
 
@@ -20,4 +24,4 @@ Motion respects `prefers-reduced-motion`, video remains muted by default, editor
 
 ## Validation gate
 
-The V7 public code has been normalized with the repository formatter. The branch must pass the complete repository CI suite and receive an exact-head Ready Vercel preview before this visual pass is considered deployment-verified.
+The branch must pass the complete repository CI suite and receive a Ready Vercel preview before this visual pass is considered deployment-verified.
