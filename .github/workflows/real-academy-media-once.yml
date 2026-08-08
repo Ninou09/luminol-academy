@@ -83,7 +83,7 @@ jobs:
           p.write_text(text[:a] + assertions + text[b:])
           PY
 
-          npx --yes prettier@3.9.6 --write apps/web/lib/flagship.ts apps/web/components/academy-archive.tsx apps/web/components/cinematic-media.tsx scripts/homepage-motion.test.mjs
+          npx --yes --package=prettier@3.9.6 --package=prettier-plugin-tailwindcss@0.8.1 prettier --write apps/web/lib/flagship.ts apps/web/components/academy-archive.tsx apps/web/components/cinematic-media.tsx scripts/homepage-motion.test.mjs
           rm .github/workflows/real-academy-media-once.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
