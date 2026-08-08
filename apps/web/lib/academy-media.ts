@@ -32,6 +32,11 @@ export const academyMedia = {
     alt: 'لحظة تكريم موثقة ضمن أرشيف أكاديمية لومينول',
     label: 'من أرشيف لومينول',
   },
+  founder: {
+    src: '/media/academy/founder-kheddaoui-fettouma.svg',
+    alt: 'خداوي فطومة، مؤسسة أكاديمية لومينول',
+    label: 'مؤسسة أكاديمية لومينول',
+  },
 } as const satisfies Record<string, AcademyPhoto>;
 
 export const academySchoolMedia: Record<SchoolSlug, AcademyPhoto> = {
