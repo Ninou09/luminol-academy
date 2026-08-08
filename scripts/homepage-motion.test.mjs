@@ -149,10 +149,11 @@ describe('multilingual premium public flagship', () => {
     expect(branchStageSource).toContain('<video');
     expect(branchStageSource).toContain('premiumVideos.training');
     expect(branchStageSource).toContain('v9-branch-meta');
-    expect(mediaV6Source).toContain('Monstera Production / Pexels');
+    expect(mediaV6Source).toContain('Airam Dato-on / Pexels');
     expect(mediaV6Source).toContain('Vitaly Gariev / Pexels');
-    expect(mediaV6Source).toContain('Kampus Production / Pexels');
-    expect(mediaV6Source).toContain('Eduard Perez / Pexels');
+    expect(mediaV6Source).toContain('RDNE Stock project / Pexels');
+    expect(mediaV6Source).toContain('Matheus Bertelli / Pexels');
+    expect(mediaV6Source).toContain('Ivan S / Pexels');
     expect(pageSource).not.toContain('12+');
     expect(pageSource).not.toContain('100%');
     expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");
@@ -161,6 +162,7 @@ describe('multilingual premium public flagship', () => {
   it('adds video with tight media security and honest attribution', () => {
     expect(pageSource).toContain('<CinematicMediaWall />');
     expect(mediaV6Source).toContain('videos.pexels.com');
+    expect(mediaV6Source).toContain('8419413-hd_1920_1080_30fps.mp4');
     expect(mediaV6Source).toContain('8196801-hd_1920_1080_25fps.mp4');
     expect(mediaV6Source).toContain('8428200-uhd_3840_2160_25fps.mp4');
     expect(mediaV6Source).toContain('8461012-uhd_3840_2160_25fps.mp4');
