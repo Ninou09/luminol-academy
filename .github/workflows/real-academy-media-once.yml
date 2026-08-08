@@ -24,7 +24,6 @@ jobs:
           python <<'PY'
           from pathlib import Path
 
-          # Arabic school-page media source.
           p = Path('apps/web/lib/flagship.ts')
           text = p.read_text()
           if "import { academyMedia } from './academy-media';" not in text:
@@ -42,7 +41,6 @@ jobs:
           b = text.index(end, a)
           p.write_text(text[:a] + replacement + text[b:])
 
-          # Homepage archive: visibly include Psychology as well as Languages and Training.
           p = Path('apps/web/components/academy-archive.tsx')
           text = p.read_text()
           text = text.replace("      'فضاء اللغات',\n      'محطات من مسيرة لومينول',", "      'فضاء اللغات',\n      'أنشطة علم النفس والتعلم',\n      'محطات من مسيرة لومينول',")
@@ -51,7 +49,6 @@ jobs:
           text = text.replace("  academyMedia.languages,\n  academyMedia.recognition,", "  academyMedia.languages,\n  academyMedia.psychology,\n  academyMedia.recognition,")
           p.write_text(text)
 
-          # Correct media disclosure: photographs are real, only video remains editorial.
           p = Path('apps/web/components/cinematic-media.tsx')
           text = p.read_text()
           swaps = {
@@ -69,7 +66,6 @@ jobs:
               text = text.replace(old, new)
           p.write_text(text)
 
-          # Update regression expectations without fragile photographer names.
           p = Path('scripts/homepage-motion.test.mjs')
           text = p.read_text()
           start = "    expect(mediaV6Source).toContain('Airam Dato-on / Pexels');"
@@ -87,7 +83,7 @@ jobs:
           p.write_text(text[:a] + assertions + text[b:])
           PY
 
-          pnpm exec prettier --write apps/web/lib/flagship.ts apps/web/components/academy-archive.tsx apps/web/components/cinematic-media.tsx scripts/homepage-motion.test.mjs
+          npx --yes prettier@3.9.6 --write apps/web/lib/flagship.ts apps/web/components/academy-archive.tsx apps/web/components/cinematic-media.tsx scripts/homepage-motion.test.mjs
           rm .github/workflows/real-academy-media-once.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
