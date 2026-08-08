@@ -1,0 +1,195 @@
+.v4-hero-media video,
+.v4-hero-poster {
+  transform: translate3d(
+      var(--pointer-shift-x, 0px),
+      var(--pointer-shift-y, 0px),
+      0
+    )
+    scale(1.065);
+  transition:
+    opacity 800ms ease,
+    transform 180ms linear,
+    filter 600ms ease;
+  will-change: transform;
+}
+
+.v4-hero-actions a,
+.v4-final-cta > a,
+.v4-hero-play,
+.v5-film-control {
+  transform: translate3d(var(--magnetic-x, 0px), var(--magnetic-y, 0px), 0);
+  will-change: transform;
+}
+
+.motion-enabled .v4-hero-content[data-revealed='true'] .v4-overline {
+  animation: v4-overline-in 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.motion-enabled .v4-hero-content[data-revealed='true'] h1 > span,
+.motion-enabled .v4-hero-content[data-revealed='true'] h1 > em {
+  animation: v4-hero-line-in 920ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: right bottom;
+}
+
+.motion-enabled .v4-hero-content[data-revealed='true'] h1 > span:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.motion-enabled .v4-hero-content[data-revealed='true'] h1 > em {
+  animation-delay: 170ms;
+}
+
+.motion-enabled .v4-hero-content[data-revealed='true'] .v4-hero-lede {
+  animation: v4-copy-in 720ms 250ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.motion-enabled .v4-hero-content[data-revealed='true'] .v4-hero-actions {
+  animation: v4-copy-in 720ms 330ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.v4-branch-image[data-active='true'] img {
+  animation: v4-branch-photo-arrive 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.v4-manifesto-collage::before {
+  content: '';
+  position: absolute;
+  z-index: 5;
+  width: 0.45rem;
+  height: 38%;
+  inset-inline-end: 2.2rem;
+  inset-block-start: -2rem;
+  background: linear-gradient(#159bd0, #c79a3b);
+  transform-origin: top;
+  animation: v4-collage-line 5.5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.v4-principle-grid article,
+.v4-journey-track li,
+.v4-quick-access a {
+  --motion-glow-x: 50%;
+  --motion-glow-y: 50%;
+}
+
+.v4-principle-grid article::before,
+.v4-journey-track li::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--motion-glow-x) var(--motion-glow-y),
+    rgb(21 155 208 / 0.08),
+    transparent 36%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+
+.v4-principle-grid article:hover::before,
+.v4-journey-track li:hover::before {
+  opacity: 1;
+}
+
+.v4-journey-track li {
+  position: relative;
+}
+
+.v5-film-media,
+.v5-still {
+  transform-style: preserve-3d;
+}
+
+.v5-film-copy,
+.v5-still figcaption,
+.v5-film-control {
+  transform: translateZ(24px);
+}
+
+@keyframes v4-overline-in {
+  from {
+    opacity: 0;
+    transform: translate3d(1.2rem, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes v4-hero-line-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, 1.4rem, 0) rotateX(-8deg);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+  }
+}
+
+@keyframes v4-copy-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes v4-branch-photo-arrive {
+  from {
+    transform: scale(1.07);
+    filter: saturate(0.72) contrast(1.04);
+  }
+  to {
+    transform: scale(1);
+    filter: saturate(1) contrast(1);
+  }
+}
+
+@keyframes v4-collage-line {
+  from {
+    transform: scaleY(0.3);
+    opacity: 0.35;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 0.9;
+  }
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 62rem) {
+  .v4-hero-media video,
+  .v4-hero-poster {
+    transform: scale(1.055);
+  }
+
+  .v4-hero-actions a,
+  .v4-final-cta > a,
+  .v4-hero-play,
+  .v5-film-control {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-hero-media video,
+  .v4-hero-poster,
+  .v4-hero-actions a,
+  .v4-final-cta > a,
+  .v4-hero-play,
+  .v5-film-control,
+  .v4-hero-content *,
+  .v4-branch-image img,
+  .v4-manifesto-collage::before {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

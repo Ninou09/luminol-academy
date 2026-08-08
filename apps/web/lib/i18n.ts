@@ -1,0 +1,197 @@
+export const publicLocales = ['ar', 'fr', 'en'] as const;
+
+export type PublicLocale = (typeof publicLocales)[number];
+
+export function isPublicLocale(value: string): value is PublicLocale {
+  return publicLocales.includes(value as PublicLocale);
+}
+
+export function localePrefix(locale: PublicLocale) {
+  return locale === 'ar' ? '' : `/${locale}`;
+}
+
+export function localePath(locale: PublicLocale, path: string) {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return (
+    `${localePrefix(locale)}${normalizedPath === '/' ? '' : normalizedPath}` ||
+    '/'
+  );
+}
+
+export const localeMeta = {
+  ar: { label: 'العربية', short: 'AR', dir: 'rtl' as const, htmlLang: 'ar' },
+  fr: { label: 'Français', short: 'FR', dir: 'ltr' as const, htmlLang: 'fr' },
+  en: { label: 'English', short: 'EN', dir: 'ltr' as const, htmlLang: 'en' },
+} satisfies Record<
+  PublicLocale,
+  { label: string; short: string; dir: 'rtl' | 'ltr'; htmlLang: string }
+>;
+
+export const shellCopy = {
+  ar: {
+    utility: 'تعليم إنساني يجمع بين الوعي واللغة والمهارة',
+    location: 'البليدة، الجزائر',
+    contact: 'تواصل معنا',
+    home: 'الرئيسية',
+    psychology: 'علم النفس',
+    languages: 'اللغات',
+    training: 'التكوين المهني',
+    about: 'من نحن',
+    interest: 'ابدأ استفسارك',
+    menu: 'القائمة',
+    talk: 'تحدّث مع الفريق',
+    brand: 'أكاديمية لومينول',
+    brandAria: 'الصفحة الرئيسية لأكاديمية لومينول',
+    footerKicker: 'العقل · اللغة · المستقبل',
+    footerTitle: 'أكاديمية واحدة لمسارات تعليمية مترابطة تصنع تقدّمًا حقيقيًا.',
+    footerIntro:
+      'علم النفس، تعلّم اللغات والتكوين المهني ضمن تجربة تعليمية واضحة، إنسانية وعملية.',
+    schools: 'فروع الأكاديمية',
+    academy: 'الأكاديمية',
+    startHere: 'ابدأ من هنا',
+    privacy: 'الخصوصية',
+    terms: 'الشروط',
+    cookies: 'ملفات الارتباط',
+    footerNote:
+      'محتوى علم النفس تعليمي وداعم ولا يعوّض خدمات الطوارئ أو الرعاية الطبية.',
+    explorePsychology: 'اكتشف برامج علم النفس',
+    exploreLanguages: 'اختر مسارك اللغوي',
+    exploreTraining: 'طوّر مهاراتك المهنية',
+  },
+  fr: {
+    utility:
+      'Une formation humaine qui relie conscience, langage et compétence',
+    location: 'Blida, Algérie',
+    contact: 'Nous contacter',
+    home: 'Accueil',
+    psychology: 'Psychologie',
+    languages: 'Langues',
+    training: 'Formation professionnelle',
+    about: 'À propos',
+    interest: 'Commencer',
+    menu: 'Menu',
+    talk: 'Parler à l’équipe',
+    brand: 'Luminol Academy',
+    brandAria: 'Accueil de Luminol Academy',
+    footerKicker: 'ESPRIT · LANGUE · AVENIR',
+    footerTitle:
+      'Une académie, trois parcours connectés pour progresser avec intention.',
+    footerIntro:
+      'Psychologie, langues et formation professionnelle dans une expérience claire, humaine et pratique.',
+    schools: 'Nos pôles',
+    academy: 'L’académie',
+    startHere: 'Commencer ici',
+    privacy: 'Confidentialité',
+    terms: 'Conditions',
+    cookies: 'Cookies',
+    footerNote:
+      'Le contenu de psychologie est éducatif et de soutien; il ne remplace pas les soins médicaux ni les services d’urgence.',
+    explorePsychology: 'Découvrir la psychologie',
+    exploreLanguages: 'Choisir une langue',
+    exploreTraining: 'Développer vos compétences',
+  },
+  en: {
+    utility:
+      'Human-centered learning across mind, language and professional skill',
+    location: 'Blida, Algeria',
+    contact: 'Contact us',
+    home: 'Home',
+    psychology: 'Psychology',
+    languages: 'Languages',
+    training: 'Professional Training',
+    about: 'About',
+    interest: 'Get started',
+    menu: 'Menu',
+    talk: 'Talk to the team',
+    brand: 'Luminol Academy',
+    brandAria: 'Luminol Academy home',
+    footerKicker: 'MIND · LANGUAGE · FUTURE',
+    footerTitle:
+      'One academy, three connected paths designed for meaningful progress.',
+    footerIntro:
+      'Psychology, language learning and professional development in one clear, human and practical experience.',
+    schools: 'Academy schools',
+    academy: 'Academy',
+    startHere: 'Start here',
+    privacy: 'Privacy',
+    terms: 'Terms',
+    cookies: 'Cookies',
+    footerNote:
+      'Psychology content is educational and supportive and does not replace emergency or medical care.',
+    explorePsychology: 'Explore psychology',
+    exploreLanguages: 'Choose a language path',
+    exploreTraining: 'Build professional skills',
+  },
+} satisfies Record<PublicLocale, Record<string, string>>;
+
+export const formCopy = {
+  ar: {
+    sending: 'جارٍ إرسال استفسارك…',
+    error: 'تعذر إرسال الاستفسار الآن. حاول مرة أخرى.',
+    success: 'شكرًا لك. تم استلام استفسارك وسيقوم فريق لومينول بمراجعته.',
+    eyebrow: 'أخبرنا عن هدفك',
+    title: 'ابدأ رحلتك مع لومينول.',
+    intro:
+      'شارك معنا ما تبحث عنه. سنستخدم هذه المعلومات فقط لفهم استفسارك والتواصل معك بشأنه.',
+    name: 'الاسم الكامل',
+    email: 'البريد الإلكتروني',
+    phone: 'رقم الهاتف',
+    optional: 'اختياري',
+    school: 'مجال الاهتمام',
+    helpChoose: 'ساعدني على الاختيار',
+    psychology: 'علم النفس',
+    languages: 'اللغات',
+    training: 'التكوين المهني',
+    message: 'كيف يمكن للومينول مساعدتك؟',
+    consent:
+      'أوافق على أن تقوم أكاديمية لومينول بحفظ هذه المعلومات واستخدامها للرد على استفساري.',
+    submit: 'أرسل استفساري',
+  },
+  fr: {
+    sending: 'Envoi de votre demande…',
+    error:
+      'Impossible d’envoyer votre demande pour le moment. Veuillez réessayer.',
+    success:
+      'Merci. Votre demande a bien été reçue et sera examinée par l’équipe Luminol.',
+    eyebrow: 'Parlez-nous de votre objectif',
+    title: 'Commencez votre parcours avec Luminol.',
+    intro:
+      'Dites-nous ce que vous recherchez. Ces informations servent uniquement à comprendre votre demande et à vous répondre.',
+    name: 'Nom complet',
+    email: 'Adresse e-mail',
+    phone: 'Téléphone',
+    optional: 'facultatif',
+    school: 'Domaine d’intérêt',
+    helpChoose: 'Aidez-moi à choisir',
+    psychology: 'Psychologie',
+    languages: 'Langues',
+    training: 'Formation professionnelle',
+    message: 'Comment Luminol peut-elle vous aider ?',
+    consent:
+      'J’accepte que Luminol Academy conserve ces informations et les utilise pour répondre à ma demande.',
+    submit: 'Envoyer ma demande',
+  },
+  en: {
+    sending: 'Sending your enquiry…',
+    error: 'We could not send your enquiry right now. Please try again.',
+    success:
+      'Thank you. Your enquiry has been received and will be reviewed by the Luminol team.',
+    eyebrow: 'Tell us about your goal',
+    title: 'Start your Luminol journey.',
+    intro:
+      'Share what you are looking for. We use this information only to understand your enquiry and respond to you.',
+    name: 'Full name',
+    email: 'Email address',
+    phone: 'Phone number',
+    optional: 'optional',
+    school: 'Area of interest',
+    helpChoose: 'Help me choose',
+    psychology: 'Psychology',
+    languages: 'Languages',
+    training: 'Professional Training',
+    message: 'How can Luminol help you?',
+    consent:
+      'I agree that Luminol Academy may store this information and use it to respond to my enquiry.',
+    submit: 'Send my enquiry',
+  },
+} satisfies Record<PublicLocale, Record<string, string>>;

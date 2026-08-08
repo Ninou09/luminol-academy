@@ -1,0 +1,723 @@
+/* V7 — balanced scale, stronger symmetry and education-led motion. */
+:root {
+  --v7-max: 86rem;
+  --v7-content: 72rem;
+  --v7-radius: 1.1rem;
+  --v7-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Scale the flagship down without making it feel small. */
+.v4-home {
+  --v4-max: var(--v7-max);
+  --v4-gutter: clamp(1.1rem, 3.5vw, 3.8rem);
+  --v4-space: clamp(4.5rem, 7vw, 7.2rem);
+}
+
+.v4-hero {
+  min-height: min(78svh, 49rem);
+}
+
+.v4-hero-content {
+  padding: clamp(6.2rem, 9vw, 7.6rem) var(--v4-gutter) clamp(5.8rem, 8vw, 7rem);
+}
+
+.v4-hero-content > * {
+  max-width: 47rem;
+}
+
+.v4-hero h1 {
+  max-width: 15ch;
+  margin: 0.75rem 0 1.05rem;
+  font-size: clamp(2.8rem, 5.35vw, 5.65rem);
+  line-height: 1.015;
+  letter-spacing: -0.04em;
+}
+
+.v4-hero h1 em {
+  font-size: 0.66em;
+}
+
+.v4-hero-lede {
+  max-width: 40rem !important;
+  font-size: clamp(0.94rem, 1.2vw, 1.08rem);
+  line-height: 1.8;
+}
+
+.v4-hero-actions {
+  margin-top: 1.6rem;
+}
+
+.v4-hero-actions a {
+  min-height: 3.2rem !important;
+  padding-inline: 1.3rem !important;
+  font-size: 0.78rem !important;
+}
+
+.v6-hero-proof {
+  max-width: 42rem;
+  margin-top: 0.82rem;
+  font-size: 0.74rem;
+}
+
+.v4-hero-brand-shape {
+  width: clamp(14rem, 27vw, 29rem);
+  opacity: 0.085;
+}
+
+.v4-hero-media video,
+.v4-hero-poster {
+  transform: scale(1.025);
+}
+
+/* Compact, perfectly even quick navigation. */
+.v4-quick-access {
+  width: min(calc(100% - 2rem), 82rem);
+  border-radius: 0 0 1rem 1rem;
+  overflow: hidden;
+}
+
+.v4-quick-access a {
+  min-height: 7.15rem;
+  gap: 0.8rem;
+  padding: 1.05rem 1.15rem;
+  transform: translateZ(0);
+}
+
+.v4-quick-access strong {
+  font-size: 0.91rem;
+}
+
+.v4-quick-access small {
+  font-size: 0.65rem;
+}
+
+/* Editorial sections now share a more consistent 50/50 rhythm. */
+.v4-manifesto {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(3rem, 6vw, 5.5rem);
+  padding: clamp(5.5rem, 8vw, 8rem) var(--v4-gutter);
+}
+
+.v4-manifesto h2,
+.v4-branch-heading h2,
+.v4-principles h2,
+.v4-journey h2,
+.v4-governed-section h2,
+.v4-final-cta h2 {
+  font-size: clamp(2.05rem, 3.8vw, 4rem);
+  line-height: 1.16;
+}
+
+.v4-manifesto-lead {
+  margin-top: 1.25rem;
+  font-size: clamp(0.96rem, 1.3vw, 1.12rem);
+  line-height: 1.9;
+}
+
+.v4-manifesto-number {
+  inset-block-start: 2rem;
+  font-size: clamp(4rem, 8vw, 7.5rem);
+}
+
+.v4-manifesto-collage {
+  min-height: clamp(27rem, 37vw, 35rem);
+  max-width: 39rem;
+  width: 100%;
+  justify-self: center;
+}
+
+.v4-collage-main {
+  inset: 0 0 3.5rem 12%;
+  border-radius: var(--v7-radius);
+}
+
+.v4-collage-float {
+  width: 33%;
+  border-width: 0.5rem;
+  border-radius: 0.9rem;
+}
+
+.v4-collage-word {
+  font-size: clamp(1.7rem, 3vw, 3rem);
+}
+
+.v4-branch-stage {
+  padding-block: clamp(4.8rem, 7vw, 7rem);
+}
+
+.v4-branch-heading {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2.5rem, 5vw, 5rem);
+  margin-bottom: clamp(2.6rem, 4vw, 4rem);
+}
+
+.v4-branch-heading > p {
+  max-width: 37rem;
+  justify-self: end;
+  font-size: 0.86rem;
+  line-height: 1.85;
+}
+
+.v4-branch-experience {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 34rem;
+  max-width: 80rem;
+}
+
+.v6-branch-visual,
+.v4-branch-visual {
+  min-height: 34rem;
+}
+
+.v4-branch-image-word {
+  font-size: clamp(2.7rem, 5vw, 5rem);
+}
+
+.v4-branch-link {
+  gap: 0.9rem;
+  padding: clamp(1.15rem, 2vw, 1.65rem);
+}
+
+.v4-branch-link h3 {
+  margin: 0.45rem 0 0.4rem;
+  font-size: clamp(1.45rem, 2.2vw, 2.15rem);
+}
+
+.v4-branch-link p {
+  font-size: 0.74rem;
+  line-height: 1.72;
+}
+
+/* Keep video cinematic, but no longer oversized. */
+.v5-media {
+  padding: clamp(5.2rem, 8vw, 8rem) var(--v4-gutter, var(--ar-gutter));
+}
+
+.v5-media-heading {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2.5rem, 5vw, 5rem);
+  margin-bottom: clamp(3rem, 5vw, 4.5rem);
+}
+
+.v5-media-heading h2 {
+  max-width: 50rem;
+  font-size: clamp(2.35rem, 4.35vw, 4.6rem);
+  line-height: 1.1;
+}
+
+.v5-media-heading > p {
+  max-width: 35rem;
+  justify-self: end;
+  font-size: 0.82rem;
+  line-height: 1.82;
+}
+
+.v5-feature-film {
+  max-width: 76rem;
+}
+
+.v5-film-wide .v5-film-media {
+  min-height: clamp(25rem, 40vw, 38rem);
+  border-radius: var(--v7-radius);
+}
+
+.v5-film-portrait .v5-film-media {
+  min-height: clamp(27rem, 39vw, 36rem);
+  border-radius: var(--v7-radius);
+}
+
+.v5-film-copy {
+  inset-inline: clamp(1.15rem, 2.3vw, 2rem);
+  inset-block-end: clamp(1.2rem, 2.3vw, 2rem);
+}
+
+.v5-film-copy h3 {
+  max-width: 42rem;
+  font-size: clamp(1.7rem, 3.3vw, 3.45rem);
+}
+
+.v5-film-copy > span {
+  max-width: 36rem;
+  margin-top: 0.72rem;
+  font-size: 0.78rem;
+  line-height: 1.75;
+}
+
+.v5-film-split {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(3rem, 6vw, 5.5rem);
+  max-width: 76rem;
+  margin-top: clamp(4.5rem, 7vw, 6.5rem);
+}
+
+.v5-film-statement h3 {
+  font-size: clamp(2.05rem, 3.9vw, 3.8rem);
+}
+
+.v5-film-statement > span {
+  font-size: clamp(5rem, 9vw, 9rem);
+}
+
+.v5-ticker {
+  max-width: 76rem;
+  margin-block: clamp(4rem, 6vw, 5.5rem);
+}
+
+.v6-conversion-rail {
+  grid-template-columns: minmax(0, 1fr) auto;
+  width: min(90vw, 78rem);
+  gap: 1.5rem;
+  padding: clamp(1.7rem, 3vw, 2.8rem);
+  border-radius: 1.25rem;
+}
+
+.v6-conversion-rail h2 {
+  max-width: 23ch;
+  font-size: clamp(1.75rem, 3vw, 3.05rem);
+  line-height: 1.12;
+}
+
+.v6-conversion-rail p {
+  font-size: 0.82rem;
+  line-height: 1.75;
+}
+
+.v6-conversion-rail::before {
+  font-size: clamp(4rem, 8vw, 7.5rem);
+}
+
+.v4-principles,
+.v4-journey,
+.v4-governed-section,
+.v4-final-cta {
+  padding-block: clamp(4.8rem, 7vw, 7rem);
+}
+
+.v4-principle-grid article,
+.v4-journey-track li {
+  min-height: 0;
+}
+
+/* Internal pages use the same compact proportions as the homepage. */
+.ar-internal-hero,
+.ar-school-hero {
+  min-height: clamp(31rem, 62svh, 42rem);
+}
+
+.ar-internal-hero-content,
+.ar-school-hero-content {
+  padding-block: clamp(7rem, 10vw, 9rem) clamp(3.6rem, 6vw, 5.2rem);
+}
+
+.ar-internal-hero-content h1,
+.ar-school-hero-content h1 {
+  max-width: 48rem;
+  font-size: clamp(2.55rem, 4.75vw, 4.9rem);
+  line-height: 1.1;
+}
+
+.ar-internal-hero-content > p:last-child,
+.ar-school-hero-content > p {
+  max-width: 40rem;
+  font-size: clamp(0.92rem, 1.1vw, 1.04rem);
+  line-height: 1.8;
+}
+
+.ar-school-promise {
+  grid-template-columns: minmax(8rem, 0.28fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  padding: clamp(4rem, 6vw, 6rem) var(--ar-gutter);
+}
+
+.ar-school-promise blockquote {
+  max-width: 54rem;
+  font-size: clamp(1.7rem, 3.2vw, 3.25rem);
+  line-height: 1.42;
+}
+
+.ar-program-grid {
+  max-width: 76rem;
+  margin-inline: auto;
+}
+
+.ar-program-grid article {
+  min-height: 19rem;
+  padding: clamp(1.2rem, 2.3vw, 1.8rem);
+}
+
+.ar-program-grid article h3 {
+  margin-top: 2rem;
+  font-size: clamp(1.4rem, 2.1vw, 2rem);
+}
+
+.ar-program-image {
+  min-height: 10.5rem;
+  border-radius: 0.75rem;
+}
+
+/* Symmetric surface treatment. */
+.v4-principle-grid,
+.v4-team-grid,
+.v4-testimonial-grid,
+.ar-trust-grid,
+.ar-journey-grid {
+  align-items: stretch;
+}
+
+.v4-principle-grid article,
+.v4-team-grid article,
+.v4-testimonial-grid figure,
+.ar-trust-grid article,
+.ar-journey-grid li {
+  height: 100%;
+}
+
+/* Education-template-inspired movement: floating geometry, pulses, sweeps and reveals. */
+.v4-hero::before {
+  content: '';
+  position: absolute;
+  z-index: 3;
+  width: clamp(7rem, 12vw, 11rem);
+  aspect-ratio: 1;
+  inset-inline-end: clamp(3rem, 10vw, 10rem);
+  inset-block-start: clamp(7rem, 17vh, 10rem);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1.6rem rgb(69 199 232 / 0.025),
+    0 0 0 3.3rem rgb(210 166 75 / 0.018);
+  pointer-events: none;
+  animation: v7-orbit-float 7s ease-in-out infinite alternate;
+}
+
+.v4-manifesto::after {
+  content: '';
+  position: absolute;
+  width: 5.5rem;
+  aspect-ratio: 1;
+  inset-inline-end: 4%;
+  inset-block-start: 12%;
+  border: 1px dashed rgb(14 102 125 / 0.22);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: v7-spin 18s linear infinite;
+}
+
+.v4-branch-stage::after {
+  content: '';
+  position: absolute;
+  width: 8rem;
+  height: 8rem;
+  inset-inline-end: 5%;
+  inset-block-start: 4.5rem;
+  opacity: 0.22;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle,
+    var(--v6-teal) 1.5px,
+    transparent 1.5px
+  );
+  background-size: 0.9rem 0.9rem;
+  animation: v7-dot-drift 8s ease-in-out infinite alternate;
+}
+
+.v5-media-mark img,
+.v4-branch-mark img {
+  animation: v7-mark-breathe 8s ease-in-out infinite alternate;
+}
+
+.v6-conversion-rail::after {
+  content: '';
+  position: absolute;
+  width: 8.5rem;
+  aspect-ratio: 1;
+  inset-inline-end: 11%;
+  inset-block-start: -4rem;
+  border: 1px dashed rgb(255 255 255 / 0.22);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: v7-spin 22s linear infinite reverse;
+}
+
+.v4-quick-access a,
+.v4-principle-grid article,
+.ar-program-grid article,
+.v4-branch-link {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.v4-quick-access a::after,
+.v4-principle-grid article::after,
+.ar-program-grid article::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 42%;
+  height: 180%;
+  inset-block-start: -40%;
+  inset-inline-start: -55%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(69 199 232 / 0.09),
+    transparent
+  );
+  transform: rotate(16deg);
+  transition: inset-inline-start 680ms var(--v7-ease);
+  pointer-events: none;
+}
+
+.v4-quick-access a:hover::after,
+.v4-quick-access a:focus-visible::after,
+.v4-principle-grid article:hover::after,
+.ar-program-grid article:hover::after {
+  inset-inline-start: 120%;
+}
+
+.v4-scroll-cue b,
+.v5-film-control {
+  box-shadow: 0 0 0 0 rgb(69 199 232 / 0.28);
+  animation: v7-soft-pulse 2.8s ease-out infinite;
+}
+
+.v4-arrow-link span,
+.v6-primary-action,
+.v6-floating-cta a,
+.ar-program-grid article > a b {
+  will-change: transform;
+}
+
+.v4-arrow-link:hover span,
+.v6-floating-cta a:hover,
+.ar-program-grid article > a:hover b {
+  animation: v7-arrow-nudge 520ms var(--v7-ease);
+}
+
+.motion-enabled [data-reveal] {
+  transition-duration: 700ms;
+  transition-timing-function: var(--v7-ease);
+}
+
+.motion-enabled [data-reveal='left']:not([data-revealed='true']) {
+  transform: translate3d(-2rem, 0.7rem, 0) scale(0.985);
+}
+
+.motion-enabled [data-reveal='right']:not([data-revealed='true']) {
+  transform: translate3d(2rem, 0.7rem, 0) scale(0.985);
+}
+
+.motion-enabled [data-reveal]:not([data-revealed='true']) {
+  filter: blur(4px);
+}
+
+.motion-enabled [data-revealed='true'] {
+  filter: blur(0);
+}
+
+/* Small scroll-reactive polish driven by HomeMotion's existing CSS variables. */
+.motion-enabled .v4-hero-brand-shape {
+  margin-top: calc(var(--motion-progress, 0) * 1.6rem);
+}
+
+.motion-enabled .v4-branch-stage::after {
+  transform: translateY(calc(var(--scroll-velocity, 0) * -0.22px));
+}
+
+@keyframes v7-orbit-float {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-1.2rem, 1.4rem, 0) rotate(24deg);
+  }
+}
+
+@keyframes v7-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes v7-dot-drift {
+  from {
+    transform: translate3d(0, -0.45rem, 0) rotate(-3deg);
+  }
+  to {
+    transform: translate3d(-1rem, 0.8rem, 0) rotate(4deg);
+  }
+}
+
+@keyframes v7-mark-breathe {
+  from {
+    transform: scale(0.985) rotate(-1deg);
+  }
+  to {
+    transform: scale(1.025) rotate(1deg);
+  }
+}
+
+@keyframes v7-soft-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(69 199 232 / 0.28);
+  }
+  70% {
+    box-shadow: 0 0 0 0.7rem rgb(69 199 232 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(69 199 232 / 0);
+  }
+}
+
+@keyframes v7-arrow-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  45% {
+    transform: translateX(0.35rem);
+  }
+}
+
+@media (max-width: 1000px) {
+  .v4-manifesto,
+  .v4-branch-heading,
+  .v5-media-heading,
+  .v5-film-split {
+    grid-template-columns: 1fr;
+  }
+
+  .v4-branch-heading > p,
+  .v5-media-heading > p {
+    justify-self: start;
+  }
+
+  .v4-branch-experience {
+    grid-template-columns: 1fr;
+    max-width: 46rem;
+  }
+
+  .v6-branch-visual,
+  .v4-branch-visual {
+    min-height: 27rem;
+  }
+
+  .v4-manifesto-collage {
+    max-width: 36rem;
+    justify-self: stretch;
+  }
+
+  .v5-film-split {
+    max-width: 42rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .v4-hero {
+    min-height: min(78svh, 42rem);
+  }
+
+  .v4-hero h1 {
+    max-width: 12.5ch;
+    font-size: clamp(2.3rem, 11vw, 3.7rem);
+  }
+
+  .v4-hero-lede {
+    max-width: 30rem !important;
+    font-size: 0.9rem;
+  }
+
+  .v4-quick-access {
+    width: calc(100% - 1.2rem);
+  }
+
+  .v4-quick-access a {
+    min-height: 6.2rem;
+  }
+
+  .v4-manifesto {
+    gap: 2.5rem;
+    padding-block: 4.5rem;
+  }
+
+  .v4-manifesto-collage {
+    min-height: 23rem;
+  }
+
+  .v4-manifesto h2,
+  .v4-branch-heading h2,
+  .v4-principles h2,
+  .v4-journey h2,
+  .v4-governed-section h2,
+  .v4-final-cta h2,
+  .v5-media-heading h2 {
+    font-size: clamp(1.85rem, 8.5vw, 2.75rem);
+  }
+
+  .v4-branch-experience {
+    min-height: 0;
+  }
+
+  .v6-branch-visual,
+  .v4-branch-visual {
+    min-height: 22rem;
+  }
+
+  .v5-film-wide .v5-film-media,
+  .v5-film-portrait .v5-film-media {
+    min-height: clamp(22rem, 110vw, 31rem);
+  }
+
+  .v5-film-copy h3 {
+    font-size: clamp(1.5rem, 7.5vw, 2.35rem);
+  }
+
+  .v6-conversion-rail {
+    grid-template-columns: 1fr;
+    width: calc(100% - 1.2rem);
+  }
+
+  .ar-internal-hero,
+  .ar-school-hero {
+    min-height: 31rem;
+  }
+
+  .ar-internal-hero-content h1,
+  .ar-school-hero-content h1 {
+    font-size: clamp(2.2rem, 10vw, 3.5rem);
+  }
+
+  .ar-school-promise {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .ar-school-promise blockquote {
+    font-size: clamp(1.55rem, 7vw, 2.35rem);
+  }
+
+  .ar-program-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-hero::before,
+  .v4-manifesto::after,
+  .v4-branch-stage::after,
+  .v5-media-mark img,
+  .v4-branch-mark img,
+  .v6-conversion-rail::after,
+  .v4-scroll-cue b,
+  .v5-film-control {
+    animation: none !important;
+  }
+
+  .motion-enabled [data-reveal],
+  .motion-enabled [data-revealed='true'] {
+    filter: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

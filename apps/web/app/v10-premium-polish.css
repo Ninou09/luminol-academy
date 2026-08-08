@@ -1,0 +1,488 @@
+/* V10 — premium visual balance, denser editorial rhythm and richer conversion detail. */
+
+:root {
+  --v10-ink: #052b3c;
+  --v10-deep: #07394b;
+  --v10-teal: #087b8e;
+  --v10-cyan: #49c7e8;
+  --v10-gold: #ddb45e;
+  --v10-paper: #fbf9f3;
+  --v10-mist: #eef7f7;
+  --v10-line: rgb(5 43 60 / 0.12);
+  --v10-glow: 0 1.1rem 3rem rgb(4 43 58 / 0.12);
+}
+
+/* Slightly larger desktop reading scale without returning to billboard typography. */
+@media (min-width: 901px) {
+  .premium-header .desktop-nav a {
+    font-size: 0.81rem !important;
+  }
+
+  .header-cta {
+    min-height: 2.8rem !important;
+    padding-inline: 1.12rem !important;
+    font-size: 0.76rem !important;
+  }
+
+  .v4-hero-lede,
+  .v4-manifesto-copy p,
+  .v4-branch-heading > p,
+  .v4-principle-grid p,
+  .v4-journey p,
+  .v4-governed-section p,
+  .v4-final-cta p,
+  .v9-film-copy p,
+  .v5-gallery figcaption,
+  .ar-section-heading > p,
+  .ar-section-copy p,
+  .ar-story-copy p,
+  .ar-school-split-copy p,
+  .ar-method-list p,
+  .ar-faq-list p,
+  .ar-final-cta p,
+  .ar-contact-context p,
+  .ar-purpose-strip article p,
+  .ar-values-grid article p,
+  .ar-program-grid article p {
+    font-size: clamp(0.78rem, 0.88vw, 0.92rem) !important;
+    line-height: 1.82 !important;
+  }
+
+  .v4-branch-link p,
+  .v4-branch-link strong,
+  .v9-film-copy > span,
+  .v9-branch-meta small,
+  .v5-media-note,
+  .ar-section-nav a,
+  .ar-kicker,
+  .v4-overline {
+    font-size: 0.7rem !important;
+  }
+
+  .v4-branch-link h3,
+  .ar-program-grid h3,
+  .ar-method-list h3,
+  .ar-contact-path-grid h2,
+  .ar-related-grid h3 {
+    font-size: clamp(1.12rem, 1.55vw, 1.48rem) !important;
+  }
+
+  .v4-manifesto h2,
+  .v4-branch-heading h2,
+  .v4-principles h2,
+  .v4-journey h2,
+  .v4-governed-section h2,
+  .v4-final-cta h2,
+  .v5-media-heading h2,
+  .ar-section-copy h2,
+  .ar-section-heading h2,
+  .ar-trust-intro h2,
+  .ar-story-heading h2,
+  .ar-school-split-copy h2,
+  .ar-method-section h2,
+  .ar-faq-section h2,
+  .ar-contact-context h2,
+  .ar-final-cta h2 {
+    font-size: clamp(1.85rem, 2.8vw, 3rem) !important;
+  }
+
+  .ar-internal-hero h1,
+  .ar-school-hero h1 {
+    font-size: clamp(2.18rem, 3.25vw, 3.3rem) !important;
+  }
+}
+
+/* Remove oversized blank vertical fields while preserving breathing room. */
+@media (min-width: 901px) {
+  .ar-page {
+    --ar-space: clamp(3.6rem, 5.2vw, 5.6rem);
+  }
+
+  .ar-intro-section,
+  .ar-split-feature,
+  .ar-story-section,
+  .ar-school-split,
+  .ar-contact-section {
+    gap: clamp(2.2rem, 4.6vw, 5rem) !important;
+  }
+
+  .ar-method-section,
+  .ar-faq-section {
+    gap: clamp(2.2rem, 4.6vw, 5rem) !important;
+  }
+
+  .v4-manifesto,
+  .v4-branch-stage,
+  .v5-media,
+  .v4-principles,
+  .v4-journey,
+  .v4-governed-section,
+  .v4-final-cta {
+    padding-block-start: clamp(3.7rem, 5vw, 5.2rem) !important;
+    padding-block-end: clamp(3.7rem, 5vw, 5.2rem) !important;
+  }
+
+  .ar-school-promise {
+    margin-block: 0.8rem 0 !important;
+  }
+}
+
+/* Harmonize section widths and grid symmetry. */
+.v4-manifesto,
+.v4-branch-heading,
+.v4-principles,
+.v4-journey,
+.v4-governed-section,
+.v4-final-cta,
+.v5-media-heading,
+.v5-feature-film,
+.v5-film-split,
+.v5-gallery-heading,
+.v5-gallery,
+.v5-media-note {
+  width: min(calc(100% - 2rem), 76rem) !important;
+  margin-inline: auto !important;
+}
+
+.v4-principle-grid,
+.v4-journey-grid,
+.ar-values-grid,
+.ar-audience-grid {
+  align-items: stretch;
+}
+
+.v4-principle-grid > *,
+.v4-journey-grid > *,
+.ar-values-grid > *,
+.ar-audience-grid > * {
+  height: 100%;
+}
+
+.ar-program-grid {
+  gap: 1.15rem !important;
+}
+
+.ar-program-grid article {
+  height: 100%;
+  border-color: var(--v10-line) !important;
+  box-shadow: 0 0.8rem 2.2rem rgb(5 43 60 / 0.045);
+}
+
+/* Richer but still institutional color hierarchy. */
+.v4-home,
+.ar-page {
+  --ar-navy: var(--v10-deep);
+  --ar-cyan: var(--v10-teal);
+  --ar-gold: var(--v10-gold);
+}
+
+.v4-branch-stage,
+.ar-programmes-section,
+.ar-values-section,
+.ar-related-section {
+  background:
+    radial-gradient(
+      circle at 8% 15%,
+      rgb(73 199 232 / 0.07),
+      transparent 18rem
+    ),
+    linear-gradient(180deg, #fbfaf6 0%, #f7f5ef 100%) !important;
+}
+
+.v4-principles,
+.v4-journey,
+.ar-school-split,
+.ar-faq-section {
+  background:
+    radial-gradient(
+      circle at 92% 12%,
+      rgb(221 180 94 / 0.07),
+      transparent 16rem
+    ),
+    #fff !important;
+}
+
+/* Better conversion buttons: stronger contrast, shape and tactile depth. */
+.v6-primary-action,
+.v4-hero-actions a:first-child,
+.header-cta,
+.ar-hero-actions a:first-child,
+.ar-final-cta > a,
+.form-actions button {
+  border: 1px solid rgb(255 255 255 / 0.16) !important;
+  border-radius: 0.78rem !important;
+  background: linear-gradient(
+    135deg,
+    #0b7184 0%,
+    #0a8ea0 56%,
+    #49bfe0 150%
+  ) !important;
+  color: #fff !important;
+  box-shadow:
+    0 0.65rem 1.5rem rgb(4 63 80 / 0.2),
+    inset 0 1px rgb(255 255 255 / 0.18) !important;
+  transition:
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms ease,
+    border-color 260ms ease,
+    filter 260ms ease !important;
+}
+
+.v4-hero-actions a:not(:first-child),
+.ar-hero-actions a:not(:first-child) {
+  border: 1px solid rgb(255 255 255 / 0.34) !important;
+  border-radius: 0.78rem !important;
+  background: rgb(255 255 255 / 0.08) !important;
+  box-shadow: inset 0 1px rgb(255 255 255 / 0.1) !important;
+  backdrop-filter: blur(12px);
+}
+
+@media (prefers-reduced-motion: no-preference) and (pointer: fine) {
+  .v6-primary-action:hover,
+  .v4-hero-actions a:first-child:hover,
+  .header-cta:hover,
+  .ar-hero-actions a:first-child:hover,
+  .ar-final-cta > a:hover,
+  .form-actions button:hover {
+    transform: translateY(-0.16rem) scale(1.015);
+    box-shadow:
+      0 0.95rem 2rem rgb(4 63 80 / 0.26),
+      0 0 0 0.28rem rgb(73 199 232 / 0.09) !important;
+    filter: saturate(1.06);
+  }
+
+  .v4-hero-actions a:not(:first-child):hover,
+  .ar-hero-actions a:not(:first-child):hover {
+    transform: translateY(-0.12rem);
+    background: rgb(255 255 255 / 0.14) !important;
+  }
+}
+
+/* Decorative visual language to occupy dead space without becoming noise. */
+.v4-manifesto,
+.v4-journey,
+.v4-final-cta,
+.ar-school-split,
+.ar-faq-section,
+.ar-final-cta {
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.v4-manifesto::after,
+.v4-journey::after,
+.ar-school-split::after,
+.ar-faq-section::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  width: clamp(8rem, 15vw, 13rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+  border: 1px solid rgb(8 123 142 / 0.12);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at center,
+      transparent 48%,
+      rgb(73 199 232 / 0.05) 49%,
+      transparent 52%
+    ),
+    conic-gradient(
+      from 35deg,
+      transparent 0 72%,
+      rgb(221 180 94 / 0.08) 72% 78%,
+      transparent 78% 100%
+    );
+}
+
+.v4-manifesto::after,
+.ar-school-split::after {
+  inset-inline-start: -3rem;
+  inset-block-end: 1.2rem;
+}
+
+.v4-journey::after,
+.ar-faq-section::after {
+  inset-inline-end: -3.2rem;
+  inset-block-start: 1rem;
+}
+
+.v4-final-cta::before,
+.ar-final-cta::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset-inline-end: 4%;
+  inset-block-start: 16%;
+  width: clamp(7rem, 13vw, 11rem);
+  height: clamp(4rem, 7vw, 6rem);
+  pointer-events: none;
+  opacity: 0.32;
+  background-image:
+    linear-gradient(90deg, rgb(73 199 232 / 0.24) 1px, transparent 1px),
+    linear-gradient(rgb(73 199 232 / 0.24) 1px, transparent 1px);
+  background-size: 1.1rem 1.1rem;
+  mask-image: linear-gradient(135deg, #000, transparent 76%);
+}
+
+.v4-manifesto > *,
+.v4-journey > *,
+.v4-final-cta > *,
+.ar-school-split > *,
+.ar-faq-section > *,
+.ar-final-cta > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* More dimensional media framing while keeping faces visible and crops restrained. */
+.v4-hero-media,
+.v4-branch-visual,
+.v5-film-media,
+.v4-manifesto-collage,
+.ar-internal-hero-media,
+.ar-school-hero-media,
+.ar-feature-image > div {
+  outline: 1px solid rgb(255 255 255 / 0.08);
+  outline-offset: -1px;
+}
+
+.v4-manifesto-collage::before,
+.v4-branch-visual::before,
+.ar-feature-image > div::before {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  width: 2.4rem;
+  height: 2.4rem;
+  inset-inline-start: 0.65rem;
+  inset-block-start: 0.65rem;
+  pointer-events: none;
+  border-block-start: 1px solid rgb(255 255 255 / 0.58);
+  border-inline-start: 1px solid rgb(255 255 255 / 0.58);
+  border-radius: 0.3rem 0 0 0;
+  opacity: 0.72;
+}
+
+.v4-branch-experience,
+.v9-film-card,
+.ar-form-wrap,
+.ar-program-grid article {
+  box-shadow: var(--v10-glow) !important;
+}
+
+/* Micro motion: purposeful ambient detail, never scroll-jacking. */
+@media (prefers-reduced-motion: no-preference) {
+  .v4-manifesto::after,
+  .v4-journey::after,
+  .ar-school-split::after,
+  .ar-faq-section::after {
+    animation: v10-orbit-detail 11s ease-in-out infinite alternate;
+  }
+
+  .v4-final-cta::before,
+  .ar-final-cta::before {
+    animation: v10-grid-float 8s ease-in-out infinite alternate;
+  }
+
+  .v4-principle-grid article,
+  .ar-program-grid article,
+  .ar-values-grid article,
+  .ar-contact-path-grid > a {
+    transition:
+      transform 330ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 330ms ease,
+      border-color 330ms ease,
+      background 330ms ease;
+  }
+
+  .v4-principle-grid article:hover,
+  .ar-program-grid article:hover,
+  .ar-values-grid article:hover,
+  .ar-contact-path-grid > a:hover {
+    transform: translateY(-0.2rem);
+    border-color: rgb(8 123 142 / 0.24) !important;
+    box-shadow: 0 1rem 2.7rem rgb(5 43 60 / 0.08);
+  }
+
+  .v4-principle-grid article::after,
+  .ar-values-grid article::after,
+  .ar-program-grid article::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--v10-cyan),
+      transparent
+    );
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .v4-principle-grid article:hover::after,
+  .ar-values-grid article:hover::after,
+  .ar-program-grid article:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes v10-orbit-detail {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-4deg);
+  }
+  to {
+    transform: translate3d(0.4rem, -0.45rem, 0) rotate(5deg);
+  }
+}
+
+@keyframes v10-grid-float {
+  from {
+    transform: translateY(0);
+    opacity: 0.22;
+  }
+  to {
+    transform: translateY(-0.5rem);
+    opacity: 0.4;
+  }
+}
+
+/* Maintain clean mobile density. */
+@media (max-width: 900px) {
+  .v4-manifesto::after,
+  .v4-journey::after,
+  .ar-school-split::after,
+  .ar-faq-section::after {
+    width: 7rem;
+    opacity: 0.5;
+  }
+
+  .v4-final-cta::before,
+  .ar-final-cta::before {
+    display: none;
+  }
+
+  .v4-hero-actions a,
+  .ar-hero-actions a,
+  .header-cta,
+  .ar-final-cta > a,
+  .form-actions button {
+    border-radius: 0.7rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-manifesto::after,
+  .v4-journey::after,
+  .ar-school-split::after,
+  .ar-faq-section::after,
+  .v4-final-cta::before,
+  .ar-final-cta::before {
+    animation: none !important;
+  }
+}

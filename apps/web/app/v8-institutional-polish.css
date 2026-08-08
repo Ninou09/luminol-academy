@@ -1,0 +1,650 @@
+/* V8 — compact institutional polish, calmer crops, richer micro-detail and motion. */
+:root {
+  --v8-navy: #082735;
+  --v8-navy-deep: #051a24;
+  --v8-teal: #0b7084;
+  --v8-cyan: #35b9dd;
+  --v8-cyan-soft: #bcecf6;
+  --v8-gold: #d4a548;
+  --v8-cream: #f6f3eb;
+  --v8-paper: #fffdf9;
+  --v8-line: rgb(8 39 53 / 0.13);
+  --v8-shadow: 0 1.3rem 3.8rem rgb(5 26 36 / 0.11);
+}
+
+/* Smaller, more editorial type scale. */
+.v4-home {
+  --v4-max: 84rem;
+  --v4-space: clamp(4rem, 6vw, 6.25rem);
+}
+
+.v4-hero {
+  min-height: min(72svh, 45rem);
+}
+
+.v4-hero-content {
+  padding: clamp(5.7rem, 8vw, 7rem) var(--v4-gutter) clamp(4.8rem, 7vw, 6rem);
+}
+
+.v4-hero-content > * {
+  max-width: 43rem;
+}
+
+.v4-hero h1 {
+  max-width: 14ch;
+  margin: 0.65rem 0 0.9rem;
+  font-size: clamp(2.35rem, 4.5vw, 4.65rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+html[data-locale='ar'] .v4-hero h1,
+html[data-locale='ar'] .v4-home h2,
+html[data-locale='ar'] .v4-home h3 {
+  letter-spacing: 0;
+}
+
+.v4-hero h1 em {
+  margin-top: 0.3rem;
+  font-size: 0.64em;
+}
+
+.v4-hero-lede {
+  max-width: 37rem !important;
+  font-size: clamp(0.88rem, 1vw, 1rem);
+  line-height: 1.78;
+}
+
+.v4-overline {
+  font-size: 0.66rem;
+}
+
+.v6-hero-proof {
+  margin-top: 0.75rem;
+  font-size: 0.68rem;
+}
+
+/* Stop over-cropping media. */
+.v4-hero-media video,
+.v4-hero-poster {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  transform: scale(1.005);
+}
+
+.v6-branch-poster,
+.v6-branch-video {
+  object-position: center center;
+  transform: scale(1.002);
+}
+
+.v5-film-media video,
+.v5-film-poster {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-position: center center;
+  transform: translate3d(0, calc(var(--parallax-y, 0px) * 0.35), 0) scale(1.01);
+}
+
+.v5-film-media:hover video,
+.v5-film-media:hover .v5-film-poster {
+  transform: translate3d(0, calc(var(--parallax-y, 0px) * 0.35), 0) scale(1.025);
+}
+
+.v4-manifesto-collage img,
+.v5-gallery img,
+.ar-program-image img,
+.v4-team-image img {
+  object-position: center center;
+}
+
+/* More compact and symmetric section rhythm. */
+.v4-quick-access {
+  width: min(calc(100% - 2rem), 80rem);
+}
+
+.v4-quick-access a {
+  min-height: 6.25rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  padding: 0.95rem 1rem;
+}
+
+.v4-quick-access strong {
+  font-size: 0.83rem;
+}
+
+.v4-quick-access small {
+  font-size: 0.6rem;
+  line-height: 1.55;
+}
+
+.v4-quick-access a > div {
+  position: relative;
+  padding-inline-start: 2.35rem;
+}
+
+.v4-quick-access a > div::before {
+  content: '✦';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 50%;
+  width: 1.65rem;
+  height: 1.65rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(11 112 132 / 0.2);
+  border-radius: 0.48rem;
+  background: rgb(53 185 221 / 0.08);
+  color: var(--v8-teal);
+  font-size: 0.72rem;
+  transform: translateY(-50%);
+  transition:
+    transform 260ms ease,
+    background 260ms ease,
+    color 260ms ease;
+}
+
+.v4-quick-access a:nth-child(2) > div::before {
+  content: 'A';
+  font-family: var(--font-latin), sans-serif;
+  font-weight: 900;
+}
+
+.v4-quick-access a:nth-child(3) > div::before {
+  content: '↗';
+}
+
+.v4-quick-access a:nth-child(4) > div::before {
+  content: '?';
+  font-weight: 900;
+}
+
+.v4-quick-access a:hover > div::before,
+.v4-quick-access a:focus-visible > div::before {
+  background: var(--v8-teal);
+  color: #fff;
+  transform: translateY(-50%) rotate(-5deg) scale(1.08);
+}
+
+.v4-manifesto {
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  padding: clamp(4.6rem, 7vw, 6.6rem) var(--v4-gutter);
+}
+
+.v4-manifesto h2,
+.v4-branch-heading h2,
+.v4-principles h2,
+.v4-journey h2,
+.v4-governed-section h2,
+.v4-final-cta h2 {
+  font-size: clamp(1.85rem, 3.15vw, 3.2rem);
+  line-height: 1.2;
+}
+
+.v4-manifesto-lead {
+  margin-top: 1rem;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
+  line-height: 1.82;
+}
+
+.v4-manifesto-collage {
+  min-height: clamp(23rem, 31vw, 29rem);
+  max-width: 34rem;
+}
+
+.v4-collage-main {
+  inset: 0 0 2.8rem 10%;
+}
+
+.v4-collage-float {
+  width: 30%;
+}
+
+.v4-manifesto-number {
+  font-size: clamp(3.3rem, 6vw, 5.8rem);
+}
+
+.v4-branch-stage {
+  padding-block: clamp(4rem, 6vw, 5.8rem);
+}
+
+.v4-branch-heading {
+  margin-bottom: clamp(2.2rem, 3.6vw, 3.2rem);
+}
+
+.v4-branch-heading > p {
+  font-size: 0.78rem;
+  line-height: 1.75;
+}
+
+.v4-branch-experience {
+  min-height: 30rem;
+  max-width: 78rem;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: var(--v8-shadow);
+}
+
+.v6-branch-visual,
+.v4-branch-visual {
+  min-height: 30rem;
+}
+
+.v4-branch-link {
+  padding: 1rem 1.2rem;
+}
+
+.v4-branch-link h3 {
+  margin: 0.35rem 0;
+  font-size: clamp(1.25rem, 1.75vw, 1.7rem);
+}
+
+.v4-branch-link p {
+  font-size: 0.68rem;
+  line-height: 1.62;
+}
+
+.v4-branch-link strong {
+  margin-top: 0.65rem;
+  font-size: 0.68rem;
+}
+
+.v4-branch-image-word {
+  font-size: clamp(2.2rem, 4vw, 4rem);
+}
+
+/* Media chapter: more content visible at once, less poster-like scale. */
+.v5-media {
+  padding: clamp(4.5rem, 7vw, 6.7rem) var(--v4-gutter, var(--ar-gutter));
+  background:
+    radial-gradient(
+      circle at 12% 12%,
+      rgb(53 185 221 / 0.16),
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at 90% 78%,
+      rgb(212 165 72 / 0.1),
+      transparent 26rem
+    ),
+    linear-gradient(145deg, #061923, #082b39 58%, #071d29);
+}
+
+.v5-media-heading {
+  margin-bottom: clamp(2.6rem, 4vw, 3.6rem);
+}
+
+.v5-media-heading h2 {
+  font-size: clamp(2rem, 3.65vw, 3.75rem);
+  line-height: 1.13;
+}
+
+.v5-media-heading > p {
+  font-size: 0.76rem;
+  line-height: 1.72;
+}
+
+.v5-film-wide .v5-film-media {
+  min-height: clamp(22rem, 33vw, 31rem);
+}
+
+.v5-film-portrait .v5-film-media {
+  min-height: clamp(23rem, 34vw, 31rem);
+}
+
+.v5-film-copy h3 {
+  font-size: clamp(1.55rem, 2.7vw, 2.75rem);
+  line-height: 1.18;
+}
+
+.v5-film-copy > span {
+  font-size: 0.72rem;
+  line-height: 1.65;
+}
+
+.v5-film-statement h3 {
+  font-size: clamp(1.75rem, 3vw, 2.95rem);
+  line-height: 1.2;
+}
+
+.v5-film-statement > p:last-child {
+  font-size: 0.8rem;
+  line-height: 1.78;
+}
+
+.v5-film-split {
+  margin-top: clamp(3.8rem, 6vw, 5.3rem);
+}
+
+.v5-ticker {
+  margin-block: clamp(3.4rem, 5vw, 4.7rem);
+}
+
+.v5-gallery-heading h3 {
+  font-size: clamp(1.8rem, 3vw, 3rem);
+}
+
+.v5-gallery figure {
+  border-radius: 0.85rem;
+  box-shadow: 0 1rem 2.7rem rgb(0 0 0 / 0.14);
+}
+
+/* Icon-led detail cards inspired by strong school information architecture. */
+.v4-principle-grid article {
+  padding: 1.45rem;
+  border: 1px solid var(--v8-line);
+  border-radius: 0.85rem;
+  background: linear-gradient(155deg, #fff, #fbfaf6);
+  box-shadow: 0 0.65rem 1.8rem rgb(5 26 36 / 0.045);
+}
+
+.v4-principle-grid article::before {
+  content: '◇';
+  width: 1.9rem;
+  height: 1.9rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: 1rem;
+  border: 1px solid rgb(11 112 132 / 0.22);
+  border-radius: 50%;
+  color: var(--v8-teal);
+  background: rgb(53 185 221 / 0.06);
+  font-size: 0.76rem;
+}
+
+.v4-principle-grid article:nth-child(2)::before {
+  content: '◎';
+}
+.v4-principle-grid article:nth-child(3)::before {
+  content: '↗';
+}
+.v4-principle-grid article:nth-child(4)::before {
+  content: '✓';
+}
+
+.v4-principle-grid article h3,
+.v4-journey-track h3 {
+  font-size: 0.9rem;
+}
+
+.v4-principle-grid article p,
+.v4-journey-track p {
+  font-size: 0.72rem;
+  line-height: 1.7;
+}
+
+.v4-principles,
+.v4-journey,
+.v4-governed-section,
+.v4-final-cta {
+  padding-block: clamp(4rem, 6vw, 5.8rem);
+}
+
+.v6-conversion-rail {
+  width: min(90vw, 74rem);
+  padding: clamp(1.35rem, 2.4vw, 2.1rem);
+}
+
+.v6-conversion-rail h2 {
+  font-size: clamp(1.45rem, 2.3vw, 2.3rem);
+  line-height: 1.2;
+}
+
+.v6-conversion-rail p {
+  font-size: 0.74rem;
+}
+
+.v6-primary-action,
+.v6-secondary-action,
+.v4-hero-actions a,
+.v4-final-cta > a,
+.header-cta,
+.form-actions button {
+  min-height: 2.95rem !important;
+  border-radius: 0.65rem !important;
+  font-size: 0.74rem !important;
+}
+
+/* Stronger brand color without visual noise. */
+.v4-hero-actions a:first-child,
+.v4-final-cta > a,
+.ar-final-cta > a,
+.header-cta,
+.v6-primary-action,
+.form-actions button {
+  background: linear-gradient(135deg, #0c7286, #0b475b 70%) !important;
+  box-shadow: 0 0.8rem 2rem rgb(8 79 96 / 0.22);
+}
+
+.v4-quick-access a:last-child {
+  background: linear-gradient(145deg, var(--v8-navy), #0b4254);
+}
+
+.v4-branch-link[data-active='true'] {
+  background: linear-gradient(145deg, #072633, #0a4354);
+}
+
+.v4-final-cta {
+  background:
+    radial-gradient(
+      circle at 85% 18%,
+      rgb(53 185 221 / 0.18),
+      transparent 22rem
+    ),
+    linear-gradient(145deg, var(--v8-navy-deep), #0a3444);
+}
+
+/* More motion, still purposeful and accessible. */
+@media (prefers-reduced-motion: no-preference) {
+  .v4-quick-access a > div::before,
+  .v4-principle-grid article::before {
+    animation: v8-icon-float 4.8s ease-in-out infinite alternate;
+  }
+
+  .v4-quick-access a:nth-child(2) > div::before,
+  .v4-principle-grid article:nth-child(2)::before {
+    animation-delay: -1.2s;
+  }
+  .v4-quick-access a:nth-child(3) > div::before,
+  .v4-principle-grid article:nth-child(3)::before {
+    animation-delay: -2.2s;
+  }
+  .v4-quick-access a:nth-child(4) > div::before,
+  .v4-principle-grid article:nth-child(4)::before {
+    animation-delay: -3.1s;
+  }
+
+  .v4-branch-experience,
+  .v5-film-media,
+  .v4-manifesto-collage figure {
+    transition:
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 420ms ease;
+  }
+
+  .v4-branch-experience:hover,
+  .v5-film-media:hover,
+  .v4-manifesto-collage figure:hover {
+    transform: translateY(-3px);
+  }
+
+  .v4-branch-link strong b,
+  .v4-arrow-link span,
+  .v6-primary-action {
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .v4-branch-link:hover strong b,
+  .v4-branch-link:focus-visible strong b {
+    display: inline-block;
+    transform: translateX(0.3rem);
+  }
+
+  .v4-hero-brand-shape {
+    animation-duration: 12s;
+  }
+
+  .v4-hero::before {
+    animation-duration: 9s;
+  }
+
+  .v5-media::before {
+    animation: v8-grid-breathe 9s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes v8-icon-float {
+  from {
+    translate: 0 0;
+    rotate: -2deg;
+  }
+  to {
+    translate: 0 -3px;
+    rotate: 3deg;
+  }
+}
+
+@keyframes v8-grid-breathe {
+  from {
+    opacity: 0.24;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.38;
+    transform: scale(1.015);
+  }
+}
+
+/* Internal pages: shrink oversized headings and media too. */
+.ar-internal-hero,
+.ar-school-hero {
+  min-height: clamp(27rem, 54svh, 36rem);
+}
+
+.ar-internal-hero-content,
+.ar-school-hero-content {
+  padding-block: clamp(6rem, 8vw, 7.6rem) clamp(3rem, 5vw, 4.2rem);
+}
+
+.ar-internal-hero-content h1,
+.ar-school-hero-content h1 {
+  max-width: 42rem;
+  font-size: clamp(2.15rem, 3.9vw, 3.85rem);
+  line-height: 1.14;
+}
+
+.ar-internal-hero-content > p:last-child,
+.ar-school-hero-content > p {
+  max-width: 37rem;
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+.ar-school-promise {
+  padding: clamp(3.2rem, 5vw, 4.8rem) var(--ar-gutter);
+}
+
+.ar-school-promise blockquote {
+  font-size: clamp(1.45rem, 2.55vw, 2.5rem);
+}
+
+.ar-program-grid article {
+  min-height: 16rem;
+}
+
+.ar-program-image {
+  min-height: 9rem;
+}
+
+@media (max-width: 900px) {
+  .v4-hero {
+    min-height: 72svh;
+  }
+
+  .v4-hero h1 {
+    font-size: clamp(2.25rem, 9vw, 3.45rem);
+  }
+
+  .v4-hero-lede {
+    font-size: 0.86rem;
+  }
+
+  .v4-quick-access {
+    width: calc(100% - 1.2rem);
+  }
+
+  .v4-quick-access a {
+    min-height: 5.7rem;
+  }
+
+  .v4-manifesto,
+  .v4-branch-heading,
+  .v5-media-heading,
+  .v5-film-split {
+    gap: 2.2rem;
+  }
+
+  .v4-manifesto-collage {
+    min-height: 22rem;
+  }
+
+  .v4-branch-experience,
+  .v6-branch-visual,
+  .v4-branch-visual {
+    min-height: 25rem;
+  }
+
+  .v5-film-wide .v5-film-media,
+  .v5-film-portrait .v5-film-media {
+    min-height: 22rem;
+  }
+}
+
+@media (max-width: 620px) {
+  .v4-hero {
+    min-height: 68svh;
+  }
+
+  .v4-hero-content {
+    padding-block: 5.6rem 4.4rem;
+  }
+
+  .v4-hero h1 {
+    max-width: 12ch;
+    font-size: clamp(2rem, 10.2vw, 2.85rem);
+  }
+
+  .v4-hero-actions a {
+    min-height: 2.8rem !important;
+    padding-inline: 1rem !important;
+    font-size: 0.7rem !important;
+  }
+
+  .v4-quick-access a > div {
+    padding-inline-start: 2rem;
+  }
+
+  .v4-quick-access a > div::before {
+    width: 1.45rem;
+    height: 1.45rem;
+  }
+
+  .v4-manifesto h2,
+  .v4-branch-heading h2,
+  .v4-principles h2,
+  .v4-journey h2,
+  .v4-final-cta h2,
+  .v5-media-heading h2 {
+    font-size: clamp(1.65rem, 8vw, 2.15rem);
+  }
+
+  .v5-film-copy h3,
+  .v5-film-statement h3 {
+    font-size: clamp(1.4rem, 7vw, 1.95rem);
+  }
+}

@@ -1,5 +1,38 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
+import { Manrope, Noto_Sans_Arabic } from 'next/font/google';
 import './globals.css';
+import './motion.css';
+import './site-shell.css';
+import './flagship-polish.css';
+import './arabic.css';
+import './cinematic-motion.css';
+import './v4-global.css';
+import './v4-interactions.css';
+import './v4-header.css';
+import './v4-arabic-type.css';
+import './v6-refinement.css';
+import './v7-balanced-motion.css';
+import './v8-institutional-polish.css';
+import './v8-hero-split.css';
+import './v9-award-refinement.css';
+import './v9-detail-fixes.css';
+import './v10-premium-polish.css';
+import './v11-authentic-academy.css';
+import './v12-premium-final.css';
+import { isPublicLocale, localeMeta, type PublicLocale } from '../lib/i18n';
+
+const arabicFont = Noto_Sans_Arabic({
+  subsets: ['arabic'],
+  variable: '--font-arabic',
+  display: 'swap',
+});
+
+const latinFont = Manrope({
+  subsets: ['latin'],
+  variable: '--font-latin',
+  display: 'swap',
+});
 
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
@@ -13,42 +46,99 @@ function resolveMetadataBase() {
   }
 }
 
+const metadataBase = resolveMetadataBase();
+
 export const metadata: Metadata = {
-  metadataBase: resolveMetadataBase(),
+  metadataBase,
   title: {
-    default: 'Luminol Academy | Psychology, Languages & Professional Training',
-    template: '%s | Luminol Academy',
+    default: 'أكاديمية لومينول | علم النفس واللغات والتكوين المهني',
+    template: '%s | أكاديمية لومينول',
   },
   description:
-    'Grow mentally, linguistically and professionally with Luminol Academy—one human-centered ecosystem for psychology, languages and professional training.',
+    'أكاديمية لومينول في البليدة: مسارات متكاملة في علم النفس، تعلّم اللغات والتكوين المهني ضمن تجربة إنسانية وعملية.',
   keywords: [
-    'Luminol Academy',
-    'psychology',
-    'mental wellness',
-    'language learning',
-    'professional training',
-    'coaching',
+    'أكاديمية لومينول',
+    'علم النفس',
+    'الدعم النفسي',
+    'تعلم اللغات',
+    'التكوين المهني',
+    'التدريب',
+    'البليدة',
   ],
   alternates: {
     canonical: '/',
+    languages: {
+      ar: '/',
+      fr: '/fr',
+      en: '/en',
+    },
   },
   openGraph: {
-    title: 'Luminol Academy',
+    title: 'أكاديمية لومينول',
     description:
-      'Psychology, language learning and professional development in one thoughtful human ecosystem.',
+      'علم النفس، تعلّم اللغات والتكوين المهني ضمن منظومة واحدة تهتم بالإنسان وقدراته.',
     type: 'website',
     url: '/',
+    locale: 'ar_DZ',
+    alternateLocale: ['fr_DZ', 'en_DZ'],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'أكاديمية لومينول',
+    description:
+      'علم النفس، تعلّم اللغات والتكوين المهني ضمن منظومة واحدة تهتم بالإنسان وقدراته.',
   },
 };
 
-export default function RootLayout({
+const organisationStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: 'أكاديمية لومينول',
+  alternateName: 'Luminol Academy',
+  url: metadataBase.toString(),
+  description:
+    'أكاديمية متكاملة لعلم النفس وتعلّم اللغات والتكوين المهني في البليدة، الجزائر.',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'البليدة',
+    addressCountry: 'DZ',
+  },
+  areaServed: 'الجزائر',
+  knowsAbout: [
+    'التثقيف النفسي والتنمية الشخصية',
+    'تعلم اللغات والتواصل',
+    'التكوين والتطوير المهني',
+  ],
+};
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const requestHeaders = await headers();
+  const requestedLocale = requestHeaders.get('x-luminol-locale') ?? 'ar';
+  const locale: PublicLocale = isPublicLocale(requestedLocale)
+    ? requestedLocale
+    : 'ar';
+  const meta = localeMeta[locale];
+
   return (
-    <html lang="en" dir="ltr">
-      <body>{children}</body>
+    <html
+      lang={meta.htmlLang}
+      dir={meta.dir}
+      data-locale={locale}
+      className={`${arabicFont.variable} ${latinFont.variable}`}
+    >
+      <body>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organisationStructuredData),
+          }}
+        />
+      </body>
     </html>
   );
 }

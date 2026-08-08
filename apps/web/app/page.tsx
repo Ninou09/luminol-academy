@@ -1,250 +1,349 @@
+import type { CSSProperties } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
+import './v4-home.css';
+import { AcademyArchive } from '../components/academy-archive';
+import { BranchStage } from '../components/branch-stage';
+import { CinematicMediaWall } from '../components/cinematic-media';
+import { HomeMotion } from '../components/home-motion';
+import { ImmersiveHeroMedia } from '../components/immersive-hero-media';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
+import { credibilityPrinciples } from '../lib/flagship';
+import { premiumGallery, premiumVideos } from '../lib/media-v6';
+import {
+  getPublicTeamMembers,
+  getPublicTestimonials,
+} from '../lib/sanity-public';
 
-const schools = [
+const heroVideo = premiumVideos.hero;
+const manifestoPrimary = premiumGallery[0]!;
+const manifestoSecondary = premiumGallery[4]!;
+
+const quickLinks = [
   {
-    number: '01',
-    id: 'psychology',
-    name: 'Psychology',
-    promise: 'Understand yourself. Strengthen your relationships.',
-    description:
-      'Thoughtful psychological support, coaching and educational programs for emotional wellbeing and personal development.',
-    topics: ['Mental wellness', 'Family support', 'Coaching'],
+    label: 'علم النفس',
+    description: 'وعي، دعم وتطوّر شخصي بمسؤولية.',
+    href: '/schools/psychology',
+    index: '01',
   },
   {
-    number: '02',
-    id: 'languages',
-    name: 'Languages',
-    promise: 'Learn clearly. Communicate confidently.',
-    description:
-      'Human-centered language programs that turn knowledge into confident, meaningful communication.',
-    topics: ['English', 'French', 'Fluency'],
+    label: 'اللغات',
+    description: 'لغة تُستخدم، لا تُحفظ فقط.',
+    href: '/schools/languages',
+    index: '02',
   },
   {
-    number: '03',
-    id: 'training',
-    name: 'Professional Training',
-    promise: 'Build capability. Move your career forward.',
-    description:
-      'Practical training for professionals and organizations ready to lead, communicate and work more effectively.',
-    topics: ['Leadership', 'Communication', 'Digital skills'],
+    label: 'التكوين المهني',
+    description: 'مهارات عملية للأفراد والفرق.',
+    href: '/schools/training',
+    index: '03',
+  },
+  {
+    label: 'ابدأ من هدفك',
+    description: 'سنساعدك على تحديد نقطة البداية المناسبة.',
+    href: '/contact',
+    index: '04',
   },
 ] as const;
 
-const principles = [
+const journey = [
   {
     number: '01',
-    title: 'Human before process',
-    text: 'Every learning journey starts with the person: their goals, context and potential.',
+    title: 'ابدأ بالسؤال',
+    text: 'ما الذي تريد أن تفهمه، تتعلمه أو تطوره الآن؟',
   },
   {
     number: '02',
-    title: 'Depth with clarity',
-    text: 'We make serious knowledge understandable, practical and useful in everyday life.',
+    title: 'نحدّد المسار',
+    text: 'القسم، المستوى والصيغة تُختار حول الهدف لا حول قالب جاهز.',
   },
   {
     number: '03',
-    title: 'Progress you can feel',
-    text: 'Programs are designed around meaningful outcomes, not passive participation.',
+    title: 'تعلّم بالمشاركة',
+    text: 'حوار، ممارسة، أمثلة وتغذية راجعة تجعل المعرفة قابلة للاستخدام.',
+  },
+  {
+    number: '04',
+    title: 'حوّلها إلى قدرة',
+    text: 'الخطوة الأخيرة ليست معرفة أكثر؛ بل تصرّف أو تواصل أو قرار أفضل.',
   },
 ] as const;
 
-export default function Page() {
+export default async function Page() {
+  const [testimonials, teamMembers] = await Promise.all([
+    getPublicTestimonials(),
+    getPublicTeamMembers(),
+  ]);
+
   return (
-    <main>
-      <SiteHeader />
+    <main className="ar-page v4-home">
+      <HomeMotion />
+      <SiteHeader currentPath="/" />
 
-      <section id="top" className="hero" aria-labelledby="hero-title">
-        <div className="hero-copy">
-          <p className="eyebrow">
-            Psychology · Languages · Professional growth
-          </p>
-          <h1 id="hero-title">
-            Grow with clarity.
-            <span>Learn with purpose.</span>
-          </h1>
-          <p className="hero-lede">
-            Luminol brings mental wellbeing, language learning and professional
-            development together in one thoughtful human ecosystem.
-          </p>
-          <div className="hero-actions">
-            <ButtonLink href="#schools" size="lg">
-              Explore our schools <span aria-hidden="true">↘</span>
-            </ButtonLink>
-            <ButtonLink href="/about" size="lg" variant="secondary">
-              Discover Luminol
-            </ButtonLink>
-          </div>
-          <dl className="hero-proof" aria-label="Luminol platform strengths">
-            <div>
-              <dt>3</dt>
-              <dd>Connected schools</dd>
-            </div>
-            <div>
-              <dt>1</dt>
-              <dd>Human journey</dd>
-            </div>
-            <div>
-              <dt>EN · AR</dt>
-              <dd>Bilingual foundation</dd>
-            </div>
-          </dl>
+      <section className="v4-hero" aria-labelledby="hero-title">
+        <ImmersiveHeroMedia video={heroVideo} />
+        <div className="v4-hero-gradient" aria-hidden="true" />
+        <div className="v4-hero-brand-shape" aria-hidden="true">
+          <Image
+            src="/brand/luminol-mark.svg"
+            alt=""
+            width={520}
+            height={570}
+            priority
+          />
         </div>
 
-        <div className="hero-visual" aria-hidden="true">
-          <div className="visual-grid" />
-          <div className="luminous-orbit orbit-outer" />
-          <div className="luminous-orbit orbit-inner" />
-          <div className="luminous-core">
-            <span>Lu</span>
-            <small>Potential, illuminated</small>
+        <div className="v4-hero-content" data-reveal="right">
+          <p className="v4-overline">أكاديمية لومينول · البليدة</p>
+          <h1 id="hero-title">
+            <span>طوّر عقلك.</span>
+            <span>عزّز صوتك.</span>
+            <em>وابنِ ما يأتي بعد ذلك.</em>
+          </h1>
+          <p className="v4-hero-lede">
+            علم النفس، اللغات والتكوين المهني في تجربة واحدة مصممة لتحوّل
+            المعرفة إلى قدرة حقيقية يمكن استخدامها في الحياة، الدراسة والعمل.
+          </p>
+          <div className="v4-hero-actions">
+            <ButtonLink href="/contact" size="lg">
+              ابدأ من هدفك
+            </ButtonLink>
+            <ButtonLink href="#schools" size="lg" variant="secondary">
+              استكشف أقسام الأكاديمية
+            </ButtonLink>
           </div>
-          <div className="signal-card signal-psychology">
-            <span>Mind</span>
-            <strong>Understand</strong>
+          <div className="v6-hero-proof">
+            <span>ثلاثة أقسام مترابطة</span>
+            <span>تعلم إنساني وتطبيقي</span>
+            <span>العربية · Français · English</span>
           </div>
-          <div className="signal-card signal-languages">
-            <span>Voice</span>
-            <strong>Connect</strong>
-          </div>
-          <div className="signal-card signal-training">
-            <span>Work</span>
-            <strong>Advance</strong>
+        </div>
+
+        <div className="v4-hero-side" aria-hidden="true">
+          <span>PSYCHOLOGY</span>
+          <i />
+          <span>LANGUAGES</span>
+          <i />
+          <span>PROFESSIONAL</span>
+        </div>
+
+        <a className="v4-scroll-cue" href="#v4-start">
+          <span>اكتشف التجربة</span>
+          <b aria-hidden="true">↓</b>
+        </a>
+      </section>
+
+      <nav className="v4-quick-access" aria-label="الوصول السريع">
+        {quickLinks.map((item, index) => (
+          <Link
+            href={item.href}
+            key={item.href}
+            data-reveal
+            style={{ '--reveal-delay': `${index * 55}ms` } as CSSProperties}
+          >
+            <span>{item.index}</span>
+            <div>
+              <strong>{item.label}</strong>
+              <small>{item.description}</small>
+            </div>
+            <b aria-hidden="true">↙</b>
+          </Link>
+        ))}
+      </nav>
+
+      <section id="v4-start" className="v4-manifesto">
+        <div className="v4-manifesto-number" aria-hidden="true">
+          01
+        </div>
+        <div className="v4-manifesto-copy" data-reveal="right">
+          <p className="v4-overline">الفكرة التي تجمع كل شيء</p>
+          <h2>لا نبني ثلاث مدارس منفصلة. نبني إنسانًا أكثر قدرة.</h2>
+          <p className="v4-manifesto-lead">
+            عندما تفهم نفسك بوضوح، تتواصل بصورة أفضل. وعندما تملك لغة وصوتًا
+            أقوى، تصبح المهارات المهنية أكثر تأثيرًا. لهذا صُممت لومينول كمنظومة
+            مترابطة، لا كمجموعة دورات متجاورة.
+          </p>
+          <Link className="v4-arrow-link" href="/about">
+            تعرّف على فلسفة لومينول <span aria-hidden="true">←</span>
+          </Link>
+        </div>
+
+        <div className="v4-manifesto-collage" data-reveal="left">
+          <figure className="v4-collage-main">
+            <Image
+              src={manifestoPrimary.src}
+              alt={manifestoPrimary.alt}
+              fill
+              sizes="(max-width: 900px) 88vw, 48vw"
+            />
+            <figcaption>{manifestoPrimary.caption}</figcaption>
+          </figure>
+          <figure className="v4-collage-float">
+            <Image
+              src={manifestoSecondary.src}
+              alt={manifestoSecondary.alt}
+              fill
+              sizes="(max-width: 900px) 44vw, 18vw"
+            />
+            <figcaption>{manifestoSecondary.caption}</figcaption>
+          </figure>
+          <div className="v4-collage-word" aria-hidden="true">
+            LUMINOL
           </div>
         </div>
       </section>
 
-      <section id="schools" className="schools section-shell">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">Three schools · One vision</p>
-            <h2>Growth is never only one thing.</h2>
-          </div>
+      <AcademyArchive />
+
+      <BranchStage />
+
+      <section className="v6-conversion-rail" data-reveal>
+        <div>
+          <p className="v4-overline">غير متأكد من أين تبدأ؟</p>
+          <h2>أخبرنا بما تريد تقويته. سنساعدك على تحديد نقطة البداية.</h2>
           <p>
-            People thrive when emotional wellbeing, communication and
-            professional capability develop together. Luminol connects all three
-            without losing the depth of each discipline.
+            لا تحتاج إلى معرفة اسم الدورة أو المستوى. ابدأ بالهدف الذي يهمك
+            الآن.
           </p>
         </div>
+        <Link className="v6-primary-action" href="/contact">
+          صف لنا هدفك ←
+        </Link>
+      </section>
 
-        <div className="school-grid">
-          {schools.map((school) => (
+      <CinematicMediaWall />
+
+      <section className="v4-principles" aria-labelledby="v4-principles-title">
+        <header data-reveal="right">
+          <p className="v4-overline">ما الذي يجب أن تشعر به التجربة؟</p>
+          <h2 id="v4-principles-title">
+            واضحة في الفكرة. إنسانية في الأسلوب. قوية في التطبيق.
+          </h2>
+        </header>
+        <div className="v4-principle-grid">
+          {credibilityPrinciples.map((principle, index) => (
             <article
-              className={`school-card school-${school.id}`}
-              id={school.id}
-              key={school.id}
+              data-reveal
+              key={principle.title}
+              style={{ '--reveal-delay': `${index * 65}ms` } as CSSProperties}
             >
-              <div className="school-topline">
-                <span>{school.number}</span>
-                <span className="school-mark" aria-hidden="true" />
-              </div>
-              <h3>{school.name}</h3>
-              <p className="school-promise">{school.promise}</p>
-              <p className="school-description">{school.description}</p>
-              <ul aria-label={`${school.name} focus areas`}>
-                {school.topics.map((topic) => (
-                  <li key={topic}>{topic}</li>
-                ))}
-              </ul>
-              <Link className="text-link" href={`/schools/${school.id}`}>
-                Discover this school <span aria-hidden="true">→</span>
-              </Link>
+              <span>0{index + 1}</span>
+              <h3>{principle.title}</h3>
+              <p>{principle.text}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section id="approach" className="approach">
-        <div className="approach-intro">
-          <p className="eyebrow eyebrow-light">The Luminol approach</p>
-          <h2>Knowledge becomes powerful when it changes how you live.</h2>
+      <section className="v4-journey" aria-labelledby="v4-journey-title">
+        <div className="v4-journey-heading" data-reveal="right">
+          <p className="v4-overline">رحلة بدون تعقيد</p>
+          <h2 id="v4-journey-title">من سؤال صغير إلى خطوة واضحة.</h2>
           <p>
-            We connect scientific thinking with warmth, structure and real-world
-            practice—so learning feels personal and progress becomes
-            sustainable.
+            لا تحتاج إلى معرفة اسم البرنامج المناسب قبل أن تبدأ. يكفي أن تعرف ما
+            الذي تريد تغييره أو تطويره.
           </p>
         </div>
-        <ol className="principle-list">
-          {principles.map((principle) => (
-            <li key={principle.number}>
-              <span>{principle.number}</span>
+        <ol className="v4-journey-track">
+          {journey.map((step, index) => (
+            <li
+              data-reveal="left"
+              key={step.number}
+              style={{ '--reveal-delay': `${index * 60}ms` } as CSSProperties}
+            >
+              <span>{step.number}</span>
               <div>
-                <h3>{principle.title}</h3>
-                <p>{principle.text}</p>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
               </div>
             </li>
           ))}
         </ol>
       </section>
 
-      <section id="about" className="about section-shell">
-        <div className="about-visual" aria-hidden="true">
-          <div className="about-monogram">L</div>
-          <p>Intellectual · Modern · Human</p>
-        </div>
-        <div className="about-copy">
-          <p className="eyebrow">Why Luminol exists</p>
-          <h2>A brighter way to develop human potential.</h2>
-          <p className="about-lede">
-            Luminol was created from a simple belief: meaningful education
-            should strengthen the whole person.
-          </p>
-          <p>
-            Our ecosystem brings together expert guidance, purposeful learning
-            and practical development. The experience is premium without
-            becoming distant, scientific without losing warmth, and ambitious
-            while remaining accessible.
-          </p>
-          <div className="value-row">
-            <span>Trustworthy</span>
-            <span>Empowering</span>
-            <span>Future-oriented</span>
+      {teamMembers?.length ? (
+        <section className="v4-governed-section v4-team-section">
+          <header data-reveal="right">
+            <p className="v4-overline">الناس خلف التجربة</p>
+            <h2>فريق يظهر بالاسم والصورة فقط بعد اعتماد النشر.</h2>
+          </header>
+          <div className="v4-team-grid">
+            {teamMembers.slice(0, 4).map((member, index) => (
+              <article
+                data-reveal
+                key={member._id}
+                style={{ '--reveal-delay': `${index * 65}ms` } as CSSProperties}
+              >
+                {member.portrait ? (
+                  <div className="v4-team-image">
+                    <Image
+                      src={member.portrait.url}
+                      alt={member.portrait.alt}
+                      fill
+                      sizes="(max-width: 760px) 88vw, 25vw"
+                    />
+                  </div>
+                ) : null}
+                <small>{member.school ?? 'أكاديمية لومينول'}</small>
+                <h3>{member.name}</h3>
+                <p>{member.role}</p>
+              </article>
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
-      <section
-        className="pathway section-shell"
-        aria-labelledby="pathway-title"
-      >
-        <div>
-          <p className="eyebrow">Your next chapter</p>
-          <h2 id="pathway-title">Begin with the growth that matters now.</h2>
-        </div>
-        <div className="pathway-links">
-          <Link href="/schools/psychology">
-            <span>01</span>
-            Strengthen your wellbeing
-            <b aria-hidden="true">↗</b>
-          </Link>
-          <Link href="/schools/languages">
-            <span>02</span>
-            Find your confident voice
-            <b aria-hidden="true">↗</b>
-          </Link>
-          <Link href="/schools/training">
-            <span>03</span>
-            Advance your professional path
-            <b aria-hidden="true">↗</b>
-          </Link>
-        </div>
-      </section>
+      {testimonials?.length ? (
+        <section className="v4-governed-section v4-testimonial-section">
+          <header data-reveal="right">
+            <p className="v4-overline">أصوات حقيقية</p>
+            <h2>لا نملأ الفراغ بشهادات مصطنعة.</h2>
+          </header>
+          <div className="v4-testimonial-grid">
+            {testimonials.slice(0, 3).map((testimonial, index) => (
+              <figure
+                data-reveal
+                key={testimonial._id}
+                style={{ '--reveal-delay': `${index * 65}ms` } as CSSProperties}
+              >
+                <blockquote>«{testimonial.quote}»</blockquote>
+                <figcaption>
+                  <strong>{testimonial.personName}</strong>
+                  <span>{testimonial.context ?? testimonial.school}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
-      <section id="contact" className="final-cta">
-        <div>
-          <p className="eyebrow eyebrow-light">Start your Luminol journey</p>
-          <h2>Ready to grow with purpose?</h2>
+      <section className="v4-final-cta">
+        <div className="v4-final-mark" aria-hidden="true">
+          <Image
+            src="/brand/luminol-mark.svg"
+            alt=""
+            width={420}
+            height={460}
+          />
+        </div>
+        <div data-reveal="right">
+          <p className="v4-overline">خطوتك التالية يمكن أن تبدأ الآن</p>
+          <h2>ما الشيء الذي تريد أن يصبح أقوى في حياتك؟</h2>
           <p>
-            Tell us where you want to go. We will help you find the right
-            program and next step.
+            أخبرنا بهدفك. سنساعدك على تحديد القسم، المستوى والصيغة الأقرب لما
+            تحتاجه فعلًا.
           </p>
         </div>
-        <ButtonLink href="/contact" size="lg">
-          Start a conversation <span aria-hidden="true">→</span>
+        <ButtonLink data-reveal="left" href="/contact" size="lg">
+          ابدأ استفسارك <span aria-hidden="true">←</span>
         </ButtonLink>
       </section>
 
+      <div className="v6-floating-cta">
+        <span>تحتاج مساعدة في اختيار المسار؟</span>
+        <Link href="/contact">اسأل فريق لومينول ←</Link>
+      </div>
       <SiteFooter />
     </main>
   );

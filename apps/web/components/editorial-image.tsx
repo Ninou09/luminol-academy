@@ -1,0 +1,38 @@
+import Image from 'next/image';
+import type { EditorialImage as EditorialImageData } from '../lib/flagship';
+
+type EditorialImageProps = {
+  image: EditorialImageData;
+  className?: string | undefined;
+  priority?: boolean | undefined;
+  sizes?: string | undefined;
+  caption?: string | undefined;
+};
+
+export function EditorialImage({
+  image,
+  className,
+  priority = false,
+  sizes = '(max-width: 760px) 100vw, 50vw',
+  caption,
+}: EditorialImageProps) {
+  return (
+    <figure className={className}>
+      <div className="editorial-image-frame">
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          priority={priority}
+          sizes={sizes}
+        />
+      </div>
+      <figcaption>
+        {caption ? <span>{caption}</span> : <span />}
+        <a href={image.creditUrl} target="_blank" rel="noreferrer">
+          الصورة: {image.credit}
+        </a>
+      </figcaption>
+    </figure>
+  );
+}

@@ -1,0 +1,55 @@
+/* Arabic is a connected script: preserve shaping rather than importing Latin display tracking. */
+.v4-home h1,
+.v4-home h2,
+.v4-home h3,
+.v5-media h2,
+.v5-media h3,
+.ar-internal-hero-content h1,
+.ar-school-hero-content h1,
+.ar-school-promise blockquote,
+.ar-section-copy h2,
+.ar-section-heading h2,
+.ar-trust-intro h2,
+.ar-story-heading h2,
+.ar-school-split-copy h2,
+.ar-method-section h2,
+.ar-faq-section h2,
+.ar-contact-context h2,
+.ar-final-cta h2 {
+  letter-spacing: 0 !important;
+  font-family: var(--font-arabic), Tahoma, 'Segoe UI', Arial, sans-serif;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+}
+
+.v4-hero h1 {
+  line-height: 1.04;
+}
+
+.v4-hero h1 em {
+  line-height: 1.28;
+}
+
+.v4-manifesto h2,
+.v4-branch-heading h2,
+.v4-principles h2,
+.v4-journey h2,
+.v4-governed-section h2,
+.v4-final-cta h2,
+.v5-media-heading h2,
+.v5-film-statement h3,
+.v5-gallery-heading h3 {
+  line-height: 1.2;
+}
+
+/* Keep intentional Latin microtypography isolated from Arabic copy. */
+.v4-hero-side,
+.v4-collage-word,
+.v5-feature-index,
+.v5-ticker-track,
+.v4-manifesto-number,
+.v4-branch-number,
+.v4-principle-grid article > span,
+.v4-journey-track > li > span {
+  font-family: Arial, sans-serif;
+}

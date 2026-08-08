@@ -1,0 +1,486 @@
+:root {
+  --motion-progress: 0;
+  --pointer-shift-x: 0px;
+  --pointer-shift-y: 0px;
+}
+
+.motion-cursor {
+  position: fixed;
+  z-index: 1000;
+  inset: 0 auto auto 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1px solid rgb(21 155 208 / 0.62);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.12);
+  box-shadow: 0 0 0 0.32rem rgb(21 155 208 / 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(var(--cursor-x, -4rem), var(--cursor-y, -4rem), 0)
+    translate(-50%, -50%);
+  transition:
+    width 180ms ease,
+    height 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease;
+  will-change: transform, width, height;
+}
+
+.motion-cursor[data-visible='true'] {
+  opacity: 0.9;
+}
+
+.motion-cursor[data-active='true'] {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-color: rgb(199 154 59 / 0.92);
+  background: rgb(199 154 59 / 0.08);
+  box-shadow: 0 0 0 0.5rem rgb(199 154 59 / 0.07);
+}
+
+.site-header.premium-header::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, #159bd0, #56c0eb 45%, #c79a3b);
+  transform: scaleX(var(--motion-progress));
+  transform-origin: right center;
+  transition: transform 80ms linear;
+  pointer-events: none;
+}
+
+.ar-home-hero::before,
+.ar-school-hero::before,
+.ar-internal-hero::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: clamp(24rem, 42vw, 42rem);
+  aspect-ratio: 1;
+  inset-inline-end: -10rem;
+  inset-block-start: -13rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(21 155 208 / 0.28), transparent 66%);
+  filter: blur(0.5rem);
+  animation: luminol-ambient-drift 10s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.ar-home-hero::after,
+.ar-school-hero::after,
+.ar-internal-hero::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: clamp(18rem, 32vw, 32rem);
+  aspect-ratio: 1;
+  inset-inline-start: -7rem;
+  inset-block-end: -12rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 3rem rgb(255 255 255 / 0.025),
+    0 0 0 7rem rgb(199 154 59 / 0.025);
+  animation: luminol-orbit-breathe 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.ar-home-hero-media img,
+.ar-school-hero-media img,
+.ar-internal-hero-media img {
+  transform: translate3d(
+      var(--pointer-shift-x),
+      calc(var(--parallax-y, 0px) + var(--pointer-shift-y)),
+      0
+    )
+    scale(1.085);
+  transition: transform 120ms linear;
+  will-change: transform;
+}
+
+.ar-feature-image > div img,
+.ar-school-image img,
+.ar-person-image img {
+  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.065);
+  will-change: transform;
+}
+
+.motion-enabled .ar-home-hero-content[data-revealed='true'] .ar-kicker {
+  animation: luminol-kicker-in 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.motion-enabled .ar-home-hero-content[data-revealed='true'] h1 {
+  perspective: 900px;
+}
+
+.motion-enabled .ar-home-hero-content[data-revealed='true'] h1,
+.motion-enabled .ar-home-hero-content[data-revealed='true'] h1 span,
+.motion-enabled .ar-home-hero-content[data-revealed='true'] h1 em {
+  animation: luminol-line-in 820ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: right bottom;
+}
+
+.motion-enabled .ar-home-hero-content[data-revealed='true'] h1 span {
+  animation-delay: 90ms;
+}
+
+.motion-enabled .ar-home-hero-content[data-revealed='true'] h1 em {
+  animation-delay: 180ms;
+}
+
+.motion-enabled .ar-home-hero-content[data-revealed='true'] .ar-home-hero-lede {
+  animation: luminol-copy-in 720ms 250ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.motion-enabled .ar-home-hero-content[data-revealed='true'] .ar-hero-actions {
+  animation: luminol-copy-in 720ms 330ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ar-home-hero h1 span,
+.ar-home-hero h1 em,
+.ar-section-heading h2,
+.ar-trust-intro h2 {
+  text-wrap: balance;
+}
+
+.ar-kicker::after {
+  content: '';
+  display: inline-block;
+  width: 2.25rem;
+  height: 1px;
+  margin-inline-start: 0.65rem;
+  vertical-align: middle;
+  background: currentColor;
+  transform: scaleX(0.42);
+  transform-origin: right center;
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-revealed='true'] .ar-kicker::after,
+.ar-kicker:hover::after {
+  transform: scaleX(1);
+}
+
+.ar-quick-access,
+.ar-school-grid,
+.ar-trust-grid,
+.ar-journey-grid {
+  perspective: 1200px;
+}
+
+.ar-quick-access a,
+.ar-school-card,
+.ar-trust-grid article,
+.ar-journey-grid li {
+  position: relative;
+  transform: perspective(1000px) rotateX(var(--motion-tilt-x, 0deg))
+    rotateY(var(--motion-tilt-y, 0deg))
+    translate3d(0, var(--motion-lift, 0px), 0);
+  transform-style: preserve-3d;
+  transition:
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease,
+    box-shadow 260ms ease,
+    background-color 220ms ease,
+    color 220ms ease;
+  will-change: transform;
+}
+
+.ar-quick-access a::after,
+.ar-school-card::after,
+.ar-trust-grid article::after,
+.ar-journey-grid li::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--motion-glow-x, 50%) var(--motion-glow-y, 50%),
+    rgb(86 192 235 / 0.18),
+    transparent 36%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.ar-school-card::after {
+  background: radial-gradient(
+    circle at var(--motion-glow-x, 50%) var(--motion-glow-y, 50%),
+    color-mix(in srgb, var(--ar-accent) 25%, transparent),
+    transparent 38%
+  );
+}
+
+.ar-quick-access a:hover,
+.ar-school-card:hover,
+.ar-trust-grid article:hover,
+.ar-journey-grid li:hover {
+  --motion-lift: -6px;
+}
+
+.ar-quick-access a:hover::after,
+.ar-school-card:hover::after,
+.ar-trust-grid article:hover::after,
+.ar-journey-grid li:hover::after {
+  opacity: 1;
+}
+
+.ar-school-card:hover {
+  box-shadow: 0 2rem 5rem rgb(16 42 67 / 0.15);
+}
+
+.ar-school-card:hover .ar-school-image img {
+  transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.12);
+}
+
+.ar-school-card-body,
+.ar-quick-access a > div,
+.ar-trust-grid article > *,
+.ar-journey-grid li > * {
+  position: relative;
+  z-index: 1;
+}
+
+.ar-quick-access b,
+.ar-school-card-body > a span,
+.ar-text-link span,
+.footer-lead > a span {
+  display: inline-block;
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ar-quick-access a:hover b,
+.ar-school-card-body > a:hover span,
+.ar-text-link:hover span,
+.footer-lead > a:hover span {
+  transform: translateX(-0.4rem);
+}
+
+.ar-hero-actions a,
+.header-cta,
+.ar-final-cta > a,
+.ar-section-copy > a {
+  transform: translate3d(var(--magnetic-x, 0px), var(--magnetic-y, 0px), 0);
+  transition:
+    transform 190ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms ease,
+    background-color 220ms ease,
+    border-color 220ms ease;
+  will-change: transform;
+}
+
+.ar-hero-actions a:hover,
+.header-cta:hover,
+.ar-final-cta > a:hover,
+.ar-section-copy > a:hover {
+  box-shadow: 0 1rem 2.5rem rgb(9 47 66 / 0.22);
+}
+
+.ar-trust-band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.ar-trust-band::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 45%;
+  height: 180%;
+  inset-block-start: -40%;
+  inset-inline-start: -55%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(86 192 235 / 0.1),
+    transparent
+  );
+  transform: rotate(14deg);
+  animation: luminol-sheen 11s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.ar-feature-image > div,
+.ar-school-image,
+.ar-person-image {
+  isolation: isolate;
+}
+
+.ar-feature-image > div::after,
+.ar-school-image::after,
+.ar-person-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 55%, rgb(21 155 208 / 0.12));
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 350ms ease;
+  pointer-events: none;
+}
+
+.ar-feature-image:hover > div::after,
+.ar-school-card:hover .ar-school-image::after,
+.ar-people-grid article:hover .ar-person-image::after {
+  opacity: 1;
+}
+
+.ar-section-heading h2,
+.ar-section-copy h2,
+.ar-story-heading h2,
+.ar-school-split-copy h2 {
+  background-image: linear-gradient(90deg, var(--ar-cyan), var(--ar-gold));
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-size: 0 2px;
+  transition: background-size 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-revealed='true'] .ar-section-heading h2,
+.ar-section-heading[data-revealed='true'] h2,
+[data-revealed='true'] .ar-section-copy h2,
+.ar-section-copy[data-revealed='true'] h2,
+.ar-story-heading[data-revealed='true'] h2,
+.ar-school-split-copy[data-revealed='true'] h2 {
+  background-size: min(7rem, 30%) 2px;
+}
+
+@keyframes luminol-line-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, 1.15rem, 0) rotateX(-7deg);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translate3d(0, 0, 0) rotateX(0deg);
+  }
+}
+
+@keyframes luminol-kicker-in {
+  from {
+    opacity: 0;
+    transform: translate3d(1rem, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes luminol-copy-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes luminol-ambient-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(0.94);
+    opacity: 0.62;
+  }
+  to {
+    transform: translate3d(-3rem, 2rem, 0) scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes luminol-orbit-breathe {
+  0%,
+  100% {
+    transform: scale(0.92) rotate(0deg);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.05) rotate(-7deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes luminol-sheen {
+  0%,
+  28% {
+    transform: translateX(0) rotate(14deg);
+    opacity: 0;
+  }
+  42% {
+    opacity: 1;
+  }
+  66%,
+  100% {
+    transform: translateX(-340%) rotate(14deg);
+    opacity: 0;
+  }
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 62rem) {
+  .motion-cursor {
+    display: none;
+  }
+
+  .ar-quick-access a,
+  .ar-school-card,
+  .ar-trust-grid article,
+  .ar-journey-grid li,
+  .ar-hero-actions a,
+  .header-cta,
+  .ar-final-cta > a,
+  .ar-section-copy > a {
+    transform: none !important;
+  }
+
+  .ar-home-hero-media img,
+  .ar-school-hero-media img,
+  .ar-internal-hero-media img {
+    transform: translate3d(0, var(--parallax-y, 0px), 0) scale(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-cursor {
+    display: none !important;
+  }
+
+  .site-header.premium-header::after,
+  .ar-home-hero::before,
+  .ar-home-hero::after,
+  .ar-school-hero::before,
+  .ar-school-hero::after,
+  .ar-internal-hero::before,
+  .ar-internal-hero::after,
+  .ar-trust-band::before {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .ar-home-hero-media img,
+  .ar-school-hero-media img,
+  .ar-internal-hero-media img,
+  .ar-feature-image > div img,
+  .ar-school-image img,
+  .ar-person-image img,
+  .ar-quick-access a,
+  .ar-school-card,
+  .ar-trust-grid article,
+  .ar-journey-grid li,
+  .ar-hero-actions a,
+  .header-cta,
+  .ar-final-cta > a,
+  .ar-section-copy > a {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

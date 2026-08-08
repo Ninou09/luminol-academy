@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  nanoid@3.3.16: 3.3.17
   next>postcss: 8.5.23
   next>sharp: 0.35.3
 
@@ -4968,8 +4969,8 @@ packages:
     resolution: {integrity: sha512-zoTNyBafxG0+F5PP3T3j1PKMr7gedriSdYRhLFLRFCz0OnQfQ6BkVk9peXVF30hz633Bw0Zh5McleOrXPjWYCQ==}
     engines: {node: '>=18'}
 
-  nanoid@3.3.16:
-    resolution: {integrity: sha512-bzlKTyNJ7+LdGIIwy8ijFpIqEQIvafahV7eYykJ8Cvh42EdJeODoJ6gUJXpQJvej1BddH8OqTXZNE/KfbWAu8Q==}
+  nanoid@3.3.17:
+    resolution: {integrity: sha512-xQLf0A3HOMlgHq0n247/LRuAOYmB7dXJ/DvAxGvsSBij45XtBSmQycu+F8ODbHwns/XyFZagyL1+J0Offw1E0g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -8558,7 +8559,7 @@ snapshots:
 
   '@sanity/bifur-client@0.4.1':
     dependencies:
-      nanoid: 3.3.16
+      nanoid: 3.3.17
       rxjs: 7.8.2
 
   '@sanity/cli@3.99.0(@types/node@20.19.43)(@types/react@19.2.18)(lightningcss@1.32.0)(react@19.2.8)(typescript@5.9.3)(yaml@2.9.0)':
@@ -8612,7 +8613,7 @@ snapshots:
     dependencies:
       '@sanity/eventsource': 5.0.4
       get-it: 8.8.0
-      nanoid: 3.3.16
+      nanoid: 3.3.17
       rxjs: 7.8.2
 
   '@sanity/codegen@3.99.0':
@@ -11290,7 +11291,7 @@ snapshots:
 
   nano-pubsub@3.0.0: {}
 
-  nanoid@3.3.16: {}
+  nanoid@3.3.17: {}
 
   nanoid@5.1.16: {}
 
@@ -11605,7 +11606,7 @@ snapshots:
 
   postcss@8.5.23:
     dependencies:
-      nanoid: 3.3.16
+      nanoid: 3.3.17
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -12050,7 +12051,7 @@ snapshots:
       mendoza: 3.0.8
       module-alias: 2.3.4
       nano-pubsub: 3.0.0
-      nanoid: 3.3.16
+      nanoid: 3.3.17
       node-html-parser: 6.1.13
       observable-callback: 1.0.3(rxjs@7.8.2)
       oneline: 1.0.4
