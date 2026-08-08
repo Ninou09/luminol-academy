@@ -1,0 +1,168 @@
+name: Integrate founder profile once
+
+on:
+  push:
+    branches:
+      - design/premium-motion-homepage
+    paths:
+      - .github/workflows/founder-profile-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: design/premium-motion-homepage
+          fetch-depth: 0
+      - name: Wire founder portrait into About pages
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          # Register founder portrait as governed academy media.
+          p = Path('apps/web/lib/academy-media.ts')
+          text = p.read_text()
+          needle = "  recognition: {\n    src: '/media/academy/recognition.webp',\n    alt: 'لحظة تكريم موثقة ضمن أرشيف أكاديمية لومينول',\n    label: 'من أرشيف لومينول',\n  },"
+          replacement = needle + "\n  founder: {\n    src: '/media/academy/founder-kheddaoui-fettouma.svg',\n    alt: 'خداوي فطومة، مؤسسة أكاديمية لومينول',\n    label: 'مؤسسة أكاديمية لومينول',\n  },"
+          if "founder-kheddaoui-fettouma.svg" not in text:
+              text = text.replace(needle, replacement)
+          p.write_text(text)
+
+          # Arabic About: dedicated founder section using the real portrait.
+          p = Path('apps/web/app/about/page.tsx')
+          text = p.read_text()
+          if "academyMedia" not in text:
+              text = text.replace(
+                  "import { premiumImages } from '../../lib/media-v6';",
+                  "import { academyMedia } from '../../lib/academy-media';\nimport { premiumImages } from '../../lib/media-v6';",
+              )
+          marker = "      <section className=\"ar-split-feature\">"
+          founder = '''      <section className="ar-split-feature founder-feature" aria-labelledby="founder-title">
+        <figure className="ar-feature-image founder-portrait" data-reveal="right">
+          <div>
+            <Image
+              src={academyMedia.founder.src}
+              alt={academyMedia.founder.alt}
+              fill
+              sizes="(max-width: 900px) 82vw, 34vw"
+            />
+          </div>
+          <figcaption>
+            <span>{academyMedia.founder.label}</span>
+            <span>صورة رسمية مقدمة من أكاديمية لومينول</span>
+          </figcaption>
+        </figure>
+        <div className="ar-section-copy" data-reveal="left">
+          <p className="ar-kicker">المؤسسة</p>
+          <h2 id="founder-title">خداوي فطومة</h2>
+          <p className="ar-large-copy">
+            تقود رؤية لومينول كأكاديمية تربط بين علم النفس، اللغات والتطوير المهني ضمن تجربة تعليمية إنسانية وعملية.
+          </p>
+          <p>
+            حضور المؤسسة داخل هوية الأكاديمية ليس عنصرًا شكليًا؛ بل يوضح المسؤولية والرؤية التي تقف خلف بناء البرامج، اختيار الخبرات، والحفاظ على تجربة تحترم المتعلم واحتياجاته.
+          </p>
+        </div>
+      </section>
+
+'''
+          if 'id="founder-title"' not in text:
+              text = text.replace(marker, founder + marker, 1)
+          p.write_text(text)
+
+          # Localized About: copy + dedicated founder section.
+          p = Path('apps/web/components/localized-about.tsx')
+          text = p.read_text()
+          if "academyMedia" not in text:
+              text = text.replace(
+                  "import { localePath, type PublicLocale } from '../lib/i18n';",
+                  "import { academyMedia } from '../lib/academy-media';\nimport { localePath, type PublicLocale } from '../lib/i18n';",
+              )
+          text = text.replace(
+              "    visionKicker: 'Mission et vision',",
+              "    founderKicker: 'Fondatrice',\n    founderName: 'خداوي فطومة',\n    founderLead: 'La vision de Luminol est portée par une fondatrice qui relie psychologie, langues et développement professionnel dans une même expérience éducative, humaine et pratique.',\n    founderBody: 'Présenter clairement la fondatrice rend visible la responsabilité, la vision et l’exigence qui structurent les programmes, le choix des expertises et l’accueil des apprenants.',\n    visionKicker: 'Mission et vision',",
+          )
+          text = text.replace(
+              "    visionKicker: 'Mission and vision',",
+              "    founderKicker: 'Founder',\n    founderName: 'خداوي فطومة',\n    founderLead: 'Luminol is guided by a founder who connects psychology, languages and professional development within one practical, human learning experience.',\n    founderBody: 'Showing the founder clearly makes the responsibility, vision and standards behind programme design, expert selection and the learner experience visible.',\n    visionKicker: 'Mission and vision',",
+          )
+          marker = "      <section className=\"ar-split-feature\">"
+          founder = '''      <section className="ar-split-feature founder-feature" aria-labelledby="localized-founder-title">
+        <figure className="ar-feature-image founder-portrait" data-reveal="right">
+          <div>
+            <Image
+              src={academyMedia.founder.src}
+              alt={academyMedia.founder.alt}
+              fill
+              sizes="(max-width: 900px) 82vw, 34vw"
+            />
+          </div>
+          <figcaption>
+            <span>{text.founderKicker}</span>
+            <span>Luminol Academy</span>
+          </figcaption>
+        </figure>
+        <div className="ar-section-copy" data-reveal="left">
+          <p className="ar-kicker">{text.founderKicker}</p>
+          <h2 id="localized-founder-title">{text.founderName}</h2>
+          <p className="ar-large-copy">{text.founderLead}</p>
+          <p>{text.founderBody}</p>
+        </div>
+      </section>
+
+'''
+          if 'id="localized-founder-title"' not in text:
+              text = text.replace(marker, founder + marker, 1)
+          p.write_text(text)
+
+          # Portrait-specific treatment: preserve the vertical official portrait and keep it premium.
+          p = Path('apps/web/app/v12-premium-final.css')
+          css = p.read_text()
+          addition = '''
+
+/* Founder profile — authentic portrait supplied by Luminol Academy. */
+.founder-feature {
+  align-items: center;
+}
+
+.founder-portrait > div {
+  aspect-ratio: 3 / 4;
+  max-width: 31rem;
+  margin-inline: auto;
+  background: linear-gradient(145deg, rgba(237, 242, 247, 0.96), rgba(222, 231, 240, 0.8));
+}
+
+.founder-portrait img {
+  object-fit: cover;
+  object-position: center 24%;
+}
+
+.founder-portrait figcaption {
+  max-width: 31rem;
+  margin-inline: auto;
+}
+
+@media (max-width: 700px) {
+  .founder-portrait > div,
+  .founder-portrait figcaption {
+    max-width: 23rem;
+  }
+}
+'''
+          if 'Founder profile — authentic portrait supplied by Luminol Academy.' not in css:
+              css += addition
+          p.write_text(css)
+          PY
+
+          npm install --no-save --ignore-scripts prettier@3.9.6 prettier-plugin-tailwindcss@0.8.1
+          npx prettier --write apps/web/lib/academy-media.ts apps/web/app/about/page.tsx apps/web/components/localized-about.tsx apps/web/app/v12-premium-final.css
+          rm .github/workflows/founder-profile-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/lib/academy-media.ts apps/web/app/about/page.tsx apps/web/components/localized-about.tsx apps/web/app/v12-premium-final.css .github/workflows/founder-profile-once.yml
+          git commit -m "Feature founder portrait across public About pages"
+          git push origin HEAD:design/premium-motion-homepage
