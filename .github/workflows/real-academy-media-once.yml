@@ -1,0 +1,248 @@
+name: Integrate real academy media once
+
+on:
+  push:
+    branches:
+      - design/premium-motion-homepage
+    paths:
+      - .github/workflows/real-academy-media-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: design/premium-motion-homepage
+          fetch-depth: 0
+      - name: Integrate authentic Luminol photography
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_block(path, start, end, replacement):
+              p = Path(path)
+              text = p.read_text()
+              a = text.index(start)
+              b = text.index(end, a)
+              text = text[:a] + replacement + text[b:]
+              p.write_text(text)
+
+          # 1. Make real Luminol photography the underlying institutional media source.
+          p = Path('apps/web/lib/flagship.ts')
+          text = p.read_text()
+          if "import { academyMedia } from './academy-media';" not in text:
+              text = "import { academyMedia } from './academy-media';\n" + text
+          start = 'export const editorialImages = {'
+          end = '\n\nexport const editorialVideos = ['
+          block = '''export const editorialImages = {
+            hero: {
+              src: academyMedia.training.src,
+              alt: academyMedia.training.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            psychology: {
+              src: academyMedia.psychology.src,
+              alt: academyMedia.psychology.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            languages: {
+              src: academyMedia.languages.src,
+              alt: academyMedia.languages.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            training: {
+              src: academyMedia.training.src,
+              alt: academyMedia.training.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            learning: {
+              src: academyMedia.classroom.src,
+              alt: academyMedia.classroom.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+          } satisfies Record<string, EditorialImage>;'''
+          a = text.index(start)
+          b = text.index(end, a)
+          text = text[:a] + block + text[b:]
+          p.write_text(text)
+
+          # 2. Replace the V12 stock-photo system with authentic academy photos.
+          p = Path('apps/web/lib/media-v6.ts')
+          text = p.read_text()
+          if "import { academyMedia } from './academy-media';" not in text:
+              marker = "import type {\n  EditorialGalleryImage,\n  EditorialImage,\n  EditorialVideo,\n} from './flagship';\n"
+              text = text.replace(marker, marker + "import { academyMedia } from './academy-media';\n")
+          start = 'export const premiumImages = {'
+          end = '\n\nexport const premiumVideos = {'
+          block = '''export const premiumImages = {
+            hero: {
+              src: academyMedia.training.src,
+              alt: academyMedia.training.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            psychology: {
+              src: academyMedia.psychology.src,
+              alt: academyMedia.psychology.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            languages: {
+              src: academyMedia.languages.src,
+              alt: academyMedia.languages.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            training: {
+              src: academyMedia.training.src,
+              alt: academyMedia.training.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            learning: {
+              src: academyMedia.classroom.src,
+              alt: academyMedia.classroom.alt,
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+          } satisfies Record<string, EditorialImage>;
+
+          export const premiumGallery = [
+            {
+              src: academyMedia.classroom.src,
+              alt: academyMedia.classroom.alt,
+              caption: 'التعلّم داخل القاعة',
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            {
+              src: academyMedia.training.src,
+              alt: academyMedia.training.alt,
+              caption: 'ورشة وتكوين حقيقي',
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            {
+              src: academyMedia.languages.src,
+              alt: academyMedia.languages.alt,
+              caption: 'فضاء اللغات داخل الأكاديمية',
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            {
+              src: academyMedia.psychology.src,
+              alt: academyMedia.psychology.alt,
+              caption: 'أنشطة إدراكية وتعليمية',
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+            {
+              src: academyMedia.recognition.src,
+              alt: academyMedia.recognition.alt,
+              caption: 'محطة من مسيرة لومينول',
+              credit: 'Luminol Academy archive',
+              creditUrl: '/about',
+            },
+          ] satisfies readonly EditorialGalleryImage[];'''
+          a = text.index(start)
+          b = text.index(end, a)
+          text = text[:a] + block + text[b:]
+          p.write_text(text)
+
+          # 3. Put Psychology in the homepage archive too, so all three schools are visibly real.
+          p = Path('apps/web/components/academy-archive.tsx')
+          text = p.read_text()
+          text = text.replace(
+              "      'فضاء اللغات',\n      'محطات من مسيرة لومينول',",
+              "      'فضاء اللغات',\n      'أنشطة علم النفس والتعلم',\n      'محطات من مسيرة لومينول',",
+          )
+          text = text.replace(
+              "      'Espace langues',\n      'Moments du parcours Luminol',",
+              "      'Espace langues',\n      'Psychologie et activités',\n      'Moments du parcours Luminol',",
+          )
+          text = text.replace(
+              "      'Language space',\n      'Moments from the Luminol journey',",
+              "      'Language space',\n      'Psychology and learning activities',\n      'Moments from the Luminol journey',",
+          )
+          text = text.replace(
+              "  academyMedia.languages,\n  academyMedia.recognition,",
+              "  academyMedia.languages,\n  academyMedia.psychology,\n  academyMedia.recognition,",
+          )
+          p.write_text(text)
+
+          # 4. Be explicit: homepage photos are real Luminol; only the videos remain editorial.
+          p = Path('apps/web/components/cinematic-media.tsx')
+          text = p.read_text()
+          text = text.replace(
+              "      'الفيديو هنا ليس زينة. كل مشهد يشرح فكرة: الإصغاء، المشاركة، الحوار أو التطبيق. المواد تحريرية مؤقتة إلى أن نستبدلها بلقطات لومينول الأصلية والمصرّح بنشرها.',",
+              "      'صور هذه المساحة من أرشيف أكاديمية لومينول الحقيقي. الفيديوهات وحدها مواد تحريرية مؤقتة لتوضيح الحركة والتفاعل إلى أن تتوفر لقطات لومينول الأصلية المصرّح بنشرها.',",
+          )
+          text = text.replace(
+              "    galleryAria: 'مجموعة صور تحريرية توضيحية',",
+              "    galleryAria: 'مجموعة صور حقيقية من أرشيف أكاديمية لومينول',",
+          )
+          text = text.replace(
+              "    note: 'جميع الصور والفيديوهات مواد تحريرية توضيحية مرخّصة من Pexels، وليست توثيقًا لطلاب أو حصص أكاديمية لومينول.',",
+              "    note: 'الصور المعروضة هنا من أرشيف أكاديمية لومينول. الفيديوهات فقط مواد تحريرية توضيحية مرخّصة من Pexels ولا تمثّل طلاب لومينول.',",
+          )
+          text = text.replace(
+              "      'La vidéo n’est pas décorative. Chaque scène exprime une idée: écoute, participation, dialogue ou mise en pratique. Ces médias éditoriaux sont temporaires jusqu’à leur remplacement par des images Luminol authentiques et autorisées.',",
+              "      'Les photographies de cette section proviennent des archives réelles de Luminol Academy. Seules les vidéos restent des médias éditoriaux temporaires, en attendant des séquences Luminol authentiques et autorisées.',",
+          )
+          text = text.replace(
+              "    galleryAria: 'Galerie éditoriale illustrative',",
+              "    galleryAria: 'Galerie de photographies réelles de Luminol Academy',",
+          )
+          text = text.replace(
+              "    note: 'Toutes les photos et vidéos sont des médias éditoriaux illustratifs sous licence Pexels. Elles ne représentent pas des étudiants ou des séances réelles de Luminol Academy.',",
+              "    note: 'Les photographies sont issues des archives de Luminol Academy. Seules les vidéos sont des médias éditoriaux illustratifs sous licence Pexels et ne représentent pas des séances Luminol.',",
+          )
+          text = text.replace(
+              "      'Video is not decoration here. Each scene communicates an idea: listening, participation, dialogue or application. These editorial assets are temporary until approved authentic Luminol footage replaces them.',",
+              "      'The photography in this section comes from the real Luminol Academy archive. Only the videos remain temporary editorial media until approved authentic Luminol footage is available.',",
+          )
+          text = text.replace(
+              "    galleryAria: 'Illustrative editorial gallery',",
+              "    galleryAria: 'Real Luminol Academy photography gallery',",
+          )
+          text = text.replace(
+              "    note: 'All photos and videos are illustrative editorial media licensed from Pexels. They do not depict real Luminol Academy students or sessions.',",
+              "    note: 'The photographs shown here are from the Luminol Academy archive. Only the videos are illustrative editorial media licensed from Pexels and do not depict Luminol sessions.',",
+          )
+          p.write_text(text)
+
+          # 5. Keep the regression test aligned with the new authenticity requirement.
+          p = Path('scripts/homepage-motion.test.mjs')
+          text = p.read_text()
+          old = """    expect(mediaV6Source).toContain('Airam Dato-on / Pexels');\n    expect(mediaV6Source).toContain('Vitaly Gariev / Pexels');\n    expect(mediaV6Source).toContain('Kampus Production / Pexels');\n    expect(mediaV6Source).toContain('Matheus Bertelli / Pexels');"""
+          new = """    expect(mediaV6Source).toContain('Luminol Academy archive');\n    expect(mediaV6Source).toContain('academyMedia.classroom.src');\n    expect(mediaV6Source).toContain('academyMedia.psychology.src');\n    expect(mediaV6Source).toContain('academyMedia.languages.src');\n    expect(mediaV6Source).toContain('academyMedia.training.src');\n    expect(mediaV6Source).toContain('academyMedia.recognition.src');"""
+          if old not in text:
+              raise SystemExit('Expected V12 media assertions not found')
+          text = text.replace(old, new)
+          p.write_text(text)
+          PY
+
+          pnpm exec prettier --write \
+            apps/web/lib/flagship.ts \
+            apps/web/lib/media-v6.ts \
+            apps/web/components/academy-archive.tsx \
+            apps/web/components/cinematic-media.tsx \
+            scripts/homepage-motion.test.mjs
+
+          rm .github/workflows/real-academy-media-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/lib/flagship.ts apps/web/lib/media-v6.ts apps/web/components/academy-archive.tsx apps/web/components/cinematic-media.tsx scripts/homepage-motion.test.mjs .github/workflows/real-academy-media-once.yml
+          git commit -m "Make authentic Luminol photography primary across public site"
+          git push origin HEAD:design/premium-motion-homepage
