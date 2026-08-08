@@ -23,15 +23,6 @@ jobs:
         run: |
           python <<'PY'
           from pathlib import Path
-          import re
-
-          def replace_block(path, start, end, replacement):
-              p = Path(path)
-              text = p.read_text()
-              a = text.index(start)
-              b = text.index(end, a)
-              text = text[:a] + replacement + text[b:]
-              p.write_text(text)
 
           # 1. Make real Luminol photography the underlying institutional media source.
           p = Path('apps/web/lib/flagship.ts')
@@ -225,11 +216,18 @@ jobs:
           # 5. Keep the regression test aligned with the new authenticity requirement.
           p = Path('scripts/homepage-motion.test.mjs')
           text = p.read_text()
-          old = """    expect(mediaV6Source).toContain('Airam Dato-on / Pexels');\n    expect(mediaV6Source).toContain('Vitaly Gariev / Pexels');\n    expect(mediaV6Source).toContain('Kampus Production / Pexels');\n    expect(mediaV6Source).toContain('Matheus Bertelli / Pexels');"""
-          new = """    expect(mediaV6Source).toContain('Luminol Academy archive');\n    expect(mediaV6Source).toContain('academyMedia.classroom.src');\n    expect(mediaV6Source).toContain('academyMedia.psychology.src');\n    expect(mediaV6Source).toContain('academyMedia.languages.src');\n    expect(mediaV6Source).toContain('academyMedia.training.src');\n    expect(mediaV6Source).toContain('academyMedia.recognition.src');"""
-          if old not in text:
-              raise SystemExit('Expected V12 media assertions not found')
-          text = text.replace(old, new)
+          start = "    expect(mediaV6Source).toContain('Airam Dato-on / Pexels');"
+          end = "    expect(pageSource).not.toContain('12+');"
+          a = text.index(start)
+          b = text.index(end, a)
+          new = """    expect(mediaV6Source).toContain('Luminol Academy archive');
+    expect(mediaV6Source).toContain('academyMedia.classroom.src');
+    expect(mediaV6Source).toContain('academyMedia.psychology.src');
+    expect(mediaV6Source).toContain('academyMedia.languages.src');
+    expect(mediaV6Source).toContain('academyMedia.training.src');
+    expect(mediaV6Source).toContain('academyMedia.recognition.src');
+"""
+          text = text[:a] + new + text[b:]
           p.write_text(text)
           PY
 
