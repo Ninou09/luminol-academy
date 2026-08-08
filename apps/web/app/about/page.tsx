@@ -131,7 +131,10 @@ export default async function AboutPage() {
         className="ar-split-feature founder-feature"
         aria-labelledby="founder-title"
       >
-        <figure className="ar-feature-image founder-portrait" data-reveal="right">
+        <figure
+          className="ar-feature-image founder-portrait"
+          data-reveal="right"
+        >
           <div>
             <Image
               src={academyMedia.founder.src}
@@ -150,8 +153,8 @@ export default async function AboutPage() {
           <p className="ar-kicker">المؤسسة</p>
           <h2 id="founder-title">خداوي فطومة</h2>
           <p className="ar-large-copy">
-            تقود رؤية لومينول كأكاديمية تربط بين علم النفس، اللغات والتطوير المهني
-            ضمن تجربة تعليمية إنسانية وعملية.
+            تقود رؤية لومينول كأكاديمية تربط بين علم النفس، اللغات والتطوير
+            المهني ضمن تجربة تعليمية إنسانية وعملية.
           </p>
           <p>
             حضور المؤسسة داخل هوية الأكاديمية يوضح المسؤولية والرؤية التي تقف

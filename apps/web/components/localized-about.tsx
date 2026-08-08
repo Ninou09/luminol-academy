@@ -217,7 +217,10 @@ export async function LocalizedAbout({ locale }: { locale: Locale }) {
         className="ar-split-feature founder-feature"
         aria-labelledby="localized-founder-title"
       >
-        <figure className="ar-feature-image founder-portrait" data-reveal="right">
+        <figure
+          className="ar-feature-image founder-portrait"
+          data-reveal="right"
+        >
           <div>
             <Image
               src={academyMedia.founder.src}
