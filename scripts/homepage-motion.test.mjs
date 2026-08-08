@@ -175,7 +175,7 @@ describe('multilingual premium public flagship', () => {
     expect(cinematicMediaSource).toContain('setInView(entry.isIntersecting)');
     expect(cinematicMediaSource).toContain('v9-film-copy');
     expect(cinematicMediaSource).toContain('مواد تحريرية توضيحية');
-    expect(cinematicMediaSource).toContain('Luminol Academy students');
+    expect(cinematicMediaSource).toContain('real Luminol Academy archive');
     expect(securityHeadersSource).toContain(
       "media-src 'self' https://videos.pexels.com",
     );
