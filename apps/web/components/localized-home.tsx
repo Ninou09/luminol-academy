@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
+import { AcademyArchive } from './academy-archive';
 import { BranchStage } from './branch-stage';
 import { CinematicMediaWall } from './cinematic-media';
 import { HomeMotion } from './home-motion';
@@ -348,6 +349,8 @@ export async function LocalizedHome({ locale }: { locale: TranslatedLocale }) {
           </div>
         </div>
       </section>
+
+      <AcademyArchive locale={locale} />
 
       <BranchStage locale={locale} />
 

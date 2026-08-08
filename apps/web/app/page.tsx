@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ButtonLink } from '@luminol/ui';
 import './v4-home.css';
+import { AcademyArchive } from '../components/academy-archive';
 import { BranchStage } from '../components/branch-stage';
 import { CinematicMediaWall } from '../components/cinematic-media';
 import { HomeMotion } from '../components/home-motion';
@@ -192,6 +193,8 @@ export default async function Page() {
           </div>
         </div>
       </section>
+
+      <AcademyArchive />
 
       <BranchStage />
 

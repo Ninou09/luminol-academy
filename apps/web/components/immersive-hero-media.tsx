@@ -47,7 +47,7 @@ export function ImmersiveHeroMedia({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
-  const [manualPause, setManualPause] = useState(false);
+  const [manualPause, setManualPause] = useState(true);
   const copy = controlCopy[locale];
 
   useEffect(() => {
