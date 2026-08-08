@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 const FINE_POINTER_QUERY = '(pointer: fine)';
+const REVEAL_FAILSAFE_MS = 1400;
 
 function revealImmediately(elements: HTMLElement[]) {
   for (const element of elements) {
@@ -28,12 +29,12 @@ export function HomeMotion() {
     );
     const parallaxLayers = Array.from(
       document.querySelectorAll<HTMLElement>(
-        '.ar-home-hero-media, .ar-internal-hero-media, .ar-school-hero-media, .ar-feature-image > div, .ar-school-image, .ar-person-image, .v5-film-media, .v5-still-media, .v6-branch-video, .v4-manifesto-collage',
+        '.ar-home-hero-media, .ar-internal-hero-media, .ar-school-hero-media, .ar-feature-image > div, .ar-school-image, .ar-person-image, .v5-film-media, .v5-still-media, .v6-branch-video, .v4-manifesto-collage, .v11-archive-image',
       ),
     );
     const depthCards = Array.from(
       document.querySelectorAll<HTMLElement>(
-        '.ar-quick-access a, .ar-school-card, .ar-trust-grid article, .ar-journey-grid li, .v5-film-media, .v5-still, .v4-principle-grid article, .v6-conversion-rail',
+        '.ar-quick-access a, .ar-school-card, .ar-trust-grid article, .ar-journey-grid li, .v5-film-media, .v5-still, .v4-principle-grid article, .v6-conversion-rail, .v11-archive-card, .v4-branch-link',
       ),
     );
     const magneticTargets = Array.from(
@@ -44,6 +45,14 @@ export function HomeMotion() {
 
     root.classList.add('motion-enabled');
     root.dataset.reducedMotion = reducedMotion ? 'true' : 'false';
+
+    // Progressive enhancement must never become a content gate. If an
+    // IntersectionObserver is delayed, interrupted or a browser extension
+    // interferes with hydration, reveal everything after a short grace period.
+    const revealFallback = window.setTimeout(() => {
+      revealImmediately(revealElements);
+      root.dataset.motionFallback = 'complete';
+    }, REVEAL_FAILSAFE_MS);
 
     let scrollFrame = 0;
     let cursorFrame = 0;
@@ -81,7 +90,7 @@ export function HomeMotion() {
         const centerDelta =
           (rect.top + rect.height / 2 - window.innerHeight / 2) /
           window.innerHeight;
-        const shift = clamp(centerDelta * -34, -34, 34);
+        const shift = clamp(centerDelta * -28, -28, 28);
         layer.style.setProperty('--parallax-y', `${shift.toFixed(2)}px`);
       }
     };
@@ -112,7 +121,7 @@ export function HomeMotion() {
                 observer?.unobserve(element);
               }
             },
-            { rootMargin: '0px 0px -9% 0px', threshold: 0.1 },
+            { rootMargin: '0px 0px -7% 0px', threshold: 0.08 },
           );
 
     revealElements.forEach((element) => observer?.observe(element));
@@ -135,11 +144,11 @@ export function HomeMotion() {
 
         root.style.setProperty(
           '--pointer-shift-x',
-          `${((normalizedX - 0.5) * 14).toFixed(2)}px`,
+          `${((normalizedX - 0.5) * 12).toFixed(2)}px`,
         );
         root.style.setProperty(
           '--pointer-shift-y',
-          `${((normalizedY - 0.5) * 10).toFixed(2)}px`,
+          `${((normalizedY - 0.5) * 8).toFixed(2)}px`,
         );
         root.style.setProperty(
           '--pointer-x',
@@ -185,8 +194,8 @@ export function HomeMotion() {
           const rect = card.getBoundingClientRect();
           const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
           const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-          const tiltX = (0.5 - y) * 5.2;
-          const tiltY = (x - 0.5) * 6.4;
+          const tiltX = (0.5 - y) * 4.1;
+          const tiltY = (x - 0.5) * 4.8;
 
           card.style.setProperty('--motion-tilt-x', `${tiltX.toFixed(2)}deg`);
           card.style.setProperty('--motion-tilt-y', `${tiltY.toFixed(2)}deg`);
@@ -216,11 +225,11 @@ export function HomeMotion() {
           const y = event.clientY - (rect.top + rect.height / 2);
           target.style.setProperty(
             '--magnetic-x',
-            `${clamp(x * 0.11, -8, 8).toFixed(2)}px`,
+            `${clamp(x * 0.1, -7, 7).toFixed(2)}px`,
           );
           target.style.setProperty(
             '--magnetic-y',
-            `${clamp(y * 0.12, -7, 7).toFixed(2)}px`,
+            `${clamp(y * 0.1, -6, 6).toFixed(2)}px`,
           );
         };
 
@@ -241,6 +250,7 @@ export function HomeMotion() {
     }
 
     return () => {
+      window.clearTimeout(revealFallback);
       observer?.disconnect();
       cleanups.forEach((cleanup) => cleanup());
       window.removeEventListener('scroll', requestScrollUpdate);
@@ -270,6 +280,7 @@ export function HomeMotion() {
       delete root.dataset.scrolled;
       delete root.dataset.scrollDirection;
       delete root.dataset.reducedMotion;
+      delete root.dataset.motionFallback;
     };
   }, []);
 

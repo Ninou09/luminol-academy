@@ -1,0 +1,1072 @@
+/* V12 — final premium visual system.
+   Built as a last-loaded corrective layer: media is never gated by animation,
+   authentic photography has editorial fallbacks, vertical rhythm is tighter,
+   and the palette/motion system is coherent across all public locales. */
+
+:root {
+  --v12-ink: #032632;
+  --v12-deep: #063b4a;
+  --v12-deep-2: #07566a;
+  --v12-teal: #087f91;
+  --v12-aqua: #37c5dc;
+  --v12-aqua-soft: #bdeef5;
+  --v12-gold: #d7a84f;
+  --v12-gold-soft: #f4dfad;
+  --v12-paper: #fcfbf7;
+  --v12-mint: #edf8f5;
+  --v12-sky: #eaf7fb;
+  --v12-line: rgb(3 38 50 / 0.12);
+  --v12-line-light: rgb(255 255 255 / 0.15);
+  --v12-shadow: 0 1.4rem 4.2rem rgb(3 38 50 / 0.12);
+  --v12-shadow-soft: 0 0.8rem 2.4rem rgb(3 38 50 / 0.075);
+  --v12-radius: 1.35rem;
+}
+
+.v4-home,
+.ar-page {
+  --v4-navy: var(--v12-ink);
+  --v4-navy-2: var(--v12-deep);
+  --v4-blue: var(--v12-teal);
+  --v4-blue-soft: var(--v12-aqua);
+  --v4-gold: var(--v12-gold);
+  --v4-cream: var(--v12-paper);
+  --v4-ink: var(--v12-ink);
+  --ar-navy: var(--v12-deep);
+  --ar-cyan: var(--v12-teal);
+  --ar-gold: var(--v12-gold);
+  background:
+    radial-gradient(circle at 8% 12%, rgb(55 197 220 / 0.035), transparent 24rem),
+    var(--v12-paper);
+  color: var(--v12-ink);
+}
+
+/* Safety first: media-rich areas are visible even if reveal JS is delayed. */
+.motion-enabled .v11-academy-archive [data-reveal],
+.motion-enabled .v4-manifesto-collage[data-reveal],
+.motion-enabled .v5-gallery [data-reveal],
+.motion-enabled .v4-branch-experience [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* One consistent readable scale. */
+@media (min-width: 901px) {
+  .premium-header .desktop-nav a {
+    font-size: 0.88rem !important;
+  }
+
+  .header-cta {
+    min-height: 2.85rem !important;
+    padding-inline: 1.15rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .v4-hero h1 {
+    max-width: 12ch !important;
+    font-size: clamp(2.7rem, 3.85vw, 4.05rem) !important;
+    line-height: 1.045 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  .v4-hero-lede {
+    max-width: 34rem !important;
+    font-size: clamp(1rem, 1.08vw, 1.1rem) !important;
+    line-height: 1.8 !important;
+  }
+
+  .v4-manifesto h2,
+  .v4-branch-heading h2,
+  .v4-principles h2,
+  .v4-journey h2,
+  .v4-governed-section h2,
+  .v4-final-cta h2,
+  .v5-media-heading h2,
+  .v11-archive-heading h2,
+  .ar-section-copy h2,
+  .ar-section-heading h2,
+  .ar-trust-intro h2,
+  .ar-story-heading h2,
+  .ar-school-split-copy h2,
+  .ar-method-section h2,
+  .ar-faq-section h2,
+  .ar-contact-context h2,
+  .ar-final-cta h2 {
+    font-size: clamp(2rem, 2.9vw, 3.1rem) !important;
+    line-height: 1.16 !important;
+    letter-spacing: -0.025em;
+  }
+
+  .v4-manifesto-copy p,
+  .v4-branch-heading > p,
+  .v4-principle-grid p,
+  .v4-journey p,
+  .v4-governed-section p,
+  .v4-final-cta p,
+  .v9-film-copy p,
+  .v11-archive-heading p,
+  .ar-section-heading > p,
+  .ar-section-copy p,
+  .ar-story-copy p,
+  .ar-school-split-copy p,
+  .ar-method-list p,
+  .ar-faq-list p,
+  .ar-final-cta p,
+  .ar-contact-context p {
+    font-size: clamp(0.96rem, 1.02vw, 1.06rem) !important;
+    line-height: 1.8 !important;
+  }
+
+  .v4-branch-link p,
+  .v4-branch-link strong,
+  .v9-film-copy > span,
+  .v9-branch-meta small,
+  .v5-media-note,
+  .ar-section-nav a {
+    font-size: 0.74rem !important;
+  }
+}
+
+.v4-overline,
+.ar-kicker {
+  color: var(--v12-gold) !important;
+  font-size: 0.76rem !important;
+  letter-spacing: 0.045em;
+}
+
+/* Header: crisp, luminous and calmer. */
+.utility-bar {
+  background: linear-gradient(90deg, #063b4a, #07596b 54%, #074757) !important;
+  color: rgb(255 255 255 / 0.86) !important;
+}
+
+.site-header.premium-header {
+  border-bottom-color: rgb(3 38 50 / 0.075) !important;
+  background: rgb(252 251 247 / 0.91) !important;
+  box-shadow: 0 0.55rem 1.8rem rgb(3 38 50 / 0.045);
+  backdrop-filter: blur(18px) saturate(1.12);
+}
+
+.brand-copy strong,
+.premium-header .desktop-nav a {
+  color: var(--v12-ink) !important;
+}
+
+.premium-header .desktop-nav a::after {
+  background: linear-gradient(90deg, var(--v12-teal), var(--v12-aqua)) !important;
+}
+
+/* Hero: photo-first, brighter, larger and with a richer cinematic frame. */
+.v4-hero {
+  background:
+    radial-gradient(circle at 15% 12%, rgb(55 197 220 / 0.16), transparent 24rem),
+    radial-gradient(circle at 82% 88%, rgb(215 168 79 / 0.12), transparent 24rem),
+    linear-gradient(135deg, #031f2b 0%, #063a48 55%, #052a37 100%) !important;
+}
+
+.v4-hero::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  width: 26rem;
+  height: 26rem;
+  inset-inline-end: 34%;
+  inset-block-start: -15rem;
+  border: 1px solid rgb(55 197 220 / 0.17);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4.5rem rgb(55 197 220 / 0.025),
+    0 0 0 9rem rgb(215 168 79 / 0.018);
+  pointer-events: none;
+}
+
+@media (min-width: 901px) {
+  .v4-hero {
+    min-height: clamp(38rem, 69svh, 45rem) !important;
+  }
+
+  .v4-hero-media {
+    width: min(49vw, 45rem) !important;
+    aspect-ratio: 16 / 10 !important;
+    border: 1px solid rgb(255 255 255 / 0.22) !important;
+    border-radius: 1.45rem 1.45rem 3.8rem 1.45rem !important;
+    background:
+      linear-gradient(180deg, transparent 58%, rgb(3 31 43 / 0.22)),
+      url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') center / cover no-repeat !important;
+    box-shadow:
+      0 2.3rem 6.2rem rgb(0 0 0 / 0.34),
+      0 0 0 0.35rem rgb(255 255 255 / 0.025) !important;
+  }
+
+  html[dir='rtl'] .v4-hero-media {
+    border-radius: 1.45rem 1.45rem 1.45rem 3.8rem !important;
+  }
+
+  .v4-hero-content {
+    padding-block: clamp(5.7rem, 7.4vw, 6.8rem) clamp(4.2rem, 5.3vw, 5rem) !important;
+    padding-inline-end: calc(53% + var(--v4-gutter)) !important;
+  }
+
+  html[dir='ltr'] .v4-hero-content {
+    padding-inline-start: calc(53% + var(--v4-gutter)) !important;
+    padding-inline-end: var(--v4-gutter) !important;
+  }
+}
+
+.v4-hero-poster {
+  opacity: 1 !important;
+  object-fit: cover !important;
+  object-position: center 46% !important;
+  filter: saturate(1.04) contrast(1.02) brightness(1.01) !important;
+}
+
+.v4-hero-media-wash {
+  background:
+    linear-gradient(180deg, transparent 66%, rgb(2 25 34 / 0.42)),
+    linear-gradient(90deg, rgb(2 25 34 / 0.04), transparent 48%) !important;
+}
+
+.v4-hero-media-grid {
+  opacity: 0.055 !important;
+  background-size: 4.75rem 4.75rem !important;
+}
+
+.v11-hero-authenticity {
+  max-width: 17rem !important;
+  border-color: rgb(255 255 255 / 0.24) !important;
+  background: rgb(2 31 42 / 0.64) !important;
+  box-shadow: 0 0.9rem 2.6rem rgb(0 0 0 / 0.18) !important;
+}
+
+.v11-hero-authenticity strong {
+  font-size: 0.75rem !important;
+}
+
+.v11-hero-authenticity small {
+  font-size: 0.61rem !important;
+}
+
+.v4-hero-play {
+  border-color: rgb(255 255 255 / 0.34) !important;
+  background: rgb(2 31 42 / 0.7) !important;
+  box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.16);
+}
+
+.v6-hero-proof {
+  gap: 0.5rem !important;
+  margin-top: 1.35rem !important;
+}
+
+.v6-hero-proof span {
+  border: 1px solid rgb(255 255 255 / 0.13);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.055);
+  padding: 0.38rem 0.62rem;
+  color: rgb(255 255 255 / 0.74) !important;
+}
+
+/* Quick actions overlap the hero slightly and feel like premium navigation cards. */
+.v4-quick-access {
+  width: min(calc(100% - 2rem), 76rem) !important;
+  margin-top: -1.15rem !important;
+  border: 1px solid rgb(3 38 50 / 0.1) !important;
+  border-radius: 1.15rem !important;
+  background: rgb(255 255 255 / 0.96) !important;
+  box-shadow: 0 1.2rem 3.2rem rgb(3 38 50 / 0.1) !important;
+  backdrop-filter: blur(16px);
+}
+
+.v4-quick-access a {
+  min-height: 6rem !important;
+  padding: 1rem 1.05rem !important;
+}
+
+.v4-quick-access strong {
+  color: var(--v12-ink) !important;
+  font-size: 0.9rem !important;
+}
+
+.v4-quick-access small {
+  color: #60767e !important;
+  font-size: 0.69rem !important;
+  line-height: 1.55 !important;
+}
+
+.v4-quick-access a:hover,
+.v4-quick-access a:focus-visible {
+  background: linear-gradient(145deg, #f3fbfa, #f7fbfc) !important;
+}
+
+/* Tighter chapter rhythm: breathing room without dead bands. */
+@media (min-width: 901px) {
+  .v4-manifesto,
+  .v11-academy-archive,
+  .v4-branch-stage,
+  .v5-media,
+  .v4-principles,
+  .v4-journey,
+  .v4-governed-section,
+  .v4-final-cta {
+    padding-block-start: clamp(3.4rem, 4.6vw, 4.8rem) !important;
+    padding-block-end: clamp(3.4rem, 4.6vw, 4.8rem) !important;
+  }
+}
+
+/* Manifesto: the real DOM images are visible again; no CSS-only hidden photo trick. */
+.v4-manifesto {
+  width: min(calc(100% - 2rem), 76rem) !important;
+  grid-template-columns: minmax(0, 0.88fr) minmax(22rem, 1.12fr) !important;
+  gap: clamp(2rem, 5vw, 5rem) !important;
+  align-items: center !important;
+}
+
+.v4-manifesto-collage {
+  min-height: clamp(22rem, 31vw, 30rem) !important;
+  max-width: none !important;
+}
+
+.v4-collage-main,
+.v4-collage-float {
+  overflow: hidden;
+  border: 1px solid rgb(3 38 50 / 0.1) !important;
+  background-image: none !important;
+  background-color: #dfecef !important;
+  box-shadow: var(--v12-shadow-soft) !important;
+}
+
+.v4-collage-main {
+  inset: 0 8% 1.5rem 0 !important;
+  border-radius: 1.35rem 1.35rem 3.2rem 1.35rem !important;
+}
+
+html[dir='rtl'] .v4-collage-main {
+  border-radius: 1.35rem 1.35rem 1.35rem 3.2rem !important;
+}
+
+.v4-collage-float {
+  width: 31% !important;
+  border-radius: 1rem !important;
+}
+
+.v4-collage-main > img,
+.v4-collage-float > img {
+  opacity: 1 !important;
+  object-fit: cover !important;
+  filter: saturate(1.02) contrast(1.01);
+}
+
+.v4-collage-main > figcaption,
+.v4-collage-float > figcaption {
+  opacity: 0 !important;
+}
+
+.v4-collage-main::after,
+.v4-collage-float::after {
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: rgb(2 31 42 / 0.68) !important;
+  font-size: 0.62rem !important;
+}
+
+/* Authentic archive: visible image mosaic with fallbacks and captions over media. */
+.v11-academy-archive {
+  width: min(calc(100% - 2rem), 76rem) !important;
+}
+
+.v11-archive-heading {
+  grid-template-columns: minmax(0, 1.1fr) minmax(19rem, 0.72fr) !important;
+  gap: clamp(2rem, 5vw, 5rem) !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.v11-archive-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+  grid-template-rows: 15rem 15rem !important;
+  gap: 0.85rem !important;
+}
+
+.v11-archive-card {
+  position: relative;
+  min-height: 0 !important;
+  border: 1px solid rgb(3 38 50 / 0.1) !important;
+  border-radius: 1.25rem !important;
+  background: #dcecef !important;
+  box-shadow: var(--v12-shadow-soft) !important;
+}
+
+.v11-archive-card-1 {
+  grid-column: 1 / 7 !important;
+  grid-row: 1 / 3 !important;
+}
+
+.v11-archive-card-2 {
+  grid-column: 7 / 13 !important;
+  grid-row: 1 !important;
+}
+
+.v11-archive-card-3 {
+  grid-column: 7 / 10 !important;
+  grid-row: 2 !important;
+}
+
+.v11-archive-card-4 {
+  grid-column: 10 / 13 !important;
+  grid-row: 2 !important;
+}
+
+.v11-archive-image,
+.v11-archive-card-1 .v11-archive-image,
+.v11-archive-card-4 .v11-archive-image {
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+.v11-archive-card-1 .v11-archive-image {
+  background: url('https://images.pexels.com/photos/5756759/pexels-photo-5756759.jpeg') center / cover no-repeat;
+}
+
+.v11-archive-card-2 .v11-archive-image {
+  background: url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') center / cover no-repeat;
+}
+
+.v11-archive-card-3 .v11-archive-image {
+  background: url('https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg') center / cover no-repeat;
+}
+
+.v11-archive-card-4 .v11-archive-image {
+  background: url('https://images.pexels.com/photos/33714897/pexels-photo-33714897.jpeg') center / cover no-repeat;
+}
+
+.v11-archive-image img {
+  opacity: 1 !important;
+  object-fit: cover !important;
+  filter: saturate(1.01) contrast(1.015);
+}
+
+.v11-archive-card figcaption {
+  position: absolute;
+  z-index: 4;
+  inset: auto 0 0;
+  padding: 2.5rem 0.9rem 0.9rem !important;
+  background: linear-gradient(180deg, transparent, rgb(2 27 37 / 0.78));
+  color: #fff;
+  pointer-events: none;
+}
+
+.v11-archive-card figcaption strong {
+  color: #fff !important;
+  font-size: 0.84rem !important;
+}
+
+.v11-archive-card figcaption small {
+  color: rgb(255 255 255 / 0.66) !important;
+  font-size: 0.62rem !important;
+}
+
+.v11-archive-image > span {
+  border: 1px solid rgb(255 255 255 / 0.17);
+  background: rgb(2 31 42 / 0.62) !important;
+}
+
+/* School selector: large authentic preview plus visible photographic cues for all 3 paths. */
+.v4-branch-stage {
+  background:
+    radial-gradient(circle at 10% 5%, rgb(55 197 220 / 0.08), transparent 21rem),
+    linear-gradient(180deg, #f8fbf9, #f3f7f4) !important;
+}
+
+.v4-branch-heading {
+  margin-bottom: 1.4rem !important;
+}
+
+.v4-branch-experience {
+  padding: 0.75rem !important;
+  gap: 0.8rem !important;
+  border: 1px solid var(--v12-line) !important;
+  border-radius: 1.5rem !important;
+  background: #fff !important;
+  box-shadow: var(--v12-shadow) !important;
+}
+
+.v4-branch-visual {
+  min-height: clamp(21rem, 33vw, 29rem) !important;
+  background-color: #dcecef !important;
+}
+
+.v4-branch-stage-psychology .v4-branch-visual {
+  background:
+    url('/media/academy/child-activities.webp') center / contain no-repeat,
+    url('https://images.pexels.com/photos/36729380/pexels-photo-36729380.jpeg') center / cover no-repeat !important;
+}
+
+.v4-branch-stage-languages .v4-branch-visual {
+  background:
+    url('/media/academy/language-map.webp') center / cover no-repeat,
+    url('https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg') center / cover no-repeat !important;
+}
+
+.v4-branch-stage-training .v4-branch-visual {
+  background:
+    url('/media/academy/workshop-training.webp') center / cover no-repeat,
+    url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') center / cover no-repeat !important;
+}
+
+.v6-branch-poster {
+  opacity: 1 !important;
+}
+
+.v4-branch-list {
+  display: grid !important;
+  gap: 0.45rem !important;
+  padding: 0.45rem !important;
+  border: 0 !important;
+  background: #f7faf9;
+}
+
+.v4-branch-link {
+  position: relative;
+  min-height: 8.7rem !important;
+  padding: 0.95rem 0.95rem 0.95rem 7.4rem !important;
+  overflow: hidden;
+  border: 1px solid rgb(3 38 50 / 0.08) !important;
+  border-radius: 0.95rem !important;
+  background: #fff !important;
+}
+
+html[dir='rtl'] .v4-branch-link {
+  padding: 0.95rem 7.4rem 0.95rem 0.95rem !important;
+}
+
+.v4-branch-link::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset-block: 0.55rem;
+  inset-inline-start: 0.55rem;
+  width: 5.95rem;
+  border-radius: 0.72rem;
+  background-position: center;
+  background-size: cover;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16);
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 420ms ease;
+}
+
+.v4-branch-link:nth-child(1)::before {
+  background-image:
+    url('/media/academy/child-activities.webp'),
+    url('https://images.pexels.com/photos/36729380/pexels-photo-36729380.jpeg');
+  background-size: contain, cover;
+  background-repeat: no-repeat;
+  background-color: #e9f1f0;
+}
+
+.v4-branch-link:nth-child(2)::before {
+  background-image:
+    url('/media/academy/language-map.webp'),
+    url('https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg');
+}
+
+.v4-branch-link:nth-child(3)::before {
+  background-image:
+    url('/media/academy/workshop-training.webp'),
+    url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg');
+}
+
+.v4-branch-link > * {
+  position: relative;
+  z-index: 1;
+}
+
+.v4-branch-link[data-active='true'] {
+  border-color: rgb(8 127 145 / 0.28) !important;
+  background: linear-gradient(145deg, #f3fbfa, #f7fbfc) !important;
+  box-shadow: 0 0.8rem 2rem rgb(3 38 50 / 0.065);
+}
+
+.v4-branch-link h3 {
+  margin-block: 0.22rem 0.32rem !important;
+  color: var(--v12-ink) !important;
+  font-size: clamp(1.12rem, 1.5vw, 1.48rem) !important;
+}
+
+.v4-branch-link p {
+  color: #62767e !important;
+  line-height: 1.62 !important;
+}
+
+.v4-branch-link strong {
+  color: var(--v12-teal) !important;
+}
+
+/* School and About page authentic backgrounds gain remote fallbacks. */
+.ar-theme-psychology .ar-school-hero-media,
+.school-psychology .ar-school-hero-media {
+  background-image:
+    url('/media/academy/child-activities.webp'),
+    url('https://images.pexels.com/photos/36729380/pexels-photo-36729380.jpeg') !important;
+  background-size: contain, cover !important;
+  background-position: center !important;
+}
+
+.ar-theme-languages .ar-school-hero-media,
+.school-languages .ar-school-hero-media {
+  background-image:
+    url('/media/academy/language-map.webp'),
+    url('https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg') !important;
+  background-size: cover !important;
+}
+
+.ar-theme-training .ar-school-hero-media,
+.school-training .ar-school-hero-media {
+  background-image:
+    url('/media/academy/workshop-training.webp'),
+    url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') !important;
+  background-size: cover !important;
+}
+
+.ar-about-hero .ar-internal-hero-media {
+  background-image:
+    url('/media/academy/recognition.webp'),
+    url('https://images.pexels.com/photos/33714897/pexels-photo-33714897.jpeg') !important;
+}
+
+/* Conversion rail: compact, higher contrast. */
+.v6-conversion-rail {
+  width: min(calc(100% - 2rem), 76rem) !important;
+  margin-block: 0 !important;
+  padding: clamp(1.5rem, 3vw, 2.2rem) !important;
+  border: 1px solid rgb(55 197 220 / 0.18) !important;
+  border-radius: 1.35rem !important;
+  background:
+    radial-gradient(circle at 8% 30%, rgb(55 197 220 / 0.15), transparent 15rem),
+    linear-gradient(125deg, #032b38, #075365 65%, #063b4a) !important;
+  color: #fff !important;
+  box-shadow: 0 1.2rem 3rem rgb(3 38 50 / 0.15) !important;
+}
+
+.v6-conversion-rail h2,
+.v6-conversion-rail p {
+  color: #fff !important;
+}
+
+.v6-conversion-rail > div > p:last-child {
+  color: rgb(255 255 255 / 0.7) !important;
+}
+
+/* Cinematic section: denser visual storytelling, no giant empty black fields. */
+.v5-media {
+  background:
+    radial-gradient(circle at 12% 12%, rgb(55 197 220 / 0.12), transparent 22rem),
+    radial-gradient(circle at 90% 72%, rgb(215 168 79 / 0.09), transparent 20rem),
+    linear-gradient(155deg, #021c27, #063a49 58%, #032731) !important;
+}
+
+.v5-media-heading {
+  margin-bottom: 1.7rem !important;
+}
+
+.v5-media-heading p {
+  max-width: 32rem;
+}
+
+.v5-feature-film,
+.v5-film-split {
+  margin-top: 1rem !important;
+}
+
+.v9-film-card {
+  border-color: rgb(255 255 255 / 0.13) !important;
+  background: rgb(255 255 255 / 0.055) !important;
+  box-shadow: 0 1.4rem 4rem rgb(0 0 0 / 0.19) !important;
+  backdrop-filter: blur(9px);
+}
+
+.v5-film-media,
+.v6-film-media {
+  min-height: clamp(18rem, 27vw, 24rem) !important;
+}
+
+.v5-film-poster,
+.v5-gallery img {
+  filter: saturate(1.03) contrast(1.015);
+}
+
+.v5-ticker {
+  margin-block: 2rem !important;
+  border-block-color: rgb(255 255 255 / 0.08) !important;
+}
+
+.v5-gallery-heading {
+  margin-bottom: 1rem !important;
+}
+
+.v5-gallery {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0.75rem !important;
+}
+
+.v5-still {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 1rem !important;
+  overflow: hidden;
+  background: rgb(255 255 255 / 0.04);
+}
+
+.v5-still-media {
+  min-height: clamp(12rem, 18vw, 16rem) !important;
+}
+
+.v5-still figcaption {
+  min-height: 3.3rem !important;
+  padding: 0.7rem 0.8rem !important;
+}
+
+.v5-still figcaption strong {
+  font-size: 0.74rem !important;
+}
+
+.v5-still figcaption a {
+  font-size: 0.55rem !important;
+}
+
+/* Principles + journey: card density and alternating warmth. */
+.v4-principles {
+  background:
+    radial-gradient(circle at 88% 12%, rgb(215 168 79 / 0.08), transparent 18rem),
+    #fff !important;
+}
+
+.v4-principle-grid {
+  gap: 0.75rem !important;
+}
+
+.v4-principle-grid article {
+  border: 1px solid rgb(3 38 50 / 0.09) !important;
+  border-radius: 1rem !important;
+  background: linear-gradient(145deg, #fff, #f8fbfa) !important;
+  box-shadow: 0 0.6rem 1.8rem rgb(3 38 50 / 0.04);
+}
+
+.v4-journey {
+  background:
+    radial-gradient(circle at 8% 82%, rgb(55 197 220 / 0.07), transparent 18rem),
+    linear-gradient(180deg, #fbfaf6, #f6f8f5) !important;
+}
+
+.v4-journey-track li {
+  border-color: rgb(3 38 50 / 0.09) !important;
+  border-radius: 1rem !important;
+  background: rgb(255 255 255 / 0.85) !important;
+  box-shadow: 0 0.6rem 1.7rem rgb(3 38 50 / 0.04);
+}
+
+/* Final CTA: premium finish with depth instead of a large quiet block. */
+.v4-final-cta,
+.ar-final-cta {
+  border-radius: 1.6rem !important;
+  background:
+    radial-gradient(circle at 16% 20%, rgb(55 197 220 / 0.18), transparent 18rem),
+    radial-gradient(circle at 86% 78%, rgb(215 168 79 / 0.13), transparent 18rem),
+    linear-gradient(130deg, #032633, #075165 62%, #053643) !important;
+  box-shadow: 0 1.6rem 4.5rem rgb(3 38 50 / 0.16) !important;
+}
+
+.v4-final-cta h2,
+.v4-final-cta p,
+.ar-final-cta h2,
+.ar-final-cta p {
+  color: #fff !important;
+}
+
+.v4-final-cta p,
+.ar-final-cta p {
+  color: rgb(255 255 255 / 0.72) !important;
+}
+
+/* Buttons: luminous without looking like consumer SaaS. */
+.v6-primary-action,
+.v4-hero-actions a:first-child,
+.header-cta,
+.ar-hero-actions a:first-child,
+.ar-final-cta > a,
+.v4-final-cta > a,
+.form-actions button {
+  border: 1px solid rgb(255 255 255 / 0.17) !important;
+  border-radius: 0.82rem !important;
+  background: linear-gradient(135deg, #087286 0%, #0792a6 55%, #37c5dc 145%) !important;
+  color: #fff !important;
+  box-shadow:
+    0 0.75rem 1.8rem rgb(2 74 91 / 0.24),
+    inset 0 1px rgb(255 255 255 / 0.2) !important;
+}
+
+/* Richer motion, but content never depends on it. */
+@media (prefers-reduced-motion: no-preference) and (pointer: fine) {
+  .v4-hero::before {
+    animation: v12-orbit 12s ease-in-out infinite alternate;
+  }
+
+  .v4-hero-media {
+    animation: v12-media-arrive 850ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+  }
+
+  .v4-hero-media::after {
+    animation: v12-sheen 8s ease-in-out 1.5s infinite !important;
+  }
+
+  .v4-quick-access a,
+  .v11-archive-card,
+  .v4-branch-link,
+  .v5-still,
+  .v4-principle-grid article,
+  .v4-journey-track li {
+    transition:
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 420ms ease,
+      border-color 420ms ease,
+      background 420ms ease;
+  }
+
+  .v4-quick-access a:hover,
+  .v11-archive-card:hover,
+  .v5-still:hover,
+  .v4-principle-grid article:hover,
+  .v4-journey-track li:hover {
+    transform: translateY(-0.26rem);
+  }
+
+  .v11-archive-card:hover {
+    box-shadow: var(--v12-shadow) !important;
+  }
+
+  .v11-archive-card:hover .v11-archive-image img,
+  .v5-still:hover img {
+    transform: scale(1.025) !important;
+  }
+
+  .v4-branch-link:hover::before,
+  .v4-branch-link:focus-visible::before {
+    transform: scale(1.045);
+    filter: saturate(1.08) contrast(1.02);
+  }
+
+  .v6-primary-action,
+  .v4-hero-actions a:first-child,
+  .header-cta,
+  .ar-hero-actions a:first-child,
+  .ar-final-cta > a,
+  .v4-final-cta > a,
+  .form-actions button {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .v6-primary-action::after,
+  .header-cta::after,
+  .v4-final-cta > a::after,
+  .ar-final-cta > a::after {
+    content: '';
+    position: absolute;
+    inset: -30% auto -30% -45%;
+    width: 34%;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.32), transparent);
+    transform: skewX(-18deg);
+    transition: left 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .v6-primary-action:hover::after,
+  .header-cta:hover::after,
+  .v4-final-cta > a:hover::after,
+  .ar-final-cta > a:hover::after {
+    left: 118%;
+  }
+}
+
+@keyframes v12-orbit {
+  from {
+    transform: translate3d(0, 0, 0) scale(0.96);
+    opacity: 0.6;
+  }
+  to {
+    transform: translate3d(1rem, 0.7rem, 0) scale(1.04);
+    opacity: 1;
+  }
+}
+
+@keyframes v12-media-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-46%) translateX(1.5rem) scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-48%) translateX(0) scale(1);
+  }
+}
+
+@keyframes v12-sheen {
+  0%,
+  66% {
+    transform: translateX(-140%);
+  }
+  84%,
+  100% {
+    transform: translateX(140%);
+  }
+}
+
+/* Mobile: image density remains high, spacing stays compact, no hidden media. */
+@media (max-width: 900px) {
+  .v4-hero {
+    min-height: auto !important;
+    padding-bottom: 1rem;
+  }
+
+  .v4-hero-media {
+    min-height: 19rem !important;
+    background: url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') center / cover no-repeat !important;
+  }
+
+  .v4-hero-content {
+    padding-block: 3.5rem 2.5rem !important;
+  }
+
+  .v4-hero h1 {
+    font-size: clamp(2.35rem, 11vw, 3.4rem) !important;
+  }
+
+  .v4-quick-access {
+    width: calc(100% - 1rem) !important;
+    margin-top: -0.4rem !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .v4-quick-access a {
+    min-height: 5.6rem !important;
+    padding: 0.85rem !important;
+  }
+
+  .v4-manifesto,
+  .v11-academy-archive,
+  .v4-branch-stage,
+  .v5-media,
+  .v4-principles,
+  .v4-journey,
+  .v4-governed-section,
+  .v4-final-cta {
+    padding-block-start: 3rem !important;
+    padding-block-end: 3rem !important;
+  }
+
+  .v4-manifesto {
+    width: calc(100% - 1.25rem) !important;
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  .v4-manifesto-collage {
+    min-height: 19rem !important;
+  }
+
+  .v11-academy-archive {
+    width: calc(100% - 1.25rem) !important;
+  }
+
+  .v11-archive-heading,
+  .v11-archive-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .v11-archive-grid {
+    grid-template-rows: none !important;
+    gap: 0.7rem !important;
+  }
+
+  .v11-archive-card-1,
+  .v11-archive-card-2,
+  .v11-archive-card-3,
+  .v11-archive-card-4 {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .v11-archive-card .v11-archive-image,
+  .v11-archive-card-1 .v11-archive-image,
+  .v11-archive-card-4 .v11-archive-image {
+    height: 15rem !important;
+    min-height: 15rem !important;
+  }
+
+  .v4-branch-experience {
+    width: calc(100% - 1rem) !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .v4-branch-link,
+  html[dir='rtl'] .v4-branch-link {
+    min-height: 7.6rem !important;
+    padding: 0.85rem 0.85rem 0.85rem 6.4rem !important;
+  }
+
+  html[dir='rtl'] .v4-branch-link {
+    padding: 0.85rem 6.4rem 0.85rem 0.85rem !important;
+  }
+
+  .v4-branch-link::before {
+    width: 5.2rem;
+  }
+
+  .v5-gallery {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .v5-still-media {
+    min-height: 11.5rem !important;
+  }
+
+  .v6-conversion-rail {
+    width: calc(100% - 1.25rem) !important;
+  }
+
+  .v4-final-cta,
+  .ar-final-cta {
+    border-radius: 1.15rem !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .v4-quick-access,
+  .v5-gallery {
+    grid-template-columns: 1fr !important;
+  }
+
+  .v4-quick-access a {
+    min-height: 4.8rem !important;
+  }
+
+  .v11-archive-card .v11-archive-image,
+  .v11-archive-card-1 .v11-archive-image,
+  .v11-archive-card-4 .v11-archive-image {
+    height: 13.2rem !important;
+    min-height: 13.2rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-hero::before,
+  .v4-hero-media,
+  .v4-hero-media::after,
+  .v4-quick-access a,
+  .v11-archive-card,
+  .v11-archive-image img,
+  .v4-branch-link,
+  .v4-branch-link::before,
+  .v5-still,
+  .v5-still img {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

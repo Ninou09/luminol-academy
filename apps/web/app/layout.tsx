@@ -19,6 +19,7 @@ import './v9-award-refinement.css';
 import './v9-detail-fixes.css';
 import './v10-premium-polish.css';
 import './v11-authentic-academy.css';
+import './v12-premium-final.css';
 import { isPublicLocale, localeMeta, type PublicLocale } from '../lib/i18n';
 
 const arabicFont = Noto_Sans_Arabic({
