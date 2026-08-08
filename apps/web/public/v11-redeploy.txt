@@ -1,3 +1,4 @@
-V11 redeploy trigger after Vercel quota reset. Authentic academy media is included in this branch.
-Final current-head preview refresh after dependency-audit and validation cleanup at 2026-08-07T23:54Z.
-Force preview after authentic-photo visibility fix at 2026-08-08T00:05Z: hero stays on the real academy photo until play is requested, and the homepage now renders the four-photo Academy Archive explicitly.
+V11 visible-media preview branch.
+Authentic Luminol Academy photography is intentionally visible before any editorial motion.
+Homepage explicitly renders the four-photo Academy Archive.
+Preview branch trigger: 2026-08-08T00:06Z.
