@@ -9,12 +9,12 @@ export type AcademyPhoto = {
 export const academyMedia = {
   classroom: {
     src: '/media/academy/classroom-digital.webp',
-    alt: 'قاعة تدريب حقيقية داخل أكاديمية لومينول أثناء جلسة تعلم رقمية',
+    alt: 'قاعة تدريب حقيقية داخل أكاديمية لومينول أثناء ورشة حضورية مع متدربين',
     label: 'من فضاءات أكاديمية لومينول',
   },
   languages: {
     src: '/media/academy/language-map.webp',
-    alt: 'جدارية خريطة العالم داخل فضاء تعلم اللغات في أكاديمية لومينول',
+    alt: 'جدارية خريطة العالم الحقيقية داخل فضاء تعلم اللغات في أكاديمية لومينول',
     label: 'من فضاء اللغات في الأكاديمية',
   },
   training: {
@@ -29,13 +29,13 @@ export const academyMedia = {
   },
   recognition: {
     src: '/media/academy/recognition.webp',
-    alt: 'لحظة تكريم موثقة ضمن أرشيف أكاديمية لومينول',
+    alt: 'لحظة تكريم حقيقية موثقة ضمن أرشيف أكاديمية لومينول',
     label: 'من أرشيف لومينول',
   },
   founder: {
-    src: '/media/academy/founder-kheddaoui-fettouma.svg',
+    src: '/media/academy/founder-kheddaoui-fettouma.webp',
     alt: 'خداوي فطومة، مؤسسة أكاديمية لومينول',
-    label: 'مؤسسة أكاديمية لومينول',
+    label: 'خداوي فطومة — مؤسسة أكاديمية لومينول',
   },
 } as const satisfies Record<string, AcademyPhoto>;
 
