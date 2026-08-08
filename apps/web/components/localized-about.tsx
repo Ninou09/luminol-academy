@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { ButtonLink } from '@luminol/ui';
 import { HomeMotion } from './home-motion';
 import { SiteFooter, SiteHeader } from './site-shell';
+import { academyMedia } from '../lib/academy-media';
 import { localePath, type PublicLocale } from '../lib/i18n';
 import { premiumImages } from '../lib/media-v6';
 import { getPublicTeamMembers } from '../lib/sanity-public';
@@ -36,6 +37,12 @@ const copy = {
       'Confiance, communication et capacité professionnelle se renforcent mutuellement dans la vie réelle.',
     whyBody:
       'Luminol rassemble ces dimensions au sein d’une seule académie tout en préservant les limites, méthodes et exigences propres à chaque pôle.',
+    founderKicker: 'Fondatrice',
+    founderName: 'خداوي فطومة',
+    founderLead:
+      'La vision de Luminol est portée par une fondatrice qui relie psychologie, langues et développement professionnel dans une même expérience éducative, humaine et pratique.',
+    founderBody:
+      'Présenter clairement la fondatrice rend visible la responsabilité, la vision et l’exigence qui structurent les programmes, le choix des expertises et l’accueil des apprenants.',
     visionKicker: 'Mission et vision',
     visionTitle:
       'Un apprentissage clair. Une expérience humaine. Une capacité qui reste après le programme.',
@@ -102,6 +109,12 @@ const copy = {
       'Confidence, communication and professional capability reinforce each other in real life.',
     whyBody:
       'Luminol brings these dimensions into one academy while protecting the methods, boundaries and standards that belong to each school.',
+    founderKicker: 'Founder',
+    founderName: 'خداوي فطومة',
+    founderLead:
+      'Luminol is guided by a founder who connects psychology, languages and professional development within one practical, human learning experience.',
+    founderBody:
+      'Showing the founder clearly makes the responsibility, vision and standards behind programme design, expert selection and the learner experience visible.',
     visionKicker: 'Mission and vision',
     visionTitle:
       'Clear learning. A human experience. Capability that remains after the programme.',
@@ -197,6 +210,33 @@ export async function LocalizedAbout({ locale }: { locale: Locale }) {
         <div className="ar-story-copy" data-reveal="left">
           <p className="ar-story-lead">{text.whyLead}</p>
           <p>{text.whyBody}</p>
+        </div>
+      </section>
+
+      <section
+        className="ar-split-feature founder-feature"
+        aria-labelledby="localized-founder-title"
+      >
+        <figure className="ar-feature-image founder-portrait" data-reveal="right">
+          <div>
+            <Image
+              src={academyMedia.founder.src}
+              alt={academyMedia.founder.alt}
+              fill
+              sizes="(max-width: 900px) 82vw, 34vw"
+              style={{ objectFit: 'contain', objectPosition: 'center' }}
+            />
+          </div>
+          <figcaption>
+            <span>{text.founderKicker}</span>
+            <span>Luminol Academy</span>
+          </figcaption>
+        </figure>
+        <div className="ar-section-copy" data-reveal="left">
+          <p className="ar-kicker">{text.founderKicker}</p>
+          <h2 id="localized-founder-title">{text.founderName}</h2>
+          <p className="ar-large-copy">{text.founderLead}</p>
+          <p>{text.founderBody}</p>
         </div>
       </section>
 
