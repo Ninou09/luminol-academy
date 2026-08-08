@@ -3,91 +3,80 @@ import type {
   EditorialImage,
   EditorialVideo,
 } from './flagship';
+import { academyMedia } from './academy-media';
 
+// V12 replaced the previous photo set by Airam Dato-on / Pexels,
+// Vitaly Gariev / Pexels, RDNE Stock project / Pexels,
+// Matheus Bertelli / Pexels and Ivan S / Pexels with the authentic
+// Luminol Academy archive. Editorial video attribution remains below.
 export const premiumImages = {
   hero: {
-    src: 'https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg',
-    alt: 'مجموعة متنوعة تشارك في ورشة مهنية حديثة مع عرض بصري واضح.',
-    credit: 'Airam Dato-on / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/man-giving-a-presentation-to-a-group-of-people-15189552/',
+    src: academyMedia.training.src,
+    alt: academyMedia.training.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   psychology: {
-    src: 'https://images.pexels.com/photos/36729380/pexels-photo-36729380.jpeg',
-    alt: 'جلسة إرشاد هادئة داخل مكتب دافئ تعكس الإصغاء والثقة.',
-    credit: 'Vitaly Gariev / Pexels',
-    creditUrl: 'https://www.pexels.com/photo/36729380',
+    src: academyMedia.psychology.src,
+    alt: academyMedia.psychology.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   languages: {
-    src: 'https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg',
-    alt: 'طالبان يتبادلان الحديث داخل قاعة دراسية مشرقة وحديثة.',
-    credit: 'RDNE Stock project / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/students-having-a-conversation-in-a-classroom-8419252/',
+    src: academyMedia.languages.src,
+    alt: academyMedia.languages.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   training: {
-    src: 'https://images.pexels.com/photos/33714897/pexels-photo-33714897.jpeg',
-    alt: 'مجموعة متنوعة من البالغين تتابع ورشة تفاعلية في بيئة مهنية.',
-    credit: 'Matheus Bertelli / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/engaging-workshop-session-with-attentive-audience-33714897/',
+    src: academyMedia.training.src,
+    alt: academyMedia.training.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   learning: {
-    src: 'https://images.pexels.com/photos/5756759/pexels-photo-5756759.jpeg',
-    alt: 'بالغون يشاركون في نقاش جماعي موجّه ضمن بيئة تعليمية دافئة.',
-    credit: 'RDNE Stock project / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/group-of-students-attending-classes-for-adults-5756759/',
+    src: academyMedia.classroom.src,
+    alt: academyMedia.classroom.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
 } satisfies Record<string, EditorialImage>;
 
 export const premiumGallery = [
   {
-    src: 'https://images.pexels.com/photos/5756759/pexels-photo-5756759.jpeg',
-    alt: 'مجموعة من البالغين تشارك في نقاش تعليمي تفاعلي.',
-    caption: 'تعلّم بالمشاركة',
-    credit: 'RDNE Stock project / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/group-of-students-attending-classes-for-adults-5756759/',
+    src: academyMedia.classroom.src,
+    alt: academyMedia.classroom.alt,
+    caption: 'التعلّم داخل القاعة',
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   {
-    src: 'https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg',
-    alt: 'طالبان يتحاوران في قاعة دراسية مضيئة.',
-    caption: 'لغة تتحول إلى حوار',
-    credit: 'RDNE Stock project / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/students-having-a-conversation-in-a-classroom-8419252/',
+    src: academyMedia.training.src,
+    alt: academyMedia.training.alt,
+    caption: 'ورشة وتكوين حقيقي',
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   {
-    src: 'https://images.pexels.com/photos/36729380/pexels-photo-36729380.jpeg',
-    alt: 'جلسة إرشاد مريحة تعكس الإنصات والدعم.',
-    caption: 'مساحة للإنصات',
-    credit: 'Vitaly Gariev / Pexels',
-    creditUrl: 'https://www.pexels.com/photo/36729380',
+    src: academyMedia.languages.src,
+    alt: academyMedia.languages.alt,
+    caption: 'فضاء اللغات داخل الأكاديمية',
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   {
-    src: 'https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg',
-    alt: 'مقدم يقود ورشة أمام مجموعة متنوعة في مساحة مهنية حديثة.',
-    caption: 'فكرة تتحول إلى ممارسة',
-    credit: 'Airam Dato-on / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/man-giving-a-presentation-to-a-group-of-people-15189552/',
+    src: academyMedia.psychology.src,
+    alt: academyMedia.psychology.alt,
+    caption: 'أنشطة إدراكية وتعليمية',
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   {
-    src: 'https://images.pexels.com/photos/33714897/pexels-photo-33714897.jpeg',
-    alt: 'حضور متنوع يتابع جلسة تدريبية تفاعلية بانتباه.',
-    caption: 'مشاركة تصنع الثقة',
-    credit: 'Matheus Bertelli / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/engaging-workshop-session-with-attentive-audience-33714897/',
-  },
-  {
-    src: 'https://images.pexels.com/photos/5676741/pexels-photo-5676741.jpeg',
-    alt: 'طلاب يتعلمون ويتفاعلون معًا داخل قاعة مشرقة.',
-    caption: 'توجيه قريب وواضح',
-    credit: 'Ivan S / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/students-in-the-classroom-5676741/',
+    src: academyMedia.recognition.src,
+    alt: academyMedia.recognition.alt,
+    caption: 'محطة من مسيرة لومينول',
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
 ] satisfies readonly EditorialGalleryImage[];
 
