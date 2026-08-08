@@ -149,11 +149,12 @@ describe('multilingual premium public flagship', () => {
     expect(branchStageSource).toContain('<video');
     expect(branchStageSource).toContain('premiumVideos.training');
     expect(branchStageSource).toContain('v9-branch-meta');
-    expect(mediaV6Source).toContain('Airam Dato-on / Pexels');
-    expect(mediaV6Source).toContain('Vitaly Gariev / Pexels');
-    expect(mediaV6Source).toContain('RDNE Stock project / Pexels');
-    expect(mediaV6Source).toContain('Matheus Bertelli / Pexels');
-    expect(mediaV6Source).toContain('Ivan S / Pexels');
+    expect(mediaV6Source).toContain('Luminol Academy archive');
+    expect(mediaV6Source).toContain('academyMedia.classroom.src');
+    expect(mediaV6Source).toContain('academyMedia.psychology.src');
+    expect(mediaV6Source).toContain('academyMedia.languages.src');
+    expect(mediaV6Source).toContain('academyMedia.training.src');
+    expect(mediaV6Source).toContain('academyMedia.recognition.src');
     expect(pageSource).not.toContain('12+');
     expect(pageSource).not.toContain('100%');
     expect(nextConfigSource).toContain("hostname: 'images.pexels.com'");

@@ -14,7 +14,7 @@ const mediaCopy = {
     overline: 'الحركة جزء من القصة',
     title: 'شاهد نوع التجربة قبل أن تدخل القاعة.',
     intro:
-      'الفيديو هنا ليس زينة. كل مشهد يشرح فكرة: الإصغاء، المشاركة، الحوار أو التطبيق. المواد تحريرية مؤقتة إلى أن نستبدلها بلقطات لومينول الأصلية والمصرّح بنشرها.',
+      'صور هذه المساحة من أرشيف أكاديمية لومينول الحقيقي. الفيديوهات وحدها مواد تحريرية مؤقتة إلى أن تتوفر لقطات لومينول الأصلية المصرّح بنشرها.',
     statementOverline: 'من الفكرة إلى الفعل',
     statementTitle: 'التعلم الجيد لا ينتهي عند آخر شريحة في العرض.',
     statementBody:
@@ -22,8 +22,8 @@ const mediaCopy = {
     ticker: 'وعي · لغة · مهارة · تطبيق · تواصل · تقدّم · LUMINOL ·',
     galleryOverline: 'إيقاع بصري أكثر إنسانية',
     galleryTitle: 'صور تضع الأشخاص والتفاعل في قلب التجربة.',
-    galleryAria: 'مجموعة صور تحريرية توضيحية',
-    note: 'جميع الصور والفيديوهات مواد تحريرية توضيحية مرخّصة من Pexels، وليست توثيقًا لطلاب أو حصص أكاديمية لومينول.',
+    galleryAria: 'مجموعة صور حقيقية من أرشيف أكاديمية لومينول',
+    note: 'الصور المعروضة هنا من أرشيف أكاديمية لومينول. الفيديوهات فقط مواد تحريرية توضيحية مرخّصة من Pexels ولا تمثّل طلاب لومينول.',
     play: 'تشغيل الفيديو',
     pause: 'إيقاف الفيديو',
     credit: 'فيديو تحريري',
@@ -32,7 +32,7 @@ const mediaCopy = {
     overline: 'Le mouvement raconte aussi',
     title: 'Ressentez le type d’expérience avant même d’entrer en salle.',
     intro:
-      'La vidéo n’est pas décorative. Chaque scène exprime une idée: écoute, participation, dialogue ou mise en pratique. Ces médias éditoriaux sont temporaires jusqu’à leur remplacement par des images Luminol authentiques et autorisées.',
+      'Les photographies de cette section proviennent des archives réelles de Luminol Academy. Seules les vidéos restent des médias éditoriaux temporaires.',
     statementOverline: 'De l’idée à l’action',
     statementTitle: 'Un bon apprentissage ne s’arrête pas à la dernière slide.',
     statementBody:
@@ -42,8 +42,8 @@ const mediaCopy = {
     galleryOverline: 'Un rythme visuel plus humain',
     galleryTitle:
       'Des images où les personnes et l’interaction restent au centre.',
-    galleryAria: 'Galerie éditoriale illustrative',
-    note: 'Toutes les photos et vidéos sont des médias éditoriaux illustratifs sous licence Pexels. Elles ne représentent pas des étudiants ou des séances réelles de Luminol Academy.',
+    galleryAria: 'Galerie de photographies réelles de Luminol Academy',
+    note: 'Les photographies sont issues des archives de Luminol Academy. Seules les vidéos sont des médias éditoriaux illustratifs sous licence Pexels.',
     play: 'Lire la vidéo',
     pause: 'Mettre la vidéo en pause',
     credit: 'Vidéo éditoriale',
@@ -52,7 +52,7 @@ const mediaCopy = {
     overline: 'Motion carries the story',
     title: 'Feel the kind of experience before you enter the room.',
     intro:
-      'Video is not decoration here. Each scene communicates an idea: listening, participation, dialogue or application. These editorial assets are temporary until approved authentic Luminol footage replaces them.',
+      'The photography in this section comes from the real Luminol Academy archive. Only the videos remain temporary editorial media.',
     statementOverline: 'From idea to action',
     statementTitle: 'Good learning does not end on the final slide.',
     statementBody:
@@ -61,8 +61,8 @@ const mediaCopy = {
       'AWARENESS · LANGUAGE · SKILL · ACTION · CONNECTION · PROGRESS · LUMINOL ·',
     galleryOverline: 'A more human visual rhythm',
     galleryTitle: 'Images that keep people and interaction at the centre.',
-    galleryAria: 'Illustrative editorial gallery',
-    note: 'All photos and videos are illustrative editorial media licensed from Pexels. They do not depict real Luminol Academy students or sessions.',
+    galleryAria: 'Real Luminol Academy photography gallery',
+    note: 'The photographs shown here are from the Luminol Academy archive. Only the videos are illustrative editorial media licensed from Pexels.',
     play: 'Play video',
     pause: 'Pause video',
     credit: 'Editorial video',

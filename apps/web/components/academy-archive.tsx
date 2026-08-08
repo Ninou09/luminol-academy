@@ -13,6 +13,7 @@ const archiveCopy = {
       'التعلّم داخل القاعة',
       'ورشات وتكوين',
       'فضاء اللغات',
+      'أنشطة علم النفس والتعلم',
       'محطات من مسيرة لومينول',
     ],
   },
@@ -26,6 +27,7 @@ const archiveCopy = {
       'Apprendre en salle',
       'Ateliers et formation',
       'Espace langues',
+      'Psychologie et activités',
       'Moments du parcours Luminol',
     ],
   },
@@ -38,6 +40,7 @@ const archiveCopy = {
       'Learning in the classroom',
       'Workshops and training',
       'Language space',
+      'Psychology and learning activities',
       'Moments from the Luminol journey',
     ],
   },
@@ -47,6 +50,7 @@ const archiveItems = [
   academyMedia.classroom,
   academyMedia.training,
   academyMedia.languages,
+  academyMedia.psychology,
   academyMedia.recognition,
 ] as const;
 

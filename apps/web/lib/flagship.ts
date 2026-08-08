@@ -1,3 +1,4 @@
+import { academyMedia } from './academy-media';
 import type { SchoolSlug } from './schools';
 
 export type EditorialImage = {
@@ -24,39 +25,34 @@ export type EditorialVideo = {
 
 export const editorialImages = {
   hero: {
-    src: 'https://images.pexels.com/photos/5905527/pexels-photo-5905527.jpeg',
-    alt: 'مدرّسة وطلاب من خلفيات متنوعة يناقشون درسًا داخل قاعة تعليم حديثة.',
-    credit: 'Katerina Holmes / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/diverse-people-discussing-lesson-in-classroom-5905527/',
+    src: academyMedia.training.src,
+    alt: academyMedia.training.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   psychology: {
-    src: 'https://images.pexels.com/photos/7176050/pexels-photo-7176050.jpeg',
-    alt: 'مختصة تتحدث بهدوء مع شخص في جلسة إرشاد ودعم فردية.',
-    credit: 'SHVETS production / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/a-therapist-talking-to-her-patient-7176050/',
+    src: academyMedia.psychology.src,
+    alt: academyMedia.psychology.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   languages: {
-    src: 'https://images.pexels.com/photos/8199134/pexels-photo-8199134.jpeg',
-    alt: 'طلاب جامعيون متنوعون يشاركون في نقاش تفاعلي داخل الفصل.',
-    credit: 'Yan Krukau / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/a-class-having-a-discussion-8199134/',
+    src: academyMedia.languages.src,
+    alt: academyMedia.languages.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   training: {
-    src: 'https://images.pexels.com/photos/34046709/pexels-photo-34046709.jpeg',
-    alt: 'فريق متنوع يشارك في ورشة تدريب مهني باستخدام الحواسيب والعرض التقديمي.',
-    credit: 'Beniam / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/diverse-team-engaged-in-business-training-workshop-34046709/',
+    src: academyMedia.training.src,
+    alt: academyMedia.training.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
   learning: {
-    src: 'https://images.pexels.com/photos/6683894/pexels-photo-6683894.jpeg',
-    alt: 'طلاب ومدرّس يتعاونون حول مهمة تعليمية داخل بيئة دراسية حديثة.',
-    credit: 'Andy Barbour / Pexels',
-    creditUrl:
-      'https://www.pexels.com/photo/student-and-teacher-having-a-conversation-6683894/',
+    src: academyMedia.classroom.src,
+    alt: academyMedia.classroom.alt,
+    credit: 'Luminol Academy archive',
+    creditUrl: '/about',
   },
 } satisfies Record<string, EditorialImage>;
 
