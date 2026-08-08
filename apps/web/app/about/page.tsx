@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { ButtonLink } from '@luminol/ui';
 import { HomeMotion } from '../../components/home-motion';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import { academyMedia } from '../../lib/academy-media';
 import { credibilityPrinciples } from '../../lib/flagship';
 import { premiumImages } from '../../lib/media-v6';
 import { getPublicTeamMembers } from '../../lib/sanity-public';
@@ -122,6 +123,40 @@ export default async function AboutPage() {
             الهدف ليس ملء الوقت بالمحتوى، بل مساعدة الأشخاص والعائلات والمهنيين
             والمؤسسات على إيجاد نقطة بداية مفيدة ثم الاستمرار في التطور مع تغير
             احتياجاتهم.
+          </p>
+        </div>
+      </section>
+
+      <section
+        className="ar-split-feature founder-feature"
+        aria-labelledby="founder-title"
+      >
+        <figure className="ar-feature-image founder-portrait" data-reveal="right">
+          <div>
+            <Image
+              src={academyMedia.founder.src}
+              alt={academyMedia.founder.alt}
+              fill
+              sizes="(max-width: 900px) 82vw, 34vw"
+              style={{ objectFit: 'contain', objectPosition: 'center' }}
+            />
+          </div>
+          <figcaption>
+            <span>{academyMedia.founder.label}</span>
+            <span>صورة رسمية مقدمة من أكاديمية لومينول</span>
+          </figcaption>
+        </figure>
+        <div className="ar-section-copy" data-reveal="left">
+          <p className="ar-kicker">المؤسسة</p>
+          <h2 id="founder-title">خداوي فطومة</h2>
+          <p className="ar-large-copy">
+            تقود رؤية لومينول كأكاديمية تربط بين علم النفس، اللغات والتطوير المهني
+            ضمن تجربة تعليمية إنسانية وعملية.
+          </p>
+          <p>
+            حضور المؤسسة داخل هوية الأكاديمية يوضح المسؤولية والرؤية التي تقف
+            خلف بناء البرامج، اختيار الخبرات، والحفاظ على تجربة تحترم المتعلم
+            واحتياجاته.
           </p>
         </div>
       </section>
