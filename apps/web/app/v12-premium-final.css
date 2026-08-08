@@ -35,7 +35,11 @@
   --ar-cyan: var(--v12-teal);
   --ar-gold: var(--v12-gold);
   background:
-    radial-gradient(circle at 8% 12%, rgb(55 197 220 / 0.035), transparent 24rem),
+    radial-gradient(
+      circle at 8% 12%,
+      rgb(55 197 220 / 0.035),
+      transparent 24rem
+    ),
     var(--v12-paper);
   color: var(--v12-ink);
 }
@@ -152,14 +156,26 @@
 }
 
 .premium-header .desktop-nav a::after {
-  background: linear-gradient(90deg, var(--v12-teal), var(--v12-aqua)) !important;
+  background: linear-gradient(
+    90deg,
+    var(--v12-teal),
+    var(--v12-aqua)
+  ) !important;
 }
 
 /* Hero: photo-first, brighter, larger and with a richer cinematic frame. */
 .v4-hero {
   background:
-    radial-gradient(circle at 15% 12%, rgb(55 197 220 / 0.16), transparent 24rem),
-    radial-gradient(circle at 82% 88%, rgb(215 168 79 / 0.12), transparent 24rem),
+    radial-gradient(
+      circle at 15% 12%,
+      rgb(55 197 220 / 0.16),
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at 82% 88%,
+      rgb(215 168 79 / 0.12),
+      transparent 24rem
+    ),
     linear-gradient(135deg, #031f2b 0%, #063a48 55%, #052a37 100%) !important;
 }
 
@@ -191,7 +207,8 @@
     border-radius: 1.45rem 1.45rem 3.8rem 1.45rem !important;
     background:
       linear-gradient(180deg, transparent 58%, rgb(3 31 43 / 0.22)),
-      url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') center / cover no-repeat !important;
+      url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg')
+        center / cover no-repeat !important;
     box-shadow:
       0 2.3rem 6.2rem rgb(0 0 0 / 0.34),
       0 0 0 0.35rem rgb(255 255 255 / 0.025) !important;
@@ -420,19 +437,23 @@ html[dir='rtl'] .v4-collage-main {
 }
 
 .v11-archive-card-1 .v11-archive-image {
-  background: url('https://images.pexels.com/photos/5756759/pexels-photo-5756759.jpeg') center / cover no-repeat;
+  background: url('https://images.pexels.com/photos/5756759/pexels-photo-5756759.jpeg')
+    center / cover no-repeat;
 }
 
 .v11-archive-card-2 .v11-archive-image {
-  background: url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') center / cover no-repeat;
+  background: url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg')
+    center / cover no-repeat;
 }
 
 .v11-archive-card-3 .v11-archive-image {
-  background: url('https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg') center / cover no-repeat;
+  background: url('https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg')
+    center / cover no-repeat;
 }
 
 .v11-archive-card-4 .v11-archive-image {
-  background: url('https://images.pexels.com/photos/33714897/pexels-photo-33714897.jpeg') center / cover no-repeat;
+  background: url('https://images.pexels.com/photos/33714897/pexels-photo-33714897.jpeg')
+    center / cover no-repeat;
 }
 
 .v11-archive-image img {
@@ -469,7 +490,11 @@ html[dir='rtl'] .v4-collage-main {
 /* School selector: large authentic preview plus visible photographic cues for all 3 paths. */
 .v4-branch-stage {
   background:
-    radial-gradient(circle at 10% 5%, rgb(55 197 220 / 0.08), transparent 21rem),
+    radial-gradient(
+      circle at 10% 5%,
+      rgb(55 197 220 / 0.08),
+      transparent 21rem
+    ),
     linear-gradient(180deg, #f8fbf9, #f3f7f4) !important;
 }
 
@@ -494,19 +519,22 @@ html[dir='rtl'] .v4-collage-main {
 .v4-branch-stage-psychology .v4-branch-visual {
   background:
     url('/media/academy/child-activities.webp') center / contain no-repeat,
-    url('https://images.pexels.com/photos/36729380/pexels-photo-36729380.jpeg') center / cover no-repeat !important;
+    url('https://images.pexels.com/photos/36729380/pexels-photo-36729380.jpeg')
+      center / cover no-repeat !important;
 }
 
 .v4-branch-stage-languages .v4-branch-visual {
   background:
     url('/media/academy/language-map.webp') center / cover no-repeat,
-    url('https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg') center / cover no-repeat !important;
+    url('https://images.pexels.com/photos/8419252/pexels-photo-8419252.jpeg')
+      center / cover no-repeat !important;
 }
 
 .v4-branch-stage-training .v4-branch-visual {
   background:
     url('/media/academy/workshop-training.webp') center / cover no-repeat,
-    url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') center / cover no-repeat !important;
+    url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg')
+      center / cover no-repeat !important;
 }
 
 .v6-branch-poster {
@@ -638,7 +666,11 @@ html[dir='rtl'] .v4-branch-link {
   border: 1px solid rgb(55 197 220 / 0.18) !important;
   border-radius: 1.35rem !important;
   background:
-    radial-gradient(circle at 8% 30%, rgb(55 197 220 / 0.15), transparent 15rem),
+    radial-gradient(
+      circle at 8% 30%,
+      rgb(55 197 220 / 0.15),
+      transparent 15rem
+    ),
     linear-gradient(125deg, #032b38, #075365 65%, #063b4a) !important;
   color: #fff !important;
   box-shadow: 0 1.2rem 3rem rgb(3 38 50 / 0.15) !important;
@@ -656,8 +688,16 @@ html[dir='rtl'] .v4-branch-link {
 /* Cinematic section: denser visual storytelling, no giant empty black fields. */
 .v5-media {
   background:
-    radial-gradient(circle at 12% 12%, rgb(55 197 220 / 0.12), transparent 22rem),
-    radial-gradient(circle at 90% 72%, rgb(215 168 79 / 0.09), transparent 20rem),
+    radial-gradient(
+      circle at 12% 12%,
+      rgb(55 197 220 / 0.12),
+      transparent 22rem
+    ),
+    radial-gradient(
+      circle at 90% 72%,
+      rgb(215 168 79 / 0.09),
+      transparent 20rem
+    ),
     linear-gradient(155deg, #021c27, #063a49 58%, #032731) !important;
 }
 
@@ -733,7 +773,11 @@ html[dir='rtl'] .v4-branch-link {
 /* Principles + journey: card density and alternating warmth. */
 .v4-principles {
   background:
-    radial-gradient(circle at 88% 12%, rgb(215 168 79 / 0.08), transparent 18rem),
+    radial-gradient(
+      circle at 88% 12%,
+      rgb(215 168 79 / 0.08),
+      transparent 18rem
+    ),
     #fff !important;
 }
 
@@ -750,7 +794,11 @@ html[dir='rtl'] .v4-branch-link {
 
 .v4-journey {
   background:
-    radial-gradient(circle at 8% 82%, rgb(55 197 220 / 0.07), transparent 18rem),
+    radial-gradient(
+      circle at 8% 82%,
+      rgb(55 197 220 / 0.07),
+      transparent 18rem
+    ),
     linear-gradient(180deg, #fbfaf6, #f6f8f5) !important;
 }
 
@@ -766,8 +814,16 @@ html[dir='rtl'] .v4-branch-link {
 .ar-final-cta {
   border-radius: 1.6rem !important;
   background:
-    radial-gradient(circle at 16% 20%, rgb(55 197 220 / 0.18), transparent 18rem),
-    radial-gradient(circle at 86% 78%, rgb(215 168 79 / 0.13), transparent 18rem),
+    radial-gradient(
+      circle at 16% 20%,
+      rgb(55 197 220 / 0.18),
+      transparent 18rem
+    ),
+    radial-gradient(
+      circle at 86% 78%,
+      rgb(215 168 79 / 0.13),
+      transparent 18rem
+    ),
     linear-gradient(130deg, #032633, #075165 62%, #053643) !important;
   box-shadow: 0 1.6rem 4.5rem rgb(3 38 50 / 0.16) !important;
 }
@@ -794,7 +850,12 @@ html[dir='rtl'] .v4-branch-link {
 .form-actions button {
   border: 1px solid rgb(255 255 255 / 0.17) !important;
   border-radius: 0.82rem !important;
-  background: linear-gradient(135deg, #087286 0%, #0792a6 55%, #37c5dc 145%) !important;
+  background: linear-gradient(
+    135deg,
+    #087286 0%,
+    #0792a6 55%,
+    #37c5dc 145%
+  ) !important;
   color: #fff !important;
   box-shadow:
     0 0.75rem 1.8rem rgb(2 74 91 / 0.24),
@@ -871,7 +932,12 @@ html[dir='rtl'] .v4-branch-link {
     inset: -30% auto -30% -45%;
     width: 34%;
     pointer-events: none;
-    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.32), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.32),
+      transparent
+    );
     transform: skewX(-18deg);
     transition: left 650ms cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -926,7 +992,8 @@ html[dir='rtl'] .v4-branch-link {
 
   .v4-hero-media {
     min-height: 19rem !important;
-    background: url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg') center / cover no-repeat !important;
+    background: url('https://images.pexels.com/photos/15189552/pexels-photo-15189552.jpeg')
+      center / cover no-repeat !important;
   }
 
   .v4-hero-content {
