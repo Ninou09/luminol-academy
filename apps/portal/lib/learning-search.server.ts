@@ -46,7 +46,6 @@ export async function searchLearnerContent(
         },
       },
     },
-    take: 100,
   });
 
   const candidates: LearningSearchCandidate[] = [];
