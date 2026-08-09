@@ -86,6 +86,8 @@ jobs:
           PY
 
       - name: Format and validate Prisma schema
+        env:
+          DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
         run: |
           pnpm --filter @luminol/database exec prisma format
           pnpm --filter @luminol/database exec prisma validate
