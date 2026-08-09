@@ -5,6 +5,7 @@ import { db } from '@luminol/database';
 import {
   ADMIN_SEARCH_RESULT_LIMIT,
   escapePostgresLikePattern,
+  isAdminSearchQueryEligible,
   normalizeAdminSearchQuery,
 } from './operations-search';
 
@@ -20,7 +21,7 @@ export async function searchAdminOperations(
 ) {
   const query = normalizeAdminSearchQuery(rawQuery);
 
-  if (query.length < 2) {
+  if (!isAdminSearchQueryEligible(query)) {
     return {
       query,
       people: { items: [], hasMore: false },

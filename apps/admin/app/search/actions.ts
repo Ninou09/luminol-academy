@@ -3,7 +3,10 @@
 import { requirePermission } from '@luminol/auth';
 import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
 
-import { parseAdminSearchParam } from '../../lib/operations-search';
+import {
+  isAdminSearchQueryEligible,
+  parseAdminSearchParam,
+} from '../../lib/operations-search';
 import { searchAdminOperations } from '../../lib/operations-search.server';
 import type { AdminSearchState } from './search-state';
 
@@ -20,7 +23,7 @@ export async function submitAdminSearch(
 
   const rawQuery = parseAdminSearchParam(rawSearchValue(formData));
   const results = await searchAdminOperations(rawQuery);
-  const searched = results.query.length >= 2;
+  const searched = isAdminSearchQueryEligible(results.query);
   const shownCount =
     results.people.items.length +
     results.enquiries.items.length +

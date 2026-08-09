@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import {
   ADMIN_SEARCH_MAX_QUERY_LENGTH,
+  ADMIN_SEARCH_MIN_QUERY_LENGTH,
   escapePostgresLikePattern,
+  isAdminSearchQueryEligible,
   normalizeAdminSearchQuery,
   parseAdminSearchParam,
 } from './operations-search';
@@ -27,6 +29,12 @@ describe('administration operations search', () => {
     expect(normalizeAdminSearchQuery('x'.repeat(300))).toHaveLength(
       ADMIN_SEARCH_MAX_QUERY_LENGTH,
     );
+  });
+
+  it('requires an indexable three-character minimum', () => {
+    expect(ADMIN_SEARCH_MIN_QUERY_LENGTH).toBe(3);
+    expect(isAdminSearchQueryEligible('Li')).toBe(false);
+    expect(isAdminSearchQueryEligible('Lin')).toBe(true);
   });
 
   it('escapes PostgreSQL LIKE wildcards so searches stay literal', () => {

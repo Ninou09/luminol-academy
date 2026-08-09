@@ -1,7 +1,15 @@
 import { z } from 'zod';
 
-export const ADMIN_SEARCH_MAX_QUERY_LENGTH = 120;
-export const ADMIN_SEARCH_RESULT_LIMIT = 20;
+import {
+  ADMIN_SEARCH_MAX_QUERY_LENGTH,
+  ADMIN_SEARCH_MIN_QUERY_LENGTH,
+} from './operations-search.constants';
+
+export {
+  ADMIN_SEARCH_MAX_QUERY_LENGTH,
+  ADMIN_SEARCH_MIN_QUERY_LENGTH,
+  ADMIN_SEARCH_RESULT_LIMIT,
+} from './operations-search.constants';
 
 const adminSearchParamSchema = z
   .union([
@@ -22,6 +30,10 @@ export function normalizeAdminSearchQuery(value: string | null | undefined) {
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, ADMIN_SEARCH_MAX_QUERY_LENGTH);
+}
+
+export function isAdminSearchQueryEligible(value: string) {
+  return value.length >= ADMIN_SEARCH_MIN_QUERY_LENGTH;
 }
 
 export function escapePostgresLikePattern(value: string) {

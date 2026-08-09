@@ -2,6 +2,10 @@
 
 import { useActionState } from 'react';
 
+import {
+  ADMIN_SEARCH_MAX_QUERY_LENGTH,
+  ADMIN_SEARCH_MIN_QUERY_LENGTH,
+} from '../../lib/operations-search.constants';
 import { displayPersonName, formatEnumLabel } from '../../lib/operations';
 import { submitAdminSearch } from './actions';
 import styles from './page.module.css';
@@ -53,8 +57,8 @@ export function AdminSearchWorkspace() {
               type="search"
               dir="auto"
               defaultValue={state.query}
-              minLength={2}
-              maxLength={120}
+              minLength={ADMIN_SEARCH_MIN_QUERY_LENGTH}
+              maxLength={ADMIN_SEARCH_MAX_QUERY_LENGTH}
               autoComplete="off"
               spellCheck={false}
               placeholder="Try a name, email, course title or slug"
@@ -160,7 +164,9 @@ export function AdminSearchWorkspace() {
         </section>
       ) : (
         <section className={styles.prompt} aria-live="polite">
-          <h2>Enter at least two characters to search.</h2>
+          <h2>
+            Enter at least {ADMIN_SEARCH_MIN_QUERY_LENGTH} characters to search.
+          </h2>
           <p>
             Results remain inside this server-authorized administration
             workspace and protected search terms are submitted in the request
