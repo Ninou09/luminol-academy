@@ -1,0 +1,39 @@
+name: Fix Milestone 15 locale routing builder once
+
+on:
+  push:
+    branches:
+      - feature/milestone-15-locale-routing
+
+permissions:
+  contents: write
+
+jobs:
+  fix-builder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+      - name: Fix root-relative Vitest invocation and remove this workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/m15-locale-routing-once.yml')
+          text = path.read_text()
+          old = 'pnpm --filter @luminol/localization test'
+          new = 'pnpm exec vitest run packages/localization/src/index.test.ts packages/localization/src/routing.test.ts'
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected exactly one old test invocation, found {text.count(old)}')
+          path.write_text(text.replace(old, new))
+          PY
+
+          rm .github/workflows/fix-m15-routing-builder-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/m15-locale-routing-once.yml .github/workflows/fix-m15-routing-builder-once.yml
+          git commit -m "Fix locale routing builder validation"
+          git push
