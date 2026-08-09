@@ -38,7 +38,9 @@ describe('Next.js 16 Clerk proxy conventions', () => {
       expect(source).toContain('await auth.protect()');
       expect(source).toContain('LOCALE_REQUEST_HEADER');
       expect(source).toContain('LOCALE_COOKIE_NAME');
-      expect(source).toContain('NextResponse.redirect(request.nextUrl.clone())');
+      expect(source).toContain(
+        'NextResponse.redirect(request.nextUrl.clone())',
+      );
       expect(source).toContain("'/(api|trpc)(.*)'");
 
       const localePersistenceIndex = source.indexOf(
