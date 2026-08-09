@@ -86,6 +86,8 @@ The second delivery slice adds governed public programme discovery at `/programm
 
 The third delivery slice adds protected administration search at `/search` in the administration application. Access requires the existing `academy:manage` server authorization. Search is limited to active account identity, enquiry identity/routing metadata, and course portfolio metadata; enquiry messages and private learning content are intentionally excluded. URL input is Zod-validated, result groups are bounded and truthfully labelled, and mixed Arabic/Latin result text uses automatic direction where needed.
 
+Phases 1–3 are implemented on the active milestone branch. The remaining product slice is aggregate telemetry and milestone-wide verification.
+
 Planned follow-up slice:
 
 - privacy-safe aggregate search telemetry without retaining raw sensitive queries
