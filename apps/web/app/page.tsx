@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const route = localizePathname(locale, '/');
 
   return {
-    title: 'Luminol Academy',
+    title: { absolute: 'Luminol Academy' },
     description: copy.site.description,
     alternates: {
       canonical: route,
