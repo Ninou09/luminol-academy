@@ -63,11 +63,13 @@ export default async function SearchPage({
                 <p className="eyebrow">Results</p>
                 <h2>
                   {results.length > 0
-                    ? `${results.length} match${results.length === 1 ? '' : 'es'}`
+                    ? `Showing ${results.length} result${results.length === 1 ? '' : 's'}`
                     : 'No matches yet'}
                 </h2>
               </div>
-              <span dir="auto">For “{query}”</span>
+              <span>
+                For “<bdi dir="auto">{query}</bdi>”
+              </span>
             </div>
 
             {results.length > 0 ? (
