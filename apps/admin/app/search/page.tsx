@@ -19,7 +19,7 @@ export default async function AdminSearchPage() {
   const administratorName = displayPersonName(
     administrator.firstName,
     administrator.lastName,
-    copy.shell.administration,
+    copy.shell.administrator,
   );
 
   return (
