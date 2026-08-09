@@ -1,0 +1,104 @@
+.frame {
+  --media-accent: var(--color-brand-gold);
+  --media-soft: var(--color-brand-canvas);
+  --media-grid: rgb(16 42 67 / 0.08);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: var(--luminol-media-ratio-wide);
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--luminol-media-radius);
+  background: var(--media-soft);
+  box-shadow: var(--shadow-editorial);
+  isolation: isolate;
+}
+
+.psychology {
+  --media-accent: var(--color-school-psychology);
+  --media-soft: var(--color-school-psychology-soft);
+}
+
+.languages {
+  --media-accent: var(--color-school-languages);
+  --media-soft: var(--color-school-languages-soft);
+}
+
+.training {
+  --media-accent: var(--color-school-training);
+  --media-soft: var(--color-school-training-soft);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--luminol-motion-standard) var(--luminol-ease-out);
+}
+
+.frame:hover .image {
+  transform: scale(1.018);
+}
+
+.fallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--media-soft);
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.72;
+  background-image:
+    linear-gradient(var(--media-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--media-grid) 1px, transparent 1px);
+  background-size: 3.5rem 3.5rem;
+  mask-image: linear-gradient(135deg, black, transparent 76%);
+}
+
+.halo {
+  position: absolute;
+  width: min(62%, 19rem);
+  aspect-ratio: 1;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  border: 1px solid var(--media-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2.5rem rgb(255 255 255 / 0.3);
+  opacity: 0.42;
+  transform: translate(-50%, -50%);
+}
+
+.axis {
+  position: absolute;
+  inset-inline-start: 12%;
+  inset-block-end: 16%;
+  width: 38%;
+  height: 1px;
+  background: var(--media-accent);
+  opacity: 0.72;
+}
+
+.mark {
+  position: absolute;
+  inset-inline-end: 10%;
+  inset-block-end: 8%;
+  color: var(--media-accent);
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 500;
+  line-height: 1;
+  opacity: 0.78;
+}
+
+html[dir='rtl'] .halo {
+  transform: translate(50%, -50%);
+}
+
+@media (hover: none) {
+  .frame:hover .image {
+    transform: none;
+  }
+}

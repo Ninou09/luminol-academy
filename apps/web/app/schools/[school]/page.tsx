@@ -4,11 +4,14 @@ import {
   localizePathname,
 } from '@luminol/localization';
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ButtonLink } from '@luminol/ui';
 
+import {
+  EditorialMedia,
+  type EditorialMediaAsset,
+} from '../../../components/editorial-media';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
@@ -78,7 +81,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     title: string;
     description: string;
     delivery?: string | null;
-    image?: { url: string; alt: string } | null;
+    image?: EditorialMediaAsset | null;
   }> = cmsProgrammes?.length
     ? cmsProgrammes.map((programme) => ({
         id: programme._id,
@@ -87,8 +90,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         delivery: programme.delivery ?? null,
         image: programme.image
           ? {
-              url: buildSanityProgrammeImageUrl(programme.image),
+              src: buildSanityProgrammeImageUrl(programme.image),
               alt: programme.image.alt,
+              source: 'sanity' as const,
             }
           : null,
       }))
@@ -157,22 +161,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           {programmes.map((program, index) => (
             <article key={program.id}>
               <span>{String(index + 1).padStart(2, '0')}</span>
-              {program.image ? (
-                <Image
-                  className={styles.programImage}
-                  src={program.image.url}
-                  alt={program.image.alt}
-                  width={1200}
-                  height={675}
-                  sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                />
-              ) : null}
-              <h3
-                className={
-                  program.image ? styles.programTitleWithImage : undefined
-                }
-                dir="auto"
-              >
+              <EditorialMedia
+                className={styles.programMedia}
+                school={school.slug}
+                asset={program.image}
+              />
+              <h3 className={styles.programTitleWithMedia} dir="auto">
                 {program.title}
               </h3>
               {program.delivery ? (

@@ -10,15 +10,19 @@
   --color-brand-success: #277a53;
   --color-brand-danger: #b42318;
   --color-school-psychology: #2f6b67;
+  --color-school-psychology-soft: #e8f1ef;
   --color-school-languages: #375a7f;
+  --color-school-languages-soft: #e9eef4;
   --color-school-training: #8a5a32;
-  --font-sans: Manrope, system-ui, sans-serif;
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-arabic: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+  --color-school-training-soft: #f4ece5;
+  --font-sans: var(--font-manrope, Manrope), system-ui, sans-serif;
+  --font-display: var(--font-cormorant, Georgia), serif;
+  --font-arabic: var(--font-noto-arabic, 'Noto Sans Arabic'), sans-serif;
   --radius-control: 0.375rem;
   --radius-card: 0.75rem;
   --radius-pill: 999px;
   --shadow-elevated: 0 1.25rem 3rem rgb(16 42 67 / 0.12);
+  --shadow-editorial: 0 1.5rem 4rem rgb(16 42 67 / 0.1);
 }
 
 :root {
@@ -27,9 +31,16 @@
   --luminol-section-space: clamp(4rem, 9vw, 8rem);
   --luminol-content-width: 72rem;
   --luminol-reading-width: 42rem;
+  --luminol-media-radius: clamp(0.75rem, 1.4vw, 1.25rem);
+  --luminol-media-ratio-wide: 16 / 9;
+  --luminol-media-ratio-editorial: 4 / 3;
+  --luminol-motion-fast: 180ms;
+  --luminol-motion-standard: 280ms;
+  --luminol-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-html[dir='rtl'] {
+html[dir='rtl'],
+html[dir='rtl'] body {
   font-family: var(--font-arabic);
 }
 
