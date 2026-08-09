@@ -1,0 +1,55 @@
+html[data-motion='full'][data-motion-ready='true'] [data-reveal][data-reveal-state='pending'] {
+  opacity: 0;
+  transform: translateY(1.75rem);
+}
+
+html[data-motion='full'][data-motion-ready='true'] [data-reveal] {
+  transition:
+    opacity 700ms var(--luminol-ease-out),
+    transform 700ms var(--luminol-ease-out);
+}
+
+html[data-motion='full'][data-motion-ready='true'] [data-reveal][data-reveal-state='visible'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+html[data-motion='full'] [data-motion-float] {
+  animation: luminol-float 8s ease-in-out infinite alternate;
+}
+
+html[data-motion='full'] [data-motion-orbit] {
+  animation: luminol-orbit 26s linear infinite;
+}
+
+html[data-motion='full'] [data-motion-orbit='reverse'] {
+  animation-direction: reverse;
+  animation-duration: 34s;
+}
+
+@keyframes luminol-float {
+  from {
+    transform: translate3d(0, -0.45rem, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0.65rem, 0);
+  }
+}
+
+@keyframes luminol-orbit {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-motion-float],
+  [data-motion-orbit] {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
