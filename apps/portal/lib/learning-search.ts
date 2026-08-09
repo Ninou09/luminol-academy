@@ -146,5 +146,6 @@ export function rankLearningSearchResults(
   rawQuery: string | undefined | null,
   limit = LEARNING_SEARCH_MAX_RESULTS,
 ): LearningSearchResult[] {
-  return rankLearningSearchResultsWithCount(candidates, rawQuery, limit).results;
+  return rankLearningSearchResultsWithCount(candidates, rawQuery, limit)
+    .results;
 }

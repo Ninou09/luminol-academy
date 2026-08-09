@@ -142,12 +142,12 @@ describe('learner search', () => {
       courseTitle: `English programme ${index}`,
     }));
 
-    expect(rankLearningSearchResultsWithCount(repeated, 'English')).toMatchObject(
-      {
-        totalMatches: 40,
-        results: expect.arrayContaining([expect.any(Object)]),
-      },
-    );
+    expect(
+      rankLearningSearchResultsWithCount(repeated, 'English'),
+    ).toMatchObject({
+      totalMatches: 40,
+      results: expect.arrayContaining([expect.any(Object)]),
+    });
     expect(
       rankLearningSearchResultsWithCount(repeated, 'English').results,
     ).toHaveLength(20);

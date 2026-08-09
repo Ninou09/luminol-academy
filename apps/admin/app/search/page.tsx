@@ -39,7 +39,9 @@ export default async function AdminSearchPage({
     results.enquiries.items.length +
     results.courses.items.length;
   const hasMoreResults =
-    results.people.hasMore || results.enquiries.hasMore || results.courses.hasMore;
+    results.people.hasMore ||
+    results.enquiries.hasMore ||
+    results.courses.hasMore;
   const telemetryResultCount = hasMoreResults
     ? Math.max(21, shownCount)
     : shownCount;
