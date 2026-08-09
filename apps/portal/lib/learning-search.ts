@@ -34,7 +34,11 @@ export function normalizeLearningSearchQuery(raw: string | undefined | null) {
     .slice(0, LEARNING_SEARCH_MAX_QUERY_LENGTH);
 }
 
-function scoreText(value: string | null | undefined, query: string, tokens: string[]) {
+function scoreText(
+  value: string | null | undefined,
+  query: string,
+  tokens: string[],
+) {
   if (!value) return 0;
 
   const text = fold(value);
@@ -74,21 +78,26 @@ export function rankLearningSearchResults(
   const boundedLimit = Math.max(1, Math.min(limit, LEARNING_SEARCH_MAX_RESULTS));
 
   return candidates
-    .map((candidate) => {
+    .flatMap((candidate) => {
       const titleScore = scoreText(candidate.title, query, tokens) * 3;
       const courseScore = scoreText(candidate.courseTitle, query, tokens);
       const moduleScore = scoreText(candidate.moduleTitle, query, tokens);
       const bodyScore = scoreText(candidate.body, query, tokens);
+      const textScore = titleScore + courseScore + moduleScore + bodyScore;
+
+      if (textScore === 0) return [];
+
       const kindBoost =
         candidate.kind === 'lesson' ? 6 : candidate.kind === 'module' ? 3 : 0;
 
-      return {
-        ...candidate,
-        href: hrefFor(candidate),
-        score: titleScore + courseScore + moduleScore + bodyScore + kindBoost,
-      };
+      return [
+        {
+          ...candidate,
+          href: hrefFor(candidate),
+          score: textScore + kindBoost,
+        },
+      ];
     })
-    .filter((result) => result.score > 0)
     .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
     .slice(0, boundedLimit);
 }
