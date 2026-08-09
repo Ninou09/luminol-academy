@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   LEARNING_SEARCH_MAX_QUERY_LENGTH,
   normalizeLearningSearchQuery,
+  parseLearningSearchParam,
   rankLearningSearchResults,
   type LearningSearchCandidate,
 } from './learning-search';
@@ -43,6 +44,16 @@ const candidates: LearningSearchCandidate[] = [
 ];
 
 describe('learner search', () => {
+  it('validates URL-owned search parameters', () => {
+    expect(parseLearningSearchParam('job interview')).toBe('job interview');
+    expect(parseLearningSearchParam(['stress'])).toBe('stress');
+    expect(parseLearningSearchParam(['one', 'two'])).toBeUndefined();
+    expect(parseLearningSearchParam(42)).toBeUndefined();
+    expect(
+      parseLearningSearchParam('x'.repeat(LEARNING_SEARCH_MAX_QUERY_LENGTH + 1)),
+    ).toBeUndefined();
+  });
+
   it('normalizes whitespace and bounds query length', () => {
     expect(normalizeLearningSearchQuery('  job   interview  ')).toBe(
       'job interview',
