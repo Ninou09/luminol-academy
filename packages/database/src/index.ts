@@ -7,6 +7,8 @@ import {
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
+export const SEARCH_TELEMETRY_WRITE_TIMEOUT_MS = 150;
+
 function getClient(): PrismaClient {
   const client = globalForPrisma.prisma ?? new PrismaClient();
   if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = client;
@@ -44,10 +46,31 @@ export function searchTelemetryDay(now = new Date()) {
   );
 }
 
+async function waitForBoundedTelemetryWrite(write: Promise<unknown>) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const settledWrite = write.then(
+    () => true,
+    () => false,
+  );
+  const timeout = new Promise<boolean>((resolve) => {
+    timer = setTimeout(
+      () => resolve(false),
+      SEARCH_TELEMETRY_WRITE_TIMEOUT_MS,
+    );
+  });
+
+  try {
+    return await Promise.race([settledWrite, timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 /**
  * Records only a daily aggregate bucket. Raw query text, user identifiers,
  * session identifiers, IP addresses and content values are deliberately not
- * accepted by this API or persisted by the backing model.
+ * accepted by this API or persisted by the backing model. Writes are bounded
+ * so observability cannot hold a search response open behind a slow database.
  */
 export async function recordSearchTelemetry({
   surface,
@@ -62,8 +85,8 @@ export async function recordSearchTelemetry({
     normalizedResultCount > 0 ? SearchOutcome.HIT : SearchOutcome.NO_MATCH;
   const resultBucket = searchResultBucketForCount(normalizedResultCount);
 
-  try {
-    await db.searchTelemetryDaily.upsert({
+  return waitForBoundedTelemetryWrite(
+    db.searchTelemetryDaily.upsert({
       where: {
         day_surface_outcome_resultBucket: {
           day,
@@ -82,12 +105,8 @@ export async function recordSearchTelemetry({
       update: {
         count: { increment: 1 },
       },
-    });
-    return true;
-  } catch {
-    // Telemetry is best-effort and must never make search unavailable.
-    return false;
-  }
+    }),
+  );
 }
 
 export * from '@prisma/client';
