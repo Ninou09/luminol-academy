@@ -1,5 +1,14 @@
+import { z } from 'zod';
+
 export const LEARNING_SEARCH_MAX_QUERY_LENGTH = 120;
 export const LEARNING_SEARCH_MAX_RESULTS = 20;
+
+const learningSearchParamSchema = z
+  .union([
+    z.string().max(LEARNING_SEARCH_MAX_QUERY_LENGTH),
+    z.array(z.string().max(LEARNING_SEARCH_MAX_QUERY_LENGTH)).max(1),
+  ])
+  .optional();
 
 export type LearningSearchCandidate = {
   kind: 'programme' | 'module' | 'lesson';
@@ -15,6 +24,12 @@ export type LearningSearchResult = LearningSearchCandidate & {
   href: string;
   score: number;
 };
+
+export function parseLearningSearchParam(value: unknown) {
+  const parsed = learningSearchParamSchema.safeParse(value);
+  if (!parsed.success) return undefined;
+  return Array.isArray(parsed.data) ? parsed.data[0] : parsed.data;
+}
 
 function fold(value: string) {
   return value
