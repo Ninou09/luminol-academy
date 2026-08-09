@@ -7,7 +7,9 @@ import {
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-export const SEARCH_TELEMETRY_WRITE_TIMEOUT_MS = 150;
+export const SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS = 100;
+export const SEARCH_TELEMETRY_TRANSACTION_MAX_WAIT_MS = 100;
+export const SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS = 250;
 
 function getClient(): PrismaClient {
   const client = globalForPrisma.prisma ?? new PrismaClient();
@@ -46,31 +48,12 @@ export function searchTelemetryDay(now = new Date()) {
   );
 }
 
-export async function settleSearchTelemetryWrite(
-  write: Promise<unknown>,
-  timeoutMs = SEARCH_TELEMETRY_WRITE_TIMEOUT_MS,
-) {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const settledWrite = write.then(
-    () => true,
-    () => false,
-  );
-  const timeout = new Promise<boolean>((resolve) => {
-    timer = setTimeout(() => resolve(false), Math.max(0, timeoutMs));
-  });
-
-  try {
-    return await Promise.race([settledWrite, timeout]);
-  } finally {
-    if (timer) clearTimeout(timer);
-  }
-}
-
 /**
  * Records only a daily aggregate bucket. Raw query text, user identifiers,
  * session identifiers, IP addresses and content values are deliberately not
- * accepted by this API or persisted by the backing model. Writes are bounded
- * so observability cannot hold a search response open behind a slow database.
+ * accepted by this API or persisted by the backing model. A database statement
+ * timeout plus an interactive-transaction acquisition/runtime bound prevents a
+ * stalled telemetry write from accumulating after the search response path.
  */
 export async function recordSearchTelemetry({
   surface,
@@ -86,28 +69,39 @@ export async function recordSearchTelemetry({
   const resultBucket = searchResultBucketForCount(normalizedResultCount);
 
   try {
-    return await settleSearchTelemetryWrite(
-      db.searchTelemetryDaily.upsert({
-        where: {
-          day_surface_outcome_resultBucket: {
+    await db.$transaction(
+      async (transaction) => {
+        await transaction.$queryRaw`SELECT set_config('statement_timeout', ${String(
+          SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS,
+        )}, true)`;
+
+        await transaction.searchTelemetryDaily.upsert({
+          where: {
+            day_surface_outcome_resultBucket: {
+              day,
+              surface,
+              outcome,
+              resultBucket,
+            },
+          },
+          create: {
             day,
             surface,
             outcome,
             resultBucket,
+            count: 1,
           },
-        },
-        create: {
-          day,
-          surface,
-          outcome,
-          resultBucket,
-          count: 1,
-        },
-        update: {
-          count: { increment: 1 },
-        },
-      }),
+          update: {
+            count: { increment: 1 },
+          },
+        });
+      },
+      {
+        maxWait: SEARCH_TELEMETRY_TRANSACTION_MAX_WAIT_MS,
+        timeout: SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS,
+      },
     );
+    return true;
   } catch {
     return false;
   }
