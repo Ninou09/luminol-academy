@@ -494,6 +494,9 @@ model Course {
   certificates         Certificate[]
   languageProfile      LanguageCourseProfile?
   placementAssessments PlacementAssessment[]
+
+  @@index([title(ops: raw("gin_trgm_ops"))], type: Gin, map: "Course_title_trgm_idx")
+  @@index([slug(ops: raw("gin_trgm_ops"))], type: Gin, map: "Course_slug_trgm_idx")
 }
 
 model LanguageCourseProfile {
@@ -828,6 +831,8 @@ model Enquiry {
 
   @@index([status, createdAt])
   @@index([email])
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "Enquiry_name_trgm_idx")
+  @@index([email(ops: raw("gin_trgm_ops"))], type: Gin, map: "Enquiry_email_trgm_idx")
 }
 
 model EnquiryStatusEvent {
