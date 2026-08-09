@@ -64,6 +64,14 @@ export default clerkMiddleware(async (auth, request) => {
     );
   }
 
+  if (request.cookies.get(LOCALE_COOKIE_NAME)?.value !== decision.locale) {
+    return persistLocale(
+      NextResponse.redirect(request.nextUrl.clone()),
+      request,
+      decision.locale,
+    );
+  }
+
   if (!isPublicPathname(decision.pathname)) await auth.protect();
 
   const destination = request.nextUrl.clone();
@@ -71,13 +79,9 @@ export default clerkMiddleware(async (auth, request) => {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(LOCALE_REQUEST_HEADER, decision.locale);
 
-  return persistLocale(
-    NextResponse.rewrite(destination, {
-      request: { headers: requestHeaders },
-    }),
-    request,
-    decision.locale,
-  );
+  return NextResponse.rewrite(destination, {
+    request: { headers: requestHeaders },
+  });
 });
 
 export const config = {
