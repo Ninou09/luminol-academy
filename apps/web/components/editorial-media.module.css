@@ -1,11 +1,12 @@
 .frame {
   --media-accent: var(--color-brand-gold);
   --media-soft: var(--color-brand-canvas);
+  --media-grid: rgb(16 42 67 / 0.08);
   position: relative;
   overflow: hidden;
   width: 100%;
   aspect-ratio: var(--luminol-media-ratio-wide);
-  border: 1px solid color-mix(in srgb, var(--media-accent) 24%, var(--color-brand-line));
+  border: 1px solid var(--color-brand-line);
   border-radius: var(--luminol-media-radius);
   background: var(--media-soft);
   box-shadow: var(--shadow-editorial);
@@ -43,19 +44,17 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 72% 28%, color-mix(in srgb, var(--media-accent) 26%, transparent), transparent 29%),
-    linear-gradient(140deg, var(--media-soft), color-mix(in srgb, var(--media-accent) 10%, white));
+  background: var(--media-soft);
 }
 
 .grid {
   position: absolute;
   inset: 0;
-  opacity: 0.28;
+  opacity: 0.72;
   background-image:
-    linear-gradient(color-mix(in srgb, var(--media-accent) 18%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--media-accent) 18%, transparent) 1px, transparent 1px);
-  background-size: clamp(2.25rem, 6vw, 4.5rem) clamp(2.25rem, 6vw, 4.5rem);
+    linear-gradient(var(--media-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--media-grid) 1px, transparent 1px);
+  background-size: 3.5rem 3.5rem;
   mask-image: linear-gradient(135deg, black, transparent 76%);
 }
 
@@ -65,9 +64,10 @@
   aspect-ratio: 1;
   inset-block-start: 50%;
   inset-inline-start: 50%;
-  border: 1px solid color-mix(in srgb, var(--media-accent) 40%, transparent);
+  border: 1px solid var(--media-accent);
   border-radius: 50%;
-  box-shadow: 0 0 0 2.5rem color-mix(in srgb, var(--media-accent) 5%, transparent);
+  box-shadow: 0 0 0 2.5rem rgb(255 255 255 / 0.3);
+  opacity: 0.42;
   transform: translate(-50%, -50%);
 }
 
@@ -85,7 +85,7 @@
   position: absolute;
   inset-inline-end: 10%;
   inset-block-end: 8%;
-  color: color-mix(in srgb, var(--media-accent) 88%, var(--color-brand-ink));
+  color: var(--media-accent);
   font-family: var(--font-display);
   font-size: clamp(3rem, 8vw, 6rem);
   font-weight: 500;
