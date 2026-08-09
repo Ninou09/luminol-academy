@@ -82,14 +82,18 @@ export default async function SearchPage({
                         <span className="status">
                           {labelForKind(result.kind)}
                         </span>
-                        <span>{result.courseTitle}</span>
+                        <span dir="auto">{result.courseTitle}</span>
                       </div>
-                      <h3>{result.title}</h3>
+                      <h3 dir="auto">{result.title}</h3>
                       {result.moduleTitle && result.kind === 'lesson' ? (
-                        <p className="course-note">{result.moduleTitle}</p>
+                        <p className="course-note" dir="auto">
+                          {result.moduleTitle}
+                        </p>
                       ) : null}
                       {result.body ? (
-                        <p className="course-note">{result.body}</p>
+                        <p className="course-note" dir="auto">
+                          {result.body}
+                        </p>
                       ) : null}
                       <Link className="course-link" href={result.href}>
                         Open {labelForKind(result.kind).toLowerCase()}{' '}
