@@ -77,9 +77,7 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
   const delivery = fold(programme.delivery ?? '');
   const school = fold(schools[programme.school].name);
   const languageText = fold(
-    programme.languages
-      .map((code) => programmeLanguageLabels[code])
-      .join(' '),
+    programme.languages.map((code) => programmeLanguageLabels[code]).join(' '),
   );
 
   let score = 0;
@@ -104,10 +102,7 @@ export function filterPublicProgrammes(
   return programmes
     .flatMap((programme) => {
       if (filters.school && programme.school !== filters.school) return [];
-      if (
-        filters.language &&
-        !programme.languages.includes(filters.language)
-      ) {
+      if (filters.language && !programme.languages.includes(filters.language)) {
         return [];
       }
 

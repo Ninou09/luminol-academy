@@ -161,16 +161,15 @@ export default async function ProgrammesPage({
                     </div>
                     <h3 dir="auto">{programme.title}</h3>
                     <p dir="auto">{programme.summary}</p>
-                    <ul
-                      className={styles.tags}
-                      aria-label="Programme details"
-                    >
+                    <ul className={styles.tags} aria-label="Programme details">
                       {programme.languages.map((language) => (
                         <li key={language}>
                           {programmeLanguageLabels[language]}
                         </li>
                       ))}
-                      {programme.delivery ? <li>{programme.delivery}</li> : null}
+                      {programme.delivery ? (
+                        <li>{programme.delivery}</li>
+                      ) : null}
                     </ul>
                     <div className={styles.cardActions}>
                       <Link href={`/schools/${programme.school}#programs`}>
