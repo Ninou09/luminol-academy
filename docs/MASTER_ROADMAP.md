@@ -80,7 +80,7 @@ Delivered capabilities include the security and privacy audit, response hardenin
 
 Status: In progress
 
-The first delivery slice adds privacy-safe learner search across only the authenticated learner's active or completed, published programme content. Search is server-scoped to enrolled courses, normalizes and bounds queries, ranks title matches above descriptive text, and returns direct programme or lesson destinations without exposing another learner's content.
+The first delivery slice adds privacy-safe learner search across only the authenticated learner's active or completed, published programme content. Search is server-scoped to enrolled courses, validates URL-owned input with Zod, normalizes and bounds queries, searches every eligible enrollment, gates results on real text matches before ranking, supports automatic RTL/LTR query direction, and returns direct programme or lesson destinations without exposing another learner's content.
 
 Planned follow-up slices:
 
