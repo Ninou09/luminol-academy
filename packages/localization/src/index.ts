@@ -195,15 +195,19 @@ export function sanitizeInternalReturnTo(
     const url = new URL(candidate, 'https://luminol.local');
     if (url.origin !== 'https://luminol.local') return fallback;
 
-    const decodedPathname = decodeURIComponent(url.pathname);
+    const normalizedPathname = url.pathname;
+    if (normalizedPathname.startsWith('//')) return fallback;
+
+    const decodedPathname = decodeURIComponent(normalizedPathname);
     if (
+      decodedPathname.startsWith('//') ||
       decodedPathname.includes('\\') ||
       containsControlCharacters(decodedPathname)
     ) {
       return fallback;
     }
 
-    return `${url.pathname}${url.search}${url.hash}`;
+    return `${normalizedPathname}${url.search}${url.hash}`;
   } catch {
     return fallback;
   }
