@@ -1,0 +1,215 @@
+.hero {
+  padding-block: clamp(4rem, 8vw, 7rem) clamp(2rem, 4vw, 3rem);
+}
+
+.hero h1 {
+  max-width: 14ch;
+  margin: 1rem 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.7rem, 6vw, 5.5rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+.hero > p:last-child {
+  max-width: 48rem;
+  color: var(--color-brand-ink-soft);
+  line-height: 1.8;
+}
+
+.discovery {
+  padding-block: 0 clamp(5rem, 9vw, 8rem);
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: minmax(16rem, 2fr) repeat(2, minmax(10rem, 1fr)) auto;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+  padding: 1.25rem;
+  border: 1px solid var(--color-brand-line);
+  background: var(--color-brand-canvas);
+}
+
+.filters label {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.filters input,
+.filters select {
+  min-height: 3rem;
+  width: 100%;
+  border: 1px solid var(--color-brand-line);
+  background: transparent;
+  color: var(--color-brand-ink);
+  font: inherit;
+  padding-inline: 0.85rem;
+}
+
+.filterActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.filterActions button,
+.filterActions a {
+  min-height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 1rem;
+  border: 1px solid var(--color-brand-ink);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.filterActions a {
+  background: transparent;
+  color: var(--color-brand-ink);
+}
+
+.resultHeading {
+  margin-bottom: 1.5rem;
+}
+
+.resultHeading h2,
+.emptyState h2 {
+  margin: 0.6rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  overflow: hidden;
+  border: 1px solid var(--color-brand-line);
+  background: var(--color-brand-canvas);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.cardBody {
+  padding: 1.35rem;
+}
+
+.meta,
+.tags,
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.meta {
+  justify-content: space-between;
+  color: var(--color-brand-gold-strong);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card h3 {
+  margin: 1rem 0 0.65rem;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.card p {
+  color: var(--color-brand-ink-soft);
+  line-height: 1.65;
+}
+
+.tags {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--color-brand-line);
+  font-size: 0.7rem;
+}
+
+.cardActions {
+  margin-top: 1.25rem;
+}
+
+.cardActions a,
+.emptyState a {
+  color: var(--color-brand-ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-underline-offset: 0.25rem;
+}
+
+.emptyState {
+  padding: clamp(2rem, 5vw, 4rem);
+  border: 1px solid var(--color-brand-line);
+}
+
+.emptyState p {
+  max-width: 45rem;
+  color: var(--color-brand-ink-soft);
+  line-height: 1.7;
+}
+
+@media (max-width: 1000px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .queryField,
+  .filterActions {
+    grid-column: 1 / -1;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .filters,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .queryField,
+  .filterActions {
+    grid-column: auto;
+  }
+
+  .filterActions {
+    align-items: stretch;
+  }
+}
