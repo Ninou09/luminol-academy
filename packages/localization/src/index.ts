@@ -168,6 +168,13 @@ export function buildLanguageAlternates(
   };
 }
 
+function containsControlCharacters(value: string): boolean {
+  return Array.from(value).some((character) => {
+    const codePoint = character.codePointAt(0);
+    return codePoint !== undefined && (codePoint <= 0x1f || codePoint === 0x7f);
+  });
+}
+
 export function sanitizeInternalReturnTo(
   value: unknown,
   fallback = '/',
@@ -179,7 +186,7 @@ export function sanitizeInternalReturnTo(
     !candidate.startsWith('/') ||
     candidate.startsWith('//') ||
     candidate.includes('\\') ||
-    /[\u0000-\u001f\u007f]/.test(candidate)
+    containsControlCharacters(candidate)
   ) {
     return fallback;
   }
@@ -187,6 +194,15 @@ export function sanitizeInternalReturnTo(
   try {
     const url = new URL(candidate, 'https://luminol.local');
     if (url.origin !== 'https://luminol.local') return fallback;
+
+    const decodedPathname = decodeURIComponent(url.pathname);
+    if (
+      decodedPathname.includes('\\') ||
+      containsControlCharacters(decodedPathname)
+    ) {
+      return fallback;
+    }
+
     return `${url.pathname}${url.search}${url.hash}`;
   } catch {
     return fallback;
