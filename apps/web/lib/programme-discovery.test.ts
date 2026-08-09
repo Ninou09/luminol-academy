@@ -84,8 +84,8 @@ describe('programme discovery filters', () => {
       ),
     ).toEqual([
       'programme-english',
-      'programme-stress',
       'programme-leadership',
+      'programme-stress',
     ]);
   });
 });
