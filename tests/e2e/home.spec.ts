@@ -28,6 +28,20 @@ test('locale routing persists language and document direction', async ({
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
 });
 
+test('public copy follows the canonical locale', async ({ page }) => {
+  await page.goto('/ar');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'تقدّم بوضوح.',
+  );
+  await expect(page.getByRole('link', { name: 'البرامج' })).toBeVisible();
+
+  await page.goto('/fr/contact');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'Votre prochaine étape commence',
+  );
+  await expect(page.getByText('Parlez-nous de votre objectif')).toBeVisible();
+});
+
 test('public metadata and error behavior are available', async ({
   request,
 }) => {
@@ -37,13 +51,17 @@ test('public metadata and error behavior are available', async ({
 
   const sitemap = await request.get('/sitemap.xml');
   expect(sitemap.ok()).toBeTruthy();
-  expect(await sitemap.text()).toContain('<urlset');
+  const sitemapText = await sitemap.text();
+  expect(sitemapText).toContain('<urlset');
+  expect(sitemapText).toContain('/ar/about');
+  expect(sitemapText).toContain('/fr/schools/languages');
+  expect(sitemapText).toContain('/en/programmes');
 
   const missing = await request.get('/definitely-not-a-launch-route');
   expect(missing.status()).toBe(404);
 });
 
-test('public pages publish route-specific canonical and Open Graph URLs', async ({
+test('public pages publish localized canonical, hreflang and Open Graph URLs', async ({
   page,
 }) => {
   for (const route of [
@@ -53,7 +71,7 @@ test('public pages publish route-specific canonical and Open Graph URLs', async 
     '/schools/languages',
     '/schools/training',
   ]) {
-    await page.goto(route);
+    await page.goto(`/fr${route}`);
 
     const canonicalHref = await page
       .locator('link[rel="canonical"]')
@@ -61,15 +79,25 @@ test('public pages publish route-specific canonical and Open Graph URLs', async 
     const openGraphUrl = await page
       .locator('meta[property="og:url"]')
       .getAttribute('content');
+    const arabicHref = await page
+      .locator('link[rel="alternate"][hreflang="ar"]')
+      .getAttribute('href');
+    const englishHref = await page
+      .locator('link[rel="alternate"][hreflang="en"]')
+      .getAttribute('href');
 
     expect(canonicalHref).toBeTruthy();
     expect(openGraphUrl).toBeTruthy();
+    expect(arabicHref).toBeTruthy();
+    expect(englishHref).toBeTruthy();
 
     const canonical = new URL(canonicalHref!);
     const openGraph = new URL(openGraphUrl!);
 
-    expect(canonical.pathname).toBe(route);
-    expect(openGraph.pathname).toBe(route);
+    expect(canonical.pathname).toBe(`/fr${route}`);
+    expect(openGraph.pathname).toBe(`/fr${route}`);
+    expect(new URL(arabicHref!).pathname).toBe(`/ar${route}`);
+    expect(new URL(englishHref!).pathname).toBe(`/en${route}`);
     expect(openGraph.origin).toBe(canonical.origin);
   }
 });

@@ -1,14 +1,27 @@
+import {
+  buildLanguageAlternates,
+  localizeHref,
+  localizePathname,
+} from '@luminol/localization';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ButtonLink } from '@luminol/ui';
+
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { getPublicCopy } from '../../../lib/public-localization';
+import { getRequestLocale } from '../../../lib/request-locale';
 import {
   buildSanityProgrammeImageUrl,
   getProgrammesForSchool,
 } from '../../../lib/sanity';
-import { isSchoolSlug, schools } from '../../../lib/schools';
+import {
+  getSchool,
+  getSchools,
+  isSchoolSlug,
+  schools,
+} from '../../../lib/schools';
 import styles from './page.module.css';
 
 type SchoolPageProps = {
@@ -25,20 +38,28 @@ export async function generateMetadata({
   const { school: slug } = await params;
   if (!isSchoolSlug(slug)) return {};
 
-  const school = schools[slug];
-  const route = `/schools/${school.slug}`;
+  const locale = await getRequestLocale();
+  const school = getSchool(locale, slug);
+  const pathname = `/schools/${school.slug}`;
+  const route = localizePathname(locale, pathname);
 
   return {
     title: school.name,
     description: school.introduction,
     alternates: {
       canonical: route,
+      languages: buildLanguageAlternates(pathname),
     },
     openGraph: {
       title: `Luminol ${school.name}`,
       description: school.introduction,
       type: 'website',
       url: route,
+    },
+    twitter: {
+      card: 'summary',
+      title: `Luminol ${school.name}`,
+      description: school.introduction,
     },
   };
 }
@@ -47,7 +68,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   const { school: slug } = await params;
   if (!isSchoolSlug(slug)) notFound();
 
-  const school = schools[slug];
+  const locale = await getRequestLocale();
+  const copy = getPublicCopy(locale).schoolPage;
+  const localizedSchools = getSchools(locale);
+  const school = localizedSchools[slug];
   const cmsProgrammes = await getProgrammesForSchool(slug);
   const programmes: Array<{
     id: string;
@@ -73,7 +97,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         title: programme.title,
         description: programme.description,
       }));
-  const relatedSchools = Object.values(schools).filter(
+  const relatedSchools = Object.values(localizedSchools).filter(
     (item) => item.slug !== school.slug,
   );
 
@@ -83,18 +107,22 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
       <section className="school-detail-hero">
         <div className="school-detail-copy">
-          <Link className="breadcrumb" href="/#schools">
-            Luminol schools <span aria-hidden="true">/</span> {school.name}
+          <Link className="breadcrumb" href={localizeHref(locale, '/#schools')}>
+            {copy.schoolsLabel} <span aria-hidden="true">/</span> {school.name}
           </Link>
           <p className="eyebrow">{school.eyebrow}</p>
           <h1>{school.headline}</h1>
           <p className="school-detail-lede">{school.introduction}</p>
           <div className="hero-actions">
             <ButtonLink href="#programs" size="lg">
-              Explore programs <span aria-hidden="true">↘</span>
+              {copy.explorePrograms} <span aria-hidden="true">↘</span>
             </ButtonLink>
-            <ButtonLink href="/contact" size="lg" variant="secondary">
-              Start your journey
+            <ButtonLink
+              href={localizeHref(locale, '/contact')}
+              size="lg"
+              variant="secondary"
+            >
+              {copy.startJourney}
             </ButtonLink>
           </div>
         </div>
@@ -113,21 +141,17 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
       </section>
 
       <section className="school-promise-band">
-        <p>Our promise</p>
+        <p>{copy.promiseLabel}</p>
         <blockquote>{school.promise}</blockquote>
       </section>
 
       <section id="programs" className="programs section-shell">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Programs and support</p>
-            <h2>Choose the pathway that fits your next step.</h2>
+            <p className="eyebrow">{copy.programsEyebrow}</p>
+            <h2>{copy.programsTitle}</h2>
           </div>
-          <p>
-            Each program is shaped around a clear purpose, thoughtful
-            progression and an experience that respects the person behind the
-            goal.
-          </p>
+          <p>{copy.programsBody}</p>
         </div>
         <div className="program-grid">
           {programmes.map((program, index) => (
@@ -147,15 +171,16 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 className={
                   program.image ? styles.programTitleWithImage : undefined
                 }
+                dir="auto"
               >
                 {program.title}
               </h3>
               {program.delivery ? (
                 <small className="program-delivery">{program.delivery}</small>
               ) : null}
-              <p>{program.description}</p>
-              <Link href="/contact">
-                Ask about this program <b aria-hidden="true">→</b>
+              <p dir="auto">{program.description}</p>
+              <Link href={localizeHref(locale, '/contact')}>
+                {copy.askProgram} <b aria-hidden="true">→</b>
               </Link>
             </article>
           ))}
@@ -164,8 +189,8 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
       <section className="school-method">
         <div className="method-heading">
-          <p className="eyebrow eyebrow-light">How the journey works</p>
-          <h2>A clear path from intention to meaningful progress.</h2>
+          <p className="eyebrow eyebrow-light">{copy.journeyEyebrow}</p>
+          <h2>{copy.journeyTitle}</h2>
         </div>
         <ol>
           {school.approach.map((step, index) => (
@@ -182,8 +207,8 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
       <section className="audience section-shell">
         <div>
-          <p className="eyebrow">Designed around people</p>
-          <h2>Who this school supports</h2>
+          <p className="eyebrow">{copy.audienceEyebrow}</p>
+          <h2>{copy.audienceTitle}</h2>
         </div>
         <ul>
           {school.audiences.map((audience) => (
@@ -192,23 +217,23 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </ul>
       </section>
 
-      <aside className="school-note section-shell" aria-label="Program note">
-        <span>Important</span>
+      <aside className="school-note section-shell" aria-label={copy.noteAria}>
+        <span>{copy.important}</span>
         <p>{school.note}</p>
       </aside>
 
       <section className="related-schools section-shell">
-        <p className="eyebrow">Continue exploring Luminol</p>
+        <p className="eyebrow">{copy.relatedEyebrow}</p>
         <div className="related-heading">
-          <h2>Growth connects across every school.</h2>
-          <p>
-            Explore another dimension of your personal, linguistic or
-            professional development.
-          </p>
+          <h2>{copy.relatedTitle}</h2>
+          <p>{copy.relatedBody}</p>
         </div>
         <div className="related-grid">
           {relatedSchools.map((related) => (
-            <Link href={`/schools/${related.slug}`} key={related.slug}>
+            <Link
+              href={localizeHref(locale, `/schools/${related.slug}`)}
+              key={related.slug}
+            >
               <span>{related.number}</span>
               <h3>{related.name}</h3>
               <b aria-hidden="true">↗</b>
@@ -219,15 +244,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
       <section className="final-cta">
         <div>
-          <p className="eyebrow eyebrow-light">Your next step</p>
-          <h2>Let&apos;s find the right path forward.</h2>
-          <p>
-            Begin with your goal. Luminol will help you identify the program and
-            learning experience that fits.
-          </p>
+          <p className="eyebrow eyebrow-light">{copy.ctaEyebrow}</p>
+          <h2>{copy.ctaTitle}</h2>
+          <p>{copy.ctaBody}</p>
         </div>
-        <ButtonLink href="/contact" size="lg">
-          Start your journey <span aria-hidden="true">→</span>
+        <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
+          {copy.startJourney} <span aria-hidden="true">→</span>
         </ButtonLink>
       </section>
 

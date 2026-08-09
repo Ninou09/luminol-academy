@@ -5,7 +5,7 @@ import {
   type CmsProgrammeLanguage,
   type PublicCmsProgramme,
 } from './sanity';
-import { isSchoolSlug, schools, type SchoolSlug } from './schools';
+import { getSchools, isSchoolSlug, type SchoolSlug } from './schools';
 
 export const PUBLIC_PROGRAMME_MAX_QUERY_LENGTH = 100;
 
@@ -13,6 +13,12 @@ export const programmeLanguageLabels: Record<CmsProgrammeLanguage, string> = {
   ar: 'Arabic',
   fr: 'French',
   en: 'English',
+};
+
+const programmeLanguageSearchLabels: Record<CmsProgrammeLanguage, string> = {
+  ar: 'Arabic Arabe العربية',
+  fr: 'French Français الفرنسية',
+  en: 'English Anglais الإنجليزية',
 };
 
 export type ProgrammeDiscoveryFilters = {
@@ -75,9 +81,15 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
   const title = fold(programme.title);
   const summary = fold(programme.summary);
   const delivery = fold(programme.delivery ?? '');
-  const school = fold(schools[programme.school].name);
+  const school = fold(
+    (['ar', 'fr', 'en'] as const)
+      .map((locale) => getSchools(locale)[programme.school].name)
+      .join(' '),
+  );
   const languageText = fold(
-    programme.languages.map((code) => programmeLanguageLabels[code]).join(' '),
+    programme.languages
+      .map((code) => programmeLanguageSearchLabels[code])
+      .join(' '),
   );
 
   let score = 0;

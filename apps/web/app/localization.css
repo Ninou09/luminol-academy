@@ -1,0 +1,134 @@
+.site-header-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.site-header-actions > a {
+  text-decoration: none;
+}
+
+.locale-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--color-brand-surface) 88%, transparent);
+}
+
+.locale-switcher a {
+  min-width: 2rem;
+  padding: 0.4rem 0.45rem;
+  border-radius: calc(var(--radius-control) - 2px);
+  color: var(--color-brand-muted);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+}
+
+.locale-switcher a[aria-current='page'] {
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+}
+
+.locale-switcher a:focus-visible {
+  outline: 2px solid var(--color-brand-gold-strong);
+  outline-offset: 2px;
+}
+
+html[dir='rtl']
+  body
+  :where(
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    a,
+    span,
+    small,
+    strong,
+    b,
+    li,
+    dt,
+    dd,
+    label,
+    button,
+    blockquote
+  ) {
+  letter-spacing: normal;
+}
+
+html[dir='rtl'] .eyebrow,
+html[dir='rtl'] .desktop-nav a,
+html[dir='rtl'] .signal-card span,
+html[dir='rtl'] .luminous-core small,
+html[dir='rtl'] .hero-proof dd,
+html[dir='rtl'] .school-topline,
+html[dir='rtl'] .text-link,
+html[dir='rtl'] .about-visual p,
+html[dir='rtl'] footer p,
+html[dir='rtl'] .breadcrumb,
+html[dir='rtl'] .detail-words span,
+html[dir='rtl'] .school-promise-band > p,
+html[dir='rtl'] .program-delivery,
+html[dir='rtl'] .program-grid a,
+html[dir='rtl'] .school-note span,
+html[dir='rtl'] .about-page-visual > p,
+html[dir='rtl'] .mission-vision span,
+html[dir='rtl'] .ecosystem-core small,
+html[dir='rtl'] .form-grid label > span {
+  text-transform: none;
+}
+
+@media (max-width: 68rem) {
+  .site-header-actions {
+    gap: 0.6rem;
+  }
+}
+
+@media (max-width: 38rem) {
+  .site-header {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: 0.75rem;
+  }
+
+  .site-header > .site-header-actions {
+    min-height: auto;
+    padding-inline: 0;
+    font-size: inherit;
+  }
+
+  .site-header-actions {
+    width: 100%;
+    justify-self: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .locale-switcher {
+    gap: 0;
+  }
+
+  .locale-switcher a {
+    min-width: 1.7rem;
+    padding-inline: 0.3rem;
+    font-size: 0.56rem;
+  }
+
+  .site-header-actions > a {
+    min-height: 2.35rem;
+    padding-inline: 0.65rem;
+    font-size: 0.58rem;
+    white-space: nowrap;
+  }
+}

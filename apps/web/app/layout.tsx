@@ -1,12 +1,10 @@
-import {
-  getLocaleDirection,
-  LOCALE_REQUEST_HEADER,
-  parseLocale,
-} from '@luminol/localization';
+import { getLocaleDirection } from '@luminol/localization';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 
+import { getPublicCopy } from '../lib/public-localization';
+import { getRequestLocale } from '../lib/request-locale';
 import './globals.css';
+import './localization.css';
 
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
@@ -20,41 +18,40 @@ function resolveMetadataBase() {
   }
 }
 
-export const metadata: Metadata = {
-  metadataBase: resolveMetadataBase(),
-  title: {
-    default: 'Luminol Academy | Psychology, Languages & Professional Training',
-    template: '%s | Luminol Academy',
-  },
-  description:
-    'Grow mentally, linguistically and professionally with Luminol Academy—one human-centered ecosystem for psychology, languages and professional training.',
-  keywords: [
-    'Luminol Academy',
-    'psychology',
-    'mental wellness',
-    'language learning',
-    'professional training',
-    'coaching',
-  ],
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    title: 'Luminol Academy',
-    description:
-      'Psychology, language learning and professional development in one thoughtful human ecosystem.',
-    type: 'website',
-    url: '/',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const copy = getPublicCopy(locale);
+
+  return {
+    metadataBase: resolveMetadataBase(),
+    title: {
+      default: 'Luminol Academy',
+      template: '%s | Luminol Academy',
+    },
+    description: copy.site.description,
+    keywords: [
+      'Luminol Academy',
+      'psychology',
+      'mental wellness',
+      'language learning',
+      'professional training',
+      'coaching',
+    ],
+    openGraph: {
+      title: 'Luminol Academy',
+      description: copy.site.description,
+      type: 'website',
+      locale,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const requestHeaders = await headers();
-  const locale = parseLocale(requestHeaders.get(LOCALE_REQUEST_HEADER));
+  const locale = await getRequestLocale();
 
   return (
     <html lang={locale} dir={getLocaleDirection(locale)}>

@@ -1,7 +1,12 @@
 'use client';
 
+import type { Locale } from '@luminol/localization';
 import { useState, type FormEvent } from 'react';
 import { Button } from '@luminol/ui';
+
+import type { getPublicCopy } from '../lib/public-localization';
+
+type FormCopy = ReturnType<typeof getPublicCopy>['form'];
 
 type SubmissionState =
   | { status: 'idle'; message: '' }
@@ -9,7 +14,12 @@ type SubmissionState =
   | { status: 'success'; message: string }
   | { status: 'error'; message: string };
 
-export function EnquiryForm() {
+type EnquiryFormProps = {
+  locale: Locale;
+  copy: FormCopy;
+};
+
+export function EnquiryForm({ locale, copy }: EnquiryFormProps) {
   const [submission, setSubmission] = useState<SubmissionState>({
     status: 'idle',
     message: '',
@@ -20,10 +30,7 @@ export function EnquiryForm() {
     const form = event.currentTarget;
     const formData = new FormData(form);
 
-    setSubmission({
-      status: 'submitting',
-      message: 'Sending your enquiry…',
-    });
+    setSubmission({ status: 'submitting', message: copy.sending });
 
     try {
       const response = await fetch('/api/enquiries', {
@@ -35,52 +42,33 @@ export function EnquiryForm() {
           phone: formData.get('phone'),
           school: formData.get('school'),
           message: formData.get('message'),
-          locale: 'en',
+          locale,
           consent: formData.get('consent') === 'on',
           website: formData.get('website'),
         }),
       });
 
-      const payload = (await response.json()) as {
-        submitted?: boolean;
-        error?: string;
-      };
-
-      if (!response.ok || !payload.submitted) {
-        throw new Error(payload.error || 'Unable to submit the enquiry.');
-      }
+      const payload = (await response.json()) as { submitted?: boolean };
+      if (!response.ok || !payload.submitted) throw new Error(copy.error);
 
       form.reset();
-      setSubmission({
-        status: 'success',
-        message:
-          'Thank you. Your enquiry is safely with Luminol, and the team will review it.',
-      });
-    } catch (error) {
-      setSubmission({
-        status: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Unable to submit the enquiry. Please try again.',
-      });
+      setSubmission({ status: 'success', message: copy.success });
+    } catch {
+      setSubmission({ status: 'error', message: copy.error });
     }
   }
 
   return (
     <form className="enquiry-form" onSubmit={submitEnquiry}>
       <div className="form-heading">
-        <p className="eyebrow">Tell us about your goal</p>
-        <h2>Start your Luminol journey.</h2>
-        <p>
-          Share what you are looking for. The Luminol team will use these
-          details only to understand and respond to your enquiry.
-        </p>
+        <p className="eyebrow">{copy.eyebrow}</p>
+        <h2>{copy.title}</h2>
+        <p>{copy.intro}</p>
       </div>
 
       <div className="form-grid">
         <label>
-          <span>Full name</span>
+          <span>{copy.fullName}</span>
           <input
             autoComplete="name"
             maxLength={100}
@@ -91,7 +79,7 @@ export function EnquiryForm() {
           />
         </label>
         <label>
-          <span>Email address</span>
+          <span>{copy.email}</span>
           <input
             autoComplete="email"
             maxLength={254}
@@ -102,21 +90,21 @@ export function EnquiryForm() {
         </label>
         <label>
           <span>
-            Phone number <small>Optional</small>
+            {copy.phone} <small>{copy.optional}</small>
           </span>
           <input autoComplete="tel" maxLength={30} name="phone" type="tel" />
         </label>
         <label>
-          <span>Area of interest</span>
+          <span>{copy.interest}</span>
           <select defaultValue="GENERAL" name="school" required>
-            <option value="GENERAL">Help me choose</option>
-            <option value="PSYCHOLOGY">Psychology</option>
-            <option value="LANGUAGES">Languages</option>
-            <option value="TRAINING">Professional Training</option>
+            <option value="GENERAL">{copy.choose}</option>
+            <option value="PSYCHOLOGY">{copy.psychology}</option>
+            <option value="LANGUAGES">{copy.languages}</option>
+            <option value="TRAINING">{copy.training}</option>
           </select>
         </label>
         <label className="message-field">
-          <span>How can Luminol help?</span>
+          <span>{copy.message}</span>
           <textarea
             maxLength={2000}
             minLength={10}
@@ -134,10 +122,7 @@ export function EnquiryForm() {
 
       <label className="consent-field">
         <input name="consent" required type="checkbox" />
-        <span>
-          I agree that Luminol may store and use these details to respond to my
-          enquiry.
-        </span>
+        <span>{copy.consent}</span>
       </label>
 
       <div className="form-actions">
@@ -146,7 +131,7 @@ export function EnquiryForm() {
           size="lg"
           type="submit"
         >
-          {submission.status === 'submitting' ? 'Sending…' : 'Send my enquiry'}
+          {submission.status === 'submitting' ? copy.sending : copy.submit}
         </Button>
         <p
           className={`form-status form-status-${submission.status}`}

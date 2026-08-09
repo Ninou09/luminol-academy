@@ -1,105 +1,110 @@
+import {
+  buildLanguageAlternates,
+  localizeHref,
+  localizePathname,
+} from '@luminol/localization';
 import type { Metadata } from 'next';
-import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import Link from 'next/link';
+
 import { EnquiryForm } from '../../components/enquiry-form';
+import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import { getPublicCopy } from '../../lib/public-localization';
+import { getRequestLocale } from '../../lib/request-locale';
+import { getSchools } from '../../lib/schools';
 
-const contactDescription =
-  'Tell Luminol about your psychology, language-learning or professional-development goals and find the right next step.';
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const copy = getPublicCopy(locale).contact;
+  const route = localizePathname(locale, '/contact');
 
-export const metadata: Metadata = {
-  title: 'Contact',
-  description: contactDescription,
-  alternates: {
-    canonical: '/contact',
-  },
-  openGraph: {
-    title: 'Contact Luminol',
-    description: contactDescription,
-    type: 'website',
-    url: '/contact',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'Contact Luminol',
-    description: contactDescription,
-  },
-};
+  return {
+    title: copy.title,
+    description: copy.description,
+    alternates: {
+      canonical: route,
+      languages: buildLanguageAlternates('/contact'),
+    },
+    openGraph: {
+      title: copy.title,
+      description: copy.description,
+      type: 'website',
+      url: route,
+    },
+    twitter: {
+      card: 'summary',
+      title: copy.title,
+      description: copy.description,
+    },
+  };
+}
 
-const contactPaths = [
-  {
-    number: '01',
-    name: 'Psychology',
-    description: 'Wellbeing, family guidance, coaching and workshops.',
-    href: '/schools/psychology',
-  },
-  {
-    number: '02',
-    name: 'Languages',
-    description: 'English, French, fluency and communication pathways.',
-    href: '/schools/languages',
-  },
-  {
-    number: '03',
-    name: 'Professional Training',
-    description: 'Leadership, workplace skills and corporate learning.',
-    href: '/schools/training',
-  },
-] as const;
+export default async function ContactPage() {
+  const locale = await getRequestLocale();
+  const publicCopy = getPublicCopy(locale);
+  const copy = publicCopy.contact;
+  const schools = getSchools(locale);
+  const contactPaths = [
+    {
+      number: '01',
+      school: schools.psychology,
+      description: copy.pathDescriptions.psychology,
+    },
+    {
+      number: '02',
+      school: schools.languages,
+      description: copy.pathDescriptions.languages,
+    },
+    {
+      number: '03',
+      school: schools.training,
+      description: copy.pathDescriptions.training,
+    },
+  ] as const;
 
-export default function ContactPage() {
   return (
     <main>
       <SiteHeader />
 
       <section className="contact-hero">
         <div>
-          <p className="eyebrow">Contact Luminol</p>
-          <h1>Your next step starts with a conversation.</h1>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1>{copy.heroTitle}</h1>
         </div>
-        <p>
-          Whether you already know what you need or want help choosing, share
-          your goal and Luminol will guide you toward the right school and
-          program.
-        </p>
+        <p>{copy.heroBody}</p>
       </section>
 
       <section className="contact-paths section-shell">
-        <p className="eyebrow">Explore before you enquire</p>
+        <p className="eyebrow">{copy.exploreEyebrow}</p>
         <div className="contact-path-grid">
           {contactPaths.map((path) => (
-            <a href={path.href} key={path.name}>
+            <Link
+              href={localizeHref(locale, `/schools/${path.school.slug}`)}
+              key={path.school.slug}
+            >
               <span>{path.number}</span>
-              <h2>{path.name}</h2>
+              <h2>{path.school.name}</h2>
               <p>{path.description}</p>
               <b aria-hidden="true">↗</b>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
 
       <section className="enquiry-section section-shell">
         <div className="enquiry-context">
-          <p className="eyebrow eyebrow-light">A thoughtful first step</p>
-          <h2>What happens next?</h2>
+          <p className="eyebrow eyebrow-light">{copy.nextEyebrow}</p>
+          <h2>{copy.nextTitle}</h2>
           <ol>
-            <li>
-              <span>01</span>
-              Your enquiry is securely recorded.
-            </li>
-            <li>
-              <span>02</span>
-              The team reviews your goal and area of interest.
-            </li>
-            <li>
-              <span>03</span>
-              Luminol follows up with the most suitable next step.
-            </li>
+            {copy.steps.map((step, index) => (
+              <li key={step}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                {step}
+              </li>
+            ))}
           </ol>
-          <p className="privacy-note">
-            Please do not include highly sensitive medical, financial or
-            identity information in this form.
-          </p>
+          <p className="privacy-note">{copy.privacyNote}</p>
         </div>
-        <EnquiryForm />
+        <EnquiryForm locale={locale} copy={publicCopy.form} />
       </section>
 
       <SiteFooter />
