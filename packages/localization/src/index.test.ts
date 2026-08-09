@@ -79,11 +79,30 @@ describe('safe navigation and formatting', () => {
     );
     expect(sanitizeInternalReturnTo('//evil.example')).toBe('/');
     expect(sanitizeInternalReturnTo('/\\evil')).toBe('/');
+    expect(sanitizeInternalReturnTo('/%5Cevil')).toBe('/');
+    expect(sanitizeInternalReturnTo('/%00evil')).toBe('/');
     expect(sanitizeInternalReturnTo('https://evil.example')).toBe('/');
   });
 
-  it('formats integer minor units as localized currency', () => {
-    expect(formatLocalizedCurrency(125000, 'DZD', 'fr')).toContain('1');
+  it('formats integer minor units with each currency minor-unit exponent', () => {
+    expect(formatLocalizedCurrency(125000, 'DZD', 'fr')).toBe(
+      new Intl.NumberFormat('fr-DZ', {
+        style: 'currency',
+        currency: 'DZD',
+      }).format(1250),
+    );
+    expect(formatLocalizedCurrency(1250, 'JPY', 'en')).toBe(
+      new Intl.NumberFormat('en-DZ', {
+        style: 'currency',
+        currency: 'JPY',
+      }).format(1250),
+    );
+    expect(formatLocalizedCurrency(1250, 'KWD', 'en')).toBe(
+      new Intl.NumberFormat('en-DZ', {
+        style: 'currency',
+        currency: 'KWD',
+      }).format(1.25),
+    );
     expect(() => formatLocalizedCurrency(1.5, 'DZD', 'en')).toThrow(
       'Currency minor units must be an integer',
     );
