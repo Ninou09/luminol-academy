@@ -64,7 +64,7 @@ export async function SiteFooter() {
       </div>
       <div className={styles.footerBottom}>
         <p>© {new Date().getFullYear()} Luminol Academy</p>
-        <p>Psychology · Languages · Professional Training</p>
+        <p>Luminol · AR · FR · EN</p>
       </div>
     </footer>
   );
