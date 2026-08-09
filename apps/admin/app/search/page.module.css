@@ -47,11 +47,7 @@
 .sidebar nav a:focus-visible,
 .sidebar nav .active {
   border-inline-start-color: var(--color-brand-gold);
-  background: color-mix(
-    in srgb,
-    var(--color-brand-surface) 7%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--color-brand-surface) 7%, transparent);
   color: var(--color-brand-surface);
 }
 
