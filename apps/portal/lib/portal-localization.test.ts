@@ -14,6 +14,8 @@ describe('learner portal localization', () => {
   it('provides complete core navigation and learner copy for every locale', () => {
     for (const locale of locales) {
       const copy = getPortalCopy(locale);
+      expect(copy.metadata.title.length).toBeGreaterThan(0);
+      expect(copy.metadata.description.length).toBeGreaterThan(0);
       expect(copy.shell.portal.length).toBeGreaterThan(0);
       expect(copy.shell.search.length).toBeGreaterThan(0);
       expect(copy.dashboard.myProgrammes.length).toBeGreaterThan(0);
