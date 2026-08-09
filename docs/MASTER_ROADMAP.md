@@ -88,7 +88,7 @@ The third delivery slice adds protected administration search at `/search` in th
 
 The observability slice records only daily aggregate search outcome buckets for learner search, public programme search, and protected administration search. The persistence model and write API do not accept or store raw query text, user identifiers, session identifiers, IP addresses, or searched content. Telemetry writes run inside a database transaction with a PostgreSQL statement timeout plus bounded Prisma transaction acquisition/runtime limits, so stalled writes are canceled instead of accumulating detached work. Learner telemetry uses the pre-display-limit match count, and administration telemetry preserves overflow into the `TWENTY_PLUS` bucket.
 
-Final review hardening also places administration search tests inside the repository-wide Vitest quality gate. All planned Milestone 14 product slices are implemented on the active milestone branch. Milestone-wide CI and independent re-review remain before the milestone is marked complete.
+Final review hardening also places administration search tests inside the repository-wide Vitest quality gate, keeps protected identity searches out of browser URLs, treats PostgreSQL wildcard characters as literal search text, and bounds telemetry work at the database layer. All planned Milestone 14 product slices are implemented on the active milestone branch. Milestone-wide CI and independent re-review remain before the milestone is marked complete.
 
 AI/vector search and external paid search providers remain explicitly out of scope until the deterministic search layer is proven.
 
