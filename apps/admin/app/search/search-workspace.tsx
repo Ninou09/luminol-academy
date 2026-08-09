@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useActionState } from 'react';
 
 import { displayPersonName, formatEnumLabel } from '../../lib/operations';
@@ -104,7 +103,6 @@ export function AdminSearchWorkspace() {
                       Account created{' '}
                       {dateFormatter.format(new Date(person.createdAt))}
                     </span>
-                    <Link href="/#learners">Open learner operations</Link>
                   </article>
                 ))}
               </div>
@@ -129,7 +127,6 @@ export function AdminSearchWorkspace() {
                       {formatEnumLabel(enquiry.status)} ·{' '}
                       {dateFormatter.format(new Date(enquiry.createdAt))}
                     </span>
-                    <Link href="/#enquiries">Open enquiry operations</Link>
                   </article>
                 ))}
               </div>
@@ -153,7 +150,6 @@ export function AdminSearchWorkspace() {
                       {course.published ? 'Published' : 'Draft'} · Updated{' '}
                       {dateFormatter.format(new Date(course.updatedAt))}
                     </span>
-                    <Link href="/#programmes">Open programme operations</Link>
                   </article>
                 ))}
               </div>
