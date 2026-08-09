@@ -189,7 +189,7 @@
 :global(html[dir='rtl']) .card h3,
 :global(html[dir='rtl']) .filters label,
 :global(html[dir='rtl']) .meta {
-  letter-spacing: 0;
+  letter-spacing: normal;
 }
 
 :global(html[dir='rtl']) .meta {
