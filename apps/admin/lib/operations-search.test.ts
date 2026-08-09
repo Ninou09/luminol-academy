@@ -2,12 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import {
   ADMIN_SEARCH_MAX_QUERY_LENGTH,
+  escapePostgresLikePattern,
   normalizeAdminSearchQuery,
   parseAdminSearchParam,
 } from './operations-search';
 
 describe('administration operations search', () => {
-  it('validates URL-owned search parameters', () => {
+  it('validates untrusted search input', () => {
     expect(parseAdminSearchParam('learner@example.com')).toBe(
       'learner@example.com',
     );
@@ -26,5 +27,12 @@ describe('administration operations search', () => {
     expect(normalizeAdminSearchQuery('x'.repeat(300))).toHaveLength(
       ADMIN_SEARCH_MAX_QUERY_LENGTH,
     );
+  });
+
+  it('escapes PostgreSQL LIKE wildcards so searches stay literal', () => {
+    expect(escapePostgresLikePattern('50%_\\done')).toBe(
+      '50\\%\\_\\\\done',
+    );
+    expect(escapePostgresLikePattern('plain text')).toBe('plain text');
   });
 });
