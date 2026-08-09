@@ -85,28 +85,32 @@ export async function recordSearchTelemetry({
     normalizedResultCount > 0 ? SearchOutcome.HIT : SearchOutcome.NO_MATCH;
   const resultBucket = searchResultBucketForCount(normalizedResultCount);
 
-  return settleSearchTelemetryWrite(
-    db.searchTelemetryDaily.upsert({
-      where: {
-        day_surface_outcome_resultBucket: {
+  try {
+    return await settleSearchTelemetryWrite(
+      db.searchTelemetryDaily.upsert({
+        where: {
+          day_surface_outcome_resultBucket: {
+            day,
+            surface,
+            outcome,
+            resultBucket,
+          },
+        },
+        create: {
           day,
           surface,
           outcome,
           resultBucket,
+          count: 1,
         },
-      },
-      create: {
-        day,
-        surface,
-        outcome,
-        resultBucket,
-        count: 1,
-      },
-      update: {
-        count: { increment: 1 },
-      },
-    }),
-  );
+        update: {
+          count: { increment: 1 },
+        },
+      }),
+    );
+  } catch {
+    return false;
+  }
 }
 
 export * from '@prisma/client';
