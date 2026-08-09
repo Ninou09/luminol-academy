@@ -24,12 +24,15 @@ export default async function SearchPage({
   const user = await requireUser();
   const params = await searchParams;
   const rawQuery = parseLearningSearchParam(params.q);
-  const { query, results } = await searchLearnerContent(user.id, rawQuery);
+  const { query, results, totalMatches } = await searchLearnerContent(
+    user.id,
+    rawQuery,
+  );
 
   if (query.length >= 2) {
     await recordSearchTelemetry({
       surface: SearchSurface.LEARNER,
-      resultCount: results.length,
+      resultCount: totalMatches,
     });
   }
 
