@@ -47,6 +47,12 @@ export default async function LessonPage({
     : `/courses/${course.slug}`;
   const nextHref = localizeHref(locale, rawNextHref);
   const number = (value: number) => formatLocalizedNumber(value, locale);
+  const lessonNavigationLabel =
+    locale === 'ar'
+      ? 'التنقل بين الدروس'
+      : locale === 'fr'
+        ? 'Navigation entre les leçons'
+        : 'Lesson navigation';
 
   return (
     <main>
@@ -108,7 +114,10 @@ export default async function LessonPage({
               )}
             </section>
 
-            <nav className={styles.navigation} aria-label={copy.breadcrumb}>
+            <nav
+              className={styles.navigation}
+              aria-label={lessonNavigationLabel}
+            >
               {navigation.previous?.slug ? (
                 <Link
                   href={localizeHref(
