@@ -453,6 +453,25 @@ importers:
         specifier: ^3.2.4
         version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(jsdom@28.1.0)(lightningcss@1.32.0)(yaml@2.9.0)
 
+  packages/localization:
+    dependencies:
+      zod:
+        specifier: ^4.0.10
+        version: 4.4.3
+    devDependencies:
+      '@luminol/config':
+        specifier: workspace:*
+        version: link:../config
+      eslint:
+        specifier: ^10.8.0
+        version: 10.8.0(jiti@2.7.0)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(jsdom@28.1.0)(lightningcss@1.32.0)(yaml@2.9.0)
+
   packages/notifications:
     dependencies:
       '@luminol/database':
