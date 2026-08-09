@@ -252,8 +252,12 @@ export function formatLocalizedCurrency(
     throw new RangeError('Currency must be a three-letter ISO code');
   }
 
-  return formatLocalizedNumber(minorUnits / 100, locale, {
+  const formatter = new Intl.NumberFormat(getIntlLocale(locale), {
     style: 'currency',
     currency: normalizedCurrency,
   });
+  const fractionDigits = formatter.resolvedOptions().maximumFractionDigits;
+  const majorUnits = minorUnits / 10 ** fractionDigits;
+
+  return formatter.format(majorUnits);
 }
