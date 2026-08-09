@@ -1,0 +1,195 @@
+name: Fix portal review findings once
+
+on:
+  push:
+    branches:
+      - feature/milestone-15-portal-localization
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-15-portal-localization
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply exact review fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          labels = Path('apps/portal/lib/portal-localization.ts')
+          text = labels.read_text()
+
+          status_block = r'''const STATUS_LABELS: Record<Locale, Record<string, string>> = {
+            en: {
+              ACTIVE: 'Active',
+              COMPLETED: 'Completed',
+              IN_PROGRESS: 'In progress',
+              NOT_STARTED: 'Not started',
+              REVIEW_REQUIRED: 'Review required',
+              SUBMITTED: 'Submitted',
+              PENDING: 'Pending',
+              DRAFT: 'Draft',
+              OPEN: 'Open',
+              PAID: 'Paid',
+              VOID: 'Void',
+              PAST_DUE: 'Past due',
+              REFUNDED: 'Refunded',
+              REQUIRES_PAYMENT_METHOD: 'Requires payment method',
+              REQUIRES_CONFIRMATION: 'Requires confirmation',
+              PROCESSING: 'Processing',
+              SUCCEEDED: 'Succeeded',
+              FAILED: 'Failed',
+              PARTIALLY_REFUNDED: 'Partially refunded',
+              TRIALING: 'Trialing',
+              PAUSED: 'Paused',
+              EXPIRED: 'Expired',
+              CANCELLED: 'Cancelled',
+              REVOKED: 'Revoked',
+              SUPERSEDED: 'Superseded',
+            },
+            fr: {
+              ACTIVE: 'Actif',
+              COMPLETED: 'Terminé',
+              IN_PROGRESS: 'En cours',
+              NOT_STARTED: 'Non commencé',
+              REVIEW_REQUIRED: 'Révision requise',
+              SUBMITTED: 'Soumis',
+              PENDING: 'En attente',
+              DRAFT: 'Brouillon',
+              OPEN: 'Ouverte',
+              PAID: 'Payée',
+              VOID: 'Annulée',
+              PAST_DUE: 'En retard',
+              REFUNDED: 'Remboursé',
+              REQUIRES_PAYMENT_METHOD: 'Moyen de paiement requis',
+              REQUIRES_CONFIRMATION: 'Confirmation requise',
+              PROCESSING: 'En traitement',
+              SUCCEEDED: 'Réussi',
+              FAILED: 'Échec',
+              PARTIALLY_REFUNDED: 'Partiellement remboursé',
+              TRIALING: 'Période d’essai',
+              PAUSED: 'En pause',
+              EXPIRED: 'Expiré',
+              CANCELLED: 'Annulé',
+              REVOKED: 'Révoqué',
+              SUPERSEDED: 'Remplacé',
+            },
+            ar: {
+              ACTIVE: 'نشط',
+              COMPLETED: 'مكتمل',
+              IN_PROGRESS: 'قيد الإنجاز',
+              NOT_STARTED: 'لم يبدأ',
+              REVIEW_REQUIRED: 'يتطلب مراجعة',
+              SUBMITTED: 'تم الإرسال',
+              PENDING: 'قيد الانتظار',
+              DRAFT: 'مسودة',
+              OPEN: 'مفتوحة',
+              PAID: 'مدفوعة',
+              VOID: 'ملغاة',
+              PAST_DUE: 'متأخرة',
+              REFUNDED: 'مستردة',
+              REQUIRES_PAYMENT_METHOD: 'يتطلب وسيلة دفع',
+              REQUIRES_CONFIRMATION: 'يتطلب تأكيداً',
+              PROCESSING: 'قيد المعالجة',
+              SUCCEEDED: 'ناجحة',
+              FAILED: 'فشلت',
+              PARTIALLY_REFUNDED: 'مستردة جزئياً',
+              TRIALING: 'فترة تجريبية',
+              PAUSED: 'متوقفة مؤقتاً',
+              EXPIRED: 'منتهية',
+              CANCELLED: 'ملغاة',
+              REVOKED: 'ملغاة',
+              SUPERSEDED: 'مستبدلة',
+            },
+          };'''
+
+          text, count = re.subn(
+              r"const STATUS_LABELS: Record<Locale, Record<string, string>> = \{.*?\n\};\n\nconst LESSON_TYPE_LABELS",
+              status_block + "\n\nconst LESSON_TYPE_LABELS",
+              text,
+              count=1,
+              flags=re.S,
+          )
+          if count != 1:
+              raise SystemExit('status block replacement failed')
+
+          lesson_block = r'''const LESSON_TYPE_LABELS: Record<Locale, Record<string, string>> = {
+            en: {
+              VIDEO: 'Video',
+              ARTICLE: 'Article',
+              RESOURCE: 'Resource',
+              LIVE: 'Live',
+            },
+            fr: {
+              VIDEO: 'Vidéo',
+              ARTICLE: 'Article',
+              RESOURCE: 'Ressource',
+              LIVE: 'Direct',
+            },
+            ar: {
+              VIDEO: 'فيديو',
+              ARTICLE: 'مقال',
+              RESOURCE: 'مورد',
+              LIVE: 'مباشر',
+            },
+          };'''
+          text, count = re.subn(
+              r"const LESSON_TYPE_LABELS: Record<Locale, Record<string, string>> = \{.*?\n\};\n\nconst SKILL_LABELS",
+              lesson_block + "\n\nconst SKILL_LABELS",
+              text,
+              count=1,
+              flags=re.S,
+          )
+          if count != 1:
+              raise SystemExit('lesson type block replacement failed')
+          labels.write_text(text)
+
+          lesson = Path('apps/portal/app/courses/[slug]/lessons/[lessonSlug]/page.tsx')
+          text = lesson.read_text()
+          needle = "  const number = (value: number) => formatLocalizedNumber(value, locale);\n"
+          insert = needle + "  const lessonNavigationLabel =\n    locale === 'ar'\n      ? 'التنقل بين الدروس'\n      : locale === 'fr'\n        ? 'Navigation entre les leçons'\n        : 'Lesson navigation';\n"
+          if needle not in text:
+              raise SystemExit('lesson navigation insertion point missing')
+          text = text.replace(needle, insert, 1)
+          text = text.replace(
+              '<nav className={styles.navigation} aria-label={copy.breadcrumb}>',
+              '<nav className={styles.navigation} aria-label={lessonNavigationLabel}>',
+              1,
+          )
+          lesson.write_text(text)
+          PY
+
+      - name: Format review fixes
+        run: pnpm exec prettier --write apps/portal/lib/portal-localization.ts 'apps/portal/app/courses/[slug]/lessons/[lessonSlug]/page.tsx' apps/portal/components/portal-language-switcher.tsx apps/portal/app/portal-localization.css
+
+      - name: Commit fixes and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/portal
+          git rm .github/workflows/fix-portal-review-once.yml
+          git commit -m "Address learner portal localization review"
+          git push origin HEAD:feature/milestone-15-portal-localization
