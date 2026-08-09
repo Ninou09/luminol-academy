@@ -1,27 +1,32 @@
 import { requirePlatformPermission } from '@luminol/auth';
 import { db } from '@luminol/database';
+import {
+  formatLocalizedDate,
+  formatLocalizedNumber,
+  getCommonDictionary,
+  localizeHref,
+} from '@luminol/localization';
 import Link from 'next/link';
 
+import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
+import { getAdminCopy, getAdminEnumLabel } from '../../lib/admin-localization';
+import { getAdminRequestLocale } from '../../lib/request-locale';
 import {
   issueCertificateAction,
   replaceCertificateAction,
   revokeCertificateAction,
 } from './actions';
 
-const dateFormatter = new Intl.DateTimeFormat('en', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-});
-
 export default async function CertificatesAdminPage() {
   await requirePlatformPermission('certificate:audit:read');
+  const locale = await getAdminRequestLocale();
+  const copy = getAdminCopy(locale).certificates;
+  const common = getCommonDictionary(locale);
 
   const issued = await db.certificate.findMany({
     where: { completionId: { not: null } },
     select: { completionId: true },
   });
-
   const eligible = await db.enrollment.findMany({
     where: {
       status: 'COMPLETED',
@@ -39,7 +44,6 @@ export default async function CertificatesAdminPage() {
     },
     take: 100,
   });
-
   const certificates = await db.certificate.findMany({
     select: {
       id: true,
@@ -53,13 +57,14 @@ export default async function CertificatesAdminPage() {
     orderBy: { issuedAt: 'desc' },
     take: 100,
   });
-
   const activeCount = certificates.filter(
     (certificate) => certificate.status === 'ACTIVE',
   ).length;
   const revokedCount = certificates.filter(
     (certificate) => certificate.status === 'REVOKED',
   ).length;
+  const number = (value: number) => formatLocalizedNumber(value, locale);
+  const date = (value: Date) => formatLocalizedDate(value, locale);
 
   return (
     <main
@@ -70,55 +75,66 @@ export default async function CertificatesAdminPage() {
         <div className="admin-content">
           <section className="admin-intro">
             <div>
-              <p className="eyebrow">Credential operations</p>
-              <h1>Certificate registry</h1>
-              <p>
-                Issue certificates from verified completions, review their audit
-                history, and manage replacements or revocations.
-              </p>
+              <p className="eyebrow">{copy.eyebrow}</p>
+              <h1>{copy.title}</h1>
+              <p>{copy.intro}</p>
             </div>
-            <Link href="/">Back to operations</Link>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Link href={localizeHref(locale, '/')}>{copy.back}</Link>
+              <AdminLanguageSwitcher
+                locale={locale}
+                label={common.languageSelectorLabel}
+              />
+            </div>
           </section>
 
-          <section className="metric-grid" aria-label="Certificate summary">
+          <section className="metric-grid" aria-label={copy.summaryAria}>
             <article>
-              <span>Eligible completions</span>
-              <strong>{eligible.length}</strong>
-              <small>Ready for certificate review</small>
+              <span>{copy.eligibleCompletions}</span>
+              <strong>{number(eligible.length)}</strong>
+              <small>{copy.readyForReview}</small>
             </article>
             <article>
-              <span>Total certificates</span>
-              <strong>{certificates.length}</strong>
-              <small>Most recent 100 records</small>
+              <span>{copy.totalCertificates}</span>
+              <strong>{number(certificates.length)}</strong>
+              <small>{copy.recentRecords}</small>
             </article>
             <article>
-              <span>Active</span>
-              <strong>{activeCount}</strong>
-              <small>Currently valid credentials</small>
+              <span>{copy.active}</span>
+              <strong>{number(activeCount)}</strong>
+              <small>{copy.currentlyValid}</small>
             </article>
             <article>
-              <span>Revoked</span>
-              <strong>{revokedCount}</strong>
-              <small>Invalidated credentials</small>
+              <span>{copy.revoked}</span>
+              <strong>{number(revokedCount)}</strong>
+              <small>{copy.invalidated}</small>
             </article>
           </section>
 
           <section className="admin-panel" style={{ marginBottom: '1.25rem' }}>
             <div className="panel-heading">
               <div>
-                <p className="eyebrow">Awaiting action</p>
-                <h2>Eligible completions</h2>
+                <p className="eyebrow">{copy.awaitingAction}</p>
+                <h2>{copy.eligibleCompletions}</h2>
               </div>
-              <span>{eligible.length} ready</span>
+              <span>
+                {number(eligible.length)} {copy.ready}
+              </span>
             </div>
-
             {eligible.length > 0 ? (
               <div className="compact-list">
                 {eligible.map((item) => (
                   <article key={item.id}>
                     <div>
-                      <h3>{item.course.title}</h3>
-                      <p>{item.user.email}</p>
+                      <h3 dir="auto">{item.course.title}</h3>
+                      <p dir="auto">{item.user.email}</p>
                     </div>
                     <form action={issueCertificateAction}>
                       <input
@@ -126,18 +142,15 @@ export default async function CertificatesAdminPage() {
                         name="completionId"
                         value={item.id}
                       />
-                      <button type="submit">Issue certificate</button>
+                      <button type="submit">{copy.issueCertificate}</button>
                     </form>
                   </article>
                 ))}
               </div>
             ) : (
               <div className="admin-empty">
-                <strong>No certificates are waiting to be issued.</strong>
-                <p>
-                  A learner appears here only after a published programme
-                  enrolment has been marked completed with a completion date.
-                </p>
+                <strong>{copy.noAwaitingTitle}</strong>
+                <p>{copy.noAwaitingBody}</p>
               </div>
             )}
           </section>
@@ -145,12 +158,13 @@ export default async function CertificatesAdminPage() {
           <section className="admin-panel">
             <div className="panel-heading">
               <div>
-                <p className="eyebrow">Credential history</p>
-                <h2>Issued certificates</h2>
+                <p className="eyebrow">{copy.history}</p>
+                <h2>{copy.issuedCertificates}</h2>
               </div>
-              <span>{certificates.length} records</span>
+              <span>
+                {number(certificates.length)} {copy.records}
+              </span>
             </div>
-
             {certificates.length > 0 ? (
               <div style={{ display: 'grid', gap: '1rem' }}>
                 {certificates.map((item) => (
@@ -163,24 +177,24 @@ export default async function CertificatesAdminPage() {
                     }}
                   >
                     <h3>
-                      {item.recipientNameSnapshot} — {item.courseTitleSnapshot}
+                      <bdi dir="auto">{item.recipientNameSnapshot}</bdi> —{' '}
+                      <bdi dir="auto">{item.courseTitleSnapshot}</bdi>
                     </h3>
                     <p>
-                      <code>{item.serialNumber}</code> · {item.status} · issued{' '}
-                      {dateFormatter.format(item.issuedAt)}
+                      <code dir="ltr">{item.serialNumber}</code> ·{' '}
+                      {getAdminEnumLabel(locale, item.status)} · {copy.issued}{' '}
+                      {date(item.issuedAt)}
                     </p>
-
                     {item.auditEvents.length > 0 && (
                       <ul>
                         {item.auditEvents.map((event) => (
                           <li key={event.id}>
-                            {event.action} ·{' '}
-                            {dateFormatter.format(event.occurredAt)}
+                            {getAdminEnumLabel(locale, event.action)} ·{' '}
+                            {date(event.occurredAt)}
                           </li>
                         ))}
                       </ul>
                     )}
-
                     {item.status === 'ACTIVE' && (
                       <div
                         style={{
@@ -203,12 +217,18 @@ export default async function CertificatesAdminPage() {
                             value={`replacement-${item.id}`}
                           />
                           <label>
-                            Replacement reason
-                            <input name="reason" required maxLength={500} />
+                            {copy.replacementReason}
+                            <input
+                              name="reason"
+                              required
+                              maxLength={500}
+                              dir="auto"
+                            />
                           </label>
-                          <button type="submit">Replace certificate</button>
+                          <button type="submit">
+                            {copy.replaceCertificate}
+                          </button>
                         </form>
-
                         <form action={revokeCertificateAction}>
                           <input
                             type="hidden"
@@ -216,16 +236,22 @@ export default async function CertificatesAdminPage() {
                             value={item.id}
                           />
                           <label>
-                            Revocation reason
+                            {copy.revocationReason}
                             <select name="reasonCode" required>
                               <option value="issued_in_error">
-                                Issued in error
+                                {copy.issuedInError}
                               </option>
-                              <option value="misconduct">Misconduct</option>
-                              <option value="replaced">Replacement</option>
+                              <option value="misconduct">
+                                {copy.misconduct}
+                              </option>
+                              <option value="replaced">
+                                {copy.replacement}
+                              </option>
                             </select>
                           </label>
-                          <button type="submit">Revoke certificate</button>
+                          <button type="submit">
+                            {copy.revokeCertificate}
+                          </button>
                         </form>
                       </div>
                     )}
@@ -234,10 +260,8 @@ export default async function CertificatesAdminPage() {
               </div>
             ) : (
               <div className="admin-empty">
-                <strong>No certificates have been issued yet.</strong>
-                <p>
-                  Issued credentials and their audit history will appear here.
-                </p>
+                <strong>{copy.noIssuedTitle}</strong>
+                <p>{copy.noIssuedBody}</p>
               </div>
             )}
           </section>
