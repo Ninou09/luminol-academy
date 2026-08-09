@@ -1,3 +1,4 @@
+import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -41,6 +42,13 @@ export default async function ProgrammesPage({
   const programmes = sourceProgrammes
     ? filterPublicProgrammes(sourceProgrammes, filters)
     : null;
+
+  if (programmes !== null && filters.query.length >= 2) {
+    await recordSearchTelemetry({
+      surface: SearchSurface.PUBLIC_PROGRAMMES,
+      resultCount: programmes.length,
+    });
+  }
 
   return (
     <main>
