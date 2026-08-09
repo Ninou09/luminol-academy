@@ -1,0 +1,100 @@
+name: Apply Milestone 14 telemetry schema once
+
+on:
+  push:
+    branches:
+      - feature/milestone-14-search-discovery
+    paths:
+      - .github/workflows/apply-m14-telemetry-schema-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  schema:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out milestone branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-14-search-discovery
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22.12.0'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Add aggregate telemetry schema
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path('packages/database/prisma/schema.prisma')
+          text = path.read_text()
+          enum_marker = 'enum EnrollmentStatus {'
+          enums = '''enum SearchSurface {
+            LEARNER
+            PUBLIC_PROGRAMMES
+            ADMIN
+          }
+
+          enum SearchOutcome {
+            HIT
+            NO_MATCH
+          }
+
+          enum SearchResultBucket {
+            ZERO
+            ONE_TO_FIVE
+            SIX_TO_TWENTY
+            TWENTY_PLUS
+          }
+
+          '''
+          if 'enum SearchSurface {' not in text:
+              text = text.replace(enum_marker, enums + enum_marker, 1)
+
+          model = '''
+          model SearchTelemetryDaily {
+            id           String             @id @default(cuid())
+            day          DateTime           @db.Date
+            surface      SearchSurface
+            outcome      SearchOutcome
+            resultBucket SearchResultBucket
+            count        Int                @default(0)
+            createdAt    DateTime           @default(now())
+            updatedAt    DateTime           @updatedAt
+
+            @@unique([day, surface, outcome, resultBucket])
+            @@index([surface, day])
+          }
+          '''
+          if 'model SearchTelemetryDaily {' not in text:
+              text = text.rstrip() + '\n\n' + model.strip() + '\n'
+
+          path.write_text(text)
+          PY
+
+      - name: Format and validate Prisma schema
+        run: |
+          pnpm --filter @luminol/database exec prisma format
+          pnpm --filter @luminol/database exec prisma validate
+
+      - name: Commit schema and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/apply-m14-telemetry-schema-once.yml
+          git add packages/database/prisma/schema.prisma
+          git commit -m "Model Milestone 14 aggregate search telemetry"
+          git push origin HEAD:feature/milestone-14-search-discovery
