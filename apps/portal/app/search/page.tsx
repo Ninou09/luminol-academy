@@ -10,6 +10,11 @@ function labelForKind(kind: 'programme' | 'module' | 'lesson') {
   return 'Lesson';
 }
 
+function destinationLabelForKind(kind: 'programme' | 'module' | 'lesson') {
+  if (kind === 'module') return 'programme containing this module';
+  return labelForKind(kind).toLowerCase();
+}
+
 export default async function SearchPage({
   searchParams,
 }: {
@@ -98,7 +103,7 @@ export default async function SearchPage({
                         </p>
                       ) : null}
                       <Link className="course-link" href={result.href}>
-                        Open {labelForKind(result.kind).toLowerCase()}{' '}
+                        Open {destinationLabelForKind(result.kind)}{' '}
                         <span aria-hidden="true">→</span>
                       </Link>
                     </div>
