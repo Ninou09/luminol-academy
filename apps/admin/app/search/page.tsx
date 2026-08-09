@@ -1,5 +1,6 @@
 import { UserButton } from '@clerk/nextjs';
 import { requirePermission } from '@luminol/auth';
+import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
 import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
@@ -37,6 +38,13 @@ export default async function AdminSearchPage({
     results.people.items.length +
     results.enquiries.items.length +
     results.courses.items.length;
+
+  if (hasSearch) {
+    await recordSearchTelemetry({
+      surface: SearchSurface.ADMIN,
+      resultCount: shownCount,
+    });
+  }
 
   return (
     <main className={styles.shell}>
