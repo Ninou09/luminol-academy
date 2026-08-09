@@ -1,17 +1,21 @@
-import { UserButton } from '@clerk/nextjs';
 import { requireUser } from '@luminol/auth';
 import { db } from '@luminol/database';
-import { Wordmark } from '@luminol/ui';
+import { formatLocalizedNumber, localizeHref } from '@luminol/localization';
 import Link from 'next/link';
 
+import { PortalHeader } from '../../components/portal-header';
+import {
+  getPortalCopy,
+  getPortalStatusLabel,
+} from '../../lib/portal-localization';
+import { getPortalRequestLocale } from '../../lib/request-locale';
 import { startPlacementFromForm } from './actions';
-
-function formatStatus(status: string) {
-  return status.charAt(0) + status.slice(1).toLowerCase().replaceAll('_', ' ');
-}
 
 export default async function LanguagesPage() {
   const user = await requireUser();
+  const locale = await getPortalRequestLocale();
+  const portalCopy = getPortalCopy(locale);
+  const copy = portalCopy.languages;
   const assessments = await db.placementAssessment.findMany({
     where: { published: true },
     orderBy: [{ targetLanguage: 'asc' }, { version: 'desc' }],
@@ -31,31 +35,24 @@ export default async function LanguagesPage() {
       },
     },
   });
+  const number = (value: number) => formatLocalizedNumber(value, locale);
+  const placementLabel =
+    locale === 'ar'
+      ? 'تحديد مستوى CEFR'
+      : locale === 'fr'
+        ? 'Positionnement CECR'
+        : 'CEFR placement';
 
   return (
     <main>
-      <header className="portal-header">
-        <Link href="/" className="brand-link" aria-label="Luminol learner home">
-          <Wordmark />
-        </Link>
-        <div className="portal-account">
-          <Link href="/" className="text-sm no-underline">
-            Dashboard
-          </Link>
-          <UserButton />
-        </div>
-      </header>
+      <PortalHeader />
 
       <div className="dashboard-shell">
         <section className="dashboard-intro" aria-labelledby="language-title">
           <div>
-            <p className="eyebrow">Language learning</p>
-            <h1 id="language-title">Find your starting level.</h1>
-            <p>
-              Take a secure CEFR placement assessment and receive a clear view
-              of your reading, listening, speaking, writing, grammar and
-              vocabulary.
-            </p>
+            <p className="eyebrow">{copy.eyebrow}</p>
+            <h1 id="language-title">{copy.title}</h1>
+            <p>{copy.intro}</p>
           </div>
         </section>
 
@@ -65,10 +62,12 @@ export default async function LanguagesPage() {
         >
           <div className="section-heading">
             <div>
-              <p className="eyebrow">Placement</p>
-              <h2 id="assessments-title">Available assessments</h2>
+              <p className="eyebrow">{copy.placement}</p>
+              <h2 id="assessments-title">{copy.availableAssessments}</h2>
             </div>
-            <span>{assessments.length} available</span>
+            <span>
+              {number(assessments.length)} {copy.available}
+            </span>
           </div>
 
           {assessments.length === 0 ? (
@@ -77,11 +76,8 @@ export default async function LanguagesPage() {
                 A1
               </span>
               <div>
-                <h3>Placement assessments are being prepared.</h3>
-                <p>
-                  Your language programmes will appear here as soon as they are
-                  published.
-                </p>
+                <h3>{copy.emptyTitle}</h3>
+                <p>{copy.emptyBody}</p>
               </div>
             </div>
           ) : (
@@ -103,40 +99,49 @@ export default async function LanguagesPage() {
                     <div className="course-content">
                       <div className="course-meta">
                         <span className="status status-active">
-                          CEFR placement
+                          {placementLabel}
                         </span>
-                        <span>Version {assessment.version}</span>
+                        <span>
+                          {copy.version} {number(assessment.version)}
+                        </span>
                       </div>
-                      <h3>{assessment.title}</h3>
-                      <p className="course-note">
+                      <h3 dir="auto">{assessment.title}</h3>
+                      <p className="course-note" dir="auto">
                         {assessment.course.title} · {assessment.targetLanguage}
                         {assessment.timeLimitMinutes
-                          ? ` · ${assessment.timeLimitMinutes} minutes`
-                          : ' · Untimed'}
+                          ? ` · ${number(assessment.timeLimitMinutes)} ${portalCopy.lesson.minutes}`
+                          : ` · ${copy.untimed}`}
                       </p>
 
-                      {latest && (
+                      {latest ? (
                         <p className="course-note">
-                          Latest attempt: {formatStatus(latest.status)}
+                          {copy.latestAttempt}:{' '}
+                          {getPortalStatusLabel(locale, latest.status)}
                           {latest.recommendedLevel
-                            ? ` · Level ${latest.recommendedLevel}`
+                            ? ` · ${copy.level} ${latest.recommendedLevel}`
                             : ''}
                         </p>
-                      )}
+                      ) : null}
 
                       {hasResult && latest ? (
                         <Link
                           className="course-link"
-                          href={`/languages/results/${latest.id}`}
+                          href={localizeHref(
+                            locale,
+                            `/languages/results/${latest.id}`,
+                          )}
                         >
-                          View result <span aria-hidden="true">→</span>
+                          {copy.viewResult} <span aria-hidden="true">→</span>
                         </Link>
                       ) : isActive && latest ? (
                         <Link
                           className="course-link"
-                          href={`/languages/placement/${latest.id}`}
+                          href={localizeHref(
+                            locale,
+                            `/languages/placement/${latest.id}`,
+                          )}
                         >
-                          Resume assessment <span aria-hidden="true">→</span>
+                          {copy.resume} <span aria-hidden="true">→</span>
                         </Link>
                       ) : (
                         <form action={startPlacementFromForm}>
@@ -146,7 +151,7 @@ export default async function LanguagesPage() {
                             value={assessment.id}
                           />
                           <button className="course-link" type="submit">
-                            Start assessment <span aria-hidden="true">→</span>
+                            {copy.start} <span aria-hidden="true">→</span>
                           </button>
                         </form>
                       )}

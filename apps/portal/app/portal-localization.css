@@ -1,0 +1,132 @@
+.portal-account {
+  flex-wrap: wrap;
+}
+
+.portal-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.portal-nav a {
+  color: var(--color-brand-ink-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.portal-nav a:hover,
+.portal-nav a:focus-visible {
+  color: var(--color-brand-ink);
+}
+
+.portal-locale-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.15rem;
+  border: 1px solid rgb(24 42 51 / 0.14);
+  border-radius: var(--radius-control);
+}
+
+.portal-locale-switcher a {
+  min-width: 1.9rem;
+  padding: 0.35rem;
+  border-radius: calc(var(--radius-control) - 2px);
+  color: var(--color-brand-ink-soft);
+  font-size: 0.6rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+}
+
+.portal-locale-switcher a[aria-current='page'] {
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+}
+
+.portal-locale-switcher a:focus-visible {
+  outline: 2px solid var(--color-brand-gold-dark);
+  outline-offset: 2px;
+}
+
+html[dir='rtl'] body
+  :where(
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    a,
+    span,
+    small,
+    strong,
+    b,
+    li,
+    dt,
+    dd,
+    label,
+    button,
+    blockquote
+  ) {
+  letter-spacing: normal;
+}
+
+html[dir='rtl']
+  :where(
+    .eyebrow,
+    .summary-grid span,
+    .module-heading > span,
+    .lesson-copy > div
+  ) {
+  text-transform: none;
+}
+
+@media (max-width: 900px) {
+  .portal-header {
+    align-items: flex-start;
+    gap: 1rem;
+    padding-block: 1rem;
+  }
+
+  .portal-account {
+    justify-content: flex-end;
+  }
+
+  .portal-nav {
+    order: 3;
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 620px) {
+  .portal-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+  }
+
+  .portal-account {
+    gap: 0.5rem;
+  }
+
+  .portal-nav {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    gap: 0.55rem 0.8rem;
+  }
+
+  .portal-nav a {
+    font-size: 0.65rem;
+  }
+
+  .portal-locale-switcher a {
+    min-width: 1.65rem;
+    padding-inline: 0.25rem;
+    font-size: 0.55rem;
+  }
+}

@@ -1,9 +1,18 @@
 import { requireUser } from '@luminol/auth';
 import { db } from '@luminol/database';
+import { formatLocalizedDate, localizeHref } from '@luminol/localization';
 import Link from 'next/link';
+
+import { PortalHeader } from '../../components/portal-header';
+import { getPortalCopy } from '../../lib/portal-localization';
+import { getPortalRequestLocale } from '../../lib/request-locale';
 import { setNotificationRead, updateMarketingPreference } from './actions';
+
 export default async function NotificationsPage() {
   const user = await requireUser();
+  const locale = await getPortalRequestLocale();
+  const copy = getPortalCopy(locale).notifications;
+  const dashboardLabel = getPortalCopy(locale).shell.dashboard;
   const [items, preference] = await Promise.all([
     db.notification.findMany({
       where: { recipientId: user.id, channel: 'IN_APP' },
@@ -19,21 +28,29 @@ export default async function NotificationsPage() {
       },
     }),
   ]);
+
   return (
     <main>
+      <PortalHeader />
       <div className="dashboard-shell">
-        <Link href="/">← Dashboard</Link>
+        <Link href={localizeHref(locale, '/')}>← {dashboardLabel}</Link>
         <section className="dashboard-section">
-          <p className="eyebrow">Updates</p>
-          <h1>Notifications</h1>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1>{copy.title}</h1>
           {items.length ? (
             <div className="certificate-list">
               {items.map((item) => (
                 <article key={item.id}>
                   <div>
-                    <h2>{item.title}</h2>
-                    <p>{item.body}</p>
-                    <small>{item.createdAt.toLocaleDateString()}</small>
+                    <h2 dir="auto">{item.title}</h2>
+                    <p dir="auto">{item.body}</p>
+                    <small>
+                      {formatLocalizedDate(item.createdAt, locale, {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </small>
                   </div>
                   <form action={setNotificationRead}>
                     <input
@@ -46,21 +63,20 @@ export default async function NotificationsPage() {
                       name="read"
                       value={item.readAt ? 'false' : 'true'}
                     />
-                    <button>{item.readAt ? 'Mark unread' : 'Mark read'}</button>
+                    <button type="submit">
+                      {item.readAt ? copy.markUnread : copy.markRead}
+                    </button>
                   </form>
                 </article>
               ))}
             </div>
           ) : (
-            <p>No notifications yet.</p>
+            <p>{copy.empty}</p>
           )}
         </section>
         <section className="dashboard-section">
-          <h2>Email preferences</h2>
-          <p>
-            Essential account and learning messages are always sent. Optional
-            updates require your consent.
-          </p>
+          <h2>{copy.emailPreferences}</h2>
+          <p>{copy.preferencesBody}</p>
           <form action={updateMarketingPreference}>
             <label>
               <input
@@ -68,18 +84,18 @@ export default async function NotificationsPage() {
                 name="enabled"
                 defaultChecked={preference?.enabled ?? false}
               />{' '}
-              Receive optional academy updates
+              {copy.marketing}
             </label>
             <label>
-              {' '}
-              Time zone{' '}
+              {copy.timeZone}{' '}
               <input
                 name="timeZone"
+                dir="ltr"
                 defaultValue={preference?.timeZone ?? 'UTC'}
                 required
               />
             </label>
-            <button type="submit">Save preferences</button>
+            <button type="submit">{copy.save}</button>
           </form>
         </section>
       </div>
