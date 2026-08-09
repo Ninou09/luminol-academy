@@ -61,12 +61,12 @@ export function parseProgrammeDiscoveryParams(
   const languageResult = z
     .enum(PROGRAMME_LANGUAGE_CODES)
     .safeParse(languageValue);
+  const filters: ProgrammeDiscoveryFilters = { query };
 
-  return {
-    query,
-    school,
-    language: languageResult.success ? languageResult.data : undefined,
-  };
+  if (school) filters.school = school;
+  if (languageResult.success) filters.language = languageResult.data;
+
+  return filters;
 }
 
 function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
