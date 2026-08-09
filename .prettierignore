@@ -3,3 +3,6 @@ node_modules
 dist
 coverage
 pnpm-lock.yaml
+
+# Static translation catalog; validated by localization tests and typechecking.
+apps/admin/lib/admin-localization.ts

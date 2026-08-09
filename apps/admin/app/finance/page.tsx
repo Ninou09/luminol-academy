@@ -17,25 +17,32 @@ export default async function FinanceAdminPage() {
   const locale = await getAdminRequestLocale();
   const copy = getAdminCopy(locale).finance;
   const common = getCommonDictionary(locale);
-  const [invoices, payments, refunds, corporate, reconciliations] = await Promise.all([
-    db.invoice.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-      include: { customer: { select: { email: true } } },
-    }),
-    db.paymentIntent.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
-    db.refund.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
-    db.corporateBillingRecord.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-      include: { invoice: true },
-    }),
-    db.reconciliationRecord.findMany({ orderBy: { settledAt: 'desc' }, take: 50 }),
-  ]);
+  const [invoices, payments, refunds, corporate, reconciliations] =
+    await Promise.all([
+      db.invoice.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+        include: { customer: { select: { email: true } } },
+      }),
+      db.paymentIntent.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
+      db.refund.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
+      db.corporateBillingRecord.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+        include: { invoice: true },
+      }),
+      db.reconciliationRecord.findMany({
+        orderBy: { settledAt: 'desc' },
+        take: 50,
+      }),
+    ]);
   const number = (value: number) => formatLocalizedNumber(value, locale);
 
   return (
-    <main className="admin-shell" style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}>
+    <main
+      className="admin-shell"
+      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
+    >
       <section className="admin-dashboard">
         <div className="admin-content">
           <section className="admin-intro">
@@ -44,16 +51,28 @@ export default async function FinanceAdminPage() {
               <h1>{copy.title}</h1>
               <p>{copy.intro}</p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                flexWrap: 'wrap',
+              }}
+            >
               <Link href={localizeHref(locale, '/')}>{copy.back}</Link>
-              <AdminLanguageSwitcher locale={locale} label={common.languageSelectorLabel} />
+              <AdminLanguageSwitcher
+                locale={locale}
+                label={common.languageSelectorLabel}
+              />
             </div>
           </section>
 
           <section className="admin-panel">
             <div className="panel-heading">
               <h2>{copy.invoices}</h2>
-              <span>{number(invoices.length)} {copy.recent}</span>
+              <span>
+                {number(invoices.length)} {copy.recent}
+              </span>
             </div>
             {invoices.length ? (
               <div className="compact-list">
@@ -64,7 +83,13 @@ export default async function FinanceAdminPage() {
                       <p dir="auto">{invoice.customer.email}</p>
                     </div>
                     <div>
-                      <strong>{formatLocalizedCurrency(invoice.totalMinor, invoice.currency, locale)}</strong>
+                      <strong>
+                        {formatLocalizedCurrency(
+                          invoice.totalMinor,
+                          invoice.currency,
+                          locale,
+                        )}
+                      </strong>
                       <small>{getAdminEnumLabel(locale, invoice.status)}</small>
                     </div>
                   </article>
@@ -90,7 +115,13 @@ export default async function FinanceAdminPage() {
             </article>
             <article>
               <span>{copy.reconciliationExceptions}</span>
-              <strong>{number(reconciliations.filter((item) => item.status === 'DISCREPANCY').length)}</strong>
+              <strong>
+                {number(
+                  reconciliations.filter(
+                    (item) => item.status === 'DISCREPANCY',
+                  ).length,
+                )}
+              </strong>
             </article>
           </section>
 
@@ -108,7 +139,13 @@ export default async function FinanceAdminPage() {
                     </div>
                     <div>
                       <small>{copy.difference}</small>
-                      <strong>{formatLocalizedCurrency(record.differenceMinor, record.currency, locale)}</strong>
+                      <strong>
+                        {formatLocalizedCurrency(
+                          record.differenceMinor,
+                          record.currency,
+                          locale,
+                        )}
+                      </strong>
                     </div>
                   </article>
                 ))}

@@ -33,12 +33,26 @@ export default async function DeliveryPage() {
   });
 
   return (
-    <main className="admin-shell" style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}>
+    <main
+      className="admin-shell"
+      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
+    >
       <section className="admin-dashboard">
         <div className="admin-content">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              flexWrap: 'wrap',
+            }}
+          >
             <Link href={localizeHref(locale, '/')}>← {copy.back}</Link>
-            <AdminLanguageSwitcher locale={locale} label={common.languageSelectorLabel} />
+            <AdminLanguageSwitcher
+              locale={locale}
+              label={common.languageSelectorLabel}
+            />
           </div>
           <h1>{copy.title}</h1>
           <p>{copy.intro}</p>
@@ -52,8 +66,13 @@ export default async function DeliveryPage() {
                   <bdi dir="auto">{item.lastErrorCode ?? copy.noErrorCode}</bdi>
                 </p>
                 <small>
-                  {copy.organization}: <bdi dir="auto">{item.organizationId ?? copy.personal}</bdi> ·{' '}
-                  {copy.next}: {formatLocalizedDate(item.scheduledAt, locale, { dateStyle: 'medium', timeStyle: 'short' })}
+                  {copy.organization}:{' '}
+                  <bdi dir="auto">{item.organizationId ?? copy.personal}</bdi> ·{' '}
+                  {copy.next}:{' '}
+                  {formatLocalizedDate(item.scheduledAt, locale, {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })}
                 </small>
               </article>
             ))

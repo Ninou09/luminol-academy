@@ -31,7 +31,11 @@ export default async function CertificatesAdminPage() {
     where: {
       status: 'COMPLETED',
       completedAt: { not: null },
-      id: { notIn: issued.flatMap((item) => (item.completionId ? [item.completionId] : [])) },
+      id: {
+        notIn: issued.flatMap((item) =>
+          item.completionId ? [item.completionId] : [],
+        ),
+      },
     },
     select: {
       id: true,
@@ -53,13 +57,20 @@ export default async function CertificatesAdminPage() {
     orderBy: { issuedAt: 'desc' },
     take: 100,
   });
-  const activeCount = certificates.filter((certificate) => certificate.status === 'ACTIVE').length;
-  const revokedCount = certificates.filter((certificate) => certificate.status === 'REVOKED').length;
+  const activeCount = certificates.filter(
+    (certificate) => certificate.status === 'ACTIVE',
+  ).length;
+  const revokedCount = certificates.filter(
+    (certificate) => certificate.status === 'REVOKED',
+  ).length;
   const number = (value: number) => formatLocalizedNumber(value, locale);
   const date = (value: Date) => formatLocalizedDate(value, locale);
 
   return (
-    <main className="admin-shell" style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}>
+    <main
+      className="admin-shell"
+      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
+    >
       <section className="admin-dashboard">
         <div className="admin-content">
           <section className="admin-intro">
@@ -68,9 +79,19 @@ export default async function CertificatesAdminPage() {
               <h1>{copy.title}</h1>
               <p>{copy.intro}</p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                flexWrap: 'wrap',
+              }}
+            >
               <Link href={localizeHref(locale, '/')}>{copy.back}</Link>
-              <AdminLanguageSwitcher locale={locale} label={common.languageSelectorLabel} />
+              <AdminLanguageSwitcher
+                locale={locale}
+                label={common.languageSelectorLabel}
+              />
             </div>
           </section>
 
@@ -103,7 +124,9 @@ export default async function CertificatesAdminPage() {
                 <p className="eyebrow">{copy.awaitingAction}</p>
                 <h2>{copy.eligibleCompletions}</h2>
               </div>
-              <span>{number(eligible.length)} {copy.ready}</span>
+              <span>
+                {number(eligible.length)} {copy.ready}
+              </span>
             </div>
             {eligible.length > 0 ? (
               <div className="compact-list">
@@ -114,7 +137,11 @@ export default async function CertificatesAdminPage() {
                       <p dir="auto">{item.user.email}</p>
                     </div>
                     <form action={issueCertificateAction}>
-                      <input type="hidden" name="completionId" value={item.id} />
+                      <input
+                        type="hidden"
+                        name="completionId"
+                        value={item.id}
+                      />
                       <button type="submit">{copy.issueCertificate}</button>
                     </form>
                   </article>
@@ -134,7 +161,9 @@ export default async function CertificatesAdminPage() {
                 <p className="eyebrow">{copy.history}</p>
                 <h2>{copy.issuedCertificates}</h2>
               </div>
-              <span>{number(certificates.length)} {copy.records}</span>
+              <span>
+                {number(certificates.length)} {copy.records}
+              </span>
             </div>
             {certificates.length > 0 ? (
               <div style={{ display: 'grid', gap: '1rem' }}>
@@ -160,7 +189,8 @@ export default async function CertificatesAdminPage() {
                       <ul>
                         {item.auditEvents.map((event) => (
                           <li key={event.id}>
-                            {getAdminEnumLabel(locale, event.action)} · {date(event.occurredAt)}
+                            {getAdminEnumLabel(locale, event.action)} ·{' '}
+                            {date(event.occurredAt)}
                           </li>
                         ))}
                       </ul>
@@ -169,31 +199,59 @@ export default async function CertificatesAdminPage() {
                       <div
                         style={{
                           display: 'grid',
-                          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(260px, 1fr))',
                           gap: '1rem',
                           marginTop: '1rem',
                         }}
                       >
                         <form action={replaceCertificateAction}>
-                          <input type="hidden" name="certificateId" value={item.id} />
-                          <input type="hidden" name="requestId" value={`replacement-${item.id}`} />
+                          <input
+                            type="hidden"
+                            name="certificateId"
+                            value={item.id}
+                          />
+                          <input
+                            type="hidden"
+                            name="requestId"
+                            value={`replacement-${item.id}`}
+                          />
                           <label>
                             {copy.replacementReason}
-                            <input name="reason" required maxLength={500} dir="auto" />
+                            <input
+                              name="reason"
+                              required
+                              maxLength={500}
+                              dir="auto"
+                            />
                           </label>
-                          <button type="submit">{copy.replaceCertificate}</button>
+                          <button type="submit">
+                            {copy.replaceCertificate}
+                          </button>
                         </form>
                         <form action={revokeCertificateAction}>
-                          <input type="hidden" name="certificateId" value={item.id} />
+                          <input
+                            type="hidden"
+                            name="certificateId"
+                            value={item.id}
+                          />
                           <label>
                             {copy.revocationReason}
                             <select name="reasonCode" required>
-                              <option value="issued_in_error">{copy.issuedInError}</option>
-                              <option value="misconduct">{copy.misconduct}</option>
-                              <option value="replaced">{copy.replacement}</option>
+                              <option value="issued_in_error">
+                                {copy.issuedInError}
+                              </option>
+                              <option value="misconduct">
+                                {copy.misconduct}
+                              </option>
+                              <option value="replaced">
+                                {copy.replacement}
+                              </option>
                             </select>
                           </label>
-                          <button type="submit">{copy.revokeCertificate}</button>
+                          <button type="submit">
+                            {copy.revokeCertificate}
+                          </button>
                         </form>
                       </div>
                     )}

@@ -20,17 +20,27 @@ describe('administration localization', () => {
   });
 
   it('keeps localized administrative concepts distinct', () => {
-    expect(getAdminCopy('ar').shell.search).not.toBe(getAdminCopy('fr').shell.search);
-    expect(getAdminCopy('fr').dashboard.recentEnquiries).not.toBe(getAdminCopy('en').dashboard.recentEnquiries);
-    expect(getAdminCopy('ar').finance.reconciliation).not.toBe(getAdminCopy('en').finance.reconciliation);
+    expect(getAdminCopy('ar').shell.search).not.toBe(
+      getAdminCopy('fr').shell.search,
+    );
+    expect(getAdminCopy('fr').dashboard.recentEnquiries).not.toBe(
+      getAdminCopy('en').dashboard.recentEnquiries,
+    );
+    expect(getAdminCopy('ar').finance.reconciliation).not.toBe(
+      getAdminCopy('en').finance.reconciliation,
+    );
   });
 
   it('localizes operational enums used by protected pages', () => {
     expect(getAdminEnumLabel('ar', 'PSYCHOLOGY')).toBe('علم النفس');
-    expect(getAdminEnumLabel('fr', 'TRAINING')).toBe('Formation professionnelle');
+    expect(getAdminEnumLabel('fr', 'TRAINING')).toBe(
+      'Formation professionnelle',
+    );
     expect(getAdminEnumLabel('ar', 'CONTACTED')).toBe('تم التواصل');
     expect(getAdminEnumLabel('fr', 'IN_REVIEW')).toBe('En examen');
-    expect(getAdminEnumLabel('ar', 'RETRY_SCHEDULED')).toBe('إعادة المحاولة مجدولة');
+    expect(getAdminEnumLabel('ar', 'RETRY_SCHEDULED')).toBe(
+      'إعادة المحاولة مجدولة',
+    );
     expect(getAdminEnumLabel('fr', 'SUPERSEDED')).toBe('Remplacé');
   });
 });

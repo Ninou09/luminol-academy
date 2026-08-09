@@ -104,7 +104,10 @@ export default async function Page() {
             </div>
           </section>
 
-          <section className="metric-grid" aria-label={copy.dashboard.summaryAria}>
+          <section
+            className="metric-grid"
+            aria-label={copy.dashboard.summaryAria}
+          >
             <article>
               <span>{copy.dashboard.activePeople}</span>
               <strong>{number(operations.summary.activeUsers)}</strong>
@@ -142,7 +145,9 @@ export default async function Page() {
                 aria-valuemax={100}
                 aria-valuenow={operations.summary.completionRate}
               >
-                <span style={{ width: `${operations.summary.completionRate}%` }} />
+                <span
+                  style={{ width: `${operations.summary.completionRate}%` }}
+                />
               </div>
             </article>
           </section>
@@ -155,7 +160,8 @@ export default async function Page() {
                   <h2>{copy.dashboard.recentEnquiries}</h2>
                 </div>
                 <span>
-                  {number(operations.summary.newEnquiries)} {copy.dashboard.newSuffix}
+                  {number(operations.summary.newEnquiries)}{' '}
+                  {copy.dashboard.newSuffix}
                 </span>
               </div>
               {operations.recentEnquiries.length > 0 ? (
@@ -173,11 +179,20 @@ export default async function Page() {
                         <span>{getAdminEnumLabel(locale, enquiry.school)}</span>
                         <small>{date(enquiry.createdAt)}</small>
                       </div>
-                      <span className={`data-status status-${enquiry.status.toLowerCase()}`}>
+                      <span
+                        className={`data-status status-${enquiry.status.toLowerCase()}`}
+                      >
                         {getAdminEnumLabel(locale, enquiry.status)}
                       </span>
-                      <form action={transitionEnquiryStatus} className="status-form">
-                        <input type="hidden" name="enquiryId" value={enquiry.id} />
+                      <form
+                        action={transitionEnquiryStatus}
+                        className="status-form"
+                      >
+                        <input
+                          type="hidden"
+                          name="enquiryId"
+                          value={enquiry.id}
+                        />
                         <label>
                           <span className="sr-only">
                             {copy.dashboard.updateEnquiryStatus}: {enquiry.name}
@@ -188,12 +203,16 @@ export default async function Page() {
                             required
                             aria-label={`${copy.dashboard.updateEnquiryStatus}: ${enquiry.name}`}
                           >
-                            <option value="" disabled>{copy.dashboard.moveTo}</option>
-                            {getEnquiryTransitions(enquiry.status).map((status) => (
-                              <option key={status} value={status}>
-                                {getAdminEnumLabel(locale, status)}
-                              </option>
-                            ))}
+                            <option value="" disabled>
+                              {copy.dashboard.moveTo}
+                            </option>
+                            {getEnquiryTransitions(enquiry.status).map(
+                              (status) => (
+                                <option key={status} value={status}>
+                                  {getAdminEnumLabel(locale, status)}
+                                </option>
+                              ),
+                            )}
                           </select>
                         </label>
                         <button type="submit">{copy.dashboard.update}</button>
@@ -215,14 +234,24 @@ export default async function Page() {
               </div>
               {operations.enrollmentOptions.learners.length > 0 &&
               operations.enrollmentOptions.courses.length > 0 ? (
-                <form action={createEnrollment} className="enrollment-create-form">
+                <form
+                  action={createEnrollment}
+                  className="enrollment-create-form"
+                >
                   <label>
                     <span>{copy.dashboard.learner}</span>
                     <select name="userId" defaultValue="" required>
-                      <option value="" disabled>{copy.dashboard.selectLearner}</option>
+                      <option value="" disabled>
+                        {copy.dashboard.selectLearner}
+                      </option>
                       {operations.enrollmentOptions.learners.map((learner) => (
                         <option key={learner.id} value={learner.id}>
-                          {displayPersonName(learner.firstName, learner.lastName, learner.email)} · {learner.email}
+                          {displayPersonName(
+                            learner.firstName,
+                            learner.lastName,
+                            learner.email,
+                          )}{' '}
+                          · {learner.email}
                         </option>
                       ))}
                     </select>
@@ -230,16 +259,24 @@ export default async function Page() {
                   <label>
                     <span>{copy.dashboard.publishedCourse}</span>
                     <select name="courseId" defaultValue="" required>
-                      <option value="" disabled>{copy.dashboard.selectCourse}</option>
+                      <option value="" disabled>
+                        {copy.dashboard.selectCourse}
+                      </option>
                       {operations.enrollmentOptions.courses.map((course) => (
-                        <option key={course.id} value={course.id}>{course.title}</option>
+                        <option key={course.id} value={course.id}>
+                          {course.title}
+                        </option>
                       ))}
                     </select>
                   </label>
-                  <button type="submit">{copy.dashboard.createEnrollment}</button>
+                  <button type="submit">
+                    {copy.dashboard.createEnrollment}
+                  </button>
                 </form>
               ) : (
-                <p className="enrollment-readiness">{copy.dashboard.enrollmentReadiness}</p>
+                <p className="enrollment-readiness">
+                  {copy.dashboard.enrollmentReadiness}
+                </p>
               )}
               {operations.recentEnrollments.length > 0 ? (
                 <div className="compact-list">
@@ -256,16 +293,26 @@ export default async function Page() {
                         <p dir="auto">{enrollment.course.title}</p>
                       </div>
                       <div>
-                        <span className={`data-status status-${enrollment.status.toLowerCase()}`}>
+                        <span
+                          className={`data-status status-${enrollment.status.toLowerCase()}`}
+                        >
                           {getAdminEnumLabel(locale, enrollment.status)}
                         </span>
                         <small>{date(enrollment.enrolledAt)}</small>
                       </div>
-                      <form action={transitionEnrollmentStatus} className="status-form enrollment-status-form">
-                        <input type="hidden" name="enrollmentId" value={enrollment.id} />
+                      <form
+                        action={transitionEnrollmentStatus}
+                        className="status-form enrollment-status-form"
+                      >
+                        <input
+                          type="hidden"
+                          name="enrollmentId"
+                          value={enrollment.id}
+                        />
                         <label>
                           <span className="sr-only">
-                            {copy.dashboard.updateEnrollmentStatus}: {enrollment.course.title}
+                            {copy.dashboard.updateEnrollmentStatus}:{' '}
+                            {enrollment.course.title}
                           </span>
                           <select
                             name="toStatus"
@@ -273,12 +320,16 @@ export default async function Page() {
                             required
                             aria-label={`${copy.dashboard.updateEnrollmentStatus}: ${enrollment.course.title}`}
                           >
-                            <option value="" disabled>{copy.dashboard.moveTo}</option>
-                            {getEnrollmentTransitions(enrollment.status).map((status) => (
-                              <option key={status} value={status}>
-                                {getAdminEnumLabel(locale, status)}
-                              </option>
-                            ))}
+                            <option value="" disabled>
+                              {copy.dashboard.moveTo}
+                            </option>
+                            {getEnrollmentTransitions(enrollment.status).map(
+                              (status) => (
+                                <option key={status} value={status}>
+                                  {getAdminEnumLabel(locale, status)}
+                                </option>
+                              ),
+                            )}
                           </select>
                         </label>
                         <button type="submit">{copy.dashboard.update}</button>
@@ -298,7 +349,10 @@ export default async function Page() {
                 <p className="eyebrow">{copy.dashboard.portfolio}</p>
                 <h2>{copy.dashboard.programmeReadiness}</h2>
               </div>
-              <span>{number(operations.coursePortfolio.length)} {copy.dashboard.recentSuffix}</span>
+              <span>
+                {number(operations.coursePortfolio.length)}{' '}
+                {copy.dashboard.recentSuffix}
+              </span>
             </div>
             {operations.coursePortfolio.length > 0 ? (
               <div className="portfolio-table">
@@ -314,8 +368,16 @@ export default async function Page() {
                     <h3 dir="auto">{course.title}</h3>
                     <span>{number(course._count.modules)}</span>
                     <span>{number(course._count.enrollments)}</span>
-                    <span className={course.published ? 'data-status status-active' : 'data-status status-draft'}>
-                      {course.published ? copy.dashboard.published : copy.dashboard.draft}
+                    <span
+                      className={
+                        course.published
+                          ? 'data-status status-active'
+                          : 'data-status status-draft'
+                      }
+                    >
+                      {course.published
+                        ? copy.dashboard.published
+                        : copy.dashboard.draft}
                     </span>
                     <small>{date(course.updatedAt)}</small>
                   </article>
