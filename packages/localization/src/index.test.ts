@@ -81,6 +81,7 @@ describe('safe navigation and formatting', () => {
     expect(sanitizeInternalReturnTo('/\\evil')).toBe('/');
     expect(sanitizeInternalReturnTo('/%5Cevil')).toBe('/');
     expect(sanitizeInternalReturnTo('/%00evil')).toBe('/');
+    expect(sanitizeInternalReturnTo('/%2e%2e//evil.example')).toBe('/');
     expect(sanitizeInternalReturnTo('https://evil.example')).toBe('/');
   });
 
