@@ -41,7 +41,11 @@ export default async function AdminSearchPage({
   return (
     <main className={styles.shell}>
       <aside className={styles.sidebar}>
-        <Link className={styles.brand} href="/" aria-label="Luminol administration">
+        <Link
+          className={styles.brand}
+          href="/"
+          aria-label="Luminol administration"
+        >
           <Wordmark />
         </Link>
         <p className={styles.label}>Administration</p>
@@ -72,7 +76,10 @@ export default async function AdminSearchPage({
         </header>
 
         <div className={styles.content}>
-          <section className={styles.intro} aria-labelledby="admin-search-title">
+          <section
+            className={styles.intro}
+            aria-labelledby="admin-search-title"
+          >
             <p className="eyebrow">Search & discovery</p>
             <h1 id="admin-search-title">Find operational records.</h1>
             <p>
@@ -81,8 +88,15 @@ export default async function AdminSearchPage({
               learning content.
             </p>
 
-            <form action="/search" method="get" role="search" className={styles.form}>
-              <label htmlFor="admin-search">Search administration records</label>
+            <form
+              action="/search"
+              method="get"
+              role="search"
+              className={styles.form}
+            >
+              <label htmlFor="admin-search">
+                Search administration records
+              </label>
               <div>
                 <input
                   id="admin-search"
@@ -115,7 +129,10 @@ export default async function AdminSearchPage({
                 </span>
               </div>
 
-              <section className={styles.group} aria-labelledby="people-results">
+              <section
+                className={styles.group}
+                aria-labelledby="people-results"
+              >
                 <div className={styles.groupHeading}>
                   <h3 id="people-results">People</h3>
                   <ResultLimitNote hasMore={results.people.hasMore} />
@@ -133,7 +150,8 @@ export default async function AdminSearchPage({
                         </h4>
                         <p dir="auto">{person.email}</p>
                         <span>
-                          Account created {dateFormatter.format(person.createdAt)}
+                          Account created{' '}
+                          {dateFormatter.format(person.createdAt)}
                         </span>
                         <Link href="/#learners">Open learner operations</Link>
                       </article>
@@ -144,7 +162,10 @@ export default async function AdminSearchPage({
                 )}
               </section>
 
-              <section className={styles.group} aria-labelledby="enquiry-results">
+              <section
+                className={styles.group}
+                aria-labelledby="enquiry-results"
+              >
                 <div className={styles.groupHeading}>
                   <h3 id="enquiry-results">Enquiries</h3>
                   <ResultLimitNote hasMore={results.enquiries.hasMore} />
@@ -169,7 +190,10 @@ export default async function AdminSearchPage({
                 )}
               </section>
 
-              <section className={styles.group} aria-labelledby="course-results">
+              <section
+                className={styles.group}
+                aria-labelledby="course-results"
+              >
                 <div className={styles.groupHeading}>
                   <h3 id="course-results">Programmes</h3>
                   <ResultLimitNote hasMore={results.courses.hasMore} />
@@ -184,7 +208,9 @@ export default async function AdminSearchPage({
                           {course.published ? 'Published' : 'Draft'} · Updated{' '}
                           {dateFormatter.format(course.updatedAt)}
                         </span>
-                        <Link href="/#programmes">Open programme operations</Link>
+                        <Link href="/#programmes">
+                          Open programme operations
+                        </Link>
                       </article>
                     ))}
                   </div>
