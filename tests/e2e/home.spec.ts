@@ -2,9 +2,30 @@ import { expect, test } from '@playwright/test';
 
 test('institutional home is available', async ({ page }) => {
   await page.goto('/');
+  await expect(page).toHaveURL(/\/en\/?$/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
     'Grow with clarity.',
   );
+});
+
+test('locale routing persists language and document direction', async ({
+  page,
+}) => {
+  await page.goto('/fr/programmes?q=english&school=languages');
+  await expect(page).toHaveURL(/\/fr\/programmes\?q=english&school=languages$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+
+  await page.goto('/programmes?q=english&school=languages');
+  await expect(page).toHaveURL(/\/fr\/programmes\?q=english&school=languages$/);
+
+  await page.goto('/ar');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+
+  await page.goto('/FR/about');
+  await expect(page).toHaveURL(/\/fr\/about$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
 });
 
 test('public metadata and error behavior are available', async ({

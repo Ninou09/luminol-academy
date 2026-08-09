@@ -1,4 +1,3 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
 import {
   LOCALE_COOKIE_MAX_AGE_SECONDS,
   LOCALE_COOKIE_NAME,
@@ -10,16 +9,9 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 const localeRoutingOptions = {
-  bypassPrefixes: ['/api', '/trpc', '/__clerk', '/.well-known'],
+  bypassPrefixes: ['/api', '/trpc', '/.well-known'],
+  bypassExact: ['/robots.txt', '/sitemap.xml'],
 } as const;
-
-function isPublicPathname(pathname: string) {
-  return (
-    pathname === '/sign-in' ||
-    pathname.startsWith('/sign-in/') ||
-    pathname === '/api/webhooks/clerk'
-  );
-}
 
 function persistLocale(
   response: NextResponse,
@@ -39,19 +31,14 @@ function persistLocale(
   return response;
 }
 
-export default clerkMiddleware(async (auth, request) => {
+export function proxy(request: NextRequest) {
   const decision = resolveLocaleRequest(
     request.nextUrl.pathname,
     request.cookies.get(LOCALE_COOKIE_NAME)?.value,
     localeRoutingOptions,
   );
 
-  if (decision.kind === 'bypass') {
-    if (!isPublicPathname(request.nextUrl.pathname)) {
-      await auth.protect();
-    }
-    return NextResponse.next();
-  }
+  if (decision.kind === 'bypass') return NextResponse.next();
 
   if (decision.kind === 'redirect') {
     const destination = request.nextUrl.clone();
@@ -62,8 +49,6 @@ export default clerkMiddleware(async (auth, request) => {
       decision.locale,
     );
   }
-
-  if (!isPublicPathname(decision.pathname)) await auth.protect();
 
   const destination = request.nextUrl.clone();
   destination.pathname = decision.pathname;
@@ -77,7 +62,7 @@ export default clerkMiddleware(async (auth, request) => {
     request,
     decision.locale,
   );
-});
+}
 
 export const config = {
   matcher: [

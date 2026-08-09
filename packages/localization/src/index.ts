@@ -270,3 +270,78 @@ export function formatLocalizedCurrency(
   const majorUnits = minorUnits / 10 ** fractionDigits;
   return formatter.format(majorUnits);
 }
+
+export const LOCALE_COOKIE_NAME = 'luminol_locale';
+export const LOCALE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
+
+export type LocaleRoutingOptions = {
+  bypassPrefixes?: readonly string[];
+  bypassExact?: readonly string[];
+};
+
+export type LocaleRoutingDecision =
+  | { kind: 'bypass' }
+  | { kind: 'rewrite'; locale: Locale; pathname: string }
+  | { kind: 'redirect'; locale: Locale; pathname: string };
+
+function matchesPathPrefix(pathname: string, prefix: string): boolean {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
+
+function shouldBypassLocaleRouting(
+  pathname: string,
+  options: LocaleRoutingOptions,
+): boolean {
+  if (options.bypassExact?.includes(pathname)) return true;
+  return Boolean(
+    options.bypassPrefixes?.some((prefix) =>
+      matchesPathPrefix(pathname, prefix),
+    ),
+  );
+}
+
+export function resolveLocaleRequest(
+  pathname: string,
+  storedLocale: unknown,
+  options: LocaleRoutingOptions = {},
+): LocaleRoutingDecision {
+  const safePathname = pathname.startsWith('/') ? pathname : '/';
+
+  if (shouldBypassLocaleRouting(safePathname, options)) {
+    return { kind: 'bypass' };
+  }
+
+  const localized = parseLocalizedPathname(safePathname);
+  if (localized) {
+    if (shouldBypassLocaleRouting(localized.pathname, options)) {
+      return { kind: 'bypass' };
+    }
+
+    const rawLocaleSegment = safePathname.split('/')[1] ?? '';
+    const canonicalPathname = localizePathname(
+      localized.locale,
+      localized.pathname,
+    );
+
+    if (rawLocaleSegment !== localized.locale) {
+      return {
+        kind: 'redirect',
+        locale: localized.locale,
+        pathname: canonicalPathname,
+      };
+    }
+
+    return {
+      kind: 'rewrite',
+      locale: localized.locale,
+      pathname: localized.pathname,
+    };
+  }
+
+  const locale = parseLocale(storedLocale);
+  return {
+    kind: 'redirect',
+    locale,
+    pathname: localizePathname(locale, safePathname),
+  };
+}

@@ -55,6 +55,9 @@ importers:
       '@luminol/finance':
         specifier: workspace:*
         version: link:../../packages/finance
+      '@luminol/localization':
+        specifier: workspace:*
+        version: link:../../packages/localization
       '@luminol/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -122,6 +125,9 @@ importers:
       '@luminol/language':
         specifier: workspace:*
         version: link:../../packages/language
+      '@luminol/localization':
+        specifier: workspace:*
+        version: link:../../packages/localization
       '@luminol/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -217,6 +223,9 @@ importers:
       '@luminol/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@luminol/localization':
+        specifier: workspace:*
+        version: link:../../packages/localization
       '@luminol/ui':
         specifier: workspace:*
         version: link:../../packages/ui
