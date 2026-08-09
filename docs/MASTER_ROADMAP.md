@@ -74,9 +74,26 @@ Status: Complete
 
 Delivered capabilities include the security and privacy audit, response hardening, dependency checks, migration and recovery runbooks, public smoke tests, controlled production deployment, and production verification.
 
+## Active product milestone
+
+### Milestone 14 — Search and Discovery
+
+Status: In progress
+
+The first delivery slice adds privacy-safe learner search across only the authenticated learner's active or completed, published programme content. Search is server-scoped to enrolled courses, normalizes and bounds queries, ranks title matches above descriptive text, and returns direct programme or lesson destinations without exposing another learner's content.
+
+Planned follow-up slices:
+
+- governed public programme discovery using only published content
+- school and language filters with shareable URL state
+- protected administration search where operationally useful
+- privacy-safe aggregate search telemetry without retaining raw sensitive queries
+
+AI/vector search and external paid search providers remain explicitly out of scope until the deterministic search layer is proven.
+
 ## Active operational phase — Post-launch stabilization
 
-This phase is not a new product milestone. Its purpose is to prove and maintain the operational controls required for wider use.
+This phase continues alongside product milestones. Its purpose is to prove and maintain the operational controls required for wider use.
 
 ### Availability and monitoring
 
@@ -112,7 +129,6 @@ This phase is not a new product milestone. Its purpose is to prove and maintain 
 These are not committed milestones and must not displace operational stabilization:
 
 - multilingual content and full interface localization
-- search infrastructure
 - richer background-job processing
 - approved AI-assisted learning tools
 - corporate accounts and team learning
