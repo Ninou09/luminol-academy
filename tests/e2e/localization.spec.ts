@@ -14,3 +14,10 @@ test('mobile header keeps contact access and locale links preserve URL state', a
     '/ar/programmes?q=english&school=languages#catalogue',
   );
 });
+
+test('localized home metadata does not duplicate the academy brand', async ({
+  page,
+}) => {
+  await page.goto('/ar');
+  await expect(page).toHaveTitle('Luminol Academy');
+});
