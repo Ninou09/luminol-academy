@@ -55,8 +55,11 @@ export default async function Page() {
           <a href="#programmes">
             <span>04</span> Programmes
           </a>
+          <Link href="/search">
+            <span>05</span> Search
+          </Link>
           <Link href="/finance">
-            <span>05</span> Finance
+            <span>06</span> Finance
           </Link>
         </nav>
         <div className="admin-sidebar-note">
