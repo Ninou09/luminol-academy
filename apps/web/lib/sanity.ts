@@ -125,7 +125,7 @@ const publicCmsProgrammeSchema = cmsProgrammeSchema.extend({
   school: schoolSlugSchema,
   languages: z.array(programmeLanguageSchema).max(3).default([]),
 });
-const publicCmsProgrammeListSchema = z.array(publicCmsProgrammeSchema).max(250);
+const publicCmsProgrammeListSchema = z.array(publicCmsProgrammeSchema);
 
 export type CmsProgramme = z.infer<typeof cmsProgrammeSchema>;
 export type PublicCmsProgramme = z.infer<typeof publicCmsProgrammeSchema>;
