@@ -84,9 +84,10 @@ The first delivery slice adds privacy-safe learner search across only the authen
 
 The second delivery slice adds governed public programme discovery at `/programmes`. It reads only active, non-draft Sanity programme documents with valid public slugs, validates URL-owned query and filter state, supports deterministic text discovery, and provides school and delivery-language filters whose state remains shareable in the URL. If the governed CMS source cannot be validated, discovery fails closed instead of inventing public programme data.
 
-Planned follow-up slices:
+The third delivery slice adds protected administration search at `/search` in the administration application. Access requires the existing `academy:manage` server authorization. Search is limited to active account identity, enquiry identity/routing metadata, and course portfolio metadata; enquiry messages and private learning content are intentionally excluded. URL input is Zod-validated, result groups are bounded and truthfully labelled, and mixed Arabic/Latin result text uses automatic direction where needed.
 
-- protected administration search where operationally useful
+Planned follow-up slice:
+
 - privacy-safe aggregate search telemetry without retaining raw sensitive queries
 
 AI/vector search and external paid search providers remain explicitly out of scope until the deterministic search layer is proven.
