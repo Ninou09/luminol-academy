@@ -82,10 +82,10 @@ Status: In progress
 
 The first delivery slice adds privacy-safe learner search across only the authenticated learner's active or completed, published programme content. Search is server-scoped to enrolled courses, validates URL-owned input with Zod, normalizes and bounds queries, searches every eligible enrollment, gates results on real text matches before ranking, supports automatic RTL/LTR query direction, and returns direct programme or lesson destinations without exposing another learner's content.
 
+The second delivery slice adds governed public programme discovery at `/programmes`. It reads only active, non-draft Sanity programme documents with valid public slugs, validates URL-owned query and filter state, supports deterministic text discovery, and provides school and delivery-language filters whose state remains shareable in the URL.
+
 Planned follow-up slices:
 
-- governed public programme discovery using only published content
-- school and language filters with shareable URL state
 - protected administration search where operationally useful
 - privacy-safe aggregate search telemetry without retaining raw sensitive queries
 
