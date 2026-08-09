@@ -4,7 +4,7 @@ import { db } from '@luminol/database';
 
 import {
   normalizeLearningSearchQuery,
-  rankLearningSearchResults,
+  rankLearningSearchResultsWithCount,
   type LearningSearchCandidate,
 } from './learning-search';
 
@@ -13,7 +13,7 @@ export async function searchLearnerContent(
   rawQuery: string | null | undefined,
 ) {
   const query = normalizeLearningSearchQuery(rawQuery);
-  if (query.length < 2) return { query, results: [] };
+  if (query.length < 2) return { query, results: [], totalMatches: 0 };
 
   const enrollments = await db.enrollment.findMany({
     where: {
@@ -82,5 +82,6 @@ export async function searchLearnerContent(
     }
   }
 
-  return { query, results: rankLearningSearchResults(candidates, query) };
+  const ranked = rankLearningSearchResultsWithCount(candidates, query);
+  return { query, ...ranked };
 }
