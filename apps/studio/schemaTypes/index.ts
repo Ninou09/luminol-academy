@@ -6,6 +6,12 @@ const schoolOptions = [
   { title: 'Professional Training', value: 'training' },
 ] as const;
 
+const languageOptions = [
+  { title: 'Arabic', value: 'ar' },
+  { title: 'French', value: 'fr' },
+  { title: 'English', value: 'en' },
+] as const;
+
 const programme = defineType({
   name: 'programme',
   title: 'Programme',
@@ -71,6 +77,16 @@ const programme = defineType({
           { title: 'Flexible', value: 'Flexible' },
         ],
       },
+    }),
+    defineField({
+      name: 'languages',
+      title: 'Languages of delivery',
+      description:
+        'Select each language in which this programme can currently be delivered. Used by public discovery filters.',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: { list: [...languageOptions], layout: 'grid' },
+      validation: (rule) => rule.unique().max(3),
     }),
     defineField({
       name: 'image',

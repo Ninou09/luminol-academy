@@ -9,6 +9,7 @@ export function SiteHeader() {
       </Link>
       <nav className="desktop-nav" aria-label="Primary navigation">
         <Link href="/#schools">Our schools</Link>
+        <Link href="/programmes">Programmes</Link>
         <Link href="/#approach">Our approach</Link>
         <Link href="/about">About Luminol</Link>
       </nav>

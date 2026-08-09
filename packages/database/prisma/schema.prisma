@@ -7,6 +7,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum SearchSurface {
+  LEARNER
+  PUBLIC_PROGRAMMES
+  ADMIN
+}
+
+enum SearchOutcome {
+  HIT
+  NO_MATCH
+}
+
+enum SearchResultBucket {
+  ZERO
+  ONE_TO_FIVE
+  SIX_TO_TWENTY
+  TWENTY_PLUS
+}
+
 enum EnrollmentStatus {
   PENDING
   ACTIVE
@@ -476,6 +494,9 @@ model Course {
   certificates         Certificate[]
   languageProfile      LanguageCourseProfile?
   placementAssessments PlacementAssessment[]
+
+  @@index([title(ops: raw("gin_trgm_ops"))], type: Gin, map: "Course_title_trgm_idx")
+  @@index([slug(ops: raw("gin_trgm_ops"))], type: Gin, map: "Course_slug_trgm_idx")
 }
 
 model LanguageCourseProfile {
@@ -810,6 +831,8 @@ model Enquiry {
 
   @@index([status, createdAt])
   @@index([email])
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "Enquiry_name_trgm_idx")
+  @@index([email(ops: raw("gin_trgm_ops"))], type: Gin, map: "Enquiry_email_trgm_idx")
 }
 
 model EnquiryStatusEvent {
@@ -824,4 +847,18 @@ model EnquiryStatusEvent {
 
   @@index([enquiryId, createdAt])
   @@index([actorUserId, createdAt])
+}
+
+model SearchTelemetryDaily {
+  id           String             @id @default(cuid())
+  day          DateTime           @db.Date
+  surface      SearchSurface
+  outcome      SearchOutcome
+  resultBucket SearchResultBucket
+  count        Int                @default(0)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@unique([day, surface, outcome, resultBucket])
+  @@index([surface, day])
 }

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const routes = ['', '/about', '/contact'];
+const routes = ['', '/programmes', '/about', '/contact'];
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
 function resolveSiteOrigin() {

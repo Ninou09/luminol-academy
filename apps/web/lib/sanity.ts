@@ -1,10 +1,14 @@
 import { z } from 'zod';
 import type { SchoolSlug } from './schools';
 
+export const PROGRAMME_LANGUAGE_CODES = ['ar', 'fr', 'en'] as const;
+
 const SANITY_API_VERSION = '2024-01-01';
 const PROGRAMME_IMAGE_WIDTH = 1200;
 const PROGRAMME_IMAGE_HEIGHT = 675;
 const placeholderProjectIds = new Set(['example', 'placeholder', 'replace-me']);
+const schoolSlugSchema = z.enum(['psychology', 'languages', 'training']);
+const programmeLanguageSchema = z.enum(PROGRAMME_LANGUAGE_CODES);
 
 function isApprovedSanityImageUrl(value: string) {
   try {
@@ -108,14 +112,24 @@ const cmsProgrammeSchema = z.object({
   title: z.string().trim().min(1).max(120),
   summary: z.string().trim().min(1).max(320),
   slug: z.object({ current: z.string().min(1) }).nullish(),
+  school: schoolSlugSchema.nullish(),
+  languages: z.array(programmeLanguageSchema).max(3).optional(),
   delivery: z.string().trim().max(80).nullish(),
   featured: z.boolean().default(false),
   image: cmsProgrammeImageSchema.nullish(),
 });
 
 const cmsProgrammeListSchema = z.array(cmsProgrammeSchema).max(100);
+const publicCmsProgrammeSchema = cmsProgrammeSchema.extend({
+  slug: z.object({ current: z.string().trim().min(1).max(96) }),
+  school: schoolSlugSchema,
+  languages: z.array(programmeLanguageSchema).max(3).default([]),
+});
+const publicCmsProgrammeListSchema = z.array(publicCmsProgrammeSchema);
 
 export type CmsProgramme = z.infer<typeof cmsProgrammeSchema>;
+export type PublicCmsProgramme = z.infer<typeof publicCmsProgrammeSchema>;
+export type CmsProgrammeLanguage = (typeof PROGRAMME_LANGUAGE_CODES)[number];
 
 type ProgrammeImage = NonNullable<CmsProgramme['image']>;
 
@@ -272,12 +286,16 @@ export async function getProgrammesForSchool(
   const query = `*[
     _type == "programme" &&
     school == $school &&
-    active == true
+    active == true &&
+    !(_id in path("drafts.**")) &&
+    defined(slug.current)
   ] | order(order asc, title asc) {
     _id,
     title,
     summary,
     slug,
+    school,
+    "languages": coalesce(languages, []),
     delivery,
     "featured": coalesce(featured, false),
     "image": select(
@@ -309,6 +327,62 @@ export async function getProgrammesForSchool(
     if (!result.success) return null;
 
     const programmes = cmsProgrammeListSchema.safeParse(result.data.result);
+    return programmes.success ? programmes.data : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getPublicProgrammes(): Promise<
+  PublicCmsProgramme[] | null
+> {
+  const config = getSanityConfig();
+  if (!config) return null;
+
+  const query = `*[
+    _type == "programme" &&
+    active == true &&
+    !(_id in path("drafts.**")) &&
+    defined(slug.current)
+  ] | order(featured desc, school asc, order asc, title asc, _id asc) {
+    _id,
+    title,
+    summary,
+    slug,
+    school,
+    "languages": coalesce(languages, []),
+    delivery,
+    "featured": coalesce(featured, false),
+    "image": select(
+      defined(image.asset) => {
+        "url": image.asset->url,
+        "alt": image.alt,
+        "crop": image.crop,
+        "hotspot": image.hotspot,
+        "dimensions": image.asset->metadata.dimensions
+      },
+      null
+    )
+  }`;
+
+  const endpoint = new URL(
+    `https://${config.projectId}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${config.dataset}`,
+  );
+  endpoint.searchParams.set('query', query);
+
+  try {
+    const response = await fetch(endpoint, {
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return null;
+
+    const payload: unknown = await response.json();
+    const result = z.object({ result: z.unknown() }).safeParse(payload);
+    if (!result.success) return null;
+
+    const programmes = publicCmsProgrammeListSchema.safeParse(
+      result.data.result,
+    );
     return programmes.success ? programmes.data : null;
   } catch {
     return null;

@@ -40,6 +40,7 @@ export default async function Page() {
           <Wordmark />
         </Link>
         <div className="portal-account">
+          <Link href="/search">Search</Link>
           <Link href="/notifications">Notifications</Link>
           <Link href="/finance">Billing</Link>
           <Link href="/account">Account</Link>
