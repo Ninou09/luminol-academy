@@ -1,4 +1,5 @@
 import { requireUser } from '@luminol/auth';
+import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
 import Link from 'next/link';
 
 import { parseLearningSearchParam } from '../../lib/learning-search';
@@ -24,6 +25,13 @@ export default async function SearchPage({
   const params = await searchParams;
   const rawQuery = parseLearningSearchParam(params.q);
   const { query, results } = await searchLearnerContent(user.id, rawQuery);
+
+  if (query.length >= 2) {
+    await recordSearchTelemetry({
+      surface: SearchSurface.LEARNER,
+      resultCount: results.length,
+    });
+  }
 
   return (
     <main>
