@@ -5,11 +5,18 @@ import { describe, expect, it } from 'vitest';
 const cases = [
   {
     app: 'admin',
-    publicRoutes: ["'/sign-in(.*)'", "'/api/webhooks/clerk'"],
+    publicRoutes: [
+      "pathname === '/sign-in'",
+      "pathname === '/api/webhooks/clerk'",
+    ],
   },
   {
     app: 'portal',
-    publicRoutes: ["'/sign-in(.*)'", "'/sign-up(.*)'"],
+    publicRoutes: [
+      "pathname === '/sign-in'",
+      "pathname === '/sign-up'",
+      "pathname.startsWith('/sign-up/')",
+    ],
   },
 ];
 
@@ -25,9 +32,25 @@ describe('Next.js 16 Clerk proxy conventions', () => {
 
       const source = readFileSync(proxyPath, 'utf8');
       expect(source).toContain('clerkMiddleware');
-      expect(source).toContain('createRouteMatcher');
+      expect(source).toContain('resolveLocaleRequest');
+      expect(source).toContain('isPublicPathname');
+      expect(source).toContain('decision.pathname');
       expect(source).toContain('await auth.protect()');
+      expect(source).toContain('LOCALE_REQUEST_HEADER');
+      expect(source).toContain('LOCALE_COOKIE_NAME');
+      expect(source).toContain(
+        'NextResponse.redirect(request.nextUrl.clone())',
+      );
       expect(source).toContain("'/(api|trpc)(.*)'");
+
+      const localePersistenceIndex = source.indexOf(
+        'request.cookies.get(LOCALE_COOKIE_NAME)?.value !== decision.locale',
+      );
+      const localizedProtectionIndex = source.indexOf(
+        'if (!isPublicPathname(decision.pathname)) await auth.protect();',
+      );
+      expect(localePersistenceIndex).toBeGreaterThan(-1);
+      expect(localizedProtectionIndex).toBeGreaterThan(localePersistenceIndex);
 
       for (const route of publicRoutes) {
         expect(source).toContain(route);

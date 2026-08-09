@@ -17,6 +17,7 @@
     "@luminol/database": "workspace:*",
     "@luminol/finance": "workspace:*",
     "@luminol/language": "workspace:*",
+    "@luminol/localization": "workspace:*",
     "@luminol/ui": "workspace:*",
     "@luminol/validation": "workspace:*",
     "next": "^16.2.12",
