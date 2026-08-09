@@ -47,14 +47,19 @@
 .sidebar nav a:focus-visible,
 .sidebar nav .active {
   border-inline-start-color: var(--color-brand-gold);
-  background: rgb(255 255 255 / 0.07);
+  background: color-mix(
+    in srgb,
+    var(--color-brand-surface) 7%,
+    transparent
+  );
   color: var(--color-brand-surface);
 }
 
 .privacyNote {
   margin-top: auto;
   padding: 1rem;
-  border: 1px solid rgb(255 255 255 / 0.12);
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 12%, transparent);
   color: var(--color-brand-line);
   font-size: 0.72rem;
   line-height: 1.6;
@@ -238,14 +243,6 @@
   color: var(--color-brand-ink-soft);
   font-size: 0.75rem;
   line-height: 1.5;
-}
-
-.cards a {
-  margin-top: 0.5rem;
-  color: var(--color-brand-ink);
-  font-size: 0.76rem;
-  font-weight: 800;
-  text-underline-offset: 0.22rem;
 }
 
 .empty,
