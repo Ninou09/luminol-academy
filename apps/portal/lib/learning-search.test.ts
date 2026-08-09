@@ -5,6 +5,7 @@ import {
   normalizeLearningSearchQuery,
   parseLearningSearchParam,
   rankLearningSearchResults,
+  rankLearningSearchResultsWithCount,
   type LearningSearchCandidate,
 } from './learning-search';
 
@@ -118,7 +119,7 @@ describe('learner search', () => {
     );
   });
 
-  it('rejects trivial queries and caps result counts', () => {
+  it('rejects trivial queries and caps displayed result counts', () => {
     expect(rankLearningSearchResults(candidates, 'a')).toEqual([]);
 
     const repeated = Array.from({ length: 40 }, (_, index) => ({
@@ -131,6 +132,25 @@ describe('learner search', () => {
     expect(rankLearningSearchResults(repeated, 'English', 200)).toHaveLength(
       20,
     );
+  });
+
+  it('retains the pre-limit match count for aggregate telemetry', () => {
+    const repeated = Array.from({ length: 40 }, (_, index) => ({
+      ...candidates[0]!,
+      title: `English programme ${index}`,
+      courseSlug: `english-${index}`,
+      courseTitle: `English programme ${index}`,
+    }));
+
+    expect(rankLearningSearchResultsWithCount(repeated, 'English')).toMatchObject(
+      {
+        totalMatches: 40,
+        results: expect.arrayContaining([expect.any(Object)]),
+      },
+    );
+    expect(
+      rankLearningSearchResultsWithCount(repeated, 'English').results,
+    ).toHaveLength(20);
   });
 
   it('does not return unrelated content', () => {
