@@ -11,16 +11,16 @@ export type EditorialMediaAsset = {
 
 type EditorialMediaProps = {
   school: SchoolSlug;
-  asset?: EditorialMediaAsset | null;
-  priority?: boolean;
-  sizes?: string;
-  className?: string;
+  asset?: EditorialMediaAsset | null | undefined;
+  priority?: boolean | undefined;
+  sizes?: string | undefined;
+  className?: string | undefined;
 };
 
 const schoolClass: Record<SchoolSlug, string> = {
-  psychology: styles.psychology,
-  languages: styles.languages,
-  training: styles.training,
+  psychology: styles.psychology ?? '',
+  languages: styles.languages ?? '',
+  training: styles.training ?? '',
 };
 
 const schoolMark: Record<SchoolSlug, string> = {
