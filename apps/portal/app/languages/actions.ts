@@ -9,8 +9,11 @@ import {
   startPlacementAttempt,
   submitPlacementAttempt,
 } from '@luminol/language';
+import { localizeHref } from '@luminol/localization';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+
+import { getPortalRequestLocale } from '../../lib/request-locale';
 
 export async function startPlacement(input: unknown) {
   const user = await requireUser();
@@ -28,8 +31,9 @@ export async function startPlacementFromForm(formData: FormData) {
   const attempt = await startPlacement({
     assessmentId: formData.get('assessmentId'),
   });
+  const locale = await getPortalRequestLocale();
 
-  redirect(`/languages/placement/${attempt.id}`);
+  redirect(localizeHref(locale, `/languages/placement/${attempt.id}`));
 }
 
 export async function getActivePlacement(input: unknown) {

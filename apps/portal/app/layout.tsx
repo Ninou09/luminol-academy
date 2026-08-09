@@ -1,27 +1,28 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import {
-  getLocaleDirection,
-  LOCALE_REQUEST_HEADER,
-  parseLocale,
-} from '@luminol/localization';
+import { getLocaleDirection } from '@luminol/localization';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 
+import { getPortalCopy } from '../lib/portal-localization';
+import { getPortalRequestLocale } from '../lib/request-locale';
 import './globals.css';
+import './portal-localization.css';
 
-export const metadata: Metadata = {
-  title: 'Learner Portal | Luminol',
-  description:
-    'Your secure Luminol space for programmes, progress and achievements.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getPortalRequestLocale();
+  const copy = getPortalCopy(locale).metadata;
+
+  return {
+    title: copy.title,
+    description: copy.description,
+  };
+}
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const requestHeaders = await headers();
-  const locale = parseLocale(requestHeaders.get(LOCALE_REQUEST_HEADER));
+  const locale = await getPortalRequestLocale();
 
   return (
     <html lang={locale} dir={getLocaleDirection(locale)}>

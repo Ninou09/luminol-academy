@@ -1,21 +1,81 @@
-import { UserButton } from '@clerk/nextjs';
 import { requireUser } from '@luminol/auth';
-import { Wordmark } from '@luminol/ui';
+import {
+  formatLocalizedDate,
+  formatLocalizedNumber,
+  localizeHref,
+  type Locale,
+} from '@luminol/localization';
 import Link from 'next/link';
 
+import { PortalHeader } from '../components/portal-header';
 import { getLearnerDashboard } from '../lib/dashboard.server';
+import {
+  getPortalCopy,
+  getPortalStatusLabel,
+} from '../lib/portal-localization';
+import { getPortalArrow } from '../lib/portal-direction';
+import { getPortalRequestLocale } from '../lib/request-locale';
 import { setCertificateVisibility } from './certificates/actions';
 
-const dateFormatter = new Intl.DateTimeFormat('en', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-});
 const fallbackWebsiteUrl = 'https://luminol-academy-web.vercel.app';
 
-function formatStatus(status: string) {
-  return status.charAt(0) + status.slice(1).toLowerCase().replace('_', ' ');
-}
+const dashboardExtras = {
+  en: {
+    enrolled: 'enrolled',
+    active: 'Active',
+    joined: 'Joined',
+    progress: 'progress',
+    pending: 'Your programme is being prepared.',
+    complete: 'Programme completed—well done.',
+    saved: 'Your learning record is saved securely.',
+    certificatesEmpty:
+      'Completed programme certificates will appear here automatically.',
+    certificatePrivacy:
+      'Certificates stay private unless you publish them. Publishing displays your synchronized name, programme, issue date and verification status on an unindexed public page. You can withdraw access at any time.',
+    footer: 'Learning with lasting impact',
+  },
+  fr: {
+    enrolled: 'inscrits',
+    active: 'Actif',
+    joined: 'Inscrit le',
+    progress: 'progression',
+    pending: 'Votre programme est en préparation.',
+    complete: 'Programme terminé—bravo.',
+    saved: 'Votre dossier d’apprentissage est enregistré en toute sécurité.',
+    certificatesEmpty:
+      'Les certificats des programmes terminés apparaîtront ici automatiquement.',
+    certificatePrivacy:
+      'Les certificats restent privés tant que vous ne les publiez pas. La publication affiche votre nom synchronisé, le programme, la date d’émission et le statut de vérification sur une page publique non indexée. Vous pouvez retirer cet accès à tout moment.',
+    footer: 'Un apprentissage qui laisse une trace durable',
+  },
+  ar: {
+    enrolled: 'مسجلون',
+    active: 'آخر نشاط',
+    joined: 'انضم في',
+    progress: 'التقدّم',
+    pending: 'يتم تحضير برنامجك.',
+    complete: 'أكملت البرنامج—أحسنت.',
+    saved: 'سجل تعلّمك محفوظ بأمان.',
+    certificatesEmpty: 'ستظهر شهادات البرامج المكتملة هنا تلقائياً.',
+    certificatePrivacy:
+      'تبقى الشهادات خاصة ما لم تنشرها. عند النشر يظهر اسمك المتزامن والبرنامج وتاريخ الإصدار وحالة التحقق في صفحة عامة غير مفهرسة، ويمكنك إيقاف الوصول في أي وقت.',
+    footer: 'للتعلّم أثرٌ يدوم',
+  },
+} as const satisfies Record<
+  Locale,
+  {
+    enrolled: string;
+    active: string;
+    joined: string;
+    progress: string;
+    pending: string;
+    complete: string;
+    saved: string;
+    certificatesEmpty: string;
+    certificatePrivacy: string;
+    footer: string;
+  }
+>;
 
 function resolveWebsiteUrl() {
   const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
@@ -29,70 +89,75 @@ function resolveWebsiteUrl() {
 
 export default async function Page() {
   const user = await requireUser();
+  const locale = await getPortalRequestLocale();
+  const copy = getPortalCopy(locale).dashboard;
+  const extras = dashboardExtras[locale];
   const dashboard = await getLearnerDashboard(user.id);
-  const firstName = user.firstName?.trim() || 'there';
+  const firstName = user.firstName?.trim();
   const websiteUrl = resolveWebsiteUrl();
+  const number = (value: number) => formatLocalizedNumber(value, locale);
+  const date = (value: Date) => formatLocalizedDate(value, locale);
 
   return (
     <main>
-      <header className="portal-header">
-        <Link href="/" className="brand-link" aria-label="Luminol learner home">
-          <Wordmark />
-        </Link>
-        <div className="portal-account">
-          <Link href="/search">Search</Link>
-          <Link href="/notifications">Notifications</Link>
-          <Link href="/finance">Billing</Link>
-          <Link href="/account">Account</Link>
-          <span>Learner portal</span>
-          <UserButton />
-        </div>
-      </header>
+      <PortalHeader />
 
       <div className="dashboard-shell">
         <section className="dashboard-intro" aria-labelledby="dashboard-title">
           <div>
-            <p className="eyebrow">Your learning space</p>
-            <h1 id="dashboard-title">Welcome, {firstName}.</h1>
-            <p>
-              Continue your programmes, follow your progress and keep every
-              achievement in one secure place.
-            </p>
+            <p className="eyebrow">{copy.eyebrow}</p>
+            <h1 id="dashboard-title">
+              {copy.welcome}
+              {firstName ? (
+                <>
+                  {', '}
+                  <bdi dir="auto">{firstName}</bdi>
+                </>
+              ) : null}
+              .
+            </h1>
+            <p>{copy.intro}</p>
           </div>
           <p className="today">
-            <span>Today</span>
-            {dateFormatter.format(new Date())}
+            <span>{copy.today}</span>
+            {formatLocalizedDate(new Date(), locale, {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
           </p>
         </section>
 
-        <section className="summary-grid" aria-label="Learning summary">
+        <section className="summary-grid" aria-label={copy.eyebrow}>
           <article>
-            <span>Active programmes</span>
-            <strong>{dashboard.summary.activeCourses}</strong>
+            <span>{copy.activeProgrammes}</span>
+            <strong>{number(dashboard.summary.activeCourses)}</strong>
           </article>
           <article>
-            <span>Average progress</span>
-            <strong>{dashboard.summary.averageProgress}%</strong>
+            <span>{copy.averageProgress}</span>
+            <strong>{number(dashboard.summary.averageProgress)}%</strong>
           </article>
           <article>
-            <span>Completed</span>
-            <strong>{dashboard.summary.completedCourses}</strong>
+            <span>{copy.completed}</span>
+            <strong>{number(dashboard.summary.completedCourses)}</strong>
           </article>
           <article>
-            <span>Certificates</span>
-            <strong>{dashboard.summary.validCertificates}</strong>
+            <span>{copy.certificates}</span>
+            <strong>{number(dashboard.summary.validCertificates)}</strong>
           </article>
         </section>
 
         <section className="dashboard-section" aria-labelledby="courses-title">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">Learning</p>
-              <h2 id="courses-title">My programmes</h2>
+              <p className="eyebrow">{copy.learning}</p>
+              <h2 id="courses-title">{copy.myProgrammes}</h2>
             </div>
-            {dashboard.courses.length > 0 && (
-              <span>{dashboard.courses.length} enrolled</span>
-            )}
+            {dashboard.courses.length > 0 ? (
+              <span>
+                {number(dashboard.courses.length)} {extras.enrolled}
+              </span>
+            ) : null}
           </div>
 
           {dashboard.courses.length > 0 ? (
@@ -100,34 +165,34 @@ export default async function Page() {
               {dashboard.courses.map((course, index) => (
                 <article className="course-card" key={course.enrollmentId}>
                   <div className={`course-symbol course-symbol-${index % 3}`}>
-                    <span aria-hidden="true">0{index + 1}</span>
+                    <span aria-hidden="true">{number(index + 1)}</span>
                   </div>
                   <div className="course-content">
                     <div className="course-meta">
                       <span
                         className={`status status-${course.status.toLowerCase()}`}
                       >
-                        {formatStatus(course.status)}
+                        {getPortalStatusLabel(locale, course.status)}
                       </span>
                       <span>
                         {course.lastActivityAt
-                          ? `Active ${dateFormatter.format(course.lastActivityAt)}`
-                          : `Joined ${dateFormatter.format(course.enrolledAt)}`}
+                          ? `${extras.active} ${date(course.lastActivityAt)}`
+                          : `${extras.joined} ${date(course.enrolledAt)}`}
                       </span>
                     </div>
-                    <h3>{course.title}</h3>
+                    <h3 dir="auto">{course.title}</h3>
                     <div className="progress-copy">
                       <span>
                         {course.totalLessons > 0
-                          ? `${course.completedLessons} of ${course.totalLessons} lessons`
-                          : 'Ready to begin'}
+                          ? `${number(course.completedLessons)} / ${number(course.totalLessons)} ${copy.lessons}`
+                          : copy.readyToBegin}
                       </span>
-                      <strong>{course.progress}%</strong>
+                      <strong>{number(course.progress)}%</strong>
                     </div>
                     <div
                       className="progress-track"
                       role="progressbar"
-                      aria-label={`${course.title} progress`}
+                      aria-label={`${course.title} ${extras.progress}`}
                       aria-valuemin={0}
                       aria-valuemax={100}
                       aria-valuenow={course.progress}
@@ -136,19 +201,22 @@ export default async function Page() {
                     </div>
                     <p className="course-note">
                       {course.status === 'PENDING'
-                        ? 'Your programme is being prepared.'
+                        ? extras.pending
                         : course.status === 'COMPLETED'
-                          ? 'Programme completed—well done.'
-                          : 'Your learning record is saved securely.'}
+                          ? extras.complete
+                          : extras.saved}
                     </p>
-                    {course.status !== 'PENDING' && (
+                    {course.status !== 'PENDING' ? (
                       <Link
                         className="course-link"
-                        href={`/courses/${course.slug}`}
+                        href={localizeHref(locale, `/courses/${course.slug}`)}
                       >
-                        Open programme <span aria-hidden="true">→</span>
+                        {copy.openProgramme}{' '}
+                        <span aria-hidden="true">
+                          {getPortalArrow(locale, 'forward')}
+                        </span>
                       </Link>
-                    )}
+                    ) : null}
                   </div>
                 </article>
               ))}
@@ -159,13 +227,17 @@ export default async function Page() {
                 ✦
               </span>
               <div>
-                <h3>Your first programme starts here.</h3>
-                <p>
-                  Explore psychology, languages and professional training
-                  designed around meaningful, lasting growth.
-                </p>
+                <h3>{copy.emptyTitle}</h3>
+                <p>{copy.emptyBody}</p>
               </div>
-              <Link href={`${websiteUrl}/#schools`}>Discover programmes</Link>
+              <a
+                href={new URL(
+                  localizeHref(locale, '/#schools'),
+                  websiteUrl,
+                ).toString()}
+              >
+                {copy.discoverProgrammes}
+              </a>
             </div>
           )}
         </section>
@@ -176,8 +248,8 @@ export default async function Page() {
         >
           <div className="section-heading">
             <div>
-              <p className="eyebrow">Achievements</p>
-              <h2 id="certificates-title">Certificates</h2>
+              <p className="eyebrow">{copy.achievements}</p>
+              <h2 id="certificates-title">{copy.certificates}</h2>
             </div>
           </div>
 
@@ -189,34 +261,46 @@ export default async function Page() {
                     L
                   </span>
                   <div>
-                    <h3>
-                      <Link href={`/certificates/${certificate.id}`}>
+                    <h3 dir="auto">
+                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/certificates/${certificate.id}`,
+                        )}
+                      >
                         {certificate.course.title}
                       </Link>
                     </h3>
-                    <p>Issued {dateFormatter.format(certificate.issuedAt)}</p>
+                    <p>
+                      {copy.issued} {date(certificate.issuedAt)}
+                    </p>
                   </div>
                   <div className="certificate-verification">
                     <span>
                       {certificate.revokedAt
-                        ? 'Revoked'
+                        ? copy.revoked
                         : certificate.publiclyVisible
-                          ? 'Public verification on'
-                          : 'Private'}
+                          ? copy.publicVerification
+                          : copy.privateVerification}
                     </span>
-                    <code>{certificate.verificationId}</code>
+                    <code dir="ltr">{certificate.verificationId}</code>
                     <div className="certificate-actions">
-                      {certificate.publiclyVisible && (
+                      {certificate.publiclyVisible ? (
                         <a
-                          href={`${websiteUrl}/certificates/${certificate.verificationId}`}
+                          href={new URL(
+                            localizeHref(
+                              locale,
+                              `/certificates/${certificate.verificationId}`,
+                            ),
+                            websiteUrl,
+                          ).toString()}
                           target="_blank"
                           rel="noreferrer"
                         >
-                          Open verification
+                          {copy.openVerification}
                         </a>
-                      )}
-                      {(!certificate.revokedAt ||
-                        certificate.publiclyVisible) && (
+                      ) : null}
+                      {!certificate.revokedAt || certificate.publiclyVisible ? (
                         <form action={setCertificateVisibility}>
                           <input
                             type="hidden"
@@ -232,38 +316,30 @@ export default async function Page() {
                           />
                           <button type="submit">
                             {certificate.publiclyVisible
-                              ? 'Make private'
-                              : 'Publish verification'}
+                              ? copy.makePrivate
+                              : copy.publishVerification}
                           </button>
                         </form>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </article>
               ))}
             </div>
           ) : (
-            <p className="certificate-empty">
-              Completed programme certificates will appear here automatically.
-            </p>
+            <p className="certificate-empty">{extras.certificatesEmpty}</p>
           )}
-          {dashboard.certificates.length > 0 && (
+          {dashboard.certificates.length > 0 ? (
             <p className="certificate-privacy-note">
-              Certificates stay private unless you publish them. Publishing
-              displays your synchronized name, programme, issue date and
-              verification status on an unindexed public page. You can withdraw
-              access at any time.
+              {extras.certificatePrivacy}
             </p>
-          )}
+          ) : null}
         </section>
       </div>
 
       <footer>
         <span>© Luminol</span>
-        <span lang="ar" dir="rtl">
-          للتعلّم أثرٌ يدوم
-        </span>
-        <span>Le savoir nous éclaire</span>
+        <span>{extras.footer}</span>
       </footer>
     </main>
   );

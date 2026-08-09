@@ -2,9 +2,12 @@
 
 import { AuthorizationError, requireUser } from '@luminol/auth';
 import { db } from '@luminol/database';
+import { localizeHref } from '@luminol/localization';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+
+import { getPortalRequestLocale } from '../../../lib/request-locale';
 
 const completionSchema = z.object({
   lessonId: z.string().min(1).max(128),
@@ -126,5 +129,8 @@ export async function completeLesson(formData: FormData) {
   revalidatePath('/');
   revalidatePath(`/courses/${course.slug}`);
 
-  if (redirectTo) redirect(redirectTo);
+  if (redirectTo) {
+    const locale = await getPortalRequestLocale();
+    redirect(localizeHref(locale, redirectTo));
+  }
 }
