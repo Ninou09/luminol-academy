@@ -1,7 +1,16 @@
 import { SearchResultBucket } from '@prisma/client';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { searchResultBucketForCount, searchTelemetryDay } from './index';
+import {
+  SEARCH_TELEMETRY_WRITE_TIMEOUT_MS,
+  searchResultBucketForCount,
+  searchTelemetryDay,
+  settleSearchTelemetryWrite,
+} from './index';
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe('privacy-safe search telemetry aggregates', () => {
   it('buckets only aggregate result counts', () => {
@@ -24,5 +33,24 @@ describe('privacy-safe search telemetry aggregates', () => {
     expect(searchTelemetryDay(new Date('2026-08-09T23:59:59.999Z'))).toEqual(
       new Date('2026-08-09T00:00:00.000Z'),
     );
+  });
+
+  it('bounds a stalled telemetry write instead of blocking search indefinitely', async () => {
+    vi.useFakeTimers();
+    const stalledWrite = new Promise<never>(() => undefined);
+    const settlement = settleSearchTelemetryWrite(stalledWrite);
+
+    await vi.advanceTimersByTimeAsync(SEARCH_TELEMETRY_WRITE_TIMEOUT_MS);
+
+    await expect(settlement).resolves.toBe(false);
+  });
+
+  it('reports a telemetry write that settles before the timeout', async () => {
+    await expect(settleSearchTelemetryWrite(Promise.resolve())).resolves.toBe(
+      true,
+    );
+    await expect(
+      settleSearchTelemetryWrite(Promise.reject(new Error('unavailable'))),
+    ).resolves.toBe(false);
   });
 });
