@@ -78,7 +78,7 @@ Delivered capabilities include the security and privacy audit, response hardenin
 
 ### Milestone 14 — Search and Discovery
 
-Status: In progress
+Status: In progress — implementation complete, final verification in progress
 
 The first delivery slice adds privacy-safe learner search across only the authenticated learner's active or completed, published programme content. Search is server-scoped to enrolled courses, validates URL-owned input with Zod, normalizes and bounds queries, searches every eligible enrollment, gates results on real text matches before ranking, supports automatic RTL/LTR query direction, and returns direct programme or lesson destinations without exposing another learner's content.
 
@@ -86,11 +86,9 @@ The second delivery slice adds governed public programme discovery at `/programm
 
 The third delivery slice adds protected administration search at `/search` in the administration application. Access requires the existing `academy:manage` server authorization. Search is limited to active account identity, enquiry identity/routing metadata, and course portfolio metadata; enquiry messages and private learning content are intentionally excluded. URL input is Zod-validated, result groups are bounded and truthfully labelled, and mixed Arabic/Latin result text uses automatic direction where needed.
 
-Phases 1–3 are implemented on the active milestone branch. The remaining product slice is aggregate telemetry and milestone-wide verification.
+The observability slice records only daily aggregate search outcome buckets for learner search, public programme search, and protected administration search. The persistence model and write API do not accept or store raw query text, user identifiers, session identifiers, IP addresses, or searched content. Telemetry writes are best-effort and cannot make search unavailable.
 
-Planned follow-up slice:
-
-- privacy-safe aggregate search telemetry without retaining raw sensitive queries
+All planned Milestone 14 product slices are implemented on the active milestone branch. Milestone-wide CI and independent review remain before the milestone is marked complete.
 
 AI/vector search and external paid search providers remain explicitly out of scope until the deterministic search layer is proven.
 
