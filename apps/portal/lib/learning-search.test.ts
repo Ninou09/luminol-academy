@@ -74,6 +74,34 @@ describe('learner search', () => {
     );
   });
 
+  it('uses href as a deterministic final tiebreaker', () => {
+    const tied: LearningSearchCandidate[] = [
+      {
+        kind: 'lesson',
+        courseSlug: 'z-course',
+        courseTitle: 'Course Z',
+        title: 'Introduction',
+        lessonSlug: 'introduction',
+      },
+      {
+        kind: 'lesson',
+        courseSlug: 'a-course',
+        courseTitle: 'Course A',
+        title: 'Introduction',
+        lessonSlug: 'introduction',
+      },
+    ];
+
+    expect(
+      rankLearningSearchResults(tied, 'Introduction').map(
+        (result) => result.href,
+      ),
+    ).toEqual([
+      '/courses/a-course/lessons/introduction',
+      '/courses/z-course/lessons/introduction',
+    ]);
+  });
+
   it('supports normalized Arabic search text', () => {
     const arabic: LearningSearchCandidate[] = [
       {
