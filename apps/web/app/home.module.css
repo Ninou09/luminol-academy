@@ -1,0 +1,70 @@
+.page { overflow: clip; background: var(--color-brand-canvas); color: var(--color-brand-ink); }
+.hero { position: relative; min-height: calc(100svh - 5.5rem); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(24rem, .95fr); gap: clamp(3rem, 7vw, 8rem); align-items: center; width: min(calc(100% - (2 * var(--luminol-page-gutter))), 92rem); margin-inline: auto; padding-block: clamp(4rem, 8vw, 8rem); }
+.hero::before { content: ''; position: absolute; width: 38rem; aspect-ratio: 1; inset-inline-start: -20rem; inset-block-start: -16rem; border-radius: 50%; background: rgb(199 154 59 / .1); filter: blur(6rem); pointer-events: none; }
+.heroCopy { position: relative; z-index: 2; max-width: 50rem; }
+.eyebrow { margin: 0 0 1.25rem; color: var(--color-brand-gold-strong); font-size: .7rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.heroTitle { margin: 0; font-family: var(--font-display); font-size: clamp(4rem, 8.4vw, 8.6rem); font-weight: 500; letter-spacing: -.055em; line-height: .82; }
+.heroTitle span { display: block; margin-top: .12em; color: var(--color-brand-gold-strong); font-style: italic; font-weight: 400; }
+.heroLede { max-width: 39rem; margin: 2rem 0 0; color: var(--color-brand-ink-soft); font-size: clamp(1rem, 1.45vw, 1.25rem); line-height: 1.8; }
+.heroActions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
+.proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 3rem 0 0; padding-top: 1.5rem; border-top: 1px solid var(--color-brand-line); }
+.proof div { display: grid; gap: .35rem; }
+.proof dt { font-family: var(--font-display); font-size: 1.8rem; }
+.proof dd { margin: 0; color: var(--color-brand-muted); font-size: .66rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.stage { position: relative; min-height: clamp(32rem, 56vw, 47rem); border: 1px solid rgb(16 42 67 / .16); border-radius: clamp(1.2rem, 2.6vw, 2rem); background: linear-gradient(145deg, #102a43 0%, #173956 58%, #214a60 100%); box-shadow: var(--shadow-editorial); overflow: hidden; isolation: isolate; }
+.stageGrid { position: absolute; inset: 0; opacity: .15; background-image: linear-gradient(rgb(255 255 255 / .35) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / .35) 1px, transparent 1px); background-size: 4rem 4rem; mask-image: linear-gradient(145deg, black, transparent 75%); }
+.glow { position: absolute; width: 20rem; aspect-ratio: 1; inset-inline-start: 50%; inset-block-start: 50%; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, rgb(199 154 59 / .35), rgb(199 154 59 / .05) 45%, transparent 70%); filter: blur(1rem); }
+.orbit { position: absolute; inset: 17%; border: 1px solid rgb(255 255 255 / .22); border-radius: 50%; }
+.orbit::before { content: ''; position: absolute; width: .7rem; aspect-ratio: 1; top: -0.35rem; left: 50%; border-radius: 50%; background: var(--color-brand-gold); box-shadow: 0 0 1.5rem rgb(199 154 59 / .8); }
+.orbitInner { inset: 29%; border-style: dashed; opacity: .75; }
+.core { position: absolute; inset-inline-start: 50%; inset-block-start: 50%; width: 9.5rem; aspect-ratio: 1; display: grid; place-items: center; translate: -50% -50%; border: 1px solid rgb(255 255 255 / .35); border-radius: 50%; background: rgb(250 250 248 / .96); color: var(--color-brand-ink); box-shadow: 0 2rem 6rem rgb(0 0 0 / .24); font-family: var(--font-display); font-size: 3.1rem; }
+.signal { position: absolute; min-width: 10rem; padding: 1rem 1.1rem; border: 1px solid rgb(255 255 255 / .18); border-radius: .85rem; background: rgb(250 250 248 / .1); color: white; backdrop-filter: blur(.75rem); }
+.signal span { display: block; color: rgb(255 255 255 / .6); font-size: .58rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.signal strong { display: block; margin-top: .25rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; }
+.signalOne { inset-inline-start: 7%; inset-block-start: 14%; }
+.signalTwo { inset-inline-end: 6%; inset-block-start: 43%; }
+.signalThree { inset-inline-start: 10%; inset-block-end: 12%; }
+.section { width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem); margin-inline: auto; padding-block: var(--luminol-section-space); }
+.sectionHeading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 34rem); gap: 3rem; align-items: end; margin-bottom: clamp(2.5rem, 6vw, 5rem); }
+.sectionHeading h2, .aboutCopy h2, .pathway h2, .approachIntro h2, .cta h2 { margin: 0; font-family: var(--font-display); font-size: clamp(2.8rem, 5vw, 5.5rem); font-weight: 500; letter-spacing: -.035em; line-height: .95; }
+.sectionHeading > p { margin: 0; color: var(--color-brand-muted); line-height: 1.8; }
+.schoolGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.schoolCard { position: relative; min-height: 35rem; display: flex; flex-direction: column; padding: clamp(1.5rem, 2.5vw, 2.25rem); border: 1px solid var(--color-brand-line); border-radius: var(--luminol-media-radius); background: white; overflow: hidden; transition: transform var(--luminol-motion-standard) var(--luminol-ease-out), box-shadow var(--luminol-motion-standard) ease; }
+.schoolCard::before { content: ''; position: absolute; width: 18rem; aspect-ratio: 1; inset-inline-end: -8rem; inset-block-start: -9rem; border-radius: 50%; background: var(--school-soft); }
+.schoolCard:hover { transform: translateY(-.5rem); box-shadow: var(--shadow-editorial); }
+.psychology { --school-accent: var(--color-school-psychology); --school-soft: var(--color-school-psychology-soft); }
+.languages { --school-accent: var(--color-school-languages); --school-soft: var(--color-school-languages-soft); }
+.training { --school-accent: var(--color-school-training); --school-soft: var(--color-school-training-soft); }
+.schoolTop { position: relative; display: flex; justify-content: space-between; color: var(--school-accent); font-size: .7rem; font-weight: 800; letter-spacing: .12em; }
+.schoolGlyph { width: 2.3rem; aspect-ratio: 1; border: 1px solid var(--school-accent); border-radius: 50%; }
+.schoolCard h3 { position: relative; margin: auto 0 1rem; font-family: var(--font-display); font-size: clamp(2.5rem, 3.8vw, 4.2rem); font-weight: 500; line-height: .95; }
+.schoolPromise { color: var(--school-accent); font-family: var(--font-display); font-size: 1.25rem; font-style: italic; }
+.schoolDescription { color: var(--color-brand-muted); line-height: 1.7; }
+.schoolCard ul { display: grid; gap: .55rem; margin: 1.25rem 0 1.75rem; padding: 1.25rem 0 0; border-top: 1px solid var(--color-brand-line); list-style: none; }
+.schoolCard li { font-size: .76rem; font-weight: 700; }
+.textLink { margin-top: auto; color: var(--color-brand-ink); font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-decoration: none; text-transform: uppercase; }
+.approach { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(4rem, 10vw, 10rem); padding: var(--luminol-section-space) max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2)); background: var(--color-brand-ink); color: white; }
+.approachIntro { position: sticky; top: 8rem; align-self: start; }
+.approachIntro p:last-child { max-width: 31rem; color: rgb(255 255 255 / .65); line-height: 1.8; }
+.light { color: var(--color-brand-gold); }
+.principles { margin: 0; padding: 0; list-style: none; }
+.principles li { display: grid; grid-template-columns: 3rem 1fr; gap: 1.5rem; padding-block: 2rem; border-top: 1px solid rgb(255 255 255 / .16); }
+.principles li > span { color: var(--color-brand-gold); font-size: .68rem; }
+.principles h3 { margin: 0; font-family: var(--font-display); font-size: clamp(1.7rem, 2.8vw, 2.6rem); font-weight: 500; }
+.principles p { margin: .6rem 0 0; color: rgb(255 255 255 / .62); line-height: 1.7; }
+.about { display: grid; grid-template-columns: minmax(19rem, .75fr) minmax(0, 1.25fr); gap: clamp(3rem, 9vw, 9rem); align-items: center; }
+.aboutVisual { position: relative; min-height: 34rem; display: grid; place-items: center; border-radius: var(--luminol-media-radius); background: linear-gradient(145deg, var(--color-school-psychology-soft), var(--color-school-languages-soft)); overflow: hidden; }
+.monogram { font-family: var(--font-display); font-size: clamp(12rem, 24vw, 21rem); color: rgb(16 42 67 / .1); line-height: 1; }
+.aboutVisual p { position: absolute; inset-inline: 2rem; inset-block-end: 2rem; margin: 0; color: var(--color-brand-ink); font-family: var(--font-display); font-size: 1.5rem; }
+.aboutCopy > p:not(.eyebrow) { max-width: 42rem; color: var(--color-brand-muted); line-height: 1.8; }
+.aboutLede { color: var(--color-brand-ink) !important; font-family: var(--font-display); font-size: 1.5rem; }
+.values { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.75rem; }
+.values span { padding: .55rem .8rem; border: 1px solid var(--color-brand-line); border-radius: var(--radius-pill); font-size: .66rem; font-weight: 800; }
+.pathway { display: grid; grid-template-columns: .7fr 1.3fr; gap: clamp(3rem, 8vw, 8rem); }
+.pathwayLinks { display: grid; border-top: 1px solid var(--color-brand-line); }
+.pathwayLinks a { display: grid; grid-template-columns: 3rem 1fr auto; gap: 1rem; align-items: center; padding-block: 1.5rem; border-bottom: 1px solid var(--color-brand-line); color: var(--color-brand-ink); font-family: var(--font-display); font-size: clamp(1.5rem, 2.6vw, 2.4rem); text-decoration: none; }
+.pathwayLinks span, .pathwayLinks b { color: var(--color-brand-gold-strong); font-family: var(--font-sans); font-size: .65rem; }
+.cta { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 3rem; align-items: end; padding: clamp(4rem, 9vw, 8rem) max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2)); background: #15334d; color: white; }
+.cta p:last-child { max-width: 40rem; color: rgb(255 255 255 / .65); line-height: 1.8; }
+@media (max-width: 1000px) { .hero { grid-template-columns: 1fr; } .stage { min-height: 34rem; } .schoolGrid { grid-template-columns: 1fr; } .schoolCard { min-height: 28rem; } .approach, .about, .pathway { grid-template-columns: 1fr; } .approachIntro { position: static; } }
+@media (max-width: 680px) { .hero { width: calc(100% - 2.5rem); padding-block: 3.5rem 5rem; } .heroTitle { font-size: clamp(3.7rem, 18vw, 5.7rem); } .proof { grid-template-columns: 1fr; } .stage { min-height: 28rem; } .signal { min-width: 8rem; padding: .75rem; } .signalTwo { inset-inline-end: 3%; } .section { width: calc(100% - 2.5rem); } .sectionHeading { grid-template-columns: 1fr; gap: 1rem; } .approach { padding-inline: 1.25rem; } .aboutVisual { min-height: 25rem; } .cta { grid-template-columns: 1fr; padding-inline: 1.25rem; } }
