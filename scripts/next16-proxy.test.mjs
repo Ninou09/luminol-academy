@@ -5,7 +5,10 @@ import { describe, expect, it } from 'vitest';
 const cases = [
   {
     app: 'admin',
-    publicRoutes: ["pathname === '/sign-in'", "pathname === '/api/webhooks/clerk'"],
+    publicRoutes: [
+      "pathname === '/sign-in'",
+      "pathname === '/api/webhooks/clerk'",
+    ],
   },
   {
     app: 'portal',
