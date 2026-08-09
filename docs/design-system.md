@@ -13,7 +13,7 @@ experiences without coupling those applications together.
 - School colours distinguish Psychology, Languages and Professional Training
   without replacing the core Luminol identity.
 - Manrope is the Latin interface face, Cormorant Garamond is the display face,
-  and Noto Sans Arabic with IBM Plex Sans Arabic fallback supports Arabic.
+  and Noto Sans Arabic supports Arabic with a system sans-serif fallback.
 
 The public website loads the governed font families through `next/font` so they
 are bundled with the application instead of depending on a runtime third-party
