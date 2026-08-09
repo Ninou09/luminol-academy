@@ -86,9 +86,9 @@ The second delivery slice adds governed public programme discovery at `/programm
 
 The third delivery slice adds protected administration search at `/search` in the administration application. Access requires the existing `academy:manage` server authorization. Search is limited to active account identity, enquiry identity/routing metadata, and course portfolio metadata; enquiry messages and private learning content are intentionally excluded. URL input is Zod-validated, result groups are bounded and truthfully labelled, and mixed Arabic/Latin result text uses automatic direction where needed.
 
-The observability slice records only daily aggregate search outcome buckets for learner search, public programme search, and protected administration search. The persistence model and write API do not accept or store raw query text, user identifiers, session identifiers, IP addresses, or searched content. Telemetry writes are best-effort and cannot make search unavailable.
+The observability slice records only daily aggregate search outcome buckets for learner search, public programme search, and protected administration search. The persistence model and write API do not accept or store raw query text, user identifiers, session identifiers, IP addresses, or searched content. Telemetry writes use a short bounded settlement window so a slow or unavailable telemetry database cannot hold search responses open. Learner telemetry uses the pre-display-limit match count, and administration telemetry preserves overflow into the `TWENTY_PLUS` bucket.
 
-All planned Milestone 14 product slices are implemented on the active milestone branch. Milestone-wide CI and independent review remain before the milestone is marked complete.
+Final review hardening also places administration search tests inside the repository-wide Vitest quality gate. All planned Milestone 14 product slices are implemented on the active milestone branch. Milestone-wide CI and independent re-review remain before the milestone is marked complete.
 
 AI/vector search and external paid search providers remain explicitly out of scope until the deterministic search layer is proven.
 
