@@ -1,0 +1,800 @@
+name: Build Milestone 15 locale routing once
+
+on:
+  push:
+    branches:
+      - feature/milestone-15-locale-routing
+
+permissions:
+  contents: write
+
+jobs:
+  build-routing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install current workspace
+        run: pnpm install --frozen-lockfile
+      - name: Build locale routing and persistence
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node <<'EOF'
+          const fs = require('node:fs');
+
+          for (const path of [
+            'apps/web/package.json',
+            'apps/portal/package.json',
+            'apps/admin/package.json',
+          ]) {
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            pkg.dependencies = pkg.dependencies || {};
+            pkg.dependencies['@luminol/localization'] = 'workspace:*';
+            pkg.dependencies = Object.fromEntries(
+              Object.entries(pkg.dependencies).sort(([a], [b]) => a.localeCompare(b)),
+            );
+            fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
+          }
+          EOF
+
+          if ! grep -q "LOCALE_COOKIE_NAME" packages/localization/src/index.ts; then
+            cat >> packages/localization/src/index.ts <<'EOF'
+
+          export const LOCALE_COOKIE_NAME = 'luminol_locale';
+          export const LOCALE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
+
+          export type LocaleRoutingOptions = {
+            bypassPrefixes?: readonly string[];
+            bypassExact?: readonly string[];
+          };
+
+          export type LocaleRoutingDecision =
+            | { kind: 'bypass' }
+            | { kind: 'rewrite'; locale: Locale; pathname: string }
+            | { kind: 'redirect'; locale: Locale; pathname: string };
+
+          function matchesPathPrefix(pathname: string, prefix: string): boolean {
+            return pathname === prefix || pathname.startsWith(`${prefix}/`);
+          }
+
+          function shouldBypassLocaleRouting(
+            pathname: string,
+            options: LocaleRoutingOptions,
+          ): boolean {
+            if (options.bypassExact?.includes(pathname)) return true;
+            return Boolean(
+              options.bypassPrefixes?.some((prefix) =>
+                matchesPathPrefix(pathname, prefix),
+              ),
+            );
+          }
+
+          export function resolveLocaleRequest(
+            pathname: string,
+            storedLocale: unknown,
+            options: LocaleRoutingOptions = {},
+          ): LocaleRoutingDecision {
+            const safePathname = pathname.startsWith('/') ? pathname : '/';
+
+            if (shouldBypassLocaleRouting(safePathname, options)) {
+              return { kind: 'bypass' };
+            }
+
+            const localized = parseLocalizedPathname(safePathname);
+            if (localized) {
+              if (shouldBypassLocaleRouting(localized.pathname, options)) {
+                return { kind: 'bypass' };
+              }
+
+              const rawLocaleSegment = safePathname.split('/')[1] ?? '';
+              const canonicalPathname = localizePathname(
+                localized.locale,
+                localized.pathname,
+              );
+
+              if (rawLocaleSegment !== localized.locale) {
+                return {
+                  kind: 'redirect',
+                  locale: localized.locale,
+                  pathname: canonicalPathname,
+                };
+              }
+
+              return {
+                kind: 'rewrite',
+                locale: localized.locale,
+                pathname: localized.pathname,
+              };
+            }
+
+            const locale = parseLocale(storedLocale);
+            return {
+              kind: 'redirect',
+              locale,
+              pathname: localizePathname(locale, safePathname),
+            };
+          }
+          EOF
+          fi
+
+          cat > packages/localization/src/routing.test.ts <<'EOF'
+          import { describe, expect, it } from 'vitest';
+
+          import {
+            LOCALE_COOKIE_MAX_AGE_SECONDS,
+            LOCALE_COOKIE_NAME,
+            resolveLocaleRequest,
+          } from './index';
+
+          const routingOptions = {
+            bypassPrefixes: ['/api', '/trpc', '/__clerk', '/.well-known'],
+            bypassExact: ['/robots.txt', '/sitemap.xml'],
+          } as const;
+
+          describe('locale request routing', () => {
+            it('redirects unprefixed pages to the persisted locale', () => {
+              expect(resolveLocaleRequest('/programmes', 'fr', routingOptions)).toEqual({
+                kind: 'redirect',
+                locale: 'fr',
+                pathname: '/fr/programmes',
+              });
+            });
+
+            it('falls back deterministically to English', () => {
+              expect(resolveLocaleRequest('/about', 'de', routingOptions)).toEqual({
+                kind: 'redirect',
+                locale: 'en',
+                pathname: '/en/about',
+              });
+            });
+
+            it('rewrites canonical localized pages to their internal route', () => {
+              expect(resolveLocaleRequest('/ar/programmes', 'en', routingOptions)).toEqual({
+                kind: 'rewrite',
+                locale: 'ar',
+                pathname: '/programmes',
+              });
+            });
+
+            it('canonicalizes locale prefix casing', () => {
+              expect(resolveLocaleRequest('/FR/about', 'en', routingOptions)).toEqual({
+                kind: 'redirect',
+                locale: 'fr',
+                pathname: '/fr/about',
+              });
+            });
+
+            it('does not localize machine routes or create localized API aliases', () => {
+              expect(resolveLocaleRequest('/api/health', 'ar', routingOptions)).toEqual({
+                kind: 'bypass',
+              });
+              expect(resolveLocaleRequest('/fr/api/health', 'ar', routingOptions)).toEqual({
+                kind: 'bypass',
+              });
+              expect(resolveLocaleRequest('/robots.txt', 'fr', routingOptions)).toEqual({
+                kind: 'bypass',
+              });
+            });
+
+            it('uses path-segment boundaries for bypass prefixes', () => {
+              expect(resolveLocaleRequest('/apiary', 'fr', routingOptions)).toEqual({
+                kind: 'redirect',
+                locale: 'fr',
+                pathname: '/fr/apiary',
+              });
+            });
+
+            it('defines a durable same-origin locale cookie contract', () => {
+              expect(LOCALE_COOKIE_NAME).toBe('luminol_locale');
+              expect(LOCALE_COOKIE_MAX_AGE_SECONDS).toBe(31_536_000);
+            });
+          });
+          EOF
+
+          cat > apps/web/proxy.ts <<'EOF'
+          import {
+            LOCALE_COOKIE_MAX_AGE_SECONDS,
+            LOCALE_COOKIE_NAME,
+            LOCALE_REQUEST_HEADER,
+            resolveLocaleRequest,
+            type Locale,
+          } from '@luminol/localization';
+          import type { NextRequest } from 'next/server';
+          import { NextResponse } from 'next/server';
+
+          const localeRoutingOptions = {
+            bypassPrefixes: ['/api', '/trpc', '/.well-known'],
+            bypassExact: ['/robots.txt', '/sitemap.xml'],
+          } as const;
+
+          function persistLocale(
+            response: NextResponse,
+            request: NextRequest,
+            locale: Locale,
+          ) {
+            if (request.cookies.get(LOCALE_COOKIE_NAME)?.value !== locale) {
+              response.cookies.set(LOCALE_COOKIE_NAME, locale, {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production',
+                path: '/',
+                maxAge: LOCALE_COOKIE_MAX_AGE_SECONDS,
+              });
+            }
+
+            return response;
+          }
+
+          export function proxy(request: NextRequest) {
+            const decision = resolveLocaleRequest(
+              request.nextUrl.pathname,
+              request.cookies.get(LOCALE_COOKIE_NAME)?.value,
+              localeRoutingOptions,
+            );
+
+            if (decision.kind === 'bypass') return NextResponse.next();
+
+            if (decision.kind === 'redirect') {
+              const destination = request.nextUrl.clone();
+              destination.pathname = decision.pathname;
+              return persistLocale(
+                NextResponse.redirect(destination),
+                request,
+                decision.locale,
+              );
+            }
+
+            const destination = request.nextUrl.clone();
+            destination.pathname = decision.pathname;
+            const requestHeaders = new Headers(request.headers);
+            requestHeaders.set(LOCALE_REQUEST_HEADER, decision.locale);
+
+            return persistLocale(
+              NextResponse.rewrite(destination, {
+                request: { headers: requestHeaders },
+              }),
+              request,
+              decision.locale,
+            );
+          }
+
+          export const config = {
+            matcher: [
+              '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+              '/(api|trpc)(.*)',
+            ],
+          };
+          EOF
+
+          cat > apps/portal/proxy.ts <<'EOF'
+          import { clerkMiddleware } from '@clerk/nextjs/server';
+          import {
+            LOCALE_COOKIE_MAX_AGE_SECONDS,
+            LOCALE_COOKIE_NAME,
+            LOCALE_REQUEST_HEADER,
+            resolveLocaleRequest,
+            type Locale,
+          } from '@luminol/localization';
+          import type { NextRequest } from 'next/server';
+          import { NextResponse } from 'next/server';
+
+          const localeRoutingOptions = {
+            bypassPrefixes: ['/api', '/trpc', '/__clerk', '/.well-known'],
+          } as const;
+
+          function isPublicPathname(pathname: string) {
+            return (
+              pathname === '/sign-in' ||
+              pathname.startsWith('/sign-in/') ||
+              pathname === '/sign-up' ||
+              pathname.startsWith('/sign-up/')
+            );
+          }
+
+          function persistLocale(
+            response: NextResponse,
+            request: NextRequest,
+            locale: Locale,
+          ) {
+            if (request.cookies.get(LOCALE_COOKIE_NAME)?.value !== locale) {
+              response.cookies.set(LOCALE_COOKIE_NAME, locale, {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production',
+                path: '/',
+                maxAge: LOCALE_COOKIE_MAX_AGE_SECONDS,
+              });
+            }
+
+            return response;
+          }
+
+          export default clerkMiddleware(async (auth, request) => {
+            const decision = resolveLocaleRequest(
+              request.nextUrl.pathname,
+              request.cookies.get(LOCALE_COOKIE_NAME)?.value,
+              localeRoutingOptions,
+            );
+
+            if (decision.kind === 'bypass') {
+              if (!isPublicPathname(request.nextUrl.pathname)) {
+                await auth.protect();
+              }
+              return NextResponse.next();
+            }
+
+            if (decision.kind === 'redirect') {
+              const destination = request.nextUrl.clone();
+              destination.pathname = decision.pathname;
+              return persistLocale(
+                NextResponse.redirect(destination),
+                request,
+                decision.locale,
+              );
+            }
+
+            if (!isPublicPathname(decision.pathname)) await auth.protect();
+
+            const destination = request.nextUrl.clone();
+            destination.pathname = decision.pathname;
+            const requestHeaders = new Headers(request.headers);
+            requestHeaders.set(LOCALE_REQUEST_HEADER, decision.locale);
+
+            return persistLocale(
+              NextResponse.rewrite(destination, {
+                request: { headers: requestHeaders },
+              }),
+              request,
+              decision.locale,
+            );
+          });
+
+          export const config = {
+            matcher: [
+              '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+              '/(api|trpc)(.*)',
+            ],
+          };
+          EOF
+
+          cat > apps/admin/proxy.ts <<'EOF'
+          import { clerkMiddleware } from '@clerk/nextjs/server';
+          import {
+            LOCALE_COOKIE_MAX_AGE_SECONDS,
+            LOCALE_COOKIE_NAME,
+            LOCALE_REQUEST_HEADER,
+            resolveLocaleRequest,
+            type Locale,
+          } from '@luminol/localization';
+          import type { NextRequest } from 'next/server';
+          import { NextResponse } from 'next/server';
+
+          const localeRoutingOptions = {
+            bypassPrefixes: ['/api', '/trpc', '/__clerk', '/.well-known'],
+          } as const;
+
+          function isPublicPathname(pathname: string) {
+            return (
+              pathname === '/sign-in' ||
+              pathname.startsWith('/sign-in/') ||
+              pathname === '/api/webhooks/clerk'
+            );
+          }
+
+          function persistLocale(
+            response: NextResponse,
+            request: NextRequest,
+            locale: Locale,
+          ) {
+            if (request.cookies.get(LOCALE_COOKIE_NAME)?.value !== locale) {
+              response.cookies.set(LOCALE_COOKIE_NAME, locale, {
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: process.env.NODE_ENV === 'production',
+                path: '/',
+                maxAge: LOCALE_COOKIE_MAX_AGE_SECONDS,
+              });
+            }
+
+            return response;
+          }
+
+          export default clerkMiddleware(async (auth, request) => {
+            const decision = resolveLocaleRequest(
+              request.nextUrl.pathname,
+              request.cookies.get(LOCALE_COOKIE_NAME)?.value,
+              localeRoutingOptions,
+            );
+
+            if (decision.kind === 'bypass') {
+              if (!isPublicPathname(request.nextUrl.pathname)) {
+                await auth.protect();
+              }
+              return NextResponse.next();
+            }
+
+            if (decision.kind === 'redirect') {
+              const destination = request.nextUrl.clone();
+              destination.pathname = decision.pathname;
+              return persistLocale(
+                NextResponse.redirect(destination),
+                request,
+                decision.locale,
+              );
+            }
+
+            if (!isPublicPathname(decision.pathname)) await auth.protect();
+
+            const destination = request.nextUrl.clone();
+            destination.pathname = decision.pathname;
+            const requestHeaders = new Headers(request.headers);
+            requestHeaders.set(LOCALE_REQUEST_HEADER, decision.locale);
+
+            return persistLocale(
+              NextResponse.rewrite(destination, {
+                request: { headers: requestHeaders },
+              }),
+              request,
+              decision.locale,
+            );
+          });
+
+          export const config = {
+            matcher: [
+              '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+              '/(api|trpc)(.*)',
+            ],
+          };
+          EOF
+
+          cat > apps/web/app/layout.tsx <<'EOF'
+          import {
+            getLocaleDirection,
+            LOCALE_REQUEST_HEADER,
+            parseLocale,
+          } from '@luminol/localization';
+          import type { Metadata } from 'next';
+          import { headers } from 'next/headers';
+
+          import './globals.css';
+
+          const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
+
+          function resolveMetadataBase() {
+            const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+            try {
+              return new URL(configured || fallbackSiteUrl);
+            } catch {
+              return new URL(fallbackSiteUrl);
+            }
+          }
+
+          export const metadata: Metadata = {
+            metadataBase: resolveMetadataBase(),
+            title: {
+              default:
+                'Luminol Academy | Psychology, Languages & Professional Training',
+              template: '%s | Luminol Academy',
+            },
+            description:
+              'Grow mentally, linguistically and professionally with Luminol Academy—one human-centered ecosystem for psychology, languages and professional training.',
+            keywords: [
+              'Luminol Academy',
+              'psychology',
+              'mental wellness',
+              'language learning',
+              'professional training',
+              'coaching',
+            ],
+            alternates: {
+              canonical: '/',
+            },
+            openGraph: {
+              title: 'Luminol Academy',
+              description:
+                'Psychology, language learning and professional development in one thoughtful human ecosystem.',
+              type: 'website',
+              url: '/',
+            },
+          };
+
+          export default async function RootLayout({
+            children,
+          }: Readonly<{
+            children: React.ReactNode;
+          }>) {
+            const requestHeaders = await headers();
+            const locale = parseLocale(requestHeaders.get(LOCALE_REQUEST_HEADER));
+
+            return (
+              <html lang={locale} dir={getLocaleDirection(locale)}>
+                <body>{children}</body>
+              </html>
+            );
+          }
+          EOF
+
+          cat > apps/portal/app/layout.tsx <<'EOF'
+          import { ClerkProvider } from '@clerk/nextjs';
+          import {
+            getLocaleDirection,
+            LOCALE_REQUEST_HEADER,
+            parseLocale,
+          } from '@luminol/localization';
+          import type { Metadata } from 'next';
+          import { headers } from 'next/headers';
+
+          import './globals.css';
+
+          export const metadata: Metadata = {
+            title: 'Learner Portal | Luminol',
+            description:
+              'Your secure Luminol space for programmes, progress and achievements.',
+          };
+
+          export default async function RootLayout({
+            children,
+          }: {
+            children: React.ReactNode;
+          }) {
+            const requestHeaders = await headers();
+            const locale = parseLocale(requestHeaders.get(LOCALE_REQUEST_HEADER));
+
+            return (
+              <html lang={locale} dir={getLocaleDirection(locale)}>
+                <body>
+                  <ClerkProvider>{children}</ClerkProvider>
+                </body>
+              </html>
+            );
+          }
+          EOF
+
+          cat > apps/admin/app/layout.tsx <<'EOF'
+          import { ClerkProvider } from '@clerk/nextjs';
+          import {
+            getLocaleDirection,
+            LOCALE_REQUEST_HEADER,
+            parseLocale,
+          } from '@luminol/localization';
+          import type { Metadata } from 'next';
+          import { headers } from 'next/headers';
+
+          import './globals.css';
+
+          export const metadata: Metadata = {
+            title: 'Administration | Luminol',
+            description: 'Secure academic and operational administration for Luminol.',
+            robots: { index: false, follow: false },
+          };
+
+          export default async function RootLayout({
+            children,
+          }: {
+            children: React.ReactNode;
+          }) {
+            const requestHeaders = await headers();
+            const locale = parseLocale(requestHeaders.get(LOCALE_REQUEST_HEADER));
+
+            return (
+              <html lang={locale} dir={getLocaleDirection(locale)}>
+                <body>
+                  <ClerkProvider>{children}</ClerkProvider>
+                </body>
+              </html>
+            );
+          }
+          EOF
+
+          cat > tests/e2e/home.spec.ts <<'EOF'
+          import { expect, test } from '@playwright/test';
+
+          test('institutional home is available', async ({ page }) => {
+            await page.goto('/');
+            await expect(page).toHaveURL(/\/en\/?$/);
+            await expect(page.getByRole('heading', { level: 1 })).toContainText(
+              'Grow with clarity.',
+            );
+          });
+
+          test('locale routing persists language and document direction', async ({
+            page,
+          }) => {
+            await page.goto('/fr/programmes?q=english&school=languages');
+            await expect(page).toHaveURL(
+              /\/fr\/programmes\?q=english&school=languages$/,
+            );
+            await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+            await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
+
+            await page.goto('/programmes?q=english&school=languages');
+            await expect(page).toHaveURL(
+              /\/fr\/programmes\?q=english&school=languages$/,
+            );
+
+            await page.goto('/ar');
+            await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+            await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+
+            await page.goto('/FR/about');
+            await expect(page).toHaveURL(/\/fr\/about$/);
+            await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+          });
+
+          test('public metadata and error behavior are available', async ({
+            request,
+          }) => {
+            const robots = await request.get('/robots.txt');
+            expect(robots.ok()).toBeTruthy();
+            expect(await robots.text()).toContain('Sitemap:');
+
+            const sitemap = await request.get('/sitemap.xml');
+            expect(sitemap.ok()).toBeTruthy();
+            expect(await sitemap.text()).toContain('<urlset');
+
+            const missing = await request.get('/definitely-not-a-launch-route');
+            expect(missing.status()).toBe(404);
+          });
+
+          test('public pages publish route-specific canonical and Open Graph URLs', async ({
+            page,
+          }) => {
+            for (const route of [
+              '/about',
+              '/contact',
+              '/schools/psychology',
+              '/schools/languages',
+              '/schools/training',
+            ]) {
+              await page.goto(route);
+
+              const canonicalHref = await page
+                .locator('link[rel="canonical"]')
+                .getAttribute('href');
+              const openGraphUrl = await page
+                .locator('meta[property="og:url"]')
+                .getAttribute('content');
+
+              expect(canonicalHref).toBeTruthy();
+              expect(openGraphUrl).toBeTruthy();
+
+              const canonical = new URL(canonicalHref!);
+              const openGraph = new URL(openGraphUrl!);
+
+              expect(canonical.pathname).toBe(route);
+              expect(openGraph.pathname).toBe(route);
+              expect(openGraph.origin).toBe(canonical.origin);
+            }
+          });
+
+          test('responses include launch security headers', async ({ request }) => {
+            const response = await request.get('/');
+            expect(response.headers()['x-content-type-options']).toBe('nosniff');
+            expect(response.headers()['content-security-policy']).toContain(
+              "frame-ancestors 'none'",
+            );
+          });
+
+          test('certificate verification does not reveal unknown or malformed records', async ({
+            request,
+          }) => {
+            const unknown = await request.get(
+              '/certificates/unknown-certificate-identifier',
+            );
+            expect(unknown.status()).toBe(404);
+
+            const malformed = await request.get('/certificates/short');
+            expect(malformed.status()).toBe(404);
+          });
+
+          test.describe('authenticated launch journeys', () => {
+            test.skip(
+              !process.env.PLAYWRIGHT_ADMIN_STORAGE_STATE ||
+                !process.env.PLAYWRIGHT_ADMIN_BASE_URL ||
+                !process.env.PLAYWRIGHT_PORTAL_STORAGE_STATE ||
+                !process.env.PLAYWRIGHT_PORTAL_BASE_URL,
+              'Requires CI-managed admin and learner storage-state files and preview URLs.',
+            );
+
+            test('admin can open the overview and protected certificate registry', async ({
+              browser,
+            }) => {
+              const context = await browser.newContext({
+                storageState: process.env.PLAYWRIGHT_ADMIN_STORAGE_STATE,
+              });
+              const page = await context.newPage();
+              await page.goto(process.env.PLAYWRIGHT_ADMIN_BASE_URL!);
+              await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+              const protectedResponse = await page.goto(
+                `${process.env.PLAYWRIGHT_ADMIN_BASE_URL}/certificates`,
+              );
+              await expect(
+                page.getByRole('heading', { name: 'Certificate registry' }),
+              ).toBeVisible();
+              expect(protectedResponse?.headers()['cache-control']).toContain(
+                'no-store',
+              );
+              const staticAsset = await page
+                .locator('script[src*="/_next/static/"]')
+                .first()
+                .getAttribute('src');
+              expect(staticAsset).toBeTruthy();
+              const staticResponse = await context.request.get(staticAsset!);
+              expect(staticResponse.headers()['cache-control']).not.toContain(
+                'no-store',
+              );
+              await context.close();
+            });
+
+            test('learner can open the portal overview and certificate area', async ({
+              browser,
+            }) => {
+              const context = await browser.newContext({
+                storageState: process.env.PLAYWRIGHT_PORTAL_STORAGE_STATE,
+              });
+              const page = await context.newPage();
+              await page.goto(process.env.PLAYWRIGHT_PORTAL_BASE_URL!);
+              await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+              await page.goto(`${process.env.PLAYWRIGHT_PORTAL_BASE_URL}/finance`);
+              await expect(
+                page.getByRole('heading', { name: 'Invoices and payments' }),
+              ).toBeVisible();
+              await context.close();
+            });
+          });
+          EOF
+
+          pnpm install --lockfile-only
+          pnpm install --frozen-lockfile
+          pnpm exec prettier --write \
+            packages/localization/src/index.ts \
+            packages/localization/src/routing.test.ts \
+            apps/web/package.json \
+            apps/portal/package.json \
+            apps/admin/package.json \
+            apps/web/proxy.ts \
+            apps/portal/proxy.ts \
+            apps/admin/proxy.ts \
+            apps/web/app/layout.tsx \
+            apps/portal/app/layout.tsx \
+            apps/admin/app/layout.tsx \
+            tests/e2e/home.spec.ts \
+            pnpm-lock.yaml
+
+          pnpm --filter @luminol/localization test
+          pnpm --filter @luminol/localization typecheck
+          pnpm --filter @luminol/web typecheck
+          pnpm --filter @luminol/portal typecheck
+          pnpm --filter @luminol/admin typecheck
+
+          rm .github/workflows/m15-locale-routing-once.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            packages/localization/src/index.ts \
+            packages/localization/src/routing.test.ts \
+            apps/web/package.json \
+            apps/portal/package.json \
+            apps/admin/package.json \
+            apps/web/proxy.ts \
+            apps/portal/proxy.ts \
+            apps/admin/proxy.ts \
+            apps/web/app/layout.tsx \
+            apps/portal/app/layout.tsx \
+            apps/admin/app/layout.tsx \
+            tests/e2e/home.spec.ts \
+            pnpm-lock.yaml \
+            .github/workflows/m15-locale-routing-once.yml
+          git commit -m "Build locale routing and persistence"
+          git push
