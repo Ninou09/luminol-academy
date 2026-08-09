@@ -1,6 +1,7 @@
 import { requireUser } from '@luminol/auth';
 import Link from 'next/link';
 
+import { parseLearningSearchParam } from '../../lib/learning-search';
 import { searchLearnerContent } from '../../lib/learning-search.server';
 
 function labelForKind(kind: 'programme' | 'module' | 'lesson') {
@@ -16,7 +17,7 @@ export default async function SearchPage({
 }) {
   const user = await requireUser();
   const params = await searchParams;
-  const rawQuery = Array.isArray(params.q) ? params.q[0] : params.q;
+  const rawQuery = parseLearningSearchParam(params.q);
   const { query, results } = await searchLearnerContent(user.id, rawQuery);
 
   return (
@@ -44,6 +45,7 @@ export default async function SearchPage({
                 id="learning-search"
                 name="q"
                 type="search"
+                dir="auto"
                 defaultValue={query}
                 maxLength={120}
                 minLength={2}
@@ -65,7 +67,7 @@ export default async function SearchPage({
                     : 'No matches yet'}
                 </h2>
               </div>
-              <span>For “{query}”</span>
+              <span dir="auto">For “{query}”</span>
             </div>
 
             {results.length > 0 ? (
