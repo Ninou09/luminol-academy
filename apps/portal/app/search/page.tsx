@@ -23,7 +23,8 @@ const searchExtras = {
     noMatches: 'No matches yet',
     moduleDestination: 'programme containing this module',
     emptyTitle: 'Nothing in your enrolled learning matches that search.',
-    emptyBody: 'Try a shorter topic, lesson title, module name or programme name.',
+    emptyBody:
+      'Try a shorter topic, lesson title, module name or programme name.',
   },
   fr: {
     dashboard: 'Tableau de bord',
@@ -33,8 +34,10 @@ const searchExtras = {
     forQuery: 'Pour',
     noMatches: 'Aucun résultat',
     moduleDestination: 'programme contenant ce module',
-    emptyTitle: 'Aucun contenu de vos formations ne correspond à cette recherche.',
-    emptyBody: 'Essayez un sujet plus court, un titre de leçon, un module ou un programme.',
+    emptyTitle:
+      'Aucun contenu de vos formations ne correspond à cette recherche.',
+    emptyBody:
+      'Essayez un sujet plus court, un titre de leçon, un module ou un programme.',
   },
   ar: {
     dashboard: 'لوحة التعلّم',
@@ -49,10 +52,7 @@ const searchExtras = {
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
-function labelForKind(
-  locale: Locale,
-  kind: 'programme' | 'module' | 'lesson',
-) {
+function labelForKind(locale: Locale, kind: 'programme' | 'module' | 'lesson') {
   const copy = getPortalCopy(locale).search;
   if (kind === 'programme') return copy.programme;
   if (kind === 'module') return copy.module;
@@ -173,7 +173,8 @@ export default async function SearchPage({
                         className="course-link"
                         href={localizeHref(locale, result.href)}
                       >
-                        {copy.open} {destinationLabelForKind(locale, result.kind)}{' '}
+                        {copy.open}{' '}
+                        {destinationLabelForKind(locale, result.kind)}{' '}
                         <span aria-hidden="true">→</span>
                       </Link>
                     </div>

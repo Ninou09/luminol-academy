@@ -143,7 +143,9 @@ export default async function CoursePage({
                         ) : null}
                       </div>
                       {lesson.status === 'COMPLETED' ? (
-                        <span className="complete-state">✓ {copy.completed}</span>
+                        <span className="complete-state">
+                          ✓ {copy.completed}
+                        </span>
                       ) : enrollment.status === 'ACTIVE' ? (
                         <form action={completeLesson}>
                           <input

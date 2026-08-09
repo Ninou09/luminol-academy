@@ -50,10 +50,7 @@ export default async function PlacementResultPage({
     <main>
       <PortalHeader />
       <div className="dashboard-shell">
-        <Link
-          className="course-link"
-          href={localizeHref(locale, '/languages')}
-        >
+        <Link className="course-link" href={localizeHref(locale, '/languages')}>
           ← {backLabel}
         </Link>
         <section
@@ -80,7 +77,9 @@ export default async function PlacementResultPage({
           </article>
           <article>
             <span>{copy.totalScore}</span>
-            <strong>{totalScore == null ? '—' : `${number(totalScore)}%`}</strong>
+            <strong>
+              {totalScore == null ? '—' : `${number(totalScore)}%`}
+            </strong>
           </article>
           <article>
             <span>{copy.skillAreas}</span>
@@ -104,10 +103,7 @@ export default async function PlacementResultPage({
               <p>{copy.completeFirst}</p>
             </div>
             <Link
-              href={localizeHref(
-                locale,
-                `/languages/placement/${attempt.id}`,
-              )}
+              href={localizeHref(locale, `/languages/placement/${attempt.id}`)}
             >
               {copy.resume}
             </Link>
@@ -140,7 +136,9 @@ export default async function PlacementResultPage({
                           {skillLabel}
                         </span>
                         <span>
-                          {result.level ? `CEFR ${result.level}` : copy.diagnostic}
+                          {result.level
+                            ? `CEFR ${result.level}`
+                            : copy.diagnostic}
                         </span>
                       </div>
                       <h3>{number(score)}%</h3>

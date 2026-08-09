@@ -19,15 +19,18 @@ const accountExtras = {
     learner: 'Learner',
     active: 'Active',
     status: 'Account status',
-    synchronized: 'Your protected identity is synchronized with the Luminol database.',
+    synchronized:
+      'Your protected identity is synchronized with the Luminol database.',
     profile: 'Profile details',
-    identityChanges: 'Identity changes are managed securely through your account menu.',
+    identityChanges:
+      'Identity changes are managed securely through your account menu.',
     primaryEmail: 'Primary synchronized email address.',
     access: 'Access',
     rolesBody: 'Roles currently assigned to this account.',
     lastSignIn: 'Last sign-in',
     notRecorded: 'Not recorded yet',
-    lastSignInBody: 'Latest sign-in timestamp received from the protected identity provider.',
+    lastSignInBody:
+      'Latest sign-in timestamp received from the protected identity provider.',
     footer: 'Learning with lasting impact',
   },
   fr: {
@@ -35,15 +38,18 @@ const accountExtras = {
     learner: 'Apprenant',
     active: 'Actif',
     status: 'Statut du compte',
-    synchronized: 'Votre identité protégée est synchronisée avec la base de données Luminol.',
+    synchronized:
+      'Votre identité protégée est synchronisée avec la base de données Luminol.',
     profile: 'Détails du profil',
-    identityChanges: 'Les modifications d’identité sont gérées de manière sécurisée depuis le menu de votre compte.',
+    identityChanges:
+      'Les modifications d’identité sont gérées de manière sécurisée depuis le menu de votre compte.',
     primaryEmail: 'Adresse e-mail principale synchronisée.',
     access: 'Accès',
     rolesBody: 'Rôles actuellement attribués à ce compte.',
     lastSignIn: 'Dernière connexion',
     notRecorded: 'Pas encore enregistrée',
-    lastSignInBody: 'Dernière date de connexion reçue du fournisseur d’identité protégé.',
+    lastSignInBody:
+      'Dernière date de connexion reçue du fournisseur d’identité protégé.',
     footer: 'Un apprentissage qui laisse une trace durable',
   },
   ar: {

@@ -27,7 +27,8 @@ const dashboardExtras = {
     pending: 'Your programme is being prepared.',
     complete: 'Programme completed—well done.',
     saved: 'Your learning record is saved securely.',
-    certificatesEmpty: 'Completed programme certificates will appear here automatically.',
+    certificatesEmpty:
+      'Completed programme certificates will appear here automatically.',
     certificatePrivacy:
       'Certificates stay private unless you publish them. Publishing displays your synchronized name, programme, issue date and verification status on an unindexed public page. You can withdraw access at any time.',
     footer: 'Learning with lasting impact',
@@ -225,7 +226,12 @@ export default async function Page() {
                 <h3>{copy.emptyTitle}</h3>
                 <p>{copy.emptyBody}</p>
               </div>
-              <a href={new URL(localizeHref(locale, '/#schools'), websiteUrl).toString()}>
+              <a
+                href={new URL(
+                  localizeHref(locale, '/#schools'),
+                  websiteUrl,
+                ).toString()}
+              >
                 {copy.discoverProgrammes}
               </a>
             </div>
@@ -252,7 +258,12 @@ export default async function Page() {
                   </span>
                   <div>
                     <h3 dir="auto">
-                      <Link href={localizeHref(locale, `/certificates/${certificate.id}`)}>
+                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/certificates/${certificate.id}`,
+                        )}
+                      >
                         {certificate.course.title}
                       </Link>
                     </h3>
@@ -315,7 +326,9 @@ export default async function Page() {
             <p className="certificate-empty">{extras.certificatesEmpty}</p>
           )}
           {dashboard.certificates.length > 0 ? (
-            <p className="certificate-privacy-note">{extras.certificatePrivacy}</p>
+            <p className="certificate-privacy-note">
+              {extras.certificatePrivacy}
+            </p>
           ) : null}
         </section>
       </div>

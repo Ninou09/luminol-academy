@@ -41,7 +41,9 @@ export default async function CertificatePage({
     <main>
       <PortalHeader />
       <div className="dashboard-shell">
-        <Link href={localizeHref(locale, '/')}>← {portalCopy.shell.dashboard}</Link>
+        <Link href={localizeHref(locale, '/')}>
+          ← {portalCopy.shell.dashboard}
+        </Link>
         <section
           className="dashboard-section"
           aria-labelledby="certificate-title"

@@ -54,9 +54,14 @@ export default async function LessonPage({
 
       <div className={styles.shell}>
         <nav className={styles.breadcrumbs} aria-label={copy.breadcrumb}>
-          <Link href={localizeHref(locale, '/')}>{portalCopy.shell.dashboard}</Link>
+          <Link href={localizeHref(locale, '/')}>
+            {portalCopy.shell.dashboard}
+          </Link>
           <span aria-hidden="true">/</span>
-          <Link href={localizeHref(locale, `/courses/${course.slug}`)} dir="auto">
+          <Link
+            href={localizeHref(locale, `/courses/${course.slug}`)}
+            dir="auto"
+          >
             {course.title}
           </Link>
           <span aria-hidden="true">/</span>
@@ -139,7 +144,10 @@ export default async function LessonPage({
             </nav>
           </article>
 
-          <aside className={styles.sidebar} aria-label={copy.lessonsInProgramme}>
+          <aside
+            className={styles.sidebar}
+            aria-label={copy.lessonsInProgramme}
+          >
             <strong>
               {number(navigation.position)}/{number(navigation.total)}
             </strong>

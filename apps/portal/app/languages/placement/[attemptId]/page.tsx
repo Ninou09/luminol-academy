@@ -42,10 +42,7 @@ export default async function PlacementSessionPage({
     <main>
       <PortalHeader />
       <div className="dashboard-shell">
-        <Link
-          className="course-link"
-          href={localizeHref(locale, '/languages')}
-        >
+        <Link className="course-link" href={localizeHref(locale, '/languages')}>
           ← {backLabel}
         </Link>
         <section

@@ -31,7 +31,9 @@ export default async function FinancePage() {
             <h1>{copy.title}</h1>
             <p>{copy.intro}</p>
           </div>
-          <Link href={localizeHref(locale, '/')}>{portalCopy.shell.dashboard}</Link>
+          <Link href={localizeHref(locale, '/')}>
+            {portalCopy.shell.dashboard}
+          </Link>
         </section>
         <section className="dashboard-section" aria-labelledby="invoice-title">
           <div className="section-heading">
@@ -103,7 +105,8 @@ export default async function FinancePage() {
               <article key={subscription.id}>
                 <h3 dir="auto">{subscription.pricingPlan.name}</h3>
                 <p>
-                  {getPortalStatusLabel(locale, subscription.status)} · {copy.renews}{' '}
+                  {getPortalStatusLabel(locale, subscription.status)} ·{' '}
+                  {copy.renews}{' '}
                   {formatLocalizedDate(subscription.currentPeriodEnd, locale, {
                     day: 'numeric',
                     month: 'long',
