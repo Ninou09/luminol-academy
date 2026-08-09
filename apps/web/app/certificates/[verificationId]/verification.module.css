@@ -183,6 +183,21 @@
   line-height: 1.65;
 }
 
+:global(html[dir='rtl']) .intro > p:first-child,
+:global(html[dir='rtl']) .heading > span,
+:global(html[dir='rtl']) .details dt,
+:global(html[dir='rtl']) .intro h1,
+:global(html[dir='rtl']) .heading p {
+  letter-spacing: normal;
+}
+
+:global(html[dir='rtl']) .intro > p:first-child,
+:global(html[dir='rtl']) .heading > span,
+:global(html[dir='rtl']) .details dt,
+:global(html[dir='rtl']) .heading p {
+  text-transform: none;
+}
+
 @media (max-width: 42rem) {
   .heading,
   .privacy {
