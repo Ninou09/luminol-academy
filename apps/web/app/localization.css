@@ -98,6 +98,9 @@ html[dir='rtl'] .form-grid label > span {
   }
 
   .site-header-actions > a {
-    display: none;
+    min-height: 2.35rem;
+    padding-inline: 0.65rem;
+    font-size: 0.58rem;
+    white-space: nowrap;
   }
 }
