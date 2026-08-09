@@ -116,6 +116,11 @@ export function rankLearningSearchResults(
         },
       ];
     })
-    .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        a.title.localeCompare(b.title) ||
+        a.href.localeCompare(b.href),
+    )
     .slice(0, boundedLimit);
 }
