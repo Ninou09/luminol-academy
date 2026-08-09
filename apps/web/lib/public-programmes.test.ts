@@ -7,6 +7,20 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+function publicProgramme(index: number) {
+  return {
+    _id: `programme-${index}`,
+    title: `Programme ${index}`,
+    summary: `A governed public programme summary for catalogue record ${index}.`,
+    slug: { current: `programme-${index}` },
+    school: 'languages',
+    languages: ['en'],
+    delivery: 'Hybrid',
+    featured: false,
+    image: null,
+  };
+}
+
 describe('getPublicProgrammes', () => {
   it('fails closed when the CMS is unconfigured', async () => {
     vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'placeholder');
@@ -25,16 +39,13 @@ describe('getPublicProgrammes', () => {
         JSON.stringify({
           result: [
             {
-              _id: 'programme-1',
+              ...publicProgramme(1),
               title: 'English Conversation',
               summary:
                 'Build practical confidence for everyday English conversation.',
               slug: { current: 'english-conversation' },
-              school: 'languages',
               languages: ['en', 'fr'],
-              delivery: 'Hybrid',
               featured: true,
-              image: null,
             },
           ],
         }),
@@ -52,6 +63,25 @@ describe('getPublicProgrammes', () => {
     expect(query).toContain('defined(slug.current)');
   });
 
+  it('accepts a complete governed catalogue above 250 programmes', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123xy');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            result: Array.from({ length: 251 }, (_, index) =>
+              publicProgramme(index),
+            ),
+          }),
+          { status: 200 },
+        ),
+      ),
+    );
+
+    await expect(getPublicProgrammes()).resolves.toHaveLength(251);
+  });
+
   it('fails closed for unknown public taxonomy values', async () => {
     vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123xy');
     vi.stubGlobal(
@@ -61,15 +91,12 @@ describe('getPublicProgrammes', () => {
           JSON.stringify({
             result: [
               {
-                _id: 'programme-2',
+                ...publicProgramme(2),
                 title: 'Unknown programme',
                 summary:
                   'This record should not pass the governed public programme contract.',
                 slug: { current: 'unknown-programme' },
                 school: 'unknown',
-                languages: ['en'],
-                featured: false,
-                image: null,
               },
             ],
           }),
