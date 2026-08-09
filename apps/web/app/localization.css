@@ -42,31 +42,49 @@
   outline-offset: 2px;
 }
 
-html[dir='rtl'] .hero h1,
-html[dir='rtl'] .section-heading h2,
-html[dir='rtl'] .approach h2,
-html[dir='rtl'] .about h2,
-html[dir='rtl'] .pathway h2,
-html[dir='rtl'] .final-cta h2,
-html[dir='rtl'] .about-page-copy h1,
-html[dir='rtl'] .contact-hero h1,
-html[dir='rtl'] .origin h2,
-html[dir='rtl'] .mission-vision h2,
-html[dir='rtl'] .ecosystem h3,
-html[dir='rtl'] .enquiry-context h2,
-html[dir='rtl'] .form-heading h2,
-html[dir='rtl'] .school-detail-copy h1 {
-  letter-spacing: 0;
+html[dir='rtl'] body
+  :where(
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    a,
+    span,
+    small,
+    strong,
+    b,
+    li,
+    dt,
+    dd,
+    label,
+    button,
+    blockquote
+  ) {
+  letter-spacing: normal;
 }
 
 html[dir='rtl'] .eyebrow,
 html[dir='rtl'] .desktop-nav a,
+html[dir='rtl'] .signal-card span,
+html[dir='rtl'] .luminous-core small,
 html[dir='rtl'] .hero-proof dd,
+html[dir='rtl'] .school-topline,
+html[dir='rtl'] .text-link,
+html[dir='rtl'] .about-visual p,
+html[dir='rtl'] footer p,
+html[dir='rtl'] .breadcrumb,
+html[dir='rtl'] .detail-words span,
+html[dir='rtl'] .school-promise-band > p,
+html[dir='rtl'] .program-delivery,
+html[dir='rtl'] .program-grid a,
+html[dir='rtl'] .school-note span,
 html[dir='rtl'] .about-page-visual > p,
 html[dir='rtl'] .mission-vision span,
 html[dir='rtl'] .ecosystem-core small,
 html[dir='rtl'] .form-grid label > span {
-  letter-spacing: 0;
   text-transform: none;
 }
 
