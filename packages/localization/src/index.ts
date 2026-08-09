@@ -257,7 +257,12 @@ export function formatLocalizedCurrency(
     currency: normalizedCurrency,
   });
   const fractionDigits = formatter.resolvedOptions().maximumFractionDigits;
-  const majorUnits = minorUnits / 10 ** fractionDigits;
+  if (fractionDigits === undefined) {
+    throw new RangeError(
+      `Unable to determine currency precision for ${normalizedCurrency}`,
+    );
+  }
 
+  const majorUnits = minorUnits / 10 ** fractionDigits;
   return formatter.format(majorUnits);
 }
