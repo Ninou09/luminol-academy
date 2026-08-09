@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 test('mobile header keeps contact access and locale links preserve URL state', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+  await page.setViewportSize({ width: 320, height: 812 });
   await page.goto('/fr/programmes?q=english&school=languages#catalogue');
 
   await expect(page.locator('.site-header-actions > a')).toBeVisible();
@@ -13,6 +13,11 @@ test('mobile header keeps contact access and locale links preserve URL state', a
     'href',
     '/ar/programmes?q=english&school=languages#catalogue',
   );
+
+  const horizontalOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(horizontalOverflow).toBeLessThanOrEqual(1);
 });
 
 test('localized home metadata does not duplicate the academy brand', async ({
