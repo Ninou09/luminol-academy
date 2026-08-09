@@ -4,6 +4,7 @@ import {
   formatLocalizedDate,
   formatLocalizedNumber,
   getCommonDictionary,
+  getLocaleDirection,
   localizeHref,
 } from '@luminol/localization';
 import Link from 'next/link';
@@ -17,6 +18,7 @@ export default async function DeliveryPage() {
   const locale = await getAdminRequestLocale();
   const copy = getAdminCopy(locale).notifications;
   const common = getCommonDictionary(locale);
+  const backArrow = getLocaleDirection(locale) === 'rtl' ? '→' : '←';
   const deliveries = await db.notification.findMany({
     where: { status: { in: ['RETRY_SCHEDULED', 'DEAD_LETTER'] } },
     select: {
@@ -48,7 +50,9 @@ export default async function DeliveryPage() {
               flexWrap: 'wrap',
             }}
           >
-            <Link href={localizeHref(locale, '/')}>← {copy.back}</Link>
+            <Link href={localizeHref(locale, '/')}>
+              <span aria-hidden="true">{backArrow}</span> {copy.back}
+            </Link>
             <AdminLanguageSwitcher
               locale={locale}
               label={common.languageSelectorLabel}
