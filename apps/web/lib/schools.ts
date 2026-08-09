@@ -195,7 +195,8 @@ const frenchSchools: Record<SchoolSlug, SchoolDefinition> = {
     number: '01',
     name: 'Psychologie',
     eyebrow: 'Bien-être · Conscience de soi · Développement personnel',
-    headline: 'Comprenez ce que vous ressentez. Construisez ce qui vous aide à avancer.',
+    headline:
+      'Comprenez ce que vous ressentez. Construisez ce qui vous aide à avancer.',
     introduction:
       'Luminol Psychologie crée un espace réfléchi pour développer la conscience émotionnelle, bénéficier d’un accompagnement bienveillant et progresser personnellement à différentes étapes de la vie.',
     promise:
@@ -370,8 +371,7 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
     headline: 'افهم ما تشعر به. وابنِ ما يساعدك على الازدهار.',
     introduction:
       'توفّر لومينول لعلم النفس مساحة مدروسة لتنمية الوعي العاطفي والحصول على توجيه داعم وتحقيق تطور شخصي ذي معنى عبر مراحل الحياة المختلفة.',
-    promise:
-      'تفكير علمي ودفء إنساني وأدوات عملية، مجتمعة بعناية.',
+    promise: 'تفكير علمي ودفء إنساني وأدوات عملية، مجتمعة بعناية.',
     visualWords: ['وعي', 'توازن', 'تواصل'],
     programs: [
       {
@@ -461,8 +461,7 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
       },
       {
         title: 'استخدم صوتك',
-        description:
-          'ابنِ الثقة والمرونة للتواصل خارج قاعة الدرس.',
+        description: 'ابنِ الثقة والمرونة للتواصل خارج قاعة الدرس.',
       },
     ],
     audiences: ['المتعلمون الصغار', 'طلبة الجامعة', 'المهنيون', 'المؤسسات'],
@@ -476,8 +475,7 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
     headline: 'طوّر المهارات التي تدفع العمل إلى الأمام.',
     introduction:
       'تساعد لومينول للتكوين المهني الأفراد والمؤسسات على تحويل الطموح إلى قدرة من خلال تعلّم عملي وملائم ومصمم بعناية.',
-    promise:
-      'تطوير مهني يحترم وقتك ويرتبط مباشرة بكيفية إنجاز العمل.',
+    promise: 'تطوير مهني يحترم وقتك ويرتبط مباشرة بكيفية إنجاز العمل.',
     visualWords: ['قُد', 'ابتكر', 'تقدّم'],
     programs: [
       {
@@ -514,8 +512,7 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
       },
       {
         title: 'طبّق بثقة',
-        description:
-          'اخرج بأدوات مفيدة وقرارات أوضح وطريقة عملية للتقدم.',
+        description: 'اخرج بأدوات مفيدة وقرارات أوضح وطريقة عملية للتقدم.',
       },
     ],
     audiences: ['المهنيون في بداية المسار', 'المسيرون', 'الفرق', 'المؤسسات'],
@@ -531,7 +528,9 @@ const schoolsByLocale: Record<Locale, Record<SchoolSlug, SchoolDefinition>> = {
   ar: arabicSchools,
 };
 
-export function getSchools(locale: Locale): Record<SchoolSlug, SchoolDefinition> {
+export function getSchools(
+  locale: Locale,
+): Record<SchoolSlug, SchoolDefinition> {
   return schoolsByLocale[locale];
 }
 

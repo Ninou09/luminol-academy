@@ -16,8 +16,12 @@ describe('public localization dictionaries', () => {
   });
 
   it('does not silently fall back to English for core Arabic and French surfaces', () => {
-    expect(getPublicCopy('ar').home.heroTitle).not.toBe(getPublicCopy('en').home.heroTitle);
-    expect(getPublicCopy('fr').contact.heroTitle).not.toBe(getPublicCopy('en').contact.heroTitle);
+    expect(getPublicCopy('ar').home.heroTitle).not.toBe(
+      getPublicCopy('en').home.heroTitle,
+    );
+    expect(getPublicCopy('fr').contact.heroTitle).not.toBe(
+      getPublicCopy('en').contact.heroTitle,
+    );
     expect(getPublicCopy('ar').programmes.searchLabel).toContain('البرامج');
   });
 });

@@ -135,9 +135,7 @@ export default async function ProgrammesPage({
 
           <div className={styles.filterActions}>
             <button type="submit">{copy.apply}</button>
-            <Link href={localizeHref(locale, '/programmes')}>
-              {copy.clear}
-            </Link>
+            <Link href={localizeHref(locale, '/programmes')}>{copy.clear}</Link>
           </div>
         </form>
 
@@ -153,9 +151,7 @@ export default async function ProgrammesPage({
           <div className={styles.emptyState} aria-live="polite">
             <h2>{copy.emptyTitle}</h2>
             <p>{copy.emptyBody}</p>
-            <Link href={localizeHref(locale, '/programmes')}>
-              {copy.reset}
-            </Link>
+            <Link href={localizeHref(locale, '/programmes')}>{copy.reset}</Link>
           </div>
         ) : (
           <div>
@@ -194,7 +190,9 @@ export default async function ProgrammesPage({
                       {programme.languages.map((language) => (
                         <li key={language}>{copy.languageNames[language]}</li>
                       ))}
-                      {programme.delivery ? <li>{programme.delivery}</li> : null}
+                      {programme.delivery ? (
+                        <li>{programme.delivery}</li>
+                      ) : null}
                     </ul>
                     <div className={styles.cardActions}>
                       <Link

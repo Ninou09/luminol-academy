@@ -15,10 +15,7 @@ export const programmeLanguageLabels: Record<CmsProgrammeLanguage, string> = {
   en: 'English',
 };
 
-const programmeLanguageSearchLabels: Record<
-  CmsProgrammeLanguage,
-  string
-> = {
+const programmeLanguageSearchLabels: Record<CmsProgrammeLanguage, string> = {
   ar: 'Arabic Arabe العربية',
   fr: 'French Français الفرنسية',
   en: 'English Anglais الإنجليزية',

@@ -1,7 +1,4 @@
-import {
-  SUPPORTED_LOCALES,
-  localizePathname,
-} from '@luminol/localization';
+import { SUPPORTED_LOCALES, localizePathname } from '@luminol/localization';
 import type { MetadataRoute } from 'next';
 
 const routes = [

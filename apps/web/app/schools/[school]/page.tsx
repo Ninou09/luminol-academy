@@ -107,10 +107,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
       <section className="school-detail-hero">
         <div className="school-detail-copy">
-          <Link
-            className="breadcrumb"
-            href={localizeHref(locale, '/#schools')}
-          >
+          <Link className="breadcrumb" href={localizeHref(locale, '/#schools')}>
             {copy.schoolsLabel} <span aria-hidden="true">/</span> {school.name}
           </Link>
           <p className="eyebrow">{school.eyebrow}</p>
@@ -220,10 +217,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         </ul>
       </section>
 
-      <aside
-        className="school-note section-shell"
-        aria-label={copy.noteAria}
-      >
+      <aside className="school-note section-shell" aria-label={copy.noteAria}>
         <span>{copy.important}</span>
         <p>{school.note}</p>
       </aside>

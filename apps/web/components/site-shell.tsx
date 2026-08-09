@@ -30,9 +30,7 @@ export async function SiteHeader() {
         <Link href={localizeHref(locale, '/#approach')}>
           {copy.site.nav.approach}
         </Link>
-        <Link href={localizeHref(locale, '/about')}>
-          {copy.site.nav.about}
-        </Link>
+        <Link href={localizeHref(locale, '/about')}>{copy.site.nav.about}</Link>
       </nav>
       <div className="site-header-actions">
         <LanguageSwitcher

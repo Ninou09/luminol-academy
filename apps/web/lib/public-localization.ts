@@ -344,7 +344,8 @@ export const PUBLIC_COPY = {
       trainingTagline: 'Develop and advance.',
       ctaEyebrow: 'Find your place at Luminol',
       ctaTitle: 'Which kind of growth matters most today?',
-      ctaBody: 'Explore the three schools or tell the team what you want to achieve.',
+      ctaBody:
+        'Explore the three schools or tell the team what you want to achieve.',
       ctaAction: 'Start a conversation',
     },
     contact: {
@@ -515,7 +516,8 @@ export const PUBLIC_COPY = {
       discoverSchool: 'Découvrir cette école',
       focusAreas: 'domaines prioritaires',
       approachEyebrow: "L'approche Luminol",
-      approachTitle: 'Le savoir devient puissant lorsqu’il transforme le quotidien.',
+      approachTitle:
+        'Le savoir devient puissant lorsqu’il transforme le quotidien.',
       approachIntro:
         'Nous associons rigueur, chaleur humaine, structure et mise en pratique afin que l’apprentissage reste personnel et que les progrès durent.',
       principles: [
@@ -536,7 +538,8 @@ export const PUBLIC_COPY = {
         },
       ],
       aboutEyebrow: 'Pourquoi Luminol existe',
-      aboutTitle: 'Une manière plus lumineuse de développer le potentiel humain.',
+      aboutTitle:
+        'Une manière plus lumineuse de développer le potentiel humain.',
       aboutLede:
         'Luminol est née d’une conviction simple : une éducation utile doit renforcer la personne dans sa globalité.',
       aboutBody:
@@ -564,7 +567,8 @@ export const PUBLIC_COPY = {
         'Luminol est un écosystème porté par sa fondatrice, dédié au bien-être psychologique, aux langues et au développement professionnel, construit autour de la personne dans sa globalité.',
       visualCaption: 'Savoir · Humanité · Progrès',
       originEyebrow: 'L’idée fondatrice',
-      originTitle: 'La croissance devient transformatrice lorsque les savoirs se relient.',
+      originTitle:
+        'La croissance devient transformatrice lorsque les savoirs se relient.',
       originLede:
         'Luminol est partie d’un constat simple : équilibre émotionnel, communication et capacité professionnelle s’influencent constamment.',
       originBodyOne:
@@ -572,11 +576,13 @@ export const PUBLIC_COPY = {
       originBodyTwo:
         'Le résultat est une académie exigeante sur le plan intellectuel, attentive sur le plan humain et suffisamment pratique pour produire des changements réels au quotidien.',
       missionLabel: 'Mission',
-      missionTitle: 'Rendre le développement humain utile, clair et accessible.',
+      missionTitle:
+        'Rendre le développement humain utile, clair et accessible.',
       missionBody:
         'Proposer un accompagnement réfléchi et des apprentissages de qualité pour mieux se comprendre, communiquer avec confiance et développer les capacités nécessaires pour avancer.',
       visionLabel: 'Vision',
-      visionTitle: 'Construire une plateforme connectée pour apprendre toute la vie.',
+      visionTitle:
+        'Construire une plateforme connectée pour apprendre toute la vie.',
       visionBody:
         'Créer un écosystème de confiance où individus, familles, professionnels et organisations peuvent apprendre, évoluer et mesurer leurs progrès à chaque étape importante.',
       valuesEyebrow: 'Ce qui guide Luminol',
@@ -618,7 +624,8 @@ export const PUBLIC_COPY = {
       trainingTagline: 'Développer et avancer.',
       ctaEyebrow: 'Trouvez votre place chez Luminol',
       ctaTitle: 'Quelle évolution compte le plus pour vous aujourd’hui ?',
-      ctaBody: 'Explorez les trois écoles ou partagez avec notre équipe ce que vous souhaitez accomplir.',
+      ctaBody:
+        'Explorez les trois écoles ou partagez avec notre équipe ce que vous souhaitez accomplir.',
       ctaAction: 'Commencer une conversation',
     },
     contact: {
@@ -632,8 +639,10 @@ export const PUBLIC_COPY = {
       exploreEyebrow: 'Explorer avant de nous écrire',
       pathDescriptions: {
         psychology: 'Bien-être, accompagnement familial, coaching et ateliers.',
-        languages: 'Anglais, français, aisance orale et parcours de communication.',
-        training: 'Leadership, compétences professionnelles et formation en entreprise.',
+        languages:
+          'Anglais, français, aisance orale et parcours de communication.',
+        training:
+          'Leadership, compétences professionnelles et formation en entreprise.',
       },
       nextEyebrow: 'Une première étape réfléchie',
       nextTitle: 'Que se passe-t-il ensuite ?',
@@ -661,12 +670,14 @@ export const PUBLIC_COPY = {
       allLanguages: 'Toutes les langues',
       apply: 'Appliquer les filtres',
       clear: 'Effacer',
-      unavailableTitle: 'La découverte des programmes est momentanément indisponible.',
+      unavailableTitle:
+        'La découverte des programmes est momentanément indisponible.',
       unavailableBody:
         'Le catalogue public n’a pas pu être vérifié depuis la source CMS gouvernée. Vous pouvez toujours explorer chaque école Luminol ou contacter l’académie pour connaître les programmes actuels.',
       exploreSchools: 'Explorer les trois écoles',
       emptyTitle: 'Aucun programme publié ne correspond à ces filtres.',
-      emptyBody: 'Essayez un sujet plus large, une autre école ou une autre langue.',
+      emptyBody:
+        'Essayez un sujet plus large, une autre école ou une autre langue.',
       reset: 'Réinitialiser la recherche',
       published: 'Programmes publiés',
       programmeSingular: 'programme',
@@ -861,14 +872,12 @@ export const PUBLIC_COPY = {
         {
           number: '01',
           title: 'عمق فكري',
-          description:
-            'نحترم المعرفة الجادة وننقلها بوضوح ونزاهة وعناية.',
+          description: 'نحترم المعرفة الجادة وننقلها بوضوح ونزاهة وعناية.',
         },
         {
           number: '02',
           title: 'دفء إنساني',
-          description:
-            'يجب أن تبقى التجربة الراقية شخصية وداعمة ومتاحة فعلًا.',
+          description: 'يجب أن تبقى التجربة الراقية شخصية وداعمة ومتاحة فعلًا.',
         },
         {
           number: '03',
@@ -969,8 +978,7 @@ export const PUBLIC_COPY = {
       important: 'مهم',
       relatedEyebrow: 'واصل استكشاف لومينول',
       relatedTitle: 'النمو يربط بين جميع مدارسنا.',
-      relatedBody:
-        'استكشف بُعدًا آخر من تطورك الشخصي أو اللغوي أو المهني.',
+      relatedBody: 'استكشف بُعدًا آخر من تطورك الشخصي أو اللغوي أو المهني.',
       ctaEyebrow: 'خطوتك التالية',
       ctaTitle: 'لنجد معًا الطريق الأنسب إلى الأمام.',
       ctaBody:

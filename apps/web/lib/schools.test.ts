@@ -3,7 +3,11 @@ import { getSchools, isSchoolSlug, schools } from './schools';
 
 describe('Luminol school content', () => {
   it('keeps the three public school routes stable', () => {
-    expect(Object.keys(schools)).toEqual(['psychology', 'languages', 'training']);
+    expect(Object.keys(schools)).toEqual([
+      'psychology',
+      'languages',
+      'training',
+    ]);
   });
 
   it('validates only supported school slugs', () => {
