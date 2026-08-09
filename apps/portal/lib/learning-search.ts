@@ -25,6 +25,11 @@ export type LearningSearchResult = LearningSearchCandidate & {
   score: number;
 };
 
+export type RankedLearningSearch = {
+  results: LearningSearchResult[];
+  totalMatches: number;
+};
+
 export function parseLearningSearchParam(value: unknown) {
   const parsed = learningSearchParamSchema.safeParse(value);
   if (!parsed.success) return undefined;
@@ -80,20 +85,15 @@ function hrefFor(candidate: LearningSearchCandidate) {
   return courseHref;
 }
 
-export function rankLearningSearchResults(
+function matchedLearningSearchResults(
   candidates: readonly LearningSearchCandidate[],
   rawQuery: string | undefined | null,
-  limit = LEARNING_SEARCH_MAX_RESULTS,
-): LearningSearchResult[] {
+) {
   const normalized = normalizeLearningSearchQuery(rawQuery);
   const query = fold(normalized);
   if (query.length < 2) return [];
 
   const tokens = query.split(' ').filter((token) => token.length >= 2);
-  const boundedLimit = Math.max(
-    1,
-    Math.min(limit, LEARNING_SEARCH_MAX_RESULTS),
-  );
 
   return candidates
     .flatMap((candidate) => {
@@ -121,6 +121,30 @@ export function rankLearningSearchResults(
         b.score - a.score ||
         a.title.localeCompare(b.title) ||
         a.href.localeCompare(b.href),
-    )
-    .slice(0, boundedLimit);
+    );
+}
+
+export function rankLearningSearchResultsWithCount(
+  candidates: readonly LearningSearchCandidate[],
+  rawQuery: string | undefined | null,
+  limit = LEARNING_SEARCH_MAX_RESULTS,
+): RankedLearningSearch {
+  const matched = matchedLearningSearchResults(candidates, rawQuery);
+  const boundedLimit = Math.max(
+    1,
+    Math.min(limit, LEARNING_SEARCH_MAX_RESULTS),
+  );
+
+  return {
+    results: matched.slice(0, boundedLimit),
+    totalMatches: matched.length,
+  };
+}
+
+export function rankLearningSearchResults(
+  candidates: readonly LearningSearchCandidate[],
+  rawQuery: string | undefined | null,
+  limit = LEARNING_SEARCH_MAX_RESULTS,
+): LearningSearchResult[] {
+  return rankLearningSearchResultsWithCount(candidates, rawQuery, limit).results;
 }
