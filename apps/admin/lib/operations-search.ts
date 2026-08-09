@@ -23,3 +23,7 @@ export function normalizeAdminSearchQuery(value: string | null | undefined) {
     .trim()
     .slice(0, ADMIN_SEARCH_MAX_QUERY_LENGTH);
 }
+
+export function escapePostgresLikePattern(value: string) {
+  return value.replace(/[\\%_]/g, (character) => `\\${character}`);
+}
