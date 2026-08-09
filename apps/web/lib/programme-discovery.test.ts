@@ -77,6 +77,21 @@ describe('programme discovery filters', () => {
     ).toBe('programme-stress');
   });
 
+  it('matches school and language concepts across interface languages', () => {
+    expect(
+      filterPublicProgrammes(programmes, { query: 'التكوين المهني' })[0]?._id,
+    ).toBe('programme-leadership');
+
+    const frenchResults = filterPublicProgrammes(programmes, {
+      query: 'Français',
+    }).map((programme) => programme._id);
+
+    expect(frenchResults).toHaveLength(2);
+    expect(frenchResults).toEqual(
+      expect.arrayContaining(['programme-leadership', 'programme-stress']),
+    );
+  });
+
   it('ranks featured programmes first and stays deterministic', () => {
     expect(
       filterPublicProgrammes(programmes, { query: '' }).map(

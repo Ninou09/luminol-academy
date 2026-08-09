@@ -1,4 +1,9 @@
 import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
+import {
+  buildLanguageAlternates,
+  localizeHref,
+  localizePathname,
+} from '@luminol/localization';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -7,28 +12,41 @@ import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import {
   filterPublicProgrammes,
   parseProgrammeDiscoveryParams,
-  programmeLanguageLabels,
 } from '../../lib/programme-discovery';
+import { getPublicCopy } from '../../lib/public-localization';
+import { getRequestLocale } from '../../lib/request-locale';
 import {
   buildSanityProgrammeImageUrl,
   getPublicProgrammes,
 } from '../../lib/sanity';
-import { schools } from '../../lib/schools';
+import { getSchools } from '../../lib/schools';
 import styles from './page.module.css';
 
-export const metadata: Metadata = {
-  title: 'Programmes',
-  description:
-    'Explore published Luminol Academy programmes by school, language and learning goal.',
-  alternates: { canonical: '/programmes' },
-  openGraph: {
-    title: 'Programmes | Luminol Academy',
-    description:
-      'Explore published Luminol Academy programmes by school, language and learning goal.',
-    type: 'website',
-    url: '/programmes',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getRequestLocale();
+  const copy = getPublicCopy(locale).programmes;
+  const route = localizePathname(locale, '/programmes');
+
+  return {
+    title: copy.title,
+    description: copy.description,
+    alternates: {
+      canonical: route,
+      languages: buildLanguageAlternates('/programmes'),
+    },
+    openGraph: {
+      title: copy.title,
+      description: copy.description,
+      type: 'website',
+      url: route,
+    },
+    twitter: {
+      card: 'summary',
+      title: copy.title,
+      description: copy.description,
+    },
+  };
+}
 
 type ProgrammesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -37,6 +55,9 @@ type ProgrammesPageProps = {
 export default async function ProgrammesPage({
   searchParams,
 }: ProgrammesPageProps) {
+  const locale = await getRequestLocale();
+  const copy = getPublicCopy(locale).programmes;
+  const schools = getSchools(locale);
   const filters = parseProgrammeDiscoveryParams(await searchParams);
   const sourceProgrammes = await getPublicProgrammes();
   const programmes = sourceProgrammes
@@ -55,24 +76,20 @@ export default async function ProgrammesPage({
       <SiteHeader />
 
       <section className={`section-shell ${styles.hero}`}>
-        <p className="eyebrow">Search & discovery</p>
-        <h1>Find the Luminol programme that fits your next step.</h1>
-        <p>
-          Search the currently published programme catalogue, then narrow it by
-          school or delivery language. Every filter stays in the URL so the
-          result can be bookmarked or shared.
-        </p>
+        <p className="eyebrow">{copy.eyebrow}</p>
+        <h1>{copy.heroTitle}</h1>
+        <p>{copy.heroBody}</p>
       </section>
 
       <section className={`section-shell ${styles.discovery}`}>
         <form
           className={styles.filters}
-          action="/programmes"
+          action={localizeHref(locale, '/programmes')}
           method="get"
           role="search"
         >
           <label className={styles.queryField} htmlFor="programme-query">
-            <span>Search programmes</span>
+            <span>{copy.searchLabel}</span>
             <input
               id="programme-query"
               name="q"
@@ -80,18 +97,18 @@ export default async function ProgrammesPage({
               dir="auto"
               defaultValue={filters.query}
               maxLength={100}
-              placeholder="Try leadership, English or stress"
+              placeholder={copy.searchPlaceholder}
             />
           </label>
 
           <label htmlFor="programme-school">
-            <span>School</span>
+            <span>{copy.schoolLabel}</span>
             <select
               id="programme-school"
               name="school"
               defaultValue={filters.school ?? ''}
             >
-              <option value="">All schools</option>
+              <option value="">{copy.allSchools}</option>
               {Object.values(schools).map((school) => (
                 <option key={school.slug} value={school.slug}>
                   {school.name}
@@ -101,14 +118,14 @@ export default async function ProgrammesPage({
           </label>
 
           <label htmlFor="programme-language">
-            <span>Delivery language</span>
+            <span>{copy.languageLabel}</span>
             <select
               id="programme-language"
               name="language"
               defaultValue={filters.language ?? ''}
             >
-              <option value="">All languages</option>
-              {Object.entries(programmeLanguageLabels).map(([code, label]) => (
+              <option value="">{copy.allLanguages}</option>
+              {Object.entries(copy.languageNames).map(([code, label]) => (
                 <option key={code} value={code}>
                   {label}
                 </option>
@@ -117,34 +134,38 @@ export default async function ProgrammesPage({
           </label>
 
           <div className={styles.filterActions}>
-            <button type="submit">Apply filters</button>
-            <Link href="/programmes">Clear</Link>
+            <button type="submit">{copy.apply}</button>
+            <Link href={localizeHref(locale, '/programmes')}>
+              {copy.clear}
+            </Link>
           </div>
         </form>
 
         {programmes === null ? (
           <div className={styles.emptyState} role="status">
-            <h2>Programme discovery is temporarily unavailable.</h2>
-            <p>
-              The public catalogue could not be verified from the governed CMS
-              source. You can still explore each Luminol school or contact the
-              academy for current programme information.
-            </p>
-            <Link href="/#schools">Explore the three schools</Link>
+            <h2>{copy.unavailableTitle}</h2>
+            <p>{copy.unavailableBody}</p>
+            <Link href={localizeHref(locale, '/#schools')}>
+              {copy.exploreSchools}
+            </Link>
           </div>
         ) : programmes.length === 0 ? (
           <div className={styles.emptyState} aria-live="polite">
-            <h2>No published programmes match these filters.</h2>
-            <p>Try a broader topic, another school or a different language.</p>
-            <Link href="/programmes">Reset discovery</Link>
+            <h2>{copy.emptyTitle}</h2>
+            <p>{copy.emptyBody}</p>
+            <Link href={localizeHref(locale, '/programmes')}>
+              {copy.reset}
+            </Link>
           </div>
         ) : (
           <div>
             <div className={styles.resultHeading} aria-live="polite">
-              <p className="eyebrow">Published programmes</p>
+              <p className="eyebrow">{copy.published}</p>
               <h2>
-                {programmes.length} programme
-                {programmes.length === 1 ? '' : 's'}
+                {programmes.length}{' '}
+                {programmes.length === 1
+                  ? copy.programmeSingular
+                  : copy.programmePlural}
               </h2>
             </div>
 
@@ -165,25 +186,28 @@ export default async function ProgrammesPage({
                   <div className={styles.cardBody}>
                     <div className={styles.meta}>
                       <span>{schools[programme.school].name}</span>
-                      {programme.featured ? <span>Featured</span> : null}
+                      {programme.featured ? <span>{copy.featured}</span> : null}
                     </div>
                     <h3 dir="auto">{programme.title}</h3>
                     <p dir="auto">{programme.summary}</p>
-                    <ul className={styles.tags} aria-label="Programme details">
+                    <ul className={styles.tags} aria-label={copy.detailsAria}>
                       {programme.languages.map((language) => (
-                        <li key={language}>
-                          {programmeLanguageLabels[language]}
-                        </li>
+                        <li key={language}>{copy.languageNames[language]}</li>
                       ))}
-                      {programme.delivery ? (
-                        <li>{programme.delivery}</li>
-                      ) : null}
+                      {programme.delivery ? <li>{programme.delivery}</li> : null}
                     </ul>
                     <div className={styles.cardActions}>
-                      <Link href={`/schools/${programme.school}#programs`}>
-                        View school
+                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/schools/${programme.school}#programs`,
+                        )}
+                      >
+                        {copy.viewSchool}
                       </Link>
-                      <Link href="/contact">Ask Luminol</Link>
+                      <Link href={localizeHref(locale, '/contact')}>
+                        {copy.askLuminol}
+                      </Link>
                     </div>
                   </div>
                 </article>
