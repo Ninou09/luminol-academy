@@ -21,3 +21,19 @@ test('localized home metadata does not duplicate the academy brand', async ({
   await page.goto('/ar');
   await expect(page).toHaveTitle('Luminol Academy');
 });
+
+test('Arabic public typography does not apply Latin tracking to joined text', async ({
+  page,
+}) => {
+  await page.goto('/ar');
+  await expect(page.locator('.school-card h3').first()).toHaveCSS(
+    'letter-spacing',
+    'normal',
+  );
+
+  await page.goto('/ar/programmes');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCSS(
+    'letter-spacing',
+    'normal',
+  );
+});
