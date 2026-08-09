@@ -4,6 +4,7 @@ import { db } from '@luminol/database';
 
 import {
   ADMIN_SEARCH_RESULT_LIMIT,
+  escapePostgresLikePattern,
   normalizeAdminSearchQuery,
 } from './operations-search';
 
@@ -29,7 +30,8 @@ export async function searchAdminOperations(
   }
 
   const take = ADMIN_SEARCH_RESULT_LIMIT + 1;
-  const contains = { contains: query, mode: 'insensitive' as const };
+  const literalQuery = escapePostgresLikePattern(query);
+  const contains = { contains: literalQuery, mode: 'insensitive' as const };
 
   const [people, enquiries, courses] = await Promise.all([
     db.user.findMany({
