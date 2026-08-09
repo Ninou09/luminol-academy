@@ -11,6 +11,7 @@ import { PortalHeader } from '../../components/portal-header';
 import { parseLearningSearchParam } from '../../lib/learning-search';
 import { searchLearnerContent } from '../../lib/learning-search.server';
 import { getPortalCopy } from '../../lib/portal-localization';
+import { getPortalArrow } from '../../lib/portal-direction';
 import { getPortalRequestLocale } from '../../lib/request-locale';
 
 const searchExtras = {
@@ -94,7 +95,9 @@ export default async function SearchPage({
     <main>
       <PortalHeader />
       <div className="dashboard-shell">
-        <Link href={localizeHref(locale, '/')}>← {extras.dashboard}</Link>
+        <Link href={localizeHref(locale, '/')}>
+          {getPortalArrow(locale, 'back')} {extras.dashboard}
+        </Link>
 
         <section className="dashboard-section" aria-labelledby="search-title">
           <div className="section-heading">
@@ -175,7 +178,9 @@ export default async function SearchPage({
                       >
                         {copy.open}{' '}
                         {destinationLabelForKind(locale, result.kind)}{' '}
-                        <span aria-hidden="true">→</span>
+                        <span aria-hidden="true">
+                          {getPortalArrow(locale, 'forward')}
+                        </span>
                       </Link>
                     </div>
                   </article>

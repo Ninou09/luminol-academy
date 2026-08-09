@@ -9,6 +9,7 @@ import {
   getPortalCopy,
   getPortalStatusLabel,
 } from '../../../lib/portal-localization';
+import { getPortalArrow } from '../../../lib/portal-direction';
 import { getPortalRequestLocale } from '../../../lib/request-locale';
 
 export default async function CertificatePage({
@@ -42,7 +43,7 @@ export default async function CertificatePage({
       <PortalHeader />
       <div className="dashboard-shell">
         <Link href={localizeHref(locale, '/')}>
-          ← {portalCopy.shell.dashboard}
+          {getPortalArrow(locale, 'back')} {portalCopy.shell.dashboard}
         </Link>
         <section
           className="dashboard-section"

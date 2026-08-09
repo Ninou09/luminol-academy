@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { PortalHeader } from '../../components/portal-header';
 import { getPortalCopy } from '../../lib/portal-localization';
+import { getPortalArrow } from '../../lib/portal-direction';
 import { getPortalRequestLocale } from '../../lib/request-locale';
 import { setNotificationRead, updateMarketingPreference } from './actions';
 
@@ -33,7 +34,9 @@ export default async function NotificationsPage() {
     <main>
       <PortalHeader />
       <div className="dashboard-shell">
-        <Link href={localizeHref(locale, '/')}>← {dashboardLabel}</Link>
+        <Link href={localizeHref(locale, '/')}>
+          {getPortalArrow(locale, 'back')} {dashboardLabel}
+        </Link>
         <section className="dashboard-section">
           <p className="eyebrow">{copy.eyebrow}</p>
           <h1>{copy.title}</h1>

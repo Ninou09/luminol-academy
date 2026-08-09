@@ -11,6 +11,7 @@ import {
   getPortalCopy,
   getPortalStatusLabel,
 } from '../../lib/portal-localization';
+import { getPortalArrow } from '../../lib/portal-direction';
 import { getPortalRequestLocale } from '../../lib/request-locale';
 
 const accountExtras = {
@@ -85,7 +86,7 @@ export default async function AccountPage() {
 
       <div className="course-shell">
         <Link className="back-link" href={localizeHref(locale, '/')}>
-          ← {extras.back}
+          {getPortalArrow(locale, 'back')} {extras.back}
         </Link>
 
         <section className="course-hero" aria-labelledby="account-title">

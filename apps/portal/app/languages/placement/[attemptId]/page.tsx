@@ -6,6 +6,7 @@ import { notFound, redirect } from 'next/navigation';
 
 import { PortalHeader } from '../../../../components/portal-header';
 import { getPortalCopy } from '../../../../lib/portal-localization';
+import { getPortalArrow } from '../../../../lib/portal-direction';
 import { getPortalRequestLocale } from '../../../../lib/request-locale';
 
 export default async function PlacementSessionPage({
@@ -43,7 +44,7 @@ export default async function PlacementSessionPage({
       <PortalHeader />
       <div className="dashboard-shell">
         <Link className="course-link" href={localizeHref(locale, '/languages')}>
-          ← {backLabel}
+          {getPortalArrow(locale, 'back')} {backLabel}
         </Link>
         <section
           className="dashboard-intro mt-12"

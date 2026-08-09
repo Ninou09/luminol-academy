@@ -13,6 +13,7 @@ import {
   getPortalCopy,
   getPortalStatusLabel,
 } from '../lib/portal-localization';
+import { getPortalArrow } from '../lib/portal-direction';
 import { getPortalRequestLocale } from '../lib/request-locale';
 import { setCertificateVisibility } from './certificates/actions';
 
@@ -210,7 +211,10 @@ export default async function Page() {
                         className="course-link"
                         href={localizeHref(locale, `/courses/${course.slug}`)}
                       >
-                        {copy.openProgramme} <span aria-hidden="true">→</span>
+                        {copy.openProgramme}{' '}
+                        <span aria-hidden="true">
+                          {getPortalArrow(locale, 'forward')}
+                        </span>
                       </Link>
                     ) : null}
                   </div>

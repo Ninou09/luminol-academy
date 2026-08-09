@@ -10,6 +10,7 @@ import {
   getPortalStatusLabel,
   getSkillLabel,
 } from '../../../../lib/portal-localization';
+import { getPortalArrow } from '../../../../lib/portal-direction';
 import { getPortalRequestLocale } from '../../../../lib/request-locale';
 
 export default async function PlacementResultPage({
@@ -51,7 +52,7 @@ export default async function PlacementResultPage({
       <PortalHeader />
       <div className="dashboard-shell">
         <Link className="course-link" href={localizeHref(locale, '/languages')}>
-          ← {backLabel}
+          {getPortalArrow(locale, 'back')} {backLabel}
         </Link>
         <section
           className="dashboard-intro mt-12"
@@ -173,7 +174,9 @@ export default async function PlacementResultPage({
                 >
                   {copy.explore}{' '}
                   <bdi dir="auto">{attempt.assessment.course.title}</bdi>{' '}
-                  <span aria-hidden="true">→</span>
+                  <span aria-hidden="true">
+                    {getPortalArrow(locale, 'forward')}
+                  </span>
                 </Link>
               </div>
             ) : null}

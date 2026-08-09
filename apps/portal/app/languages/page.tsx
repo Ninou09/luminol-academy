@@ -8,6 +8,7 @@ import {
   getPortalCopy,
   getPortalStatusLabel,
 } from '../../lib/portal-localization';
+import { getPortalArrow } from '../../lib/portal-direction';
 import { getPortalRequestLocale } from '../../lib/request-locale';
 import { startPlacementFromForm } from './actions';
 
@@ -131,7 +132,10 @@ export default async function LanguagesPage() {
                             `/languages/results/${latest.id}`,
                           )}
                         >
-                          {copy.viewResult} <span aria-hidden="true">→</span>
+                          {copy.viewResult}{' '}
+                          <span aria-hidden="true">
+                            {getPortalArrow(locale, 'forward')}
+                          </span>
                         </Link>
                       ) : isActive && latest ? (
                         <Link
@@ -141,7 +145,10 @@ export default async function LanguagesPage() {
                             `/languages/placement/${latest.id}`,
                           )}
                         >
-                          {copy.resume} <span aria-hidden="true">→</span>
+                          {copy.resume}{' '}
+                          <span aria-hidden="true">
+                            {getPortalArrow(locale, 'forward')}
+                          </span>
                         </Link>
                       ) : (
                         <form action={startPlacementFromForm}>
@@ -151,7 +158,10 @@ export default async function LanguagesPage() {
                             value={assessment.id}
                           />
                           <button className="course-link" type="submit">
-                            {copy.start} <span aria-hidden="true">→</span>
+                            {copy.start}{' '}
+                            <span aria-hidden="true">
+                              {getPortalArrow(locale, 'forward')}
+                            </span>
                           </button>
                         </form>
                       )}

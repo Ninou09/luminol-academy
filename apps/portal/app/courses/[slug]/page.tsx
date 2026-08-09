@@ -13,6 +13,7 @@ import {
   getLessonTypeLabel,
   getPortalCopy,
 } from '../../../lib/portal-localization';
+import { getPortalArrow } from '../../../lib/portal-direction';
 import { getPortalRequestLocale } from '../../../lib/request-locale';
 import { completeLesson } from './actions';
 
@@ -49,7 +50,7 @@ export default async function CoursePage({
 
       <div className="course-shell">
         <Link className="back-link" href={localizeHref(locale, '/')}>
-          ← {copy.back}
+          {getPortalArrow(locale, 'back')} {copy.back}
         </Link>
 
         <section className="course-hero" aria-labelledby="course-title">
@@ -68,7 +69,9 @@ export default async function CoursePage({
                 )}
               >
                 {progress.completedLessons > 0 ? copy.resume : copy.start}{' '}
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true">
+                  {getPortalArrow(locale, 'forward')}
+                </span>
               </Link>
             ) : null}
           </div>
