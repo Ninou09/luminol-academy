@@ -1,10 +1,35 @@
 import { getLocaleDirection } from '@luminol/localization';
 import type { Metadata } from 'next';
+import {
+  Cormorant_Garamond,
+  Manrope,
+  Noto_Sans_Arabic,
+} from 'next/font/google';
 
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import './globals.css';
 import './localization.css';
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-manrope',
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  display: 'swap',
+  variable: '--font-cormorant',
+});
+
+const notoSansArabic = Noto_Sans_Arabic({
+  subsets: ['arabic'],
+  display: 'swap',
+  variable: '--font-noto-arabic',
+});
 
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
@@ -52,9 +77,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getRequestLocale();
+  const fontVariables = `${manrope.variable} ${cormorant.variable} ${notoSansArabic.variable}`;
 
   return (
-    <html lang={locale} dir={getLocaleDirection(locale)}>
+    <html
+      className={fontVariables}
+      lang={locale}
+      dir={getLocaleDirection(locale)}
+    >
       <body>{children}</body>
     </html>
   );
