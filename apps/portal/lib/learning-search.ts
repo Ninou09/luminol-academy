@@ -90,7 +90,10 @@ export function rankLearningSearchResults(
   if (query.length < 2) return [];
 
   const tokens = query.split(' ').filter((token) => token.length >= 2);
-  const boundedLimit = Math.max(1, Math.min(limit, LEARNING_SEARCH_MAX_RESULTS));
+  const boundedLimit = Math.max(
+    1,
+    Math.min(limit, LEARNING_SEARCH_MAX_RESULTS),
+  );
 
   return candidates
     .flatMap((candidate) => {

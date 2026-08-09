@@ -79,7 +79,9 @@ export default async function SearchPage({
                   >
                     <div className="course-content">
                       <div className="course-meta">
-                        <span className="status">{labelForKind(result.kind)}</span>
+                        <span className="status">
+                          {labelForKind(result.kind)}
+                        </span>
                         <span>{result.courseTitle}</span>
                       </div>
                       <h3>{result.title}</h3>
@@ -103,7 +105,9 @@ export default async function SearchPage({
                   ✦
                 </span>
                 <div>
-                  <h3>Nothing in your enrolled learning matches that search.</h3>
+                  <h3>
+                    Nothing in your enrolled learning matches that search.
+                  </h3>
                   <p>
                     Try a shorter topic, lesson title, module name or programme
                     name.

@@ -50,7 +50,9 @@ describe('learner search', () => {
     expect(parseLearningSearchParam(['one', 'two'])).toBeUndefined();
     expect(parseLearningSearchParam(42)).toBeUndefined();
     expect(
-      parseLearningSearchParam('x'.repeat(LEARNING_SEARCH_MAX_QUERY_LENGTH + 1)),
+      parseLearningSearchParam(
+        'x'.repeat(LEARNING_SEARCH_MAX_QUERY_LENGTH + 1),
+      ),
     ).toBeUndefined();
   });
 
@@ -98,7 +100,9 @@ describe('learner search', () => {
       courseTitle: `English programme ${index}`,
     }));
 
-    expect(rankLearningSearchResults(repeated, 'English', 200)).toHaveLength(20);
+    expect(rankLearningSearchResults(repeated, 'English', 200)).toHaveLength(
+      20,
+    );
   });
 
   it('does not return unrelated content', () => {
