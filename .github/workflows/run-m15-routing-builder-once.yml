@@ -55,6 +55,10 @@ jobs:
               'pnpm exec vitest run packages/localization/src/index.test.ts packages/localization/src/routing.test.ts',
           )
           payload = payload.replace(
+              'pnpm --filter @luminol/localization typecheck\npnpm --filter @luminol/web typecheck',
+              'pnpm --filter @luminol/localization typecheck\npnpm db:generate\npnpm --filter @luminol/web typecheck',
+          )
+          payload = payload.replace(
               'rm .github/workflows/m15-locale-routing-once.yml',
               ': # workflow cleanup is performed through the GitHub connector after a successful push',
           )
