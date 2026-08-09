@@ -1,16 +1,13 @@
 import { SearchResultBucket } from '@prisma/client';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
-  SEARCH_TELEMETRY_WRITE_TIMEOUT_MS,
+  SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS,
+  SEARCH_TELEMETRY_TRANSACTION_MAX_WAIT_MS,
+  SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS,
   searchResultBucketForCount,
   searchTelemetryDay,
-  settleSearchTelemetryWrite,
 } from './index';
-
-afterEach(() => {
-  vi.useRealTimers();
-});
 
 describe('privacy-safe search telemetry aggregates', () => {
   it('buckets only aggregate result counts', () => {
@@ -35,22 +32,13 @@ describe('privacy-safe search telemetry aggregates', () => {
     );
   });
 
-  it('bounds a stalled telemetry write instead of blocking search indefinitely', async () => {
-    vi.useFakeTimers();
-    const stalledWrite = new Promise<never>(() => undefined);
-    const settlement = settleSearchTelemetryWrite(stalledWrite);
-
-    await vi.advanceTimersByTimeAsync(SEARCH_TELEMETRY_WRITE_TIMEOUT_MS);
-
-    await expect(settlement).resolves.toBe(false);
-  });
-
-  it('reports a telemetry write that settles before the timeout', async () => {
-    await expect(settleSearchTelemetryWrite(Promise.resolve())).resolves.toBe(
-      true,
+  it('keeps telemetry database waits short and explicitly bounded', () => {
+    expect(SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS).toBeGreaterThan(0);
+    expect(SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS).toBeLessThanOrEqual(100);
+    expect(SEARCH_TELEMETRY_TRANSACTION_MAX_WAIT_MS).toBeLessThanOrEqual(100);
+    expect(SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS).toBeGreaterThan(
+      SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS,
     );
-    await expect(
-      settleSearchTelemetryWrite(Promise.reject(new Error('unavailable'))),
-    ).resolves.toBe(false);
+    expect(SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS).toBeLessThanOrEqual(250);
   });
 });
