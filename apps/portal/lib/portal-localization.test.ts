@@ -9,6 +9,26 @@ import {
 } from './portal-localization';
 
 const locales: Locale[] = ['ar', 'fr', 'en'];
+const displayedFinanceStatuses = [
+  'DRAFT',
+  'OPEN',
+  'PAID',
+  'VOID',
+  'PAST_DUE',
+  'REFUNDED',
+  'REQUIRES_PAYMENT_METHOD',
+  'REQUIRES_CONFIRMATION',
+  'PROCESSING',
+  'SUCCEEDED',
+  'FAILED',
+  'CANCELLED',
+  'PARTIALLY_REFUNDED',
+  'TRIALING',
+  'ACTIVE',
+  'PAUSED',
+  'EXPIRED',
+] as const;
+const lessonTypes = ['VIDEO', 'ARTICLE', 'RESOURCE', 'LIVE'] as const;
 
 describe('learner portal localization', () => {
   it('provides complete core navigation and learner copy for every locale', () => {
@@ -37,6 +57,26 @@ describe('learner portal localization', () => {
     expect(getPortalCopy('fr').search.action).not.toBe(
       getPortalCopy('en').search.action,
     );
+  });
+
+  it('localizes every finance state displayed by the learner portal', () => {
+    for (const status of displayedFinanceStatuses) {
+      expect(getPortalStatusLabel('fr', status)).not.toBe(
+        getPortalStatusLabel('en', status),
+      );
+      expect(getPortalStatusLabel('ar', status)).not.toBe(
+        getPortalStatusLabel('en', status),
+      );
+    }
+  });
+
+  it('localizes every actual lesson type', () => {
+    for (const lessonType of lessonTypes) {
+      expect(getLessonTypeLabel('fr', lessonType).length).toBeGreaterThan(0);
+      expect(getLessonTypeLabel('ar', lessonType).length).toBeGreaterThan(0);
+    }
+    expect(getLessonTypeLabel('fr', 'RESOURCE')).toBe('Ressource');
+    expect(getLessonTypeLabel('ar', 'RESOURCE')).toBe('مورد');
   });
 
   it('localizes governed system labels with deterministic fallbacks', () => {
