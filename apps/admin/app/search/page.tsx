@@ -47,7 +47,7 @@ export default async function AdminSearchPage() {
             <span>Protected administration workspace</span>
           </div>
           <div className={styles.account}>
-            <span>{administratorName}</span>
+            <span dir="auto">{administratorName}</span>
             <UserButton />
           </div>
         </header>
