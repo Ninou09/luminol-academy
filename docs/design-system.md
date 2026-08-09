@@ -13,7 +13,11 @@ experiences without coupling those applications together.
 - School colours distinguish Psychology, Languages and Professional Training
   without replacing the core Luminol identity.
 - Manrope is the Latin interface face, Cormorant Garamond is the display face,
-  and IBM Plex Sans Arabic with Noto Sans Arabic fallback supports Arabic.
+  and Noto Sans Arabic with IBM Plex Sans Arabic fallback supports Arabic.
+
+The public website loads the governed font families through `next/font` so they
+are bundled with the application instead of depending on a runtime third-party
+font request. CSS font tokens retain system fallbacks for resilience.
 
 Tokens are available as typed values from `@luminol/config/tailwind` and as
 Tailwind/CSS custom properties from `@luminol/config/tokens.css`.
@@ -48,6 +52,29 @@ isolated bidirectional value.
 All interactive controls include visible keyboard focus, minimum target sizes
 and reduced-motion support. Prefer native semantic elements and preserve their
 accessible names.
+
+## Editorial media foundation
+
+The public website uses `EditorialMedia` as the governed presentation boundary
+for programme imagery. It has two deliberate states:
+
+- an approved CMS-backed asset with meaningful alternative text and an explicit
+  source marker;
+- a branch-specific decorative fallback when no approved asset is available.
+
+A missing image must therefore degrade to an intentional Luminol composition,
+not a broken image, an empty hole, or an unreviewed stock replacement. The
+fallback is decorative and hidden from assistive technology because the nearby
+programme title and description carry the content.
+
+Psychology, Languages and Professional Training each receive a restrained soft
+surface derived from their existing school token. Shared media radius, aspect
+ratio, shadow, duration and easing tokens keep future hero, card and feature
+media consistent. Motion remains subtle and the repository-wide reduced-motion
+rule disables it for users who request less motion.
+
+Real media added in later visual phases must preserve its source, review status,
+alt text and responsive crop intent before it replaces a governed fallback.
 
 ## Governance
 
