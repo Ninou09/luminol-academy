@@ -46,17 +46,17 @@ export function searchTelemetryDay(now = new Date()) {
   );
 }
 
-async function waitForBoundedTelemetryWrite(write: Promise<unknown>) {
+export async function settleSearchTelemetryWrite(
+  write: Promise<unknown>,
+  timeoutMs = SEARCH_TELEMETRY_WRITE_TIMEOUT_MS,
+) {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const settledWrite = write.then(
     () => true,
     () => false,
   );
   const timeout = new Promise<boolean>((resolve) => {
-    timer = setTimeout(
-      () => resolve(false),
-      SEARCH_TELEMETRY_WRITE_TIMEOUT_MS,
-    );
+    timer = setTimeout(() => resolve(false), Math.max(0, timeoutMs));
   });
 
   try {
@@ -85,7 +85,7 @@ export async function recordSearchTelemetry({
     normalizedResultCount > 0 ? SearchOutcome.HIT : SearchOutcome.NO_MATCH;
   const resultBucket = searchResultBucketForCount(normalizedResultCount);
 
-  return waitForBoundedTelemetryWrite(
+  return settleSearchTelemetryWrite(
     db.searchTelemetryDaily.upsert({
       where: {
         day_surface_outcome_resultBucket: {
