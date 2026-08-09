@@ -96,6 +96,11 @@ html[dir='rtl'] .form-grid label > span {
 }
 
 @media (max-width: 38rem) {
+  .site-header {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: 0.75rem;
+  }
+
   .site-header > .site-header-actions {
     min-height: auto;
     padding-inline: 0;
@@ -103,6 +108,10 @@ html[dir='rtl'] .form-grid label > span {
   }
 
   .site-header-actions {
+    width: 100%;
+    justify-self: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 0.35rem;
   }
 
