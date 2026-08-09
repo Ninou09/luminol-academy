@@ -1,0 +1,56 @@
+name: Format Milestone 14 review fixes once
+
+on:
+  push:
+    branches:
+      - feature/milestone-14-search-discovery
+    paths:
+      - .github/workflows/format-m14-final-fixes-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out milestone branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-14-search-discovery
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '22.12.0'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format review fixes
+        run: >-
+          pnpm exec prettier --write
+          apps/portal/lib/learning-search.ts
+          apps/portal/lib/learning-search.server.ts
+          apps/portal/lib/learning-search.test.ts
+          apps/portal/app/search/page.tsx
+          apps/admin/app/search/page.tsx
+          packages/database/src/index.ts
+          packages/database/src/search-telemetry.test.ts
+          vitest.config.ts
+
+      - name: Commit formatting and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/format-m14-final-fixes-once.yml
+          git add apps/portal apps/admin/app/search/page.tsx packages/database/src vitest.config.ts
+          git commit -m "Format Milestone 14 final review fixes"
+          git push origin HEAD:feature/milestone-14-search-discovery
