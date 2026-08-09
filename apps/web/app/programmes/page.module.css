@@ -183,6 +183,19 @@
   line-height: 1.7;
 }
 
+:global(html[dir='rtl']) .hero h1,
+:global(html[dir='rtl']) .resultHeading h2,
+:global(html[dir='rtl']) .emptyState h2,
+:global(html[dir='rtl']) .card h3,
+:global(html[dir='rtl']) .filters label,
+:global(html[dir='rtl']) .meta {
+  letter-spacing: 0;
+}
+
+:global(html[dir='rtl']) .meta {
+  text-transform: none;
+}
+
 @media (max-width: 1000px) {
   .filters {
     grid-template-columns: 1fr 1fr;
