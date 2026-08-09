@@ -1,81 +1,92 @@
 import { UserButton } from '@clerk/nextjs';
-import Link from 'next/link';
 import { requirePermission } from '@luminol/auth';
+import {
+  formatLocalizedDate,
+  formatLocalizedNumber,
+  getCommonDictionary,
+  localizeHref,
+} from '@luminol/localization';
 import { Wordmark } from '@luminol/ui';
+import Link from 'next/link';
 
+import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
+import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import {
   displayPersonName,
-  formatEnumLabel,
   getEnrollmentTransitions,
   getEnquiryTransitions,
 } from '../lib/operations';
 import { getOperationsDashboard } from '../lib/operations.server';
+import { getAdminRequestLocale } from '../lib/request-locale';
 import {
   createEnrollment,
   transitionEnrollmentStatus,
 } from './enrollments/actions';
 import { transitionEnquiryStatus } from './enquiries/actions';
 
-const dateFormatter = new Intl.DateTimeFormat('en', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-});
-
 export default async function Page() {
   const administrator = await requirePermission('academy:manage');
+  const locale = await getAdminRequestLocale();
+  const copy = getAdminCopy(locale);
+  const common = getCommonDictionary(locale);
   const operations = await getOperationsDashboard();
   const administratorName = displayPersonName(
     administrator.firstName,
     administrator.lastName,
-    'Administrator',
+    copy.shell.administrator,
   );
+  const number = (value: number) => formatLocalizedNumber(value, locale);
+  const date = (value: Date) => formatLocalizedDate(value, locale);
 
   return (
     <main className="admin-shell">
       <aside className="admin-sidebar">
         <Link
           className="admin-brand"
-          href="/"
-          aria-label="Luminol administration"
+          href={localizeHref(locale, '/')}
+          aria-label={copy.shell.aria}
         >
           <Wordmark />
         </Link>
-        <p className="admin-label">Administration</p>
-        <nav aria-label="Administration navigation">
+        <p className="admin-label">{copy.shell.administration}</p>
+        <nav aria-label={copy.shell.navigationAria}>
           <a className="active" href="#overview">
-            <span>01</span> Overview
+            <span>01</span> {copy.shell.overview}
           </a>
           <a href="#enquiries">
-            <span>02</span> Enquiries
+            <span>02</span> {copy.shell.enquiries}
           </a>
           <a href="#learners">
-            <span>03</span> Learners
+            <span>03</span> {copy.shell.learners}
           </a>
           <a href="#programmes">
-            <span>04</span> Programmes
+            <span>04</span> {copy.shell.programmes}
           </a>
-          <Link href="/search">
-            <span>05</span> Search
+          <Link href={localizeHref(locale, '/search')}>
+            <span>05</span> {copy.shell.search}
           </Link>
-          <Link href="/finance">
-            <span>06</span> Finance
+          <Link href={localizeHref(locale, '/finance')}>
+            <span>06</span> {copy.shell.finance}
           </Link>
         </nav>
         <div className="admin-sidebar-note">
-          <span>Protected workspace</span>
-          <p>Server-authorized operations for the Luminol team.</p>
+          <span>{copy.shell.protectedWorkspace}</span>
+          <p>{copy.shell.protectedNote}</p>
         </div>
       </aside>
 
       <section className="admin-dashboard">
         <header className="admin-topbar">
           <div>
-            <p>Academic operations</p>
-            <span>Live platform overview</span>
+            <p>{copy.dashboard.topbarTitle}</p>
+            <span>{copy.dashboard.topbarSubtitle}</span>
           </div>
           <div className="admin-account">
-            <span>{administratorName}</span>
+            <AdminLanguageSwitcher
+              locale={locale}
+              label={common.languageSelectorLabel}
+            />
+            <span dir="auto">{administratorName}</span>
             <UserButton />
           </div>
         </header>
@@ -83,54 +94,55 @@ export default async function Page() {
         <div className="admin-content">
           <section className="admin-intro" id="overview">
             <div>
-              <p className="eyebrow">Operations centre</p>
-              <h1>Clarity for every branch.</h1>
-              <p>
-                One view of people, programmes, enquiries and learning activity
-                across the Luminol ecosystem.
-              </p>
+              <p className="eyebrow">{copy.dashboard.eyebrow}</p>
+              <h1>{copy.dashboard.title}</h1>
+              <p>{copy.dashboard.intro}</p>
             </div>
             <div className="health-status">
               <span aria-hidden="true" />
-              Platform data connected
+              {copy.dashboard.health}
             </div>
           </section>
 
-          <section className="metric-grid" aria-label="Operations summary">
+          <section className="metric-grid" aria-label={copy.dashboard.summaryAria}>
             <article>
-              <span>Active people</span>
-              <strong>{operations.summary.activeUsers}</strong>
-              <small>Synchronized accounts</small>
+              <span>{copy.dashboard.activePeople}</span>
+              <strong>{number(operations.summary.activeUsers)}</strong>
+              <small>{copy.dashboard.synchronizedAccounts}</small>
             </article>
             <article>
-              <span>Active enrolments</span>
-              <strong>{operations.summary.activeEnrollments}</strong>
-              <small>Learning now</small>
+              <span>{copy.dashboard.activeEnrollments}</span>
+              <strong>{number(operations.summary.activeEnrollments)}</strong>
+              <small>{copy.dashboard.learningNow}</small>
             </article>
             <article>
-              <span>Published courses</span>
-              <strong>{operations.summary.publishedCourses}</strong>
-              <small>Available programmes</small>
+              <span>{copy.dashboard.publishedCourses}</span>
+              <strong>{number(operations.summary.publishedCourses)}</strong>
+              <small>{copy.dashboard.availableProgrammes}</small>
             </article>
             <article>
-              <span>New enquiries</span>
-              <strong>{operations.summary.newEnquiries}</strong>
-              <small>Awaiting review</small>
+              <span>{copy.dashboard.newEnquiries}</span>
+              <strong>{number(operations.summary.newEnquiries)}</strong>
+              <small>{copy.dashboard.awaitingReview}</small>
             </article>
             <article className="completion-metric">
-              <span>Completion rate</span>
-              <strong>{operations.summary.completionRate}%</strong>
+              <span>{copy.dashboard.completionRate}</span>
+              <strong>
+                {formatLocalizedNumber(
+                  operations.summary.completionRate / 100,
+                  locale,
+                  { style: 'percent', maximumFractionDigits: 1 },
+                )}
+              </strong>
               <div
                 className="admin-progress"
                 role="progressbar"
-                aria-label="Programme completion rate"
+                aria-label={copy.dashboard.completionRateAria}
                 aria-valuemin={0}
                 aria-valuemax={100}
                 aria-valuenow={operations.summary.completionRate}
               >
-                <span
-                  style={{ width: `${operations.summary.completionRate}%` }}
-                />
+                <span style={{ width: `${operations.summary.completionRate}%` }} />
               </div>
             </article>
           </section>
@@ -139,10 +151,12 @@ export default async function Page() {
             <section className="admin-panel enquiries-panel" id="enquiries">
               <div className="panel-heading">
                 <div>
-                  <p className="eyebrow">Growth</p>
-                  <h2>Recent enquiries</h2>
+                  <p className="eyebrow">{copy.dashboard.growth}</p>
+                  <h2>{copy.dashboard.recentEnquiries}</h2>
                 </div>
-                <span>{operations.summary.newEnquiries} new</span>
+                <span>
+                  {number(operations.summary.newEnquiries)} {copy.dashboard.newSuffix}
+                </span>
               </div>
               {operations.recentEnquiries.length > 0 ? (
                 <div className="data-list">
@@ -152,173 +166,128 @@ export default async function Page() {
                         {enquiry.name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <h3>{enquiry.name}</h3>
-                        <p>{enquiry.email}</p>
+                        <h3 dir="auto">{enquiry.name}</h3>
+                        <p dir="auto">{enquiry.email}</p>
                       </div>
                       <div className="data-meta">
-                        <span>{formatEnumLabel(enquiry.school)}</span>
-                        <small>{dateFormatter.format(enquiry.createdAt)}</small>
+                        <span>{getAdminEnumLabel(locale, enquiry.school)}</span>
+                        <small>{date(enquiry.createdAt)}</small>
                       </div>
-                      <span
-                        className={`data-status status-${enquiry.status.toLowerCase()}`}
-                      >
-                        {formatEnumLabel(enquiry.status)}
+                      <span className={`data-status status-${enquiry.status.toLowerCase()}`}>
+                        {getAdminEnumLabel(locale, enquiry.status)}
                       </span>
-                      <form
-                        action={transitionEnquiryStatus}
-                        className="status-form"
-                      >
-                        <input
-                          type="hidden"
-                          name="enquiryId"
-                          value={enquiry.id}
-                        />
+                      <form action={transitionEnquiryStatus} className="status-form">
+                        <input type="hidden" name="enquiryId" value={enquiry.id} />
                         <label>
                           <span className="sr-only">
-                            Update {enquiry.name}&apos;s enquiry status
+                            {copy.dashboard.updateEnquiryStatus}: {enquiry.name}
                           </span>
                           <select
                             name="toStatus"
                             defaultValue=""
                             required
-                            aria-label={`Update ${enquiry.name}'s enquiry status`}
+                            aria-label={`${copy.dashboard.updateEnquiryStatus}: ${enquiry.name}`}
                           >
-                            <option value="" disabled>
-                              Move to…
-                            </option>
-                            {getEnquiryTransitions(enquiry.status).map(
-                              (status) => (
-                                <option key={status} value={status}>
-                                  {formatEnumLabel(status)}
-                                </option>
-                              ),
-                            )}
+                            <option value="" disabled>{copy.dashboard.moveTo}</option>
+                            {getEnquiryTransitions(enquiry.status).map((status) => (
+                              <option key={status} value={status}>
+                                {getAdminEnumLabel(locale, status)}
+                              </option>
+                            ))}
                           </select>
                         </label>
-                        <button type="submit">Update</button>
+                        <button type="submit">{copy.dashboard.update}</button>
                       </form>
                     </article>
                   ))}
                 </div>
               ) : (
-                <p className="admin-empty">No enquiries have arrived yet.</p>
+                <p className="admin-empty">{copy.dashboard.noEnquiries}</p>
               )}
             </section>
 
             <section className="admin-panel learners-panel" id="learners">
               <div className="panel-heading">
                 <div>
-                  <p className="eyebrow">Learning</p>
-                  <h2>Recent enrolments</h2>
+                  <p className="eyebrow">{copy.dashboard.learning}</p>
+                  <h2>{copy.dashboard.recentEnrollments}</h2>
                 </div>
               </div>
               {operations.enrollmentOptions.learners.length > 0 &&
               operations.enrollmentOptions.courses.length > 0 ? (
-                <form
-                  action={createEnrollment}
-                  className="enrollment-create-form"
-                >
+                <form action={createEnrollment} className="enrollment-create-form">
                   <label>
-                    <span>Learner</span>
+                    <span>{copy.dashboard.learner}</span>
                     <select name="userId" defaultValue="" required>
-                      <option value="" disabled>
-                        Select learner
-                      </option>
+                      <option value="" disabled>{copy.dashboard.selectLearner}</option>
                       {operations.enrollmentOptions.learners.map((learner) => (
                         <option key={learner.id} value={learner.id}>
-                          {displayPersonName(
-                            learner.firstName,
-                            learner.lastName,
-                            learner.email,
-                          )}{' '}
-                          · {learner.email}
+                          {displayPersonName(learner.firstName, learner.lastName, learner.email)} · {learner.email}
                         </option>
                       ))}
                     </select>
                   </label>
                   <label>
-                    <span>Published course</span>
+                    <span>{copy.dashboard.publishedCourse}</span>
                     <select name="courseId" defaultValue="" required>
-                      <option value="" disabled>
-                        Select course
-                      </option>
+                      <option value="" disabled>{copy.dashboard.selectCourse}</option>
                       {operations.enrollmentOptions.courses.map((course) => (
-                        <option key={course.id} value={course.id}>
-                          {course.title}
-                        </option>
+                        <option key={course.id} value={course.id}>{course.title}</option>
                       ))}
                     </select>
                   </label>
-                  <button type="submit">Create enrolment</button>
+                  <button type="submit">{copy.dashboard.createEnrollment}</button>
                 </form>
               ) : (
-                <p className="enrollment-readiness">
-                  A synchronized learner and published course are required
-                  before an enrolment can be created.
-                </p>
+                <p className="enrollment-readiness">{copy.dashboard.enrollmentReadiness}</p>
               )}
               {operations.recentEnrollments.length > 0 ? (
                 <div className="compact-list">
                   {operations.recentEnrollments.map((enrollment) => (
                     <article key={enrollment.id}>
                       <div>
-                        <h3>
+                        <h3 dir="auto">
                           {displayPersonName(
                             enrollment.user.firstName,
                             enrollment.user.lastName,
                             enrollment.user.email,
                           )}
                         </h3>
-                        <p>{enrollment.course.title}</p>
+                        <p dir="auto">{enrollment.course.title}</p>
                       </div>
                       <div>
-                        <span
-                          className={`data-status status-${enrollment.status.toLowerCase()}`}
-                        >
-                          {formatEnumLabel(enrollment.status)}
+                        <span className={`data-status status-${enrollment.status.toLowerCase()}`}>
+                          {getAdminEnumLabel(locale, enrollment.status)}
                         </span>
-                        <small>
-                          {dateFormatter.format(enrollment.enrolledAt)}
-                        </small>
+                        <small>{date(enrollment.enrolledAt)}</small>
                       </div>
-                      <form
-                        action={transitionEnrollmentStatus}
-                        className="status-form enrollment-status-form"
-                      >
-                        <input
-                          type="hidden"
-                          name="enrollmentId"
-                          value={enrollment.id}
-                        />
+                      <form action={transitionEnrollmentStatus} className="status-form enrollment-status-form">
+                        <input type="hidden" name="enrollmentId" value={enrollment.id} />
                         <label>
                           <span className="sr-only">
-                            Update {enrollment.course.title} enrolment status
+                            {copy.dashboard.updateEnrollmentStatus}: {enrollment.course.title}
                           </span>
                           <select
                             name="toStatus"
                             defaultValue=""
                             required
-                            aria-label={`Update ${enrollment.course.title} enrolment status`}
+                            aria-label={`${copy.dashboard.updateEnrollmentStatus}: ${enrollment.course.title}`}
                           >
-                            <option value="" disabled>
-                              Move to…
-                            </option>
-                            {getEnrollmentTransitions(enrollment.status).map(
-                              (status) => (
-                                <option key={status} value={status}>
-                                  {formatEnumLabel(status)}
-                                </option>
-                              ),
-                            )}
+                            <option value="" disabled>{copy.dashboard.moveTo}</option>
+                            {getEnrollmentTransitions(enrollment.status).map((status) => (
+                              <option key={status} value={status}>
+                                {getAdminEnumLabel(locale, status)}
+                              </option>
+                            ))}
                           </select>
                         </label>
-                        <button type="submit">Update</button>
+                        <button type="submit">{copy.dashboard.update}</button>
                       </form>
                     </article>
                   ))}
                 </div>
               ) : (
-                <p className="admin-empty">No learner enrolments yet.</p>
+                <p className="admin-empty">{copy.dashboard.noEnrollments}</p>
               )}
             </section>
           </div>
@@ -326,40 +295,34 @@ export default async function Page() {
           <section className="admin-panel portfolio-panel" id="programmes">
             <div className="panel-heading">
               <div>
-                <p className="eyebrow">Portfolio</p>
-                <h2>Programme readiness</h2>
+                <p className="eyebrow">{copy.dashboard.portfolio}</p>
+                <h2>{copy.dashboard.programmeReadiness}</h2>
               </div>
-              <span>{operations.coursePortfolio.length} recent</span>
+              <span>{number(operations.coursePortfolio.length)} {copy.dashboard.recentSuffix}</span>
             </div>
             {operations.coursePortfolio.length > 0 ? (
               <div className="portfolio-table">
                 <div className="portfolio-header" aria-hidden="true">
-                  <span>Programme</span>
-                  <span>Modules</span>
-                  <span>Enrolments</span>
-                  <span>Status</span>
-                  <span>Updated</span>
+                  <span>{copy.dashboard.programme}</span>
+                  <span>{copy.dashboard.modules}</span>
+                  <span>{copy.dashboard.enrollments}</span>
+                  <span>{copy.dashboard.status}</span>
+                  <span>{copy.dashboard.updated}</span>
                 </div>
                 {operations.coursePortfolio.map((course) => (
                   <article key={course.id}>
-                    <h3>{course.title}</h3>
-                    <span>{course._count.modules}</span>
-                    <span>{course._count.enrollments}</span>
-                    <span
-                      className={
-                        course.published
-                          ? 'data-status status-active'
-                          : 'data-status status-draft'
-                      }
-                    >
-                      {course.published ? 'Published' : 'Draft'}
+                    <h3 dir="auto">{course.title}</h3>
+                    <span>{number(course._count.modules)}</span>
+                    <span>{number(course._count.enrollments)}</span>
+                    <span className={course.published ? 'data-status status-active' : 'data-status status-draft'}>
+                      {course.published ? copy.dashboard.published : copy.dashboard.draft}
                     </span>
-                    <small>{dateFormatter.format(course.updatedAt)}</small>
+                    <small>{date(course.updatedAt)}</small>
                   </article>
                 ))}
               </div>
             ) : (
-              <p className="admin-empty">No courses have been synchronized.</p>
+              <p className="admin-empty">{copy.dashboard.noCourses}</p>
             )}
           </section>
         </div>

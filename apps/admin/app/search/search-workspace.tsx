@@ -1,27 +1,42 @@
 'use client';
 
+import {
+  formatLocalizedNumber,
+  getIntlLocale,
+  type Locale,
+} from '@luminol/localization';
 import { useActionState } from 'react';
 
+import {
+  getAdminEnumLabel,
+  type AdminSearchCopy,
+} from '../../lib/admin-localization';
 import {
   ADMIN_SEARCH_MAX_QUERY_LENGTH,
   ADMIN_SEARCH_MIN_QUERY_LENGTH,
 } from '../../lib/operations-search.constants';
-import { displayPersonName, formatEnumLabel } from '../../lib/operations';
+import { displayPersonName } from '../../lib/operations';
 import { submitAdminSearch } from './actions';
 import styles from './page.module.css';
 import { EMPTY_ADMIN_SEARCH_STATE } from './search-state';
 
-const dateFormatter = new Intl.DateTimeFormat('en', {
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-});
-
-function ResultLimitNote({ hasMore }: { hasMore: boolean }) {
-  return hasMore ? <span>Showing the first 20 matches</span> : null;
+function ResultLimitNote({
+  hasMore,
+  copy,
+}: {
+  hasMore: boolean;
+  copy: AdminSearchCopy;
+}) {
+  return hasMore ? <span>{copy.firstTwenty}</span> : null;
 }
 
-export function AdminSearchWorkspace() {
+export function AdminSearchWorkspace({
+  locale,
+  copy,
+}: {
+  locale: Locale;
+  copy: AdminSearchCopy;
+}) {
   const [state, formAction, pending] = useActionState(
     submitAdminSearch,
     EMPTY_ADMIN_SEARCH_STATE,
@@ -30,17 +45,18 @@ export function AdminSearchWorkspace() {
     state.people.items.length +
     state.enquiries.items.length +
     state.courses.items.length;
+  const dateFormatter = new Intl.DateTimeFormat(getIntlLocale(locale), {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
 
   return (
     <div className={styles.content}>
       <section className={styles.intro} aria-labelledby="admin-search-title">
-        <p className="eyebrow">Search & discovery</p>
-        <h1 id="admin-search-title">Find operational records.</h1>
-        <p>
-          Search active people, enquiry identity and routing metadata, and the
-          course portfolio without exposing enquiry messages or private learning
-          content.
-        </p>
+        <p className="eyebrow">{copy.eyebrow}</p>
+        <h1 id="admin-search-title">{copy.title}</h1>
+        <p>{copy.intro}</p>
 
         <form
           action={formAction}
@@ -48,7 +64,7 @@ export function AdminSearchWorkspace() {
           className={styles.form}
           autoComplete="off"
         >
-          <label htmlFor="admin-search">Search administration records</label>
+          <label htmlFor="admin-search">{copy.fieldLabel}</label>
           <div>
             <input
               key={state.query}
@@ -61,10 +77,10 @@ export function AdminSearchWorkspace() {
               maxLength={ADMIN_SEARCH_MAX_QUERY_LENGTH}
               autoComplete="off"
               spellCheck={false}
-              placeholder="Try a name, email, course title or slug"
+              placeholder={copy.placeholder}
             />
             <button type="submit" disabled={pending}>
-              {pending ? 'Searching…' : 'Search'}
+              {pending ? copy.searching : copy.search}
             </button>
           </div>
         </form>
@@ -74,22 +90,24 @@ export function AdminSearchWorkspace() {
         <section className={styles.results} aria-live="polite">
           <div className={styles.resultSummary}>
             <div>
-              <p className="eyebrow">Results</p>
+              <p className="eyebrow">{copy.results}</p>
               <h2>
                 {shownCount > 0
-                  ? `${shownCount} result${shownCount === 1 ? '' : 's'} shown`
-                  : 'No matching records'}
+                  ? `${formatLocalizedNumber(shownCount, locale)} ${
+                      shownCount === 1 ? copy.resultShown : copy.resultsShown
+                    }`
+                  : copy.noMatchingRecords}
               </h2>
             </div>
             <span>
-              For “<bdi dir="auto">{state.query}</bdi>”
+              {copy.forQuery} “<bdi dir="auto">{state.query}</bdi>”
             </span>
           </div>
 
           <section className={styles.group} aria-labelledby="people-results">
             <div className={styles.groupHeading}>
-              <h3 id="people-results">People</h3>
-              <ResultLimitNote hasMore={state.people.hasMore} />
+              <h3 id="people-results">{copy.people}</h3>
+              <ResultLimitNote hasMore={state.people.hasMore} copy={copy} />
             </div>
             {state.people.items.length > 0 ? (
               <div className={styles.cards}>
@@ -104,21 +122,21 @@ export function AdminSearchWorkspace() {
                     </h4>
                     <p dir="auto">{person.email}</p>
                     <span>
-                      Account created{' '}
+                      {copy.accountCreated}{' '}
                       {dateFormatter.format(new Date(person.createdAt))}
                     </span>
                   </article>
                 ))}
               </div>
             ) : (
-              <p className={styles.empty}>No active people match.</p>
+              <p className={styles.empty}>{copy.noPeople}</p>
             )}
           </section>
 
           <section className={styles.group} aria-labelledby="enquiry-results">
             <div className={styles.groupHeading}>
-              <h3 id="enquiry-results">Enquiries</h3>
-              <ResultLimitNote hasMore={state.enquiries.hasMore} />
+              <h3 id="enquiry-results">{copy.enquiries}</h3>
+              <ResultLimitNote hasMore={state.enquiries.hasMore} copy={copy} />
             </div>
             {state.enquiries.items.length > 0 ? (
               <div className={styles.cards}>
@@ -127,22 +145,22 @@ export function AdminSearchWorkspace() {
                     <h4 dir="auto">{enquiry.name}</h4>
                     <p dir="auto">{enquiry.email}</p>
                     <span>
-                      {formatEnumLabel(enquiry.school)} ·{' '}
-                      {formatEnumLabel(enquiry.status)} ·{' '}
+                      {getAdminEnumLabel(locale, enquiry.school)} ·{' '}
+                      {getAdminEnumLabel(locale, enquiry.status)} ·{' '}
                       {dateFormatter.format(new Date(enquiry.createdAt))}
                     </span>
                   </article>
                 ))}
               </div>
             ) : (
-              <p className={styles.empty}>No enquiry identities match.</p>
+              <p className={styles.empty}>{copy.noEnquiries}</p>
             )}
           </section>
 
           <section className={styles.group} aria-labelledby="course-results">
             <div className={styles.groupHeading}>
-              <h3 id="course-results">Programmes</h3>
-              <ResultLimitNote hasMore={state.courses.hasMore} />
+              <h3 id="course-results">{copy.programmes}</h3>
+              <ResultLimitNote hasMore={state.courses.hasMore} copy={copy} />
             </div>
             {state.courses.items.length > 0 ? (
               <div className={styles.cards}>
@@ -151,27 +169,22 @@ export function AdminSearchWorkspace() {
                     <h4 dir="auto">{course.title}</h4>
                     <p dir="auto">/{course.slug}</p>
                     <span>
-                      {course.published ? 'Published' : 'Draft'} · Updated{' '}
+                      {course.published ? copy.published : copy.draft} ·{' '}
+                      {copy.updated}{' '}
                       {dateFormatter.format(new Date(course.updatedAt))}
                     </span>
                   </article>
                 ))}
               </div>
             ) : (
-              <p className={styles.empty}>No programmes match.</p>
+              <p className={styles.empty}>{copy.noProgrammes}</p>
             )}
           </section>
         </section>
       ) : (
         <section className={styles.prompt} aria-live="polite">
-          <h2>
-            Enter at least {ADMIN_SEARCH_MIN_QUERY_LENGTH} characters to search.
-          </h2>
-          <p>
-            Results remain inside this server-authorized administration
-            workspace and protected search terms are submitted in the request
-            body rather than the URL.
-          </p>
+          <h2>{copy.minimumPrompt}</h2>
+          <p>{copy.privacyPrompt}</p>
         </section>
       )}
     </div>

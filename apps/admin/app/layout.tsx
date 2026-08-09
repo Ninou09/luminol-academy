@@ -1,27 +1,27 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import {
-  getLocaleDirection,
-  LOCALE_REQUEST_HEADER,
-  parseLocale,
-} from '@luminol/localization';
+import { getLocaleDirection } from '@luminol/localization';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 
+import { getAdminCopy } from '../lib/admin-localization';
+import { getAdminRequestLocale } from '../lib/request-locale';
 import './globals.css';
+import './admin-localization.css';
 
-export const metadata: Metadata = {
-  title: 'Administration | Luminol',
-  description: 'Secure academic and operational administration for Luminol.',
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getAdminRequestLocale();
+  const copy = getAdminCopy(locale).metadata;
+
+  return {
+    title: copy.title,
+    description: copy.description,
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
-  const requestHeaders = await headers();
-  const locale = parseLocale(requestHeaders.get(LOCALE_REQUEST_HEADER));
+}: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getAdminRequestLocale();
 
   return (
     <html lang={locale} dir={getLocaleDirection(locale)}>
