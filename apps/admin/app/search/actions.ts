@@ -26,7 +26,9 @@ export async function submitAdminSearch(
     results.enquiries.items.length +
     results.courses.items.length;
   const hasMoreResults =
-    results.people.hasMore || results.enquiries.hasMore || results.courses.hasMore;
+    results.people.hasMore ||
+    results.enquiries.hasMore ||
+    results.courses.hasMore;
 
   if (searched) {
     await recordSearchTelemetry({

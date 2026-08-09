@@ -30,9 +30,7 @@ describe('administration operations search', () => {
   });
 
   it('escapes PostgreSQL LIKE wildcards so searches stay literal', () => {
-    expect(escapePostgresLikePattern('50%_\\done')).toBe(
-      '50\\%\\_\\\\done',
-    );
+    expect(escapePostgresLikePattern('50%_\\done')).toBe('50\\%\\_\\\\done');
     expect(escapePostgresLikePattern('plain text')).toBe('plain text');
   });
 });
