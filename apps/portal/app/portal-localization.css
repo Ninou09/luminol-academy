@@ -25,7 +25,7 @@
   align-items: center;
   gap: 0.15rem;
   padding: 0.15rem;
-  border: 1px solid rgb(24 42 51 / 0.14);
+  border: 1px solid var(--color-brand-line);
   border-radius: var(--radius-control);
 }
 
