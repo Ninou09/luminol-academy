@@ -8,7 +8,10 @@ import {
   type LearningSearchCandidate,
 } from './learning-search';
 
-export async function searchLearnerContent(userId: string, rawQuery: string | null | undefined) {
+export async function searchLearnerContent(
+  userId: string,
+  rawQuery: string | null | undefined,
+) {
   const query = normalizeLearningSearchQuery(rawQuery);
   if (query.length < 2) return { query, results: [] };
 
