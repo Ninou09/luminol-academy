@@ -9,6 +9,7 @@ import {
 import { PublicMotionController } from '../components/public-motion-controller';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
+import { resolvePublicSiteUrl } from '../lib/site-url';
 import './globals.css';
 import './localization.css';
 import './motion.css';
@@ -30,22 +31,12 @@ const notoSansArabic = Noto_Sans_Arabic({
   display: 'swap',
   variable: '--font-noto-arabic',
 });
-const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
-
-function resolveMetadataBase() {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  try {
-    return new URL(configured || fallbackSiteUrl);
-  } catch {
-    return new URL(fallbackSiteUrl);
-  }
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
   return {
-    metadataBase: resolveMetadataBase(),
+    metadataBase: resolvePublicSiteUrl(),
     title: { default: 'Luminol Academy', template: '%s | Luminol Academy' },
     description: copy.site.description,
     keywords: [
