@@ -108,6 +108,15 @@ const programme = defineType({
                   : 'Alternative text must contain at least 3 non-whitespace characters.',
               ),
         }),
+        defineField({
+          name: 'publicationApproved',
+          title: 'Image publication approved',
+          description:
+            'Enable only after permission/rights, alternative text and crop/hotspot have been reviewed for public use.',
+          type: 'boolean',
+          initialValue: false,
+          validation: (rule) => rule.required(),
+        }),
       ],
     }),
     defineField({
