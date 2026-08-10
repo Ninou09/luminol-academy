@@ -299,7 +299,8 @@ export async function getProgrammesForSchool(
     delivery,
     "featured": coalesce(featured, false),
     "image": select(
-      defined(image.asset) => {
+      defined(image.asset) &&
+      coalesce(image.publicationApproved, false) == true => {
         "url": image.asset->url,
         "alt": image.alt,
         "crop": image.crop,
@@ -354,7 +355,8 @@ export async function getPublicProgrammes(): Promise<
     delivery,
     "featured": coalesce(featured, false),
     "image": select(
-      defined(image.asset) => {
+      defined(image.asset) &&
+      coalesce(image.publicationApproved, false) == true => {
         "url": image.asset->url,
         "alt": image.alt,
         "crop": image.crop,
