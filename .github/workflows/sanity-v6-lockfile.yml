@@ -5,7 +5,7 @@ on:
     branches: [chore/issue-85-sanity-v6]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   lockfile:
@@ -21,8 +21,15 @@ jobs:
           cache: pnpm
       - name: Regenerate lockfile only
         run: pnpm install --lockfile-only --no-frozen-lockfile
-      - name: Upload regenerated lockfile
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: sanity-v6-lockfile
-          path: pnpm-lock.yaml
+      - name: Commit regenerated lockfile when changed
+        shell: bash
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "pnpm-lock.yaml already matches the Sanity v6 dependency set."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "Regenerate lockfile for Sanity Studio v6"
+          git push origin HEAD:chore/issue-85-sanity-v6
