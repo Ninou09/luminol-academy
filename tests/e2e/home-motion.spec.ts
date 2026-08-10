@@ -57,5 +57,7 @@ test('motion targets are discovered after client navigation to home', async ({
 
   await expect(page).toHaveURL(/\/en\/?$/);
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'full');
-  await expect(page.locator('[data-reveal-state="visible"]').first()).toBeVisible();
+  await expect(
+    page.locator('[data-reveal-state="visible"]').first(),
+  ).toBeVisible();
 });
