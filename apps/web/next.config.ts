@@ -19,12 +19,6 @@ const nextConfig: NextConfig = {
         ]
       : [],
   },
-  outputFileTracingIncludes: {
-    '/*': [
-      '../../node_modules/.pnpm/@prisma+client*/node_modules/.prisma/client/**/*',
-      '../../node_modules/.pnpm/@prisma+engines*/node_modules/@prisma/engines/**/*',
-    ],
-  },
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   async headers() {
