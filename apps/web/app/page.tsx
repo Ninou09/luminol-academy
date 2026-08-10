@@ -132,7 +132,7 @@ export default async function Page() {
         <div className={styles.schoolGrid}>
           {schoolList.map((school) => (
             <article
-              className={`${styles.schoolCard} ${schoolTone[school.slug]}`}
+              className={`${styles.schoolCard} ${schoolTone[school.slug]} school-card`}
               id={school.slug}
               key={school.slug}
               data-reveal
