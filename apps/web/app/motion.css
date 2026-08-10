@@ -1,19 +1,19 @@
 html[data-motion='full'][data-motion-ready='true']
   [data-reveal][data-reveal-state='pending'] {
   opacity: 0;
-  transform: translateY(1.75rem);
+  translate: 0 1.75rem;
 }
 
 html[data-motion='full'][data-motion-ready='true'] [data-reveal] {
   transition:
     opacity 700ms var(--luminol-ease-out),
-    transform 700ms var(--luminol-ease-out);
+    translate 700ms var(--luminol-ease-out);
 }
 
 html[data-motion='full'][data-motion-ready='true']
   [data-reveal][data-reveal-state='visible'] {
   opacity: 1;
-  transform: translateY(0);
+  translate: 0 0;
 }
 
 html[data-motion='full'] [data-motion-float] {
@@ -50,6 +50,7 @@ html[data-motion='full'] [data-motion-orbit='reverse'] {
   [data-motion-float],
   [data-motion-orbit] {
     opacity: 1 !important;
+    translate: none !important;
     transform: none !important;
     animation: none !important;
     transition: none !important;

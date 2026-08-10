@@ -64,3 +64,24 @@ test('motion targets are discovered after client navigation to home', async ({
     page.locator('[data-reveal-state="visible"]').first(),
   ).toBeVisible();
 });
+
+test('school card hover lift remains active after reveal', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/en');
+
+  const card = page.locator('.school-card').first();
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveAttribute('data-reveal-state', 'visible');
+  await card.hover();
+
+  await expect
+    .poll(() =>
+      card.evaluate((element) => {
+        const transform = getComputedStyle(element).transform;
+        return transform === 'none'
+          ? 0
+          : new DOMMatrixReadOnly(transform).m42;
+      }),
+    )
+    .toBeLessThan(-1);
+});
