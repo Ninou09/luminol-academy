@@ -20,7 +20,10 @@ const routes = [
 function buildAbsoluteLanguageAlternates(origin: string, pathname: string) {
   return Object.fromEntries(
     Object.entries(buildLanguageAlternates(pathname)).map(
-      ([language, localizedPathname]) => [language, `${origin}${localizedPathname}`],
+      ([language, localizedPathname]) => [
+        language,
+        `${origin}${localizedPathname}`,
+      ],
     ),
   );
 }
