@@ -1,0 +1,89 @@
+import { expect, test } from '@playwright/test';
+
+test('premium home shell exposes core navigation and brand surfaces', async ({
+  page,
+}) => {
+  await page.goto('/en');
+
+  await expect(page.getByRole('banner')).toBeVisible();
+  await expect(
+    page.getByRole('navigation', { name: /primary navigation/i }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+    'Grow with clarity.',
+  );
+  await expect(page.locator('[data-reveal]')).not.toHaveCount(0);
+  await expect(page.getByRole('contentinfo')).toBeVisible();
+});
+
+test('motion controller honors reduced motion without hiding content', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/en');
+
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-motion-ready',
+    'true',
+  );
+  await expect(page.locator('[data-reveal]').first()).toHaveAttribute(
+    'data-reveal-state',
+    'visible',
+  );
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(
+    page.locator('[data-motion-float]').filter({ hasText: /^Lu$/ }),
+  ).toHaveCSS('translate', '-50% -50%');
+});
+
+test('full motion progressively reveals the homepage', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/en');
+
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'full');
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-motion-ready',
+    'true',
+  );
+  await expect(
+    page.locator('[data-reveal-state="visible"]').first(),
+  ).toBeVisible();
+});
+
+test('motion targets are discovered after client navigation to home', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/en/about');
+  await page
+    .getByRole('link', { name: /luminol home/i })
+    .first()
+    .click();
+
+  await expect(page).toHaveURL(/\/en\/?$/);
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'full');
+  await expect(
+    page.locator('[data-reveal-state="visible"]').first(),
+  ).toBeVisible();
+});
+
+test('school card hover lift remains active after reveal', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/en');
+
+  const card = page.locator('[data-school-card]').first();
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveAttribute('data-reveal-state', 'visible');
+  await card.hover();
+
+  await expect
+    .poll(() =>
+      card.evaluate((element) => {
+        const transform = getComputedStyle(element).transform;
+        if (transform === 'none') return 0;
+        return new DOMMatrixReadOnly(transform).m42;
+      }),
+    )
+    .toBeLessThan(-1);
+});

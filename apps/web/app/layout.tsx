@@ -6,17 +6,18 @@ import {
   Noto_Sans_Arabic,
 } from 'next/font/google';
 
+import { PublicMotionController } from '../components/public-motion-controller';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import './globals.css';
 import './localization.css';
+import './motion.css';
 
 const manrope = Manrope({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-manrope',
 });
-
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
@@ -24,18 +25,15 @@ const cormorant = Cormorant_Garamond({
   display: 'swap',
   variable: '--font-cormorant',
 });
-
 const notoSansArabic = Noto_Sans_Arabic({
   subsets: ['arabic'],
   display: 'swap',
   variable: '--font-noto-arabic',
 });
-
 const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
 
 function resolveMetadataBase() {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-
   try {
     return new URL(configured || fallbackSiteUrl);
   } catch {
@@ -46,13 +44,9 @@ function resolveMetadataBase() {
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
-
   return {
     metadataBase: resolveMetadataBase(),
-    title: {
-      default: 'Luminol Academy',
-      template: '%s | Luminol Academy',
-    },
+    title: { default: 'Luminol Academy', template: '%s | Luminol Academy' },
     description: copy.site.description,
     keywords: [
       'Luminol Academy',
@@ -73,9 +67,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   const locale = await getRequestLocale();
   const fontVariables = `${manrope.variable} ${cormorant.variable} ${notoSansArabic.variable}`;
 
@@ -85,7 +77,10 @@ export default async function RootLayout({
       lang={locale}
       dir={getLocaleDirection(locale)}
     >
-      <body>{children}</body>
+      <body>
+        <PublicMotionController />
+        {children}
+      </body>
     </html>
   );
 }

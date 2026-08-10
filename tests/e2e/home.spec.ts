@@ -33,7 +33,9 @@ test('public copy follows the canonical locale', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
     'تقدّم بوضوح.',
   );
-  await expect(page.getByRole('link', { name: 'البرامج' })).toBeVisible();
+  await expect(
+    page.locator('header').getByRole('link', { name: 'البرامج' }),
+  ).toBeVisible();
 
   await page.goto('/fr/contact');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
