@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --write apps/web/app/programmes/page.tsx apps/web/components/site-shell.tsx tests/e2e/public-skip-link.spec.ts && { echo PROGRAMMES; base64 -w0 apps/web/app/programmes/page.tsx; echo; echo SHELL; base64 -w0 apps/web/components/site-shell.tsx; echo; echo TEST; base64 -w0 tests/e2e/public-skip-link.spec.ts; echo; } > typecheck.log && exit 1",
+    "format:check": "prettier --check .",
     "security:check": "node scripts/security-check.mjs && node scripts/check-action-pins.mjs",
     "db:generate": "node scripts/generate-prisma-client.mjs",
     "db:migrate": "pnpm --filter @luminol/database migrate",

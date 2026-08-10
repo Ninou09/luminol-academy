@@ -60,7 +60,9 @@ export async function SiteHeader() {
               href={localizeHref(locale, '/contact')}
               aria-label={copy.site.nav.contact}
             >
-              <span className={styles.contactLabel}>{copy.site.nav.contact}</span>{' '}
+              <span className={styles.contactLabel}>
+                {copy.site.nav.contact}
+              </span>{' '}
               <span aria-hidden="true">↗</span>
             </Link>
           </div>

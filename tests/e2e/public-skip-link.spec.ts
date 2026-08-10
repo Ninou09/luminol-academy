@@ -29,9 +29,9 @@ test('English keyboard users can skip the sticky public navigation', async ({
   const beforeFocus = await skipLink.boundingBox();
 
   expect(beforeFocus).not.toBeNull();
-  expect((beforeFocus?.y ?? 0) + (beforeFocus?.height ?? 0)).toBeLessThanOrEqual(
-    0,
-  );
+  expect(
+    (beforeFocus?.y ?? 0) + (beforeFocus?.height ?? 0),
+  ).toBeLessThanOrEqual(0);
 
   await page.keyboard.press('Tab');
   await expect(skipLink).toBeFocused();

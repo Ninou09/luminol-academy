@@ -153,7 +153,9 @@ export default async function ProgrammesPage({
             <div className={styles.emptyState} aria-live="polite">
               <h2>{copy.emptyTitle}</h2>
               <p>{copy.emptyBody}</p>
-              <Link href={localizeHref(locale, '/programmes')}>{copy.reset}</Link>
+              <Link href={localizeHref(locale, '/programmes')}>
+                {copy.reset}
+              </Link>
             </div>
           ) : (
             <div>
@@ -184,7 +186,9 @@ export default async function ProgrammesPage({
                     <div className={styles.cardBody}>
                       <div className={styles.meta}>
                         <span>{schools[programme.school].name}</span>
-                        {programme.featured ? <span>{copy.featured}</span> : null}
+                        {programme.featured ? (
+                          <span>{copy.featured}</span>
+                        ) : null}
                       </div>
                       <h3 dir="auto">{programme.title}</h3>
                       <p dir="auto">{programme.summary}</p>
