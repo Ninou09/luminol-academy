@@ -96,7 +96,12 @@
   min-height: clamp(32rem, 56vw, 47rem);
   border: 1px solid rgb(16 42 67 / 0.16);
   border-radius: clamp(1.2rem, 2.6vw, 2rem);
-  background: linear-gradient(145deg, #102a43 0%, #173956 58%, #214a60 100%);
+  background: linear-gradient(
+    145deg,
+    var(--color-brand-ink) 0%,
+    var(--color-brand-ink-soft) 58%,
+    var(--color-school-psychology) 100%
+  );
   box-shadow: var(--shadow-editorial);
   overflow: hidden;
   isolation: isolate;
@@ -471,7 +476,7 @@
   align-items: end;
   padding: clamp(4rem, 9vw, 8rem)
     max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
-  background: #15334d;
+  background: var(--color-brand-ink-soft);
   color: white;
 }
 .cta p:last-child {
