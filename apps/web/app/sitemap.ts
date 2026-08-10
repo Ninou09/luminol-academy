@@ -1,4 +1,8 @@
-import { SUPPORTED_LOCALES, localizePathname } from '@luminol/localization';
+import {
+  SUPPORTED_LOCALES,
+  buildLanguageAlternates,
+  localizePathname,
+} from '@luminol/localization';
 import type { MetadataRoute } from 'next';
 
 const routes = [
@@ -22,6 +26,17 @@ function resolveSiteOrigin() {
   }
 }
 
+function buildAbsoluteLanguageAlternates(origin: string, pathname: string) {
+  return Object.fromEntries(
+    Object.entries(buildLanguageAlternates(pathname)).map(
+      ([language, localizedPathname]) => [
+        language,
+        `${origin}${localizedPathname}`,
+      ],
+    ),
+  );
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const origin = resolveSiteOrigin();
 
@@ -31,6 +46,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
       return {
         url: `${origin}${localizePathname(locale, pathname)}`,
+        alternates: {
+          languages: buildAbsoluteLanguageAlternates(origin, pathname),
+        },
         changeFrequency:
           route === '' ? ('weekly' as const) : ('monthly' as const),
         priority: route === '' ? 1 : route.startsWith('/schools/') ? 0.8 : 0.7,
