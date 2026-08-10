@@ -68,7 +68,7 @@ export async function SiteFooter() {
             href={localizeHref(locale, '/')}
             aria-label={copy.site.nav.homeAria}
           >
-            <Wordmark className={styles.footerWordmark} />
+            <Wordmark className={styles.footerWordmark ?? ''} />
           </Link>
           <p>{copy.site.footerDisciplines}</p>
         </div>
