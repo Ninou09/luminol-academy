@@ -36,7 +36,7 @@ export async function SiteHeader() {
             {copy.site.nav.about}
           </Link>
         </nav>
-        <div className={styles.actions}>
+        <div className={`${styles.actions} site-header-actions`}>
           <LanguageSwitcher
             locale={locale}
             label={common.languageSelectorLabel}
@@ -44,8 +44,10 @@ export async function SiteHeader() {
           <Link
             className={styles.contactLink}
             href={localizeHref(locale, '/contact')}
+            aria-label={copy.site.nav.contact}
           >
-            {copy.site.nav.contact} <span aria-hidden="true">↗</span>
+            <span className={styles.contactLabel}>{copy.site.nav.contact}</span>{' '}
+            <span aria-hidden="true">↗</span>
           </Link>
         </div>
       </div>
@@ -56,6 +58,7 @@ export async function SiteHeader() {
 export async function SiteFooter() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
+  const footerNavigationLabel = `${copy.site.nav.about} · ${copy.site.nav.programmes}`;
 
   return (
     <footer className={styles.footer}>
@@ -73,7 +76,7 @@ export async function SiteFooter() {
           <span>{copy.site.nav.primaryAria}</span>
           <nav
             className={styles.footerNav}
-            aria-label={copy.site.nav.primaryAria}
+            aria-label={footerNavigationLabel}
           >
             <Link href={localizeHref(locale, '/#schools')}>
               {copy.site.nav.schools}
@@ -96,7 +99,7 @@ export async function SiteFooter() {
       </div>
       <div className={styles.footerBottom}>
         <p>© {new Date().getFullYear()} Luminol Academy</p>
-        <p>Luminol · AR · FR · EN</p>
+        <p>Luminol · {copy.site.footerDisciplines}</p>
       </div>
     </footer>
   );
