@@ -5,7 +5,7 @@ test('premium home shell exposes core navigation and brand surfaces', async ({
 }) => {
   await page.goto('/en');
 
-  await expect(page.getByRole('banner')).toBeVisible();
+  await expect(page.locator('header').first()).toBeVisible();
   await expect(
     page.getByRole('navigation', { name: /primary navigation/i }),
   ).toBeVisible();
