@@ -153,9 +153,25 @@
 @media (max-width: 960px) {
   .headerInner {
     grid-template-columns: 1fr auto;
+    gap: 0.75rem 1rem;
+    padding-block: 0.75rem 0.5rem;
   }
   .nav {
+    grid-column: 1 / -1;
+    min-width: 0;
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding-block: 0.15rem;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar {
     display: none;
+  }
+  .nav a {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
   .footerMain {
     grid-template-columns: 1fr 1fr;
