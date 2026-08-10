@@ -1,10 +1,12 @@
-import { SearchResultBucket } from '@prisma/client';
 import { describe, expect, it } from 'vitest';
 
 import {
+  PRISMA_PG_CONNECTION_TIMEOUT_MS,
+  PRISMA_PG_IDLE_TIMEOUT_MS,
   SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS,
   SEARCH_TELEMETRY_TRANSACTION_MAX_WAIT_MS,
   SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS,
+  SearchResultBucket,
   searchResultBucketForCount,
   searchTelemetryDay,
 } from './index';
@@ -30,6 +32,11 @@ describe('privacy-safe search telemetry aggregates', () => {
     expect(searchTelemetryDay(new Date('2026-08-09T23:59:59.999Z'))).toEqual(
       new Date('2026-08-09T00:00:00.000Z'),
     );
+  });
+
+  it('preserves the Prisma v6 PostgreSQL timeout behavior', () => {
+    expect(PRISMA_PG_CONNECTION_TIMEOUT_MS).toBe(5_000);
+    expect(PRISMA_PG_IDLE_TIMEOUT_MS).toBe(300_000);
   });
 
   it('keeps telemetry database waits short and explicitly bounded', () => {
