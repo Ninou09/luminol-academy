@@ -93,9 +93,9 @@ Dynamic learner records, enquiry messages, assessments, finance data, certificat
 
 ## Post-milestone public experience hardening
 
-Status: Implemented in the repository; final production freshness and governed real-media verification remain operationally pending.
+Status: Implemented and production-fresh; governed real-media verification remains operationally pending.
 
-The premium public redesign was intentionally delivered outside a new numbered product milestone so it could preserve the platform contracts completed in Milestones 1–15. The current repository includes:
+The premium public redesign was intentionally delivered outside a new numbered product milestone so it could preserve the platform contracts completed in Milestones 1–15. The current repository and production public site include:
 
 - immersive localized homepage storytelling and a reusable reduced-motion-aware motion controller
 - premium sticky public navigation and footer treatment
@@ -105,8 +105,12 @@ The premium public redesign was intentionally delivered outside a new numbered p
 - public projection rules that omit unapproved or malformed programme imagery
 - a localized premium 404 recovery experience
 - localized keyboard skip-to-content navigation and stable main-content targets
-- additional structured-data, metadata, sitemap/robots, responsive, accessibility, and browser-regression hardening
+- mobile primary navigation that stays available on narrow screens
+- reduced-motion-safe scrolling, sticky-header anchor offsets, and explicit public-shell keyboard focus rings
+- structured-data, metadata, sitemap/robots, responsive, accessibility, and browser-regression hardening
 - Vercel affected-package checks and opt-in non-production preview deployment policy to reduce monorepo deployment pressure
+
+The temporary production deployment-freshness incident tracked in #128 is resolved. Current `main` is deployed and the stable public alias has been re-verified for the absolute sitemap declaration, Organization structured data, hardened response headers, and runtime health.
 
 The later real-photography phase is not complete until approved governed assets exist and are verified in production. No synthetic testimonial, private record, or unapproved portrait should be introduced merely to complete that visual phase.
 
@@ -114,11 +118,11 @@ The later real-photography phase is not complete until approved governed assets 
 
 No new numbered product milestone is currently active. Operational stabilization and governance take priority over new feature breadth while the remaining external dependencies are resolved.
 
-### Production freshness and availability
+### Production availability
 
-- recover Vercel deployment capacity and deploy current `main` to the stable production aliases (#128)
-- verify robots/sitemap, structured data, security headers, canonical metadata, and representative public routes after the fresh deployment
+- keep normal `main` deployments and post-deploy verification healthy after the resolved #128 quota incident
 - continue scheduled synthetic checks for the public website, learner portal, and administration application
+- verify robots/sitemap, structured data, security headers, canonical metadata, and representative public routes after relevant production changes
 - investigate grouped runtime errors before treating individual log lines as production incidents
 
 ### Authenticated production verification
@@ -135,6 +139,13 @@ No new numbered product milestone is currently active. Operational stabilization
 - verify meaningful alternative text, crop, hotspot, CDN source, and explicit publication approval
 - keep unapproved or malformed media fail-closed and text-only
 - complete the remaining production checks tracked in #45 and the real-media phase tracked in #93
+
+### Sanity Studio operational verification
+
+- the coordinated Studio v3 → v6 code migration is complete through PR #112
+- launch the migrated Studio against the intended Sanity project/dataset without modifying production content solely for verification
+- confirm the governed schema and expected desks/document types load successfully
+- retain sanitized verification evidence under #85
 
 ### Data recovery and operations
 
@@ -154,10 +165,10 @@ No new numbered product milestone is currently active. Operational stabilization
 
 These are coordinated maintenance initiatives, not active product milestones, and should remain isolated from unrelated feature work:
 
-- TypeScript 7 toolchain migration — #115
-- Sanity Studio v6 migration — #85
+- TypeScript 7 toolchain migration — #115 — deliberately deferred until typescript-eslint and the wider toolchain officially support the chosen migration architecture
+- Sanity Studio v6 environment verification — #85 — code migration complete; only operational observation against the intended environment remains
 
-Major compiler/CMS upgrades must preserve strict type checking, schema governance, production builds, and the complete CI/browser gate. They should not be merged as isolated dependency-major bumps merely because Dependabot opened an update.
+Major compiler/CMS changes must preserve strict type checking, schema governance, production builds, and the complete CI/browser gate. They should not be merged as isolated dependency-major bumps merely because Dependabot opened an update.
 
 ## Future platform opportunities
 
