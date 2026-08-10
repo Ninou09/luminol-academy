@@ -1,8 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  buildOrganizationJsonLd,
-  serializeJsonLd,
-} from './structured-data';
+import { buildOrganizationJsonLd, serializeJsonLd } from './structured-data';
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -31,7 +28,9 @@ describe('Organization structured data', () => {
   });
 
   it('escapes raw angle-bracket openings during JSON-LD serialization', () => {
-    const serialized = serializeJsonLd({ description: '<script>alert(1)</script>' });
+    const serialized = serializeJsonLd({
+      description: '<script>alert(1)</script>',
+    });
 
     expect(serialized).not.toContain('<');
     expect(serialized).toContain('\\u003cscript>');
