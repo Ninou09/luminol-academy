@@ -69,7 +69,10 @@ test('mobile in-page navigation clears the sticky header', async ({ page }) => {
       page.locator('#approach').evaluate((target) => {
         const header = document.querySelector('header');
         if (!header) return Number.NEGATIVE_INFINITY;
-        return target.getBoundingClientRect().top - header.getBoundingClientRect().bottom;
+        return (
+          target.getBoundingClientRect().top -
+          header.getBoundingClientRect().bottom
+        );
       }),
     )
     .toBeGreaterThanOrEqual(-1);
