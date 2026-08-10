@@ -9,6 +9,7 @@ This document is the canonical delivery sequence for Luminol Academy. `PROJECT_S
 - Shared capabilities must be implemented once and reused across schools.
 - Sensitive psychology information must never be exposed through general learning or administration views.
 - Every milestone includes tests, documentation, accessibility, and production build validation.
+- Dynamic, personal, sensitive, or governed content must not be automatically translated or publicly published without its applicable approval boundary.
 
 ## Delivered platform
 
@@ -74,64 +75,97 @@ Status: Complete
 
 Delivered capabilities include the security and privacy audit, response hardening, dependency checks, migration and recovery runbooks, public smoke tests, controlled production deployment, and production verification.
 
-## Active product milestone
-
 ### Milestone 14 — Search and Discovery
 
-Status: In progress — implementation complete, final verification in progress
+Status: Complete
 
-The first delivery slice adds privacy-safe learner search across only the authenticated learner's active or completed, published programme content. Search is server-scoped to enrolled courses, validates URL-owned input with Zod, normalizes and bounds queries, searches every eligible enrollment, gates results on real text matches before ranking, supports automatic RTL/LTR query direction, and returns direct programme or lesson destinations without exposing another learner's content.
+Delivered capabilities include privacy-safe learner search scoped to eligible enrolled and published learning content, governed public programme discovery, protected administration search, literal wildcard-safe PostgreSQL matching, indexed operational contains searches, and privacy-safe aggregate search outcome telemetry. The milestone does not store raw search queries, user identities, sessions, or IP addresses in search telemetry.
 
-The second delivery slice adds governed public programme discovery at `/programmes`. It reads only active, non-draft Sanity programme documents with valid public slugs, validates URL-owned query and filter state, supports deterministic text discovery, and provides school and delivery-language filters whose state remains shareable in the URL. If the governed CMS source cannot be validated, discovery fails closed instead of inventing public programme data.
+AI/vector search and external paid search providers remain explicitly out of scope until the deterministic search layer is proven in broader use.
 
-The third delivery slice adds protected administration search at `/search` in the administration application. Access requires the existing `academy:manage` server authorization. Search is limited to active account identity, enquiry identity/routing metadata, and course portfolio metadata; enquiry messages and private learning content are intentionally excluded. Untrusted POST form input is Zod-validated, protected identity search terms are kept out of URLs, PostgreSQL wildcard metacharacters are escaped so matching stays literal, and trigram GIN indexes support the case-insensitive contains predicates as operational tables grow. Result groups are bounded and truthfully labelled, generic links that could not identify the matched record are omitted, and mixed Arabic/Latin result and administrator identity text uses automatic direction where needed.
+### Milestone 15 — Arabic, French, and English Localization
 
-The observability slice records only daily aggregate search outcome buckets for learner search, public programme search, and protected administration search. The persistence model and write API do not accept or store raw query text, user identifiers, session identifiers, IP addresses, or searched content. Telemetry writes run inside a database transaction with a PostgreSQL statement timeout plus bounded Prisma transaction acquisition/runtime limits, so stalled writes are canceled instead of accumulating detached work. Learner telemetry uses the pre-display-limit match count, and administration telemetry preserves overflow into the `TWENTY_PLUS` bucket.
+Status: Complete
 
-Final review hardening also places administration search tests inside the repository-wide Vitest quality gate, keeps protected identity searches out of browser URLs, treats PostgreSQL wildcard characters as literal search text, indexes protected contains searches, avoids misleading generic result destinations, uses brand-token-based search workspace states, and bounds telemetry work at the database layer. All planned Milestone 14 product slices are implemented on the active milestone branch. Milestone-wide CI and independent re-review remain before the milestone is marked complete.
+Delivered capabilities include the shared typed `ar`/`fr`/`en` locale contract, locale-aware routing and persistence, localized public/learner/administration interfaces, Arabic RTL behavior, mixed-script bidi safeguards, localized canonical/`hreflang`/metadata behavior, and preservation of protected search and authorization boundaries across locales.
 
-AI/vector search and external paid search providers remain explicitly out of scope until the deterministic search layer is proven.
+Dynamic learner records, enquiry messages, assessments, finance data, certificate data, psychology content, personal identity data, and governed CMS source content remain source data rather than receiving guessed automatic translations.
+
+## Post-milestone public experience hardening
+
+Status: Implemented in the repository; final production freshness and governed real-media verification remain operationally pending.
+
+The premium public redesign was intentionally delivered outside a new numbered product milestone so it could preserve the platform contracts completed in Milestones 1–15. The current repository includes:
+
+- immersive localized homepage storytelling and a reusable reduced-motion-aware motion controller
+- premium sticky public navigation and footer treatment
+- premium school, About, and Contact experiences using token-governed RTL-safe responsive layouts
+- governed editorial media fallbacks that do not require unapproved photography
+- an explicit Sanity programme-image publication approval field whose safe default is `false`
+- public projection rules that omit unapproved or malformed programme imagery
+- a localized premium 404 recovery experience
+- localized keyboard skip-to-content navigation and stable main-content targets
+- additional structured-data, metadata, sitemap/robots, responsive, accessibility, and browser-regression hardening
+- Vercel affected-package checks and opt-in non-production preview deployment policy to reduce monorepo deployment pressure
+
+The later real-photography phase is not complete until approved governed assets exist and are verified in production. No synthetic testimonial, private record, or unapproved portrait should be introduced merely to complete that visual phase.
 
 ## Active operational phase — Post-launch stabilization
 
-This phase continues alongside product milestones. Its purpose is to prove and maintain the operational controls required for wider use.
+No new numbered product milestone is currently active. Operational stabilization and governance take priority over new feature breadth while the remaining external dependencies are resolved.
 
-### Availability and monitoring
+### Production freshness and availability
 
-- scheduled synthetic checks for the public website, learner portal, and administration application
-- public metadata, sitemap, robots, security-header, and certificate-privacy checks
-- clear failure evidence in GitHub Actions
-- assigned monitoring and incident ownership before public promotion
+- recover Vercel deployment capacity and deploy current `main` to the stable production aliases (#128)
+- verify robots/sitemap, structured data, security headers, canonical metadata, and representative public routes after the fresh deployment
+- continue scheduled synthetic checks for the public website, learner portal, and administration application
+- investigate grouped runtime errors before treating individual log lines as production incidents
 
 ### Authenticated production verification
 
-- restricted admin and learner smoke accounts
-- authenticated Playwright storage-state configuration
-- protected administration and learner journey verification
-- Clerk, Sanity, and OAuth CSP and browser checks
+- obtain a restricted administration smoke account when production Clerk access permits it
+- verify the restricted learner smoke account remains denied administration access
+- configure authenticated Playwright storage-state secrets and stable protected test targets
+- run protected administration and learner browser journeys in CI
+- preserve Clerk, OAuth, CSP, and server-side authorization boundaries
+
+### Governed media verification
+
+- publish only approved active Sanity programme media
+- verify meaningful alternative text, crop, hotspot, CDN source, and explicit publication approval
+- keep unapproved or malformed media fail-closed and text-only
+- complete the remaining production checks tracked in #45 and the real-media phase tracked in #93
 
 ### Data recovery and operations
 
-- Neon point-in-time recovery and restore drill
-- documented row, constraint, and critical-journey validation
-- rollback target and incident lead assignment
-- production migration evidence retained without exposing secrets
+- maintain the completed Neon restore-drill evidence and recovery runbooks
+- retain production migration evidence without exposing secrets
+- keep monitoring, incident command, Vercel rollback, and Neon recovery ownership explicit
+- designate a backup operator before broader promotion or planned primary-operator absence
 
 ### Outbound email activation
 
-- verified Luminol sender domain
-- controlled Resend API key and From address
-- monitored delivery to an approved test recipient
-- worker retry and dead-letter verification
-- gradual enablement for real learners
+- verify a Luminol sender domain
+- configure the controlled email provider credentials only in the applicable deployment environment
+- complete a monitored delivery to an approved test recipient
+- verify retry and dead-letter behavior before enabling real learner delivery
+
+## Planned maintenance work
+
+These are coordinated maintenance initiatives, not active product milestones, and should remain isolated from unrelated feature work:
+
+- TypeScript 7 toolchain migration — #115
+- Sanity Studio v6 migration — #85
+
+Major compiler/CMS upgrades must preserve strict type checking, schema governance, production builds, and the complete CI/browser gate. They should not be merged as isolated dependency-major bumps merely because Dependabot opened an update.
 
 ## Future platform opportunities
 
 These are not committed milestones and must not displace operational stabilization:
 
-- multilingual content and full interface localization
-- richer background-job processing
-- approved AI-assisted learning tools
+- richer background-job processing and dedicated queue infrastructure when scale justifies it
+- approved AI-assisted learning tools with explicit privacy and human-review boundaries
 - corporate accounts and team learning
 - native mobile applications
 - dedicated external uptime and paging service
+- deeper analytics only where data minimization and consent requirements are satisfied
