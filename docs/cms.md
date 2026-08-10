@@ -16,17 +16,20 @@ Programmes belong to one of the three stable school values:
 
 The public website reads only documents where `active` is true. Title, slug,
 school and summary are required. Display order controls the sequence within a
-school page. Images require meaningful alternative text.
+school page. Images require meaningful alternative text and explicit publication
+approval before the public website may render them.
 
-When a programme image is present, the public website accepts only the
-published `https://cdn.sanity.io` asset URL together with its approved
-alternative text, source dimensions, crop and hotspot. The card image URL is
-generated at a stable 16:9 size while preserving the editor-selected crop and
-keeping the selected hotspot in frame. A programme without an image keeps the
-reviewed text-only card layout. Missing alternative text, a non-Sanity image
-host, invalid framing metadata or malformed CMS data causes the complete
-external programme response to fail closed and the school page to use its
-reviewed fallback programmes.
+When a programme image is present, the public website projects it only when
+`publicationApproved` is explicitly true. Missing approval is treated exactly
+like no public image, so the reviewed programme card fallback remains available
+without blocking otherwise approved text content. Approved images must use the
+published `https://cdn.sanity.io` asset URL together with meaningful alternative
+text, source dimensions, crop and hotspot. The card image URL is generated at a
+stable 16:9 size while preserving the editor-selected crop and keeping the
+selected hotspot in frame. For an approved image, missing alternative text, a
+non-Sanity image host, invalid framing metadata or malformed CMS data causes the
+complete external programme response to fail closed and the school page to use
+its reviewed fallback programmes.
 
 ### Site Settings
 
@@ -76,13 +79,15 @@ authenticated session.
 3. Check image purpose, permission and meaningful alternative text.
 4. Adjust the image crop and hotspot so the important subject remains visible
    in the programme card's 16:9 frame.
-5. Review all claims, names and consent-sensitive information.
-6. Set `active` to true only when the content is ready.
-7. Publish the document.
-8. Verify the matching school page after the website cache refreshes.
-9. For an image-bearing programme, confirm the rendered asset comes from
-   `cdn.sanity.io`, reflects the approved crop and hotspot, and uses the
-   approved alternative text.
+5. Set `publicationApproved` only after the image rights/permission,
+   alternative text and framing have all been reviewed for public use.
+6. Review all claims, names and consent-sensitive information.
+7. Set `active` to true only when the content is ready.
+8. Publish the document.
+9. Verify the matching school page after the website cache refreshes.
+10. For an approved image-bearing programme, confirm the rendered asset comes
+    from `cdn.sanity.io`, reflects the approved crop and hotspot, and uses the
+    approved alternative text.
 
 The public website revalidates CMS programme data every five minutes.
 
