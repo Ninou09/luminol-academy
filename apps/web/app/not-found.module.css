@@ -68,7 +68,8 @@
   border: 1px solid var(--color-brand-line);
   border-radius: clamp(1.5rem, 4vw, 3rem);
   background: color-mix(in srgb, var(--color-brand-surface) 82%, transparent);
-  box-shadow: 0 2rem 6rem color-mix(in srgb, var(--color-brand-ink) 12%, transparent);
+  box-shadow: 0 2rem 6rem
+    color-mix(in srgb, var(--color-brand-ink) 12%, transparent);
   overflow: hidden;
   display: grid;
   place-items: center;
