@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 type MotionMode = 'full' | 'reduced';
@@ -13,6 +14,8 @@ function revealImmediately(elements: HTMLElement[]) {
 }
 
 export function PublicMotionController() {
+  const pathname = usePathname();
+
   useEffect(() => {
     const root = document.documentElement;
     const media = window.matchMedia(reducedMotionQuery);
@@ -71,7 +74,7 @@ export function PublicMotionController() {
       delete root.dataset.motionReady;
       for (const element of elements) delete element.dataset.revealState;
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }
