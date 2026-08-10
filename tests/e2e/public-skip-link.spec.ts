@@ -45,6 +45,30 @@ test('English keyboard users can skip the sticky public navigation', async ({
   await expect(page).toHaveURL(/#main-content$/);
 });
 
+test('shared public shell uses explicit keyboard focus rings', async ({
+  page,
+}) => {
+  await page.goto('/en');
+  await page.keyboard.press('Tab');
+
+  const primaryLink = page
+    .getByRole('navigation', { name: /primary navigation/i })
+    .getByRole('link')
+    .first();
+  const contactLink = page.getByRole('banner').getByRole('link', {
+    name: 'Start your journey',
+  });
+  const footerLink = page.locator('footer nav a').first();
+
+  for (const link of [primaryLink, contactLink, footerLink]) {
+    await link.focus();
+    await expect(link).toBeFocused();
+    await expect(link).toHaveCSS('outline-style', 'solid');
+    await expect(link).toHaveCSS('outline-width', '2px');
+    await expect(link).toHaveCSS('outline-offset', '4px');
+  }
+});
+
 test('Arabic public shell localizes the skip link and keeps the RTL target', async ({
   page,
 }) => {
