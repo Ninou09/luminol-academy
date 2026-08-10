@@ -32,7 +32,8 @@ const NOT_FOUND_COPY: Record<Locale, NotFoundCopy> = {
     home: 'Retour à l’accueil',
     programmes: 'Voir les programmes',
     noteTitle: 'Vous êtes toujours chez Luminol.',
-    noteBody: 'Utilisez la navigation ci-dessus ou choisissez une prochaine étape.',
+    noteBody:
+      'Utilisez la navigation ci-dessus ou choisissez une prochaine étape.',
   },
   ar: {
     eyebrow: '404 · الصفحة غير موجودة',
@@ -72,7 +73,10 @@ export default async function NotFound() {
             </div>
           </div>
 
-          <aside className={styles.visual} aria-labelledby="not-found-note-title">
+          <aside
+            className={styles.visual}
+            aria-labelledby="not-found-note-title"
+          >
             <div className={styles.orbit} aria-hidden="true">
               <span>4</span>
               <span>0</span>
