@@ -51,7 +51,7 @@ html[data-motion='full'] [data-motion-orbit='reverse'] {
 
 @media (max-width: 960px) {
   html {
-    scroll-padding-block-start: 8.5rem;
+    scroll-padding-block-start: 9.5rem;
   }
 }
 
