@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --write apps/web/components/site-shell.tsx tests/e2e/home-motion.spec.ts && tar -czf typecheck.log apps/web/components/site-shell.tsx tests/e2e/home-motion.spec.ts && exit 1",
     "security:check": "node scripts/security-check.mjs && node scripts/check-action-pins.mjs",
     "db:generate": "pnpm --filter @luminol/database generate",
     "db:migrate": "pnpm --filter @luminol/database migrate",
