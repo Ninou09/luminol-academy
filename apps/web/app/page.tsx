@@ -52,7 +52,7 @@ export default async function Page() {
     <>
       <SiteHeader />
       <OrganizationJsonLd description={publicCopy.site.description} />
-      <main className={styles.page}>
+      <main id="main-content" tabIndex={-1} className={styles.page}>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
           <div className={styles.heroCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.heroEyebrow}</p>
