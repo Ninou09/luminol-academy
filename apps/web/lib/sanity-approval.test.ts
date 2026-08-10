@@ -9,9 +9,11 @@ afterEach(() => {
 describe('programme image publication approval', () => {
   it('projects image data only after explicit publication approval', async () => {
     vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'abc123xy');
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ result: [] }), { status: 200 }),
-    );
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ result: [] }), { status: 200 }),
+      );
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(getProgrammesForSchool('languages')).resolves.toEqual([]);
