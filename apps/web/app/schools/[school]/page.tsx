@@ -3,10 +3,10 @@ import {
   localizeHref,
   localizePathname,
 } from '@luminol/localization';
+import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ButtonLink } from '@luminol/ui';
 
 import {
   EditorialMedia,
@@ -104,150 +104,204 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   const relatedSchools = Object.values(localizedSchools).filter(
     (item) => item.slug !== school.slug,
   );
+  const schoolTone = {
+    psychology: styles.psychology ?? '',
+    languages: styles.languages ?? '',
+    training: styles.training ?? '',
+  };
 
   return (
-    <main className={`school-page school-page-${school.slug}`}>
+    <>
       <SiteHeader />
-
-      <section className="school-detail-hero">
-        <div className="school-detail-copy">
-          <Link className="breadcrumb" href={localizeHref(locale, '/#schools')}>
-            {copy.schoolsLabel} <span aria-hidden="true">/</span> {school.name}
-          </Link>
-          <p className="eyebrow">{school.eyebrow}</p>
-          <h1>{school.headline}</h1>
-          <p className="school-detail-lede">{school.introduction}</p>
-          <div className="hero-actions">
-            <ButtonLink href="#programs" size="lg">
-              {copy.explorePrograms} <span aria-hidden="true">↘</span>
-            </ButtonLink>
-            <ButtonLink
-              href={localizeHref(locale, '/contact')}
-              size="lg"
-              variant="secondary"
+      <main className={`${styles.page} ${schoolTone[school.slug]}`}>
+        <section
+          className={styles.hero}
+          aria-labelledby="school-hero-title"
+          data-school-hero={school.slug}
+        >
+          <div className={styles.heroCopy} data-reveal>
+            <Link
+              className={styles.breadcrumb}
+              href={localizeHref(locale, '/#schools')}
             >
-              {copy.startJourney}
-            </ButtonLink>
+              {copy.schoolsLabel} <span aria-hidden="true">/</span>{' '}
+              {school.name}
+            </Link>
+            <p className={styles.eyebrow}>{school.eyebrow}</p>
+            <h1 id="school-hero-title">{school.headline}</h1>
+            <p className={styles.heroLede}>{school.introduction}</p>
+            <div className={styles.heroActions}>
+              <ButtonLink href="#programs" size="lg">
+                {copy.explorePrograms} <span aria-hidden="true">↘</span>
+              </ButtonLink>
+              <ButtonLink
+                href={localizeHref(locale, '/contact')}
+                size="lg"
+                variant="secondary"
+              >
+                {copy.startJourney}
+              </ButtonLink>
+            </div>
           </div>
-        </div>
 
-        <div className="school-detail-visual" aria-hidden="true">
-          <span className="detail-number">{school.number}</span>
-          <div className="detail-orbit detail-orbit-outer" />
-          <div className="detail-orbit detail-orbit-inner" />
-          <div className="detail-core">{school.name.charAt(0)}</div>
-          <div className="detail-words">
-            {school.visualWords.map((word) => (
-              <span key={word}>{word}</span>
+          <div className={styles.heroVisual} aria-hidden="true" data-reveal>
+            <span className={styles.detailNumber}>{school.number}</span>
+            <div
+              className={`${styles.orbit} ${styles.orbitOuter}`}
+              data-motion-orbit
+            />
+            <div
+              className={`${styles.orbit} ${styles.orbitInner}`}
+              data-motion-orbit="reverse"
+            />
+            <div className={styles.detailCore} data-motion-float>
+              {school.name.charAt(0)}
+            </div>
+            <div className={styles.detailWords}>
+              {school.visualWords.map((word) => (
+                <span key={word}>{word}</span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.promiseBand} data-reveal>
+          <p>{copy.promiseLabel}</p>
+          <blockquote>{school.promise}</blockquote>
+        </section>
+
+        <section
+          id="programs"
+          className={styles.section}
+          aria-labelledby="school-programmes-title"
+        >
+          <div className={styles.sectionHeading} data-reveal>
+            <div>
+              <p className={styles.eyebrow}>{copy.programsEyebrow}</p>
+              <h2 id="school-programmes-title">{copy.programsTitle}</h2>
+            </div>
+            <p>{copy.programsBody}</p>
+          </div>
+          <div className={styles.programGrid}>
+            {programmes.map((program, index) => (
+              <article
+                className={styles.programCard}
+                key={program.id}
+                data-programme-card
+                data-reveal
+              >
+                <span className={styles.programIndex}>
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <EditorialMedia
+                  className={styles.programMedia}
+                  school={school.slug}
+                  asset={program.image}
+                />
+                <h3 dir="auto">{program.title}</h3>
+                {program.delivery ? (
+                  <small className={styles.programDelivery}>
+                    {program.delivery}
+                  </small>
+                ) : null}
+                <p dir="auto">{program.description}</p>
+                <Link href={localizeHref(locale, '/contact')}>
+                  {copy.askProgram} <b aria-hidden="true">→</b>
+                </Link>
+              </article>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="school-promise-band">
-        <p>{copy.promiseLabel}</p>
-        <blockquote>{school.promise}</blockquote>
-      </section>
-
-      <section id="programs" className="programs section-shell">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">{copy.programsEyebrow}</p>
-            <h2>{copy.programsTitle}</h2>
+        <section
+          className={styles.method}
+          aria-labelledby="school-journey-title"
+        >
+          <div className={styles.methodHeading} data-reveal>
+            <p className={`${styles.eyebrow} ${styles.eyebrowLight}`}>
+              {copy.journeyEyebrow}
+            </p>
+            <h2 id="school-journey-title">{copy.journeyTitle}</h2>
           </div>
-          <p>{copy.programsBody}</p>
-        </div>
-        <div className="program-grid">
-          {programmes.map((program, index) => (
-            <article key={program.id}>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <EditorialMedia
-                className={styles.programMedia}
-                school={school.slug}
-                asset={program.image}
-              />
-              <h3 className={styles.programTitleWithMedia} dir="auto">
-                {program.title}
-              </h3>
-              {program.delivery ? (
-                <small className="program-delivery">{program.delivery}</small>
-              ) : null}
-              <p dir="auto">{program.description}</p>
-              <Link href={localizeHref(locale, '/contact')}>
-                {copy.askProgram} <b aria-hidden="true">→</b>
+          <ol>
+            {school.approach.map((step, index) => (
+              <li key={step.title} data-reveal>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.description}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section
+          className={`${styles.section} ${styles.audience}`}
+          aria-labelledby="school-audience-title"
+        >
+          <div data-reveal>
+            <p className={styles.eyebrow}>{copy.audienceEyebrow}</p>
+            <h2 id="school-audience-title">{copy.audienceTitle}</h2>
+          </div>
+          <ul>
+            {school.audiences.map((audience) => (
+              <li key={audience} data-reveal>
+                {audience}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <aside
+          className={`${styles.section} ${styles.note}`}
+          aria-label={copy.noteAria}
+          data-reveal
+        >
+          <span>{copy.important}</span>
+          <p>{school.note}</p>
+        </aside>
+
+        <section
+          className={`${styles.section} ${styles.related}`}
+          aria-labelledby="related-schools-title"
+        >
+          <p className={styles.eyebrow} data-reveal>
+            {copy.relatedEyebrow}
+          </p>
+          <div className={styles.relatedHeading} data-reveal>
+            <h2 id="related-schools-title">{copy.relatedTitle}</h2>
+            <p>{copy.relatedBody}</p>
+          </div>
+          <div className={styles.relatedGrid}>
+            {relatedSchools.map((related) => (
+              <Link
+                href={localizeHref(locale, `/schools/${related.slug}`)}
+                key={related.slug}
+                data-reveal
+              >
+                <span>{related.number}</span>
+                <h3>{related.name}</h3>
+                <b aria-hidden="true">↗</b>
               </Link>
-            </article>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
 
-      <section className="school-method">
-        <div className="method-heading">
-          <p className="eyebrow eyebrow-light">{copy.journeyEyebrow}</p>
-          <h2>{copy.journeyTitle}</h2>
-        </div>
-        <ol>
-          {school.approach.map((step, index) => (
-            <li key={step.title}>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.description}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="audience section-shell">
-        <div>
-          <p className="eyebrow">{copy.audienceEyebrow}</p>
-          <h2>{copy.audienceTitle}</h2>
-        </div>
-        <ul>
-          {school.audiences.map((audience) => (
-            <li key={audience}>{audience}</li>
-          ))}
-        </ul>
-      </section>
-
-      <aside className="school-note section-shell" aria-label={copy.noteAria}>
-        <span>{copy.important}</span>
-        <p>{school.note}</p>
-      </aside>
-
-      <section className="related-schools section-shell">
-        <p className="eyebrow">{copy.relatedEyebrow}</p>
-        <div className="related-heading">
-          <h2>{copy.relatedTitle}</h2>
-          <p>{copy.relatedBody}</p>
-        </div>
-        <div className="related-grid">
-          {relatedSchools.map((related) => (
-            <Link
-              href={localizeHref(locale, `/schools/${related.slug}`)}
-              key={related.slug}
-            >
-              <span>{related.number}</span>
-              <h3>{related.name}</h3>
-              <b aria-hidden="true">↗</b>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="final-cta">
-        <div>
-          <p className="eyebrow eyebrow-light">{copy.ctaEyebrow}</p>
-          <h2>{copy.ctaTitle}</h2>
-          <p>{copy.ctaBody}</p>
-        </div>
-        <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
-          {copy.startJourney} <span aria-hidden="true">→</span>
-        </ButtonLink>
-      </section>
-
+        <section className={styles.finalCta} data-reveal>
+          <div className={styles.finalCtaText}>
+            <p className={`${styles.eyebrow} ${styles.eyebrowLight}`}>
+              {copy.ctaEyebrow}
+            </p>
+            <h2>{copy.ctaTitle}</h2>
+            <p>{copy.ctaBody}</p>
+          </div>
+          <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
+            {copy.startJourney} <span aria-hidden="true">→</span>
+          </ButtonLink>
+        </section>
+      </main>
       <SiteFooter />
-    </main>
+    </>
   );
 }
