@@ -143,7 +143,9 @@ export default async function Page() {
                 </div>
                 <h3>{school.name}</h3>
                 <p className={styles.schoolPromise}>{school.promise}</p>
-                <p className={styles.schoolDescription}>{school.introduction}</p>
+                <p className={styles.schoolDescription}>
+                  {school.introduction}
+                </p>
                 <ul aria-label={`${school.name} — ${copy.focusAreas}`}>
                   {school.programs.slice(0, 3).map((program) => (
                     <li key={program.title}>{program.title}</li>
