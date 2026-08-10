@@ -8,7 +8,10 @@ const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const databaseDirectory = join(repositoryRoot, 'packages', 'database');
 const generatedDirectory = join(databaseDirectory, 'generated', 'prisma');
 const generatedClient = join(generatedDirectory, 'client.ts');
-const fingerprintFile = join(generatedDirectory, '.luminol-generator-fingerprint');
+const fingerprintFile = join(
+  generatedDirectory,
+  '.luminol-generator-fingerprint',
+);
 const lockDirectory = join(
   repositoryRoot,
   'node_modules',
@@ -124,7 +127,9 @@ await acquireLock();
 
 try {
   if (await generatedClientMatches(fingerprint)) {
-    console.log('Prisma Client is already generated for the current schema and lockfile.');
+    console.log(
+      'Prisma Client is already generated for the current schema and lockfile.',
+    );
   } else {
     await runPrismaGenerate();
     await writeFile(fingerprintFile, `${fingerprint}\n`, 'utf8');
