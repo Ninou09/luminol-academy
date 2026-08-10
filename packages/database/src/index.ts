@@ -1,18 +1,39 @@
+import { PrismaPg } from '@prisma/adapter-pg';
 import {
   PrismaClient,
   SearchOutcome,
   SearchResultBucket,
   type SearchSurface,
-} from '@prisma/client';
+} from '../generated/prisma/client';
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
+export const PRISMA_PG_CONNECTION_TIMEOUT_MS = 5_000;
+export const PRISMA_PG_IDLE_TIMEOUT_MS = 300_000;
 export const SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS = 100;
 export const SEARCH_TELEMETRY_TRANSACTION_MAX_WAIT_MS = 100;
 export const SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS = 250;
 
+function requireDatabaseUrl() {
+  const databaseUrl = process.env.DATABASE_URL?.trim();
+  if (!databaseUrl) {
+    throw new Error('DATABASE_URL is required to initialize Prisma Client.');
+  }
+  return databaseUrl;
+}
+
+function createClient() {
+  const adapter = new PrismaPg({
+    connectionString: requireDatabaseUrl(),
+    connectionTimeoutMillis: PRISMA_PG_CONNECTION_TIMEOUT_MS,
+    idleTimeoutMillis: PRISMA_PG_IDLE_TIMEOUT_MS,
+  });
+
+  return new PrismaClient({ adapter });
+}
+
 function getClient(): PrismaClient {
-  const client = globalForPrisma.prisma ?? new PrismaClient();
+  const client = globalForPrisma.prisma ?? createClient();
   if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = client;
   return client;
 }
@@ -107,4 +128,4 @@ export async function recordSearchTelemetry({
   }
 }
 
-export * from '@prisma/client';
+export * from '../generated/prisma/client';
