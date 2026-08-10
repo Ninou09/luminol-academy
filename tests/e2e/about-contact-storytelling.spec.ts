@@ -27,7 +27,9 @@ test('About reduced motion keeps the centered brand core in place', async ({
   );
 });
 
-test('premium Contact page preserves the enquiry form contract', async ({ page }) => {
+test('premium Contact page preserves the enquiry form contract', async ({
+  page,
+}) => {
   await page.goto('/en/contact');
 
   await expect(page.getByRole('banner')).toBeVisible();
@@ -38,11 +40,26 @@ test('premium Contact page preserves the enquiry form contract', async ({ page }
 
   const form = page.locator('[data-contact-form] form.enquiry-form');
   await expect(form).toBeVisible();
-  await expect(form.locator('input[name="name"]')).toHaveAttribute('required', '');
-  await expect(form.locator('input[name="email"]')).toHaveAttribute('required', '');
-  await expect(form.locator('select[name="school"]')).toHaveAttribute('required', '');
-  await expect(form.locator('textarea[name="message"]')).toHaveAttribute('required', '');
-  await expect(form.locator('input[name="consent"]')).toHaveAttribute('required', '');
+  await expect(form.locator('input[name="name"]')).toHaveAttribute(
+    'required',
+    '',
+  );
+  await expect(form.locator('input[name="email"]')).toHaveAttribute(
+    'required',
+    '',
+  );
+  await expect(form.locator('select[name="school"]')).toHaveAttribute(
+    'required',
+    '',
+  );
+  await expect(form.locator('textarea[name="message"]')).toHaveAttribute(
+    'required',
+    '',
+  );
+  await expect(form.locator('input[name="consent"]')).toHaveAttribute(
+    'required',
+    '',
+  );
 });
 
 test('Arabic About and Contact storytelling stay RTL and mobile-safe', async ({

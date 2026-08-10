@@ -74,7 +74,11 @@
     145deg,
     var(--color-brand-ink),
     var(--color-brand-ink-soft) 60%,
-    color-mix(in srgb, var(--color-school-languages) 55%, var(--color-brand-ink))
+    color-mix(
+      in srgb,
+      var(--color-school-languages) 55%,
+      var(--color-brand-ink)
+    )
   );
   box-shadow: var(--shadow-editorial);
   overflow: hidden;
@@ -90,13 +94,18 @@
     color-mix(in srgb, var(--color-brand-surface) 18%, transparent) 0deg 1deg,
     transparent 1deg 16deg
   );
-  mask-image: radial-gradient(circle, var(--color-brand-ink) 0 38%, transparent 72%);
+  mask-image: radial-gradient(
+    circle,
+    var(--color-brand-ink) 0 38%,
+    transparent 72%
+  );
 }
 
 .orbit {
   position: absolute;
   inset: 18%;
-  border: 1px solid color-mix(in srgb, var(--color-brand-surface) 24%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 24%, transparent);
   border-radius: 50%;
 }
 
@@ -109,7 +118,8 @@
   left: 50%;
   border-radius: 50%;
   background: var(--color-brand-gold);
-  box-shadow: 0 0 1.6rem color-mix(in srgb, var(--color-brand-gold) 80%, transparent);
+  box-shadow: 0 0 1.6rem
+    color-mix(in srgb, var(--color-brand-gold) 80%, transparent);
 }
 
 .core {
@@ -121,11 +131,13 @@
   display: grid;
   place-items: center;
   translate: -50% -50%;
-  border: 1px solid color-mix(in srgb, var(--color-brand-surface) 35%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 35%, transparent);
   border-radius: 50%;
   background: color-mix(in srgb, var(--color-brand-canvas) 96%, transparent);
   color: var(--color-brand-ink);
-  box-shadow: 0 2rem 6rem color-mix(in srgb, var(--color-brand-ink) 25%, transparent);
+  box-shadow: 0 2rem 6rem
+    color-mix(in srgb, var(--color-brand-ink) 25%, transparent);
   font-family: var(--font-display);
   font-size: 4.4rem;
 }
@@ -194,7 +206,8 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: clamp(2rem, 5vw, 5rem) max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
+  padding: clamp(2rem, 5vw, 5rem)
+    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
 }
 
 .missionVision article:first-child {
@@ -202,7 +215,11 @@
   background: linear-gradient(
     145deg,
     var(--color-brand-surface),
-    color-mix(in srgb, var(--color-school-psychology-soft) 65%, var(--color-brand-surface))
+    color-mix(
+      in srgb,
+      var(--color-school-psychology-soft) 65%,
+      var(--color-brand-surface)
+    )
   );
 }
 
@@ -210,7 +227,11 @@
   background: linear-gradient(
     145deg,
     var(--color-brand-surface),
-    color-mix(in srgb, var(--color-school-languages-soft) 65%, var(--color-brand-surface))
+    color-mix(
+      in srgb,
+      var(--color-school-languages-soft) 65%,
+      var(--color-brand-surface)
+    )
   );
 }
 
@@ -319,7 +340,8 @@
   left: 50%;
   top: 42%;
   translate: -50% -50%;
-  border: 1px solid color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
   border-radius: 50%;
   box-shadow:
     0 0 0 5rem color-mix(in srgb, var(--color-brand-surface) 3%, transparent),
@@ -363,7 +385,8 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: 1.4rem;
-  border: 1px solid color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
   border-radius: 1rem;
   color: var(--color-brand-surface);
   text-decoration: none;
@@ -396,12 +419,20 @@
 
 .psychology {
   --school-accent: var(--color-school-psychology);
-  background: color-mix(in srgb, var(--color-school-psychology) 18%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--color-school-psychology) 18%,
+    transparent
+  );
 }
 
 .languages {
   --school-accent: var(--color-school-languages);
-  background: color-mix(in srgb, var(--color-school-languages) 18%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--color-school-languages) 18%,
+    transparent
+  );
 }
 
 .training {
@@ -414,7 +445,8 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 3rem;
   align-items: end;
-  padding: clamp(4rem, 9vw, 8rem) max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
+  padding: clamp(4rem, 9vw, 8rem)
+    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
   background: var(--color-brand-ink-soft);
   color: var(--color-brand-surface);
 }

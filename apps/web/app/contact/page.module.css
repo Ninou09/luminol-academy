@@ -24,7 +24,11 @@
   inset-inline-end: -20rem;
   inset-block-start: -18rem;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--color-school-languages) 10%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--color-school-languages) 10%,
+    transparent
+  );
   filter: blur(7rem);
   pointer-events: none;
 }
@@ -154,7 +158,8 @@
   display: grid;
   grid-template-columns: minmax(18rem, 0.72fr) minmax(0, 1.28fr);
   gap: clamp(3rem, 8vw, 8rem);
-  padding: var(--luminol-section-space) max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
+  padding: var(--luminol-section-space)
+    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
   background: var(--color-brand-ink);
   color: var(--color-brand-surface);
 }
@@ -179,7 +184,8 @@
   gap: 0;
   margin: 2.5rem 0 0;
   padding: 0;
-  border-top: 1px solid color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
   list-style: none;
 }
 
@@ -188,7 +194,8 @@
   grid-template-columns: 3rem 1fr;
   gap: 1rem;
   padding-block: 1.25rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
   color: color-mix(in srgb, var(--color-brand-surface) 75%, transparent);
   line-height: 1.6;
 }
@@ -207,11 +214,13 @@
 }
 
 .formSurface {
-  border: 1px solid color-mix(in srgb, var(--color-brand-surface) 18%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 18%, transparent);
   border-radius: var(--luminol-media-radius);
   background: var(--color-brand-canvas);
   color: var(--color-brand-ink);
-  box-shadow: 0 2rem 6rem color-mix(in srgb, var(--color-brand-ink) 28%, transparent);
+  box-shadow: 0 2rem 6rem
+    color-mix(in srgb, var(--color-brand-ink) 28%, transparent);
   overflow: hidden;
 }
 
