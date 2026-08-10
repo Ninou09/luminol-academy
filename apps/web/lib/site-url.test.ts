@@ -22,7 +22,9 @@ describe('public site URL resolution', () => {
   it('falls back safely when the configured URL is malformed', () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'not a url');
 
-    expect(resolvePublicSiteUrl().toString()).toBe(`${FALLBACK_PUBLIC_SITE_URL}/`);
+    expect(resolvePublicSiteUrl().toString()).toBe(
+      `${FALLBACK_PUBLIC_SITE_URL}/`,
+    );
     expect(resolvePublicSiteOrigin()).toBe(FALLBACK_PUBLIC_SITE_URL);
   });
 });
