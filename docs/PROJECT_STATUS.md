@@ -1,6 +1,6 @@
 # Luminol Academy Project Status
 
-_Last updated: 2026-08-10_
+_Last updated: 2026-08-11_
 
 ## Current state
 
@@ -18,7 +18,7 @@ Stable production applications:
 
 Milestones 1 through 15 are complete in the repository. The platform is in post-launch stabilization and public-experience hardening rather than an active numbered product milestone.
 
-Repository `main` is currently ahead of the stable Vercel production aliases because the Vercel Free-plan daily deployment quota was exhausted during later merges. This is tracked in #128 and is a deployment-freshness issue, not a known runtime outage.
+Production freshness recovered after the temporary Vercel Free-plan deployment-capacity incident tracked in #128. Current `main` (`6c15cc5de002dc79290ad402d98ba74691b35c50`) is deployed to the public production project. The stable public alias has been re-verified for its absolute sitemap declaration, Organization structured data, hardened response headers, and representative localized content. Grouped runtime-error checks for web, administration, and portal showed no errors in the post-recovery verification window.
 
 ## Delivered milestones
 
@@ -129,6 +129,8 @@ After Milestone 15, the public experience received a large premium visual and ac
 - governed editorial media fallbacks and explicit Sanity programme-image publication approval with safe default `false`
 - premium localized 404 recovery experience
 - localized keyboard skip-to-content navigation and stable `main#main-content` targets across public routes
+- mobile primary navigation that remains available within a contained horizontal row rather than disappearing on narrow screens
+- reduced-motion-safe scrolling, sticky-header anchor offsets, and explicit token-governed keyboard focus rings on the public shell
 - Organization structured data, localized metadata improvements, sitemap/robots hardening, and public regression coverage
 - Vercel monorepo affected-package checks plus opt-in non-production preview policy to reduce free-plan deployment pressure
 
@@ -138,18 +140,18 @@ Approved real photography is intentionally not fabricated or substituted. Real-m
 
 The platform is in post-launch stabilization. Current work is intentionally operational and governance-focused:
 
-1. Recover Vercel deployment capacity and deploy current `main` to the stable production aliases (#128).
-2. Re-verify production robots/sitemap, structured data, security headers, and runtime health after the fresh deployment.
-3. Publish and verify one approved active Sanity programme image with meaningful alternative text, crop, hotspot, and publication approval (#45 and #93).
-4. Configure a restricted administration smoke account when production Clerk access permits it, then enable authenticated browser-smoke storage states and protected journeys.
-5. Verify a Luminol sender domain before enabling real learner email, then complete a monitored outbound delivery and retry/dead-letter check.
-6. Designate a backup operator before wider promotion or any planned primary-operator absence.
+1. Publish and verify one approved active Sanity programme image with meaningful alternative text, crop, hotspot, and publication approval (#45 and #93).
+2. Configure a restricted administration smoke account when production Clerk access permits it, then enable authenticated browser-smoke storage states and protected journeys (#40).
+3. Launch the migrated Sanity Studio v6 against the intended project/dataset and record non-sensitive operational verification without changing production content (#85).
+4. Verify a Luminol sender domain before enabling real learner email, then complete a monitored outbound delivery and retry/dead-letter check (#40).
+5. Designate a backup operator before wider promotion or any planned primary-operator absence (#40).
+6. Keep TypeScript 7 deferred until typescript-eslint and the wider toolchain officially support the chosen migration architecture (#115).
 
 ## Current external blockers
 
-- **Vercel production freshness:** Free-plan daily deployment capacity is exhausted; tracked in #128.
 - **Approved real media:** the rendering and approval infrastructure is complete, but no approved active image-bearing programme is available for final production verification; tracked in #45 and #93.
 - **Restricted administration smoke access:** production Clerk administration access remains deferred until the required account/service access is available; tracked in #40.
+- **Sanity Studio environment verification:** the v6 code migration is complete, but the Studio still needs to be observed against the intended Sanity project/dataset; tracked in #85.
 - **Outbound email:** a verified sender domain and controlled monitored delivery are still required before learner email activation; tracked in #40.
 - **Backup operations:** `Ninou09` remains the named primary operator and a backup operator is still required before broader promotion; tracked in #40.
 
@@ -169,11 +171,11 @@ Every production change must preserve the architecture and pass the repository's
 - authenticated smoke tests when protected test credentials are available
 - independent review when review capacity is available, with no unresolved actionable review threads before merge
 
-Vercel previews are now opt-in for non-production branches and are supplementary to the GitHub CI merge gate. Production deployment and post-deploy verification remain required before a change is considered live.
+Vercel previews are opt-in for non-production branches and supplementary to the GitHub CI merge gate. Production deployment and post-deploy verification remain required before a change is considered live.
 
 ## Planned maintenance, not active milestones
 
-- coordinated TypeScript 7 toolchain migration is tracked separately in #115
-- coordinated Sanity Studio v6 migration is tracked separately in #85
+- TypeScript 7 toolchain migration remains intentionally deferred under #115 until the repository can use an officially supported compiler/tooling combination.
+- Sanity Studio v6 code migration is complete through PR #112; #85 now tracks only operational environment verification of the migrated Studio.
 
-These major dependency migrations should not be used to bypass current operational blockers or mixed into unrelated feature work.
+Major compiler/CMS changes must preserve strict type checking, schema governance, production builds, and the complete CI/browser gate. They must not be used to bypass current operational blockers or mixed into unrelated feature work.
