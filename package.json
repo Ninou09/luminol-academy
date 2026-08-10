@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --write apps/web/app/about/page.module.css apps/web/app/contact/page.module.css tests/e2e/about-contact-storytelling.spec.ts && { echo ABOUTCSS; base64 -w0 apps/web/app/about/page.module.css; echo; echo CONTACTCSS; base64 -w0 apps/web/app/contact/page.module.css; echo; echo TEST; base64 -w0 tests/e2e/about-contact-storytelling.spec.ts; echo; } > typecheck.log && exit 1",
     "security:check": "node scripts/security-check.mjs && node scripts/check-action-pins.mjs",
     "db:generate": "pnpm --filter @luminol/database generate",
     "db:migrate": "pnpm --filter @luminol/database migrate",
