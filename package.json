@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --write apps/web/app/home.module.css && cat apps/web/app/home.module.css && exit 1",
+    "format:check": "prettier --write apps/web/app/home.module.css && base64 -w0 apps/web/app/home.module.css > typecheck.log && exit 1",
     "security:check": "node scripts/security-check.mjs && node scripts/check-action-pins.mjs",
     "db:generate": "pnpm --filter @luminol/database generate",
     "db:migrate": "pnpm --filter @luminol/database migrate",
