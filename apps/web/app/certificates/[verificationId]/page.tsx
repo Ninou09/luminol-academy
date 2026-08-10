@@ -61,7 +61,7 @@ export default async function CertificateVerificationPage({
   return (
     <>
       <SiteHeader />
-      <main className={styles.page}>
+      <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.intro}>
           <p>{copy.eyebrow}</p>
           <h1>{valid ? copy.verifiedTitle : copy.revokedTitle}</h1>
