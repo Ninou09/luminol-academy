@@ -1,0 +1,201 @@
+.page {
+  overflow: clip;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      color-mix(in srgb, var(--color-brand-gold) 10%, transparent),
+      transparent 30rem
+    ),
+    var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+}
+
+.hero {
+  position: relative;
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 92rem);
+  min-height: calc(100svh - 5.5rem);
+  margin-inline: auto;
+  padding-block: clamp(4rem, 9vw, 8rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(22rem, 0.82fr);
+  gap: clamp(3rem, 8vw, 8rem);
+  align-items: center;
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  max-width: 48rem;
+}
+
+.eyebrow {
+  margin: 0 0 1.25rem;
+  color: var(--color-brand-gold-strong);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.copy h1 {
+  max-width: 10ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 8vw, 8.25rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+}
+
+.body {
+  max-width: 38rem;
+  margin: 2rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.8;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 2rem;
+}
+
+.visual {
+  position: relative;
+  min-height: 31rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: clamp(1.5rem, 4vw, 3rem);
+  background: color-mix(in srgb, var(--color-brand-surface) 82%, transparent);
+  box-shadow: 0 2rem 6rem color-mix(in srgb, var(--color-brand-ink) 12%, transparent);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.visual::before,
+.visual::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.visual::before {
+  width: 24rem;
+  aspect-ratio: 1;
+  inset: 50% auto auto 50%;
+  translate: -50% -58%;
+  border: 1px solid color-mix(in srgb, var(--color-brand-gold) 40%, transparent);
+  box-shadow:
+    0 0 0 3rem color-mix(in srgb, var(--color-brand-gold) 4%, transparent),
+    0 0 0 7rem color-mix(in srgb, var(--color-brand-gold) 2%, transparent);
+}
+
+.visual::after {
+  width: 16rem;
+  aspect-ratio: 1;
+  inset-inline-end: -6rem;
+  inset-block-start: -5rem;
+  background: color-mix(in srgb, var(--color-brand-gold) 12%, transparent);
+  filter: blur(3rem);
+}
+
+.orbit {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.08em;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 12vw, 11rem);
+  font-weight: 500;
+  line-height: 0.8;
+  letter-spacing: -0.08em;
+}
+
+.orbit span:nth-child(2) {
+  color: var(--color-brand-gold-strong);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.note {
+  position: absolute;
+  z-index: 3;
+  inset-inline: clamp(1.25rem, 4vw, 2.25rem);
+  inset-block-end: clamp(1.25rem, 4vw, 2.25rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-brand-line);
+}
+
+.note p {
+  margin: 0;
+  font-weight: 800;
+}
+
+.note span {
+  display: block;
+  max-width: 30rem;
+  margin-top: 0.35rem;
+  color: var(--color-brand-ink-soft);
+  line-height: 1.6;
+}
+
+:global(html[dir='rtl']) .eyebrow {
+  letter-spacing: 0;
+}
+
+:global(html[dir='rtl']) .copy h1,
+:global(html[lang='ar']) .orbit {
+  letter-spacing: normal;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .copy h1 {
+    max-width: 12ch;
+  }
+
+  .visual {
+    min-height: 25rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero {
+    padding-block: 3.5rem;
+    gap: 2.5rem;
+  }
+
+  .copy h1 {
+    font-size: clamp(3.4rem, 18vw, 5rem);
+  }
+
+  .actions {
+    display: grid;
+  }
+
+  .actions > * {
+    width: 100%;
+  }
+
+  .visual {
+    min-height: 20rem;
+  }
+
+  .visual::before {
+    width: 18rem;
+  }
+
+  .orbit {
+    font-size: clamp(5rem, 26vw, 7rem);
+  }
+}
