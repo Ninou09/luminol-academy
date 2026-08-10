@@ -123,6 +123,8 @@ function runPrismaGenerate() {
 }
 
 const fingerprint = await buildFingerprint();
+// Every caller takes the lock before checking the generated client so no other
+// process can observe or replace a partially written Prisma output directory.
 await acquireLock();
 
 try {
