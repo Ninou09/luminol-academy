@@ -15,18 +15,36 @@ export async function SiteHeader() {
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
-        <Link className={styles.brand} href={localizeHref(locale, '/')} aria-label={copy.site.nav.homeAria}>
+        <Link
+          className={styles.brand}
+          href={localizeHref(locale, '/')}
+          aria-label={copy.site.nav.homeAria}
+        >
           <Wordmark />
         </Link>
         <nav className={styles.nav} aria-label={copy.site.nav.primaryAria}>
-          <Link href={localizeHref(locale, '/#schools')}>{copy.site.nav.schools}</Link>
-          <Link href={localizeHref(locale, '/programmes')}>{copy.site.nav.programmes}</Link>
-          <Link href={localizeHref(locale, '/#approach')}>{copy.site.nav.approach}</Link>
-          <Link href={localizeHref(locale, '/about')}>{copy.site.nav.about}</Link>
+          <Link href={localizeHref(locale, '/#schools')}>
+            {copy.site.nav.schools}
+          </Link>
+          <Link href={localizeHref(locale, '/programmes')}>
+            {copy.site.nav.programmes}
+          </Link>
+          <Link href={localizeHref(locale, '/#approach')}>
+            {copy.site.nav.approach}
+          </Link>
+          <Link href={localizeHref(locale, '/about')}>
+            {copy.site.nav.about}
+          </Link>
         </nav>
         <div className={styles.actions}>
-          <LanguageSwitcher locale={locale} label={common.languageSelectorLabel} />
-          <Link className={styles.contactLink} href={localizeHref(locale, '/contact')}>
+          <LanguageSwitcher
+            locale={locale}
+            label={common.languageSelectorLabel}
+          />
+          <Link
+            className={styles.contactLink}
+            href={localizeHref(locale, '/contact')}
+          >
             {copy.site.nav.contact} <span aria-hidden="true">↗</span>
           </Link>
         </div>
@@ -43,18 +61,32 @@ export async function SiteFooter() {
     <footer className={styles.footer}>
       <div className={styles.footerMain}>
         <div className={styles.footerBrand}>
-          <Link href={localizeHref(locale, '/')} aria-label={copy.site.nav.homeAria}>
+          <Link
+            href={localizeHref(locale, '/')}
+            aria-label={copy.site.nav.homeAria}
+          >
             <Wordmark className={styles.footerWordmark} />
           </Link>
           <p>{copy.site.footerDisciplines}</p>
         </div>
         <div className={styles.footerColumn}>
           <span>{copy.site.nav.primaryAria}</span>
-          <nav className={styles.footerNav} aria-label={copy.site.nav.primaryAria}>
-            <Link href={localizeHref(locale, '/#schools')}>{copy.site.nav.schools}</Link>
-            <Link href={localizeHref(locale, '/programmes')}>{copy.site.nav.programmes}</Link>
-            <Link href={localizeHref(locale, '/about')}>{copy.site.nav.about}</Link>
-            <Link href={localizeHref(locale, '/contact')}>{copy.site.nav.contact}</Link>
+          <nav
+            className={styles.footerNav}
+            aria-label={copy.site.nav.primaryAria}
+          >
+            <Link href={localizeHref(locale, '/#schools')}>
+              {copy.site.nav.schools}
+            </Link>
+            <Link href={localizeHref(locale, '/programmes')}>
+              {copy.site.nav.programmes}
+            </Link>
+            <Link href={localizeHref(locale, '/about')}>
+              {copy.site.nav.about}
+            </Link>
+            <Link href={localizeHref(locale, '/contact')}>
+              {copy.site.nav.contact}
+            </Link>
           </nav>
         </div>
         <div className={styles.footerColumn}>

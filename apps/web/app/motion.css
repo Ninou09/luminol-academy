@@ -1,4 +1,5 @@
-html[data-motion='full'][data-motion-ready='true'] [data-reveal][data-reveal-state='pending'] {
+html[data-motion='full'][data-motion-ready='true']
+  [data-reveal][data-reveal-state='pending'] {
   opacity: 0;
   transform: translateY(1.75rem);
 }
@@ -9,7 +10,8 @@ html[data-motion='full'][data-motion-ready='true'] [data-reveal] {
     transform 700ms var(--luminol-ease-out);
 }
 
-html[data-motion='full'][data-motion-ready='true'] [data-reveal][data-reveal-state='visible'] {
+html[data-motion='full'][data-motion-ready='true']
+  [data-reveal][data-reveal-state='visible'] {
   opacity: 1;
   transform: translateY(0);
 }
