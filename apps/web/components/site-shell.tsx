@@ -74,10 +74,7 @@ export async function SiteFooter() {
         </div>
         <div className={styles.footerColumn}>
           <span>{copy.site.nav.primaryAria}</span>
-          <nav
-            className={styles.footerNav}
-            aria-label={footerNavigationLabel}
-          >
+          <nav className={styles.footerNav} aria-label={footerNavigationLabel}>
             <Link href={localizeHref(locale, '/#schools')}>
               {copy.site.nav.schools}
             </Link>

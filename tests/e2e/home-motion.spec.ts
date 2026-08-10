@@ -53,7 +53,10 @@ test('motion targets are discovered after client navigation to home', async ({
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/en/about');
-  await page.getByRole('link', { name: /luminol home/i }).first().click();
+  await page
+    .getByRole('link', { name: /luminol home/i })
+    .first()
+    .click();
 
   await expect(page).toHaveURL(/\/en\/?$/);
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'full');
