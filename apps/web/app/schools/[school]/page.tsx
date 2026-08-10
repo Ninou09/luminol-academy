@@ -124,7 +124,8 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               className={styles.breadcrumb}
               href={localizeHref(locale, '/#schools')}
             >
-              {copy.schoolsLabel} <span aria-hidden="true">/</span> {school.name}
+              {copy.schoolsLabel} <span aria-hidden="true">/</span>{' '}
+              {school.name}
             </Link>
             <p className={styles.eyebrow}>{school.eyebrow}</p>
             <h1 id="school-hero-title">{school.headline}</h1>

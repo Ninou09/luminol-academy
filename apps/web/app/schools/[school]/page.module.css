@@ -111,8 +111,7 @@
 .heroVisual {
   position: relative;
   min-height: clamp(34rem, 55vw, 47rem);
-  border: 1px solid
-    color-mix(in srgb, var(--color-brand-ink) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand-ink) 15%, transparent);
   border-radius: clamp(1.3rem, 2.7vw, 2.1rem);
   background: linear-gradient(
     145deg,
@@ -147,11 +146,7 @@
   position: absolute;
   inset-inline-start: 1.75rem;
   inset-block-start: 1.6rem;
-  color: color-mix(
-    in srgb,
-    var(--color-brand-surface) 62%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-brand-surface) 62%, transparent);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -222,11 +217,7 @@
   border: 1px solid
     color-mix(in srgb, var(--color-brand-surface) 22%, transparent);
   border-radius: var(--radius-pill);
-  background: color-mix(
-    in srgb,
-    var(--color-brand-canvas) 8%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--color-brand-canvas) 8%, transparent);
   color: var(--color-brand-surface);
   font-size: 0.64rem;
   font-weight: 800;
@@ -419,11 +410,7 @@
 
 .method li p {
   margin: 0.65rem 0 0;
-  color: color-mix(
-    in srgb,
-    var(--color-brand-surface) 64%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-brand-surface) 64%, transparent);
   line-height: 1.75;
 }
 
@@ -549,18 +536,18 @@
   align-items: end;
   padding: clamp(4rem, 9vw, 8rem)
     max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
-  background: color-mix(in srgb, var(--school-accent) 62%, var(--color-brand-ink));
+  background: color-mix(
+    in srgb,
+    var(--school-accent) 62%,
+    var(--color-brand-ink)
+  );
   color: var(--color-brand-surface);
 }
 
 .finalCtaText > p:last-child {
   max-width: 42rem;
   margin-bottom: 0;
-  color: color-mix(
-    in srgb,
-    var(--color-brand-surface) 68%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-brand-surface) 68%, transparent);
   line-height: 1.8;
 }
 

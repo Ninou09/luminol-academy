@@ -33,12 +33,16 @@ test('school reduced motion keeps the centered editorial core in place', async (
   await page.goto('/en/schools/languages');
 
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
-  const core = page.locator('[data-school-hero="languages"] [data-motion-float]');
+  const core = page.locator(
+    '[data-school-hero="languages"] [data-motion-float]',
+  );
   await expect(core).toHaveCSS('translate', '-50% -50%');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 
-test('Arabic school storytelling remains RTL and mobile-safe', async ({ page }) => {
+test('Arabic school storytelling remains RTL and mobile-safe', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 320, height: 812 });
   await page.goto('/ar/schools/training');
 
