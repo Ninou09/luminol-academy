@@ -80,6 +80,14 @@
   text-decoration: none;
   text-transform: uppercase;
 }
+.brand:focus-visible,
+.nav a:focus-visible,
+.contactLink:focus-visible,
+.footerBrand a:focus-visible,
+.footerNav a:focus-visible {
+  outline: 2px solid var(--color-brand-gold-strong);
+  outline-offset: 4px;
+}
 .footer {
   min-height: auto;
   display: block;
