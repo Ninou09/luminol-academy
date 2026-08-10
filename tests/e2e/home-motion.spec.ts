@@ -27,6 +27,7 @@ test('motion controller honors reduced motion without hiding content', async ({
     'data-motion-ready',
     'true',
   );
+  await expect(page.locator('html')).toHaveCSS('scroll-behavior', 'auto');
   await expect(page.locator('[data-reveal]').first()).toHaveAttribute(
     'data-reveal-state',
     'visible',
@@ -46,6 +47,7 @@ test('full motion progressively reveals the homepage', async ({ page }) => {
     'data-motion-ready',
     'true',
   );
+  await expect(page.locator('html')).toHaveCSS('scroll-behavior', 'smooth');
   await expect(
     page.locator('[data-reveal-state="visible"]').first(),
   ).toBeVisible();

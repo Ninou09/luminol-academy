@@ -46,6 +46,10 @@ html[data-motion='full'] [data-motion-orbit='reverse'] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   [data-reveal] {
     opacity: 1 !important;
     translate: 0 0 !important;
