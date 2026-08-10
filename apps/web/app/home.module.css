@@ -94,8 +94,7 @@
 .stage {
   position: relative;
   min-height: clamp(32rem, 56vw, 47rem);
-  border: 1px solid
-    color-mix(in srgb, var(--color-brand-ink) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand-ink) 16%, transparent);
   border-radius: clamp(1.2rem, 2.6vw, 2rem);
   background: linear-gradient(
     145deg,
@@ -176,11 +175,7 @@
   border: 1px solid
     color-mix(in srgb, var(--color-brand-surface) 35%, transparent);
   border-radius: 50%;
-  background: color-mix(
-    in srgb,
-    var(--color-brand-canvas) 96%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--color-brand-canvas) 96%, transparent);
   color: var(--color-brand-ink);
   box-shadow: 0 2rem 6rem
     color-mix(in srgb, var(--color-brand-ink) 24%, transparent);
@@ -194,21 +189,13 @@
   border: 1px solid
     color-mix(in srgb, var(--color-brand-surface) 18%, transparent);
   border-radius: 0.85rem;
-  background: color-mix(
-    in srgb,
-    var(--color-brand-canvas) 10%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--color-brand-canvas) 10%, transparent);
   color: var(--color-brand-surface);
   backdrop-filter: blur(0.75rem);
 }
 .signal span {
   display: block;
-  color: color-mix(
-    in srgb,
-    var(--color-brand-surface) 60%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-brand-surface) 60%, transparent);
   font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -377,11 +364,7 @@
 }
 .approachIntro p:last-child {
   max-width: 31rem;
-  color: color-mix(
-    in srgb,
-    var(--color-brand-surface) 65%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-brand-surface) 65%, transparent);
   line-height: 1.8;
 }
 .light {
@@ -412,11 +395,7 @@
 }
 .principles p {
   margin: 0.6rem 0 0;
-  color: color-mix(
-    in srgb,
-    var(--color-brand-surface) 62%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-brand-surface) 62%, transparent);
   line-height: 1.7;
 }
 .about {
@@ -515,11 +494,7 @@
 }
 .cta p:last-child {
   max-width: 40rem;
-  color: color-mix(
-    in srgb,
-    var(--color-brand-surface) 65%,
-    transparent
-  );
+  color: color-mix(in srgb, var(--color-brand-surface) 65%, transparent);
   line-height: 1.8;
 }
 @media (max-width: 1000px) {
