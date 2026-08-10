@@ -1,4 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "*": false,
+      "main": true,
+      "preview-*": true
+    }
+  },
   "ignoreCommand": "turbo query affected --base=$VERCEL_GIT_PREVIOUS_SHA --packages @luminol/admin --exit-code"
 }
