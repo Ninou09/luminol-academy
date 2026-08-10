@@ -32,6 +32,9 @@ test('motion controller honors reduced motion without hiding content', async ({
     'visible',
   );
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(
+    page.locator('[data-motion-float]').filter({ hasText: /^Lu$/ }),
+  ).toHaveCSS('translate', '-50% -50%');
 });
 
 test('full motion progressively reveals the homepage', async ({ page }) => {

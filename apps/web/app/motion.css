@@ -46,11 +46,14 @@ html[data-motion='full'] [data-motion-orbit='reverse'] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal],
+  [data-reveal] {
+    opacity: 1 !important;
+    translate: 0 0 !important;
+    transition: none !important;
+  }
+
   [data-motion-float],
   [data-motion-orbit] {
-    opacity: 1 !important;
-    translate: none !important;
     transform: none !important;
     animation: none !important;
     transition: none !important;
