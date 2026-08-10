@@ -5,6 +5,8 @@ import {
 } from '@luminol/localization';
 import type { MetadataRoute } from 'next';
 
+import { resolvePublicSiteOrigin } from '../lib/site-url';
+
 const routes = [
   '',
   '/programmes',
@@ -14,31 +16,17 @@ const routes = [
   '/schools/languages',
   '/schools/training',
 ] as const;
-const fallbackSiteUrl = 'https://luminol-academy-web.vercel.app';
-
-function resolveSiteOrigin() {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-
-  try {
-    return new URL(configured || fallbackSiteUrl).origin;
-  } catch {
-    return fallbackSiteUrl;
-  }
-}
 
 function buildAbsoluteLanguageAlternates(origin: string, pathname: string) {
   return Object.fromEntries(
     Object.entries(buildLanguageAlternates(pathname)).map(
-      ([language, localizedPathname]) => [
-        language,
-        `${origin}${localizedPathname}`,
-      ],
+      ([language, localizedPathname]) => [language, `${origin}${localizedPathname}`],
     ),
   );
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const origin = resolveSiteOrigin();
+  const origin = resolvePublicSiteOrigin();
 
   return SUPPORTED_LOCALES.flatMap((locale) =>
     routes.map((route) => {
