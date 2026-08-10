@@ -53,6 +53,31 @@ test('full motion progressively reveals the homepage', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('mobile in-page navigation clears the sticky header', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 812 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/en');
+
+  await page
+    .getByRole('navigation', { name: /primary navigation/i })
+    .getByRole('link', { name: /our approach/i })
+    .click();
+
+  await expect(page).toHaveURL(/#approach$/);
+  await expect
+    .poll(() =>
+      page.locator('#approach').evaluate((target) => {
+        const header = document.querySelector('header');
+        if (!header) return Number.NEGATIVE_INFINITY;
+        return (
+          target.getBoundingClientRect().top -
+          header.getBoundingClientRect().bottom
+        );
+      }),
+    )
+    .toBeGreaterThanOrEqual(-1);
+});
+
 test('motion targets are discovered after client navigation to home', async ({
   page,
 }) => {

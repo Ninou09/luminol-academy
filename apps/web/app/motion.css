@@ -1,3 +1,7 @@
+html {
+  scroll-padding-block-start: 6.5rem;
+}
+
 html[data-motion='full'][data-motion-ready='true']
   [data-reveal][data-reveal-state='pending'] {
   opacity: 0;
@@ -42,6 +46,12 @@ html[data-motion='full'] [data-motion-orbit='reverse'] {
 @keyframes luminol-orbit {
   to {
     rotate: 1turn;
+  }
+}
+
+@media (max-width: 960px) {
+  html {
+    scroll-padding-block-start: 9.5rem;
   }
 }
 
