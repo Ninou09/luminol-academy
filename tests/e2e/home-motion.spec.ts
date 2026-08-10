@@ -69,7 +69,7 @@ test('school card hover lift remains active after reveal', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/en');
 
-  const card = page.locator('.school-card').first();
+  const card = page.locator('[data-school-card]').first();
   await card.scrollIntoViewIfNeeded();
   await expect(card).toHaveAttribute('data-reveal-state', 'visible');
   await card.hover();

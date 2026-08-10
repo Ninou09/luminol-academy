@@ -33,7 +33,7 @@ test('Arabic public typography does not apply Latin tracking to joined text', as
   page,
 }) => {
   await page.goto('/ar');
-  await expect(page.locator('.school-card h3').first()).toHaveCSS(
+  await expect(page.locator('[data-school-card] h3').first()).toHaveCSS(
     'letter-spacing',
     'normal',
   );
