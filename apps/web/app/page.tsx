@@ -7,6 +7,7 @@ import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
@@ -38,7 +39,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
   const locale = await getRequestLocale();
-  const copy = getPublicCopy(locale).home;
+  const publicCopy = getPublicCopy(locale);
+  const copy = publicCopy.home;
   const schoolList = Object.values(getSchools(locale));
   const schoolTone = {
     psychology: styles.psychology ?? '',
@@ -49,6 +51,7 @@ export default async function Page() {
   return (
     <>
       <SiteHeader />
+      <OrganizationJsonLd description={publicCopy.site.description} />
       <main className={styles.page}>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
           <div className={styles.heroCopy} data-reveal>
