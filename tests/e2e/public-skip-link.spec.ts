@@ -45,7 +45,9 @@ test('English keyboard users can skip the sticky public navigation', async ({
   await expect(page).toHaveURL(/#main-content$/);
 });
 
-test('shared public shell uses explicit keyboard focus rings', async ({ page }) => {
+test('shared public shell uses explicit keyboard focus rings', async ({
+  page,
+}) => {
   await page.goto('/en');
   await page.keyboard.press('Tab');
 
@@ -54,7 +56,7 @@ test('shared public shell uses explicit keyboard focus rings', async ({ page }) 
     .getByRole('link')
     .first();
   const contactLink = page.getByRole('banner').getByRole('link', {
-    name: 'Contact',
+    name: 'Start your journey',
   });
   const footerLink = page.locator('footer nav a').first();
 
