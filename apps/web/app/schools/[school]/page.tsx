@@ -113,7 +113,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   return (
     <>
       <SiteHeader />
-      <main className={`${styles.page} ${schoolTone[school.slug]}`}>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={`${styles.page} ${schoolTone[school.slug]}`}
+      >
         <section
           className={styles.hero}
           aria-labelledby="school-hero-title"
