@@ -53,7 +53,12 @@ export default async function NotFound() {
   return (
     <>
       <SiteHeader />
-      <main className={styles.page} data-not-found>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={styles.page}
+        data-not-found
+      >
         <section className={styles.hero} aria-labelledby="not-found-title">
           <div className={styles.copy}>
             <p className={styles.eyebrow}>{copy.eyebrow}</p>

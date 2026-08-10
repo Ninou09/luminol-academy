@@ -68,7 +68,7 @@ export default async function ContactPage() {
   return (
     <>
       <SiteHeader />
-      <main className={styles.page}>
+      <main id="main-content" tabIndex={-1} className={styles.page}>
         <section
           className={styles.hero}
           aria-labelledby="contact-hero-title"
