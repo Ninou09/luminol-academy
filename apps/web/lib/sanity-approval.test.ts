@@ -21,6 +21,7 @@ describe('programme image publication approval', () => {
     const requestUrl = new URL(String(fetchMock.mock.calls[0]?.[0]));
     const query = requestUrl.searchParams.get('query') ?? '';
 
+    expect(query).toContain('"image": select(');
     expect(query).toContain('defined(image.asset) &&');
     expect(query).toContain(
       'coalesce(image.publicationApproved, false) == true',
