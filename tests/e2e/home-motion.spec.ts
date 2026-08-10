@@ -78,9 +78,8 @@ test('school card hover lift remains active after reveal', async ({ page }) => {
     .poll(() =>
       card.evaluate((element) => {
         const transform = getComputedStyle(element).transform;
-        return transform === 'none'
-          ? 0
-          : new DOMMatrixReadOnly(transform).m42;
+        if (transform === 'none') return 0;
+        return new DOMMatrixReadOnly(transform).m42;
       }),
     )
     .toBeLessThan(-1);
