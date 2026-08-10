@@ -143,8 +143,20 @@
   .headerInner {
     width: calc(100% - 2rem);
     min-height: 4.75rem;
+    gap: 0.5rem;
+  }
+  .actions {
+    gap: 0.4rem;
   }
   .contactLink {
+    min-width: 2.35rem;
+    min-height: 2.35rem;
+    justify-content: center;
+    padding-inline: 0.55rem;
+    font-size: 0.65rem;
+    letter-spacing: 0;
+  }
+  .contactLabel {
     display: none;
   }
   .footerMain {
