@@ -28,10 +28,15 @@ for (const localeCase of localeCases) {
   test(`${localeCase.locale} unmatched routes render the localized Luminol 404`, async ({
     page,
   }) => {
-    const response = await page.goto(`/${localeCase.locale}/definitely-missing-page`);
+    const response = await page.goto(
+      `/${localeCase.locale}/definitely-missing-page`,
+    );
 
     expect(response?.status()).toBe(404);
-    await expect(page.locator('html')).toHaveAttribute('lang', localeCase.locale);
+    await expect(page.locator('html')).toHaveAttribute(
+      'lang',
+      localeCase.locale,
+    );
     await expect(page.locator('html')).toHaveAttribute(
       'dir',
       localeCase.direction,
@@ -43,10 +48,9 @@ for (const localeCase of localeCases) {
     await expect(
       page.getByRole('heading', { level: 1, name: localeCase.heading }),
     ).toBeVisible();
-    await expect(page.getByRole('link', { name: localeCase.home })).toHaveAttribute(
-      'href',
-      `/${localeCase.locale}`,
-    );
+    await expect(
+      page.getByRole('link', { name: localeCase.home }),
+    ).toHaveAttribute('href', `/${localeCase.locale}`);
     await expect(
       page.getByRole('link', { name: localeCase.programmes }),
     ).toHaveAttribute('href', `/${localeCase.locale}/programmes`);
@@ -63,7 +67,8 @@ test('Arabic 404 stays within a 320px viewport', async ({ page }) => {
 
   const horizontalOverflow = await page.evaluate(
     () =>
-      document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      document.documentElement.scrollWidth -
+      document.documentElement.clientWidth,
   );
 
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
