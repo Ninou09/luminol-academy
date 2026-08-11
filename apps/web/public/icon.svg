@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Luminol Academy">
+  <rect width="64" height="64" rx="12" fill="#102a43"/>
+  <rect x="18" y="13" width="8" height="32" rx="3" fill="#c79a3b"/>
+  <rect x="18" y="37" width="26" height="8" rx="3" fill="#c79a3b"/>
+  <circle cx="38" cy="52" r="3" fill="#2f6b67"/>
+  <circle cx="47" cy="52" r="3" fill="#375a7f"/>
+  <circle cx="56" cy="52" r="3" fill="#8a5a32"/>
+</svg>
