@@ -69,23 +69,20 @@ test('public pages publish branded browser and device icons', async ({
 }) => {
   await page.goto('/en');
 
-  const iconHrefs = await page
+  const iconPaths = await page
     .locator('link[rel="icon"]')
     .evaluateAll((links) =>
-      links.map((link) => (link as HTMLLinkElement).href),
+      links.map((link) => new URL((link as HTMLLinkElement).href).pathname),
     );
-  const appleTouchIconHref = await page
+  const appleTouchIconPaths = await page
     .locator('link[rel="apple-touch-icon"]')
-    .getAttribute('href');
+    .evaluateAll((links) =>
+      links.map((link) => new URL((link as HTMLLinkElement).href).pathname),
+    );
 
-  expect(
-    iconHrefs.some((href) => new URL(href).pathname === '/favicon.ico'),
-  ).toBe(true);
-  expect(iconHrefs.some((href) => new URL(href).pathname === '/icon.svg')).toBe(
-    true,
-  );
-  expect(appleTouchIconHref).toBeTruthy();
-  expect(new URL(appleTouchIconHref!).pathname).toBe('/apple-touch-icon.png');
+  expect(iconPaths).toContain('/favicon.ico');
+  expect(iconPaths).toContain('/icon.svg');
+  expect(appleTouchIconPaths).toContain('/apple-touch-icon.png');
 
   const favicon = await request.get('/favicon.ico');
   expect(favicon.ok()).toBeTruthy();
