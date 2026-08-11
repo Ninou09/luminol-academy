@@ -4,7 +4,9 @@ test('localized home pages render the governed organization structured data', as
   page,
 }) => {
   for (const locale of ['en', 'fr', 'ar'] as const) {
-    await page.goto(`/${locale}`);
+    const response = await page.goto(`/${locale}`);
+    expect(response).not.toBeNull();
+    expect(response!.ok()).toBeTruthy();
 
     const organizationScript = page.locator('script[data-organization-jsonld]');
     await expect(organizationScript).toHaveCount(1);
@@ -16,8 +18,12 @@ test('localized home pages render the governed organization structured data', as
     const canonicalHref = await page
       .locator('link[rel="canonical"]')
       .getAttribute('href');
+    const metaDescription = await page
+      .locator('meta[name="description"]')
+      .getAttribute('content');
 
     expect(canonicalHref).toBeTruthy();
+    expect(metaDescription).toBeTruthy();
     const origin = new URL(canonicalHref!).origin;
 
     expect(jsonLd['@context']).toBe('https://schema.org');
@@ -25,7 +31,6 @@ test('localized home pages render the governed organization structured data', as
     expect(jsonLd['@id']).toBe(`${origin}/#organization`);
     expect(jsonLd.name).toBe('Luminol Academy');
     expect(jsonLd.url).toBe(origin);
-    expect(typeof jsonLd.description).toBe('string');
-    expect((jsonLd.description as string).trim().length).toBeGreaterThan(0);
+    expect(jsonLd.description).toBe(metaDescription);
   }
 });
