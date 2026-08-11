@@ -1,15 +1,17 @@
 import { expect, test } from '@playwright/test';
 
+const openGraphRoutes = [
+  { route: '/en', locale: 'en_DZ' },
+  { route: '/fr/about', locale: 'fr_DZ' },
+  { route: '/ar/contact', locale: 'ar_DZ' },
+  { route: '/en/programmes', locale: 'en_DZ' },
+  { route: '/fr/schools/languages', locale: 'fr_DZ' },
+] as const;
+
 test('public route metadata preserves governed Open Graph identity and locale', async ({
   page,
 }) => {
-  for (const { route, locale } of [
-    { route: '/en', locale: 'en_DZ' },
-    { route: '/fr/about', locale: 'fr_DZ' },
-    { route: '/ar/contact', locale: 'ar_DZ' },
-    { route: '/en/programmes', locale: 'en_DZ' },
-    { route: '/fr/schools/languages', locale: 'fr_DZ' },
-  ]) {
+  for (const { route, locale } of openGraphRoutes) {
     const response = await page.goto(route);
     expect(response).not.toBeNull();
     expect(response!.ok()).toBeTruthy();
