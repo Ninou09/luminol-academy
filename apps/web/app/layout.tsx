@@ -55,7 +55,9 @@ export async function generateMetadata(): Promise<Metadata> {
         { url: '/favicon.ico', type: 'image/x-icon' },
         { url: '/icon.svg', type: 'image/svg+xml' },
       ],
-      apple: [{ url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' }],
+      apple: [
+        { url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' },
+      ],
     },
     openGraph: {
       title: 'Luminol Academy',

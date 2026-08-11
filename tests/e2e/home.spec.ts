@@ -71,14 +71,16 @@ test('public pages publish branded browser and device icons', async ({
 
   const iconHrefs = await page
     .locator('link[rel="icon"]')
-    .evaluateAll((links) => links.map((link) => (link as HTMLLinkElement).href));
+    .evaluateAll((links) =>
+      links.map((link) => (link as HTMLLinkElement).href),
+    );
   const appleTouchIconHref = await page
     .locator('link[rel="apple-touch-icon"]')
     .getAttribute('href');
 
-  expect(iconHrefs.some((href) => new URL(href).pathname === '/favicon.ico')).toBe(
-    true,
-  );
+  expect(
+    iconHrefs.some((href) => new URL(href).pathname === '/favicon.ico'),
+  ).toBe(true);
   expect(iconHrefs.some((href) => new URL(href).pathname === '/icon.svg')).toBe(
     true,
   );
