@@ -69,7 +69,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: copy.site.description,
       siteName: 'Luminol Academy',
       type: 'website',
-      // Emit the governed regional locale in Open Graph's underscore format.
+      // Emit Algeria's governed regional locale in Open Graph's underscore format.
       locale: getOpenGraphLocale(locale),
       images: [socialPreview],
     },
