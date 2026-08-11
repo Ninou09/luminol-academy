@@ -8,10 +8,11 @@ function parseContentSecurityPolicy(value: string): Map<string, string[]> {
     .map((entry) => entry.trim())
     .filter(Boolean)) {
     const [name, ...sources] = directive.split(/\s+/);
-    if (directives.has(name)) {
-      throw new Error(`Duplicate CSP directive: ${name}`);
+    const normalizedName = name.toLowerCase();
+    if (directives.has(normalizedName)) {
+      throw new Error(`Duplicate CSP directive: ${normalizedName}`);
     }
-    directives.set(name, sources);
+    directives.set(normalizedName, sources);
   }
 
   return directives;
