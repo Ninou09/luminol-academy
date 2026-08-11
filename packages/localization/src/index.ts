@@ -114,6 +114,10 @@ export function getIntlLocale(locale: Locale): string {
   return LOCALE_DEFINITIONS[locale].intlTag;
 }
 
+export function getOpenGraphLocale(locale: Locale): string {
+  return getIntlLocale(locale).replace('-', '_');
+}
+
 export function getCommonDictionary(locale: Locale): CommonDictionary {
   return COMMON_DICTIONARIES[locale];
 }

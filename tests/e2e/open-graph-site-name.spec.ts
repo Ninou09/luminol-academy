@@ -1,20 +1,24 @@
 import { expect, test } from '@playwright/test';
 
-test('public route metadata preserves the governed Open Graph site name', async ({
+test('public route metadata preserves governed Open Graph identity and locale', async ({
   page,
 }) => {
-  for (const route of [
-    '/en',
-    '/fr/about',
-    '/ar/contact',
-    '/en/programmes',
-    '/fr/schools/languages',
+  for (const { route, locale } of [
+    { route: '/en', locale: 'en_DZ' },
+    { route: '/fr/about', locale: 'fr_DZ' },
+    { route: '/ar/contact', locale: 'ar_DZ' },
+    { route: '/en/programmes', locale: 'en_DZ' },
+    { route: '/fr/schools/languages', locale: 'fr_DZ' },
   ]) {
     await page.goto(route);
 
     const siteName = page.locator('meta[property="og:site_name"]');
     await expect(siteName).toHaveCount(1);
     await expect(siteName).toHaveAttribute('content', 'Luminol Academy');
+
+    const openGraphLocale = page.locator('meta[property="og:locale"]');
+    await expect(openGraphLocale).toHaveCount(1);
+    await expect(openGraphLocale).toHaveAttribute('content', locale);
 
     const canonicalHref = await page
       .locator('link[rel="canonical"]')
