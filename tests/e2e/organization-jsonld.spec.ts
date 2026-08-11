@@ -1,14 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { z } from 'zod';
 
-const organizationJsonLdSchema = z.object({
-  '@context': z.literal('https://schema.org'),
-  '@type': z.literal('EducationalOrganization'),
-  '@id': z.url(),
-  name: z.literal('Luminol Academy'),
-  url: z.url(),
-  description: z.string().min(1),
-});
+import { organizationJsonLdSchema } from '../../packages/validation/src/index';
 
 test('localized home pages render the governed organization structured data', async ({
   page,
