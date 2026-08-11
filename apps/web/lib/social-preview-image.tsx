@@ -1,18 +1,36 @@
+import { colors } from '@luminol/config/tailwind';
+import {
+  getLocaleDirection,
+  type Locale,
+} from '@luminol/localization';
 import { ImageResponse } from 'next/og';
 
-export const SOCIAL_PREVIEW_ALT =
-  'Luminol Academy — Psychology, Languages and Professional Training';
+import { getPublicCopy } from './public-localization';
+
 export const SOCIAL_PREVIEW_SIZE = { width: 1200, height: 630 } as const;
 export const SOCIAL_PREVIEW_CONTENT_TYPE = 'image/png';
 
-export function renderSocialPreviewImage() {
+export function getSocialPreviewAlt(locale: Locale): string {
+  const copy = getPublicCopy(locale);
+  return `Luminol Academy — ${copy.site.footerDisciplines}`;
+}
+
+export function renderSocialPreviewImage(locale: Locale) {
+  const copy = getPublicCopy(locale);
+  const direction = getLocaleDirection(locale);
+  const isRtl = direction === 'rtl';
+  const title = `${copy.home.heroTitle} ${copy.home.heroAccent}`;
+  const signals = [copy.home.mind, copy.home.voice, copy.home.work];
+
   return new ImageResponse(
     <div
+      dir={direction}
       style={{
         alignItems: 'stretch',
-        background: '#fafaf8',
-        color: '#102a43',
+        background: colors.canvas,
+        color: colors.ink,
         display: 'flex',
+        flexDirection: isRtl ? 'row-reverse' : 'row',
         height: '100%',
         overflow: 'hidden',
         padding: '68px 72px',
@@ -22,7 +40,7 @@ export function renderSocialPreviewImage() {
     >
       <div
         style={{
-          background: '#c79a3b',
+          background: colors.gold,
           height: 8,
           left: 0,
           position: 'absolute',
@@ -36,44 +54,45 @@ export function renderSocialPreviewImage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
+          textAlign: isRtl ? 'right' : 'left',
           width: 720,
         }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
-              color: '#8b651f',
+              color: colors.goldStrong,
               fontFamily: 'Arial, sans-serif',
               fontSize: 24,
               fontWeight: 700,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
+              letterSpacing: isRtl ? 0 : '0.18em',
+              textTransform: isRtl ? 'none' : 'uppercase',
             }}
           >
             Luminol Academy
           </div>
           <div
             style={{
-              fontFamily: 'Georgia, serif',
-              fontSize: 82,
+              fontFamily: isRtl ? 'Arial, sans-serif' : 'Georgia, serif',
+              fontSize: isRtl ? 70 : 82,
               fontWeight: 500,
-              letterSpacing: '-0.04em',
-              lineHeight: 0.98,
+              letterSpacing: isRtl ? 0 : '-0.04em',
+              lineHeight: isRtl ? 1.15 : 0.98,
               marginTop: 42,
             }}
           >
-            Grow with clarity. Learn with purpose.
+            {title}
           </div>
           <div
             style={{
-              color: '#627d98',
+              color: colors.muted,
               fontFamily: 'Arial, sans-serif',
               fontSize: 28,
               lineHeight: 1.35,
               marginTop: 28,
             }}
           >
-            Psychology · Languages · Professional Training
+            {copy.site.footerDisciplines}
           </div>
         </div>
 
@@ -81,18 +100,22 @@ export function renderSocialPreviewImage() {
           style={{
             alignItems: 'center',
             display: 'flex',
+            flexDirection: isRtl ? 'row-reverse' : 'row',
             fontFamily: 'Arial, sans-serif',
             fontSize: 20,
             fontWeight: 700,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
+            letterSpacing: isRtl ? 0 : '0.08em',
+            textTransform: isRtl ? 'none' : 'uppercase',
           }}
         >
-          <span>Mind</span>
-          <span style={{ color: '#c79a3b', margin: '0 18px' }}>·</span>
-          <span>Voice</span>
-          <span style={{ color: '#c79a3b', margin: '0 18px' }}>·</span>
-          <span>Work</span>
+          {signals.map((signal, index) => (
+            <div key={signal} style={{ alignItems: 'center', display: 'flex' }}>
+              {index > 0 ? (
+                <span style={{ color: colors.gold, margin: '0 18px' }}>·</span>
+              ) : null}
+              <span>{signal}</span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -108,7 +131,7 @@ export function renderSocialPreviewImage() {
       >
         <div
           style={{
-            border: '2px solid #d9e2ec',
+            border: `2px solid ${colors.line}`,
             borderRadius: 999,
             height: 360,
             position: 'absolute',
@@ -117,7 +140,7 @@ export function renderSocialPreviewImage() {
         />
         <div
           style={{
-            border: '1px solid #c79a3b',
+            border: `1px solid ${colors.gold}`,
             borderRadius: 999,
             height: 270,
             position: 'absolute',
@@ -127,9 +150,9 @@ export function renderSocialPreviewImage() {
         <div
           style={{
             alignItems: 'center',
-            background: '#102a43',
+            background: colors.ink,
             borderRadius: 999,
-            color: '#fafaf8',
+            color: colors.canvas,
             display: 'flex',
             fontFamily: 'Georgia, serif',
             fontSize: 92,
@@ -143,7 +166,7 @@ export function renderSocialPreviewImage() {
         </div>
         <div
           style={{
-            background: '#2f6b67',
+            background: colors.psychology,
             borderRadius: 999,
             height: 22,
             left: 4,
@@ -154,7 +177,7 @@ export function renderSocialPreviewImage() {
         />
         <div
           style={{
-            background: '#375a7f',
+            background: colors.languages,
             borderRadius: 999,
             height: 22,
             position: 'absolute',
@@ -165,7 +188,7 @@ export function renderSocialPreviewImage() {
         />
         <div
           style={{
-            background: '#8a5a32',
+            background: colors.training,
             borderRadius: 999,
             bottom: 104,
             height: 22,
