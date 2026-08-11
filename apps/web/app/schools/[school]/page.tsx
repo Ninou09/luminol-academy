@@ -26,6 +26,10 @@ import {
   isSchoolSlug,
   schools,
 } from '../../../lib/schools';
+import {
+  buildBreadcrumbJsonLd,
+  serializeJsonLd,
+} from '../../../lib/structured-data';
 import styles from './page.module.css';
 
 type SchoolPageProps = {
@@ -79,6 +83,16 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   const copy = getPublicCopy(locale).schoolPage;
   const localizedSchools = getSchools(locale);
   const school = localizedSchools[slug];
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    {
+      name: copy.schoolsLabel,
+      href: localizeHref(locale, '/#schools'),
+    },
+    {
+      name: school.name,
+      href: localizeHref(locale, `/schools/${school.slug}`),
+    },
+  ]);
   const cmsProgrammes = await getProgrammesForSchool(slug);
   const programmes: Array<{
     id: string;
@@ -117,6 +131,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   return (
     <>
       <SiteHeader />
+      <script
+        type="application/ld+json"
+        data-breadcrumb-jsonld
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
+      />
       <main
         id="main-content"
         tabIndex={-1}
