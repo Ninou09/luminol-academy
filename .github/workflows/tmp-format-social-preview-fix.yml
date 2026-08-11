@@ -1,0 +1,46 @@
+name: Format social preview fix
+
+on:
+  push:
+    branches:
+      - preview-issue-151-social-preview-fixes
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: preview-issue-151-social-preview-fixes
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format changed source and tests
+        run: |
+          pnpm exec prettier --write \
+            apps/web/app/layout.tsx \
+            apps/web/app/page.tsx \
+            apps/web/app/about/page.tsx \
+            apps/web/app/contact/page.tsx \
+            apps/web/app/programmes/page.tsx \
+            'apps/web/app/schools/[school]/page.tsx' \
+            apps/web/app/api/social-preview/route.tsx \
+            apps/web/lib/social-preview-image.tsx \
+            apps/web/lib/social-preview-metadata.ts \
+            tests/e2e/home.spec.ts
+      - name: Commit formatting and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/tmp-format-social-preview-fix.yml
+          git add apps/web tests/e2e/home.spec.ts
+          git commit -m 'Format social preview review fixes'
+          git push origin HEAD:preview-issue-151-social-preview-fixes
