@@ -127,16 +127,31 @@ test('social preview metadata is localized and serves wide PNG images', async ({
 
     const openGraphUrl = new URL(openGraphImage!);
     const twitterUrl = new URL(twitterImage!);
-    expect(openGraphUrl.pathname).toBe('/api/social-preview');
-    expect(twitterUrl.pathname).toBe('/api/social-preview');
-    expect(openGraphUrl.searchParams.get('locale')).toBe(locale);
-    expect(twitterUrl.searchParams.get('locale')).toBe(locale);
+    const expectedPath =
+      locale === 'ar' ? '/social-preview-ar.png' : '/api/social-preview';
 
-    const image = await request.get(`/api/social-preview?locale=${locale}`);
+    expect(openGraphUrl.pathname).toBe(expectedPath);
+    expect(twitterUrl.pathname).toBe(expectedPath);
+
+    if (locale === 'ar') {
+      expect(openGraphUrl.search).toBe('');
+      expect(twitterUrl.search).toBe('');
+    } else {
+      expect(openGraphUrl.searchParams.get('locale')).toBe(locale);
+      expect(twitterUrl.searchParams.get('locale')).toBe(locale);
+    }
+
+    const image = await request.get(
+      `${openGraphUrl.pathname}${openGraphUrl.search}`,
+    );
     expect(image.ok()).toBeTruthy();
     expect(image.headers()['content-type']).toContain('image/png');
     expect((await image.body()).byteLength).toBeGreaterThan(1000);
   }
+
+  const legacyArabicRoute = await request.get('/api/social-preview?locale=ar');
+  expect(legacyArabicRoute.ok()).toBeTruthy();
+  expect(legacyArabicRoute.headers()['content-type']).toContain('image/png');
 });
 
 test('responses include launch security headers', async ({ request }) => {
