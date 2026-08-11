@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { breadcrumbJsonLdSchema } from '../../packages/validation/test-support/breadcrumb-jsonld';
+
 test('premium school storytelling preserves landmarks and governed media', async ({
   page,
 }) => {
@@ -66,39 +68,24 @@ test('localized school pages publish matching breadcrumb structured data', async
     '/fr/schools/languages',
     '/ar/schools/training',
   ]) {
-    await page.goto(route);
+    const response = await page.goto(route);
+    expect(response).not.toBeNull();
+    expect(response!.ok()).toBeTruthy();
 
     const rawJsonLd = await page
       .locator('script[data-breadcrumb-jsonld]')
       .textContent();
     expect(rawJsonLd).toBeTruthy();
 
-    const jsonLd = JSON.parse(rawJsonLd!) as {
-      '@context'?: string;
-      '@type'?: string;
-      itemListElement?: Array<{
-        '@type'?: string;
-        position?: number;
-        name?: string;
-        item?: string;
-      }>;
-    };
+    const parsedJsonLd: unknown = JSON.parse(rawJsonLd!);
+    const jsonLd = breadcrumbJsonLdSchema.parse(parsedJsonLd);
 
-    expect(jsonLd['@context']).toBe('https://schema.org');
-    expect(jsonLd['@type']).toBe('BreadcrumbList');
     expect(jsonLd.itemListElement).toHaveLength(2);
-    expect(jsonLd.itemListElement?.map((item) => item.position)).toEqual([
-      1, 2,
-    ]);
-    expect(
-      jsonLd.itemListElement?.every(
-        (item) => item['@type'] === 'ListItem' && Boolean(item.name?.trim()),
-      ),
-    ).toBe(true);
+    expect(jsonLd.itemListElement.map((item) => item.position)).toEqual([1, 2]);
 
     const expectedLocale = route.split('/')[1];
-    const firstUrl = new URL(jsonLd.itemListElement![0]!.item!);
-    const currentUrl = new URL(jsonLd.itemListElement![1]!.item!);
+    const firstUrl = new URL(jsonLd.itemListElement[0]!.item);
+    const currentUrl = new URL(jsonLd.itemListElement[1]!.item);
 
     expect(firstUrl.pathname).toBe(`/${expectedLocale}`);
     expect(firstUrl.hash).toBe('#schools');
@@ -109,10 +96,10 @@ test('localized school pages publish matching breadcrumb structured data', async
       .locator(`main a[href="${firstUrl.pathname}${firstUrl.hash}"]`)
       .first();
     await expect(visibleBreadcrumb).toContainText(
-      jsonLd.itemListElement![0]!.name!,
+      jsonLd.itemListElement[0]!.name,
     );
     await expect(visibleBreadcrumb).toContainText(
-      jsonLd.itemListElement![1]!.name!,
+      jsonLd.itemListElement[1]!.name,
     );
   }
 });
