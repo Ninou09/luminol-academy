@@ -1,8 +1,5 @@
 import { colors } from '@luminol/config/tailwind';
-import {
-  getLocaleDirection,
-  getOpenGraphLocale,
-} from '@luminol/localization';
+import { getLocaleDirection, getOpenGraphLocale } from '@luminol/localization';
 import type { Metadata, Viewport } from 'next';
 import {
   Cormorant_Garamond,
