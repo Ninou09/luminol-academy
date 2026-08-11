@@ -30,14 +30,20 @@ test('localized routes publish reachable governed social preview images', async 
     await expect(openGraphImage).toHaveCount(1);
     await expect(twitterImage).toHaveCount(1);
 
+    const canonicalHref = await page
+      .locator('link[rel="canonical"]')
+      .getAttribute('href');
     const openGraphImageUrl = await openGraphImage.getAttribute('content');
     const twitterImageUrl = await twitterImage.getAttribute('content');
 
+    expect(canonicalHref).toBeTruthy();
     expect(openGraphImageUrl).toBeTruthy();
     expect(twitterImageUrl).toBe(openGraphImageUrl);
 
+    const canonicalOrigin = new URL(canonicalHref!).origin;
     const parsedImageUrl = new URL(openGraphImageUrl!);
     expect(parsedImageUrl.protocol).toBe('https:');
+    expect(parsedImageUrl.origin).toBe(canonicalOrigin);
     expect(`${parsedImageUrl.pathname}${parsedImageUrl.search}`).toBe(
       previewPath,
     );
