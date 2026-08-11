@@ -10,7 +10,9 @@ test('public route metadata preserves governed Open Graph identity and locale', 
     { route: '/en/programmes', locale: 'en_DZ' },
     { route: '/fr/schools/languages', locale: 'fr_DZ' },
   ]) {
-    await page.goto(route);
+    const response = await page.goto(route);
+    expect(response).not.toBeNull();
+    expect(response!.ok()).toBeTruthy();
 
     const siteName = page.locator('meta[property="og:site_name"]');
     await expect(siteName).toHaveCount(1);
