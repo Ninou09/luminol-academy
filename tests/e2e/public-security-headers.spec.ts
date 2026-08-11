@@ -1,16 +1,21 @@
 import { expect, test } from '@playwright/test';
 
 function parseContentSecurityPolicy(value: string): Map<string, string[]> {
-  return new Map(
-    value
-      .split(';')
-      .map((directive) => directive.trim())
-      .filter(Boolean)
-      .map((directive) => {
-        const [name, ...sources] = directive.split(/\s+/);
-        return [name, sources];
-      }),
-  );
+  const directives = new Map<string, string[]>();
+
+  for (const directive of value
+    .split(';')
+    .map((entry) => entry.trim())
+    .filter(Boolean)) {
+    const [name, ...sources] = directive.split(/\s+/);
+    const normalizedName = name.toLowerCase();
+    if (directives.has(normalizedName)) {
+      throw new Error(`Duplicate CSP directive: ${normalizedName}`);
+    }
+    directives.set(normalizedName, sources);
+  }
+
+  return directives;
 }
 
 test('localized public responses preserve the governed security-header contract', async ({
@@ -19,6 +24,7 @@ test('localized public responses preserve the governed security-header contract'
   for (const route of ['/en', '/fr/about', '/ar/contact']) {
     const response = await page.goto(route);
     expect(response).not.toBeNull();
+    expect(response!.ok()).toBeTruthy();
 
     const headers = response!.headers();
     const contentSecurityPolicy = headers['content-security-policy'];
