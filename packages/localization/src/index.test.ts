@@ -5,6 +5,7 @@ import {
   COMMON_DICTIONARIES,
   formatLocalizedCurrency,
   getLocaleDirection,
+  getOpenGraphLocale,
   localizeHref,
   localizePathname,
   parseLocale,
@@ -25,6 +26,12 @@ describe('locale contract', () => {
     expect(getLocaleDirection('ar')).toBe('rtl');
     expect(getLocaleDirection('fr')).toBe('ltr');
     expect(getLocaleDirection('en')).toBe('ltr');
+  });
+
+  it('formats governed locale tags for Open Graph metadata', () => {
+    expect(getOpenGraphLocale('ar')).toBe('ar_DZ');
+    expect(getOpenGraphLocale('fr')).toBe('fr_DZ');
+    expect(getOpenGraphLocale('en')).toBe('en_DZ');
   });
 
   it('provides a complete common dictionary for every locale', () => {
