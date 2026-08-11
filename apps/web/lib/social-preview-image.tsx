@@ -1,5 +1,5 @@
 import { colors } from '@luminol/config/tailwind';
-import { getLocaleDirection, type Locale } from '@luminol/localization';
+import type { Locale } from '@luminol/localization';
 import { ImageResponse } from 'next/og';
 
 import { getPublicCopy } from './public-localization';
@@ -7,27 +7,25 @@ import { getPublicCopy } from './public-localization';
 export const SOCIAL_PREVIEW_SIZE = { width: 1200, height: 630 } as const;
 export const SOCIAL_PREVIEW_CONTENT_TYPE = 'image/png';
 
+type GeneratedSocialPreviewLocale = Exclude<Locale, 'ar'>;
+
 export function getSocialPreviewAlt(locale: Locale): string {
   const copy = getPublicCopy(locale);
   return `Luminol Academy — ${copy.site.footerDisciplines}`;
 }
 
-export function renderSocialPreviewImage(locale: Locale) {
+export function renderSocialPreviewImage(locale: GeneratedSocialPreviewLocale) {
   const copy = getPublicCopy(locale);
-  const direction = getLocaleDirection(locale);
-  const isRtl = direction === 'rtl';
   const title = `${copy.home.heroTitle} ${copy.home.heroAccent}`;
   const signals = [copy.home.mind, copy.home.voice, copy.home.work];
 
   return new ImageResponse(
     <div
-      dir={direction}
       style={{
         alignItems: 'stretch',
         background: colors.canvas,
         color: colors.ink,
         display: 'flex',
-        flexDirection: isRtl ? 'row-reverse' : 'row',
         height: '100%',
         overflow: 'hidden',
         padding: '68px 72px',
@@ -51,7 +49,7 @@ export function renderSocialPreviewImage(locale: Locale) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          textAlign: isRtl ? 'right' : 'left',
+          textAlign: 'left',
           width: 720,
         }}
       >
@@ -62,19 +60,19 @@ export function renderSocialPreviewImage(locale: Locale) {
               fontFamily: 'Arial, sans-serif',
               fontSize: 24,
               fontWeight: 700,
-              letterSpacing: isRtl ? 0 : '0.18em',
-              textTransform: isRtl ? 'none' : 'uppercase',
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
             }}
           >
             Luminol Academy
           </div>
           <div
             style={{
-              fontFamily: isRtl ? 'Arial, sans-serif' : 'Georgia, serif',
-              fontSize: isRtl ? 70 : 82,
+              fontFamily: 'Georgia, serif',
+              fontSize: 82,
               fontWeight: 500,
-              letterSpacing: isRtl ? 0 : '-0.04em',
-              lineHeight: isRtl ? 1.15 : 0.98,
+              letterSpacing: '-0.04em',
+              lineHeight: 0.98,
               marginTop: 42,
             }}
           >
@@ -97,12 +95,11 @@ export function renderSocialPreviewImage(locale: Locale) {
           style={{
             alignItems: 'center',
             display: 'flex',
-            flexDirection: isRtl ? 'row-reverse' : 'row',
             fontFamily: 'Arial, sans-serif',
             fontSize: 20,
             fontWeight: 700,
-            letterSpacing: isRtl ? 0 : '0.08em',
-            textTransform: isRtl ? 'none' : 'uppercase',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
           }}
         >
           {signals.map((signal, index) => (
