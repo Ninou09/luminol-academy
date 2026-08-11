@@ -1,8 +1,5 @@
 import { colors } from '@luminol/config/tailwind';
-import {
-  getLocaleDirection,
-  type Locale,
-} from '@luminol/localization';
+import { getLocaleDirection, type Locale } from '@luminol/localization';
 import { ImageResponse } from 'next/og';
 
 import { getPublicCopy } from './public-localization';
