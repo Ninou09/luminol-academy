@@ -63,6 +63,44 @@ test('public metadata and error behavior are available', async ({
   expect(missing.status()).toBe(404);
 });
 
+test('public pages publish branded browser and device icons', async ({
+  page,
+  request,
+}) => {
+  await page.goto('/en');
+
+  const iconHrefs = await page
+    .locator('link[rel="icon"]')
+    .evaluateAll((links) => links.map((link) => (link as HTMLLinkElement).href));
+  const appleTouchIconHref = await page
+    .locator('link[rel="apple-touch-icon"]')
+    .getAttribute('href');
+
+  expect(iconHrefs.some((href) => new URL(href).pathname === '/favicon.ico')).toBe(
+    true,
+  );
+  expect(iconHrefs.some((href) => new URL(href).pathname === '/icon.svg')).toBe(
+    true,
+  );
+  expect(appleTouchIconHref).toBeTruthy();
+  expect(new URL(appleTouchIconHref!).pathname).toBe('/apple-touch-icon.png');
+
+  const favicon = await request.get('/favicon.ico');
+  expect(favicon.ok()).toBeTruthy();
+  expect(favicon.headers()['content-type']).toContain('image/');
+  expect((await favicon.body()).byteLength).toBeGreaterThan(1000);
+
+  const svgIcon = await request.get('/icon.svg');
+  expect(svgIcon.ok()).toBeTruthy();
+  expect(svgIcon.headers()['content-type']).toContain('image/svg+xml');
+  expect(await svgIcon.text()).toContain('Luminol Academy');
+
+  const appleTouchIcon = await request.get('/apple-touch-icon.png');
+  expect(appleTouchIcon.ok()).toBeTruthy();
+  expect(appleTouchIcon.headers()['content-type']).toContain('image/png');
+  expect((await appleTouchIcon.body()).byteLength).toBeGreaterThan(500);
+});
+
 test('public pages publish localized canonical, hreflang and Open Graph URLs', async ({
   page,
 }) => {
