@@ -102,5 +102,15 @@ test('localized school pages publish matching breadcrumb structured data', async
     expect(firstUrl.hash).toBe('#schools');
     expect(currentUrl.pathname).toBe(route);
     expect(currentUrl.origin).toBe(firstUrl.origin);
+
+    const visibleBreadcrumb = page
+      .locator(`main a[href="${firstUrl.pathname}${firstUrl.hash}"]`)
+      .first();
+    await expect(visibleBreadcrumb).toContainText(
+      jsonLd.itemListElement![0]!.name!,
+    );
+    await expect(visibleBreadcrumb).toContainText(
+      jsonLd.itemListElement![1]!.name!,
+    );
   }
 });
