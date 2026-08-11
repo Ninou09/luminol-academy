@@ -57,3 +57,50 @@ test('Arabic school storytelling remains RTL and mobile-safe', async ({
   );
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
 });
+
+test('localized school pages publish matching breadcrumb structured data', async ({
+  page,
+}) => {
+  for (const route of [
+    '/en/schools/psychology',
+    '/fr/schools/languages',
+    '/ar/schools/training',
+  ]) {
+    await page.goto(route);
+
+    const rawJsonLd = await page
+      .locator('script[data-breadcrumb-jsonld]')
+      .textContent();
+    expect(rawJsonLd).toBeTruthy();
+
+    const jsonLd = JSON.parse(rawJsonLd!) as {
+      '@context'?: string;
+      '@type'?: string;
+      itemListElement?: Array<{
+        '@type'?: string;
+        position?: number;
+        name?: string;
+        item?: string;
+      }>;
+    };
+
+    expect(jsonLd['@context']).toBe('https://schema.org');
+    expect(jsonLd['@type']).toBe('BreadcrumbList');
+    expect(jsonLd.itemListElement).toHaveLength(2);
+    expect(jsonLd.itemListElement?.map((item) => item.position)).toEqual([1, 2]);
+    expect(
+      jsonLd.itemListElement?.every(
+        (item) => item['@type'] === 'ListItem' && Boolean(item.name?.trim()),
+      ),
+    ).toBe(true);
+
+    const expectedLocale = route.split('/')[1];
+    const firstUrl = new URL(jsonLd.itemListElement![0]!.item!);
+    const currentUrl = new URL(jsonLd.itemListElement![1]!.item!);
+
+    expect(firstUrl.pathname).toBe(`/${expectedLocale}`);
+    expect(firstUrl.hash).toBe('#schools');
+    expect(currentUrl.pathname).toBe(route);
+    expect(currentUrl.origin).toBe(firstUrl.origin);
+  }
+});
