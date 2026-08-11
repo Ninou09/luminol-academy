@@ -10,6 +10,7 @@ import { PublicMotionController } from '../components/public-motion-controller';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { resolvePublicSiteUrl } from '../lib/site-url';
+import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import './globals.css';
 import './localization.css';
 import './motion.css';
@@ -35,6 +36,8 @@ const notoSansArabic = Noto_Sans_Arabic({
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
+  const socialPreview = getSocialPreviewImage(locale);
+
   return {
     metadataBase: resolvePublicSiteUrl(),
     title: { default: 'Luminol Academy', template: '%s | Luminol Academy' },
@@ -52,6 +55,13 @@ export async function generateMetadata(): Promise<Metadata> {
       description: copy.site.description,
       type: 'website',
       locale,
+      images: [socialPreview],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Luminol Academy',
+      description: copy.site.description,
+      images: [socialPreview],
     },
   };
 }
