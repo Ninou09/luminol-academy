@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { organizationJsonLdSchema } from '../../packages/validation/src/index';
+import { organizationJsonLdSchema } from '../../packages/validation/test-support/organization-jsonld';
 
 test('localized home pages render the governed organization structured data', async ({
   page,
