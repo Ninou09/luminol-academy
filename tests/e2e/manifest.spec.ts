@@ -1,11 +1,15 @@
 import { colors } from '@luminol/config/tailwind';
 import { expect, test } from '@playwright/test';
 
+import { webManifestSchema } from '../../packages/validation/test-support/web-manifest';
+
 test('public pages publish the governed app manifest and browser theme color', async ({
   page,
   request,
 }) => {
-  await page.goto('/en');
+  const pageResponse = await page.goto('/en');
+  expect(pageResponse).not.toBeNull();
+  expect(pageResponse!.ok()).toBeTruthy();
 
   const manifestHref = await page
     .locator('link[rel="manifest"]')
@@ -26,15 +30,8 @@ test('public pages publish the governed app manifest and browser theme color', a
     /application\/(?:manifest\+json|json)/,
   );
 
-  const manifest = (await response.json()) as {
-    name?: string;
-    short_name?: string;
-    start_url?: string;
-    display?: string;
-    background_color?: string;
-    theme_color?: string;
-    icons?: Array<{ src?: string; sizes?: string; type?: string }>;
-  };
+  const parsedManifest: unknown = await response.json();
+  const manifest = webManifestSchema.parse(parsedManifest);
 
   expect(manifest).toMatchObject({
     name: 'Luminol Academy',
@@ -47,8 +44,16 @@ test('public pages publish the governed app manifest and browser theme color', a
 
   expect(manifest.icons).toEqual(
     expect.arrayContaining([
-      expect.objectContaining({ src: '/favicon.ico', type: 'image/x-icon' }),
-      expect.objectContaining({ src: '/icon.svg', type: 'image/svg+xml' }),
+      expect.objectContaining({
+        src: '/favicon.ico',
+        sizes: 'any',
+        type: 'image/x-icon',
+      }),
+      expect.objectContaining({
+        src: '/icon.svg',
+        sizes: 'any',
+        type: 'image/svg+xml',
+      }),
       expect.objectContaining({
         src: '/apple-touch-icon.png',
         sizes: '180x180',
