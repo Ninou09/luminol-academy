@@ -69,6 +69,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: copy.site.description,
       siteName: 'Luminol Academy',
       type: 'website',
+      // Keep Open Graph formatting aligned with the governed locale contract.
       locale: getOpenGraphLocale(locale),
       images: [socialPreview],
     },
