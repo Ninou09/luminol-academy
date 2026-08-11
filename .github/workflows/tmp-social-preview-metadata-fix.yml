@@ -1,0 +1,124 @@
+name: Apply social preview metadata fix
+
+on:
+  push:
+    branches:
+      - preview-issue-151-social-preview-fixes
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: preview-issue-151-social-preview-fixes
+          fetch-depth: 0
+
+      - name: Apply reviewed metadata changes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          pages = {
+              'apps/web/app/page.tsx': (
+                  "import { getRequestLocale } from '../lib/request-locale';\n",
+                  "import { getSocialPreviewImage } from '../lib/social-preview-metadata';\n",
+                  "  const route = localizePathname(locale, '/');\n",
+              ),
+              'apps/web/app/about/page.tsx': (
+                  "import { getRequestLocale } from '../../lib/request-locale';\n",
+                  "import { getSocialPreviewImage } from '../../lib/social-preview-metadata';\n",
+                  "  const route = localizePathname(locale, '/about');\n",
+              ),
+              'apps/web/app/contact/page.tsx': (
+                  "import { getRequestLocale } from '../../lib/request-locale';\n",
+                  "import { getSocialPreviewImage } from '../../lib/social-preview-metadata';\n",
+                  "  const route = localizePathname(locale, '/contact');\n",
+              ),
+              'apps/web/app/programmes/page.tsx': (
+                  "import { getRequestLocale } from '../../lib/request-locale';\n",
+                  "import { getSocialPreviewImage } from '../../lib/social-preview-metadata';\n",
+                  "  const route = localizePathname(locale, '/programmes');\n",
+              ),
+              'apps/web/app/schools/[school]/page.tsx': (
+                  "import { getRequestLocale } from '../../../lib/request-locale';\n",
+                  "import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';\n",
+                  "  const route = localizePathname(locale, pathname);\n",
+              ),
+          }
+
+          for filename, (request_import, preview_import, route_line) in pages.items():
+              path = Path(filename)
+              text = path.read_text()
+
+              if preview_import not in text:
+                  assert request_import in text, filename
+                  text = text.replace(
+                      request_import,
+                      request_import + preview_import,
+                      1,
+                  )
+
+              social_line = '  const socialPreview = getSocialPreviewImage(locale);\n'
+              if social_line not in text:
+                  assert route_line in text, filename
+                  text = text.replace(route_line, route_line + social_line, 1)
+
+              if '      images: [socialPreview],\n    },\n    twitter:' not in text:
+                  marker = '      url: route,\n    },\n    twitter:'
+                  assert marker in text, filename
+                  text = text.replace(
+                      marker,
+                      '      url: route,\n      images: [socialPreview],\n    },\n    twitter:',
+                      1,
+                  )
+
+              text = text.replace(
+                  "      card: 'summary',",
+                  "      card: 'summary_large_image',",
+                  1,
+              )
+
+              twitter_pattern = re.compile(
+                  r"(    twitter: \{\n.*?      description: [^\n]+,\n)(    \},)",
+                  re.DOTALL,
+              )
+              if not re.search(
+                  r"twitter: \{.*?images: \[socialPreview\]",
+                  text,
+                  re.DOTALL,
+              ):
+                  text, count = twitter_pattern.subn(
+                      r"\1      images: [socialPreview],\n\2",
+                      text,
+                      count=1,
+                  )
+                  assert count == 1, filename
+
+              assert text.count('images: [socialPreview]') >= 2, filename
+              assert "card: 'summary_large_image'" in text, filename
+              path.write_text(text)
+
+          test_path = Path('tests/e2e/home.spec.ts')
+          tests = test_path.read_text()
+          anchor = "test('responses include launch security headers', async ({ request }) => {"
+          new_test = """test('social preview metadata is localized and serves wide PNG images', async ({\n  page,\n  request,\n}) => {\n  for (const locale of ['ar', 'fr', 'en'] as const) {\n    await page.goto(`/${locale}/about`);\n\n    const openGraphImage = await page\n      .locator('meta[property=\"og:image\"]')\n      .getAttribute('content');\n    const twitterImage = await page\n      .locator('meta[name=\"twitter:image\"]')\n      .getAttribute('content');\n    const twitterCard = await page\n      .locator('meta[name=\"twitter:card\"]')\n      .getAttribute('content');\n\n    expect(openGraphImage).toBeTruthy();\n    expect(twitterImage).toBeTruthy();\n    expect(twitterCard).toBe('summary_large_image');\n\n    const openGraphUrl = new URL(openGraphImage!);\n    const twitterUrl = new URL(twitterImage!);\n    expect(openGraphUrl.pathname).toBe('/api/social-preview');\n    expect(twitterUrl.pathname).toBe('/api/social-preview');\n    expect(openGraphUrl.searchParams.get('locale')).toBe(locale);\n    expect(twitterUrl.searchParams.get('locale')).toBe(locale);\n\n    const image = await request.get(`/api/social-preview?locale=${locale}`);\n    expect(image.ok()).toBeTruthy();\n    expect(image.headers()['content-type']).toContain('image/png');\n    expect((await image.body()).byteLength).toBeGreaterThan(1000);\n  }\n});\n\n"""
+          if new_test not in tests:
+              assert anchor in tests
+              tests = tests.replace(anchor, new_test + anchor, 1)
+              test_path.write_text(tests)
+          PY
+
+      - name: Commit generated patch and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/tmp-social-preview-metadata-fix.yml
+          git add apps/web/app/page.tsx apps/web/app/about/page.tsx apps/web/app/contact/page.tsx apps/web/app/programmes/page.tsx 'apps/web/app/schools/[school]/page.tsx' tests/e2e/home.spec.ts
+          git commit -m 'Apply reviewed social preview metadata fixes'
+          git push origin HEAD:preview-issue-151-social-preview-fixes
