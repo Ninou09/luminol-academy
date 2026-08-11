@@ -1,5 +1,6 @@
 import {
   buildLanguageAlternates,
+  getOpenGraphLocale,
   localizeHref,
   localizePathname,
 } from '@luminol/localization';
@@ -31,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: copy.title,
       description: copy.description,
       siteName: 'Luminol Academy',
-      locale,
+      locale: getOpenGraphLocale(locale),
       type: 'website',
       url: route,
       images: [socialPreview],
