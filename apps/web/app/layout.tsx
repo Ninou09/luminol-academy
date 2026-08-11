@@ -1,5 +1,6 @@
+import { colors } from '@luminol/config/tailwind';
 import { getLocaleDirection } from '@luminol/localization';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import {
   Cormorant_Garamond,
   Manrope,
@@ -32,6 +33,10 @@ const notoSansArabic = Noto_Sans_Arabic({
   display: 'swap',
   variable: '--font-noto-arabic',
 });
+
+export const viewport: Viewport = {
+  themeColor: colors.ink,
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
