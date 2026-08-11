@@ -1,5 +1,5 @@
 import { colors } from '@luminol/config/tailwind';
-import { getLocaleDirection } from '@luminol/localization';
+import { getLocaleDirection, getOpenGraphLocale } from '@luminol/localization';
 import type { Metadata, Viewport } from 'next';
 import {
   Cormorant_Garamond,
@@ -69,7 +69,8 @@ export async function generateMetadata(): Promise<Metadata> {
       description: copy.site.description,
       siteName: 'Luminol Academy',
       type: 'website',
-      locale,
+      // Keep Open Graph formatting aligned with the governed locale contract.
+      locale: getOpenGraphLocale(locale),
       images: [socialPreview],
     },
     twitter: {
