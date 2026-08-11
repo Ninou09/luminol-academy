@@ -62,7 +62,7 @@ export function renderSocialPreviewImage() {
               marginTop: 42,
             }}
           >
-            Develop the whole person.
+            Grow with clarity. Learn with purpose.
           </div>
           <div
             style={{
