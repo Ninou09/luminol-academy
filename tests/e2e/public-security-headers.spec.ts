@@ -1,5 +1,18 @@
 import { expect, test } from '@playwright/test';
 
+function parseContentSecurityPolicy(value: string): Map<string, string[]> {
+  return new Map(
+    value
+      .split(';')
+      .map((directive) => directive.trim())
+      .filter(Boolean)
+      .map((directive) => {
+        const [name, ...sources] = directive.split(/\s+/);
+        return [name, sources];
+      }),
+  );
+}
+
 test('localized public responses preserve the governed security-header contract', async ({
   page,
 }) => {
@@ -11,9 +24,10 @@ test('localized public responses preserve the governed security-header contract'
     const contentSecurityPolicy = headers['content-security-policy'];
 
     expect(contentSecurityPolicy).toBeTruthy();
-    expect(contentSecurityPolicy).toContain("default-src 'self'");
-    expect(contentSecurityPolicy).toContain("frame-ancestors 'none'");
-    expect(contentSecurityPolicy).toContain("object-src 'none'");
+    const directives = parseContentSecurityPolicy(contentSecurityPolicy!);
+    expect(directives.get('default-src')).toEqual(["'self'"]);
+    expect(directives.get('frame-ancestors')).toEqual(["'none'"]);
+    expect(directives.get('object-src')).toEqual(["'none'"]);
     expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
     expect(headers['x-content-type-options']).toBe('nosniff');
     expect(headers['x-frame-options']).toBe('DENY');
