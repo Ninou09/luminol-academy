@@ -29,6 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: copy.title,
       description: copy.description,
+      siteName: 'Luminol Academy',
       type: 'website',
       url: route,
       images: [socialPreview],
