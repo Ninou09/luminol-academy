@@ -1,4 +1,14 @@
 import { expect, test } from '@playwright/test';
+import { z } from 'zod';
+
+const organizationJsonLdSchema = z.object({
+  '@context': z.literal('https://schema.org'),
+  '@type': z.literal('EducationalOrganization'),
+  '@id': z.url(),
+  name: z.literal('Luminol Academy'),
+  url: z.url(),
+  description: z.string().min(1),
+});
 
 test('localized home pages render the governed organization structured data', async ({
   page,
@@ -14,7 +24,8 @@ test('localized home pages render the governed organization structured data', as
     const rawJsonLd = await organizationScript.textContent();
     expect(rawJsonLd).toBeTruthy();
 
-    const jsonLd = JSON.parse(rawJsonLd!) as Record<string, unknown>;
+    const parsedJsonLd: unknown = JSON.parse(rawJsonLd!);
+    const jsonLd = organizationJsonLdSchema.parse(parsedJsonLd);
     const canonicalHref = await page
       .locator('link[rel="canonical"]')
       .getAttribute('href');
@@ -26,10 +37,7 @@ test('localized home pages render the governed organization structured data', as
     expect(metaDescription).toBeTruthy();
     const origin = new URL(canonicalHref!).origin;
 
-    expect(jsonLd['@context']).toBe('https://schema.org');
-    expect(jsonLd['@type']).toBe('EducationalOrganization');
     expect(jsonLd['@id']).toBe(`${origin}/#organization`);
-    expect(jsonLd.name).toBe('Luminol Academy');
     expect(jsonLd.url).toBe(origin);
     expect(jsonLd.description).toBe(metaDescription);
   }
