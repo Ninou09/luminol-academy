@@ -1,0 +1,36 @@
+name: Format branded icon changes
+
+on:
+  push:
+    branches:
+      - preview-issue-156-brand-icons
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: preview-issue-156-brand-icons
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format changed text files
+        run: |
+          pnpm exec prettier --write apps/web/app/layout.tsx tests/e2e/home.spec.ts
+      - name: Commit formatting and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/tmp-format-brand-icons.yml
+          git add apps/web/app/layout.tsx tests/e2e/home.spec.ts
+          git commit -m 'Format branded icon metadata and smoke test'
+          git push origin HEAD:preview-issue-156-brand-icons
