@@ -7,5 +7,5 @@
       "preview-*": true
     }
   },
-  "ignoreCommand": "turbo query affected --base=$VERCEL_GIT_PREVIOUS_SHA --packages @luminol/admin --exit-code"
+  "ignoreCommand": "if [ -z \"$VERCEL_GIT_PREVIOUS_SHA\" ]; then exit 1; fi; turbo query affected --base=\"$VERCEL_GIT_PREVIOUS_SHA\" --packages @luminol/admin --exit-code"
 }
