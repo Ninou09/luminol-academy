@@ -104,6 +104,56 @@ test('public pages publish localized canonical, hreflang and Open Graph URLs', a
   }
 });
 
+test('social preview metadata is localized and serves wide PNG images', async ({
+  page,
+  request,
+}) => {
+  for (const locale of ['ar', 'fr', 'en'] as const) {
+    await page.goto(`/${locale}/about`);
+
+    const openGraphImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute('content');
+    const twitterImage = await page
+      .locator('meta[name="twitter:image"]')
+      .getAttribute('content');
+    const twitterCard = await page
+      .locator('meta[name="twitter:card"]')
+      .getAttribute('content');
+
+    expect(openGraphImage).toBeTruthy();
+    expect(twitterImage).toBeTruthy();
+    expect(twitterCard).toBe('summary_large_image');
+
+    const openGraphUrl = new URL(openGraphImage!);
+    const twitterUrl = new URL(twitterImage!);
+    const expectedPath =
+      locale === 'ar' ? '/social-preview-ar.png' : '/api/social-preview';
+
+    expect(openGraphUrl.pathname).toBe(expectedPath);
+    expect(twitterUrl.pathname).toBe(expectedPath);
+
+    if (locale === 'ar') {
+      expect(openGraphUrl.search).toBe('');
+      expect(twitterUrl.search).toBe('');
+    } else {
+      expect(openGraphUrl.searchParams.get('locale')).toBe(locale);
+      expect(twitterUrl.searchParams.get('locale')).toBe(locale);
+    }
+
+    const image = await request.get(
+      `${openGraphUrl.pathname}${openGraphUrl.search}`,
+    );
+    expect(image.ok()).toBeTruthy();
+    expect(image.headers()['content-type']).toContain('image/png');
+    expect((await image.body()).byteLength).toBeGreaterThan(1000);
+  }
+
+  const legacyArabicRoute = await request.get('/api/social-preview?locale=ar');
+  expect(legacyArabicRoute.ok()).toBeTruthy();
+  expect(legacyArabicRoute.headers()['content-type']).toContain('image/png');
+});
+
 test('responses include launch security headers', async ({ request }) => {
   const response = await request.get('/');
   expect(response.headers()['x-content-type-options']).toBe('nosniff');

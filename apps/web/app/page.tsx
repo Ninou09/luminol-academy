@@ -11,6 +11,7 @@ import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
+import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
 
@@ -18,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
   const route = localizePathname(locale, '/');
+  const socialPreview = getSocialPreviewImage(locale);
 
   return {
     title: { absolute: 'Luminol Academy' },
@@ -28,11 +30,13 @@ export async function generateMetadata(): Promise<Metadata> {
       description: copy.site.description,
       type: 'website',
       url: route,
+      images: [socialPreview],
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title: 'Luminol Academy',
       description: copy.site.description,
+      images: [socialPreview],
     },
   };
 }
