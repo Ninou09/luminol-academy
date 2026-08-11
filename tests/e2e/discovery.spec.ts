@@ -11,6 +11,7 @@ const routePaths = [
 ] as const;
 
 const locales = ['ar', 'fr', 'en'] as const;
+const governedPublicOrigin = 'https://luminol-academy-web.vercel.app';
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -21,6 +22,15 @@ function alternatePattern(language: string, href: string): RegExp {
   return new RegExp(
     `hreflang=["']${language}["'][^>]+href=["']${escapedHref}["']|href=["']${escapedHref}["'][^>]+hreflang=["']${language}["']`,
   );
+}
+
+function findUrlEntry(sitemap: string, loc: string): string {
+  const entries = sitemap.match(/<url>[\s\S]*?<\/url>/g) ?? [];
+  const entry = entries.find((candidate) =>
+    candidate.includes(`<loc>${loc}</loc>`),
+  );
+  expect(entry).toBeTruthy();
+  return entry!;
 }
 
 test('robots and sitemap preserve governed public discovery', async ({
@@ -39,6 +49,7 @@ test('robots and sitemap preserve governed public discovery', async ({
   expect(sitemapDirective?.[1]).toBeTruthy();
 
   const sitemapUrl = new URL(sitemapDirective![1]);
+  expect(sitemapUrl.origin).toBe(governedPublicOrigin);
   expect(sitemapUrl.pathname).toBe('/sitemap.xml');
 
   const sitemapResponse = await request.get('/sitemap.xml');
@@ -56,7 +67,7 @@ test('robots and sitemap preserve governed public discovery', async ({
     for (const routePath of routePaths) {
       const localizedPath = `/${locale}${routePath}`;
       expect(sitemap).toContain(
-        `<loc>${sitemapUrl.origin}${localizedPath}</loc>`,
+        `<loc>${governedPublicOrigin}${localizedPath}</loc>`,
       );
     }
   }
@@ -68,12 +79,17 @@ test('robots and sitemap preserve governed public discovery', async ({
       defaultPath: '/en/schools/psychology',
     },
   ]) {
-    for (const locale of locales) {
-      const href = `${sitemapUrl.origin}/${locale}${routePath}`;
-      expect(sitemap).toMatch(alternatePattern(locale, href));
-    }
+    for (const entryLocale of locales) {
+      const entryLoc = `${governedPublicOrigin}/${entryLocale}${routePath}`;
+      const entry = findUrlEntry(sitemap, entryLoc);
 
-    const defaultHref = `${sitemapUrl.origin}${defaultPath}`;
-    expect(sitemap).toMatch(alternatePattern('x-default', defaultHref));
+      for (const alternateLocale of locales) {
+        const href = `${governedPublicOrigin}/${alternateLocale}${routePath}`;
+        expect(entry).toMatch(alternatePattern(alternateLocale, href));
+      }
+
+      const defaultHref = `${governedPublicOrigin}${defaultPath}`;
+      expect(entry).toMatch(alternatePattern('x-default', defaultHref));
+    }
   }
 });
