@@ -31,9 +31,9 @@ test('robots and sitemap preserve governed public discovery', async ({
   expect(robotsResponse.headers()['content-type']).toMatch(/text\/plain/);
 
   const robots = await robotsResponse.text();
-  expect(robots).toMatch(/User-Agent:\s*\*/i);
-  expect(robots).toMatch(/Allow:\s*\//i);
-  expect(robots).toMatch(/Disallow:\s*\/api\//i);
+  expect(robots).toMatch(/^User-Agent:\s*\*\s*$/im);
+  expect(robots).toMatch(/^Allow:\s*\/\s*$/im);
+  expect(robots).toMatch(/^Disallow:\s*\/api\/\s*$/im);
 
   const sitemapDirective = robots.match(/^Sitemap:\s*(https?:\/\/\S+)$/im);
   expect(sitemapDirective?.[1]).toBeTruthy();
