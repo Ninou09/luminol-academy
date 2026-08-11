@@ -20,7 +20,9 @@ test('localized routes publish reachable governed social preview images', async 
   request,
 }) => {
   for (const { route, previewPath } of socialPreviewCases) {
-    await page.goto(route);
+    const pageResponse = await page.goto(route);
+    expect(pageResponse).not.toBeNull();
+    expect(pageResponse!.ok()).toBeTruthy();
 
     const openGraphImage = page.locator('meta[property="og:image"]');
     const twitterImage = page.locator('meta[name="twitter:image"]');
