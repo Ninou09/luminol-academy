@@ -104,6 +104,41 @@ test('public pages publish localized canonical, hreflang and Open Graph URLs', a
   }
 });
 
+test('social preview metadata is localized and serves wide PNG images', async ({
+  page,
+  request,
+}) => {
+  for (const locale of ['ar', 'fr', 'en'] as const) {
+    await page.goto(`/${locale}/about`);
+
+    const openGraphImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute('content');
+    const twitterImage = await page
+      .locator('meta[name="twitter:image"]')
+      .getAttribute('content');
+    const twitterCard = await page
+      .locator('meta[name="twitter:card"]')
+      .getAttribute('content');
+
+    expect(openGraphImage).toBeTruthy();
+    expect(twitterImage).toBeTruthy();
+    expect(twitterCard).toBe('summary_large_image');
+
+    const openGraphUrl = new URL(openGraphImage!);
+    const twitterUrl = new URL(twitterImage!);
+    expect(openGraphUrl.pathname).toBe('/api/social-preview');
+    expect(twitterUrl.pathname).toBe('/api/social-preview');
+    expect(openGraphUrl.searchParams.get('locale')).toBe(locale);
+    expect(twitterUrl.searchParams.get('locale')).toBe(locale);
+
+    const image = await request.get(`/api/social-preview?locale=${locale}`);
+    expect(image.ok()).toBeTruthy();
+    expect(image.headers()['content-type']).toContain('image/png');
+    expect((await image.body()).byteLength).toBeGreaterThan(1000);
+  }
+});
+
 test('responses include launch security headers', async ({ request }) => {
   const response = await request.get('/');
   expect(response.headers()['x-content-type-options']).toBe('nosniff');

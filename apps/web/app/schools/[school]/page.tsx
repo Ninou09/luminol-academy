@@ -15,6 +15,7 @@ import {
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
+import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
 import {
   buildSanityProgrammeImageUrl,
   getProgrammesForSchool,
@@ -45,6 +46,7 @@ export async function generateMetadata({
   const school = getSchool(locale, slug);
   const pathname = `/schools/${school.slug}`;
   const route = localizePathname(locale, pathname);
+  const socialPreview = getSocialPreviewImage(locale);
 
   return {
     title: school.name,
@@ -58,11 +60,13 @@ export async function generateMetadata({
       description: school.introduction,
       type: 'website',
       url: route,
+      images: [socialPreview],
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title: `Luminol ${school.name}`,
       description: school.introduction,
+      images: [socialPreview],
     },
   };
 }
