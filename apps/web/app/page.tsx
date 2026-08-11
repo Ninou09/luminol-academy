@@ -29,6 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: 'Luminol Academy',
       description: copy.site.description,
       siteName: 'Luminol Academy',
+      locale,
       type: 'website',
       url: route,
       images: [socialPreview],
