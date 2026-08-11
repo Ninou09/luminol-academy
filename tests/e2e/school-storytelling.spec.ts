@@ -87,7 +87,9 @@ test('localized school pages publish matching breadcrumb structured data', async
     expect(jsonLd['@context']).toBe('https://schema.org');
     expect(jsonLd['@type']).toBe('BreadcrumbList');
     expect(jsonLd.itemListElement).toHaveLength(2);
-    expect(jsonLd.itemListElement?.map((item) => item.position)).toEqual([1, 2]);
+    expect(jsonLd.itemListElement?.map((item) => item.position)).toEqual([
+      1, 2,
+    ]);
     expect(
       jsonLd.itemListElement?.every(
         (item) => item['@type'] === 'ListItem' && Boolean(item.name?.trim()),
