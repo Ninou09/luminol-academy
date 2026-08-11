@@ -4,11 +4,11 @@ test('public route metadata preserves governed Open Graph identity and locale', 
   page,
 }) => {
   for (const { route, locale } of [
-    { route: '/en', locale: 'en' },
-    { route: '/fr/about', locale: 'fr' },
-    { route: '/ar/contact', locale: 'ar' },
-    { route: '/en/programmes', locale: 'en' },
-    { route: '/fr/schools/languages', locale: 'fr' },
+    { route: '/en', locale: 'en_DZ' },
+    { route: '/fr/about', locale: 'fr_DZ' },
+    { route: '/ar/contact', locale: 'ar_DZ' },
+    { route: '/en/programmes', locale: 'en_DZ' },
+    { route: '/fr/schools/languages', locale: 'fr_DZ' },
   ]) {
     await page.goto(route);
 
