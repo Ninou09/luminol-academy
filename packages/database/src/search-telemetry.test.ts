@@ -26,6 +26,14 @@ describe('Prisma PostgreSQL connection hardening', () => {
     },
   );
 
+  it('validates the database URL with the governed PostgreSQL schema first', () => {
+    expect(() =>
+      normalizePrismaPostgresConnectionString(
+        'https://db.example.com/luminol?sslmode=require',
+      ),
+    ).toThrow();
+  });
+
   it('leaves explicit verify-full and non-TLS modes unchanged', () => {
     for (const sslMode of ['verify-full', 'disable']) {
       const normalized = normalizePrismaPostgresConnectionString(
