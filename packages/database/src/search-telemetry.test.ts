@@ -67,6 +67,18 @@ describe('Prisma PostgreSQL connection hardening', () => {
     expect(optOut.searchParams.getAll('uselibpqcompat')).toEqual(['false']);
   });
 
+  it('matches pg case-sensitive libpq compatibility semantics', () => {
+    for (const value of ['TRUE', 'True', 'tRuE']) {
+      const normalized = normalizePrismaPostgresConnectionString(
+        `postgresql://user:password@db.example.com/luminol?sslmode=require&uselibpqcompat=${value}`,
+      );
+      const url = new URL(normalized);
+
+      expect(url.searchParams.get('sslmode')).toBe('verify-full');
+      expect(url.searchParams.get('uselibpqcompat')).toBe(value);
+    }
+  });
+
   it('leaves explicit verify-full and non-TLS modes unchanged', () => {
     for (const sslMode of ['verify-full', 'disable']) {
       const normalized = normalizePrismaPostgresConnectionString(
@@ -77,7 +89,7 @@ describe('Prisma PostgreSQL connection hardening', () => {
     }
   });
 
-  it('respects an explicit libpq compatibility opt-in', () => {
+  it('respects an explicit lowercase libpq compatibility opt-in', () => {
     const normalized = normalizePrismaPostgresConnectionString(
       'postgresql://user:password@db.example.com/luminol?sslmode=require&uselibpqcompat=true',
     );
