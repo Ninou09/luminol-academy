@@ -1,3 +1,4 @@
+import { databaseUrlSchema } from '@luminol/validation/env';
 import { PrismaPg } from '@prisma/adapter-pg';
 import {
   PrismaClient,
@@ -5,7 +6,6 @@ import {
   SearchResultBucket,
   type SearchSurface,
 } from '../generated/prisma/client';
-import { databaseUrlSchema } from '../../validation/src/env';
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
