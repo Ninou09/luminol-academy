@@ -14,12 +14,37 @@ export const SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS = 100;
 export const SEARCH_TELEMETRY_TRANSACTION_MAX_WAIT_MS = 100;
 export const SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS = 250;
 
+const LEGACY_STRICT_SSL_MODES = new Set(['prefer', 'require', 'verify-ca']);
+
+/**
+ * pg-connection-string currently treats prefer/require/verify-ca as aliases for
+ * verify-full, but its next major version will adopt weaker libpq semantics for
+ * those names. Pin the current strict behavior explicitly while respecting an
+ * operator who deliberately opted into libpq compatibility.
+ */
+export function normalizePrismaPostgresConnectionString(databaseUrl: string) {
+  const url = new URL(databaseUrl);
+  const sslMode = url.searchParams.get('sslmode')?.toLowerCase();
+  const useLibpqCompat =
+    url.searchParams.get('uselibpqcompat')?.toLowerCase() === 'true';
+
+  if (
+    !useLibpqCompat &&
+    sslMode &&
+    LEGACY_STRICT_SSL_MODES.has(sslMode)
+  ) {
+    url.searchParams.set('sslmode', 'verify-full');
+  }
+
+  return url.toString();
+}
+
 function requireDatabaseUrl() {
   const databaseUrl = process.env.DATABASE_URL?.trim();
   if (!databaseUrl) {
     throw new Error('DATABASE_URL is required to initialize Prisma Client.');
   }
-  return databaseUrl;
+  return normalizePrismaPostgresConnectionString(databaseUrl);
 }
 
 function createClient() {
