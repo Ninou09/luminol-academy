@@ -1,4 +1,5 @@
 import { PrismaPg } from '@prisma/adapter-pg';
+import { databaseUrlSchema } from '@luminol/validation/env';
 import {
   PrismaClient,
   SearchOutcome,
@@ -23,7 +24,8 @@ const LEGACY_STRICT_SSL_MODES = new Set(['prefer', 'require', 'verify-ca']);
  * operator who deliberately opted into libpq compatibility.
  */
 export function normalizePrismaPostgresConnectionString(databaseUrl: string) {
-  const url = new URL(databaseUrl);
+  const validatedDatabaseUrl = databaseUrlSchema.parse(databaseUrl);
+  const url = new URL(validatedDatabaseUrl);
   const sslMode = url.searchParams.get('sslmode')?.toLowerCase();
   const useLibpqCompat =
     url.searchParams.get('uselibpqcompat')?.toLowerCase() === 'true';
