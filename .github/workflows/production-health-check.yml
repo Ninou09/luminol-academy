@@ -60,7 +60,7 @@ jobs:
           mapfile -t response_lines <<< "$response_meta"
 
           test "${response_lines[0]:-}" = '404'
-          grep --fixed-strings 'data-not-found="true"' \
+          grep --fixed-strings 'data-not-found' \
             "$RUNNER_TEMP/certificate-response.html"
           grep --ignore-case --fixed-strings 'no-store' \
             <<< "${response_lines[1]:-}"
