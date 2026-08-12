@@ -38,7 +38,10 @@ function normalizeEffectiveSearchParameter(url: URL, name: string) {
 export function normalizePrismaPostgresConnectionString(databaseUrl: string) {
   const validatedDatabaseUrl = databaseUrlSchema.parse(databaseUrl);
   const url = new URL(validatedDatabaseUrl);
-  const sslMode = normalizeEffectiveSearchParameter(url, 'sslmode')?.toLowerCase();
+  const sslMode = normalizeEffectiveSearchParameter(
+    url,
+    'sslmode',
+  )?.toLowerCase();
   const useLibpqCompat =
     normalizeEffectiveSearchParameter(url, 'uselibpqcompat') === 'true';
 
