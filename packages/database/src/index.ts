@@ -17,6 +17,18 @@ export const SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS = 250;
 
 const LEGACY_STRICT_SSL_MODES = new Set(['prefer', 'require', 'verify-ca']);
 
+function normalizeEffectiveSearchParameter(url: URL, name: string) {
+  const values = url.searchParams.getAll(name);
+  const effectiveValue = values.at(-1);
+
+  if (values.length > 1 && effectiveValue !== undefined) {
+    url.searchParams.delete(name);
+    url.searchParams.set(name, effectiveValue);
+  }
+
+  return effectiveValue?.toLowerCase();
+}
+
 /**
  * pg-connection-string currently treats prefer/require/verify-ca as aliases for
  * verify-full, but its next major version will adopt weaker libpq semantics for
@@ -26,9 +38,9 @@ const LEGACY_STRICT_SSL_MODES = new Set(['prefer', 'require', 'verify-ca']);
 export function normalizePrismaPostgresConnectionString(databaseUrl: string) {
   const validatedDatabaseUrl = databaseUrlSchema.parse(databaseUrl);
   const url = new URL(validatedDatabaseUrl);
-  const sslMode = url.searchParams.get('sslmode')?.toLowerCase();
+  const sslMode = normalizeEffectiveSearchParameter(url, 'sslmode');
   const useLibpqCompat =
-    url.searchParams.get('uselibpqcompat')?.toLowerCase() === 'true';
+    normalizeEffectiveSearchParameter(url, 'uselibpqcompat') === 'true';
 
   if (!useLibpqCompat && sslMode && LEGACY_STRICT_SSL_MODES.has(sslMode)) {
     url.searchParams.set('sslmode', 'verify-full');
