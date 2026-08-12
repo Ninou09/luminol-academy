@@ -1,0 +1,35 @@
+name: PR lockfile sync
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'issue-190-postgres-ssl-mode'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - name: Regenerate lockfile only
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+      - name: Commit lockfile update
+        shell: bash
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo 'pnpm-lock.yaml is already synchronized.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add pnpm-lock.yaml
+          git commit -m 'Sync database workspace dependency lockfile'
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
