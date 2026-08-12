@@ -75,24 +75,52 @@ jobs:
             local title="$3"
             local body_file="$RUNNER_TEMP/${name// /-}-sign-in.html"
             local response_meta
-            local response_lines
+            local -a response_lines=()
+            local status
+            local location
+            local cache_control
+            local content_type_options
+            local frame_options
+            local csp
 
-            response_meta="$(curl --fail --silent --show-error --location --max-time 20 \
+            response_meta="$(curl --silent --show-error --max-time 20 \
               --output "$body_file" \
-              --write-out '%{http_code}\n%header{cache-control}\n%header{x-content-type-options}\n%header{content-security-policy}\n' \
+              --write-out '%{http_code}\n%header{location}\n%header{cache-control}\n%header{x-content-type-options}\n%header{x-frame-options}\n%header{content-security-policy}\n' \
               "$url/sign-in")"
             mapfile -t response_lines <<< "$response_meta"
 
-            test "${response_lines[0]:-}" = '200'
-            grep --fixed-strings "<title>$title</title>" "$body_file"
-            grep --ignore-case --fixed-strings 'no-store' \
-              <<< "${response_lines[1]:-}"
-            grep --ignore-case --line-regexp 'nosniff' \
-              <<< "${response_lines[2]:-}"
-            grep --fixed-strings "frame-ancestors 'none'" \
-              <<< "${response_lines[3]:-}"
+            status="${response_lines[0]:-}"
+            location="${response_lines[1]:-}"
+            cache_control="${response_lines[2]:-}"
+            content_type_options="${response_lines[3]:-}"
+            frame_options="${response_lines[4]:-}"
+            csp="${response_lines[5]:-}"
 
-            echo "$name sign-in is reachable with HTTP ${response_lines[0]}"
+            case "$status" in
+              200)
+                grep --fixed-strings "<title>$title</title>" "$body_file"
+                grep --ignore-case --fixed-strings 'no-store' \
+                  <<< "$cache_control"
+                grep --ignore-case --line-regexp 'nosniff' \
+                  <<< "$content_type_options"
+                grep --fixed-strings "frame-ancestors 'none'" \
+                  <<< "$csp"
+                echo "$name sign-in is reachable with HTTP $status"
+                ;;
+              302|303|307|308)
+                grep --fixed-strings 'https://vercel.com/sso-api?' \
+                  <<< "$location"
+                grep --ignore-case --fixed-strings 'no-store' \
+                  <<< "$cache_control"
+                grep --ignore-case --line-regexp 'DENY' \
+                  <<< "$frame_options"
+                echo "$name sign-in is reachable behind Vercel Deployment Protection with HTTP $status"
+                ;;
+              *)
+                echo "::error::$name sign-in returned unexpected HTTP $status"
+                exit 1
+                ;;
+            esac
           }
 
           check_sign_in 'Learner portal' "$PORTAL_URL" 'Learner Portal | Luminol'
