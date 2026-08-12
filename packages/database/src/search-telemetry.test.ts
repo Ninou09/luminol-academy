@@ -34,6 +34,39 @@ describe('Prisma PostgreSQL connection hardening', () => {
     ).toThrow();
   });
 
+  it.each([
+    ['disable&sslmode=require', 'verify-full'],
+    ['require&sslmode=disable', 'disable'],
+  ])(
+    'normalizes the downstream-effective duplicate sslmode for %s',
+    (sslModes, expected) => {
+      const normalized = normalizePrismaPostgresConnectionString(
+        `postgresql://user:password@db.example.com/luminol?sslmode=${sslModes}`,
+      );
+      const url = new URL(normalized);
+
+      expect(url.searchParams.getAll('sslmode')).toEqual([expected]);
+    },
+  );
+
+  it('uses the last libpq compatibility parameter like the downstream parser', () => {
+    const optIn = new URL(
+      normalizePrismaPostgresConnectionString(
+        'postgresql://user:password@db.example.com/luminol?sslmode=require&uselibpqcompat=false&uselibpqcompat=true',
+      ),
+    );
+    const optOut = new URL(
+      normalizePrismaPostgresConnectionString(
+        'postgresql://user:password@db.example.com/luminol?sslmode=require&uselibpqcompat=true&uselibpqcompat=false',
+      ),
+    );
+
+    expect(optIn.searchParams.get('sslmode')).toBe('require');
+    expect(optIn.searchParams.getAll('uselibpqcompat')).toEqual(['true']);
+    expect(optOut.searchParams.get('sslmode')).toBe('verify-full');
+    expect(optOut.searchParams.getAll('uselibpqcompat')).toEqual(['false']);
+  });
+
   it('leaves explicit verify-full and non-TLS modes unchanged', () => {
     for (const sslMode of ['verify-full', 'disable']) {
       const normalized = normalizePrismaPostgresConnectionString(
