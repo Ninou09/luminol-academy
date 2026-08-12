@@ -1,13 +1,18 @@
 import { z } from 'zod';
+
+export const databaseUrlSchema = z.url().startsWith('postgresql://');
+
 const serverEnvSchema = z.object({
-  DATABASE_URL: z.url().startsWith('postgresql://'),
+  DATABASE_URL: databaseUrlSchema,
   CLERK_SECRET_KEY: z.string().min(1).optional(),
   SANITY_API_TOKEN: z.string().min(1).optional(),
   RESEND_API_KEY: z.string().startsWith('re_').optional(),
 });
+
 export function validateServerEnv(env: Record<string, string | undefined>) {
   return serverEnvSchema.parse(env);
 }
+
 export const publicEnvSchema = z.object({
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().startsWith('pk_').optional(),
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1).optional(),

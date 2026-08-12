@@ -1,3 +1,4 @@
+import { databaseUrlSchema } from '@luminol/validation/env';
 import { PrismaPg } from '@prisma/adapter-pg';
 import {
   PrismaClient,
@@ -14,12 +15,49 @@ export const SEARCH_TELEMETRY_STATEMENT_TIMEOUT_MS = 100;
 export const SEARCH_TELEMETRY_TRANSACTION_MAX_WAIT_MS = 100;
 export const SEARCH_TELEMETRY_TRANSACTION_TIMEOUT_MS = 250;
 
+const LEGACY_STRICT_SSL_MODES = new Set(['prefer', 'require', 'verify-ca']);
+
+function normalizeEffectiveSearchParameter(url: URL, name: string) {
+  const values = url.searchParams.getAll(name);
+  const effectiveValue = values.at(-1);
+
+  if (values.length > 1 && effectiveValue !== undefined) {
+    url.searchParams.delete(name);
+    url.searchParams.set(name, effectiveValue);
+  }
+
+  return effectiveValue;
+}
+
+/**
+ * pg-connection-string currently treats prefer/require/verify-ca as aliases for
+ * verify-full, but its next major version will adopt weaker libpq semantics for
+ * those names. Pin the current strict behavior explicitly while respecting an
+ * operator who deliberately opted into libpq compatibility.
+ */
+export function normalizePrismaPostgresConnectionString(databaseUrl: string) {
+  const validatedDatabaseUrl = databaseUrlSchema.parse(databaseUrl);
+  const url = new URL(validatedDatabaseUrl);
+  const sslMode = normalizeEffectiveSearchParameter(
+    url,
+    'sslmode',
+  )?.toLowerCase();
+  const useLibpqCompat =
+    normalizeEffectiveSearchParameter(url, 'uselibpqcompat') === 'true';
+
+  if (!useLibpqCompat && sslMode && LEGACY_STRICT_SSL_MODES.has(sslMode)) {
+    url.searchParams.set('sslmode', 'verify-full');
+  }
+
+  return url.toString();
+}
+
 function requireDatabaseUrl() {
   const databaseUrl = process.env.DATABASE_URL?.trim();
   if (!databaseUrl) {
     throw new Error('DATABASE_URL is required to initialize Prisma Client.');
   }
-  return databaseUrl;
+  return normalizePrismaPostgresConnectionString(databaseUrl);
 }
 
 function createClient() {
