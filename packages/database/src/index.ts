@@ -28,11 +28,7 @@ export function normalizePrismaPostgresConnectionString(databaseUrl: string) {
   const useLibpqCompat =
     url.searchParams.get('uselibpqcompat')?.toLowerCase() === 'true';
 
-  if (
-    !useLibpqCompat &&
-    sslMode &&
-    LEGACY_STRICT_SSL_MODES.has(sslMode)
-  ) {
+  if (!useLibpqCompat && sslMode && LEGACY_STRICT_SSL_MODES.has(sslMode)) {
     url.searchParams.set('sslmode', 'verify-full');
   }
 
