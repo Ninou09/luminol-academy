@@ -21,6 +21,9 @@
     "@prisma/client": "7.9.1",
     "pg": "^8.22.0"
   },
+  "peerDependencies": {
+    "@luminol/validation": "workspace:*"
+  },
   "devDependencies": {
     "@luminol/config": "workspace:*",
     "@types/node": "^20.19.43",
