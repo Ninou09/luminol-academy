@@ -370,6 +370,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@luminol/validation':
+        specifier: workspace:*
+        version: link:../validation
       '@prisma/adapter-pg':
         specifier: 7.9.1
         version: 7.9.1
