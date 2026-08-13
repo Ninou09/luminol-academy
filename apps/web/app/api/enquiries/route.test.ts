@@ -21,12 +21,17 @@ const validEnquiry = {
   website: '',
 };
 
-function createRequest(body: unknown, address = '203.0.113.10') {
+function createRequest(
+  body: unknown,
+  address = '203.0.113.10',
+  headers: Record<string, string> = {},
+) {
   return new Request('https://luminol.example/api/enquiries', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
       'x-forwarded-for': address,
+      ...headers,
     },
     body: JSON.stringify(body),
   });
@@ -43,10 +48,16 @@ describe('POST /api/enquiries', () => {
     vi.unstubAllEnvs();
   });
 
-  it('stores a valid enquiry without retaining request metadata', async () => {
-    const response = await POST(createRequest(validEnquiry));
+  it('stores a valid same-origin enquiry without retaining request metadata', async () => {
+    const response = await POST(
+      createRequest(validEnquiry, '203.0.113.10', {
+        'content-type': 'application/json; charset=utf-8',
+        'sec-fetch-site': 'same-origin',
+      }),
+    );
 
     expect(response.status).toBe(201);
+    expect(response.headers.get('cache-control')).toBe('no-store');
     expect(createEnquiry).toHaveBeenCalledWith({
       data: {
         name: validEnquiry.name,
@@ -58,6 +69,37 @@ describe('POST /api/enquiries', () => {
         consent: true,
       },
     });
+  });
+
+  it('keeps non-browser clients compatible when Fetch Metadata is absent', async () => {
+    const response = await POST(createRequest(validEnquiry, '203.0.113.15'));
+
+    expect(response.status).toBe(201);
+    expect(createEnquiry).toHaveBeenCalledTimes(1);
+  });
+
+  it('rejects unsupported media types before persistence', async () => {
+    const response = await POST(
+      createRequest(validEnquiry, '203.0.113.16', {
+        'content-type': 'text/plain',
+      }),
+    );
+
+    expect(response.status).toBe(415);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(createEnquiry).not.toHaveBeenCalled();
+  });
+
+  it('rejects explicit cross-site browser submissions before persistence', async () => {
+    const response = await POST(
+      createRequest(validEnquiry, '203.0.113.17', {
+        'sec-fetch-site': 'cross-site',
+      }),
+    );
+
+    expect(response.status).toBe(403);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(createEnquiry).not.toHaveBeenCalled();
   });
 
   it('rejects invalid and honeypot submissions', async () => {
@@ -73,6 +115,8 @@ describe('POST /api/enquiries', () => {
 
     expect(invalid.status).toBe(400);
     expect(honeypot.status).toBe(400);
+    expect(invalid.headers.get('cache-control')).toBe('no-store');
+    expect(honeypot.headers.get('cache-control')).toBe('no-store');
     expect(createEnquiry).not.toHaveBeenCalled();
   });
 
@@ -82,6 +126,7 @@ describe('POST /api/enquiries', () => {
     const response = await POST(createRequest(validEnquiry, '203.0.113.13'));
 
     expect(response.status).toBe(500);
+    expect(response.headers.get('cache-control')).toBe('no-store');
     await expect(response.json()).resolves.toEqual({
       error: 'We could not save your enquiry. Please try again.',
     });
@@ -95,6 +140,7 @@ describe('POST /api/enquiries', () => {
     }
 
     expect(responses.at(-1)?.status).toBe(429);
+    expect(responses.at(-1)?.headers.get('cache-control')).toBe('no-store');
     expect(createEnquiry).toHaveBeenCalledTimes(5);
   });
 });
