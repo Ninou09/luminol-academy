@@ -86,7 +86,7 @@ jobs:
             response_meta="$(curl --silent --show-error --max-time 20 \
               --output "$body_file" \
               --write-out '%{http_code}\n%header{location}\n%header{cache-control}\n%header{x-content-type-options}\n%header{x-frame-options}\n%header{content-security-policy}\n' \
-              "$url/sign-in")"
+              "$url/en/sign-in")"
             mapfile -t response_lines <<< "$response_meta"
 
             status="${response_lines[0]:-}"
@@ -124,7 +124,7 @@ jobs:
           }
 
           check_sign_in 'Learner portal' "$PORTAL_URL" 'Learner Portal | Luminol'
-          check_sign_in 'Administration' "$ADMIN_URL" 'Administration | Luminol'
+          check_sign_in 'Administration' "$ADMIN_URL" 'Administration | Luminol Academy'
 
       - name: Record check summary
         if: always()
@@ -135,8 +135,8 @@ jobs:
             '## Production health check' \
             '' \
             "- Public website: $WEB_URL" \
-            "- Learner portal sign-in: $PORTAL_URL/sign-in" \
-            "- Administration sign-in: $ADMIN_URL/sign-in" \
+            "- Learner portal sign-in: $PORTAL_URL/en/sign-in" \
+            "- Administration sign-in: $ADMIN_URL/en/sign-in" \
             "- Checked at: $checked_at" \
             '' \
             'Scheduled GitHub Actions executions are approximate and may start later than the cron time.' \
