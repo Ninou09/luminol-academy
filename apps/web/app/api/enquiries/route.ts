@@ -32,11 +32,15 @@ function jsonResponse(body: Record<string, unknown>, status: number) {
 function hasJsonContentType(request: Request): boolean {
   const contentType = request.headers.get('content-type');
   if (!contentType) return false;
-  return contentType.split(';', 1)[0]?.trim().toLowerCase() === 'application/json';
+  return (
+    contentType.split(';', 1)[0]?.trim().toLowerCase() === 'application/json'
+  );
 }
 
 function isExplicitCrossSiteRequest(request: Request): boolean {
-  return request.headers.get('sec-fetch-site')?.trim().toLowerCase() === 'cross-site';
+  return (
+    request.headers.get('sec-fetch-site')?.trim().toLowerCase() === 'cross-site'
+  );
 }
 
 function getClientAddress(request: Request): string | null {
