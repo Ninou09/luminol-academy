@@ -79,7 +79,10 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   if (!hasJsonContentType(request)) {
-    return jsonResponse({ error: 'Content-Type must be application/json' }, 415);
+    return jsonResponse(
+      { error: 'Content-Type must be application/json' },
+      415,
+    );
   }
 
   const declaredLength = Number(request.headers.get('content-length') ?? 0);
