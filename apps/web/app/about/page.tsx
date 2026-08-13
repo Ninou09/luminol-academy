@@ -6,6 +6,7 @@ import {
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
@@ -13,6 +14,21 @@ import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
+
+const founderMediaByLocale = {
+  en: {
+    name: 'Kheddaoui Fettouma',
+    alt: 'Kheddaoui Fettouma, founder of Luminol Academy',
+  },
+  fr: {
+    name: 'Kheddaoui Fettouma',
+    alt: 'Kheddaoui Fettouma, fondatrice de Luminol Academy',
+  },
+  ar: {
+    name: 'خداوي فطومة',
+    alt: 'خداوي فطومة، مؤسسة أكاديمية لومينول',
+  },
+} as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -48,6 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale).about;
+  const founderMedia = founderMediaByLocale[locale];
   const schoolCards = [
     {
       slug: 'psychology',
@@ -86,13 +103,50 @@ export default async function AboutPage() {
             <h1 id="about-hero-title">{copy.heroTitle}</h1>
             <p>{copy.heroBody}</p>
           </div>
-          <div className={styles.heroVisual} aria-hidden="true" data-reveal>
-            <div className={styles.rays} />
-            <div className={styles.orbit} data-motion-orbit />
-            <span className={styles.core} data-motion-float>
+          <div
+            className={styles.heroVisual}
+            data-founder-media
+            data-media-source="user-approved-upload"
+            data-media-approval="2026-08-13"
+            data-media-crop="portrait-center-face"
+            data-reveal
+          >
+            <Image
+              src="/media/founder-kheddaoui-fettouma.svg"
+              alt={founderMedia.alt}
+              fill
+              priority
+              sizes="(max-width: 1000px) calc(100vw - 2.5rem), 45vw"
+              style={{ objectFit: 'cover', objectPosition: '50% 35%' }}
+            />
+            <div className={styles.rays} aria-hidden="true" />
+            <span
+              className={styles.core}
+              data-motion-float
+              aria-hidden="true"
+              style={{ opacity: 0, pointerEvents: 'none' }}
+            >
               L
             </span>
-            <p>{copy.visualCaption}</p>
+            <p
+              style={{
+                zIndex: 2,
+                display: 'grid',
+                gap: '0.2rem',
+              }}
+            >
+              <strong
+                style={{
+                  color: 'var(--color-brand-surface)',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1.5rem',
+                  fontWeight: 500,
+                }}
+              >
+                {founderMedia.name}
+              </strong>
+              <span>{copy.visualCaption}</span>
+            </p>
           </div>
         </section>
 
