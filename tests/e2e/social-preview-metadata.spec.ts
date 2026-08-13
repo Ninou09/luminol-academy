@@ -51,5 +51,11 @@ test('localized routes publish reachable governed social preview images', async 
     const previewResponse = await request.get(previewPath);
     expect(previewResponse.ok()).toBeTruthy();
     expect(previewResponse.headers()['content-type']).toMatch(/image\/png/i);
+
+    if (previewPath.startsWith('/api/social-preview')) {
+      expect(previewResponse.headers()['cache-control']).toBe(
+        'public, max-age=300, s-maxage=86400, stale-while-revalidate=604800',
+      );
+    }
   }
 });
