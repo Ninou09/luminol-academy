@@ -24,6 +24,7 @@ export function EnquiryForm({ locale, copy }: EnquiryFormProps) {
     status: 'idle',
     message: '',
   });
+  const isSubmitting = submission.status === 'submitting';
 
   async function submitEnquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,7 +60,11 @@ export function EnquiryForm({ locale, copy }: EnquiryFormProps) {
   }
 
   return (
-    <form className="enquiry-form" onSubmit={submitEnquiry}>
+    <form
+      className="enquiry-form"
+      aria-busy={isSubmitting}
+      onSubmit={submitEnquiry}
+    >
       <div className="form-heading">
         <p className="eyebrow">{copy.eyebrow}</p>
         <h2>{copy.title}</h2>
@@ -126,16 +131,13 @@ export function EnquiryForm({ locale, copy }: EnquiryFormProps) {
       </label>
 
       <div className="form-actions">
-        <Button
-          disabled={submission.status === 'submitting'}
-          size="lg"
-          type="submit"
-        >
-          {submission.status === 'submitting' ? copy.sending : copy.submit}
+        <Button disabled={isSubmitting} size="lg" type="submit">
+          {isSubmitting ? copy.sending : copy.submit}
         </Button>
         <p
           className={`form-status form-status-${submission.status}`}
           role="status"
+          aria-atomic="true"
           aria-live="polite"
         >
           {submission.message}
