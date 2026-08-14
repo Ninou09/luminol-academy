@@ -327,7 +327,8 @@ export async function archiveOrganizationTeam(formData: FormData) {
       data: { archivedAt: new Date() },
     });
 
-    if (updated.count !== 1) throw new Error('Active organization team not found');
+    if (updated.count !== 1)
+      throw new Error('Active organization team not found');
 
     await audit(
       transaction,
@@ -413,7 +414,8 @@ export async function removeOrganizationTeamMember(formData: FormData) {
       select: { id: true },
     });
 
-    if (!teamMembership) throw new Error('Organization team membership not found');
+    if (!teamMembership)
+      throw new Error('Organization team membership not found');
 
     await transaction.teamMembership.delete({
       where: { id: teamMembership.id },
@@ -456,7 +458,9 @@ export async function allocateOrganizationSeat(formData: FormData) {
     ]);
 
     if (!organization || !membership) {
-      throw new Error('Active organization membership required for seat allocation');
+      throw new Error(
+        'Active organization membership required for seat allocation',
+      );
     }
 
     const seat = await transaction.organizationSeat.create({
@@ -559,7 +563,8 @@ export async function assignOrganizationCourse(formData: FormData) {
     if (!organization || !course) {
       throw new Error('Active organization or published course not found');
     }
-    if (existing?.active) throw new Error('Course already assigned to organization');
+    if (existing?.active)
+      throw new Error('Course already assigned to organization');
 
     const organizationCourse = existing
       ? await transaction.organizationCourse.update({

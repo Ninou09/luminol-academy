@@ -17,7 +17,9 @@ describe('organization administration invariants', () => {
   test('enforces terminal seat lifecycle states', () => {
     const now = new Date('2026-08-14T13:00:00.000Z');
 
-    expect(getOrganizationSeatLifecycleUpdate('INVITED', 'ACTIVE', now)).toEqual({
+    expect(
+      getOrganizationSeatLifecycleUpdate('INVITED', 'ACTIVE', now),
+    ).toEqual({
       status: 'ACTIVE',
       activatedAt: now,
       completedAt: null,

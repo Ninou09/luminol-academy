@@ -92,7 +92,9 @@ export default async function OrganizationsAdminPage() {
 
           {dashboard.organizations.length === 0 ? (
             <section className="admin-panel">
-              <p className="admin-empty">No organizations have been created yet.</p>
+              <p className="admin-empty">
+                No organizations have been created yet.
+              </p>
             </section>
           ) : (
             dashboard.organizations.map((organization) => (
@@ -157,7 +159,10 @@ export default async function OrganizationsAdminPage() {
                         <div className="panel-heading">
                           <h3>Memberships</h3>
                         </div>
-                        <form action={upsertOrganizationMembership} className="status-form">
+                        <form
+                          action={upsertOrganizationMembership}
+                          className="status-form"
+                        >
                           <input
                             type="hidden"
                             name="organizationId"
@@ -243,7 +248,10 @@ export default async function OrganizationsAdminPage() {
                         <div className="panel-heading">
                           <h3>Seats</h3>
                         </div>
-                        <form action={allocateOrganizationSeat} className="status-form">
+                        <form
+                          action={allocateOrganizationSeat}
+                          className="status-form"
+                        >
                           <input
                             type="hidden"
                             name="organizationId"
@@ -272,7 +280,9 @@ export default async function OrganizationsAdminPage() {
                           {organization.seats.map((seat) => (
                             <article key={seat.id}>
                               <div>
-                                <strong dir="auto">{personLabel(seat.user)}</strong>
+                                <strong dir="auto">
+                                  {personLabel(seat.user)}
+                                </strong>
                                 <small>{seat.status}</small>
                               </div>
                               {seatTransitions[seat.status].length > 0 ? (
@@ -290,15 +300,21 @@ export default async function OrganizationsAdminPage() {
                                     name="seatId"
                                     value={seat.id}
                                   />
-                                  <select name="toStatus" defaultValue="" required>
+                                  <select
+                                    name="toStatus"
+                                    defaultValue=""
+                                    required
+                                  >
                                     <option value="" disabled>
                                       Move to
                                     </option>
-                                    {seatTransitions[seat.status].map((status) => (
-                                      <option key={status} value={status}>
-                                        {status}
-                                      </option>
-                                    ))}
+                                    {seatTransitions[seat.status].map(
+                                      (status) => (
+                                        <option key={status} value={status}>
+                                          {status}
+                                        </option>
+                                      ),
+                                    )}
                                   </select>
                                   <button type="submit">Update seat</button>
                                 </form>
@@ -314,7 +330,10 @@ export default async function OrganizationsAdminPage() {
                         <div className="panel-heading">
                           <h3>Teams</h3>
                         </div>
-                        <form action={createOrganizationTeam} className="status-form">
+                        <form
+                          action={createOrganizationTeam}
+                          className="status-form"
+                        >
                           <input
                             type="hidden"
                             name="organizationId"
@@ -322,7 +341,12 @@ export default async function OrganizationsAdminPage() {
                           />
                           <label>
                             <span>Team name</span>
-                            <input name="name" minLength={2} maxLength={160} required />
+                            <input
+                              name="name"
+                              minLength={2}
+                              maxLength={160}
+                              required
+                            />
                           </label>
                           <button type="submit">Create team</button>
                         </form>
@@ -334,22 +358,38 @@ export default async function OrganizationsAdminPage() {
                                 <strong dir="auto">{team.name}</strong>
                                 <small>{team.memberships.length} members</small>
                               </div>
-                              <form action={addOrganizationTeamMember} className="status-form">
+                              <form
+                                action={addOrganizationTeamMember}
+                                className="status-form"
+                              >
                                 <input
                                   type="hidden"
                                   name="organizationId"
                                   value={organization.id}
                                 />
-                                <input type="hidden" name="teamId" value={team.id} />
-                                <select name="membershipId" defaultValue="" required>
+                                <input
+                                  type="hidden"
+                                  name="teamId"
+                                  value={team.id}
+                                />
+                                <select
+                                  name="membershipId"
+                                  defaultValue=""
+                                  required
+                                >
                                   <option value="" disabled>
                                     Add member
                                   </option>
-                                  {organization.memberships.map((membership) => (
-                                    <option key={membership.id} value={membership.id}>
-                                      {personLabel(membership.user)}
-                                    </option>
-                                  ))}
+                                  {organization.memberships.map(
+                                    (membership) => (
+                                      <option
+                                        key={membership.id}
+                                        value={membership.id}
+                                      >
+                                        {personLabel(membership.user)}
+                                      </option>
+                                    ),
+                                  )}
                                 </select>
                                 <button type="submit">Add</button>
                               </form>
@@ -376,7 +416,8 @@ export default async function OrganizationsAdminPage() {
                                   />
                                   <span dir="auto">
                                     {personLabel(
-                                      teamMembership.organizationMembership.user,
+                                      teamMembership.organizationMembership
+                                        .user,
                                     )}
                                   </span>
                                   <button type="submit">Remove</button>
@@ -388,7 +429,11 @@ export default async function OrganizationsAdminPage() {
                                   name="organizationId"
                                   value={organization.id}
                                 />
-                                <input type="hidden" name="teamId" value={team.id} />
+                                <input
+                                  type="hidden"
+                                  name="teamId"
+                                  value={team.id}
+                                />
                                 <button type="submit">Archive team</button>
                               </form>
                             </article>
@@ -400,7 +445,10 @@ export default async function OrganizationsAdminPage() {
                         <div className="panel-heading">
                           <h3>Assigned learning</h3>
                         </div>
-                        <form action={assignOrganizationCourse} className="status-form">
+                        <form
+                          action={assignOrganizationCourse}
+                          className="status-form"
+                        >
                           <input
                             type="hidden"
                             name="organizationId"
@@ -412,11 +460,13 @@ export default async function OrganizationsAdminPage() {
                               <option value="" disabled>
                                 Select course
                               </option>
-                              {dashboard.options.publishedCourses.map((course) => (
-                                <option key={course.id} value={course.id}>
-                                  {course.title}
-                                </option>
-                              ))}
+                              {dashboard.options.publishedCourses.map(
+                                (course) => (
+                                  <option key={course.id} value={course.id}>
+                                    {course.title}
+                                  </option>
+                                ),
+                              )}
                             </select>
                           </label>
                           <button type="submit">Assign course</button>

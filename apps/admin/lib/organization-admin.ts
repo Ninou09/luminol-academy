@@ -13,7 +13,8 @@ export const ORGANIZATION_SEAT_STATUSES = [
 
 export type OrganizationMembershipRole =
   (typeof ORGANIZATION_MEMBERSHIP_ROLES)[number];
-export type OrganizationSeatStatus = (typeof ORGANIZATION_SEAT_STATUSES)[number];
+export type OrganizationSeatStatus =
+  (typeof ORGANIZATION_SEAT_STATUSES)[number];
 
 const SEAT_TRANSITIONS: Record<
   OrganizationSeatStatus,
@@ -29,7 +30,10 @@ export function assertOrganizationScope(
   expectedOrganizationId: string,
   actualOrganizationId: string,
 ) {
-  if (!expectedOrganizationId || expectedOrganizationId !== actualOrganizationId) {
+  if (
+    !expectedOrganizationId ||
+    expectedOrganizationId !== actualOrganizationId
+  ) {
     throw new Error('Organization scope mismatch');
   }
 }
@@ -40,7 +44,9 @@ export function getOrganizationSeatLifecycleUpdate(
   now: Date,
 ) {
   if (!SEAT_TRANSITIONS[current].includes(next)) {
-    throw new Error(`Invalid organization seat transition: ${current} -> ${next}`);
+    throw new Error(
+      `Invalid organization seat transition: ${current} -> ${next}`,
+    );
   }
 
   if (next === 'ACTIVE') {
@@ -82,7 +88,9 @@ export function summarizeOrganizationProgress(
     };
   }
 
-  const completedAssignments = records.filter((record) => record.completed).length;
+  const completedAssignments = records.filter(
+    (record) => record.completed,
+  ).length;
   const progressTotal = records.reduce((total, record) => {
     const progress = Math.min(100, Math.max(0, record.progressPercent));
     return total + progress;
