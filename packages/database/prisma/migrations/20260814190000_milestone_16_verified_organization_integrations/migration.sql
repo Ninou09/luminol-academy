@@ -7,8 +7,8 @@ ALTER TABLE "CorporateBillingRecord" ADD COLUMN "organizationRecordId" TEXT;
 ALTER TABLE "NotificationEvent" ADD COLUMN "organizationRecordId" TEXT;
 ALTER TABLE "Notification" ADD COLUMN "organizationRecordId" TEXT;
 
--- Backfill only exact first-class Organization identifiers. Legacy opaque finance
--- identifiers remain untouched and intentionally unverified.
+-- Initial historical backfill. Exact organization identities can be verified for
+-- invoices regardless of current lifecycle state because this is historical data.
 UPDATE "Invoice" AS invoice
 SET "organizationRecordId" = organization."id"
 FROM "Organization" AS organization
@@ -27,53 +27,76 @@ WHERE billing."organizationId" = organization."id"
   AND invoice."organizationRecordId" = organization."id";
 
 -- Historical organization-scoped notification events are marked verified only
--- when both the Organization and a recipient membership can be proven.
+-- when the Organization and a currently valid recipient membership can be proven.
 UPDATE "NotificationEvent" AS event
 SET "organizationRecordId" = organization."id"
 FROM "Organization" AS organization,
-     "OrganizationMembership" AS membership
+     "OrganizationMembership" AS membership,
+     "User" AS recipient
 WHERE event."organizationId" = organization."id"
+  AND organization."status" = 'ACTIVE'
+  AND organization."archivedAt" IS NULL
   AND membership."organizationId" = organization."id"
-  AND membership."userId" = event."recipientId";
+  AND membership."userId" = event."recipientId"
+  AND membership."active" = TRUE
+  AND membership."endedAt" IS NULL
+  AND recipient."id" = event."recipientId"
+  AND recipient."deletedAt" IS NULL;
 
 -- A child notification is verified only when its parent event is already
 -- verified for the same Organization, the recipient identity matches the event,
--- and membership in that Organization can be proven. Historical inconsistent
--- children remain unverified and continue to support non-identity updates.
+-- and active membership in that Organization can be proven.
 UPDATE "Notification" AS notification
 SET "organizationRecordId" = organization."id"
 FROM "Organization" AS organization,
      "OrganizationMembership" AS membership,
+     "User" AS recipient,
      "NotificationEvent" AS event
 WHERE notification."eventId" = event."id"
   AND notification."organizationId" = organization."id"
+  AND organization."status" = 'ACTIVE'
+  AND organization."archivedAt" IS NULL
   AND event."organizationId" = organization."id"
   AND event."organizationRecordId" = organization."id"
   AND notification."recipientId" = event."recipientId"
   AND membership."organizationId" = organization."id"
-  AND membership."userId" = notification."recipientId";
+  AND membership."userId" = notification."recipientId"
+  AND membership."active" = TRUE
+  AND membership."endedAt" IS NULL
+  AND recipient."id" = notification."recipientId"
+  AND recipient."deletedAt" IS NULL;
 
+-- Add foreign keys with NOT VALID so the short constraint-addition lock does not
+-- scan live tables. Separate later migrations validate each constraint using the
+-- lower-impact PostgreSQL validation lock.
 ALTER TABLE "Invoice"
   ADD CONSTRAINT "Invoice_organizationRecordId_fkey"
   FOREIGN KEY ("organizationRecordId") REFERENCES "Organization"("id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
+  ON DELETE RESTRICT ON UPDATE CASCADE NOT VALID;
 ALTER TABLE "CorporateBillingRecord"
   ADD CONSTRAINT "CorporateBillingRecord_organizationRecordId_fkey"
   FOREIGN KEY ("organizationRecordId") REFERENCES "Organization"("id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
+  ON DELETE RESTRICT ON UPDATE CASCADE NOT VALID;
 ALTER TABLE "NotificationEvent"
   ADD CONSTRAINT "NotificationEvent_organizationRecordId_fkey"
   FOREIGN KEY ("organizationRecordId") REFERENCES "Organization"("id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
+  ON DELETE RESTRICT ON UPDATE CASCADE NOT VALID;
 ALTER TABLE "Notification"
   ADD CONSTRAINT "Notification_organizationRecordId_fkey"
   FOREIGN KEY ("organizationRecordId") REFERENCES "Organization"("id")
-  ON DELETE RESTRICT ON UPDATE CASCADE;
+  ON DELETE RESTRICT ON UPDATE CASCADE NOT VALID;
 
 CREATE OR REPLACE FUNCTION "enforce_verified_organization_link"()
 RETURNS TRIGGER AS $$
+DECLARE
+  identity_changed BOOLEAN;
 BEGIN
-  IF TG_OP = 'UPDATE' THEN
+  IF TG_OP = 'INSERT' THEN
+    identity_changed := TRUE;
+  ELSE
+    identity_changed := OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+      OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId";
+
     IF OLD."organizationRecordId" IS NOT NULL
        AND OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId" THEN
       RAISE EXCEPTION 'Verified organization identity is immutable';
@@ -99,6 +122,19 @@ BEGIN
 
   IF NEW."organizationId" IS DISTINCT FROM NEW."organizationRecordId" THEN
     RAISE EXCEPTION 'Organization identity does not match verified organization';
+  END IF;
+
+  -- New or newly-linked organization scope must resolve to an active first-class
+  -- organization. Existing verified historical rows may still receive
+  -- non-identity updates after the organization later leaves the active state.
+  IF identity_changed AND NOT EXISTS (
+    SELECT 1
+    FROM "Organization" AS organization
+    WHERE organization."id" = NEW."organizationRecordId"
+      AND organization."status" = 'ACTIVE'
+      AND organization."archivedAt" IS NULL
+  ) THEN
+    RAISE EXCEPTION 'Verified organization must be active';
   END IF;
 
   RETURN NEW;
@@ -143,6 +179,48 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER "CorporateBillingRecord_invoice_organization_guard"
 BEFORE INSERT OR UPDATE ON "CorporateBillingRecord"
 FOR EACH ROW EXECUTE FUNCTION "enforce_corporate_billing_invoice_organization"();
+
+CREATE OR REPLACE FUNCTION "enforce_notification_event_recipient_scope"()
+RETURNS TRIGGER AS $$
+DECLARE
+  recipient_identity_changed BOOLEAN;
+BEGIN
+  IF NEW."organizationRecordId" IS NULL THEN
+    RETURN NEW;
+  END IF;
+
+  IF TG_OP = 'INSERT' THEN
+    recipient_identity_changed := TRUE;
+  ELSE
+    recipient_identity_changed := OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId"
+      OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId";
+  END IF;
+
+  IF recipient_identity_changed AND NOT EXISTS (
+    SELECT 1
+    FROM "Organization" AS organization
+    INNER JOIN "OrganizationMembership" AS membership
+      ON membership."organizationId" = organization."id"
+    INNER JOIN "User" AS recipient
+      ON recipient."id" = membership."userId"
+    WHERE organization."id" = NEW."organizationRecordId"
+      AND organization."status" = 'ACTIVE'
+      AND organization."archivedAt" IS NULL
+      AND membership."userId" = NEW."recipientId"
+      AND membership."active" = TRUE
+      AND membership."endedAt" IS NULL
+      AND recipient."deletedAt" IS NULL
+  ) THEN
+    RAISE EXCEPTION 'Verified notification event requires an active organization recipient';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "NotificationEvent_verified_recipient_guard"
+BEFORE INSERT OR UPDATE ON "NotificationEvent"
+FOR EACH ROW EXECUTE FUNCTION "enforce_notification_event_recipient_scope"();
 
 CREATE OR REPLACE FUNCTION "enforce_notification_event_organization"()
 RETURNS TRIGGER AS $$
@@ -191,3 +269,108 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER "Notification_event_organization_guard"
 BEFORE INSERT OR UPDATE ON "Notification"
 FOR EACH ROW EXECUTE FUNCTION "enforce_notification_event_organization"();
+
+CREATE OR REPLACE FUNCTION "enforce_notification_recipient_scope"()
+RETURNS TRIGGER AS $$
+DECLARE
+  recipient_identity_changed BOOLEAN;
+BEGIN
+  IF NEW."organizationRecordId" IS NULL THEN
+    RETURN NEW;
+  END IF;
+
+  IF TG_OP = 'INSERT' THEN
+    recipient_identity_changed := TRUE;
+  ELSE
+    recipient_identity_changed := OLD."eventId" IS DISTINCT FROM NEW."eventId"
+      OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId"
+      OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId";
+  END IF;
+
+  IF recipient_identity_changed AND NOT EXISTS (
+    SELECT 1
+    FROM "Organization" AS organization
+    INNER JOIN "OrganizationMembership" AS membership
+      ON membership."organizationId" = organization."id"
+    INNER JOIN "User" AS recipient
+      ON recipient."id" = membership."userId"
+    WHERE organization."id" = NEW."organizationRecordId"
+      AND organization."status" = 'ACTIVE'
+      AND organization."archivedAt" IS NULL
+      AND membership."userId" = NEW."recipientId"
+      AND membership."active" = TRUE
+      AND membership."endedAt" IS NULL
+      AND recipient."deletedAt" IS NULL
+  ) THEN
+    RAISE EXCEPTION 'Verified notification requires an active organization recipient';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "Notification_verified_recipient_guard"
+BEFORE INSERT OR UPDATE ON "Notification"
+FOR EACH ROW EXECUTE FUNCTION "enforce_notification_recipient_scope"();
+
+-- Re-run safe backfills after all write guards are active. This closes the
+-- migration window in which an old application process could have inserted an
+-- organization-scoped row after its first backfill. Rows written after this
+-- point must already carry verified scope, while unmatched legacy identifiers
+-- remain intentionally unverified.
+UPDATE "Invoice" AS invoice
+SET "organizationRecordId" = organization."id"
+FROM "Organization" AS organization
+WHERE invoice."organizationRecordId" IS NULL
+  AND invoice."organizationId" = organization."id"
+  AND organization."status" = 'ACTIVE'
+  AND organization."archivedAt" IS NULL;
+
+UPDATE "CorporateBillingRecord" AS billing
+SET "organizationRecordId" = organization."id"
+FROM "Organization" AS organization,
+     "Invoice" AS invoice
+WHERE billing."organizationRecordId" IS NULL
+  AND billing."organizationId" = organization."id"
+  AND organization."status" = 'ACTIVE'
+  AND organization."archivedAt" IS NULL
+  AND invoice."id" = billing."invoiceId"
+  AND invoice."organizationId" = organization."id"
+  AND invoice."organizationRecordId" = organization."id";
+
+UPDATE "NotificationEvent" AS event
+SET "organizationRecordId" = organization."id"
+FROM "Organization" AS organization,
+     "OrganizationMembership" AS membership,
+     "User" AS recipient
+WHERE event."organizationRecordId" IS NULL
+  AND event."organizationId" = organization."id"
+  AND organization."status" = 'ACTIVE'
+  AND organization."archivedAt" IS NULL
+  AND membership."organizationId" = organization."id"
+  AND membership."userId" = event."recipientId"
+  AND membership."active" = TRUE
+  AND membership."endedAt" IS NULL
+  AND recipient."id" = event."recipientId"
+  AND recipient."deletedAt" IS NULL;
+
+UPDATE "Notification" AS notification
+SET "organizationRecordId" = organization."id"
+FROM "Organization" AS organization,
+     "OrganizationMembership" AS membership,
+     "User" AS recipient,
+     "NotificationEvent" AS event
+WHERE notification."organizationRecordId" IS NULL
+  AND notification."eventId" = event."id"
+  AND notification."organizationId" = organization."id"
+  AND organization."status" = 'ACTIVE'
+  AND organization."archivedAt" IS NULL
+  AND event."organizationId" = organization."id"
+  AND event."organizationRecordId" = organization."id"
+  AND notification."recipientId" = event."recipientId"
+  AND membership."organizationId" = organization."id"
+  AND membership."userId" = notification."recipientId"
+  AND membership."active" = TRUE
+  AND membership."endedAt" IS NULL
+  AND recipient."id" = notification."recipientId"
+  AND recipient."deletedAt" IS NULL;
