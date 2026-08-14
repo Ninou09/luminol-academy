@@ -112,11 +112,14 @@ BEGIN
   END IF;
 
   -- Expand-phase compatibility: the pre-Slice-E application writes only the
-  -- legacy-compatible organizationId. Derive the verified relation when every
-  -- first-class tenant relationship can be proven, but leave opaque or
-  -- inconsistent legacy identifiers unverified instead of breaking the running
-  -- release during the migration/application rollout window.
+  -- legacy-compatible organizationId. Derive the verified relation only for a
+  -- new row or an explicit organization-identity change. Routine updates to
+  -- unmatched historical rows must never reinterpret an opaque legacy identifier.
   IF NEW."organizationRecordId" IS NULL THEN
+    IF TG_OP = 'UPDATE' AND NOT identity_changed THEN
+      RETURN NEW;
+    END IF;
+
     IF EXISTS (
       SELECT 1
       FROM "Organization" AS organization
@@ -244,6 +247,12 @@ RETURNS TRIGGER AS $$
 DECLARE
   recipient_identity_changed BOOLEAN;
 BEGIN
+  IF TG_OP = 'UPDATE'
+     AND OLD."organizationRecordId" IS NOT NULL
+     AND OLD."recipientId" IS DISTINCT FROM NEW."recipientId" THEN
+    RAISE EXCEPTION 'Verified notification event recipient is immutable';
+  END IF;
+
   IF NEW."organizationRecordId" IS NULL THEN
     RETURN NEW;
   END IF;
