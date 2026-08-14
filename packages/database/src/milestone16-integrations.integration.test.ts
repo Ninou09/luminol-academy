@@ -34,26 +34,23 @@ suite('Milestone 16 verified organization integration constraints', () => {
     });
   });
 
-  test(
-    'rejects new organization-scoped invoices without a verified relation',
-    async () => {
-      await expect(
-        db.invoice.create({
-          data: {
-            number: `M16E-DB-UNVERIFIED-${suffix}`,
-            customerId: userId,
-            organizationId,
-            currency: 'DZD',
-            subtotalMinor: 100,
-            taxMinor: 0,
-            totalMinor: 100,
-          },
-        }),
-      ).rejects.toThrow(
-        'New organization-scoped records require a verified organization',
-      );
-    },
-  );
+  test('rejects new organization-scoped invoices without a verified relation', async () => {
+    await expect(
+      db.invoice.create({
+        data: {
+          number: `M16E-DB-UNVERIFIED-${suffix}`,
+          customerId: userId,
+          organizationId,
+          currency: 'DZD',
+          subtotalMinor: 100,
+          taxMinor: 0,
+          totalMinor: 100,
+        },
+      }),
+    ).rejects.toThrow(
+      'New organization-scoped records require a verified organization',
+    );
+  });
 
   test('rejects mismatched verified organization identities', async () => {
     const otherOrganization = await db.organization.create({
@@ -83,152 +80,140 @@ suite('Milestone 16 verified organization integration constraints', () => {
     );
   });
 
-  test(
-    'keeps corporate billing on the same verified organization as its invoice',
-    async () => {
-      const invoice = await db.invoice.create({
+  test('keeps corporate billing on the same verified organization as its invoice', async () => {
+    const invoice = await db.invoice.create({
+      data: {
+        number: `M16E-DB-VERIFIED-${suffix}`,
+        customerId: userId,
+        organizationId,
+        organizationRecordId: organizationId,
+        currency: 'DZD',
+        subtotalMinor: 100,
+        taxMinor: 0,
+        totalMinor: 100,
+      },
+      select: { id: true },
+    });
+    const otherOrganization = await db.organization.create({
+      data: {
+        id: `m16e-db-corporate-other-${suffix}`,
+        name: 'Other Corporate Organization',
+        seatLimit: 5,
+      },
+      select: { id: true },
+    });
+
+    await expect(
+      db.corporateBillingRecord.create({
         data: {
-          number: `M16E-DB-VERIFIED-${suffix}`,
-          customerId: userId,
-          organizationId,
-          organizationRecordId: organizationId,
-          currency: 'DZD',
-          subtotalMinor: 100,
-          taxMinor: 0,
-          totalMinor: 100,
+          organizationId: otherOrganization.id,
+          organizationRecordId: otherOrganization.id,
+          invoiceId: invoice.id,
+          billingContactName: 'Billing Contact',
+          billingContactEmail: `billing-${suffix}@example.test`,
+          seatCount: 1,
+          pricePerSeatMinor: 100,
+          paymentTermsDays: 30,
         },
-        select: { id: true },
-      });
-      const otherOrganization = await db.organization.create({
+      }),
+    ).rejects.toThrow(
+      'Corporate billing organization must match invoice organization',
+    );
+  });
+
+  test('requires verified organization linkage for new organization notifications', async () => {
+    await expect(
+      db.notificationEvent.create({
         data: {
-          id: `m16e-db-corporate-other-${suffix}`,
-          name: 'Other Corporate Organization',
-          seatLimit: 5,
-        },
-        select: { id: true },
-      });
-
-      await expect(
-        db.corporateBillingRecord.create({
-          data: {
-            organizationId: otherOrganization.id,
-            organizationRecordId: otherOrganization.id,
-            invoiceId: invoice.id,
-            billingContactName: 'Billing Contact',
-            billingContactEmail: `billing-${suffix}@example.test`,
-            seatCount: 1,
-            pricePerSeatMinor: 100,
-            paymentTermsDays: 30,
-          },
-        }),
-      ).rejects.toThrow(
-        'Corporate billing organization must match invoice organization',
-      );
-    },
-  );
-
-  test(
-    'requires verified organization linkage for new organization notifications',
-    async () => {
-      await expect(
-        db.notificationEvent.create({
-          data: {
-            idempotencyKey: `m16e-db-event-unverified-${suffix}`,
-            organizationId,
-            recipientId: userId,
-            templateKey: 'account_notice',
-            category: 'TRANSACTIONAL',
-            payload: {
-              subject: 'Unverified event',
-              message: 'Should fail before persistence.',
-            },
-          },
-        }),
-      ).rejects.toThrow(
-        'New organization-scoped records require a verified organization',
-      );
-    },
-  );
-
-  test(
-    'rejects unscoped notifications beneath verified organization events',
-    async () => {
-      const event = await db.notificationEvent.create({
-        data: {
-          idempotencyKey: `m16e-db-event-scoped-${suffix}`,
+          idempotencyKey: `m16e-db-event-unverified-${suffix}`,
           organizationId,
-          organizationRecordId: organizationId,
           recipientId: userId,
           templateKey: 'account_notice',
           category: 'TRANSACTIONAL',
           payload: {
-            subject: 'Scoped event',
-            message: 'The child notification must keep organization scope.',
+            subject: 'Unverified event',
+            message: 'Should fail before persistence.',
           },
         },
-        select: { id: true },
-      });
+      }),
+    ).rejects.toThrow(
+      'New organization-scoped records require a verified organization',
+    );
+  });
 
-      await expect(
-        db.notification.create({
-          data: {
-            eventId: event.id,
-            recipientId: userId,
-            channel: 'IN_APP',
-            title: 'Scoped event',
-            preview: 'Organization scope is required.',
-            body: 'Organization scope is required.',
-          },
-        }),
-      ).rejects.toThrow(
-        'Notification organization must match notification event organization',
-      );
-    },
-  );
-
-  test(
-    'rejects a different recipient beneath a verified notification event',
-    async () => {
-      const outsiderId = `m16e-db-outsider-${suffix}`;
-      await db.user.create({
-        data: {
-          id: outsiderId,
-          clerkId: `m16e-db-outsider-clerk-${suffix}`,
-          email: `m16e-db-outsider-${suffix}@example.test`,
+  test('rejects unscoped notifications beneath verified organization events', async () => {
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-event-scoped-${suffix}`,
+        organizationId,
+        organizationRecordId: organizationId,
+        recipientId: userId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Scoped event',
+          message: 'The child notification must keep organization scope.',
         },
-      });
-      const event = await db.notificationEvent.create({
+      },
+      select: { id: true },
+    });
+
+    await expect(
+      db.notification.create({
         data: {
-          idempotencyKey: `m16e-db-event-recipient-${suffix}`,
+          eventId: event.id,
+          recipientId: userId,
+          channel: 'IN_APP',
+          title: 'Scoped event',
+          preview: 'Organization scope is required.',
+          body: 'Organization scope is required.',
+        },
+      }),
+    ).rejects.toThrow(
+      'Notification organization must match notification event organization',
+    );
+  });
+
+  test('rejects a different recipient beneath a verified notification event', async () => {
+    const outsiderId = `m16e-db-outsider-${suffix}`;
+    await db.user.create({
+      data: {
+        id: outsiderId,
+        clerkId: `m16e-db-outsider-clerk-${suffix}`,
+        email: `m16e-db-outsider-${suffix}@example.test`,
+      },
+    });
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-event-recipient-${suffix}`,
+        organizationId,
+        organizationRecordId: organizationId,
+        recipientId: userId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Recipient event',
+          message: 'The child notification must keep the event recipient.',
+        },
+      },
+      select: { id: true },
+    });
+
+    await expect(
+      db.notification.create({
+        data: {
+          eventId: event.id,
+          recipientId: outsiderId,
           organizationId,
           organizationRecordId: organizationId,
-          recipientId: userId,
-          templateKey: 'account_notice',
-          category: 'TRANSACTIONAL',
-          payload: {
-            subject: 'Recipient event',
-            message: 'The child notification must keep the event recipient.',
-          },
+          channel: 'IN_APP',
+          title: 'Recipient event',
+          preview: 'Recipient identity is required.',
+          body: 'Recipient identity is required.',
         },
-        select: { id: true },
-      });
-
-      await expect(
-        db.notification.create({
-          data: {
-            eventId: event.id,
-            recipientId: outsiderId,
-            organizationId,
-            organizationRecordId: organizationId,
-            channel: 'IN_APP',
-            title: 'Recipient event',
-            preview: 'Recipient identity is required.',
-            body: 'Recipient identity is required.',
-          },
-        }),
-      ).rejects.toThrow(
-        'Notification recipient must match notification event recipient',
-      );
-    },
-  );
+      }),
+    ).rejects.toThrow(
+      'Notification recipient must match notification event recipient',
+    );
+  });
 });
