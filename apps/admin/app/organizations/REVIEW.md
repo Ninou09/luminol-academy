@@ -1,0 +1,1 @@
+Review focus: fail-closed tenant scope for every form identifier, academy/admin separation from organization-manager access, append-only audit semantics, archived-organization behavior, seat lifecycle concurrency, published-course assignment, and bounded privacy-safe aggregate completion.
