@@ -1,0 +1,46 @@
+name: Temporary Finalize Milestone 16 Identity Backfills
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-finance-integration
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feature/milestone-16-finance-integration
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Apply identity and migration hardening
+        run: python .github/scripts/temporary_finalize_m16_identity_backfills.py
+      - name: Format integration coverage
+        run: |
+          pnpm exec prettier --write \
+            packages/database/src/milestone16-notification-parent-integrity.integration.test.ts \
+            packages/database/src/milestone16-parent-opaque-identity.integration.test.ts
+      - name: Commit reviewed fixes
+        shell: bash
+        run: |
+          git diff --check
+          git rm .github/workflows/temporary-finalize-m16-identity-backfills.yml
+          git rm .github/scripts/temporary_finalize_m16_identity_backfills.py
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add packages/database/prisma/migrations/20260814190000_milestone_16_verified_organization_integrations/migration.sql
+          git add packages/database/src/milestone16-notification-parent-integrity.integration.test.ts
+          git add packages/database/src/milestone16-parent-opaque-identity.integration.test.ts
+          git commit -m 'Finalize organization identity rollout guards'
+          git push origin HEAD:feature/milestone-16-finance-integration
