@@ -1,0 +1,77 @@
+name: Milestone 16 schema patch
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-organization-persistence
+    paths:
+      - .github/workflows/m16-schema-patch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-16-organization-persistence
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Patch Prisma schema
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('packages/database/prisma/schema.prisma')
+          text = path.read_text()
+
+          def replace_once(old: str, new: str) -> None:
+              global text
+              if text.count(old) != 1:
+                  raise SystemExit(f'Expected exactly one schema anchor, found {text.count(old)}: {old[:80]!r}')
+              text = text.replace(old, new, 1)
+
+          replace_once(
+              '''enum CertificateStatus {\n  ACTIVE\n  REVOKED\n  SUPERSEDED\n}\n\nmodel User {''',
+              '''enum CertificateStatus {\n  ACTIVE\n  REVOKED\n  SUPERSEDED\n}\n\nenum OrganizationStatus {\n  ACTIVE\n  SUSPENDED\n  ARCHIVED\n}\n\nenum OrganizationMembershipRole {\n  OWNER\n  MANAGER\n  LEARNER\n}\n\nenum OrganizationSeatStatus {\n  INVITED\n  ACTIVE\n  COMPLETED\n  REVOKED\n}\n\nmodel User {''',
+          )
+
+          replace_once(
+              '''  certificateRevocations  CertificateRevocation[]  @relation("CertificateRevocationActor")\n\n  @@index([email])''',
+              '''  certificateRevocations  CertificateRevocation[]  @relation("CertificateRevocationActor")\n  organizationMemberships OrganizationMembership[]\n  organizationSeats       OrganizationSeat[]\n\n  @@index([email])''',
+          )
+
+          replace_once(
+              '''  placementAssessments PlacementAssessment[]\n\n  @@index([title''',
+              '''  placementAssessments PlacementAssessment[]\n  organizationCourses  OrganizationCourse[]\n\n  @@index([title''',
+          )
+
+          replace_once(
+              '''  statusEvents EnrollmentStatusEvent[]\n\n  @@unique([userId, courseId])''',
+              '''  statusEvents             EnrollmentStatusEvent[]\n  organizationSponsorship OrganizationEnrollmentSponsorship?\n\n  @@unique([userId, courseId])''',
+          )
+
+          replace_once(
+              '''model Role {''',
+              '''model Organization {\n  id           String             @id @default(cuid())\n  name         String\n  status       OrganizationStatus @default(ACTIVE)\n  seatLimit    Int\n  archivedAt   DateTime?\n  createdAt    DateTime           @default(now())\n  updatedAt    DateTime           @updatedAt\n  memberships  OrganizationMembership[]\n  teams        Team[]\n  seats        OrganizationSeat[]\n  courses      OrganizationCourse[]\n\n  @@index([status, name])\n  @@index([archivedAt])\n}\n\nmodel OrganizationMembership {\n  id             String                     @id @default(cuid())\n  organizationId String\n  userId         String\n  role           OrganizationMembershipRole\n  active         Boolean                    @default(false)\n  joinedAt       DateTime                   @default(now())\n  endedAt        DateTime?\n  createdAt      DateTime                   @default(now())\n  updatedAt      DateTime                   @updatedAt\n  organization   Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)\n  user           User                       @relation(fields: [userId], references: [id], onDelete: Cascade)\n  teamMemberships TeamMembership[]\n\n  @@unique([organizationId, userId])\n  @@index([userId, active])\n  @@index([organizationId, role, active])\n}\n\nmodel Team {\n  id             String           @id @default(cuid())\n  organizationId String\n  name           String\n  archivedAt     DateTime?\n  createdAt      DateTime         @default(now())\n  updatedAt      DateTime         @updatedAt\n  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)\n  memberships    TeamMembership[]\n\n  @@unique([organizationId, name])\n  @@index([organizationId, archivedAt])\n}\n\nmodel TeamMembership {\n  id                       String                 @id @default(cuid())\n  teamId                   String\n  organizationMembershipId String\n  createdAt                DateTime               @default(now())\n  team                     Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)\n  organizationMembership   OrganizationMembership @relation(fields: [organizationMembershipId], references: [id], onDelete: Cascade)\n\n  @@unique([teamId, organizationMembershipId])\n  @@index([organizationMembershipId, teamId])\n}\n\nmodel OrganizationSeat {\n  id             String                 @id @default(cuid())\n  organizationId String\n  userId         String\n  status         OrganizationSeatStatus @default(INVITED)\n  invitedAt      DateTime               @default(now())\n  activatedAt    DateTime?\n  completedAt    DateTime?\n  revokedAt      DateTime?\n  createdAt      DateTime               @default(now())\n  updatedAt      DateTime               @updatedAt\n  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)\n  user           User                   @relation(fields: [userId], references: [id], onDelete: Restrict)\n\n  @@unique([organizationId, userId])\n  @@index([organizationId, status])\n  @@index([userId, status])\n}\n\nmodel OrganizationCourse {\n  id             String       @id @default(cuid())\n  organizationId String\n  courseId       String\n  active         Boolean      @default(true)\n  assignedAt     DateTime     @default(now())\n  unassignedAt   DateTime?\n  createdAt      DateTime     @default(now())\n  updatedAt      DateTime     @updatedAt\n  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)\n  course         Course       @relation(fields: [courseId], references: [id], onDelete: Restrict)\n  sponsorships   OrganizationEnrollmentSponsorship[]\n\n  @@unique([organizationId, courseId])\n  @@index([organizationId, active, assignedAt])\n  @@index([courseId, active])\n}\n\nmodel OrganizationEnrollmentSponsorship {\n  id                   String             @id @default(cuid())\n  organizationCourseId String\n  enrollmentId         String             @unique\n  active               Boolean            @default(true)\n  sponsoredAt          DateTime           @default(now())\n  endedAt              DateTime?\n  createdAt            DateTime           @default(now())\n  updatedAt            DateTime           @updatedAt\n  organizationCourse   OrganizationCourse @relation(fields: [organizationCourseId], references: [id], onDelete: Restrict)\n  enrollment           Enrollment         @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)\n\n  @@index([organizationCourseId, active])\n}\n\nmodel Role {''',
+          )
+
+          path.write_text(text)
+          PY
+          pnpm exec prisma format --schema packages/database/prisma/schema.prisma
+      - name: Commit schema patch
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add packages/database/prisma/schema.prisma
+          git diff --cached --check
+          git commit -m "Add Milestone 16 organization persistence schema"
+          git push origin HEAD:feature/milestone-16-organization-persistence
