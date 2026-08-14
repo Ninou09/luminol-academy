@@ -92,6 +92,36 @@ Delivered capabilities include the shared typed `ar`/`fr`/`en` locale contract, 
 
 Dynamic learner records, enquiry messages, assessments, finance data, certificate data, psychology content, personal identity data, and governed CMS source content remain source data rather than receiving guessed automatic translations.
 
+## Active product milestone
+
+### Milestone 16 — Organizations and Team Learning
+
+Status: Active
+
+Issue #214 is the governing milestone issue. The milestone adds a first-class organization and team-learning layer by reusing the platform's existing enrolment, professional-development, finance, notification, certificate, search, localization, and authorization foundations rather than creating a parallel learner system.
+
+The delivery boundary is intentionally staged:
+
+1. **Organization and team domain foundation** — define organization lifecycle states, organization membership roles, teams, seat-allocation scope, fail-closed manager access, and privacy-safe aggregate learning visibility with unit coverage.
+2. **Persistence and migration** — add first-class organization, membership, team, team-membership, organization-course, and sponsored-enrolment persistence with tenant-safe constraints and a production-safe backfill strategy before any finance foreign key is introduced.
+3. **Administration operations** — add protected organization/team administration under the existing `academy:manage` boundary, with audited mutations and server-side organization scope checks.
+4. **Organization manager experience** — provide a restricted organization-manager surface for the manager's own roster, seat utilization, assigned learning, and approved aggregate progress. Organization membership does not grant academy-wide administration rights.
+5. **Finance, notifications, and localization integration** — connect verified organization records to corporate billing, existing notifications and certificates, and the governed Arabic/French/English localization layer.
+
+Milestone 16 security and privacy invariants are non-negotiable:
+
+- every organization-scoped read and write is authorized server-side
+- organization membership and global academy RBAC remain separate concepts
+- URL/form organization identifiers are untrusted input and must be verified against the signed-in user's membership
+- managers receive only explicitly approved aggregate learning and seat information
+- assessment answers, psychology content, enquiry messages, personal finance records, private certificate metadata, and unrelated learner data are not exposed to organization managers
+- cross-organization roster, search, learning, finance, and mutation access fails closed
+- there is no public organization directory and no guessed translation of identity or sensitive learner data
+
+Explicitly excluded from Milestone 16 are SSO/SAML/SCIM, HRIS integrations, AI-generated manager insights, public organization profiles, and replacement of the existing enrolment, RBAC, finance, certificate, or notification systems.
+
+Repository completion and production-live verification remain separate. Milestone 16 must pass the normal exact-head quality and review gates, and no slice is described as production-live until its deployment and applicable post-deploy verification exist.
+
 ## Post-milestone public experience hardening
 
 Status: Repository implementation active and strongly validated; production freshness is evidence-based per change, and governed real-media verification remains operationally incomplete.
@@ -122,9 +152,9 @@ The later real-photography phase is not complete until additional approved gover
 
 Vercel Free-plan quota or build-rate pressure may temporarily leave stable production aliases behind the repository head. Safe repository development continues behind the exact-head GitHub CI gate, while production-live claims remain blocked until the corresponding deployment and post-deploy checks exist.
 
-## Active operational phase — Post-launch stabilization
+## Parallel operational phase — Post-launch stabilization
 
-No new numbered product milestone is currently active. Operational stabilization and governance take priority over new feature breadth while the remaining external dependencies are resolved.
+Milestone 16 repository development is active while operational stabilization and governance continue in parallel. New organization work must not weaken or bypass the remaining production, media, repository-governance, legal, authentication, or recovery gates.
 
 ### Production availability and monitoring
 
@@ -196,11 +226,11 @@ Major compiler/CMS changes must preserve strict type checking, schema governance
 
 ## Future platform opportunities
 
-These are not committed milestones and must not displace operational stabilization:
+These are not committed milestones and must not displace operational stabilization or the bounded Milestone 16 delivery sequence:
 
 - richer background-job processing and dedicated queue infrastructure when scale justifies it
 - approved AI-assisted learning tools with explicit privacy and human-review boundaries
-- corporate accounts and team learning
+- SSO/SCIM and external HR-system integrations only after the first-party organization model is proven
 - native mobile applications
 - dedicated external uptime and paging service
 - deeper analytics only where data minimization and consent requirements are satisfied
