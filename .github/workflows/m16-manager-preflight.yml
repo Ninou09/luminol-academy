@@ -25,14 +25,49 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --no-frozen-lockfile
-      - name: Fix optional team-filter state
+      - name: Apply manager workspace typing fixes
         shell: bash
         run: |
           python <<'PY'
           import re
           from pathlib import Path
-          path = Path('apps/portal/app/organization/page.tsx')
-          text = path.read_text()
+
+          server = Path('apps/portal/lib/organization-manager.server.ts')
+          text = server.read_text()
+          text = text.replace(
+              "import { db } from '@luminol/database';",
+              "import { db, type Prisma } from '@luminol/database';",
+              1,
+          )
+          old_where = '''const managerRoles = ['OWNER', 'MANAGER'] as const;
+
+const managerMembershipWhere = (userId: string) => ({
+  userId,
+  active: true,
+  role: { in: managerRoles },
+  organization: { archivedAt: null },
+});'''
+          new_where = '''function managerMembershipWhere(
+  userId: string,
+): Prisma.OrganizationMembershipWhereInput {
+  return {
+    userId,
+    active: true,
+    role: { in: ['OWNER', 'MANAGER'] },
+    organization: { archivedAt: null },
+  };
+}'''
+          if old_where not in text:
+              raise SystemExit('Expected manager where block not found')
+          server.write_text(text.replace(old_where, new_where, 1))
+
+          page = Path('apps/portal/app/organization/page.tsx')
+          text = page.read_text()
+          text = text.replace(
+              '    teamId?: string;\n',
+              '    teamId?: string | undefined;\n',
+              1,
+          )
           pattern = re.compile(
               r"href=\{workspaceHref\(locale, \{\s*\.\.\.baseState,\s*teamId: undefined,\s*rosterPage: 1,\s*\}\)\}"
           )
@@ -46,7 +81,7 @@ jobs:
           text, count = pattern.subn(replacement, text, count=1)
           if count != 1:
               raise SystemExit(f'Expected one team-filter reset block, replaced {count}')
-          path.write_text(text)
+          page.write_text(text)
           PY
       - run: pnpm exec prettier --write apps/portal/app/organization/page.tsx apps/portal/components/portal-header.tsx apps/portal/lib/organization-manager.ts apps/portal/lib/organization-manager.server.ts apps/portal/lib/organization-manager-localization.ts apps/portal/lib/organization-manager.test.ts apps/portal/app/organization/README.md apps/portal/package.json
       - run: pnpm db:generate
