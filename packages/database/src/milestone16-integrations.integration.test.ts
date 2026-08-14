@@ -34,21 +34,26 @@ suite('Milestone 16 verified organization integration constraints', () => {
     });
   });
 
-  test('rejects new organization-scoped invoices without a verified relation', async () => {
-    await expect(
-      db.invoice.create({
-        data: {
-          number: `M16E-DB-UNVERIFIED-${suffix}`,
-          customerId: userId,
-          organizationId,
-          currency: 'DZD',
-          subtotalMinor: 100,
-          taxMinor: 0,
-          totalMinor: 100,
-        },
-      }),
-    ).rejects.toThrow('New organization-scoped records require a verified organization');
-  });
+  test(
+    'rejects new organization-scoped invoices without a verified relation',
+    async () => {
+      await expect(
+        db.invoice.create({
+          data: {
+            number: `M16E-DB-UNVERIFIED-${suffix}`,
+            customerId: userId,
+            organizationId,
+            currency: 'DZD',
+            subtotalMinor: 100,
+            taxMinor: 0,
+            totalMinor: 100,
+          },
+        }),
+      ).rejects.toThrow(
+        'New organization-scoped records require a verified organization',
+      );
+    },
+  );
 
   test('rejects mismatched verified organization identities', async () => {
     const otherOrganization = await db.organization.create({
@@ -73,63 +78,75 @@ suite('Milestone 16 verified organization integration constraints', () => {
           totalMinor: 100,
         },
       }),
-    ).rejects.toThrow('Organization identity does not match verified organization');
+    ).rejects.toThrow(
+      'Organization identity does not match verified organization',
+    );
   });
 
-  test('keeps corporate billing on the same verified organization as its invoice', async () => {
-    const invoice = await db.invoice.create({
-      data: {
-        number: `M16E-DB-VERIFIED-${suffix}`,
-        customerId: userId,
-        organizationId,
-        organizationRecordId: organizationId,
-        currency: 'DZD',
-        subtotalMinor: 100,
-        taxMinor: 0,
-        totalMinor: 100,
-      },
-      select: { id: true },
-    });
-    const otherOrganization = await db.organization.create({
-      data: {
-        id: `m16e-db-corporate-other-${suffix}`,
-        name: 'Other Corporate Organization',
-        seatLimit: 5,
-      },
-      select: { id: true },
-    });
-
-    await expect(
-      db.corporateBillingRecord.create({
+  test(
+    'keeps corporate billing on the same verified organization as its invoice',
+    async () => {
+      const invoice = await db.invoice.create({
         data: {
-          organizationId: otherOrganization.id,
-          organizationRecordId: otherOrganization.id,
-          invoiceId: invoice.id,
-          billingContactName: 'Billing Contact',
-          billingContactEmail: `billing-${suffix}@example.test`,
-          seatCount: 1,
-          pricePerSeatMinor: 100,
-          paymentTermsDays: 30,
-        },
-      }),
-    ).rejects.toThrow('Corporate billing organization must match invoice organization');
-  });
-
-  test('requires verified organization linkage for new organization notifications', async () => {
-    await expect(
-      db.notificationEvent.create({
-        data: {
-          idempotencyKey: `m16e-db-event-unverified-${suffix}`,
+          number: `M16E-DB-VERIFIED-${suffix}`,
+          customerId: userId,
           organizationId,
-          recipientId: userId,
-          templateKey: 'account_notice',
-          category: 'TRANSACTIONAL',
-          payload: {
-            subject: 'Unverified event',
-            message: 'Should fail before persistence.',
-          },
+          organizationRecordId: organizationId,
+          currency: 'DZD',
+          subtotalMinor: 100,
+          taxMinor: 0,
+          totalMinor: 100,
         },
-      }),
-    ).rejects.toThrow('New organization-scoped records require a verified organization');
-  });
+        select: { id: true },
+      });
+      const otherOrganization = await db.organization.create({
+        data: {
+          id: `m16e-db-corporate-other-${suffix}`,
+          name: 'Other Corporate Organization',
+          seatLimit: 5,
+        },
+        select: { id: true },
+      });
+
+      await expect(
+        db.corporateBillingRecord.create({
+          data: {
+            organizationId: otherOrganization.id,
+            organizationRecordId: otherOrganization.id,
+            invoiceId: invoice.id,
+            billingContactName: 'Billing Contact',
+            billingContactEmail: `billing-${suffix}@example.test`,
+            seatCount: 1,
+            pricePerSeatMinor: 100,
+            paymentTermsDays: 30,
+          },
+        }),
+      ).rejects.toThrow(
+        'Corporate billing organization must match invoice organization',
+      );
+    },
+  );
+
+  test(
+    'requires verified organization linkage for new organization notifications',
+    async () => {
+      await expect(
+        db.notificationEvent.create({
+          data: {
+            idempotencyKey: `m16e-db-event-unverified-${suffix}`,
+            organizationId,
+            recipientId: userId,
+            templateKey: 'account_notice',
+            category: 'TRANSACTIONAL',
+            payload: {
+              subject: 'Unverified event',
+              message: 'Should fail before persistence.',
+            },
+          },
+        }),
+      ).rejects.toThrow(
+        'New organization-scoped records require a verified organization',
+      );
+    },
+  );
 });
