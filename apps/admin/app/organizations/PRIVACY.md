@@ -1,1 +1,0 @@
-Aggregate organization completion is computed from sponsored enrollment status counts. The organization administration dashboard does not read or display assessment answers, placement scores, psychology content, enquiry bodies, finance payloads, certificate metadata, or learner-authored content.
