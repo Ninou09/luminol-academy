@@ -131,6 +131,9 @@ importers:
       '@luminol/localization':
         specifier: workspace:*
         version: link:../../packages/localization
+      '@luminol/professional':
+        specifier: workspace:*
+        version: link:../../packages/professional
       '@luminol/ui':
         specifier: workspace:*
         version: link:../../packages/ui
