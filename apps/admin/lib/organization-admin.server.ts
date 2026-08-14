@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { db } from '@luminol/database';
+import type { Prisma } from '@luminol/database';
 import { z } from 'zod';
 
 const ORGANIZATION_PAGE_SIZE = 25;
@@ -21,14 +22,14 @@ export async function getOrganizationAdminDashboard(
   rawQuery: OrganizationAdminDashboardQuery = {},
 ) {
   const query = dashboardQuerySchema.parse(rawQuery);
-  const organizationWhere = query.organizationQuery
+  const organizationWhere: Prisma.OrganizationWhereInput = query.organizationQuery
     ? {
         name: {
           contains: query.organizationQuery,
-          mode: 'insensitive' as const,
+          mode: 'insensitive',
         },
       }
-    : undefined;
+    : {};
   const userWhere = query.userQuery
     ? {
         deletedAt: null,
