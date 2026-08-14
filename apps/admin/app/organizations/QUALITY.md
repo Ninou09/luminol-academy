@@ -1,0 +1,1 @@
+Slice C must pass migration deployment against ephemeral PostgreSQL, lint/format, strict typecheck, unit/integration tests, production builds, public smoke tests, exact-head CI, and independent review before merge.
