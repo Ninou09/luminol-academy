@@ -1,6 +1,0 @@
-- `academy:manage` is required at the route and every mutation entry point.
-- Organization IDs, membership IDs, team IDs, seat IDs, user IDs, and course IDs from forms are untrusted.
-- Related records are re-resolved with organization scope before mutation.
-- Organization manager permissions are not used here and remain separate from academy administration RBAC.
-- Aggregate completion intentionally avoids assessment answers, scores, psychology data, enquiries, finance payloads, and certificate metadata.
-- Database triggers and constraints remain authoritative for tenant scope, seat capacity, sponsorship history, and lifecycle concurrency.
