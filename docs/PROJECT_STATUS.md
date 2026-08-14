@@ -1,6 +1,6 @@
 # Luminol Academy Project Status
 
-_Last updated: 2026-08-11_
+_Last updated: 2026-08-14_
 
 ## Current state
 
@@ -10,15 +10,19 @@ The canonical branch is:
 
 `main`
 
-Stable production applications:
+Current repository head at this status update:
+
+`b362bc7c114f3cc33fc1576ddbac4ff8017109cb`
+
+Stable production application aliases:
 
 - Public website: `https://luminol-academy-web.vercel.app`
 - Learner portal: `https://luminol-academy-portal.vercel.app`
 - Administration: `https://luminol-academy-admin.vercel.app`
 
-Milestones 1 through 15 are complete in the repository. The platform is in post-launch stabilization and public-experience hardening rather than an active numbered product milestone.
+Milestones 1 through 15 are complete in the repository. The platform is in post-launch stabilization, public-experience hardening, media governance, and operational verification rather than an active numbered product milestone.
 
-Production freshness recovered after the temporary Vercel Free-plan deployment-capacity incident tracked in #128. Current `main` (`6c15cc5de002dc79290ad402d98ba74691b35c50`) is deployed to the public production project. The stable public alias has been re-verified for its absolute sitemap declaration, Organization structured data, hardened response headers, and representative localized content. Grouped runtime-error checks for web, administration, and portal showed no errors in the post-recovery verification window.
+Repository progress and production freshness are tracked separately. The current repository head has passed the required GitHub quality gates through its pull-request validation, and the post-merge `main` quality workflow is green. Vercel Free-plan build-rate limits can temporarily prevent a corresponding production build; such quota limits do not block continued repository development, but no quota-blocked change is described as live until a production deployment and post-deploy verification actually exist.
 
 ## Delivered milestones
 
@@ -121,7 +125,7 @@ Production freshness recovered after the temporary Vercel Free-plan deployment-c
 
 ## Post-milestone public hardening
 
-After Milestone 15, the public experience received a large premium visual and accessibility upgrade without introducing unapproved real media:
+After Milestone 15, the public experience received a substantial premium visual, accessibility, privacy, and operational hardening programme:
 
 - token-governed premium homepage, school, About, and Contact storytelling
 - reusable reduced-motion-aware public motion controller
@@ -133,8 +137,16 @@ After Milestone 15, the public experience received a large premium visual and ac
 - reduced-motion-safe scrolling, sticky-header anchor offsets, and explicit token-governed keyboard focus rings on the public shell
 - Organization structured data, localized metadata improvements, sitemap/robots hardening, and public regression coverage
 - Vercel monorepo affected-package checks plus opt-in non-production preview policy to reduce free-plan deployment pressure
+- production dependency-audit repair and continued exact-head audit coverage (#201)
+- explicit `noindex, nofollow` indexing boundary for the learner portal (#202)
+- accessible enquiry pending/submission status behavior (#203)
+- bounded shared caching for generated social previews (#204)
+- production sign-in health-probe maintenance and protection-aware monitoring (#206 and #192)
+- stricter public-enquiry transport boundaries, including JSON-only submissions, cross-site browser rejection, and `no-store` responses (#208)
+- approved founder portrait publication on the localized About experience (#209)
+- approved founder portrait publication on the Psychology school hero while preserving governed abstract visuals for Languages and Professional Training (#210)
 
-Approved real photography is intentionally not fabricated or substituted. Real-media rollout remains dependent on approved governed assets.
+Approved real photography is not fabricated or substituted. The approved founder media is now governed in repository code, while additional branch/programme photography remains dependent on explicit rights and publication approval.
 
 ## Current operational phase
 
@@ -145,15 +157,21 @@ The platform is in post-launch stabilization. Current work is intentionally oper
 3. Launch the migrated Sanity Studio v6 against the intended project/dataset and record non-sensitive operational verification without changing production content (#85).
 4. Verify a Luminol sender domain before enabling real learner email, then complete a monitored outbound delivery and retry/dead-letter check (#40).
 5. Designate a backup operator before wider promotion or any planned primary-operator absence (#40).
-6. Keep TypeScript 7 deferred until typescript-eslint and the wider toolchain officially support the chosen migration architecture (#115).
+6. Confirm the repaired scheduled production-health workflow with a fully green post-fix scheduled or manual run before closing #192.
+7. Configure repository/ruleset protection for `main`, requiring the existing quality gate without deadlocking the single-operator workflow (#186).
+8. Publish reviewed privacy, terms, and cookie notices only after approved legal copy and verified operator details are supplied (#150).
+9. Keep TypeScript 7 deferred until typescript-eslint and the wider toolchain officially support the chosen migration architecture (#115).
 
-## Current external blockers
+## Current blockers and deferred external inputs
 
-- **Approved real media:** the rendering and approval infrastructure is complete, but no approved active image-bearing programme is available for final production verification; tracked in #45 and #93.
+- **Approved programme media:** rendering and approval infrastructure is complete, but final Sanity production verification still requires an approved active image-bearing programme; tracked in #45 and #93.
 - **Restricted administration smoke access:** production Clerk administration access remains deferred until the required account/service access is available; tracked in #40.
 - **Sanity Studio environment verification:** the v6 code migration is complete, but the Studio still needs to be observed against the intended Sanity project/dataset; tracked in #85.
 - **Outbound email:** a verified sender domain and controlled monitored delivery are still required before learner email activation; tracked in #40.
 - **Backup operations:** `Ninou09` remains the named primary operator and a backup operator is still required before broader promotion; tracked in #40.
+- **Reviewed legal copy:** privacy, terms, and cookie publication must not invent legal entity details, retention periods, lawful bases, transfer claims, or contractual rights; tracked in #150.
+- **Repository settings:** `main` branch protection/ruleset enforcement remains a GitHub repository-settings task rather than an application-code change; tracked in #186.
+- **Production deployment freshness:** Vercel build-rate limits may temporarily leave production behind the repository head. This is a deployment-capacity constraint, not a reason to stop repository work; production claims remain evidence-based.
 
 ## Quality gates
 
@@ -171,7 +189,7 @@ Every production change must preserve the architecture and pass the repository's
 - authenticated smoke tests when protected test credentials are available
 - independent review when review capacity is available, with no unresolved actionable review threads before merge
 
-Vercel previews are opt-in for non-production branches and supplementary to the GitHub CI merge gate. Production deployment and post-deploy verification remain required before a change is considered live.
+GitHub exact-head CI is the required repository merge gate. Vercel previews are supplementary and may be unavailable during free-plan quota pressure. Production deployment and post-deploy verification remain separate requirements before a merged change is considered live.
 
 ## Planned maintenance, not active milestones
 
