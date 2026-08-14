@@ -149,69 +149,76 @@ export async function getOrganizationManagerDashboard(
   const teamWhere = { organizationId, archivedAt: null };
   const courseWhere = { organizationId, active: true };
 
-  const [rosterCount, teamCount, courseCount, seatGroups, roster, teams, courses] =
-    await Promise.all([
-      db.organizationMembership.count({ where: rosterWhere }),
-      db.team.count({ where: teamWhere }),
-      db.organizationCourse.count({ where: courseWhere }),
-      db.organizationSeat.groupBy({
-        by: ['status'],
-        where: { organizationId },
-        _count: { _all: true },
-      }),
-      db.organizationMembership.findMany({
-        where: rosterWhere,
-        skip: (query.rosterPage - 1) * ORGANIZATION_MANAGER_ROSTER_PAGE_SIZE,
-        take: ORGANIZATION_MANAGER_ROSTER_PAGE_SIZE,
-        orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
-        select: {
-          id: true,
-          role: true,
-          joinedAt: true,
-          user: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-            },
+  const [
+    rosterCount,
+    teamCount,
+    courseCount,
+    seatGroups,
+    roster,
+    teams,
+    courses,
+  ] = await Promise.all([
+    db.organizationMembership.count({ where: rosterWhere }),
+    db.team.count({ where: teamWhere }),
+    db.organizationCourse.count({ where: courseWhere }),
+    db.organizationSeat.groupBy({
+      by: ['status'],
+      where: { organizationId },
+      _count: { _all: true },
+    }),
+    db.organizationMembership.findMany({
+      where: rosterWhere,
+      skip: (query.rosterPage - 1) * ORGANIZATION_MANAGER_ROSTER_PAGE_SIZE,
+      take: ORGANIZATION_MANAGER_ROSTER_PAGE_SIZE,
+      orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
+      select: {
+        id: true,
+        role: true,
+        joinedAt: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
           },
         },
-      }),
-      db.team.findMany({
-        where: teamWhere,
-        skip: (query.teamPage - 1) * ORGANIZATION_MANAGER_TEAM_PAGE_SIZE,
-        take: ORGANIZATION_MANAGER_TEAM_PAGE_SIZE,
-        orderBy: [{ name: 'asc' }, { id: 'asc' }],
-        select: {
-          id: true,
-          name: true,
-          _count: {
-            select: {
-              memberships: {
-                where: {
-                  organizationMembership: {
-                    active: true,
-                    user: { deletedAt: null },
-                  },
+      },
+    }),
+    db.team.findMany({
+      where: teamWhere,
+      skip: (query.teamPage - 1) * ORGANIZATION_MANAGER_TEAM_PAGE_SIZE,
+      take: ORGANIZATION_MANAGER_TEAM_PAGE_SIZE,
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            memberships: {
+              where: {
+                organizationMembership: {
+                  active: true,
+                  user: { deletedAt: null },
                 },
               },
             },
           },
         },
-      }),
-      db.organizationCourse.findMany({
-        where: courseWhere,
-        skip: (query.coursePage - 1) * ORGANIZATION_MANAGER_COURSE_PAGE_SIZE,
-        take: ORGANIZATION_MANAGER_COURSE_PAGE_SIZE,
-        orderBy: [{ assignedAt: 'desc' }, { id: 'desc' }],
-        select: {
-          id: true,
-          assignedAt: true,
-          course: { select: { id: true, title: true } },
-        },
-      }),
-    ]);
+      },
+    }),
+    db.organizationCourse.findMany({
+      where: courseWhere,
+      skip: (query.coursePage - 1) * ORGANIZATION_MANAGER_COURSE_PAGE_SIZE,
+      take: ORGANIZATION_MANAGER_COURSE_PAGE_SIZE,
+      orderBy: [{ assignedAt: 'desc' }, { id: 'desc' }],
+      select: {
+        id: true,
+        assignedAt: true,
+        course: { select: { id: true, title: true } },
+      },
+    }),
+  ]);
 
   const rosterPageCount = Math.max(
     1,
@@ -292,8 +299,8 @@ export async function getOrganizationManagerDashboard(
           },
         });
 
-  const visibleCourseIds = coursePage.map((organizationCourse) =>
-    organizationCourse.id,
+  const visibleCourseIds = coursePage.map(
+    (organizationCourse) => organizationCourse.id,
   );
   const progressSnapshot = await db.$transaction(
     async (transaction) => {
