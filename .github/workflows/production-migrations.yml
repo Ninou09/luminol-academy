@@ -54,6 +54,11 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
+      - name: Backfill verified notification organization links
+        run: pnpm --filter @luminol/database backfill:m16-notification-organizations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Verify migration status
         run: pnpm --filter @luminol/database exec prisma migrate status
         env:
