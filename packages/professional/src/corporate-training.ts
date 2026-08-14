@@ -27,6 +27,20 @@ export const CORPORATE_MEMBERSHIP_ROLES = [
 export type CorporateMembershipRole =
   (typeof CORPORATE_MEMBERSHIP_ROLES)[number];
 
+export const CORPORATE_MANAGER_DATA_KINDS = [
+  'SEAT_UTILIZATION',
+  'ASSIGNMENT_PROGRESS',
+  'COMPLETION_TOTALS',
+  'ASSESSMENT_ANSWERS',
+  'PSYCHOLOGY_CONTENT',
+  'ENQUIRY_MESSAGES',
+  'PERSONAL_FINANCE',
+  'PRIVATE_CERTIFICATE_METADATA',
+] as const;
+
+export type CorporateManagerDataKind =
+  (typeof CORPORATE_MANAGER_DATA_KINDS)[number];
+
 export const corporateOrganizationSchema = z.object({
   organizationId: z.string().min(1),
   name: z.string().min(2).max(160),
@@ -66,6 +80,10 @@ export const corporateProgressRecordSchema = z.object({
   completed: z.boolean(),
 });
 
+export const corporateManagerDataKindSchema = z.enum(
+  CORPORATE_MANAGER_DATA_KINDS,
+);
+
 export const CORPORATE_MANAGER_DATA_POLICY = {
   SEAT_UTILIZATION: true,
   ASSIGNMENT_PROGRESS: true,
@@ -75,10 +93,7 @@ export const CORPORATE_MANAGER_DATA_POLICY = {
   ENQUIRY_MESSAGES: false,
   PERSONAL_FINANCE: false,
   PRIVATE_CERTIFICATE_METADATA: false,
-} as const;
-
-export type CorporateManagerDataKind =
-  keyof typeof CORPORATE_MANAGER_DATA_POLICY;
+} as const satisfies Record<CorporateManagerDataKind, boolean>;
 
 export type CorporateOrganization = z.infer<typeof corporateOrganizationSchema>;
 export type CorporateOrganizationGovernance = z.infer<
@@ -133,17 +148,22 @@ export function assertCorporateManagerAccess(
   }
 }
 
-export function canCorporateManagerViewData(
-  role: CorporateMembershipRole,
-  dataKind: CorporateManagerDataKind,
-) {
-  const validatedRole = z.enum(CORPORATE_MEMBERSHIP_ROLES).parse(role);
+export function canCorporateManagerViewData(role: unknown, dataKind: unknown) {
+  const validatedRole = z.enum(CORPORATE_MEMBERSHIP_ROLES).safeParse(role);
+  const validatedDataKind = corporateManagerDataKindSchema.safeParse(dataKind);
 
-  if (validatedRole !== 'OWNER' && validatedRole !== 'MANAGER') {
+  if (!validatedRole.success || !validatedDataKind.success) {
     return false;
   }
 
-  return CORPORATE_MANAGER_DATA_POLICY[dataKind];
+  if (
+    validatedRole.data !== 'OWNER' &&
+    validatedRole.data !== 'MANAGER'
+  ) {
+    return false;
+  }
+
+  return CORPORATE_MANAGER_DATA_POLICY[validatedDataKind.data];
 }
 
 export function assertCorporateSeatMutationScope(
