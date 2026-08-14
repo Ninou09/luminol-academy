@@ -14,8 +14,10 @@ BEFORE UPDATE OF "organizationId" ON "Team"
 FOR EACH ROW EXECUTE FUNCTION "prevent_team_organization_change"();
 
 -- An active sponsorship requires an active organization-course assignment and an
--- active seat for the enrolled learner in that same organization. Course identity
--- must match for active and historical sponsorship rows alike.
+-- active seat for the enrolled learner in that same organization. The assignment,
+-- enrollment and seat rows are locked while the sponsorship is validated so a
+-- concurrent unassignment, enrollment identity change or seat closure cannot race
+-- an active sponsorship into an invalid tenant state.
 CREATE OR REPLACE FUNCTION "enforce_organization_sponsorship_course_scope"() RETURNS trigger AS $$
 DECLARE
     assigned_course_id TEXT;
@@ -24,17 +26,20 @@ DECLARE
     organization_status "OrganizationStatus";
     enrolled_course_id TEXT;
     enrolled_user_id TEXT;
+    active_seat_id TEXT;
 BEGIN
     SELECT oc."courseId", oc."organizationId", oc."active", o."status"
     INTO assigned_course_id, assigned_organization_id, assignment_active, organization_status
     FROM "OrganizationCourse" oc
     JOIN "Organization" o ON o."id" = oc."organizationId"
-    WHERE oc."id" = NEW."organizationCourseId";
+    WHERE oc."id" = NEW."organizationCourseId"
+    FOR SHARE OF oc;
 
     SELECT "courseId", "userId"
     INTO enrolled_course_id, enrolled_user_id
     FROM "Enrollment"
-    WHERE "id" = NEW."enrollmentId";
+    WHERE "id" = NEW."enrollmentId"
+    FOR SHARE;
 
     IF assigned_course_id IS NULL OR enrolled_course_id IS NULL OR assigned_course_id <> enrolled_course_id THEN
         RAISE EXCEPTION 'Organization sponsorship course scope mismatch';
@@ -45,13 +50,15 @@ BEGIN
             RAISE EXCEPTION 'Active organization course assignment required for sponsorship';
         END IF;
 
-        IF NOT EXISTS (
-            SELECT 1
-            FROM "OrganizationSeat" seat
-            WHERE seat."organizationId" = assigned_organization_id
-              AND seat."userId" = enrolled_user_id
-              AND seat."status" = 'ACTIVE'
-        ) THEN
+        SELECT seat."id"
+        INTO active_seat_id
+        FROM "OrganizationSeat" seat
+        WHERE seat."organizationId" = assigned_organization_id
+          AND seat."userId" = enrolled_user_id
+          AND seat."status" = 'ACTIVE'
+        FOR SHARE;
+
+        IF active_seat_id IS NULL THEN
             RAISE EXCEPTION 'Active organization seat required for sponsorship';
         END IF;
     END IF;
