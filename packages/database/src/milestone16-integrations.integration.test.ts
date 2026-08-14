@@ -149,4 +149,86 @@ suite('Milestone 16 verified organization integration constraints', () => {
       );
     },
   );
+
+  test(
+    'rejects unscoped notifications beneath verified organization events',
+    async () => {
+      const event = await db.notificationEvent.create({
+        data: {
+          idempotencyKey: `m16e-db-event-scoped-${suffix}`,
+          organizationId,
+          organizationRecordId: organizationId,
+          recipientId: userId,
+          templateKey: 'account_notice',
+          category: 'TRANSACTIONAL',
+          payload: {
+            subject: 'Scoped event',
+            message: 'The child notification must keep organization scope.',
+          },
+        },
+        select: { id: true },
+      });
+
+      await expect(
+        db.notification.create({
+          data: {
+            eventId: event.id,
+            recipientId: userId,
+            channel: 'IN_APP',
+            title: 'Scoped event',
+            preview: 'Organization scope is required.',
+            body: 'Organization scope is required.',
+          },
+        }),
+      ).rejects.toThrow(
+        'Notification organization must match notification event organization',
+      );
+    },
+  );
+
+  test(
+    'rejects a different recipient beneath a verified notification event',
+    async () => {
+      const outsiderId = `m16e-db-outsider-${suffix}`;
+      await db.user.create({
+        data: {
+          id: outsiderId,
+          clerkId: `m16e-db-outsider-clerk-${suffix}`,
+          email: `m16e-db-outsider-${suffix}@example.test`,
+        },
+      });
+      const event = await db.notificationEvent.create({
+        data: {
+          idempotencyKey: `m16e-db-event-recipient-${suffix}`,
+          organizationId,
+          organizationRecordId: organizationId,
+          recipientId: userId,
+          templateKey: 'account_notice',
+          category: 'TRANSACTIONAL',
+          payload: {
+            subject: 'Recipient event',
+            message: 'The child notification must keep the event recipient.',
+          },
+        },
+        select: { id: true },
+      });
+
+      await expect(
+        db.notification.create({
+          data: {
+            eventId: event.id,
+            recipientId: outsiderId,
+            organizationId,
+            organizationRecordId: organizationId,
+            channel: 'IN_APP',
+            title: 'Recipient event',
+            preview: 'Recipient identity is required.',
+            body: 'Recipient identity is required.',
+          },
+        }),
+      ).rejects.toThrow(
+        'Notification recipient must match notification event recipient',
+      );
+    },
+  );
 });
