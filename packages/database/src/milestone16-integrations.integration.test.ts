@@ -233,7 +233,8 @@ suite('Milestone 16 verified organization integration constraints', () => {
         category: 'TRANSACTIONAL',
         payload: {
           subject: 'Opaque parent event',
-          message: 'The child must keep the parent legacy organization identity.',
+          message:
+            'The child must keep the parent legacy organization identity.',
         },
       },
       select: { id: true },

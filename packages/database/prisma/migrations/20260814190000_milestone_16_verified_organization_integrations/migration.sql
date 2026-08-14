@@ -220,105 +220,12 @@ WHERE event."organizationId" = organization."id"
   AND recipient."id" = event."recipientId"
   AND recipient."deletedAt" IS NULL;
 
--- A child notification is verified only when its parent event is already
--- verified for the same Organization, the recipient identity matches the event,
--- and active membership in that Organization can be proven. Process notifications
--- in bounded transactions so workers are never held behind one table-wide update.
-CREATE OR REPLACE PROCEDURE "backfill_verified_notification_organizations"()
-LANGUAGE plpgsql
-AS $$
-DECLARE
-  updated_rows INTEGER;
-  remaining_rows BOOLEAN;
-BEGIN
-  LOOP
-    WITH candidate AS (
-      SELECT notification."id"
-      FROM "Notification" AS notification
-      INNER JOIN "NotificationEvent" AS event
-        ON event."id" = notification."eventId"
-      INNER JOIN "Organization" AS organization
-        ON organization."id" = notification."organizationId"
-      INNER JOIN "OrganizationMembership" AS membership
-        ON membership."organizationId" = organization."id"
-       AND membership."userId" = notification."recipientId"
-      INNER JOIN "User" AS recipient
-        ON recipient."id" = notification."recipientId"
-      WHERE notification."organizationRecordId" IS NULL
-        AND organization."status" = 'ACTIVE'
-        AND organization."archivedAt" IS NULL
-        AND event."organizationId" = organization."id"
-        AND event."organizationRecordId" = organization."id"
-        AND notification."recipientId" = event."recipientId"
-        AND membership."active" = TRUE
-        AND membership."endedAt" IS NULL
-        AND recipient."deletedAt" IS NULL
-      ORDER BY notification."id"
-      FOR UPDATE OF notification SKIP LOCKED
-      LIMIT 500
-    )
-    UPDATE "Notification" AS notification
-    SET "organizationRecordId" = organization."id"
-    FROM candidate,
-         "Organization" AS organization,
-         "OrganizationMembership" AS membership,
-         "User" AS recipient,
-         "NotificationEvent" AS event
-    WHERE notification."id" = candidate."id"
-      AND notification."eventId" = event."id"
-      AND notification."organizationId" = organization."id"
-      AND organization."status" = 'ACTIVE'
-      AND organization."archivedAt" IS NULL
-      AND event."organizationId" = organization."id"
-      AND event."organizationRecordId" = organization."id"
-      AND notification."recipientId" = event."recipientId"
-      AND membership."organizationId" = organization."id"
-      AND membership."userId" = notification."recipientId"
-      AND membership."active" = TRUE
-      AND membership."endedAt" IS NULL
-      AND recipient."id" = notification."recipientId"
-      AND recipient."deletedAt" IS NULL;
-
-    GET DIAGNOSTICS updated_rows = ROW_COUNT;
-    COMMIT;
-
-    IF updated_rows > 0 THEN
-      CONTINUE;
-    END IF;
-
-    SELECT EXISTS (
-      SELECT 1
-      FROM "Notification" AS notification
-      INNER JOIN "NotificationEvent" AS event
-        ON event."id" = notification."eventId"
-      INNER JOIN "Organization" AS organization
-        ON organization."id" = notification."organizationId"
-      INNER JOIN "OrganizationMembership" AS membership
-        ON membership."organizationId" = organization."id"
-       AND membership."userId" = notification."recipientId"
-      INNER JOIN "User" AS recipient
-        ON recipient."id" = notification."recipientId"
-      WHERE notification."organizationRecordId" IS NULL
-        AND organization."status" = 'ACTIVE'
-        AND organization."archivedAt" IS NULL
-        AND event."organizationId" = organization."id"
-        AND event."organizationRecordId" = organization."id"
-        AND notification."recipientId" = event."recipientId"
-        AND membership."active" = TRUE
-        AND membership."endedAt" IS NULL
-        AND recipient."deletedAt" IS NULL
-    ) INTO remaining_rows;
-
-    IF NOT remaining_rows THEN
-      EXIT;
-    END IF;
-
-    PERFORM pg_sleep(0.05);
-  END LOOP;
-END;
-$$;
-
-CALL "backfill_verified_notification_organizations"();
+-- Historical child Notification rows are intentionally not backfilled inside
+-- prisma migrate deploy. The verified relation remains nullable for legacy history,
+-- while temporary and permanent guards protect all new or identity-changing writes.
+-- The production migration workflow runs a separate bounded transaction backfill
+-- after schema deployment so notification workers are never held behind a table-wide
+-- migration transaction.
 
 -- Add foreign keys with NOT VALID so the short constraint-addition lock does not
 -- scan live tables. Separate later migrations validate each constraint using the
@@ -719,5 +626,4 @@ WHERE event."organizationRecordId" IS NULL
   AND recipient."id" = event."recipientId"
   AND recipient."deletedAt" IS NULL;
 
-CALL "backfill_verified_notification_organizations"();
-DROP PROCEDURE "backfill_verified_notification_organizations"();
+-- Child Notification history is reconciled by the post-migration bounded backfill.
