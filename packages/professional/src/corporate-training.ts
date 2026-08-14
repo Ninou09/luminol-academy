@@ -156,10 +156,7 @@ export function canCorporateManagerViewData(role: unknown, dataKind: unknown) {
     return false;
   }
 
-  if (
-    validatedRole.data !== 'OWNER' &&
-    validatedRole.data !== 'MANAGER'
-  ) {
+  if (validatedRole.data !== 'OWNER' && validatedRole.data !== 'MANAGER') {
     return false;
   }
 
