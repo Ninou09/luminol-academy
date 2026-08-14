@@ -186,7 +186,42 @@ suite('Milestone 16 verified organization integration constraints', () => {
     expect(event.organizationRecordId).toBe(organizationId);
   });
 
-  test('keeps legacy notification events unverified when membership cannot be proven', async () => {
+  test('preserves unmatched opaque legacy notification writers during expansion', async () => {
+    const opaqueOrganizationId = `legacy-notification-org-${suffix}`;
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-event-opaque-${suffix}`,
+        organizationId: opaqueOrganizationId,
+        recipientId: userId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Opaque legacy event',
+          message: 'The opaque legacy identity remains unverified.',
+        },
+      },
+      select: { id: true, organizationRecordId: true },
+    });
+
+    expect(event.organizationRecordId).toBeNull();
+
+    const notification = await db.notification.create({
+      data: {
+        eventId: event.id,
+        recipientId: userId,
+        organizationId: opaqueOrganizationId,
+        channel: 'IN_APP',
+        title: 'Opaque legacy event',
+        preview: 'The opaque legacy identity remains unverified.',
+        body: 'The opaque legacy identity remains unverified.',
+      },
+      select: { organizationRecordId: true },
+    });
+
+    expect(notification.organizationRecordId).toBeNull();
+  });
+
+  test('rejects legacy-form first-class organization events when membership cannot be proven', async () => {
     const outsiderId = `m16e-db-legacy-event-outsider-${suffix}`;
     await db.user.create({
       data: {
@@ -196,22 +231,23 @@ suite('Milestone 16 verified organization integration constraints', () => {
       },
     });
 
-    const event = await db.notificationEvent.create({
-      data: {
-        idempotencyKey: `m16e-db-event-legacy-outsider-${suffix}`,
-        organizationId,
-        recipientId: outsiderId,
-        templateKey: 'account_notice',
-        category: 'TRANSACTIONAL',
-        payload: {
-          subject: 'Unverified legacy event',
-          message: 'Membership cannot be proven during the expand phase.',
+    await expect(
+      db.notificationEvent.create({
+        data: {
+          idempotencyKey: `m16e-db-event-legacy-outsider-${suffix}`,
+          organizationId,
+          recipientId: outsiderId,
+          templateKey: 'account_notice',
+          category: 'TRANSACTIONAL',
+          payload: {
+            subject: 'Invalid first-class legacy-form event',
+            message: 'Membership cannot be proven during the expand phase.',
+          },
         },
-      },
-      select: { organizationRecordId: true },
-    });
-
-    expect(event.organizationRecordId).toBeNull();
+      }),
+    ).rejects.toThrow(
+      'First-class organization notification scope requires verified active membership',
+    );
   });
 
   test('rejects verified organization events for recipients without membership', async () => {
