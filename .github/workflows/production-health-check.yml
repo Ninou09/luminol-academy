@@ -94,6 +94,7 @@ jobs:
             local frame_is_deny='no'
 
             response_meta="$(curl --silent --show-error --max-time 20 \
+              --cookie 'luminol_locale=en' \
               --output "$body_file" \
               --write-out '%{http_code}\n%header{location}\n%header{cache-control}\n%header{x-content-type-options}\n%header{x-frame-options}\n%header{content-security-policy}\n%header{x-clerk-auth-status}\n%header{x-clerk-auth-reason}\n%header{x-matched-path}\n%header{server}\n' \
               "$url/en/sign-in")"
