@@ -249,6 +249,10 @@ export async function deactivateOrganizationMembership(formData: FormData) {
       throw new Error('Active organization membership not found');
     }
 
+    await transaction.teamMembership.deleteMany({
+      where: { organizationMembershipId: input.membershipId },
+    });
+
     await audit(
       transaction,
       administrator.id,

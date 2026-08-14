@@ -38,9 +38,43 @@ function personLabel(person: {
   return name ? `${name} · ${person.email}` : person.email;
 }
 
-export default async function OrganizationsAdminPage() {
+type SearchValue = string | string[] | undefined;
+
+type OrganizationsAdminPageProps = {
+  searchParams: Promise<Record<string, SearchValue>>;
+};
+
+function firstSearchParam(value: SearchValue) {
+  return Array.isArray(value) ? (value[0] ?? '') : (value ?? '');
+}
+
+function dashboardHref(input: {
+  organizationQuery: string;
+  organizationPage: number;
+  userQuery: string;
+  courseQuery: string;
+}) {
+  const params = new URLSearchParams();
+  if (input.organizationQuery) params.set('q', input.organizationQuery);
+  if (input.organizationPage > 1)
+    params.set('page', String(input.organizationPage));
+  if (input.userQuery) params.set('user', input.userQuery);
+  if (input.courseQuery) params.set('course', input.courseQuery);
+  const query = params.toString();
+  return query ? `/organizations?${query}` : '/organizations';
+}
+
+export default async function OrganizationsAdminPage({
+  searchParams,
+}: OrganizationsAdminPageProps) {
   await requirePlatformPermission('academy:manage');
-  const dashboard = await getOrganizationAdminDashboard();
+  const params = await searchParams;
+  const dashboard = await getOrganizationAdminDashboard({
+    organizationQuery: firstSearchParam(params.q),
+    organizationPage: firstSearchParam(params.page) || 1,
+    userQuery: firstSearchParam(params.user),
+    courseQuery: firstSearchParam(params.course),
+  });
 
   return (
     <main
@@ -64,11 +98,60 @@ export default async function OrganizationsAdminPage() {
           <section className="admin-panel">
             <div className="panel-heading">
               <div>
+                <p className="eyebrow">Find</p>
+                <h2>Administration search</h2>
+              </div>
+              <span>
+                Page {dashboard.pagination.page} of{' '}
+                {dashboard.pagination.pageCount}
+                {' · '}
+                {dashboard.pagination.total} organizations
+              </span>
+            </div>
+            <form method="get" className="status-form">
+              <label>
+                <span>Organization name</span>
+                <input
+                  name="q"
+                  defaultValue={dashboard.query.organizationQuery}
+                  maxLength={160}
+                />
+              </label>
+              <label>
+                <span>User name or email</span>
+                <input
+                  name="user"
+                  defaultValue={dashboard.query.userQuery}
+                  maxLength={160}
+                />
+              </label>
+              <label>
+                <span>Published course</span>
+                <input
+                  name="course"
+                  defaultValue={dashboard.query.courseQuery}
+                  maxLength={160}
+                />
+              </label>
+              <button type="submit">Search</button>
+              <Link href="/organizations">Clear filters</Link>
+            </form>
+            <p className="admin-empty">
+              User and course selectors show up to{' '}
+              {dashboard.limits.optionSearchResults} matching results. Narrow
+              the search to reach records outside the initial result set.
+            </p>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
                 <p className="eyebrow">Create</p>
                 <h2>New organization</h2>
               </div>
               <span>
-                Showing at most {dashboard.limits.organizations} organizations
+                Page {dashboard.pagination.page} of{' '}
+                {dashboard.pagination.pageCount}
               </span>
             </div>
             <form action={createOrganization} className="status-form">
@@ -303,6 +386,7 @@ export default async function OrganizationsAdminPage() {
                                   <select
                                     name="toStatus"
                                     defaultValue=""
+                                    aria-label="Next seat status"
                                     required
                                   >
                                     <option value="" disabled>
@@ -375,6 +459,7 @@ export default async function OrganizationsAdminPage() {
                                 <select
                                   name="membershipId"
                                   defaultValue=""
+                                  aria-label={`Add member to ${team.name}`}
                                   required
                                 >
                                   <option value="" disabled>
@@ -505,6 +590,43 @@ export default async function OrganizationsAdminPage() {
               </section>
             ))
           )}
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <span>
+                Page {dashboard.pagination.page} of{' '}
+                {dashboard.pagination.pageCount}
+                {' · '}
+                {dashboard.pagination.total} organizations
+              </span>
+              <div className="status-form">
+                {dashboard.pagination.hasPreviousPage ? (
+                  <Link
+                    href={dashboardHref({
+                      organizationQuery: dashboard.query.organizationQuery,
+                      organizationPage: dashboard.pagination.page - 1,
+                      userQuery: dashboard.query.userQuery,
+                      courseQuery: dashboard.query.courseQuery,
+                    })}
+                  >
+                    Previous organizations
+                  </Link>
+                ) : null}
+                {dashboard.pagination.hasNextPage ? (
+                  <Link
+                    href={dashboardHref({
+                      organizationQuery: dashboard.query.organizationQuery,
+                      organizationPage: dashboard.pagination.page + 1,
+                      userQuery: dashboard.query.userQuery,
+                      courseQuery: dashboard.query.courseQuery,
+                    })}
+                  >
+                    Next organizations
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+          </section>
         </div>
       </section>
     </main>

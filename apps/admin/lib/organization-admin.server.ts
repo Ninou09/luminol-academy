@@ -33,7 +33,9 @@ export async function getOrganizationAdminDashboard(
     ? {
         deletedAt: null,
         OR: [
-          { email: { contains: query.userQuery, mode: 'insensitive' as const } },
+          {
+            email: { contains: query.userQuery, mode: 'insensitive' as const },
+          },
           {
             firstName: {
               contains: query.userQuery,
