@@ -93,6 +93,40 @@ suite('Milestone 16 finance expand-phase fail-closed constraints', () => {
     );
   });
 
+  test('rejects opaque corporate billing that disagrees with its verified invoice organization', async () => {
+    const invoice = await db.invoice.create({
+      data: {
+        number: `M16E-FINANCE-OPAQUE-MISMATCH-PARENT-${suffix}`,
+        customerId: userId,
+        organizationId: activeOrganizationId,
+        currency: 'DZD',
+        subtotalMinor: 100,
+        taxMinor: 0,
+        totalMinor: 100,
+      },
+      select: { id: true, organizationRecordId: true },
+    });
+    const opaqueOrganizationId = `opaque-finance-mismatch-${suffix}`;
+
+    expect(invoice.organizationRecordId).toBe(activeOrganizationId);
+
+    await expect(
+      db.corporateBillingRecord.create({
+        data: {
+          organizationId: opaqueOrganizationId,
+          invoiceId: invoice.id,
+          billingContactName: 'Opaque Mismatched Billing Contact',
+          billingContactEmail: `m16e-finance-opaque-mismatch-${suffix}@example.test`,
+          seatCount: 1,
+          pricePerSeatMinor: 100,
+          paymentTermsDays: 30,
+        },
+      }),
+    ).rejects.toThrow(
+      'Corporate billing organization must match invoice organization',
+    );
+  });
+
   test('keeps truly opaque legacy finance identifiers unverified during expansion', async () => {
     const opaqueOrganizationId = `opaque-finance-org-${suffix}`;
     const invoice = await db.invoice.create({
