@@ -1,1 +1,0 @@
-OrganizationAuditEvent records actorUserId, organizationId, action, subjectType, subjectId, and createdAt only. It is append-only at the database boundary and intentionally contains no learner-authored, assessment, psychology, enquiry, finance, or certificate payload.
