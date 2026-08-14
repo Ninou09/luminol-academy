@@ -221,6 +221,83 @@ suite('Milestone 16 verified organization integration constraints', () => {
     expect(notification.organizationRecordId).toBeNull();
   });
 
+  test('rejects opaque notification children with a different organization than their parent event', async () => {
+    const parentOrganizationId = `legacy-parent-notification-org-${suffix}`;
+    const childOrganizationId = `legacy-child-notification-org-${suffix}`;
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-event-opaque-org-mismatch-${suffix}`,
+        organizationId: parentOrganizationId,
+        recipientId: userId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Opaque parent event',
+          message: 'The child must keep the parent legacy organization identity.',
+        },
+      },
+      select: { id: true },
+    });
+
+    await expect(
+      db.notification.create({
+        data: {
+          eventId: event.id,
+          recipientId: userId,
+          organizationId: childOrganizationId,
+          channel: 'IN_APP',
+          title: 'Opaque mismatched child',
+          preview: 'The child organization must match the parent event.',
+          body: 'The child organization must match the parent event.',
+        },
+      }),
+    ).rejects.toThrow(
+      'Notification organization must match notification event organization',
+    );
+  });
+
+  test('rejects opaque notification children with a different recipient than their parent event', async () => {
+    const opaqueOrganizationId = `legacy-recipient-notification-org-${suffix}`;
+    const outsiderId = `m16e-db-opaque-recipient-outsider-${suffix}`;
+    await db.user.create({
+      data: {
+        id: outsiderId,
+        clerkId: `m16e-db-opaque-recipient-outsider-clerk-${suffix}`,
+        email: `m16e-db-opaque-recipient-outsider-${suffix}@example.test`,
+      },
+    });
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-event-opaque-recipient-mismatch-${suffix}`,
+        organizationId: opaqueOrganizationId,
+        recipientId: userId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Opaque recipient parent event',
+          message: 'The child must keep the parent recipient identity.',
+        },
+      },
+      select: { id: true },
+    });
+
+    await expect(
+      db.notification.create({
+        data: {
+          eventId: event.id,
+          recipientId: outsiderId,
+          organizationId: opaqueOrganizationId,
+          channel: 'IN_APP',
+          title: 'Opaque recipient mismatch',
+          preview: 'The child recipient must match the parent event.',
+          body: 'The child recipient must match the parent event.',
+        },
+      }),
+    ).rejects.toThrow(
+      'Notification recipient must match notification event recipient',
+    );
+  });
+
   test('rejects legacy-form first-class organization events when membership cannot be proven', async () => {
     const outsiderId = `m16e-db-legacy-event-outsider-${suffix}`;
     await db.user.create({

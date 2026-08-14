@@ -18,6 +18,8 @@ RETURNS TRIGGER AS $$
 DECLARE
   legacy_identity_changed BOOLEAN := TRUE;
   can_verify_relationship BOOLEAN := FALSE;
+  parent_organization_id TEXT;
+  parent_recipient_id TEXT;
 BEGIN
   IF TG_OP = 'UPDATE' THEN
     CASE TG_TABLE_NAME
@@ -42,6 +44,32 @@ BEGIN
     -- expand-phase guard.
     IF NOT legacy_identity_changed THEN
       RETURN NEW;
+    END IF;
+  END IF;
+
+  -- Parent identity must stay consistent even when the organization identifier is
+  -- genuinely opaque and therefore cannot be verified against Organization yet.
+  IF TG_TABLE_NAME = 'CorporateBillingRecord' THEN
+    SELECT invoice."organizationId"
+      INTO parent_organization_id
+    FROM "Invoice" AS invoice
+    WHERE invoice."id" = NEW."invoiceId";
+
+    IF NEW."organizationId" IS DISTINCT FROM parent_organization_id THEN
+      RAISE EXCEPTION 'Corporate billing organization must match invoice organization';
+    END IF;
+  ELSIF TG_TABLE_NAME = 'Notification' THEN
+    SELECT event."organizationId", event."recipientId"
+      INTO parent_organization_id, parent_recipient_id
+    FROM "NotificationEvent" AS event
+    WHERE event."id" = NEW."eventId";
+
+    IF NEW."organizationId" IS DISTINCT FROM parent_organization_id THEN
+      RAISE EXCEPTION 'Notification organization must match notification event organization';
+    END IF;
+
+    IF NEW."recipientId" IS DISTINCT FROM parent_recipient_id THEN
+      RAISE EXCEPTION 'Notification recipient must match notification event recipient';
     END IF;
   END IF;
 
@@ -194,26 +222,103 @@ WHERE event."organizationId" = organization."id"
 
 -- A child notification is verified only when its parent event is already
 -- verified for the same Organization, the recipient identity matches the event,
--- and active membership in that Organization can be proven.
-UPDATE "Notification" AS notification
-SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization,
-     "OrganizationMembership" AS membership,
-     "User" AS recipient,
-     "NotificationEvent" AS event
-WHERE notification."eventId" = event."id"
-  AND notification."organizationId" = organization."id"
-  AND organization."status" = 'ACTIVE'
-  AND organization."archivedAt" IS NULL
-  AND event."organizationId" = organization."id"
-  AND event."organizationRecordId" = organization."id"
-  AND notification."recipientId" = event."recipientId"
-  AND membership."organizationId" = organization."id"
-  AND membership."userId" = notification."recipientId"
-  AND membership."active" = TRUE
-  AND membership."endedAt" IS NULL
-  AND recipient."id" = notification."recipientId"
-  AND recipient."deletedAt" IS NULL;
+-- and active membership in that Organization can be proven. Process notifications
+-- in bounded transactions so workers are never held behind one table-wide update.
+CREATE OR REPLACE PROCEDURE "backfill_verified_notification_organizations"()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  updated_rows INTEGER;
+  remaining_rows BOOLEAN;
+BEGIN
+  LOOP
+    WITH candidate AS (
+      SELECT notification."id"
+      FROM "Notification" AS notification
+      INNER JOIN "NotificationEvent" AS event
+        ON event."id" = notification."eventId"
+      INNER JOIN "Organization" AS organization
+        ON organization."id" = notification."organizationId"
+      INNER JOIN "OrganizationMembership" AS membership
+        ON membership."organizationId" = organization."id"
+       AND membership."userId" = notification."recipientId"
+      INNER JOIN "User" AS recipient
+        ON recipient."id" = notification."recipientId"
+      WHERE notification."organizationRecordId" IS NULL
+        AND organization."status" = 'ACTIVE'
+        AND organization."archivedAt" IS NULL
+        AND event."organizationId" = organization."id"
+        AND event."organizationRecordId" = organization."id"
+        AND notification."recipientId" = event."recipientId"
+        AND membership."active" = TRUE
+        AND membership."endedAt" IS NULL
+        AND recipient."deletedAt" IS NULL
+      ORDER BY notification."id"
+      FOR UPDATE OF notification SKIP LOCKED
+      LIMIT 500
+    )
+    UPDATE "Notification" AS notification
+    SET "organizationRecordId" = organization."id"
+    FROM candidate,
+         "Organization" AS organization,
+         "OrganizationMembership" AS membership,
+         "User" AS recipient,
+         "NotificationEvent" AS event
+    WHERE notification."id" = candidate."id"
+      AND notification."eventId" = event."id"
+      AND notification."organizationId" = organization."id"
+      AND organization."status" = 'ACTIVE'
+      AND organization."archivedAt" IS NULL
+      AND event."organizationId" = organization."id"
+      AND event."organizationRecordId" = organization."id"
+      AND notification."recipientId" = event."recipientId"
+      AND membership."organizationId" = organization."id"
+      AND membership."userId" = notification."recipientId"
+      AND membership."active" = TRUE
+      AND membership."endedAt" IS NULL
+      AND recipient."id" = notification."recipientId"
+      AND recipient."deletedAt" IS NULL;
+
+    GET DIAGNOSTICS updated_rows = ROW_COUNT;
+    COMMIT;
+
+    IF updated_rows > 0 THEN
+      CONTINUE;
+    END IF;
+
+    SELECT EXISTS (
+      SELECT 1
+      FROM "Notification" AS notification
+      INNER JOIN "NotificationEvent" AS event
+        ON event."id" = notification."eventId"
+      INNER JOIN "Organization" AS organization
+        ON organization."id" = notification."organizationId"
+      INNER JOIN "OrganizationMembership" AS membership
+        ON membership."organizationId" = organization."id"
+       AND membership."userId" = notification."recipientId"
+      INNER JOIN "User" AS recipient
+        ON recipient."id" = notification."recipientId"
+      WHERE notification."organizationRecordId" IS NULL
+        AND organization."status" = 'ACTIVE'
+        AND organization."archivedAt" IS NULL
+        AND event."organizationId" = organization."id"
+        AND event."organizationRecordId" = organization."id"
+        AND notification."recipientId" = event."recipientId"
+        AND membership."active" = TRUE
+        AND membership."endedAt" IS NULL
+        AND recipient."deletedAt" IS NULL
+    ) INTO remaining_rows;
+
+    IF NOT remaining_rows THEN
+      EXIT;
+    END IF;
+
+    PERFORM pg_sleep(0.05);
+  END LOOP;
+END;
+$$;
+
+CALL "backfill_verified_notification_organizations"();
 
 -- Add foreign keys with NOT VALID so the short constraint-addition lock does not
 -- scan live tables. Separate later migrations validate each constraint using the
@@ -472,13 +577,14 @@ FOR EACH ROW EXECUTE FUNCTION "enforce_notification_event_recipient_scope"();
 CREATE OR REPLACE FUNCTION "enforce_notification_event_organization"()
 RETURNS TRIGGER AS $$
 DECLARE
+  event_organization_id TEXT;
   event_organization_record_id TEXT;
   event_recipient_id TEXT;
   identity_changed BOOLEAN;
   recipient_identity_changed BOOLEAN;
 BEGIN
-  SELECT "organizationRecordId", "recipientId"
-    INTO event_organization_record_id, event_recipient_id
+  SELECT "organizationId", "organizationRecordId", "recipientId"
+    INTO event_organization_id, event_organization_record_id, event_recipient_id
   FROM "NotificationEvent"
   WHERE "id" = NEW."eventId";
 
@@ -491,6 +597,11 @@ BEGIN
       OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId";
     recipient_identity_changed := OLD."eventId" IS DISTINCT FROM NEW."eventId"
       OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId";
+  END IF;
+
+  IF identity_changed
+     AND NEW."organizationId" IS DISTINCT FROM event_organization_id THEN
+    RAISE EXCEPTION 'Notification organization must match notification event organization';
   END IF;
 
   IF event_organization_record_id IS NOT NULL
@@ -608,23 +719,5 @@ WHERE event."organizationRecordId" IS NULL
   AND recipient."id" = event."recipientId"
   AND recipient."deletedAt" IS NULL;
 
-UPDATE "Notification" AS notification
-SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization,
-     "OrganizationMembership" AS membership,
-     "User" AS recipient,
-     "NotificationEvent" AS event
-WHERE notification."organizationRecordId" IS NULL
-  AND notification."eventId" = event."id"
-  AND notification."organizationId" = organization."id"
-  AND organization."status" = 'ACTIVE'
-  AND organization."archivedAt" IS NULL
-  AND event."organizationId" = organization."id"
-  AND event."organizationRecordId" = organization."id"
-  AND notification."recipientId" = event."recipientId"
-  AND membership."organizationId" = organization."id"
-  AND membership."userId" = notification."recipientId"
-  AND membership."active" = TRUE
-  AND membership."endedAt" IS NULL
-  AND recipient."id" = notification."recipientId"
-  AND recipient."deletedAt" IS NULL;
+CALL "backfill_verified_notification_organizations"();
+DROP PROCEDURE "backfill_verified_notification_organizations"();
