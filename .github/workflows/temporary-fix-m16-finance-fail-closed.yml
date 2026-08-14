@@ -1,0 +1,179 @@
+name: Temporary Milestone 16 Finance Guard Fix
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-finance-integration
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feature/milestone-16-finance-integration
+          fetch-depth: 0
+      - name: Apply fail-closed finance fix and tests
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          migration = Path('packages/database/prisma/migrations/20260814190000_milestone_16_verified_organization_integrations/migration.sql')
+          text = migration.read_text()
+          old = '''      IF (TG_TABLE_NAME = 'NotificationEvent' OR TG_TABLE_NAME = 'Notification')
+         AND EXISTS (
+           SELECT 1
+           FROM "Organization" AS organization
+           WHERE organization."id" = NEW."organizationId"
+         ) THEN
+        RAISE EXCEPTION 'First-class organization notification scope requires verified active membership';
+      END IF;'''
+          new = '''      IF EXISTS (
+           SELECT 1
+           FROM "Organization" AS organization
+           WHERE organization."id" = NEW."organizationId"
+         ) THEN
+        RAISE EXCEPTION 'First-class organization notification scope requires verified active membership';
+      END IF;'''
+          if old not in text:
+              raise SystemExit('expected migration block not found')
+          migration.write_text(text.replace(old, new, 1))
+
+          test_file = Path('packages/database/src/milestone16-finance-expand-fail-closed.integration.test.ts')
+          test_file.write_text('''import { beforeAll, describe, expect, test } from 'vitest';
+
+import { db } from './index';
+
+const runDatabaseTests = Boolean(process.env.TEST_DATABASE_URL);
+const suite = runDatabaseTests ? describe : describe.skip;
+const suffix = `${process.pid}-${Date.now()}`;
+const userId = `m16e-finance-user-${suffix}`;
+const activeOrganizationId = `m16e-finance-active-org-${suffix}`;
+const otherOrganizationId = `m16e-finance-other-org-${suffix}`;
+const suspendedOrganizationId = `m16e-finance-suspended-org-${suffix}`;
+
+suite('Milestone 16 finance expand-phase fail-closed constraints', () => {
+  beforeAll(async () => {
+    await db.user.create({
+      data: {
+        id: userId,
+        clerkId: `m16e-finance-clerk-${suffix}`,
+        email: `m16e-finance-${suffix}@example.test`,
+      },
+    });
+    await db.organization.createMany({
+      data: [
+        {
+          id: activeOrganizationId,
+          name: 'Active Finance Organization',
+          seatLimit: 5,
+        },
+        {
+          id: otherOrganizationId,
+          name: 'Other Finance Organization',
+          seatLimit: 5,
+        },
+        {
+          id: suspendedOrganizationId,
+          name: 'Suspended Finance Organization',
+          seatLimit: 5,
+          status: 'SUSPENDED',
+        },
+      ],
+    });
+  });
+
+  test('rejects a legacy-form invoice naming an inactive first-class organization', async () => {
+    await expect(
+      db.invoice.create({
+        data: {
+          number: `M16E-FINANCE-SUSPENDED-${suffix}`,
+          customerId: userId,
+          organizationId: suspendedOrganizationId,
+          currency: 'DZD',
+          subtotalMinor: 100,
+          taxMinor: 0,
+          totalMinor: 100,
+        },
+      }),
+    ).rejects.toThrow(
+      'First-class organization notification scope requires verified active membership',
+    );
+  });
+
+  test('rejects legacy-form corporate billing that disagrees with its verified invoice organization', async () => {
+    const invoice = await db.invoice.create({
+      data: {
+        number: `M16E-FINANCE-PARENT-${suffix}`,
+        customerId: userId,
+        organizationId: activeOrganizationId,
+        currency: 'DZD',
+        subtotalMinor: 100,
+        taxMinor: 0,
+        totalMinor: 100,
+      },
+      select: { id: true, organizationRecordId: true },
+    });
+    expect(invoice.organizationRecordId).toBe(activeOrganizationId);
+
+    await expect(
+      db.corporateBillingRecord.create({
+        data: {
+          organizationId: otherOrganizationId,
+          invoiceId: invoice.id,
+          billingContactName: 'Mismatched Billing Contact',
+          billingContactEmail: `m16e-finance-mismatch-${suffix}@example.test`,
+          seatCount: 1,
+          pricePerSeatMinor: 100,
+          paymentTermsDays: 30,
+        },
+      }),
+    ).rejects.toThrow(
+      'First-class organization notification scope requires verified active membership',
+    );
+  });
+
+  test('keeps truly opaque legacy finance identifiers unverified during expansion', async () => {
+    const opaqueOrganizationId = `opaque-finance-org-${suffix}`;
+    const invoice = await db.invoice.create({
+      data: {
+        number: `M16E-FINANCE-OPAQUE-${suffix}`,
+        customerId: userId,
+        organizationId: opaqueOrganizationId,
+        currency: 'DZD',
+        subtotalMinor: 100,
+        taxMinor: 0,
+        totalMinor: 100,
+      },
+      select: { id: true, organizationRecordId: true },
+    });
+    expect(invoice.organizationRecordId).toBeNull();
+
+    const billing = await db.corporateBillingRecord.create({
+      data: {
+        organizationId: opaqueOrganizationId,
+        invoiceId: invoice.id,
+        billingContactName: 'Opaque Legacy Billing Contact',
+        billingContactEmail: `m16e-finance-opaque-${suffix}@example.test`,
+        seatCount: 1,
+        pricePerSeatMinor: 100,
+        paymentTermsDays: 30,
+      },
+      select: { organizationRecordId: true },
+    });
+    expect(billing.organizationRecordId).toBeNull();
+  });
+});
+''')
+          PY
+          git rm .github/workflows/temporary-fix-m16-finance-fail-closed.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add packages/database/prisma/migrations/20260814190000_milestone_16_verified_organization_integrations/migration.sql packages/database/src/milestone16-finance-expand-fail-closed.integration.test.ts
+          git commit -m 'Fail closed for first-class finance identities'
+          git push origin HEAD:feature/milestone-16-finance-integration
