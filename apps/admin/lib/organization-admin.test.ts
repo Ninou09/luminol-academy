@@ -3,13 +3,33 @@ import { describe, expect, test } from 'vitest';
 import {
   assertOrganizationScope,
   getOrganizationSeatLifecycleUpdate,
-  summarizeOrganizationProgress,
+  ORGANIZATION_MEMBERSHIP_ROLES,
+  ORGANIZATION_SEAT_STATUSES,
+  ORGANIZATION_SEAT_TRANSITIONS,
 } from './organization-admin';
 
 describe('organization administration invariants', () => {
+  test('reuses the shared organization domain contract', () => {
+    expect(ORGANIZATION_MEMBERSHIP_ROLES).toEqual([
+      'OWNER',
+      'MANAGER',
+      'LEARNER',
+    ]);
+    expect(ORGANIZATION_SEAT_STATUSES).toEqual([
+      'INVITED',
+      'ACTIVE',
+      'COMPLETED',
+      'REVOKED',
+    ]);
+    expect(ORGANIZATION_SEAT_TRANSITIONS.ACTIVE).toEqual([
+      'COMPLETED',
+      'REVOKED',
+    ]);
+  });
+
   test('rejects cross-organization scope', () => {
     expect(() => assertOrganizationScope('org-a', 'org-b')).toThrow(
-      'Organization scope mismatch',
+      'Corporate organization scope mismatch',
     );
     expect(() => assertOrganizationScope('org-a', 'org-a')).not.toThrow();
   });
@@ -27,23 +47,9 @@ describe('organization administration invariants', () => {
     });
     expect(() =>
       getOrganizationSeatLifecycleUpdate('COMPLETED', 'ACTIVE', now),
-    ).toThrow('Invalid organization seat transition');
+    ).toThrow('Invalid corporate seat transition');
     expect(() =>
       getOrganizationSeatLifecycleUpdate('REVOKED', 'ACTIVE', now),
-    ).toThrow('Invalid organization seat transition');
-  });
-
-  test('summarizes only bounded aggregate progress values', () => {
-    expect(
-      summarizeOrganizationProgress([
-        { progressPercent: 40, completed: false },
-        { progressPercent: 120, completed: true },
-        { progressPercent: -5, completed: false },
-      ]),
-    ).toEqual({
-      assignmentCount: 3,
-      completedAssignments: 1,
-      averageProgressPercent: 47,
-    });
+    ).toThrow('Invalid corporate seat transition');
   });
 });
