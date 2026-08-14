@@ -77,7 +77,8 @@ export const CORPORATE_MANAGER_DATA_POLICY = {
   PRIVATE_CERTIFICATE_METADATA: false,
 } as const;
 
-export type CorporateManagerDataKind = keyof typeof CORPORATE_MANAGER_DATA_POLICY;
+export type CorporateManagerDataKind =
+  keyof typeof CORPORATE_MANAGER_DATA_POLICY;
 
 export type CorporateOrganization = z.infer<typeof corporateOrganizationSchema>;
 export type CorporateOrganizationGovernance = z.infer<
