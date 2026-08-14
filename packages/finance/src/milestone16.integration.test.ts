@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, test } from 'vitest';
 
 import { db } from '@luminol/database';
 
+import type { FinanceActor } from './access';
 import { createCorporateInvoice, createInvoice } from './server';
 
 const runDatabaseTests = Boolean(process.env.TEST_DATABASE_URL);
@@ -10,7 +11,7 @@ const suffix = `${process.pid}-${Date.now()}`;
 const actorId = `m16e-finance-actor-${suffix}`;
 const organizationId = `m16e-finance-org-${suffix}`;
 const archivedOrganizationId = `m16e-finance-archived-org-${suffix}`;
-const actor = { userId: actorId, permissions: ['finance:manage'] as const };
+const actor: FinanceActor = { userId: actorId, permissions: ['finance:manage'] };
 
 suite('Milestone 16 verified organization finance integration', () => {
   beforeAll(async () => {
