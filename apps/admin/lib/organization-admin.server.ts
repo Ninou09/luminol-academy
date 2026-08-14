@@ -138,6 +138,7 @@ export async function getOrganizationAdminDashboard(
           },
         },
         seats: {
+          where: { status: { in: ['INVITED', 'ACTIVE'] } },
           orderBy: [{ invitedAt: 'desc' }, { id: 'desc' }],
           select: {
             id: true,
@@ -189,6 +190,46 @@ export async function getOrganizationAdminDashboard(
     }),
   ]);
 
+  const organizationIds = organizations.map((organization) => organization.id);
+  const seatEligibleMemberships = organizationIds.length
+    ? await db.organizationMembership.findMany({
+        where: {
+          active: true,
+          OR: organizationIds.map((organizationId) => ({
+            organizationId,
+            user: {
+              organizationSeats: {
+                none: { organizationId },
+              },
+            },
+          })),
+        },
+        orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
+        select: {
+          id: true,
+          organizationId: true,
+          role: true,
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      })
+    : [];
+  const seatEligibleByOrganization = new Map<
+    string,
+    typeof seatEligibleMemberships
+  >();
+  for (const membership of seatEligibleMemberships) {
+    const current = seatEligibleByOrganization.get(membership.organizationId);
+    if (current) current.push(membership);
+    else seatEligibleByOrganization.set(membership.organizationId, [membership]);
+  }
+
   const progress = await Promise.all(
     organizations.map(async (organization) => {
       const [assignmentCount, completedAssignments] = await Promise.all([
@@ -224,23 +265,36 @@ export async function getOrganizationAdminDashboard(
 
   return {
     organizations: organizations.map((organization) => {
-      const seatHolderUserIds = new Set(
-        organization.seats.map((seat) => seat.userId),
-      );
       const activeMemberUserIds = new Set(
         organization.memberships.map((membership) => membership.user.id),
+      );
+      const activeCourseIds = new Set(
+        organization.courses.map((assignment) => assignment.course.id),
       );
 
       return {
         ...organization,
-        seats: organization.seats.filter(
-          (seat) => seat.status === 'INVITED' || seat.status === 'ACTIVE',
-        ),
-        availableSeatMemberships: organization.memberships.filter(
-          (membership) => !seatHolderUserIds.has(membership.user.id),
-        ),
+        teams: organization.teams.map((team) => {
+          const currentMembershipIds = new Set(
+            team.memberships.map(
+              (teamMembership) =>
+                teamMembership.organizationMembership.id,
+            ),
+          );
+          return {
+            ...team,
+            availableMemberships: organization.memberships.filter(
+              (membership) => !currentMembershipIds.has(membership.id),
+            ),
+          };
+        }),
+        availableSeatMemberships:
+          seatEligibleByOrganization.get(organization.id) ?? [],
         availableMembershipUsers: users.filter(
           (user) => !activeMemberUserIds.has(user.id),
+        ),
+        availablePublishedCourses: publishedCourses.filter(
+          (course) => !activeCourseIds.has(course.id),
         ),
         progress: progressByOrganization.get(organization.id) ?? {
           organizationId: organization.id,
