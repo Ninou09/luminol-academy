@@ -22,10 +22,14 @@ if (process.env.NODE_ENV !== 'production') {
   globalForEnquiries.enquiryRateLimits = enquiryRateLimits;
 }
 
-function jsonResponse(body: Record<string, unknown>, status: number) {
+function jsonResponse(
+  body: Record<string, unknown>,
+  status: number,
+  headers: Record<string, string> = {},
+) {
   return Response.json(body, {
     status,
-    headers: NO_STORE_HEADERS,
+    headers: { ...NO_STORE_HEADERS, ...headers },
   });
 }
 
@@ -52,8 +56,11 @@ function getClientAddress(request: Request): string | null {
   return request.headers.get('x-real-ip');
 }
 
-function isRateLimited(address: string | null, now = Date.now()): boolean {
-  if (!address) return false;
+function getRateLimitRetryAfter(
+  address: string | null,
+  now = Date.now(),
+): number | null {
+  if (!address) return null;
 
   const current = enquiryRateLimits.get(address);
   if (enquiryRateLimits.size > 1_000) {
@@ -66,11 +73,13 @@ function isRateLimited(address: string | null, now = Date.now()): boolean {
       count: 1,
       resetAt: now + RATE_LIMIT_WINDOW_MS,
     });
-    return false;
+    return null;
   }
 
   current.count += 1;
-  return current.count > RATE_LIMIT_MAX;
+  if (current.count <= RATE_LIMIT_MAX) return null;
+
+  return Math.max(1, Math.ceil((current.resetAt - now) / 1_000));
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -90,10 +99,12 @@ export async function POST(request: Request): Promise<Response> {
     return jsonResponse({ error: 'Request is too large' }, 413);
   }
 
-  if (isRateLimited(getClientAddress(request))) {
+  const retryAfter = getRateLimitRetryAfter(getClientAddress(request));
+  if (retryAfter !== null) {
     return jsonResponse(
       { error: 'Too many enquiries. Please try again later.' },
       429,
+      { 'Retry-After': String(retryAfter) },
     );
   }
 

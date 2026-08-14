@@ -58,6 +58,7 @@ describe('POST /api/enquiries', () => {
 
     expect(response.status).toBe(201);
     expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(response.headers.get('retry-after')).toBeNull();
     expect(createEnquiry).toHaveBeenCalledWith({
       data: {
         name: validEnquiry.name,
@@ -132,15 +133,21 @@ describe('POST /api/enquiries', () => {
     });
   });
 
-  it('limits repeated submissions from one trusted edge address', async () => {
+  it('limits repeated submissions from one trusted edge address and returns retry timing', async () => {
     const address = '203.0.113.14';
     const responses = [];
     for (let index = 0; index < 6; index += 1) {
       responses.push(await POST(createRequest(validEnquiry, address)));
     }
 
-    expect(responses.at(-1)?.status).toBe(429);
-    expect(responses.at(-1)?.headers.get('cache-control')).toBe('no-store');
+    const rateLimited = responses.at(-1);
+    expect(rateLimited?.status).toBe(429);
+    expect(rateLimited?.headers.get('cache-control')).toBe('no-store');
+
+    const retryAfter = Number(rateLimited?.headers.get('retry-after'));
+    expect(Number.isInteger(retryAfter)).toBe(true);
+    expect(retryAfter).toBeGreaterThan(0);
+    expect(retryAfter).toBeLessThanOrEqual(15 * 60);
     expect(createEnquiry).toHaveBeenCalledTimes(5);
   });
 });
