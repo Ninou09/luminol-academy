@@ -1,0 +1,87 @@
+name: Milestone 16 security patch
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-organization-admin
+    paths:
+      - .github/workflows/m16-security-patch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-16-organization-admin
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Harden platform authorization and archived organization concurrency
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          actions = Path('apps/admin/app/organizations/actions.ts')
+          text = actions.read_text()
+          text = text.replace("import { requirePermission } from '@luminol/auth';", "import { requirePlatformPermission } from '@luminol/auth';")
+          text = text.replace("requirePermission('academy:manage')", "requirePlatformPermission('academy:manage')")
+
+          anchor = "function revalidateOrganizationAdmin() {\n"
+          helper = '''async function requireActiveOrganization(\n  transaction: Transaction,\n  organizationId: string,\n) {\n  const organizations = await transaction.$queryRaw<Array<{ id: string }>>`\n    SELECT "id"\n    FROM "Organization"\n    WHERE "id" = ${organizationId}\n      AND "status" = 'ACTIVE'::"OrganizationStatus"\n    FOR UPDATE\n  `;\n\n  if (organizations.length !== 1) {\n    throw new Error('Active organization not found');\n  }\n}\n\n'''
+          if helper not in text:
+              if anchor not in text:
+                  raise SystemExit('Organization admin helper anchor not found')
+              text = text.replace(anchor, helper + anchor, 1)
+
+          protected_functions = [
+              'upsertOrganizationMembership',
+              'deactivateOrganizationMembership',
+              'updateOrganizationMembershipRole',
+              'createOrganizationTeam',
+              'archiveOrganizationTeam',
+              'addOrganizationTeamMember',
+              'removeOrganizationTeamMember',
+              'allocateOrganizationSeat',
+              'transitionOrganizationSeat',
+              'assignOrganizationCourse',
+              'unassignOrganizationCourse',
+          ]
+          transaction_line = "  await db.$transaction(async (transaction: Transaction) => {\n"
+          guard_line = "    await requireActiveOrganization(transaction, input.organizationId);\n"
+          for function_name in protected_functions:
+              start = text.find(f'export async function {function_name}')
+              if start < 0:
+                  raise SystemExit(f'Function not found: {function_name}')
+              transaction = text.find(transaction_line, start)
+              if transaction < 0:
+                  raise SystemExit(f'Transaction not found: {function_name}')
+              insert_at = transaction + len(transaction_line)
+              if text[insert_at:insert_at + len(guard_line)] != guard_line:
+                  text = text[:insert_at] + guard_line + text[insert_at:]
+
+          actions.write_text(text)
+
+          page = Path('apps/admin/app/organizations/page.tsx')
+          page_text = page.read_text()
+          page_text = page_text.replace("import { requirePermission } from '@luminol/auth';", "import { requirePlatformPermission } from '@luminol/auth';")
+          page_text = page_text.replace("await requirePermission('academy:manage');", "await requirePlatformPermission('academy:manage');")
+          page.write_text(page_text)
+          PY
+          pnpm exec prettier --write apps/admin/app/organizations/actions.ts apps/admin/app/organizations/page.tsx
+      - name: Commit security hardening
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add apps/admin/app/organizations/actions.ts apps/admin/app/organizations/page.tsx
+          git diff --cached --check
+          git commit -m "Harden organization administration authorization"
+          git push origin HEAD:feature/milestone-16-organization-admin
