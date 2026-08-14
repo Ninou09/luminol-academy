@@ -31,53 +31,19 @@ jobs:
           python <<'PY'
           import re
           from pathlib import Path
-
           server = Path('apps/portal/lib/organization-manager.server.ts')
           text = server.read_text()
-          text = text.replace(
-              "import { db } from '@luminol/database';",
-              "import { db, type Prisma } from '@luminol/database';",
-              1,
-          )
-          old_where = '''const managerRoles = ['OWNER', 'MANAGER'] as const;
-
-const managerMembershipWhere = (userId: string) => ({
-  userId,
-  active: true,
-  role: { in: managerRoles },
-  organization: { archivedAt: null },
-});'''
-          new_where = '''function managerMembershipWhere(
-  userId: string,
-): Prisma.OrganizationMembershipWhereInput {
-  return {
-    userId,
-    active: true,
-    role: { in: ['OWNER', 'MANAGER'] },
-    organization: { archivedAt: null },
-  };
-}'''
+          text = text.replace("import { db } from '@luminol/database';", "import { db, type Prisma } from '@luminol/database';", 1)
+          old_where = "const managerRoles = ['OWNER', 'MANAGER'] as const;\n\nconst managerMembershipWhere = (userId: string) => ({\n  userId,\n  active: true,\n  role: { in: managerRoles },\n  organization: { archivedAt: null },\n});"
+          new_where = "function managerMembershipWhere(\n  userId: string,\n): Prisma.OrganizationMembershipWhereInput {\n  return {\n    userId,\n    active: true,\n    role: { in: ['OWNER', 'MANAGER'] },\n    organization: { archivedAt: null },\n  };\n}"
           if old_where not in text:
               raise SystemExit('Expected manager where block not found')
           server.write_text(text.replace(old_where, new_where, 1))
-
           page = Path('apps/portal/app/organization/page.tsx')
           text = page.read_text()
-          text = text.replace(
-              '    teamId?: string;\n',
-              '    teamId?: string | undefined;\n',
-              1,
-          )
-          pattern = re.compile(
-              r"href=\{workspaceHref\(locale, \{\s*\.\.\.baseState,\s*teamId: undefined,\s*rosterPage: 1,\s*\}\)\}"
-          )
-          replacement = '''href={workspaceHref(locale, {
-                  organizationId: baseState.organizationId,
-                  organizationPage: baseState.organizationPage,
-                  rosterPage: 1,
-                  teamPage: baseState.teamPage,
-                  coursePage: baseState.coursePage,
-                })}'''
+          text = text.replace('    teamId?: string;\n', '    teamId?: string | undefined;\n', 1)
+          pattern = re.compile(r"href=\{workspaceHref\(locale, \{\s*\.\.\.baseState,\s*teamId: undefined,\s*rosterPage: 1,\s*\}\)\}")
+          replacement = "href={workspaceHref(locale, {\n                  organizationId: baseState.organizationId,\n                  organizationPage: baseState.organizationPage,\n                  rosterPage: 1,\n                  teamPage: baseState.teamPage,\n                  coursePage: baseState.coursePage,\n                })}"
           text, count = pattern.subn(replacement, text, count=1)
           if count != 1:
               raise SystemExit(f'Expected one team-filter reset block, replaced {count}')
