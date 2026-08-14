@@ -1,0 +1,142 @@
+name: Milestone 16 final review fixes
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-organization-admin
+    paths:
+      - .github/workflows/m16-final-review-fixes.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-16-organization-admin
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Patch final review findings
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('apps/admin/app/organizations/page.tsx')
+          text = page.read_text()
+          text = text.replace(
+              "import type { OrganizationSeatStatus } from '../../lib/organization-admin';",
+              "import { ORGANIZATION_SEAT_TRANSITIONS } from '../../lib/organization-admin';",
+              1,
+          )
+          start = text.find('const seatTransitions: Record<')
+          end = text.find('function personLabel', start)
+          if start < 0 or end < 0:
+              raise SystemExit('Seat transition block not found')
+          text = text[:start] + text[end:]
+          text = text.replace('seatTransitions[seat.status]', 'ORGANIZATION_SEAT_TRANSITIONS[seat.status]')
+          selector = '{dashboard.options.users.map((user) => ('
+          if selector not in text:
+              raise SystemExit('Membership user selector not found')
+          text = text.replace(
+              selector,
+              '{organization.availableMembershipUsers.map((user) => (',
+              1,
+          )
+          page.write_text(text)
+
+          actions = Path('apps/admin/app/organizations/actions.ts')
+          text = actions.read_text()
+          start = text.find('export async function deactivateOrganizationMembership')
+          end = text.find('export async function updateOrganizationMembershipRole', start)
+          if start < 0 or end < 0:
+              raise SystemExit('Membership deactivation function not found')
+          lines = [
+              'export async function deactivateOrganizationMembership(formData: FormData) {',
+              "  const administrator = await requirePlatformPermission('academy:manage');",
+              '  const input = membershipMutationSchema.parse({',
+              "    organizationId: formData.get('organizationId'),",
+              "    membershipId: formData.get('membershipId'),",
+              '  });',
+              '',
+              '  await db.$transaction(async (transaction: Transaction) => {',
+              '    await requireActiveOrganization(transaction, input.organizationId);',
+              '    const membership = await transaction.organizationMembership.findFirst({',
+              '      where: {',
+              '        id: input.membershipId,',
+              '        organizationId: input.organizationId,',
+              '        active: true,',
+              '      },',
+              '      select: { id: true, userId: true },',
+              '    });',
+              '',
+              '    if (!membership) {',
+              "      throw new Error('Active organization membership not found');",
+              '    }',
+              '',
+              '    const openSeat = await transaction.organizationSeat.findFirst({',
+              '      where: {',
+              '        organizationId: input.organizationId,',
+              '        userId: membership.userId,',
+              "        status: { in: ['INVITED', 'ACTIVE'] },",
+              '      },',
+              '      select: { id: true },',
+              '    });',
+              '',
+              '    if (openSeat) {',
+              '      throw new Error(',
+              "        'Close the organization seat before deactivating membership',",
+              '      );',
+              '    }',
+              '',
+              '    const updated = await transaction.organizationMembership.updateMany({',
+              '      where: {',
+              '        id: membership.id,',
+              '        organizationId: input.organizationId,',
+              '        active: true,',
+              '      },',
+              '      data: { active: false, endedAt: new Date() },',
+              '    });',
+              '',
+              '    if (updated.count !== 1) {',
+              "      throw new Error('Organization membership was updated concurrently');",
+              '    }',
+              '',
+              '    await transaction.teamMembership.deleteMany({',
+              '      where: { organizationMembershipId: membership.id },',
+              '    });',
+              '',
+              '    await audit(',
+              '      transaction,',
+              '      administrator.id,',
+              '      input.organizationId,',
+              "      'membership.deactivated',",
+              "      'organizationMembership',",
+              '      membership.id,',
+              '    );',
+              '  });',
+              '',
+              '  revalidateOrganizationAdmin();',
+              '}',
+              '',
+          ]
+          text = text[:start] + '\n'.join(lines) + text[end:]
+          actions.write_text(text)
+          PY
+          pnpm exec prettier --write apps/admin/app/organizations/page.tsx apps/admin/app/organizations/actions.ts
+      - name: Commit final review fixes
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add apps/admin/app/organizations/page.tsx apps/admin/app/organizations/actions.ts
+          git diff --cached --check
+          git commit -m "Address final organization administration review findings"
+          git push origin HEAD:feature/milestone-16-organization-admin
