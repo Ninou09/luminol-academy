@@ -83,7 +83,11 @@ jobs:
             local frame_options
             local csp
 
+            # Localized routes intentionally persist the selected locale on a first
+            # browser request. Supply that non-authentication preference cookie so
+            # this probe tests sign-in availability instead of the setup redirect.
             response_meta="$(curl --silent --show-error --max-time 20 \
+              --cookie 'luminol_locale=en' \
               --output "$body_file" \
               --write-out '%{http_code}\n%header{location}\n%header{cache-control}\n%header{x-content-type-options}\n%header{x-frame-options}\n%header{content-security-policy}\n' \
               "$url/en/sign-in")"
