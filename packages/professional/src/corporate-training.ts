@@ -64,7 +64,7 @@ export const corporateMembershipSchema = z.object({
   organizationId: z.string().min(1),
   userId: z.string().min(1),
   role: z.enum(CORPORATE_MEMBERSHIP_ROLES),
-  active: z.boolean().default(true),
+  active: z.boolean(),
 });
 
 export const corporateTeamSchema = z.object({
