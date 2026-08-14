@@ -177,15 +177,14 @@ BEGIN
     ELSE
       -- Opaque identifiers that do not resolve to a first-class Organization
       -- remain legacy-compatible during expansion. Once an identifier names a
-      -- first-class Organization, notification scope must prove the active tenant
-      -- and recipient relationship instead of silently falling back to legacy mode.
-      IF (TG_TABLE_NAME = 'NotificationEvent' OR TG_TABLE_NAME = 'Notification')
-         AND EXISTS (
-           SELECT 1
-           FROM "Organization" AS organization
-           WHERE organization."id" = NEW."organizationId"
-         ) THEN
-        RAISE EXCEPTION 'First-class organization notification scope requires verified active membership';
+      -- first-class Organization, every integrated table must prove its verified
+      -- relationship instead of silently falling back to legacy mode.
+      IF EXISTS (
+        SELECT 1
+        FROM "Organization" AS organization
+        WHERE organization."id" = NEW."organizationId"
+      ) THEN
+        RAISE EXCEPTION 'First-class organization scope requires a verified relationship';
       END IF;
 
       RETURN NEW;
