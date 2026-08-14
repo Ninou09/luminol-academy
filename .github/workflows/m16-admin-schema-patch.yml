@@ -48,26 +48,26 @@ jobs:
               r'^(\s*courses\s+OrganizationCourse\[\]\s*)$',
               r'\1\n  auditEvents  OrganizationAuditEvent[]',
           )
-          replace_once(
-              r'^model Role \{',
-              '''model OrganizationAuditEvent {
-  id             String       @id @default(cuid())
-  organizationId String
-  actorUserId    String
-  action         String
-  subjectType    String
-  subjectId      String
-  createdAt      DateTime     @default(now())
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  actor          User         @relation("OrganizationAuditActor", fields: [actorUserId], references: [id], onDelete: Restrict)
-
-  @@index([organizationId, createdAt])
-  @@index([actorUserId, createdAt])
-  @@index([subjectType, subjectId, createdAt])
-}
-
-model Role {''',
-          )
+          audit_model = "\n".join([
+              'model OrganizationAuditEvent {',
+              '  id             String       @id @default(cuid())',
+              '  organizationId String',
+              '  actorUserId    String',
+              '  action         String',
+              '  subjectType    String',
+              '  subjectId      String',
+              '  createdAt      DateTime     @default(now())',
+              '  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)',
+              '  actor          User         @relation("OrganizationAuditActor", fields: [actorUserId], references: [id], onDelete: Restrict)',
+              '',
+              '  @@index([organizationId, createdAt])',
+              '  @@index([actorUserId, createdAt])',
+              '  @@index([subjectType, subjectId, createdAt])',
+              '}',
+              '',
+              'model Role {',
+          ])
+          replace_once(r'^model Role \{', audit_model)
 
           path.write_text(text)
           PY
