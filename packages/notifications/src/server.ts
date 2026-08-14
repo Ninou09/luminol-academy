@@ -104,11 +104,11 @@ export async function createNotificationEvent(input: unknown) {
     return tx.notificationEvent.create({
       data: {
         idempotencyKey: parsed.idempotencyKey,
-        recipientId: parsed.recipientId,
+        recipient: { connect: { id: parsed.recipientId } },
         ...(organization
           ? {
               organizationId: organization.id,
-              organizationRecordId: organization.id,
+              organizationRecord: { connect: { id: organization.id } },
             }
           : {}),
         templateKey: parsed.templateKey,
@@ -121,7 +121,7 @@ export async function createNotificationEvent(input: unknown) {
             ...(organization
               ? {
                   organizationId: organization.id,
-                  organizationRecordId: organization.id,
+                  organizationRecord: { connect: { id: organization.id } },
                 }
               : {}),
             channel: channel.toUpperCase() as 'IN_APP' | 'EMAIL',
