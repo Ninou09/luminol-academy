@@ -1,0 +1,90 @@
+name: Milestone 16 review fixes
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-organization-admin
+    paths:
+      - .github/workflows/m16-review-fixes.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-16-organization-admin
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Apply review fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          actions = Path('apps/admin/app/organizations/actions.ts')
+          actions_text = actions.read_text()
+          function_start = actions_text.index('export async function deactivateOrganizationMembership')
+          audit_start = actions_text.index('    await audit(\n', function_start)
+          cleanup = '''    await transaction.teamMembership.deleteMany({\n      where: { organizationMembershipId: input.membershipId },\n    });\n\n'''
+          if cleanup not in actions_text[function_start:audit_start]:
+              actions_text = actions_text[:audit_start] + cleanup + actions_text[audit_start:]
+          actions.write_text(actions_text)
+
+          page = Path('apps/admin/app/organizations/page.tsx')
+          text = page.read_text()
+          old_entry = '''export default async function OrganizationsAdminPage() {\n  await requirePlatformPermission('academy:manage');\n  const dashboard = await getOrganizationAdminDashboard();\n'''
+          new_entry = '''type SearchValue = string | string[] | undefined;\n\ntype OrganizationsAdminPageProps = {\n  searchParams: Promise<Record<string, SearchValue>>;\n};\n\nfunction firstSearchParam(value: SearchValue) {\n  return Array.isArray(value) ? (value[0] ?? '') : (value ?? '');\n}\n\nfunction dashboardHref(input: {\n  organizationQuery: string;\n  organizationPage: number;\n  userQuery: string;\n  courseQuery: string;\n}) {\n  const params = new URLSearchParams();\n  if (input.organizationQuery) params.set('q', input.organizationQuery);\n  if (input.organizationPage > 1)\n    params.set('page', String(input.organizationPage));\n  if (input.userQuery) params.set('user', input.userQuery);\n  if (input.courseQuery) params.set('course', input.courseQuery);\n  const query = params.toString();\n  return query ? `/organizations?${query}` : '/organizations';\n}\n\nexport default async function OrganizationsAdminPage({\n  searchParams,\n}: OrganizationsAdminPageProps) {\n  await requirePlatformPermission('academy:manage');\n  const params = await searchParams;\n  const dashboard = await getOrganizationAdminDashboard({\n    organizationQuery: firstSearchParam(params.q),\n    organizationPage: firstSearchParam(params.page) || 1,\n    userQuery: firstSearchParam(params.user),\n    courseQuery: firstSearchParam(params.course),\n  });\n'''
+          if old_entry not in text:
+              raise SystemExit('Page entry anchor not found')
+          text = text.replace(old_entry, new_entry, 1)
+
+          create_anchor = '''          <section className="admin-panel">\n            <div className="panel-heading">\n              <div>\n                <p className="eyebrow">Create</p>\n'''
+          filter_panel = '''          <section className="admin-panel">\n            <div className="panel-heading">\n              <div>\n                <p className="eyebrow">Find</p>\n                <h2>Administration search</h2>\n              </div>\n              <span>\n                Page {dashboard.pagination.page} of {dashboard.pagination.pageCount}\n                {' · '}\n                {dashboard.pagination.total} organizations\n              </span>\n            </div>\n            <form method="get" className="status-form">\n              <label>\n                <span>Organization name</span>\n                <input\n                  name="q"\n                  defaultValue={dashboard.query.organizationQuery}\n                  maxLength={160}\n                />\n              </label>\n              <label>\n                <span>User name or email</span>\n                <input\n                  name="user"\n                  defaultValue={dashboard.query.userQuery}\n                  maxLength={160}\n                />\n              </label>\n              <label>\n                <span>Published course</span>\n                <input\n                  name="course"\n                  defaultValue={dashboard.query.courseQuery}\n                  maxLength={160}\n                />\n              </label>\n              <button type="submit">Search</button>\n              <Link href="/organizations">Clear filters</Link>\n            </form>\n            <p className="admin-empty">\n              User and course selectors show up to{' '}\n              {dashboard.limits.optionSearchResults} matching results. Narrow the\n              search to reach records outside the initial result set.\n            </p>\n          </section>\n\n'''
+          if create_anchor not in text:
+              raise SystemExit('Create panel anchor not found')
+          text = text.replace(create_anchor, filter_panel + create_anchor, 1)
+
+          old_summary = '''              <span>\n                Showing at most {dashboard.limits.organizations} organizations\n              </span>\n'''
+          new_summary = '''              <span>\n                Page {dashboard.pagination.page} of {dashboard.pagination.pageCount}\n              </span>\n'''
+          if old_summary not in text:
+              raise SystemExit('Create summary anchor not found')
+          text = text.replace(old_summary, new_summary, 1)
+
+          seat_select = '''                                  <select\n                                    name="toStatus"\n                                    defaultValue=""\n                                    required\n                                  >\n'''
+          seat_select_fixed = '''                                  <select\n                                    name="toStatus"\n                                    defaultValue=""\n                                    aria-label="Next seat status"\n                                    required\n                                  >\n'''
+          if seat_select not in text:
+              raise SystemExit('Seat select anchor not found')
+          text = text.replace(seat_select, seat_select_fixed, 1)
+
+          team_select = '''                                <select\n                                  name="membershipId"\n                                  defaultValue=""\n                                  required\n                                >\n'''
+          team_select_fixed = '''                                <select\n                                  name="membershipId"\n                                  defaultValue=""\n                                  aria-label={`Add member to ${team.name}`}\n                                  required\n                                >\n'''
+          if team_select not in text:
+              raise SystemExit('Team select anchor not found')
+          text = text.replace(team_select, team_select_fixed, 1)
+
+          pagination_anchor = '''            ))\n          )}\n        </div>\n'''
+          pagination_panel = '''            ))\n          )}\n\n          <section className="admin-panel">\n            <div className="panel-heading">\n              <span>\n                Page {dashboard.pagination.page} of {dashboard.pagination.pageCount}\n                {' · '}\n                {dashboard.pagination.total} organizations\n              </span>\n              <div className="status-form">\n                {dashboard.pagination.hasPreviousPage ? (\n                  <Link\n                    href={dashboardHref({\n                      organizationQuery: dashboard.query.organizationQuery,\n                      organizationPage: dashboard.pagination.page - 1,\n                      userQuery: dashboard.query.userQuery,\n                      courseQuery: dashboard.query.courseQuery,\n                    })}\n                  >\n                    Previous organizations\n                  </Link>\n                ) : null}\n                {dashboard.pagination.hasNextPage ? (\n                  <Link\n                    href={dashboardHref({\n                      organizationQuery: dashboard.query.organizationQuery,\n                      organizationPage: dashboard.pagination.page + 1,\n                      userQuery: dashboard.query.userQuery,\n                      courseQuery: dashboard.query.courseQuery,\n                    })}\n                  >\n                    Next organizations\n                  </Link>\n                ) : null}\n              </div>\n            </div>\n          </section>\n        </div>\n'''
+          position = text.rfind(pagination_anchor)
+          if position < 0:
+              raise SystemExit('Pagination anchor not found')
+          text = text[:position] + pagination_panel + text[position + len(pagination_anchor):]
+          page.write_text(text)
+          PY
+          pnpm exec prettier --write apps/admin/app/organizations/actions.ts apps/admin/app/organizations/page.tsx apps/admin/lib/organization-admin.server.ts
+      - name: Commit review fixes
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add apps/admin/app/organizations/actions.ts apps/admin/app/organizations/page.tsx apps/admin/lib/organization-admin.server.ts
+          git diff --cached --check
+          git commit -m "Address organization administration review findings"
+          git push origin HEAD:feature/milestone-16-organization-admin
