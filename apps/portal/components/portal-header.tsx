@@ -1,16 +1,22 @@
 import { UserButton } from '@clerk/nextjs';
+import { requireUser } from '@luminol/auth';
 import { getCommonDictionary, localizeHref } from '@luminol/localization';
 import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
+import { getOrganizationManagerCopy } from '../lib/organization-manager-localization';
+import { hasOrganizationManagerAccess } from '../lib/organization-manager.server';
 import { getPortalCopy } from '../lib/portal-localization';
 import { getPortalRequestLocale } from '../lib/request-locale';
 import { PortalLanguageSwitcher } from './portal-language-switcher';
 
 export async function PortalHeader() {
+  const user = await requireUser();
   const locale = await getPortalRequestLocale();
   const copy = getPortalCopy(locale);
+  const managerCopy = getOrganizationManagerCopy(locale);
   const common = getCommonDictionary(locale);
+  const canManageOrganization = await hasOrganizationManagerAccess(user.id);
 
   return (
     <header className="portal-header">
@@ -27,6 +33,11 @@ export async function PortalHeader() {
           <Link href={localizeHref(locale, '/search')}>
             {copy.shell.search}
           </Link>
+          {canManageOrganization ? (
+            <Link href={localizeHref(locale, '/organization')}>
+              {managerCopy.nav}
+            </Link>
+          ) : null}
           <Link href={localizeHref(locale, '/notifications')}>
             {copy.shell.notifications}
           </Link>
