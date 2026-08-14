@@ -90,6 +90,7 @@ CREATE OR REPLACE FUNCTION "enforce_verified_organization_link"()
 RETURNS TRIGGER AS $$
 DECLARE
   identity_changed BOOLEAN;
+  can_derive_verified_organization BOOLEAN := FALSE;
 BEGIN
   IF TG_OP = 'INSERT' THEN
     identity_changed := TRUE;
@@ -110,14 +111,69 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  -- Expand-phase compatibility: the pre-Slice-E application writes only the
+  -- legacy-compatible organizationId. Derive the verified relation when every
+  -- first-class tenant relationship can be proven, but leave opaque or
+  -- inconsistent legacy identifiers unverified instead of breaking the running
+  -- release during the migration/application rollout window.
   IF NEW."organizationRecordId" IS NULL THEN
-    IF TG_OP = 'INSERT' THEN
-      RAISE EXCEPTION 'New organization-scoped records require a verified organization';
-    ELSIF OLD."organizationId" IS DISTINCT FROM NEW."organizationId" THEN
-      RAISE EXCEPTION 'New organization-scoped records require a verified organization';
+    IF EXISTS (
+      SELECT 1
+      FROM "Organization" AS organization
+      WHERE organization."id" = NEW."organizationId"
+        AND organization."status" = 'ACTIVE'
+        AND organization."archivedAt" IS NULL
+    ) THEN
+      CASE TG_TABLE_NAME
+        WHEN 'Invoice' THEN
+          can_derive_verified_organization := TRUE;
+        WHEN 'CorporateBillingRecord' THEN
+          SELECT EXISTS (
+            SELECT 1
+            FROM "Invoice" AS invoice
+            WHERE invoice."id" = NEW."invoiceId"
+              AND invoice."organizationId" = NEW."organizationId"
+              AND invoice."organizationRecordId" = NEW."organizationId"
+          ) INTO can_derive_verified_organization;
+        WHEN 'NotificationEvent' THEN
+          SELECT EXISTS (
+            SELECT 1
+            FROM "OrganizationMembership" AS membership
+            INNER JOIN "User" AS recipient
+              ON recipient."id" = membership."userId"
+            WHERE membership."organizationId" = NEW."organizationId"
+              AND membership."userId" = NEW."recipientId"
+              AND membership."active" = TRUE
+              AND membership."endedAt" IS NULL
+              AND recipient."deletedAt" IS NULL
+          ) INTO can_derive_verified_organization;
+        WHEN 'Notification' THEN
+          SELECT EXISTS (
+            SELECT 1
+            FROM "NotificationEvent" AS event
+            INNER JOIN "OrganizationMembership" AS membership
+              ON membership."organizationId" = NEW."organizationId"
+             AND membership."userId" = NEW."recipientId"
+            INNER JOIN "User" AS recipient
+              ON recipient."id" = membership."userId"
+            WHERE event."id" = NEW."eventId"
+              AND event."organizationId" = NEW."organizationId"
+              AND event."organizationRecordId" = NEW."organizationId"
+              AND event."recipientId" = NEW."recipientId"
+              AND membership."active" = TRUE
+              AND membership."endedAt" IS NULL
+              AND recipient."deletedAt" IS NULL
+          ) INTO can_derive_verified_organization;
+        ELSE
+          can_derive_verified_organization := FALSE;
+      END CASE;
     END IF;
-    -- Existing unmatched legacy rows may still update non-identity fields.
-    RETURN NEW;
+
+    IF can_derive_verified_organization THEN
+      NEW."organizationRecordId" := NEW."organizationId";
+    ELSE
+      RETURN NEW;
+    END IF;
   END IF;
 
   IF NEW."organizationId" IS DISTINCT FROM NEW."organizationRecordId" THEN
@@ -141,19 +197,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER "Invoice_verified_organization_guard"
+-- PostgreSQL fires same-kind triggers in name order. Keep the derivation guard
+-- ahead of table-specific relationship guards so legacy writers can be upgraded
+-- safely before those stronger verified-scope checks execute.
+CREATE TRIGGER "Invoice_derive_verified_organization_guard"
 BEFORE INSERT OR UPDATE ON "Invoice"
 FOR EACH ROW EXECUTE FUNCTION "enforce_verified_organization_link"();
 
-CREATE TRIGGER "CorporateBillingRecord_verified_organization_guard"
+CREATE TRIGGER "CorporateBillingRecord_derive_verified_organization_guard"
 BEFORE INSERT OR UPDATE ON "CorporateBillingRecord"
 FOR EACH ROW EXECUTE FUNCTION "enforce_verified_organization_link"();
 
-CREATE TRIGGER "NotificationEvent_verified_organization_guard"
+CREATE TRIGGER "NotificationEvent_derive_verified_organization_guard"
 BEFORE INSERT OR UPDATE ON "NotificationEvent"
 FOR EACH ROW EXECUTE FUNCTION "enforce_verified_organization_link"();
 
-CREATE TRIGGER "Notification_verified_organization_guard"
+CREATE TRIGGER "Notification_derive_verified_organization_guard"
 BEFORE INSERT OR UPDATE ON "Notification"
 FOR EACH ROW EXECUTE FUNCTION "enforce_verified_organization_link"();
 
@@ -315,9 +374,9 @@ FOR EACH ROW EXECUTE FUNCTION "enforce_notification_recipient_scope"();
 
 -- Re-run safe backfills after all write guards are active. This closes the
 -- migration window in which an old application process could have inserted an
--- organization-scoped row after its first backfill. Rows written after this
--- point must already carry verified scope, while unmatched legacy identifiers
--- remain intentionally unverified.
+-- organization-scoped row after its first backfill. Rows written during or after
+-- this phase are verified when the first-class relationship can be proven, while
+-- unmatched or inconsistent legacy identifiers remain intentionally unverified.
 UPDATE "Invoice" AS invoice
 SET "organizationRecordId" = organization."id"
 FROM "Organization" AS organization
