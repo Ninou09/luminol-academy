@@ -12,6 +12,24 @@ test('premium school storytelling preserves landmarks and governed media', async
   await expect(page.getByRole('contentinfo')).toBeVisible();
   await expect(page.locator('[data-school-hero="psychology"]')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+
+  const founderMedia = page.locator(
+    '[data-school-hero="psychology"] [data-founder-media]',
+  );
+  await expect(founderMedia).toBeVisible();
+  await expect(founderMedia).toHaveAttribute(
+    'data-media-source',
+    'user-approved-upload',
+  );
+  await expect(founderMedia).toHaveAttribute(
+    'data-media-approval',
+    '2026-08-13',
+  );
+  await expect(founderMedia.locator('img')).toHaveAttribute(
+    'alt',
+    'Kheddaoui Fettouma, founder of Luminol Academy',
+  );
+
   await expect(page.locator('[data-programme-card]')).not.toHaveCount(0);
 
   const mediaSources = await page
@@ -35,6 +53,7 @@ test('school reduced motion keeps the centered editorial core in place', async (
   await page.goto('/en/schools/languages');
 
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+  await expect(page.locator('[data-founder-media]')).toHaveCount(0);
   const core = page.locator(
     '[data-school-hero="languages"] [data-motion-float]',
   );
