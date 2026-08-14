@@ -69,56 +69,62 @@ export async function getOrganizationAdminDashboard(
       }
     : { published: true };
 
-  const [organizationCount, organizations, users, publishedCourses] =
-    await Promise.all([
-      db.organization.count({ where: organizationWhere }),
-      db.organization.findMany({
-        where: organizationWhere,
-        skip: (query.organizationPage - 1) * ORGANIZATION_PAGE_SIZE,
-        take: ORGANIZATION_PAGE_SIZE,
-        orderBy: [{ name: 'asc' }, { id: 'asc' }],
-        select: {
-          id: true,
-          name: true,
-          status: true,
-          seatLimit: true,
-          archivedAt: true,
-          memberships: {
-            where: { active: true },
-            orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
-            select: {
-              id: true,
-              role: true,
-              user: {
-                select: {
-                  id: true,
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                },
+  const organizationCount = await db.organization.count({
+    where: organizationWhere,
+  });
+  const pageCount = Math.max(
+    1,
+    Math.ceil(organizationCount / ORGANIZATION_PAGE_SIZE),
+  );
+  const organizationPage = Math.min(query.organizationPage, pageCount);
+
+  const [organizations, users, publishedCourses] = await Promise.all([
+    db.organization.findMany({
+      where: organizationWhere,
+      skip: (organizationPage - 1) * ORGANIZATION_PAGE_SIZE,
+      take: ORGANIZATION_PAGE_SIZE,
+      orderBy: [{ name: 'asc' }, { id: 'asc' }],
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        seatLimit: true,
+        archivedAt: true,
+        memberships: {
+          where: { active: true },
+          orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
+          select: {
+            id: true,
+            role: true,
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
               },
             },
           },
-          teams: {
-            where: { archivedAt: null },
-            orderBy: [{ name: 'asc' }, { id: 'asc' }],
-            select: {
-              id: true,
-              name: true,
-              memberships: {
-                where: { organizationMembership: { active: true } },
-                orderBy: { id: 'asc' },
-                select: {
-                  id: true,
-                  organizationMembership: {
-                    select: {
-                      id: true,
-                      user: {
-                        select: {
-                          firstName: true,
-                          lastName: true,
-                          email: true,
-                        },
+        },
+        teams: {
+          where: { archivedAt: null },
+          orderBy: [{ name: 'asc' }, { id: 'asc' }],
+          select: {
+            id: true,
+            name: true,
+            memberships: {
+              where: { organizationMembership: { active: true } },
+              orderBy: { id: 'asc' },
+              select: {
+                id: true,
+                organizationMembership: {
+                  select: {
+                    id: true,
+                    user: {
+                      select: {
+                        firstName: true,
+                        lastName: true,
+                        email: true,
                       },
                     },
                   },
@@ -126,58 +132,59 @@ export async function getOrganizationAdminDashboard(
               },
             },
           },
-          seats: {
-            where: { status: { in: ['INVITED', 'ACTIVE'] } },
-            orderBy: [{ invitedAt: 'desc' }, { id: 'desc' }],
-            select: {
-              id: true,
-              status: true,
-              userId: true,
-              user: {
-                select: {
-                  firstName: true,
-                  lastName: true,
-                  email: true,
-                },
+        },
+        seats: {
+          where: { status: { in: ['INVITED', 'ACTIVE'] } },
+          orderBy: [{ invitedAt: 'desc' }, { id: 'desc' }],
+          select: {
+            id: true,
+            status: true,
+            userId: true,
+            user: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
               },
             },
           },
-          courses: {
-            where: { active: true },
-            orderBy: [{ assignedAt: 'desc' }, { id: 'desc' }],
-            select: {
-              id: true,
-              course: { select: { id: true, title: true } },
-            },
-          },
-          _count: {
-            select: {
-              memberships: true,
-              teams: true,
-              seats: true,
-              courses: true,
-            },
+        },
+        courses: {
+          where: { active: true },
+          orderBy: [{ assignedAt: 'desc' }, { id: 'desc' }],
+          select: {
+            id: true,
+            course: { select: { id: true, title: true } },
           },
         },
-      }),
-      db.user.findMany({
-        take: OPTION_LIMIT,
-        where: userWhere,
-        orderBy: [{ email: 'asc' }, { id: 'asc' }],
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          email: true,
+        _count: {
+          select: {
+            memberships: true,
+            teams: true,
+            seats: true,
+            courses: true,
+          },
         },
-      }),
-      db.course.findMany({
-        take: OPTION_LIMIT,
-        where: courseWhere,
-        orderBy: [{ title: 'asc' }, { id: 'asc' }],
-        select: { id: true, title: true },
-      }),
-    ]);
+      },
+    }),
+    db.user.findMany({
+      take: OPTION_LIMIT,
+      where: userWhere,
+      orderBy: [{ email: 'asc' }, { id: 'asc' }],
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
+    }),
+    db.course.findMany({
+      take: OPTION_LIMIT,
+      where: courseWhere,
+      orderBy: [{ title: 'asc' }, { id: 'asc' }],
+      select: { id: true, title: true },
+    }),
+  ]);
 
   const progress = await Promise.all(
     organizations.map(async (organization) => {
@@ -211,10 +218,6 @@ export async function getOrganizationAdminDashboard(
   const progressByOrganization = new Map(
     progress.map((summary) => [summary.organizationId, summary]),
   );
-  const pageCount = Math.max(
-    1,
-    Math.ceil(organizationCount / ORGANIZATION_PAGE_SIZE),
-  );
 
   return {
     organizations: organizations.map((organization) => ({
@@ -227,14 +230,14 @@ export async function getOrganizationAdminDashboard(
       },
     })),
     options: { users, publishedCourses },
-    query,
+    query: { ...query, organizationPage },
     pagination: {
-      page: query.organizationPage,
+      page: organizationPage,
       pageCount,
       total: organizationCount,
       pageSize: ORGANIZATION_PAGE_SIZE,
-      hasPreviousPage: query.organizationPage > 1,
-      hasNextPage: query.organizationPage < pageCount,
+      hasPreviousPage: organizationPage > 1,
+      hasNextPage: organizationPage < pageCount,
     },
     limits: {
       optionSearchResults: OPTION_LIMIT,
