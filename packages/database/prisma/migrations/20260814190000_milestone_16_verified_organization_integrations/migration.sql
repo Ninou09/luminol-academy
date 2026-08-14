@@ -141,16 +141,23 @@ DECLARE
   event_organization_record_id TEXT;
   event_recipient_id TEXT;
   identity_changed BOOLEAN;
+  recipient_identity_changed BOOLEAN;
 BEGIN
   SELECT "organizationRecordId", "recipientId"
     INTO event_organization_record_id, event_recipient_id
   FROM "NotificationEvent"
   WHERE "id" = NEW."eventId";
 
-  identity_changed := TG_OP = 'INSERT'
-    OR OLD."eventId" IS DISTINCT FROM NEW."eventId"
-    OR OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
-    OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId";
+  IF TG_OP = 'INSERT' THEN
+    identity_changed := TRUE;
+    recipient_identity_changed := TRUE;
+  ELSE
+    identity_changed := OLD."eventId" IS DISTINCT FROM NEW."eventId"
+      OR OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+      OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId";
+    recipient_identity_changed := OLD."eventId" IS DISTINCT FROM NEW."eventId"
+      OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId";
+  END IF;
 
   IF event_organization_record_id IS NOT NULL
      AND NEW."organizationRecordId" IS DISTINCT FROM event_organization_record_id
@@ -164,9 +171,7 @@ BEGIN
   END IF;
 
   IF NEW."recipientId" IS DISTINCT FROM event_recipient_id
-     AND (TG_OP = 'INSERT'
-       OR OLD."eventId" IS DISTINCT FROM NEW."eventId"
-       OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId") THEN
+     AND recipient_identity_changed THEN
     RAISE EXCEPTION 'Notification recipient must match notification event recipient';
   END IF;
 
