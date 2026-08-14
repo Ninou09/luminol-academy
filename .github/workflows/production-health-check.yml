@@ -2,6 +2,9 @@ name: Production health check
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - hardening/production-health-protection-v2
   schedule:
     - cron: '17 */6 * * *'
 
@@ -82,6 +85,9 @@ jobs:
             local content_type_options
             local frame_options
             local csp
+            local location_path
+            local cache_has_no_store='no'
+            local frame_is_deny='no'
 
             response_meta="$(curl --silent --show-error --max-time 20 \
               --output "$body_file" \
@@ -95,6 +101,16 @@ jobs:
             content_type_options="${response_lines[3]:-}"
             frame_options="${response_lines[4]:-}"
             csp="${response_lines[5]:-}"
+            location_path="${location%%\?*}"
+
+            if grep --ignore-case --quiet --fixed-strings 'no-store' <<< "$cache_control"; then
+              cache_has_no_store='yes'
+            fi
+            if grep --ignore-case --quiet --line-regexp 'DENY' <<< "$frame_options"; then
+              frame_is_deny='yes'
+            fi
+
+            echo "$name probe: status=$status redirect=$location_path cache-no-store=$cache_has_no_store frame-deny=$frame_is_deny"
 
             case "$status" in
               200)
