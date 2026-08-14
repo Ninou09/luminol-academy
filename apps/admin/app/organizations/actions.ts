@@ -353,7 +353,8 @@ export async function archiveOrganizationTeam(formData: FormData) {
       data: { archivedAt: new Date() },
     });
 
-    if (updated.count !== 1) throw new Error('Active organization team not found');
+    if (updated.count !== 1)
+      throw new Error('Active organization team not found');
 
     await audit(
       transaction,
@@ -473,7 +474,7 @@ export async function allocateOrganizationSeat(formData: FormData) {
 
   await db.$transaction(async (transaction: Transaction) => {
     await requireActiveOrganization(transaction, input.organizationId);
-    const [organization, membership] = await Promise.all([
+    const [organization, membership, existingSeat] = await Promise.all([
       transaction.organization.findFirst({
         where: { id: input.organizationId, status: 'ACTIVE' },
         select: { id: true },
@@ -486,10 +487,24 @@ export async function allocateOrganizationSeat(formData: FormData) {
         },
         select: { id: true },
       }),
+      transaction.organizationSeat.findUnique({
+        where: {
+          organizationId_userId: {
+            organizationId: input.organizationId,
+            userId: input.userId,
+          },
+        },
+        select: { id: true },
+      }),
     ]);
 
     if (!organization || !membership) {
-      throw new Error('Active organization membership required for seat allocation');
+      throw new Error(
+        'Active organization membership required for seat allocation',
+      );
+    }
+    if (existingSeat) {
+      throw new Error('Organization member already has a seat record');
     }
 
     const seat = await transaction.organizationSeat.create({
@@ -594,7 +609,8 @@ export async function assignOrganizationCourse(formData: FormData) {
     if (!organization || !course) {
       throw new Error('Active organization or published course not found');
     }
-    if (existing?.active) throw new Error('Course already assigned to organization');
+    if (existing?.active)
+      throw new Error('Course already assigned to organization');
 
     const organizationCourse = existing
       ? await transaction.organizationCourse.update({

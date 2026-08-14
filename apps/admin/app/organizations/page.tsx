@@ -346,14 +346,16 @@ export default async function OrganizationsAdminPage({
                               <option value="" disabled>
                                 Select member
                               </option>
-                              {organization.memberships.map((membership) => (
-                                <option
-                                  key={membership.id}
-                                  value={membership.user.id}
-                                >
-                                  {personLabel(membership.user)}
-                                </option>
-                              ))}
+                              {organization.availableSeatMemberships.map(
+                                (membership) => (
+                                  <option
+                                    key={membership.id}
+                                    value={membership.user.id}
+                                  >
+                                    {personLabel(membership.user)}
+                                  </option>
+                                ),
+                              )}
                             </select>
                           </label>
                           <button type="submit">Allocate seat</button>
