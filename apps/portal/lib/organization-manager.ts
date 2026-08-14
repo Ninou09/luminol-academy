@@ -51,7 +51,9 @@ export function assertOrganizationManagerAggregatePolicy(
 
 export function summarizeOrganizationManagerSeats(
   seatLimit: number,
-  counts: Partial<Record<'INVITED' | 'ACTIVE' | 'COMPLETED' | 'REVOKED', number>>,
+  counts: Partial<
+    Record<'INVITED' | 'ACTIVE' | 'COMPLETED' | 'REVOKED', number>
+  >,
 ) {
   const safeSeatLimit = z.number().int().positive().parse(seatLimit);
   const invited = counts.INVITED ?? 0;

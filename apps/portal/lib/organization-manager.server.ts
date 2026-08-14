@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { db } from '@luminol/database';
+import { db, type Prisma } from '@luminol/database';
 import {
   assertCorporateManagerAccess,
   type CorporateMembershipRole,
@@ -18,14 +18,16 @@ import {
   summarizeOrganizationManagerSeats,
 } from './organization-manager';
 
-const managerRoles = ['OWNER', 'MANAGER'] as const;
-
-const managerMembershipWhere = (userId: string) => ({
-  userId,
-  active: true,
-  role: { in: managerRoles },
-  organization: { archivedAt: null },
-});
+function managerMembershipWhere(
+  userId: string,
+): Prisma.OrganizationMembershipWhereInput {
+  return {
+    userId,
+    active: true,
+    role: { in: ['OWNER', 'MANAGER'] },
+    organization: { archivedAt: null },
+  };
+}
 
 export async function hasOrganizationManagerAccess(userId: string) {
   const membership = await db.organizationMembership.findFirst({
@@ -60,10 +62,7 @@ export async function getOrganizationManagerDashboard(
     where: managerWhere,
     skip: (organizationPage - 1) * ORGANIZATION_MANAGER_ORG_PAGE_SIZE,
     take: ORGANIZATION_MANAGER_ORG_PAGE_SIZE,
-    orderBy: [
-      { organization: { name: 'asc' } },
-      { organizationId: 'asc' },
-    ],
+    orderBy: [{ organization: { name: 'asc' } }, { organizationId: 'asc' }],
     select: {
       id: true,
       organizationId: true,
@@ -252,8 +251,7 @@ export async function getOrganizationManagerDashboard(
       ? roster
       : await db.organizationMembership.findMany({
           where: rosterWhere,
-          skip:
-            (boundedRosterPage - 1) * ORGANIZATION_MANAGER_ROSTER_PAGE_SIZE,
+          skip: (boundedRosterPage - 1) * ORGANIZATION_MANAGER_ROSTER_PAGE_SIZE,
           take: ORGANIZATION_MANAGER_ROSTER_PAGE_SIZE,
           orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
           select: {
@@ -295,8 +293,7 @@ export async function getOrganizationManagerDashboard(
       ? courses
       : await db.organizationCourse.findMany({
           where: courseWhere,
-          skip:
-            (boundedCoursePage - 1) * ORGANIZATION_MANAGER_COURSE_PAGE_SIZE,
+          skip: (boundedCoursePage - 1) * ORGANIZATION_MANAGER_COURSE_PAGE_SIZE,
           take: ORGANIZATION_MANAGER_COURSE_PAGE_SIZE,
           orderBy: [{ assignedAt: 'desc' }, { id: 'desc' }],
           select: {

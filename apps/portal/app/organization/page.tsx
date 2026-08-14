@@ -27,7 +27,7 @@ function workspaceHref(
   state: {
     organizationId?: string;
     organizationPage?: number;
-    teamId?: string;
+    teamId?: string | undefined;
     rosterPage?: number;
     teamPage?: number;
     coursePage?: number;
@@ -40,8 +40,7 @@ function workspaceHref(
   if (state.teamId) params.set('team', state.teamId);
   if ((state.rosterPage ?? 1) > 1)
     params.set('rosterPage', String(state.rosterPage));
-  if ((state.teamPage ?? 1) > 1)
-    params.set('teamPage', String(state.teamPage));
+  if ((state.teamPage ?? 1) > 1) params.set('teamPage', String(state.teamPage));
   if ((state.coursePage ?? 1) > 1)
     params.set('coursePage', String(state.coursePage));
 
@@ -55,7 +54,10 @@ function personLabel(person: {
   lastName: string | null;
   email: string;
 }) {
-  return [person.firstName, person.lastName].filter(Boolean).join(' ') || person.email;
+  return (
+    [person.firstName, person.lastName].filter(Boolean).join(' ') ||
+    person.email
+  );
 }
 
 export default async function OrganizationManagerPage({
@@ -92,7 +94,10 @@ export default async function OrganizationManagerPage({
     <main>
       <PortalHeader />
       <div className="dashboard-shell">
-        <section className="dashboard-intro" aria-labelledby="organization-title">
+        <section
+          className="dashboard-intro"
+          aria-labelledby="organization-title"
+        >
           <div>
             <p className="eyebrow">{copy.eyebrow}</p>
             <h1 id="organization-title">{copy.title}</h1>
@@ -148,7 +153,9 @@ export default async function OrganizationManagerPage({
             </article>
             <article>
               <span>{copy.completedSeats}</span>
-              <strong>{number(dashboard.seatUtilization.completedSeats)}</strong>
+              <strong>
+                {number(dashboard.seatUtilization.completedSeats)}
+              </strong>
             </article>
             <article>
               <span>{copy.sponsoredProgress}</span>
@@ -304,9 +311,11 @@ export default async function OrganizationManagerPage({
             <p>
               <Link
                 href={workspaceHref(locale, {
-                  ...baseState,
-                  teamId: undefined,
+                  organizationId: baseState.organizationId,
+                  organizationPage: baseState.organizationPage,
                   rosterPage: 1,
+                  teamPage: baseState.teamPage,
+                  coursePage: baseState.coursePage,
                 })}
               >
                 {copy.allMembers}
@@ -321,12 +330,9 @@ export default async function OrganizationManagerPage({
                     <h3>
                       <bdi dir="auto">{personLabel(membership.user)}</bdi>
                     </h3>
+                    <p>{copy.roleLabels[membership.role] ?? membership.role}</p>
                     <p>
-                      {copy.roleLabels[membership.role] ?? membership.role}
-                    </p>
-                    <p>
-                      {copy.email}:{' '}
-                      <bdi dir="ltr">{membership.user.email}</bdi>
+                      {copy.email}: <bdi dir="ltr">{membership.user.email}</bdi>
                     </p>
                     <p>
                       {copy.joined}: {date(membership.joinedAt)}

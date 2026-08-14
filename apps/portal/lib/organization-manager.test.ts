@@ -50,8 +50,12 @@ describe('organization manager workspace', () => {
   });
 
   it('enforces the shared aggregate-only manager policy', () => {
-    expect(() => assertOrganizationManagerAggregatePolicy('MANAGER')).not.toThrow();
-    expect(() => assertOrganizationManagerAggregatePolicy('OWNER')).not.toThrow();
+    expect(() =>
+      assertOrganizationManagerAggregatePolicy('MANAGER'),
+    ).not.toThrow();
+    expect(() =>
+      assertOrganizationManagerAggregatePolicy('OWNER'),
+    ).not.toThrow();
     expect(() => assertOrganizationManagerAggregatePolicy('LEARNER')).toThrow(
       'Organization manager aggregate policy is unavailable',
     );
