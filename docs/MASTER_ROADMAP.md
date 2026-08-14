@@ -1,6 +1,6 @@
 # Luminol Academy Master Roadmap
 
-This document is the canonical delivery sequence for Luminol Academy. `PROJECT_STATUS.md` records the live state; this file defines the intended product path.
+This document is the canonical delivery sequence for Luminol Academy. `PROJECT_STATUS.md` records the live repository and operational state; this file defines the intended product path.
 
 ## Product principles
 
@@ -10,6 +10,7 @@ This document is the canonical delivery sequence for Luminol Academy. `PROJECT_S
 - Sensitive psychology information must never be exposed through general learning or administration views.
 - Every milestone includes tests, documentation, accessibility, and production build validation.
 - Dynamic, personal, sensitive, or governed content must not be automatically translated or publicly published without its applicable approval boundary.
+- Repository completion and production-live verification are separate evidence gates; deployment quota pressure must not be mistaken for product completion or used to stop safe repository work.
 
 ## Delivered platform
 
@@ -93,9 +94,9 @@ Dynamic learner records, enquiry messages, assessments, finance data, certificat
 
 ## Post-milestone public experience hardening
 
-Status: Implemented and production-fresh; governed real-media verification remains operationally pending.
+Status: Repository implementation active and strongly validated; production freshness is evidence-based per change, and governed real-media verification remains operationally incomplete.
 
-The premium public redesign was intentionally delivered outside a new numbered product milestone so it could preserve the platform contracts completed in Milestones 1–15. The current repository and production public site include:
+The premium public redesign was intentionally delivered outside a new numbered product milestone so it could preserve the platform contracts completed in Milestones 1–15. The repository includes:
 
 - immersive localized homepage storytelling and a reusable reduced-motion-aware motion controller
 - premium sticky public navigation and footer treatment
@@ -109,21 +110,30 @@ The premium public redesign was intentionally delivered outside a new numbered p
 - reduced-motion-safe scrolling, sticky-header anchor offsets, and explicit public-shell keyboard focus rings
 - structured-data, metadata, sitemap/robots, responsive, accessibility, and browser-regression hardening
 - Vercel affected-package checks and opt-in non-production preview deployment policy to reduce monorepo deployment pressure
+- repaired production dependency auditing and continued exact-head security checks
+- explicit learner-portal indexing exclusion
+- accessible enquiry submission-state announcements
+- bounded shared caching for generated social previews
+- protection-aware synthetic sign-in monitoring
+- hardened public-enquiry transport boundaries
+- approved founder media on About and the Psychology school hero with localized accessible naming and explicit governance metadata
 
-The temporary production deployment-freshness incident tracked in #128 is resolved. Current `main` is deployed and the stable public alias has been re-verified for the absolute sitemap declaration, Organization structured data, hardened response headers, and runtime health.
+The later real-photography phase is not complete until additional approved governed assets exist and are verified through the applicable publication path. No synthetic testimonial, private record, unapproved portrait, or undocumented real-person photograph should be introduced merely to complete that visual phase.
 
-The later real-photography phase is not complete until approved governed assets exist and are verified in production. No synthetic testimonial, private record, or unapproved portrait should be introduced merely to complete that visual phase.
+Vercel Free-plan quota or build-rate pressure may temporarily leave stable production aliases behind the repository head. Safe repository development continues behind the exact-head GitHub CI gate, while production-live claims remain blocked until the corresponding deployment and post-deploy checks exist.
 
 ## Active operational phase — Post-launch stabilization
 
 No new numbered product milestone is currently active. Operational stabilization and governance take priority over new feature breadth while the remaining external dependencies are resolved.
 
-### Production availability
+### Production availability and monitoring
 
-- keep normal `main` deployments and post-deploy verification healthy after the resolved #128 quota incident
+- keep normal `main` deployments and post-deploy verification healthy when deployment capacity is available
 - continue scheduled synthetic checks for the public website, learner portal, and administration application
+- close #192 only after a fully green post-fix scheduled or manual production-health run
 - verify robots/sitemap, structured data, security headers, canonical metadata, and representative public routes after relevant production changes
 - investigate grouped runtime errors before treating individual log lines as production incidents
+- distinguish quota-blocked deployment freshness from application runtime failures
 
 ### Authenticated production verification
 
@@ -139,6 +149,7 @@ No new numbered product milestone is currently active. Operational stabilization
 - verify meaningful alternative text, crop, hotspot, CDN source, and explicit publication approval
 - keep unapproved or malformed media fail-closed and text-only
 - complete the remaining production checks tracked in #45 and the real-media phase tracked in #93
+- reuse the already approved founder portrait only within its documented governance boundary; require explicit approval for additional real-person assets
 
 ### Sanity Studio operational verification
 
@@ -146,6 +157,19 @@ No new numbered product milestone is currently active. Operational stabilization
 - launch the migrated Studio against the intended Sanity project/dataset without modifying production content solely for verification
 - confirm the governed schema and expected desks/document types load successfully
 - retain sanitized verification evidence under #85
+
+### Repository governance
+
+- configure `main` branch/ruleset protection under #186
+- require the existing quality gate before merge without deadlocking the current single-operator workflow
+- block force pushes and branch deletion
+- preserve the existing PR-based operating discipline until GitHub settings enforce it technically
+
+### Public legal notices
+
+- add privacy, terms, and cookie notices only from reviewed approved copy under #150
+- do not infer legal entity facts, controller details, retention periods, lawful bases, transfer claims, cookie categories, or contractual rights
+- keep current enquiry consent behavior intact while legal copy remains pending
 
 ### Data recovery and operations
 
