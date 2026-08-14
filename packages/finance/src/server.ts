@@ -40,11 +40,12 @@ export const createInvoiceInputSchema = z.object({
 });
 export type CreateInvoiceInput = z.input<typeof createInvoiceInputSchema>;
 
-export const createCorporateInvoiceInputSchema = corporateInvoiceRequestSchema.extend({
-  number: z.string().trim().min(1).max(100),
-  customerId: z.string().min(1),
-  lineDescription: z.string().trim().min(1).max(500),
-});
+export const createCorporateInvoiceInputSchema =
+  corporateInvoiceRequestSchema.extend({
+    number: z.string().trim().min(1).max(100),
+    customerId: z.string().min(1),
+    lineDescription: z.string().trim().min(1).max(500),
+  });
 export type CreateCorporateInvoiceInput = z.input<
   typeof createCorporateInvoiceInputSchema
 >;
