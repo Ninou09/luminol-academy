@@ -1,1 +1,0 @@
-Supported Slice C operations: create/archive organization; add/reactivate/deactivate membership; change membership role; create/archive team; add/remove team member; allocate/transition seat; assign/unassign published course; inspect bounded organization aggregate completion.
