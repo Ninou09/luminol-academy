@@ -227,7 +227,8 @@ export async function getOrganizationAdminDashboard(
   for (const membership of seatEligibleMemberships) {
     const current = seatEligibleByOrganization.get(membership.organizationId);
     if (current) current.push(membership);
-    else seatEligibleByOrganization.set(membership.organizationId, [membership]);
+    else
+      seatEligibleByOrganization.set(membership.organizationId, [membership]);
   }
 
   const progress = await Promise.all(
@@ -277,8 +278,7 @@ export async function getOrganizationAdminDashboard(
         teams: organization.teams.map((team) => {
           const currentMembershipIds = new Set(
             team.memberships.map(
-              (teamMembership) =>
-                teamMembership.organizationMembership.id,
+              (teamMembership) => teamMembership.organizationMembership.id,
             ),
           );
           return {

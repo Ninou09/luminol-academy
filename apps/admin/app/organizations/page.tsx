@@ -204,9 +204,7 @@ export default async function OrganizationsAdminPage({
               <section className="admin-panel" key={organization.id}>
                 <div className="panel-heading">
                   <div>
-                    <p className="eyebrow">
-                      {enumLabel(organization.status)}
-                    </p>
+                    <p className="eyebrow">{enumLabel(organization.status)}</p>
                     <h2 dir="auto">{organization.name}</h2>
                   </div>
                   {organization.status !== 'ARCHIVED' ? (
@@ -434,7 +432,9 @@ export default async function OrganizationsAdminPage({
                                       </option>
                                     ))}
                                   </select>
-                                  <button type="submit">{copy.updateSeat}</button>
+                                  <button type="submit">
+                                    {copy.updateSeat}
+                                  </button>
                                 </form>
                               ) : null}
                             </article>
@@ -475,7 +475,8 @@ export default async function OrganizationsAdminPage({
                               <div>
                                 <strong dir="auto">{team.name}</strong>
                                 <small>
-                                  {number(team.memberships.length)} {copy.members}
+                                  {number(team.memberships.length)}{' '}
+                                  {copy.members}
                                 </small>
                               </div>
                               <form
@@ -501,14 +502,16 @@ export default async function OrganizationsAdminPage({
                                   <option value="" disabled>
                                     {copy.addMember}
                                   </option>
-                                  {team.availableMemberships.map((membership) => (
-                                    <option
-                                      key={membership.id}
-                                      value={membership.id}
-                                    >
-                                      {personLabel(membership.user)}
-                                    </option>
-                                  ))}
+                                  {team.availableMemberships.map(
+                                    (membership) => (
+                                      <option
+                                        key={membership.id}
+                                        value={membership.id}
+                                      >
+                                        {personLabel(membership.user)}
+                                      </option>
+                                    ),
+                                  )}
                                 </select>
                                 <button type="submit">{copy.add}</button>
                               </form>
@@ -553,7 +556,9 @@ export default async function OrganizationsAdminPage({
                                   name="teamId"
                                   value={team.id}
                                 />
-                                <button type="submit">{copy.archiveTeam}</button>
+                                <button type="submit">
+                                  {copy.archiveTeam}
+                                </button>
                               </form>
                             </article>
                           ))}
@@ -608,7 +613,9 @@ export default async function OrganizationsAdminPage({
                                   name="organizationCourseId"
                                   value={organizationCourse.id}
                                 />
-                                <button type="submit">{copy.unassignCourse}</button>
+                                <button type="submit">
+                                  {copy.unassignCourse}
+                                </button>
                               </form>
                             </article>
                           ))}
