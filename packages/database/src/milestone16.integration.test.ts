@@ -166,7 +166,9 @@ suite('Milestone 16 organization persistence invariants', () => {
       },
     });
     await db.teamMembership.deleteMany({
-      where: { team: { organizationId: { in: [organizationAId, organizationBId] } } },
+      where: {
+        team: { organizationId: { in: [organizationAId, organizationBId] } },
+      },
     });
     await db.team.deleteMany({
       where: { organizationId: { in: [organizationAId, organizationBId] } },
@@ -214,12 +216,12 @@ suite('Milestone 16 organization persistence invariants', () => {
       }),
     ]);
 
-    expect(results.filter((result) => result.status === 'fulfilled')).toHaveLength(
-      1,
-    );
-    expect(results.filter((result) => result.status === 'rejected')).toHaveLength(
-      1,
-    );
+    expect(
+      results.filter((result) => result.status === 'fulfilled'),
+    ).toHaveLength(1);
+    expect(
+      results.filter((result) => result.status === 'rejected'),
+    ).toHaveLength(1);
   });
 
   test('rejects sponsorship of a learner outside the organization tenant', async () => {
@@ -286,7 +288,9 @@ suite('Milestone 16 organization persistence invariants', () => {
         where: { id: seatAId },
         data: { status: 'REVOKED', revokedAt: new Date() },
       }),
-    ).rejects.toThrow('End active sponsorships before closing organization seat');
+    ).rejects.toThrow(
+      'End active sponsorships before closing organization seat',
+    );
   });
 
   test('allows lifecycle closure after the sponsorship is ended', async () => {
