@@ -262,7 +262,10 @@ export function assertCorporateSeatTransition(
   current: CorporateSeatStatus,
   next: CorporateSeatStatus,
 ) {
-  if (!CORPORATE_SEAT_TRANSITIONS[current].includes(next)) {
+  const allowedTransitions: readonly CorporateSeatStatus[] =
+    CORPORATE_SEAT_TRANSITIONS[current];
+
+  if (!allowedTransitions.includes(next)) {
     throw new Error(`Invalid corporate seat transition: ${current} -> ${next}`);
   }
 }
