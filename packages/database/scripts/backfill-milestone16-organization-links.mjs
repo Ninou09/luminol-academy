@@ -13,8 +13,9 @@ if (!connectionString) {
 
 const batchSize = 500;
 const retryDelayMs = 50;
-const maxIdleRetries = 600;
 const lockTimeout = '2s';
+const maxBackfillDurationMs = 10 * 60 * 1000;
+const backfillDeadlineAt = Date.now() + maxBackfillDurationMs;
 const retryableDatabaseCodes = new Set(['40P01', '55P03']);
 const client = new Client({ connectionString });
 
@@ -39,7 +40,7 @@ const backfills = [
           AND organization."status" = 'ACTIVE'
           AND organization."archivedAt" IS NULL
         ORDER BY invoice."id"
-        FOR UPDATE OF invoice SKIP LOCKED
+        FOR UPDATE OF invoice, organization SKIP LOCKED
         LIMIT $1
       )
       UPDATE "Invoice" AS invoice
@@ -78,7 +79,7 @@ const backfills = [
           AND invoice."organizationId" = organization."id"
           AND invoice."organizationRecordId" = organization."id"
         ORDER BY billing."id"
-        FOR UPDATE OF billing, invoice SKIP LOCKED
+        FOR UPDATE OF billing, invoice, organization SKIP LOCKED
         LIMIT $1
       )
       UPDATE "CorporateBillingRecord" AS billing
@@ -125,7 +126,7 @@ const backfills = [
           AND membership."endedAt" IS NULL
           AND recipient."deletedAt" IS NULL
         ORDER BY event."id"
-        FOR UPDATE OF event SKIP LOCKED
+        FOR UPDATE OF event, organization, membership, recipient SKIP LOCKED
         LIMIT $1
       )
       UPDATE "NotificationEvent" AS event
@@ -182,7 +183,7 @@ const backfills = [
           AND membership."endedAt" IS NULL
           AND recipient."deletedAt" IS NULL
         ORDER BY notification."id"
-        FOR UPDATE OF notification, event SKIP LOCKED
+        FOR UPDATE OF notification, event, organization, membership, recipient SKIP LOCKED
         LIMIT $1
       )
       UPDATE "Notification" AS notification
@@ -195,7 +196,16 @@ const backfills = [
   },
 ];
 
+function assertWithinDeadline(backfill) {
+  if (Date.now() >= backfillDeadlineAt) {
+    throw new Error(
+      `Milestone 16 organization-link backfill exceeded its ${maxBackfillDurationMs / 60000}-minute global deadline while processing ${backfill.name}.`,
+    );
+  }
+}
+
 async function updateBatch(backfill) {
+  assertWithinDeadline(backfill);
   await client.query('BEGIN');
 
   try {
@@ -220,40 +230,32 @@ async function updateBatch(backfill) {
 }
 
 async function hasEligibleRows(backfill) {
+  assertWithinDeadline(backfill);
   const result = await client.query(
     `SELECT EXISTS (SELECT 1 ${backfill.eligibleSql}) AS "exists"`,
   );
   return result.rows[0]?.exists === true;
 }
 
-async function waitOrFail(backfill, idleRetries) {
-  const nextRetries = idleRetries + 1;
-
-  if (nextRetries >= maxIdleRetries) {
-    throw new Error(
-      `Milestone 16 ${backfill.name} backfill could not acquire eligible rows after ${maxIdleRetries} retries.`,
-    );
-  }
-
+async function waitOrFail(backfill) {
+  assertWithinDeadline(backfill);
   await sleep(retryDelayMs);
-  return nextRetries;
+  assertWithinDeadline(backfill);
 }
 
 async function runBackfill(backfill) {
   let totalUpdated = 0;
-  let idleRetries = 0;
 
   for (;;) {
     const batch = await updateBatch(backfill);
     totalUpdated += batch.updated;
 
     if (batch.updated > 0) {
-      idleRetries = 0;
       continue;
     }
 
     if (batch.retryable) {
-      idleRetries = await waitOrFail(backfill, idleRetries);
+      await waitOrFail(backfill);
       continue;
     }
 
@@ -261,7 +263,7 @@ async function runBackfill(backfill) {
       break;
     }
 
-    idleRetries = await waitOrFail(backfill, idleRetries);
+    await waitOrFail(backfill);
   }
 
   process.stdout.write(
