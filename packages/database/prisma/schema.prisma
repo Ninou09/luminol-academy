@@ -169,6 +169,25 @@ enum CertificateStatus {
   SUPERSEDED
 }
 
+enum OrganizationStatus {
+  ACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+enum OrganizationMembershipRole {
+  OWNER
+  MANAGER
+  LEARNER
+}
+
+enum OrganizationSeatStatus {
+  INVITED
+  ACTIVE
+  COMPLETED
+  REVOKED
+}
+
 model User {
   id                      String                   @id @default(cuid())
   clerkId                 String                   @unique
@@ -196,6 +215,8 @@ model User {
   notificationEvents      NotificationEvent[]
   certificateAuditEvents  CertificateAuditEvent[]  @relation("CertificateAuditActor")
   certificateRevocations  CertificateRevocation[]  @relation("CertificateRevocationActor")
+  organizationMemberships OrganizationMembership[]
+  organizationSeats       OrganizationSeat[]
 
   @@index([email])
   @@index([deletedAt])
@@ -440,6 +461,120 @@ model CorporateBillingRecord {
   @@index([purchaseOrderReference])
 }
 
+model Organization {
+  id          String                   @id @default(cuid())
+  name        String
+  status      OrganizationStatus       @default(ACTIVE)
+  seatLimit   Int
+  archivedAt  DateTime?
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+  memberships OrganizationMembership[]
+  teams       Team[]
+  seats       OrganizationSeat[]
+  courses     OrganizationCourse[]
+
+  @@index([status, name])
+  @@index([archivedAt])
+}
+
+model OrganizationMembership {
+  id              String                     @id @default(cuid())
+  organizationId  String
+  userId          String
+  role            OrganizationMembershipRole
+  active          Boolean                    @default(false)
+  joinedAt        DateTime                   @default(now())
+  endedAt         DateTime?
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+  organization    Organization               @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user            User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  teamMemberships TeamMembership[]
+
+  @@unique([organizationId, userId])
+  @@index([userId, active])
+  @@index([organizationId, role, active])
+}
+
+model Team {
+  id             String           @id @default(cuid())
+  organizationId String
+  name           String
+  archivedAt     DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  memberships    TeamMembership[]
+
+  @@unique([organizationId, name])
+  @@index([organizationId, archivedAt])
+}
+
+model TeamMembership {
+  id                       String                 @id @default(cuid())
+  teamId                   String
+  organizationMembershipId String
+  createdAt                DateTime               @default(now())
+  team                     Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  organizationMembership   OrganizationMembership @relation(fields: [organizationMembershipId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, organizationMembershipId])
+  @@index([organizationMembershipId, teamId])
+}
+
+model OrganizationSeat {
+  id             String                 @id @default(cuid())
+  organizationId String
+  userId         String
+  status         OrganizationSeatStatus @default(INVITED)
+  invitedAt      DateTime               @default(now())
+  activatedAt    DateTime?
+  completedAt    DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  organization   Organization           @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId, status])
+  @@index([userId, status])
+}
+
+model OrganizationCourse {
+  id             String                              @id @default(cuid())
+  organizationId String
+  courseId       String
+  active         Boolean                             @default(true)
+  assignedAt     DateTime                            @default(now())
+  unassignedAt   DateTime?
+  createdAt      DateTime                            @default(now())
+  updatedAt      DateTime                            @updatedAt
+  organization   Organization                        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  course         Course                              @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  sponsorships   OrganizationEnrollmentSponsorship[]
+
+  @@unique([organizationId, courseId])
+  @@index([organizationId, active, assignedAt])
+  @@index([courseId, active])
+}
+
+model OrganizationEnrollmentSponsorship {
+  id                   String             @id @default(cuid())
+  organizationCourseId String
+  enrollmentId         String             @unique
+  active               Boolean            @default(true)
+  sponsoredAt          DateTime           @default(now())
+  endedAt              DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  organizationCourse   OrganizationCourse @relation(fields: [organizationCourseId], references: [id], onDelete: Restrict)
+  enrollment           Enrollment         @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
+
+  @@index([organizationCourseId, active])
+}
+
 model Role {
   id          String           @id @default(cuid())
   key         String           @unique
@@ -494,6 +629,7 @@ model Course {
   certificates         Certificate[]
   languageProfile      LanguageCourseProfile?
   placementAssessments PlacementAssessment[]
+  organizationCourses  OrganizationCourse[]
 
   @@index([title(ops: raw("gin_trgm_ops"))], type: Gin, map: "Course_title_trgm_idx")
   @@index([slug(ops: raw("gin_trgm_ops"))], type: Gin, map: "Course_slug_trgm_idx")
@@ -608,17 +744,18 @@ model PlacementSkillResult {
 }
 
 model Enrollment {
-  id           String                  @id @default(cuid())
-  userId       String
-  courseId     String
-  status       EnrollmentStatus        @default(PENDING)
-  enrolledAt   DateTime                @default(now())
-  startedAt    DateTime?
-  completedAt  DateTime?
-  expiresAt    DateTime?
-  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course       Course                  @relation(fields: [courseId], references: [id], onDelete: Restrict)
-  statusEvents EnrollmentStatusEvent[]
+  id                      String                             @id @default(cuid())
+  userId                  String
+  courseId                String
+  status                  EnrollmentStatus                   @default(PENDING)
+  enrolledAt              DateTime                           @default(now())
+  startedAt               DateTime?
+  completedAt             DateTime?
+  expiresAt               DateTime?
+  user                    User                               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course                  Course                             @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  statusEvents            EnrollmentStatusEvent[]
+  organizationSponsorship OrganizationEnrollmentSponsorship?
 
   @@unique([userId, courseId])
   @@index([courseId, status])
