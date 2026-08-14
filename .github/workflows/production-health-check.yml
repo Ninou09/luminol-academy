@@ -85,13 +85,17 @@ jobs:
             local content_type_options
             local frame_options
             local csp
+            local clerk_status
+            local clerk_reason
+            local matched_path
+            local server
             local location_path
             local cache_has_no_store='no'
             local frame_is_deny='no'
 
             response_meta="$(curl --silent --show-error --max-time 20 \
               --output "$body_file" \
-              --write-out '%{http_code}\n%header{location}\n%header{cache-control}\n%header{x-content-type-options}\n%header{x-frame-options}\n%header{content-security-policy}\n' \
+              --write-out '%{http_code}\n%header{location}\n%header{cache-control}\n%header{x-content-type-options}\n%header{x-frame-options}\n%header{content-security-policy}\n%header{x-clerk-auth-status}\n%header{x-clerk-auth-reason}\n%header{x-matched-path}\n%header{server}\n' \
               "$url/en/sign-in")"
             mapfile -t response_lines <<< "$response_meta"
 
@@ -101,6 +105,10 @@ jobs:
             content_type_options="${response_lines[3]:-}"
             frame_options="${response_lines[4]:-}"
             csp="${response_lines[5]:-}"
+            clerk_status="${response_lines[6]:-}"
+            clerk_reason="${response_lines[7]:-}"
+            matched_path="${response_lines[8]:-}"
+            server="${response_lines[9]:-}"
             location_path="${location%%\?*}"
 
             if grep --ignore-case --quiet --fixed-strings 'no-store' <<< "$cache_control"; then
@@ -110,7 +118,7 @@ jobs:
               frame_is_deny='yes'
             fi
 
-            echo "$name probe: status=$status redirect=$location_path cache-no-store=$cache_has_no_store frame-deny=$frame_is_deny"
+            echo "$name probe: status=$status redirect=$location_path cache-no-store=$cache_has_no_store frame-deny=$frame_is_deny clerk-status=${clerk_status:-none} clerk-reason=${clerk_reason:-none} matched-path=${matched_path:-none} server=${server:-none}"
 
             case "$status" in
               200)
