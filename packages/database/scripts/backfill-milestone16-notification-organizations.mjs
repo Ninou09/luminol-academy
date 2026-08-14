@@ -53,10 +53,9 @@ async function backfillBatch() {
         )
         UPDATE "Notification" AS notification
         SET "organizationRecordId" = event."organizationRecordId"
-        FROM candidate
-        INNER JOIN "NotificationEvent" AS event
-          ON event."id" = notification."eventId"
+        FROM candidate, "NotificationEvent" AS event
         WHERE notification."id" = candidate."id"
+          AND event."id" = notification."eventId"
           AND notification."organizationRecordId" IS NULL
           AND event."organizationRecordId" IS NOT NULL
           AND notification."organizationId" = event."organizationId"
