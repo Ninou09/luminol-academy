@@ -1,11 +1,20 @@
 'use client';
 
+import { parseLocalizedPathname } from '@luminol/localization';
+import { usePathname } from 'next/navigation';
+
+import { getOrganizationAdminCopy } from '../../lib/organization-localization';
+
 export default function OrganizationsAdminError({
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const pathname = usePathname();
+  const locale = parseLocalizedPathname(pathname)?.locale ?? 'en';
+  const copy = getOrganizationAdminCopy(locale);
+
   return (
     <main
       className="admin-shell"
@@ -14,13 +23,10 @@ export default function OrganizationsAdminError({
       <section className="admin-dashboard">
         <div className="admin-content">
           <section className="admin-panel">
-            <h1>Organization administration is unavailable</h1>
-            <p>
-              No organization mutation was assumed to have succeeded. Retry the
-              protected workspace after checking the current data state.
-            </p>
+            <h1>{copy.errorTitle}</h1>
+            <p>{copy.errorBody}</p>
             <button type="button" onClick={() => reset()}>
-              Retry
+              {copy.retry}
             </button>
           </section>
         </div>
