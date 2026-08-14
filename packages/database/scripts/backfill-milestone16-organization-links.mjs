@@ -14,6 +14,8 @@ if (!connectionString) {
 const batchSize = 500;
 const retryDelayMs = 50;
 const maxIdleRetries = 600;
+const lockTimeout = '2s';
+const retryableDatabaseCodes = new Set(['40P01', '55P03']);
 const client = new Client({ connectionString });
 
 const backfills = [
@@ -76,7 +78,7 @@ const backfills = [
           AND invoice."organizationId" = organization."id"
           AND invoice."organizationRecordId" = organization."id"
         ORDER BY billing."id"
-        FOR UPDATE OF billing SKIP LOCKED
+        FOR UPDATE OF billing, invoice SKIP LOCKED
         LIMIT $1
       )
       UPDATE "CorporateBillingRecord" AS billing
@@ -180,7 +182,7 @@ const backfills = [
           AND membership."endedAt" IS NULL
           AND recipient."deletedAt" IS NULL
         ORDER BY notification."id"
-        FOR UPDATE OF notification SKIP LOCKED
+        FOR UPDATE OF notification, event SKIP LOCKED
         LIMIT $1
       )
       UPDATE "Notification" AS notification
@@ -197,11 +199,22 @@ async function updateBatch(backfill) {
   await client.query('BEGIN');
 
   try {
+    await client.query(`SET LOCAL lock_timeout = '${lockTimeout}'`);
     const result = await client.query(backfill.updateSql, [batchSize]);
     await client.query('COMMIT');
-    return result.rowCount ?? 0;
+    return { retryable: false, updated: result.rowCount ?? 0 };
   } catch (error) {
     await client.query('ROLLBACK');
+
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      retryableDatabaseCodes.has(error.code)
+    ) {
+      return { retryable: true, updated: 0 };
+    }
+
     throw error;
   }
 }
@@ -213,16 +226,34 @@ async function hasEligibleRows(backfill) {
   return result.rows[0]?.exists === true;
 }
 
+async function waitOrFail(backfill, idleRetries) {
+  const nextRetries = idleRetries + 1;
+
+  if (nextRetries >= maxIdleRetries) {
+    throw new Error(
+      `Milestone 16 ${backfill.name} backfill could not acquire eligible rows after ${maxIdleRetries} retries.`,
+    );
+  }
+
+  await sleep(retryDelayMs);
+  return nextRetries;
+}
+
 async function runBackfill(backfill) {
   let totalUpdated = 0;
   let idleRetries = 0;
 
   for (;;) {
-    const updated = await updateBatch(backfill);
-    totalUpdated += updated;
+    const batch = await updateBatch(backfill);
+    totalUpdated += batch.updated;
 
-    if (updated > 0) {
+    if (batch.updated > 0) {
       idleRetries = 0;
+      continue;
+    }
+
+    if (batch.retryable) {
+      idleRetries = await waitOrFail(backfill, idleRetries);
       continue;
     }
 
@@ -230,14 +261,7 @@ async function runBackfill(backfill) {
       break;
     }
 
-    idleRetries += 1;
-    if (idleRetries >= maxIdleRetries) {
-      throw new Error(
-        `Milestone 16 ${backfill.name} backfill could not acquire eligible rows after ${maxIdleRetries} retries.`,
-      );
-    }
-
-    await sleep(retryDelayMs);
+    idleRetries = await waitOrFail(backfill, idleRetries);
   }
 
   process.stdout.write(
