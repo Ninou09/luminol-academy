@@ -2,7 +2,7 @@ import { requirePlatformPermission } from '@luminol/auth';
 import Link from 'next/link';
 
 import { getOrganizationAdminDashboard } from '../../lib/organization-admin.server';
-import type { OrganizationSeatStatus } from '../../lib/organization-admin';
+import { ORGANIZATION_SEAT_TRANSITIONS } from '../../lib/organization-admin';
 import {
   addOrganizationTeamMember,
   allocateOrganizationSeat,
@@ -18,16 +18,6 @@ import {
   updateOrganizationMembershipRole,
   upsertOrganizationMembership,
 } from './actions';
-
-const seatTransitions: Record<
-  OrganizationSeatStatus,
-  readonly OrganizationSeatStatus[]
-> = {
-  INVITED: ['ACTIVE', 'REVOKED'],
-  ACTIVE: ['COMPLETED', 'REVOKED'],
-  COMPLETED: [],
-  REVOKED: [],
-};
 
 function personLabel(person: {
   firstName: string | null;
@@ -257,11 +247,13 @@ export default async function OrganizationsAdminPage({
                               <option value="" disabled>
                                 Select user
                               </option>
-                              {dashboard.options.users.map((user) => (
-                                <option key={user.id} value={user.id}>
-                                  {personLabel(user)}
-                                </option>
-                              ))}
+                              {organization.availableMembershipUsers.map(
+                                (user) => (
+                                  <option key={user.id} value={user.id}>
+                                    {personLabel(user)}
+                                  </option>
+                                ),
+                              )}
                             </select>
                           </label>
                           <label>
@@ -370,7 +362,8 @@ export default async function OrganizationsAdminPage({
                                 </strong>
                                 <small>{seat.status}</small>
                               </div>
-                              {seatTransitions[seat.status].length > 0 ? (
+                              {ORGANIZATION_SEAT_TRANSITIONS[seat.status]
+                                .length > 0 ? (
                                 <form
                                   action={transitionOrganizationSeat}
                                   className="status-form"
@@ -394,13 +387,13 @@ export default async function OrganizationsAdminPage({
                                     <option value="" disabled>
                                       Move to
                                     </option>
-                                    {seatTransitions[seat.status].map(
-                                      (status) => (
-                                        <option key={status} value={status}>
-                                          {status}
-                                        </option>
-                                      ),
-                                    )}
+                                    {ORGANIZATION_SEAT_TRANSITIONS[
+                                      seat.status
+                                    ].map((status) => (
+                                      <option key={status} value={status}>
+                                        {status}
+                                      </option>
+                                    ))}
                                   </select>
                                   <button type="submit">Update seat</button>
                                 </form>

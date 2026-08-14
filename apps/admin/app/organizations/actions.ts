@@ -236,9 +236,37 @@ export async function deactivateOrganizationMembership(formData: FormData) {
 
   await db.$transaction(async (transaction: Transaction) => {
     await requireActiveOrganization(transaction, input.organizationId);
-    const updated = await transaction.organizationMembership.updateMany({
+    const membership = await transaction.organizationMembership.findFirst({
       where: {
         id: input.membershipId,
+        organizationId: input.organizationId,
+        active: true,
+      },
+      select: { id: true, userId: true },
+    });
+
+    if (!membership) {
+      throw new Error('Active organization membership not found');
+    }
+
+    const openSeat = await transaction.organizationSeat.findFirst({
+      where: {
+        organizationId: input.organizationId,
+        userId: membership.userId,
+        status: { in: ['INVITED', 'ACTIVE'] },
+      },
+      select: { id: true },
+    });
+
+    if (openSeat) {
+      throw new Error(
+        'Close the organization seat before deactivating membership',
+      );
+    }
+
+    const updated = await transaction.organizationMembership.updateMany({
+      where: {
+        id: membership.id,
         organizationId: input.organizationId,
         active: true,
       },
@@ -246,11 +274,11 @@ export async function deactivateOrganizationMembership(formData: FormData) {
     });
 
     if (updated.count !== 1) {
-      throw new Error('Active organization membership not found');
+      throw new Error('Organization membership was updated concurrently');
     }
 
     await transaction.teamMembership.deleteMany({
-      where: { organizationMembershipId: input.membershipId },
+      where: { organizationMembershipId: membership.id },
     });
 
     await audit(
@@ -259,13 +287,12 @@ export async function deactivateOrganizationMembership(formData: FormData) {
       input.organizationId,
       'membership.deactivated',
       'organizationMembership',
-      input.membershipId,
+      membership.id,
     );
   });
 
   revalidateOrganizationAdmin();
 }
-
 export async function updateOrganizationMembershipRole(formData: FormData) {
   const administrator = await requirePlatformPermission('academy:manage');
   const input = membershipRoleSchema.parse({
