@@ -1,0 +1,1 @@
+Milestone 16 Slice C implements protected academy organization administration: organization creation/archive, membership lifecycle and role changes, team membership, seat allocation/lifecycle, published course assignment, bounded aggregate completion, and append-only audit events. Existing Enrollment remains the learner access source.
