@@ -22,14 +22,15 @@ export async function getOrganizationAdminDashboard(
   rawQuery: OrganizationAdminDashboardQuery = {},
 ) {
   const query = dashboardQuerySchema.parse(rawQuery);
-  const organizationWhere: Prisma.OrganizationWhereInput = query.organizationQuery
-    ? {
-        name: {
-          contains: query.organizationQuery,
-          mode: 'insensitive',
-        },
-      }
-    : {};
+  const organizationWhere: Prisma.OrganizationWhereInput =
+    query.organizationQuery
+      ? {
+          name: {
+            contains: query.organizationQuery,
+            mode: 'insensitive',
+          },
+        }
+      : {};
   const userWhere = query.userQuery
     ? {
         deletedAt: null,
