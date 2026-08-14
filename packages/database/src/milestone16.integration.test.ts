@@ -294,7 +294,9 @@ suite('Milestone 16 organization persistence invariants', () => {
 
     await expect(
       db.organizationSeat.delete({ where: { id: seatAId } }),
-    ).rejects.toThrow('End active sponsorships before deleting organization seat');
+    ).rejects.toThrow(
+      'End active sponsorships before deleting organization seat',
+    );
   });
 
   test('allows lifecycle closure after the sponsorship is ended', async () => {
