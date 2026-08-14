@@ -66,10 +66,11 @@ ALTER TABLE "Notification"
 CREATE OR REPLACE FUNCTION "enforce_verified_organization_link"()
 RETURNS TRIGGER AS $$
 BEGIN
-  IF TG_OP = 'UPDATE'
-     AND OLD."organizationRecordId" IS NOT NULL
-     AND OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId" THEN
-    RAISE EXCEPTION 'Verified organization identity is immutable';
+  IF TG_OP = 'UPDATE' THEN
+    IF OLD."organizationRecordId" IS NOT NULL
+       AND OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId" THEN
+      RAISE EXCEPTION 'Verified organization identity is immutable';
+    END IF;
   END IF;
 
   IF NEW."organizationId" IS NULL THEN
@@ -80,8 +81,9 @@ BEGIN
   END IF;
 
   IF NEW."organizationRecordId" IS NULL THEN
-    IF TG_OP = 'INSERT'
-       OR OLD."organizationId" IS DISTINCT FROM NEW."organizationId" THEN
+    IF TG_OP = 'INSERT' THEN
+      RAISE EXCEPTION 'New organization-scoped records require a verified organization';
+    ELSIF OLD."organizationId" IS DISTINCT FROM NEW."organizationId" THEN
       RAISE EXCEPTION 'New organization-scoped records require a verified organization';
     END IF;
     -- Existing unmatched legacy rows may still update non-identity fields.
