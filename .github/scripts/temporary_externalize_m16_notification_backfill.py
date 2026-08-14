@@ -28,7 +28,7 @@ if final_block not in text:
     raise SystemExit('final notification procedure call not found')
 text = text.replace(
     final_block,
-    '''-- Child Notification history is reconciled by the post-migration bounded backfill.''' ,
+    '-- Child Notification history is reconciled by the post-migration bounded backfill.',
     1,
 )
 if 'backfill_verified_notification_organizations' in text:
@@ -42,32 +42,6 @@ replacement_line = needle + '    "backfill:m16-notification-organizations": "nod
 if needle not in package_text:
     raise SystemExit('database package migrate script marker not found')
 package_json.write_text(package_text.replace(needle, replacement_line, 1))
-
-ci = Path('.github/workflows/ci.yml')
-ci_text = ci.read_text()
-ci_needle = '''          pnpm --filter @luminol/database exec prisma validate
-          pnpm --filter @luminol/database migrate:deploy
-'''
-ci_replacement = ci_needle + '''          pnpm --filter @luminol/database backfill:m16-notification-organizations
-'''
-if ci_needle not in ci_text:
-    raise SystemExit('CI migration marker not found')
-ci.write_text(ci_text.replace(ci_needle, ci_replacement, 1))
-
-prod = Path('.github/workflows/production-migrations.yml')
-prod_text = prod.read_text()
-prod_needle = '''      - name: Verify migration status
-        run: pnpm --filter @luminol/database exec prisma migrate status
-'''
-prod_insert = '''      - name: Backfill verified notification organization links
-        run: pnpm --filter @luminol/database backfill:m16-notification-organizations
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
-''' + prod_needle
-if prod_needle not in prod_text:
-    raise SystemExit('production migration verification marker not found')
-prod.write_text(prod_text.replace(prod_needle, prod_insert, 1))
 
 script = Path('packages/database/scripts/backfill-milestone16-notification-organizations.mjs')
 script.parent.mkdir(parents=True, exist_ok=True)
@@ -146,7 +120,9 @@ async function backfillBatch() {
 }
 
 async function hasEligibleRows() {
-  const result = await client.query(`SELECT EXISTS (SELECT 1 ${eligibleSql}) AS "exists"`);
+  const result = await client.query(
+    `SELECT EXISTS (SELECT 1 ${eligibleSql}) AS "exists"`,
+  );
   return result.rows[0]?.exists === true;
 }
 
@@ -170,7 +146,9 @@ try {
     await sleep(retryDelayMs);
   }
 
-  console.log(`Milestone 16 notification organization backfill updated ${totalUpdated} rows.`);
+  console.log(
+    `Milestone 16 notification organization backfill updated ${totalUpdated} rows.`,
+  );
 } finally {
   await client.end();
 }
