@@ -85,7 +85,8 @@ CREATE TABLE "OrganizationCourse" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "OrganizationCourse_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "OrganizationCourse_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "OrganizationCourse_active_window_check" CHECK (("active" = true AND "unassignedAt" IS NULL) OR ("active" = false AND "unassignedAt" IS NOT NULL))
 );
 
 -- CreateTable
@@ -99,7 +100,8 @@ CREATE TABLE "OrganizationEnrollmentSponsorship" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "OrganizationEnrollmentSponsorship_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "OrganizationEnrollmentSponsorship_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "OrganizationEnrollmentSponsorship_active_window_check" CHECK (("active" = true AND "endedAt" IS NULL) OR ("active" = false AND "endedAt" IS NOT NULL))
 );
 
 -- CreateIndex
@@ -148,10 +150,13 @@ CREATE INDEX "OrganizationCourse_organizationId_active_assignedAt_idx" ON "Organ
 CREATE INDEX "OrganizationCourse_courseId_active_idx" ON "OrganizationCourse"("courseId", "active");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "OrganizationEnrollmentSponsorship_enrollmentId_key" ON "OrganizationEnrollmentSponsorship"("enrollmentId");
+CREATE INDEX "OrganizationEnrollmentSponsorship_organizationCourseId_active_idx" ON "OrganizationEnrollmentSponsorship"("organizationCourseId", "active");
 
 -- CreateIndex
-CREATE INDEX "OrganizationEnrollmentSponsorship_organizationCourseId_active_idx" ON "OrganizationEnrollmentSponsorship"("organizationCourseId", "active");
+CREATE INDEX "OrganizationEnrollmentSponsorship_enrollmentId_active_idx" ON "OrganizationEnrollmentSponsorship"("enrollmentId", "active");
+
+-- Only one active sponsor may own an enrollment at a time while preserving inactive sponsorship history.
+CREATE UNIQUE INDEX "OrganizationEnrollmentSponsorship_active_enrollment_key" ON "OrganizationEnrollmentSponsorship"("enrollmentId") WHERE "active" = true;
 
 -- AddForeignKey
 ALTER TABLE "OrganizationMembership" ADD CONSTRAINT "OrganizationMembership_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -227,3 +232,107 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER "OrganizationEnrollmentSponsorship_course_scope"
 BEFORE INSERT OR UPDATE OF "organizationCourseId", "enrollmentId" ON "OrganizationEnrollmentSponsorship"
 FOR EACH ROW EXECUTE FUNCTION "enforce_organization_sponsorship_course_scope"();
+
+-- Sponsorship rows are historical records. Their enrollment/course identity is immutable; end one and create a new row instead.
+CREATE FUNCTION "prevent_organization_sponsorship_identity_change"() RETURNS trigger AS $$
+BEGIN
+    IF OLD."organizationCourseId" <> NEW."organizationCourseId" OR OLD."enrollmentId" <> NEW."enrollmentId" THEN
+        RAISE EXCEPTION 'Organization sponsorship identity is immutable';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "OrganizationEnrollmentSponsorship_immutable_identity"
+BEFORE UPDATE OF "organizationCourseId", "enrollmentId" ON "OrganizationEnrollmentSponsorship"
+FOR EACH ROW EXECUTE FUNCTION "prevent_organization_sponsorship_identity_change"();
+
+-- Organization membership identity is immutable. A changed tenant/user relationship is a new membership.
+CREATE FUNCTION "prevent_organization_membership_identity_change"() RETURNS trigger AS $$
+BEGIN
+    IF OLD."organizationId" <> NEW."organizationId" OR OLD."userId" <> NEW."userId" THEN
+        RAISE EXCEPTION 'Organization membership identity is immutable';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "OrganizationMembership_immutable_identity"
+BEFORE UPDATE OF "organizationId", "userId" ON "OrganizationMembership"
+FOR EACH ROW EXECUTE FUNCTION "prevent_organization_membership_identity_change"();
+
+-- Organization-course assignment identity is immutable. Unassign and create a new assignment instead of moving it.
+CREATE FUNCTION "prevent_organization_course_identity_change"() RETURNS trigger AS $$
+BEGIN
+    IF OLD."organizationId" <> NEW."organizationId" OR OLD."courseId" <> NEW."courseId" THEN
+        RAISE EXCEPTION 'Organization course identity is immutable';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "OrganizationCourse_immutable_identity"
+BEFORE UPDATE OF "organizationId", "courseId" ON "OrganizationCourse"
+FOR EACH ROW EXECUTE FUNCTION "prevent_organization_course_identity_change"();
+
+-- Seat identity is immutable and seat lifecycle transitions remain fail-closed at the persistence boundary.
+CREATE FUNCTION "enforce_organization_seat_lifecycle"() RETURNS trigger AS $$
+BEGIN
+    IF OLD."organizationId" <> NEW."organizationId" OR OLD."userId" <> NEW."userId" THEN
+        RAISE EXCEPTION 'Organization seat identity is immutable';
+    END IF;
+
+    IF OLD."status" = NEW."status" THEN
+        RETURN NEW;
+    END IF;
+
+    IF OLD."status" = 'INVITED' AND NEW."status" IN ('ACTIVE', 'REVOKED') THEN
+        RETURN NEW;
+    END IF;
+
+    IF OLD."status" = 'ACTIVE' AND NEW."status" IN ('COMPLETED', 'REVOKED') THEN
+        RETURN NEW;
+    END IF;
+
+    RAISE EXCEPTION 'Invalid organization seat transition: % -> %', OLD."status", NEW."status";
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "OrganizationSeat_lifecycle"
+BEFORE UPDATE OF "organizationId", "userId", "status" ON "OrganizationSeat"
+FOR EACH ROW EXECUTE FUNCTION "enforce_organization_seat_lifecycle"();
+
+-- Capacity is serialized on the organization row so concurrent seat allocations cannot exceed seatLimit.
+CREATE FUNCTION "enforce_organization_seat_capacity"() RETURNS trigger AS $$
+DECLARE
+    organization_seat_limit INTEGER;
+    allocated_seat_count INTEGER;
+BEGIN
+    SELECT "seatLimit" INTO organization_seat_limit
+    FROM "Organization"
+    WHERE "id" = NEW."organizationId"
+    FOR UPDATE;
+
+    IF organization_seat_limit IS NULL THEN
+        RAISE EXCEPTION 'Organization not found for seat allocation';
+    END IF;
+
+    IF NEW."status" <> 'REVOKED' THEN
+        SELECT COUNT(*) INTO allocated_seat_count
+        FROM "OrganizationSeat"
+        WHERE "organizationId" = NEW."organizationId"
+          AND "status" <> 'REVOKED'
+          AND "id" <> NEW."id";
+
+        IF allocated_seat_count >= organization_seat_limit THEN
+            RAISE EXCEPTION 'Organization seat capacity exceeded';
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "OrganizationSeat_capacity"
+BEFORE INSERT OR UPDATE OF "organizationId", "status" ON "OrganizationSeat"
+FOR EACH ROW EXECUTE FUNCTION "enforce_organization_seat_capacity"();
