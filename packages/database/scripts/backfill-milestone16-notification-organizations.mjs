@@ -1,5 +1,5 @@
-/* global console, process, setTimeout */
-
+import { setTimeout as sleep } from 'node:timers/promises';
+import process from 'node:process';
 import pg from 'pg';
 
 const { Client } = pg;
@@ -14,9 +14,6 @@ if (!connectionString) {
 const batchSize = 500;
 const retryDelayMs = 50;
 const client = new Client({ connectionString });
-
-const sleep = (milliseconds) =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 const eligibleSql = `
   FROM "Notification" AS notification
@@ -102,8 +99,8 @@ try {
     await sleep(retryDelayMs);
   }
 
-  console.log(
-    `Milestone 16 notification organization backfill updated ${totalUpdated} rows.`,
+  process.stdout.write(
+    `Milestone 16 notification organization backfill updated ${totalUpdated} rows.\n`,
   );
 } finally {
   await client.end();
