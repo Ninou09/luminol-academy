@@ -166,9 +166,9 @@ describe('corporate organization governance', () => {
       expect(
         canCorporateManagerViewData('MANAGER', 'SEAT_UTILIZATION'),
       ).toBe(true);
-      expect(canCorporateManagerViewData('OWNER', 'COMPLETION_TOTALS')).toBe(
-        true,
-      );
+      expect(
+        canCorporateManagerViewData('OWNER', 'COMPLETION_TOTALS'),
+      ).toBe(true);
       expect(
         canCorporateManagerViewData('MANAGER', 'ASSESSMENT_ANSWERS'),
       ).toBe(false);
@@ -178,6 +178,10 @@ describe('corporate organization governance', () => {
       expect(
         canCorporateManagerViewData('LEARNER', 'ASSIGNMENT_PROGRESS'),
       ).toBe(false);
+      expect(canCorporateManagerViewData('MANAGER', 'toString')).toBe(false);
+      expect(canCorporateManagerViewData('ADMIN', 'SEAT_UTILIZATION')).toBe(
+        false,
+      );
     },
   );
 
