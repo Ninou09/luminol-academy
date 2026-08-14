@@ -1,4 +1,4 @@
-import { requirePermission } from '@luminol/auth';
+import { requirePlatformPermission } from '@luminol/auth';
 import Link from 'next/link';
 
 import { getOrganizationAdminDashboard } from '../../lib/organization-admin.server';
@@ -39,7 +39,7 @@ function personLabel(person: {
 }
 
 export default async function OrganizationsAdminPage() {
-  await requirePermission('academy:manage');
+  await requirePlatformPermission('academy:manage');
   const dashboard = await getOrganizationAdminDashboard();
 
   return (

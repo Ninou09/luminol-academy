@@ -1,6 +1,6 @@
 'use server';
 
-import { requirePermission } from '@luminol/auth';
+import { requirePlatformPermission } from '@luminol/auth';
 import { db } from '@luminol/database';
 import type { Prisma } from '@luminol/database';
 import { revalidatePath } from 'next/cache';
@@ -83,13 +83,30 @@ async function audit(
   });
 }
 
+async function requireActiveOrganization(
+  transaction: Transaction,
+  organizationId: string,
+) {
+  const organizations = await transaction.$queryRaw<Array<{ id: string }>>`
+    SELECT "id"
+    FROM "Organization"
+    WHERE "id" = ${organizationId}
+      AND "status" = 'ACTIVE'::"OrganizationStatus"
+    FOR UPDATE
+  `;
+
+  if (organizations.length !== 1) {
+    throw new Error('Active organization not found');
+  }
+}
+
 function revalidateOrganizationAdmin() {
   revalidatePath('/organizations');
   revalidatePath('/');
 }
 
 export async function createOrganization(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = organizationSchema.parse({
     name: formData.get('name'),
     seatLimit: formData.get('seatLimit'),
@@ -115,7 +132,7 @@ export async function createOrganization(formData: FormData) {
 }
 
 export async function archiveOrganization(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = organizationIdSchema.parse({
     organizationId: formData.get('organizationId'),
   });
@@ -145,7 +162,7 @@ export async function archiveOrganization(formData: FormData) {
 }
 
 export async function upsertOrganizationMembership(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = membershipSchema.parse({
     organizationId: formData.get('organizationId'),
     userId: formData.get('userId'),
@@ -153,6 +170,7 @@ export async function upsertOrganizationMembership(formData: FormData) {
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const [organization, user, existing] = await Promise.all([
       transaction.organization.findFirst({
         where: { id: input.organizationId, status: 'ACTIVE' },
@@ -210,13 +228,14 @@ export async function upsertOrganizationMembership(formData: FormData) {
 }
 
 export async function deactivateOrganizationMembership(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = membershipMutationSchema.parse({
     organizationId: formData.get('organizationId'),
     membershipId: formData.get('membershipId'),
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const updated = await transaction.organizationMembership.updateMany({
       where: {
         id: input.membershipId,
@@ -244,7 +263,7 @@ export async function deactivateOrganizationMembership(formData: FormData) {
 }
 
 export async function updateOrganizationMembershipRole(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = membershipRoleSchema.parse({
     organizationId: formData.get('organizationId'),
     membershipId: formData.get('membershipId'),
@@ -252,6 +271,7 @@ export async function updateOrganizationMembershipRole(formData: FormData) {
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const updated = await transaction.organizationMembership.updateMany({
       where: {
         id: input.membershipId,
@@ -279,13 +299,14 @@ export async function updateOrganizationMembershipRole(formData: FormData) {
 }
 
 export async function createOrganizationTeam(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = teamSchema.parse({
     organizationId: formData.get('organizationId'),
     name: formData.get('name'),
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const organization = await transaction.organization.findFirst({
       where: { id: input.organizationId, status: 'ACTIVE' },
       select: { id: true },
@@ -311,13 +332,14 @@ export async function createOrganizationTeam(formData: FormData) {
 }
 
 export async function archiveOrganizationTeam(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = teamMutationSchema.parse({
     organizationId: formData.get('organizationId'),
     teamId: formData.get('teamId'),
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const updated = await transaction.team.updateMany({
       where: {
         id: input.teamId,
@@ -344,7 +366,7 @@ export async function archiveOrganizationTeam(formData: FormData) {
 }
 
 export async function addOrganizationTeamMember(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = teamMembershipSchema.parse({
     organizationId: formData.get('organizationId'),
     teamId: formData.get('teamId'),
@@ -352,6 +374,7 @@ export async function addOrganizationTeamMember(formData: FormData) {
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const [team, membership] = await Promise.all([
       transaction.team.findFirst({
         where: {
@@ -397,7 +420,7 @@ export async function addOrganizationTeamMember(formData: FormData) {
 }
 
 export async function removeOrganizationTeamMember(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = teamMembershipMutationSchema.parse({
     organizationId: formData.get('organizationId'),
     teamId: formData.get('teamId'),
@@ -405,6 +428,7 @@ export async function removeOrganizationTeamMember(formData: FormData) {
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const teamMembership = await transaction.teamMembership.findFirst({
       where: {
         id: input.teamMembershipId,
@@ -435,13 +459,14 @@ export async function removeOrganizationTeamMember(formData: FormData) {
 }
 
 export async function allocateOrganizationSeat(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = seatSchema.parse({
     organizationId: formData.get('organizationId'),
     userId: formData.get('userId'),
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const [organization, membership] = await Promise.all([
       transaction.organization.findFirst({
         where: { id: input.organizationId, status: 'ACTIVE' },
@@ -486,7 +511,7 @@ export async function allocateOrganizationSeat(formData: FormData) {
 }
 
 export async function transitionOrganizationSeat(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = seatTransitionSchema.parse({
     organizationId: formData.get('organizationId'),
     seatId: formData.get('seatId'),
@@ -495,6 +520,7 @@ export async function transitionOrganizationSeat(formData: FormData) {
   const now = new Date();
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const seat = await transaction.organizationSeat.findFirst({
       where: { id: input.seatId, organizationId: input.organizationId },
       select: { id: true, status: true },
@@ -533,13 +559,14 @@ export async function transitionOrganizationSeat(formData: FormData) {
 }
 
 export async function assignOrganizationCourse(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = courseSchema.parse({
     organizationId: formData.get('organizationId'),
     courseId: formData.get('courseId'),
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const [organization, course, existing] = await Promise.all([
       transaction.organization.findFirst({
         where: { id: input.organizationId, status: 'ACTIVE' },
@@ -594,13 +621,14 @@ export async function assignOrganizationCourse(formData: FormData) {
 }
 
 export async function unassignOrganizationCourse(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = organizationCourseMutationSchema.parse({
     organizationId: formData.get('organizationId'),
     organizationCourseId: formData.get('organizationCourseId'),
   });
 
   await db.$transaction(async (transaction: Transaction) => {
+    await requireActiveOrganization(transaction, input.organizationId);
     const updated = await transaction.organizationCourse.updateMany({
       where: {
         id: input.organizationCourseId,
