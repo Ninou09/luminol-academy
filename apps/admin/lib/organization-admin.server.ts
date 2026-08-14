@@ -227,6 +227,9 @@ export async function getOrganizationAdminDashboard(
       const seatHolderUserIds = new Set(
         organization.seats.map((seat) => seat.userId),
       );
+      const activeMemberUserIds = new Set(
+        organization.memberships.map((membership) => membership.user.id),
+      );
 
       return {
         ...organization,
@@ -235,6 +238,9 @@ export async function getOrganizationAdminDashboard(
         ),
         availableSeatMemberships: organization.memberships.filter(
           (membership) => !seatHolderUserIds.has(membership.user.id),
+        ),
+        availableMembershipUsers: users.filter(
+          (user) => !activeMemberUserIds.has(user.id),
         ),
         progress: progressByOrganization.get(organization.id) ?? {
           organizationId: organization.id,
