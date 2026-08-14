@@ -12,7 +12,7 @@ The canonical branch is:
 
 Current repository head at this status update:
 
-`b362bc7c114f3cc33fc1576ddbac4ff8017109cb`
+`af92cae363dfae46686e28cb2f68ee3d3dbf9bd9`
 
 Stable production application aliases:
 
@@ -22,7 +22,7 @@ Stable production application aliases:
 
 Milestones 1 through 15 are complete in the repository. The platform is in post-launch stabilization, public-experience hardening, media governance, and operational verification rather than an active numbered product milestone.
 
-Repository progress and production freshness are tracked separately. The current repository head has passed the required GitHub quality gates through its pull-request validation, and the post-merge `main` quality workflow is green. Vercel Free-plan build-rate limits can temporarily prevent a corresponding production build; such quota limits do not block continued repository development, but no quota-blocked change is described as live until a production deployment and post-deploy verification actually exist.
+Repository progress and production freshness are tracked separately. The current repository head passed its required exact-head GitHub pull-request quality gate before merge. Vercel Free-plan build-rate limits can temporarily prevent a corresponding production build; such quota limits do not block continued repository development, but no quota-blocked change is described as live until a production deployment and post-deploy verification actually exist.
 
 ## Delivered milestones
 
@@ -145,6 +145,7 @@ After Milestone 15, the public experience received a substantial premium visual,
 - stricter public-enquiry transport boundaries, including JSON-only submissions, cross-site browser rejection, and `no-store` responses (#208)
 - approved founder portrait publication on the localized About experience (#209)
 - approved founder portrait publication on the Psychology school hero while preserving governed abstract visuals for Languages and Professional Training (#210)
+- standards-compatible `Retry-After` timing on rate-limited public enquiry responses without weakening the existing trusted-edge and privacy boundaries (#212)
 
 Approved real photography is not fabricated or substituted. The approved founder media is now governed in repository code, while additional branch/programme photography remains dependent on explicit rights and publication approval.
 
