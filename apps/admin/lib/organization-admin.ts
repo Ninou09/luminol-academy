@@ -13,6 +13,7 @@ import type {
 export const ORGANIZATION_MEMBERSHIP_ROLES = CORPORATE_MEMBERSHIP_ROLES;
 export const ORGANIZATION_SEAT_STATUSES = CORPORATE_SEAT_STATUSES;
 export const ORGANIZATION_SEAT_TRANSITIONS = CORPORATE_SEAT_TRANSITIONS;
+export const ORGANIZATION_ADMIN_COLLECTION_LIMIT = 25;
 
 export type OrganizationMembershipRole = CorporateMembershipRole;
 export type OrganizationSeatStatus = CorporateSeatStatus;

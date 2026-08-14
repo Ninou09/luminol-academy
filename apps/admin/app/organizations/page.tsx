@@ -5,6 +5,7 @@ import {
   localizeHref,
   type Locale,
 } from '@luminol/localization';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
@@ -24,8 +25,10 @@ import {
   assignOrganizationCourse,
   createOrganization,
   createOrganizationTeam,
+  clearOrganizationAdministrationSearch,
   deactivateOrganizationMembership,
   removeOrganizationTeamMember,
+  searchOrganizationAdministration,
   transitionOrganizationSeat,
   unassignOrganizationCourse,
   updateOrganizationMembershipRole,
@@ -56,7 +59,7 @@ function dashboardHref(
   input: {
     organizationQuery: string;
     organizationPage: number;
-    userQuery: string;
+    teamQuery: string;
     courseQuery: string;
   },
 ) {
@@ -64,7 +67,7 @@ function dashboardHref(
   if (input.organizationQuery) params.set('q', input.organizationQuery);
   if (input.organizationPage > 1)
     params.set('page', String(input.organizationPage));
-  if (input.userQuery) params.set('user', input.userQuery);
+  if (input.teamQuery) params.set('team', input.teamQuery);
   if (input.courseQuery) params.set('course', input.courseQuery);
   const query = params.toString();
   const pathname = localizeHref(locale, '/organizations');
@@ -79,10 +82,15 @@ export default async function OrganizationsAdminPage({
   const copy = getOrganizationAdminCopy(locale);
   const common = getCommonDictionary(locale);
   const params = await searchParams;
+  const cookieStore = await cookies();
+  const userQuery = (
+    cookieStore.get('luminol-organization-admin-user-search')?.value ?? ''
+  ).slice(0, 160);
   const dashboard = await getOrganizationAdminDashboard({
     organizationQuery: firstSearchParam(params.q),
     organizationPage: firstSearchParam(params.page) || 1,
-    userQuery: firstSearchParam(params.user),
+    userQuery,
+    teamQuery: firstSearchParam(params.team),
     courseQuery: firstSearchParam(params.course),
   });
   const number = (value: number) => formatLocalizedNumber(value, locale);
@@ -96,6 +104,10 @@ export default async function OrganizationsAdminPage({
   const selectorLimit = copy.selectorLimit.replace(
     '{count}',
     number(dashboard.limits.optionSearchResults),
+  );
+  const collectionLimit = copy.collectionLimit.replace(
+    '{count}',
+    number(dashboard.limits.collectionResults),
   );
 
   return (
@@ -132,11 +144,16 @@ export default async function OrganizationsAdminPage({
                 {number(dashboard.pagination.total)} {copy.organizationsCount}
               </span>
             </div>
-            <form method="get" className="status-form">
+            <form
+              action={searchOrganizationAdministration}
+              className="status-form"
+              autoComplete="off"
+            >
+              <input type="hidden" name="locale" value={locale} />
               <label>
                 <span>{copy.organizationName}</span>
                 <input
-                  name="q"
+                  name="organizationQuery"
                   defaultValue={dashboard.query.organizationQuery}
                   maxLength={160}
                 />
@@ -144,25 +161,41 @@ export default async function OrganizationsAdminPage({
               <label>
                 <span>{copy.userSearch}</span>
                 <input
-                  name="user"
+                  name="userQuery"
+                  type="search"
                   defaultValue={dashboard.query.userQuery}
+                  maxLength={160}
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+              </label>
+              <label>
+                <span>{copy.teamName}</span>
+                <input
+                  name="teamQuery"
+                  defaultValue={dashboard.query.teamQuery}
                   maxLength={160}
                 />
               </label>
               <label>
                 <span>{copy.courseSearch}</span>
                 <input
-                  name="course"
+                  name="courseQuery"
                   defaultValue={dashboard.query.courseQuery}
                   maxLength={160}
                 />
               </label>
               <button type="submit">{copy.search}</button>
-              <Link href={localizeHref(locale, '/organizations')}>
+              <button
+                type="submit"
+                formAction={clearOrganizationAdministrationSearch}
+                formNoValidate
+              >
                 {copy.clearFilters}
-              </Link>
+              </button>
             </form>
             <p className="admin-empty">{selectorLimit}</p>
+            <p className="admin-empty">{collectionLimit}</p>
           </section>
 
           <section className="admin-panel">
@@ -235,15 +268,15 @@ export default async function OrganizationsAdminPage({
                   </article>
                   <article>
                     <span>{copy.activeMemberships}</span>
-                    <strong>{number(organization.memberships.length)}</strong>
+                    <strong>{number(organization._count.memberships)}</strong>
                   </article>
                   <article>
                     <span>{copy.activeTeams}</span>
-                    <strong>{number(organization.teams.length)}</strong>
+                    <strong>{number(organization._count.teams)}</strong>
                   </article>
                   <article>
                     <span>{copy.assignedCourses}</span>
-                    <strong>{number(organization.courses.length)}</strong>
+                    <strong>{number(organization._count.courses)}</strong>
                   </article>
                   <article>
                     <span>{copy.sponsoredCompletion}</span>
@@ -475,7 +508,7 @@ export default async function OrganizationsAdminPage({
                               <div>
                                 <strong dir="auto">{team.name}</strong>
                                 <small>
-                                  {number(team.memberships.length)}{' '}
+                                  {number(team._count.memberships)}{' '}
                                   {copy.members}
                                 </small>
                               </div>
@@ -643,7 +676,7 @@ export default async function OrganizationsAdminPage({
                     href={dashboardHref(locale, {
                       organizationQuery: dashboard.query.organizationQuery,
                       organizationPage: dashboard.pagination.page - 1,
-                      userQuery: dashboard.query.userQuery,
+                      teamQuery: dashboard.query.teamQuery,
                       courseQuery: dashboard.query.courseQuery,
                     })}
                   >
@@ -655,7 +688,7 @@ export default async function OrganizationsAdminPage({
                     href={dashboardHref(locale, {
                       organizationQuery: dashboard.query.organizationQuery,
                       organizationPage: dashboard.pagination.page + 1,
-                      userQuery: dashboard.query.userQuery,
+                      teamQuery: dashboard.query.teamQuery,
                       courseQuery: dashboard.query.courseQuery,
                     })}
                   >

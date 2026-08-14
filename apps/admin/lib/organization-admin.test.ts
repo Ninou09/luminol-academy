@@ -3,12 +3,17 @@ import { describe, expect, test } from 'vitest';
 import {
   assertOrganizationScope,
   getOrganizationSeatLifecycleUpdate,
+  ORGANIZATION_ADMIN_COLLECTION_LIMIT,
   ORGANIZATION_MEMBERSHIP_ROLES,
   ORGANIZATION_SEAT_STATUSES,
   ORGANIZATION_SEAT_TRANSITIONS,
 } from './organization-admin';
 
 describe('organization administration invariants', () => {
+  test('bounds each organization administration collection', () => {
+    expect(ORGANIZATION_ADMIN_COLLECTION_LIMIT).toBe(25);
+  });
+
   test('reuses the shared organization domain contract', () => {
     expect(ORGANIZATION_MEMBERSHIP_ROLES).toEqual([
       'OWNER',

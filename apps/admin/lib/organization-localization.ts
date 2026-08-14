@@ -17,6 +17,7 @@ export type OrganizationAdminCopy = {
   search: string;
   clearFilters: string;
   selectorLimit: string;
+  collectionLimit: string;
   createEyebrow: string;
   newOrganization: string;
   seatLimit: string;
@@ -90,6 +91,8 @@ const COPY: Record<Locale, OrganizationAdminCopy> = {
     clearFilters: 'Clear filters',
     selectorLimit:
       'User and course selectors show up to {count} matching results. Narrow the search to reach records outside the initial result set.',
+    collectionLimit:
+      'Each organization section shows up to {count} matching records. Use member, team, or course search to reach records outside the current slice.',
     createEyebrow: 'Create',
     newOrganization: 'New organization',
     seatLimit: 'Seat limit',
@@ -169,6 +172,8 @@ const COPY: Record<Locale, OrganizationAdminCopy> = {
     clearFilters: 'Effacer les filtres',
     selectorLimit:
       'Les sélecteurs d’utilisateurs et de cours affichent jusqu’à {count} résultats. Affinez la recherche pour atteindre les autres dossiers.',
+    collectionLimit:
+      'Chaque section d’organisation affiche jusqu’à {count} dossiers correspondants. Utilisez la recherche de membre, d’équipe ou de cours pour atteindre les autres dossiers.',
     createEyebrow: 'Créer',
     newOrganization: 'Nouvelle organisation',
     seatLimit: 'Limite de places',
@@ -249,6 +254,8 @@ const COPY: Record<Locale, OrganizationAdminCopy> = {
     clearFilters: 'مسح عوامل التصفية',
     selectorLimit:
       'تعرض قوائم المستخدمين والدورات حتى {count} نتيجة مطابقة. ضيّق البحث للوصول إلى السجلات الأخرى.',
+    collectionLimit:
+      'يعرض كل قسم للمؤسسة حتى {count} سجلاً مطابقاً. استخدم بحث العضو أو الفريق أو الدورة للوصول إلى السجلات الأخرى.',
     createEyebrow: 'إنشاء',
     newOrganization: 'مؤسسة جديدة',
     seatLimit: 'حد المقاعد',

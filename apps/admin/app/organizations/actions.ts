@@ -1,9 +1,12 @@
 'use server';
 
 import { requirePlatformPermission } from '@luminol/auth';
+import { localizeHref } from '@luminol/localization';
 import { db } from '@luminol/database';
 import type { Prisma } from '@luminol/database';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 import {
@@ -13,6 +16,15 @@ import {
 } from '../../lib/organization-admin';
 
 const idSchema = z.string().min(1).max(128);
+const organizationAdminSearchSchema = z.object({
+  locale: z.enum(['ar', 'fr', 'en']),
+  organizationQuery: z.string().trim().max(160).default(''),
+  userQuery: z.string().trim().max(160).default(''),
+  teamQuery: z.string().trim().max(160).default(''),
+  courseQuery: z.string().trim().max(160).default(''),
+});
+const ORGANIZATION_ADMIN_USER_SEARCH_COOKIE =
+  'luminol-organization-admin-user-search';
 const organizationSchema = z.object({
   name: z.string().trim().min(2).max(160),
   seatLimit: z.coerce.number().int().positive().max(100_000),
@@ -699,4 +711,53 @@ export async function unassignOrganizationCourse(formData: FormData) {
   });
 
   revalidateOrganizationAdmin();
+}
+
+function organizationAdminSearchHref(input: {
+  locale: 'ar' | 'fr' | 'en';
+  organizationQuery: string;
+  teamQuery: string;
+  courseQuery: string;
+}) {
+  const params = new URLSearchParams();
+  if (input.organizationQuery) params.set('q', input.organizationQuery);
+  if (input.teamQuery) params.set('team', input.teamQuery);
+  if (input.courseQuery) params.set('course', input.courseQuery);
+  const pathname = localizeHref(input.locale, '/organizations');
+  const query = params.toString();
+  return query ? `${pathname}?${query}` : pathname;
+}
+
+async function persistOrganizationAdminUserSearch(value: string) {
+  const cookieStore = await cookies();
+  cookieStore.set(ORGANIZATION_ADMIN_USER_SEARCH_COOKIE, value, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: value ? 300 : 0,
+    path: '/',
+  });
+}
+
+export async function searchOrganizationAdministration(formData: FormData) {
+  await requirePlatformPermission('academy:manage');
+  const input = organizationAdminSearchSchema.parse({
+    locale: formData.get('locale'),
+    organizationQuery: formData.get('organizationQuery'),
+    userQuery: formData.get('userQuery'),
+    teamQuery: formData.get('teamQuery'),
+    courseQuery: formData.get('courseQuery'),
+  });
+
+  await persistOrganizationAdminUserSearch(input.userQuery);
+  redirect(organizationAdminSearchHref(input));
+}
+
+export async function clearOrganizationAdministrationSearch(
+  formData: FormData,
+) {
+  await requirePlatformPermission('academy:manage');
+  const locale = z.enum(['ar', 'fr', 'en']).parse(formData.get('locale'));
+  await persistOrganizationAdminUserSearch('');
+  redirect(localizeHref(locale, '/organizations'));
 }

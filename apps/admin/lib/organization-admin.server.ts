@@ -4,6 +4,8 @@ import { db } from '@luminol/database';
 import type { Prisma } from '@luminol/database';
 import { z } from 'zod';
 
+import { ORGANIZATION_ADMIN_COLLECTION_LIMIT } from './organization-admin';
+
 const ORGANIZATION_PAGE_SIZE = 25;
 const OPTION_LIMIT = 100;
 
@@ -11,6 +13,7 @@ const dashboardQuerySchema = z.object({
   organizationQuery: z.string().trim().max(160).default(''),
   organizationPage: z.coerce.number().int().positive().max(10_000).default(1),
   userQuery: z.string().trim().max(160).default(''),
+  teamQuery: z.string().trim().max(160).default(''),
   courseQuery: z.string().trim().max(160).default(''),
 });
 
@@ -31,47 +34,61 @@ export async function getOrganizationAdminDashboard(
           },
         }
       : {};
-  const userWhere = query.userQuery
+  const userWhere: Prisma.UserWhereInput = query.userQuery
     ? {
         deletedAt: null,
         OR: [
           {
-            email: { contains: query.userQuery, mode: 'insensitive' as const },
+            email: { contains: query.userQuery, mode: 'insensitive' },
           },
           {
             firstName: {
               contains: query.userQuery,
-              mode: 'insensitive' as const,
+              mode: 'insensitive',
             },
           },
           {
             lastName: {
               contains: query.userQuery,
-              mode: 'insensitive' as const,
+              mode: 'insensitive',
             },
           },
         ],
       }
     : { deletedAt: null };
-  const courseWhere = query.courseQuery
+  const teamWhere: Prisma.TeamWhereInput = {
+    archivedAt: null,
+    ...(query.teamQuery
+      ? {
+          name: {
+            contains: query.teamQuery,
+            mode: 'insensitive' as const,
+          },
+        }
+      : {}),
+  };
+  const courseSearchWhere: Prisma.CourseWhereInput = query.courseQuery
     ? {
-        published: true,
         OR: [
           {
             title: {
               contains: query.courseQuery,
-              mode: 'insensitive' as const,
+              mode: 'insensitive',
             },
           },
           {
             slug: {
               contains: query.courseQuery,
-              mode: 'insensitive' as const,
+              mode: 'insensitive',
             },
           },
         ],
       }
-    : { published: true };
+    : {};
+  const publishedCourseWhere: Prisma.CourseWhereInput = {
+    published: true,
+    ...courseSearchWhere,
+  };
 
   const organizationCount = await db.organization.count({
     where: organizationWhere,
@@ -82,95 +99,113 @@ export async function getOrganizationAdminDashboard(
   );
   const organizationPage = Math.min(query.organizationPage, pageCount);
 
-  const [organizations, users, publishedCourses] = await Promise.all([
-    db.organization.findMany({
-      where: organizationWhere,
-      skip: (organizationPage - 1) * ORGANIZATION_PAGE_SIZE,
-      take: ORGANIZATION_PAGE_SIZE,
-      orderBy: [{ name: 'asc' }, { id: 'asc' }],
-      select: {
-        id: true,
-        name: true,
-        status: true,
-        seatLimit: true,
-        archivedAt: true,
-        memberships: {
-          where: { active: true },
-          orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
-          select: {
-            id: true,
-            role: true,
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
+  const organizations = await db.organization.findMany({
+    where: organizationWhere,
+    skip: (organizationPage - 1) * ORGANIZATION_PAGE_SIZE,
+    take: ORGANIZATION_PAGE_SIZE,
+    orderBy: [{ name: 'asc' }, { id: 'asc' }],
+    select: {
+      id: true,
+      name: true,
+      status: true,
+      seatLimit: true,
+      archivedAt: true,
+      memberships: {
+        where: { active: true, user: userWhere },
+        take: ORGANIZATION_ADMIN_COLLECTION_LIMIT,
+        orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
+        select: {
+          id: true,
+          role: true,
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
             },
           },
         },
-        teams: {
-          where: { archivedAt: null },
-          orderBy: [{ name: 'asc' }, { id: 'asc' }],
-          select: {
-            id: true,
-            name: true,
-            memberships: {
-              where: { organizationMembership: { active: true } },
-              orderBy: { id: 'asc' },
-              select: {
-                id: true,
-                organizationMembership: {
-                  select: {
-                    id: true,
-                    user: {
-                      select: {
-                        firstName: true,
-                        lastName: true,
-                        email: true,
-                      },
+      },
+      teams: {
+        where: teamWhere,
+        take: ORGANIZATION_ADMIN_COLLECTION_LIMIT,
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        select: {
+          id: true,
+          name: true,
+          memberships: {
+            where: {
+              organizationMembership: { active: true, user: userWhere },
+            },
+            take: ORGANIZATION_ADMIN_COLLECTION_LIMIT,
+            orderBy: { id: 'asc' },
+            select: {
+              id: true,
+              organizationMembership: {
+                select: {
+                  id: true,
+                  user: {
+                    select: {
+                      firstName: true,
+                      lastName: true,
+                      email: true,
                     },
                   },
                 },
               },
             },
           },
-        },
-        seats: {
-          where: { status: { in: ['INVITED', 'ACTIVE'] } },
-          orderBy: [{ invitedAt: 'desc' }, { id: 'desc' }],
-          select: {
-            id: true,
-            status: true,
-            userId: true,
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true,
+          _count: {
+            select: {
+              memberships: {
+                where: { organizationMembership: { active: true } },
               },
             },
           },
         },
-        courses: {
-          where: { active: true },
-          orderBy: [{ assignedAt: 'desc' }, { id: 'desc' }],
-          select: {
-            id: true,
-            course: { select: { id: true, title: true } },
-          },
+      },
+      seats: {
+        where: {
+          status: { in: ['INVITED', 'ACTIVE'] },
+          user: userWhere,
         },
-        _count: {
-          select: {
-            memberships: true,
-            teams: true,
-            seats: true,
-            courses: true,
+        take: ORGANIZATION_ADMIN_COLLECTION_LIMIT,
+        orderBy: [{ invitedAt: 'desc' }, { id: 'desc' }],
+        select: {
+          id: true,
+          status: true,
+          userId: true,
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
           },
         },
       },
-    }),
+      courses: {
+        where: { active: true, course: courseSearchWhere },
+        take: ORGANIZATION_ADMIN_COLLECTION_LIMIT,
+        orderBy: [{ assignedAt: 'desc' }, { id: 'desc' }],
+        select: {
+          id: true,
+          course: { select: { id: true, title: true } },
+        },
+      },
+      _count: {
+        select: {
+          memberships: { where: { active: true } },
+          teams: { where: { archivedAt: null } },
+          seats: true,
+          courses: { where: { active: true } },
+        },
+      },
+    },
+  });
+
+  const [users, publishedCourses] = await Promise.all([
     db.user.findMany({
       take: OPTION_LIMIT,
       where: userWhere,
@@ -184,126 +219,171 @@ export async function getOrganizationAdminDashboard(
     }),
     db.course.findMany({
       take: OPTION_LIMIT,
-      where: courseWhere,
+      where: publishedCourseWhere,
       orderBy: [{ title: 'asc' }, { id: 'asc' }],
       select: { id: true, title: true },
     }),
   ]);
 
   const organizationIds = organizations.map((organization) => organization.id);
-  const seatEligibleMemberships = organizationIds.length
-    ? await db.organizationMembership.findMany({
-        where: {
-          active: true,
-          OR: organizationIds.map((organizationId) => ({
-            organizationId,
+  const visibleTeamIds = organizations.flatMap((organization) =>
+    organization.teams.map((team) => team.id),
+  );
+  const visibleMembershipIds = organizations.flatMap((organization) =>
+    organization.memberships.map((membership) => membership.id),
+  );
+  const candidateUserIds = users.map((user) => user.id);
+  const candidateCourseIds = publishedCourses.map((course) => course.id);
+
+  const [
+    seatEligibilityPages,
+    candidateActiveMemberships,
+    candidateActiveCourses,
+    candidateTeamMemberships,
+    progress,
+  ] = await Promise.all([
+    Promise.all(
+      organizations.map((organization) =>
+        db.organizationMembership.findMany({
+          where: {
+            organizationId: organization.id,
+            active: true,
             user: {
+              ...userWhere,
               organizationSeats: {
-                none: { organizationId },
+                none: { organizationId: organization.id },
               },
             },
-          })),
-        },
-        orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
-        select: {
-          id: true,
-          organizationId: true,
-          role: true,
-          user: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true,
+          },
+          take: ORGANIZATION_ADMIN_COLLECTION_LIMIT,
+          orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
+          select: {
+            id: true,
+            organizationId: true,
+            role: true,
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
             },
           },
-        },
-      })
-    : [];
-  const seatEligibleByOrganization = new Map<
-    string,
-    typeof seatEligibleMemberships
-  >();
-  for (const membership of seatEligibleMemberships) {
-    const current = seatEligibleByOrganization.get(membership.organizationId);
-    if (current) current.push(membership);
-    else
-      seatEligibleByOrganization.set(membership.organizationId, [membership]);
-  }
-
-  const progress = await Promise.all(
-    organizations.map(async (organization) => {
-      const [assignmentCount, completedAssignments] = await Promise.all([
-        db.organizationEnrollmentSponsorship.count({
-          where: {
-            active: true,
-            organizationCourse: { organizationId: organization.id },
-          },
         }),
-        db.organizationEnrollmentSponsorship.count({
+      ),
+    ),
+    organizationIds.length > 0 && candidateUserIds.length > 0
+      ? db.organizationMembership.findMany({
           where: {
+            organizationId: { in: organizationIds },
+            userId: { in: candidateUserIds },
             active: true,
-            organizationCourse: { organizationId: organization.id },
-            enrollment: { status: 'COMPLETED' },
           },
-        }),
-      ]);
+          select: { organizationId: true, userId: true },
+        })
+      : Promise.resolve([]),
+    organizationIds.length > 0 && candidateCourseIds.length > 0
+      ? db.organizationCourse.findMany({
+          where: {
+            organizationId: { in: organizationIds },
+            courseId: { in: candidateCourseIds },
+            active: true,
+          },
+          select: { organizationId: true, courseId: true },
+        })
+      : Promise.resolve([]),
+    visibleTeamIds.length > 0 && visibleMembershipIds.length > 0
+      ? db.teamMembership.findMany({
+          where: {
+            teamId: { in: visibleTeamIds },
+            organizationMembershipId: { in: visibleMembershipIds },
+          },
+          select: { teamId: true, organizationMembershipId: true },
+        })
+      : Promise.resolve([]),
+    Promise.all(
+      organizations.map(async (organization) => {
+        const [assignmentCount, completedAssignments] = await Promise.all([
+          db.organizationEnrollmentSponsorship.count({
+            where: {
+              active: true,
+              organizationCourse: { organizationId: organization.id },
+            },
+          }),
+          db.organizationEnrollmentSponsorship.count({
+            where: {
+              active: true,
+              organizationCourse: { organizationId: organization.id },
+              enrollment: { status: 'COMPLETED' },
+            },
+          }),
+        ]);
 
-      return {
-        organizationId: organization.id,
-        assignmentCount,
-        completedAssignments,
-        completionPercent:
-          assignmentCount === 0
-            ? 0
-            : Math.round((completedAssignments / assignmentCount) * 100),
-      };
-    }),
+        return {
+          organizationId: organization.id,
+          assignmentCount,
+          completedAssignments,
+          completionPercent:
+            assignmentCount === 0
+              ? 0
+              : Math.round((completedAssignments / assignmentCount) * 100),
+        };
+      }),
+    ),
+  ]);
+
+  const seatEligibleByOrganization = new Map(
+    seatEligibilityPages.map((memberships, index) => [
+      organizations[index]!.id,
+      memberships,
+    ]),
+  );
+  const activeMembershipKeys = new Set(
+    candidateActiveMemberships.map(
+      (membership) => `${membership.organizationId}:${membership.userId}`,
+    ),
+  );
+  const activeCourseKeys = new Set(
+    candidateActiveCourses.map(
+      (assignment) => `${assignment.organizationId}:${assignment.courseId}`,
+    ),
+  );
+  const teamMembershipKeys = new Set(
+    candidateTeamMemberships.map(
+      (membership) =>
+        `${membership.teamId}:${membership.organizationMembershipId}`,
+    ),
   );
   const progressByOrganization = new Map(
     progress.map((summary) => [summary.organizationId, summary]),
   );
 
   return {
-    organizations: organizations.map((organization) => {
-      const activeMemberUserIds = new Set(
-        organization.memberships.map((membership) => membership.user.id),
-      );
-      const activeCourseIds = new Set(
-        organization.courses.map((assignment) => assignment.course.id),
-      );
-
-      return {
-        ...organization,
-        teams: organization.teams.map((team) => {
-          const currentMembershipIds = new Set(
-            team.memberships.map(
-              (teamMembership) => teamMembership.organizationMembership.id,
-            ),
-          );
-          return {
-            ...team,
-            availableMemberships: organization.memberships.filter(
-              (membership) => !currentMembershipIds.has(membership.id),
-            ),
-          };
-        }),
-        availableSeatMemberships:
-          seatEligibleByOrganization.get(organization.id) ?? [],
-        availableMembershipUsers: users.filter(
-          (user) => !activeMemberUserIds.has(user.id),
+    organizations: organizations.map((organization) => ({
+      ...organization,
+      teams: organization.teams.map((team) => ({
+        ...team,
+        availableMemberships: organization.memberships.filter(
+          (membership) =>
+            !teamMembershipKeys.has(`${team.id}:${membership.id}`),
         ),
-        availablePublishedCourses: publishedCourses.filter(
-          (course) => !activeCourseIds.has(course.id),
-        ),
-        progress: progressByOrganization.get(organization.id) ?? {
-          organizationId: organization.id,
-          assignmentCount: 0,
-          completedAssignments: 0,
-          completionPercent: 0,
-        },
-      };
-    }),
+      })),
+      availableSeatMemberships:
+        seatEligibleByOrganization.get(organization.id) ?? [],
+      availableMembershipUsers: users.filter(
+        (user) => !activeMembershipKeys.has(`${organization.id}:${user.id}`),
+      ),
+      availablePublishedCourses: publishedCourses.filter(
+        (course) => !activeCourseKeys.has(`${organization.id}:${course.id}`),
+      ),
+      progress: progressByOrganization.get(organization.id) ?? {
+        organizationId: organization.id,
+        assignmentCount: 0,
+        completedAssignments: 0,
+        completionPercent: 0,
+      },
+    })),
     options: { users, publishedCourses },
     query: { ...query, organizationPage },
     pagination: {
@@ -316,6 +396,7 @@ export async function getOrganizationAdminDashboard(
     },
     limits: {
       optionSearchResults: OPTION_LIMIT,
+      collectionResults: ORGANIZATION_ADMIN_COLLECTION_LIMIT,
     },
   };
 }
