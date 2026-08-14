@@ -52,69 +52,75 @@ suite('Milestone 16 notification parent identity constraints', () => {
     });
   });
 
-  test('allows a verified event recipient change before any child notification exists', async () => {
-    const event = await db.notificationEvent.create({
-      data: {
-        idempotencyKey: `m16e-parent-empty-event-${suffix}`,
-        organizationId,
-        organizationRecordId: organizationId,
-        recipientId: firstUserId,
-        templateKey: 'account_notice',
-        category: 'TRANSACTIONAL',
-        payload: {
-          subject: 'Recipient can still change',
-          message: 'No notification has been materialized yet.',
+  test(
+    'allows a verified event recipient change before any child notification exists',
+    async () => {
+      const event = await db.notificationEvent.create({
+        data: {
+          idempotencyKey: `m16e-parent-empty-event-${suffix}`,
+          organizationId,
+          organizationRecordId: organizationId,
+          recipientId: firstUserId,
+          templateKey: 'account_notice',
+          category: 'TRANSACTIONAL',
+          payload: {
+            subject: 'Recipient can still change',
+            message: 'No notification has been materialized yet.',
+          },
         },
-      },
-      select: { id: true },
-    });
+        select: { id: true },
+      });
 
-    const updated = await db.notificationEvent.update({
-      where: { id: event.id },
-      data: { recipientId: secondUserId },
-      select: { recipientId: true },
-    });
-
-    expect(updated.recipientId).toBe(secondUserId);
-  });
-
-  test('rejects changing a verified event recipient after a child notification exists', async () => {
-    const event = await db.notificationEvent.create({
-      data: {
-        idempotencyKey: `m16e-parent-child-event-${suffix}`,
-        organizationId,
-        organizationRecordId: organizationId,
-        recipientId: firstUserId,
-        templateKey: 'account_notice',
-        category: 'TRANSACTIONAL',
-        payload: {
-          subject: 'Recipient becomes fixed',
-          message: 'A child notification will preserve this recipient identity.',
-        },
-      },
-      select: { id: true },
-    });
-
-    await db.notification.create({
-      data: {
-        eventId: event.id,
-        recipientId: firstUserId,
-        organizationId,
-        organizationRecordId: organizationId,
-        channel: 'IN_APP',
-        title: 'Recipient becomes fixed',
-        preview: 'The child must remain aligned with its parent event.',
-        body: 'The child must remain aligned with its parent event.',
-      },
-    });
-
-    await expect(
-      db.notificationEvent.update({
+      const updated = await db.notificationEvent.update({
         where: { id: event.id },
         data: { recipientId: secondUserId },
-      }),
-    ).rejects.toThrow(
-      'Notification event recipient is immutable once notifications exist',
-    );
-  });
+        select: { recipientId: true },
+      });
+
+      expect(updated.recipientId).toBe(secondUserId);
+    },
+  );
+
+  test(
+    'rejects changing a verified event recipient after a child notification exists',
+    async () => {
+      const event = await db.notificationEvent.create({
+        data: {
+          idempotencyKey: `m16e-parent-child-event-${suffix}`,
+          organizationId,
+          organizationRecordId: organizationId,
+          recipientId: firstUserId,
+          templateKey: 'account_notice',
+          category: 'TRANSACTIONAL',
+          payload: {
+            subject: 'Recipient becomes fixed',
+            message: 'A child notification will preserve this recipient identity.',
+          },
+        },
+        select: { id: true },
+      });
+
+      await db.notification.create({
+        data: {
+          eventId: event.id,
+          recipientId: firstUserId,
+          organizationId,
+          organizationRecordId: organizationId,
+          channel: 'IN_APP',
+          title: 'Recipient becomes fixed',
+          preview: 'The child must remain aligned with its parent event.',
+          body: 'The child must remain aligned with its parent event.',
+        },
+      });
+
+      await expect(
+        db.notificationEvent.update({
+          where: { id: event.id },
+          data: { recipientId: secondUserId },
+        }),
+      ).rejects.toThrow(
+        'Notification event recipient is immutable once notifications exist',
+      );
+    },
+  );
 });
