@@ -6,6 +6,7 @@ import {
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -32,6 +33,21 @@ import {
   serializeJsonLd,
 } from '../../../lib/structured-data';
 import styles from './page.module.css';
+
+const founderMediaByLocale = {
+  en: {
+    name: 'Kheddaoui Fettouma',
+    alt: 'Kheddaoui Fettouma, founder of Luminol Academy',
+  },
+  fr: {
+    name: 'Kheddaoui Fettouma',
+    alt: 'Kheddaoui Fettouma, fondatrice de Luminol Academy',
+  },
+  ar: {
+    name: 'خداوي فطومة',
+    alt: 'خداوي فطومة، مؤسسة أكاديمية لومينول',
+  },
+} as const;
 
 type SchoolPageProps = {
   params: Promise<{ school: string }>;
@@ -84,6 +100,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale).schoolPage;
+  const founderMedia = founderMediaByLocale[locale];
   const localizedSchools = getSchools(locale);
   const school = localizedSchools[slug];
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -174,25 +191,90 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             </div>
           </div>
 
-          <div className={styles.heroVisual} aria-hidden="true" data-reveal>
-            <span className={styles.detailNumber}>{school.number}</span>
+          {school.slug === 'psychology' ? (
             <div
-              className={`${styles.orbit} ${styles.orbitOuter}`}
-              data-motion-orbit
-            />
-            <div
-              className={`${styles.orbit} ${styles.orbitInner}`}
-              data-motion-orbit="reverse"
-            />
-            <div className={styles.detailCore} data-motion-float>
-              {school.name.charAt(0)}
+              className={styles.heroVisual}
+              data-founder-media
+              data-media-source="user-approved-upload"
+              data-media-approval="2026-08-13"
+              data-media-crop="portrait-center-face"
+              data-reveal
+            >
+              <Image
+                src="/media/founder-kheddaoui-fettouma.svg"
+                alt={founderMedia.alt}
+                fill
+                priority
+                sizes="(max-width: 1000px) calc(100vw - 2.5rem), 45vw"
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: '50% 35%',
+                  zIndex: 0,
+                }}
+              />
+              <span
+                className={styles.detailNumber}
+                aria-hidden="true"
+                style={{ zIndex: 2 }}
+              >
+                {school.number}
+              </span>
+              <p
+                style={{
+                  position: 'absolute',
+                  insetInlineStart: '1.75rem',
+                  insetInlineEnd: '1.75rem',
+                  insetBlockEnd: '1.6rem',
+                  zIndex: 2,
+                  margin: 0,
+                  display: 'grid',
+                  gap: '0.15rem',
+                  color: 'var(--color-brand-surface)',
+                  textShadow: '0 1px 18px rgba(16, 42, 67, 0.72)',
+                }}
+              >
+                <strong
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.5rem',
+                    fontWeight: 500,
+                  }}
+                >
+                  {founderMedia.name}
+                </strong>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {school.name}
+                </span>
+              </p>
             </div>
-            <div className={styles.detailWords}>
-              {school.visualWords.map((word) => (
-                <span key={word}>{word}</span>
-              ))}
+          ) : (
+            <div className={styles.heroVisual} aria-hidden="true" data-reveal>
+              <span className={styles.detailNumber}>{school.number}</span>
+              <div
+                className={`${styles.orbit} ${styles.orbitOuter}`}
+                data-motion-orbit
+              />
+              <div
+                className={`${styles.orbit} ${styles.orbitInner}`}
+                data-motion-orbit="reverse"
+              />
+              <div className={styles.detailCore} data-motion-float>
+                {school.name.charAt(0)}
+              </div>
+              <div className={styles.detailWords}>
+                {school.visualWords.map((word) => (
+                  <span key={word}>{word}</span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </section>
 
         <section className={styles.promiseBand} data-reveal>
