@@ -563,7 +563,7 @@ model OrganizationCourse {
 model OrganizationEnrollmentSponsorship {
   id                   String             @id @default(cuid())
   organizationCourseId String
-  enrollmentId         String             @unique
+  enrollmentId         String
   active               Boolean            @default(true)
   sponsoredAt          DateTime           @default(now())
   endedAt              DateTime?
@@ -573,6 +573,7 @@ model OrganizationEnrollmentSponsorship {
   enrollment           Enrollment         @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
 
   @@index([organizationCourseId, active])
+  @@index([enrollmentId, active])
 }
 
 model Role {
@@ -744,18 +745,18 @@ model PlacementSkillResult {
 }
 
 model Enrollment {
-  id                      String                             @id @default(cuid())
-  userId                  String
-  courseId                String
-  status                  EnrollmentStatus                   @default(PENDING)
-  enrolledAt              DateTime                           @default(now())
-  startedAt               DateTime?
-  completedAt             DateTime?
-  expiresAt               DateTime?
-  user                    User                               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course                  Course                             @relation(fields: [courseId], references: [id], onDelete: Restrict)
-  statusEvents            EnrollmentStatusEvent[]
-  organizationSponsorship OrganizationEnrollmentSponsorship?
+  id                       String                              @id @default(cuid())
+  userId                   String
+  courseId                 String
+  status                   EnrollmentStatus                    @default(PENDING)
+  enrolledAt               DateTime                            @default(now())
+  startedAt                DateTime?
+  completedAt              DateTime?
+  expiresAt                DateTime?
+  user                     User                                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course                   Course                              @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  statusEvents             EnrollmentStatusEvent[]
+  organizationSponsorships OrganizationEnrollmentSponsorship[]
 
   @@unique([userId, courseId])
   @@index([courseId, status])
