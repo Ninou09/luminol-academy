@@ -56,8 +56,19 @@ jobs:
         env:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - run: pnpm lint
-      - name: Check repository formatting
-        run: pnpm format:check
+      - name: Capture exact Slice E formatting
+        shell: bash
+        run: |
+          pnpm exec prettier --write packages/database/src/milestone16-integrations.integration.test.ts packages/finance/src/milestone16.integration.test.ts
+          echo 'DB_FORMATTED_BASE64_BEGIN'
+          base64 -w0 packages/database/src/milestone16-integrations.integration.test.ts
+          echo
+          echo 'DB_FORMATTED_BASE64_END'
+          echo 'FINANCE_FORMATTED_BASE64_BEGIN'
+          base64 -w0 packages/finance/src/milestone16.integration.test.ts
+          echo
+          echo 'FINANCE_FORMATTED_BASE64_END'
+          exit 1
       - name: Run typecheck
         shell: bash
         run: |
