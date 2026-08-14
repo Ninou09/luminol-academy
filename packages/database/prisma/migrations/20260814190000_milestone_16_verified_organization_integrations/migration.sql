@@ -39,6 +39,39 @@ BEGIN
         legacy_identity_changed := FALSE;
     END CASE;
 
+    -- Parent identities cannot move away from already-materialized children.
+    -- Enforce this during the migration window as well as after permanent guards
+    -- are installed so opaque legacy scope cannot become internally inconsistent.
+    IF TG_TABLE_NAME = 'Invoice'
+       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+       AND EXISTS (
+         SELECT 1
+         FROM "CorporateBillingRecord" AS billing
+         WHERE billing."invoiceId" = OLD."id"
+       ) THEN
+      RAISE EXCEPTION 'Invoice organization is immutable once corporate billing exists';
+    END IF;
+
+    IF TG_TABLE_NAME = 'NotificationEvent'
+       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+       AND EXISTS (
+         SELECT 1
+         FROM "Notification" AS notification
+         WHERE notification."eventId" = OLD."id"
+       ) THEN
+      RAISE EXCEPTION 'Notification event organization is immutable once notifications exist';
+    END IF;
+
+    IF TG_TABLE_NAME = 'NotificationEvent'
+       AND OLD."recipientId" IS DISTINCT FROM NEW."recipientId"
+       AND EXISTS (
+         SELECT 1
+         FROM "Notification" AS notification
+         WHERE notification."eventId" = OLD."id"
+       ) THEN
+      RAISE EXCEPTION 'Notification event recipient is immutable once notifications exist';
+    END IF;
+
     -- Backfills in this migration only populate organizationRecordId. They must
     -- not be mistaken for legacy application identity changes by this temporary
     -- expand-phase guard.
@@ -259,6 +292,26 @@ BEGIN
     identity_changed := OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
       OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId";
 
+    IF TG_TABLE_NAME = 'Invoice'
+       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+       AND EXISTS (
+         SELECT 1
+         FROM "CorporateBillingRecord" AS billing
+         WHERE billing."invoiceId" = OLD."id"
+       ) THEN
+      RAISE EXCEPTION 'Invoice organization is immutable once corporate billing exists';
+    END IF;
+
+    IF TG_TABLE_NAME = 'NotificationEvent'
+       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+       AND EXISTS (
+         SELECT 1
+         FROM "Notification" AS notification
+         WHERE notification."eventId" = OLD."id"
+       ) THEN
+      RAISE EXCEPTION 'Notification event organization is immutable once notifications exist';
+    END IF;
+
     IF OLD."organizationRecordId" IS NOT NULL
        AND OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId" THEN
       RAISE EXCEPTION 'Verified organization identity is immutable';
@@ -438,6 +491,16 @@ RETURNS TRIGGER AS $$
 DECLARE
   recipient_identity_changed BOOLEAN;
 BEGIN
+  IF TG_OP = 'UPDATE'
+     AND OLD."recipientId" IS DISTINCT FROM NEW."recipientId"
+     AND EXISTS (
+       SELECT 1
+       FROM "Notification" AS notification
+       WHERE notification."eventId" = OLD."id"
+     ) THEN
+    RAISE EXCEPTION 'Notification event recipient is immutable once notifications exist';
+  END IF;
+
   IF TG_OP = 'UPDATE'
      AND OLD."organizationRecordId" IS NOT NULL
      AND OLD."recipientId" IS DISTINCT FROM NEW."recipientId" THEN
