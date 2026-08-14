@@ -138,7 +138,6 @@ export async function getOrganizationAdminDashboard(
           },
         },
         seats: {
-          where: { status: { in: ['INVITED', 'ACTIVE'] } },
           orderBy: [{ invitedAt: 'desc' }, { id: 'desc' }],
           select: {
             id: true,
@@ -224,15 +223,27 @@ export async function getOrganizationAdminDashboard(
   );
 
   return {
-    organizations: organizations.map((organization) => ({
-      ...organization,
-      progress: progressByOrganization.get(organization.id) ?? {
-        organizationId: organization.id,
-        assignmentCount: 0,
-        completedAssignments: 0,
-        completionPercent: 0,
-      },
-    })),
+    organizations: organizations.map((organization) => {
+      const seatHolderUserIds = new Set(
+        organization.seats.map((seat) => seat.userId),
+      );
+
+      return {
+        ...organization,
+        seats: organization.seats.filter(
+          (seat) => seat.status === 'INVITED' || seat.status === 'ACTIVE',
+        ),
+        availableSeatMemberships: organization.memberships.filter(
+          (membership) => !seatHolderUserIds.has(membership.user.id),
+        ),
+        progress: progressByOrganization.get(organization.id) ?? {
+          organizationId: organization.id,
+          assignmentCount: 0,
+          completedAssignments: 0,
+          completionPercent: 0,
+        },
+      };
+    }),
     options: { users, publishedCourses },
     query: { ...query, organizationPage },
     pagination: {
