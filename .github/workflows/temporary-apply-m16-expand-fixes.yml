@@ -1,0 +1,338 @@
+name: Temporary Milestone 16 Expand Fixer
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-finance-integration
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feature/milestone-16-finance-integration
+          fetch-depth: 0
+      - name: Apply reviewed migration fixes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          migration = Path('packages/database/prisma/migrations/20260814190000_milestone_16_verified_organization_integrations/migration.sql')
+          text = migration.read_text()
+
+          old_decl = '''DECLARE
+            legacy_identity_changed BOOLEAN := TRUE;
+            can_verify_relationship BOOLEAN := FALSE;
+          BEGIN'''
+          new_decl = '''DECLARE
+            legacy_identity_changed BOOLEAN := TRUE;
+            can_verify_relationship BOOLEAN := FALSE;
+            parent_organization_id TEXT;
+            parent_recipient_id TEXT;
+          BEGIN'''
+          if old_decl not in text:
+              raise SystemExit('temporary guard declaration marker not found')
+          text = text.replace(old_decl, new_decl, 1)
+
+          marker = '''  IF NEW."organizationId" IS NULL THEN
+            IF NEW."organizationRecordId" IS NOT NULL THEN
+              RAISE EXCEPTION 'Verified organization requires organization identity';
+            END IF;
+            RETURN NEW;
+          END IF;'''
+          parent_checks = '''  -- Parent identity must stay consistent even when the organization identifier is
+          -- genuinely opaque and therefore cannot be verified against Organization yet.
+          IF TG_TABLE_NAME = 'CorporateBillingRecord' THEN
+            SELECT invoice."organizationId"
+              INTO parent_organization_id
+            FROM "Invoice" AS invoice
+            WHERE invoice."id" = NEW."invoiceId";
+
+            IF NEW."organizationId" IS DISTINCT FROM parent_organization_id THEN
+              RAISE EXCEPTION 'Corporate billing organization must match invoice organization';
+            END IF;
+          ELSIF TG_TABLE_NAME = 'Notification' THEN
+            SELECT event."organizationId", event."recipientId"
+              INTO parent_organization_id, parent_recipient_id
+            FROM "NotificationEvent" AS event
+            WHERE event."id" = NEW."eventId";
+
+            IF NEW."organizationId" IS DISTINCT FROM parent_organization_id THEN
+              RAISE EXCEPTION 'Notification organization must match notification event organization';
+            END IF;
+
+            IF NEW."recipientId" IS DISTINCT FROM parent_recipient_id THEN
+              RAISE EXCEPTION 'Notification recipient must match notification event recipient';
+            END IF;
+          END IF;
+
+''' + marker
+          if marker not in text:
+              raise SystemExit('temporary guard null marker not found')
+          text = text.replace(marker, parent_checks, 1)
+
+          notification_comment = '''-- A child notification is verified only when its parent event is already
+          -- verified for the same Organization, the recipient identity matches the event,
+          -- and active membership in that Organization can be proven.'''
+          first_start = text.find(notification_comment)
+          if first_start < 0:
+              raise SystemExit('initial notification backfill comment not found')
+          add_fk_marker = '\n\n-- Add foreign keys with NOT VALID'
+          first_end = text.find(add_fk_marker, first_start)
+          if first_end < 0:
+              raise SystemExit('initial notification backfill end marker not found')
+
+          procedure = r'''-- A child notification is verified only when its parent event is already
+          -- verified for the same Organization, the recipient identity matches the event,
+          -- and active membership in that Organization can be proven. Process notifications
+          -- in bounded transactions so workers are never held behind one table-wide update.
+          CREATE OR REPLACE PROCEDURE "backfill_verified_notification_organizations"()
+          LANGUAGE plpgsql
+          AS $$
+          DECLARE
+            updated_rows INTEGER;
+            remaining_rows BOOLEAN;
+          BEGIN
+            LOOP
+              WITH candidate AS (
+                SELECT notification."id"
+                FROM "Notification" AS notification
+                INNER JOIN "NotificationEvent" AS event
+                  ON event."id" = notification."eventId"
+                INNER JOIN "Organization" AS organization
+                  ON organization."id" = notification."organizationId"
+                INNER JOIN "OrganizationMembership" AS membership
+                  ON membership."organizationId" = organization."id"
+                 AND membership."userId" = notification."recipientId"
+                INNER JOIN "User" AS recipient
+                  ON recipient."id" = notification."recipientId"
+                WHERE notification."organizationRecordId" IS NULL
+                  AND organization."status" = 'ACTIVE'
+                  AND organization."archivedAt" IS NULL
+                  AND event."organizationId" = organization."id"
+                  AND event."organizationRecordId" = organization."id"
+                  AND notification."recipientId" = event."recipientId"
+                  AND membership."active" = TRUE
+                  AND membership."endedAt" IS NULL
+                  AND recipient."deletedAt" IS NULL
+                ORDER BY notification."id"
+                FOR UPDATE OF notification SKIP LOCKED
+                LIMIT 500
+              )
+              UPDATE "Notification" AS notification
+              SET "organizationRecordId" = organization."id"
+              FROM candidate,
+                   "Organization" AS organization,
+                   "OrganizationMembership" AS membership,
+                   "User" AS recipient,
+                   "NotificationEvent" AS event
+              WHERE notification."id" = candidate."id"
+                AND notification."eventId" = event."id"
+                AND notification."organizationId" = organization."id"
+                AND organization."status" = 'ACTIVE'
+                AND organization."archivedAt" IS NULL
+                AND event."organizationId" = organization."id"
+                AND event."organizationRecordId" = organization."id"
+                AND notification."recipientId" = event."recipientId"
+                AND membership."organizationId" = organization."id"
+                AND membership."userId" = notification."recipientId"
+                AND membership."active" = TRUE
+                AND membership."endedAt" IS NULL
+                AND recipient."id" = notification."recipientId"
+                AND recipient."deletedAt" IS NULL;
+
+              GET DIAGNOSTICS updated_rows = ROW_COUNT;
+              COMMIT;
+
+              IF updated_rows > 0 THEN
+                CONTINUE;
+              END IF;
+
+              SELECT EXISTS (
+                SELECT 1
+                FROM "Notification" AS notification
+                INNER JOIN "NotificationEvent" AS event
+                  ON event."id" = notification."eventId"
+                INNER JOIN "Organization" AS organization
+                  ON organization."id" = notification."organizationId"
+                INNER JOIN "OrganizationMembership" AS membership
+                  ON membership."organizationId" = organization."id"
+                 AND membership."userId" = notification."recipientId"
+                INNER JOIN "User" AS recipient
+                  ON recipient."id" = notification."recipientId"
+                WHERE notification."organizationRecordId" IS NULL
+                  AND organization."status" = 'ACTIVE'
+                  AND organization."archivedAt" IS NULL
+                  AND event."organizationId" = organization."id"
+                  AND event."organizationRecordId" = organization."id"
+                  AND notification."recipientId" = event."recipientId"
+                  AND membership."active" = TRUE
+                  AND membership."endedAt" IS NULL
+                  AND recipient."deletedAt" IS NULL
+              ) INTO remaining_rows;
+
+              IF NOT remaining_rows THEN
+                EXIT;
+              END IF;
+
+              PERFORM pg_sleep(0.05);
+            END LOOP;
+          END;
+          $$;
+
+          CALL "backfill_verified_notification_organizations"();'''
+          text = text[:first_start] + procedure + text[first_end:]
+
+          old_event_decl = '''DECLARE
+            event_organization_record_id TEXT;
+            event_recipient_id TEXT;
+            identity_changed BOOLEAN;
+            recipient_identity_changed BOOLEAN;
+          BEGIN
+            SELECT "organizationRecordId", "recipientId"
+              INTO event_organization_record_id, event_recipient_id
+            FROM "NotificationEvent"
+            WHERE "id" = NEW."eventId";'''
+          new_event_decl = '''DECLARE
+            event_organization_id TEXT;
+            event_organization_record_id TEXT;
+            event_recipient_id TEXT;
+            identity_changed BOOLEAN;
+            recipient_identity_changed BOOLEAN;
+          BEGIN
+            SELECT "organizationId", "organizationRecordId", "recipientId"
+              INTO event_organization_id, event_organization_record_id, event_recipient_id
+            FROM "NotificationEvent"
+            WHERE "id" = NEW."eventId";'''
+          if old_event_decl not in text:
+              raise SystemExit('permanent notification parent declaration marker not found')
+          text = text.replace(old_event_decl, new_event_decl, 1)
+
+          event_check_marker = '''  IF event_organization_record_id IS NOT NULL
+             AND NEW."organizationRecordId" IS DISTINCT FROM event_organization_record_id
+             AND identity_changed THEN
+            RAISE EXCEPTION 'Notification organization must match notification event organization';
+          END IF;'''
+          legacy_event_check = '''  IF identity_changed
+             AND NEW."organizationId" IS DISTINCT FROM event_organization_id THEN
+            RAISE EXCEPTION 'Notification organization must match notification event organization';
+          END IF;
+
+''' + event_check_marker
+          if event_check_marker not in text:
+              raise SystemExit('permanent notification parent check marker not found')
+          text = text.replace(event_check_marker, legacy_event_check, 1)
+
+          last_update = text.rfind('UPDATE "Notification" AS notification')
+          if last_update < 0:
+              raise SystemExit('final notification backfill not found')
+          final_prefix = text[:last_update]
+          if 'Re-run safe backfills after all permanent write guards are active' not in final_prefix[-4000:]:
+              raise SystemExit('unexpected final notification update location')
+          text = final_prefix + '''CALL "backfill_verified_notification_organizations"();
+          DROP PROCEDURE "backfill_verified_notification_organizations"();
+'''
+
+          migration.write_text(text)
+
+          test_path = Path('packages/database/src/milestone16-integrations.integration.test.ts')
+          tests = test_path.read_text()
+          test_marker = "  test('rejects legacy-form first-class organization events when membership cannot be proven', async () => {"
+          if test_marker not in tests:
+              raise SystemExit('integration-test insertion marker not found')
+          additions = r'''  test('rejects opaque notification children with a different organization than their parent event', async () => {
+            const parentOrganizationId = `legacy-parent-notification-org-${suffix}`;
+            const childOrganizationId = `legacy-child-notification-org-${suffix}`;
+            const event = await db.notificationEvent.create({
+              data: {
+                idempotencyKey: `m16e-db-event-opaque-org-mismatch-${suffix}`,
+                organizationId: parentOrganizationId,
+                recipientId: userId,
+                templateKey: 'account_notice',
+                category: 'TRANSACTIONAL',
+                payload: {
+                  subject: 'Opaque parent event',
+                  message: 'The child must keep the parent legacy organization identity.',
+                },
+              },
+              select: { id: true },
+            });
+
+            await expect(
+              db.notification.create({
+                data: {
+                  eventId: event.id,
+                  recipientId: userId,
+                  organizationId: childOrganizationId,
+                  channel: 'IN_APP',
+                  title: 'Opaque mismatched child',
+                  preview: 'The child organization must match the parent event.',
+                  body: 'The child organization must match the parent event.',
+                },
+              }),
+            ).rejects.toThrow(
+              'Notification organization must match notification event organization',
+            );
+          });
+
+          test('rejects opaque notification children with a different recipient than their parent event', async () => {
+            const opaqueOrganizationId = `legacy-recipient-notification-org-${suffix}`;
+            const outsiderId = `m16e-db-opaque-recipient-outsider-${suffix}`;
+            await db.user.create({
+              data: {
+                id: outsiderId,
+                clerkId: `m16e-db-opaque-recipient-outsider-clerk-${suffix}`,
+                email: `m16e-db-opaque-recipient-outsider-${suffix}@example.test`,
+              },
+            });
+            const event = await db.notificationEvent.create({
+              data: {
+                idempotencyKey: `m16e-db-event-opaque-recipient-mismatch-${suffix}`,
+                organizationId: opaqueOrganizationId,
+                recipientId: userId,
+                templateKey: 'account_notice',
+                category: 'TRANSACTIONAL',
+                payload: {
+                  subject: 'Opaque recipient parent event',
+                  message: 'The child must keep the parent recipient identity.',
+                },
+              },
+              select: { id: true },
+            });
+
+            await expect(
+              db.notification.create({
+                data: {
+                  eventId: event.id,
+                  recipientId: outsiderId,
+                  organizationId: opaqueOrganizationId,
+                  channel: 'IN_APP',
+                  title: 'Opaque recipient mismatch',
+                  preview: 'The child recipient must match the parent event.',
+                  body: 'The child recipient must match the parent event.',
+                },
+              }),
+            ).rejects.toThrow(
+              'Notification recipient must match notification event recipient',
+            );
+          });
+
+'''
+          tests = tests.replace(test_marker, additions + test_marker, 1)
+          test_path.write_text(tests)
+          PY
+
+          git diff --check
+          git rm .github/workflows/temporary-apply-m16-expand-fixes.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add packages/database/prisma/migrations/20260814190000_milestone_16_verified_organization_integrations/migration.sql packages/database/src/milestone16-integrations.integration.test.ts
+          git commit -m 'Harden expand-phase organization integrity'
+          git push origin HEAD:feature/milestone-16-finance-integration
