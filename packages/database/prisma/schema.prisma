@@ -483,7 +483,7 @@ model OrganizationMembership {
   organizationId  String
   userId          String
   role            OrganizationMembershipRole
-  active          Boolean                    @default(false)
+  active          Boolean
   joinedAt        DateTime                   @default(now())
   endedAt         DateTime?
   createdAt       DateTime                   @default(now())
