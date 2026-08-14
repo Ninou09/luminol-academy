@@ -57,94 +57,83 @@ suite('Milestone 16 verified organization finance integration', () => {
     ).rejects.toThrow('Active verified organization not found');
   });
 
-  test(
-    'persists both the legacy-compatible identifier and verified relation',
-    async () => {
-      const invoice = await createInvoice(actor, {
-        number: `M16E-VERIFIED-${suffix}`,
-        customerId: actorId,
-        organizationId,
-        currency: 'DZD',
-        lines: [
-          {
-            description: 'Verified organization invoice',
-            quantity: 1,
-            unitAmountMinor: 100,
-          },
-        ],
-      });
+  test('persists both the legacy-compatible identifier and verified relation', async () => {
+    const invoice = await createInvoice(actor, {
+      number: `M16E-VERIFIED-${suffix}`,
+      customerId: actorId,
+      organizationId,
+      currency: 'DZD',
+      lines: [
+        {
+          description: 'Verified organization invoice',
+          quantity: 1,
+          unitAmountMinor: 100,
+        },
+      ],
+    });
 
-      expect(invoice.organizationId).toBe(organizationId);
-      expect(invoice.organizationRecordId).toBe(organizationId);
-    },
-  );
+    expect(invoice.organizationId).toBe(organizationId);
+    expect(invoice.organizationRecordId).toBe(organizationId);
+  });
 
-  test(
-    'creates corporate billing only for an active first-class organization',
-    async () => {
-      const result = await createCorporateInvoice(actor, {
-        number: `M16E-CORPORATE-${suffix}`,
+  test('creates corporate billing only for an active first-class organization', async () => {
+    const result = await createCorporateInvoice(actor, {
+      number: `M16E-CORPORATE-${suffix}`,
+      customerId: actorId,
+      organizationId,
+      cohortId: `cohort-${suffix}`,
+      lineDescription: 'Team learning seats',
+      billingContact: {
+        name: 'Billing Contact',
+        email: `billing-${suffix}@example.test`,
+        purchaseOrderReference: `PO-${suffix}`,
+      },
+      seatCount: 5,
+      pricePerSeatMinor: 2_000,
+      currency: 'DZD',
+      taxRateBasisPoints: 0,
+      creditMinor: 0,
+      paymentTermsDays: 30,
+    });
+
+    expect(result.invoice.organizationRecordId).toBe(organizationId);
+    expect(result.corporateBilling.organizationRecordId).toBe(organizationId);
+    expect(result.corporateBilling.organizationId).toBe(organizationId);
+  });
+
+  test('rejects archived organizations and billing beyond configured capacity', async () => {
+    await expect(
+      createCorporateInvoice(actor, {
+        number: `M16E-ARCHIVED-${suffix}`,
         customerId: actorId,
-        organizationId,
-        cohortId: `cohort-${suffix}`,
-        lineDescription: 'Team learning seats',
+        organizationId: archivedOrganizationId,
+        cohortId: `cohort-archived-${suffix}`,
+        lineDescription: 'Archived team learning seats',
         billingContact: {
           name: 'Billing Contact',
-          email: `billing-${suffix}@example.test`,
-          purchaseOrderReference: `PO-${suffix}`,
+          email: `billing-archived-${suffix}@example.test`,
         },
-        seatCount: 5,
-        pricePerSeatMinor: 2_000,
+        seatCount: 1,
+        pricePerSeatMinor: 1_000,
         currency: 'DZD',
-        taxRateBasisPoints: 0,
-        creditMinor: 0,
-        paymentTermsDays: 30,
-      });
+      }),
+    ).rejects.toThrow('Active verified organization not found');
 
-      expect(result.invoice.organizationRecordId).toBe(organizationId);
-      expect(result.corporateBilling.organizationRecordId).toBe(organizationId);
-      expect(result.corporateBilling.organizationId).toBe(organizationId);
-    },
-  );
-
-  test(
-    'rejects archived organizations and billing beyond configured capacity',
-    async () => {
-      await expect(
-        createCorporateInvoice(actor, {
-          number: `M16E-ARCHIVED-${suffix}`,
-          customerId: actorId,
-          organizationId: archivedOrganizationId,
-          cohortId: `cohort-archived-${suffix}`,
-          lineDescription: 'Archived team learning seats',
-          billingContact: {
-            name: 'Billing Contact',
-            email: `billing-archived-${suffix}@example.test`,
-          },
-          seatCount: 1,
-          pricePerSeatMinor: 1_000,
-          currency: 'DZD',
-        }),
-      ).rejects.toThrow('Active verified organization not found');
-
-      await expect(
-        createCorporateInvoice(actor, {
-          number: `M16E-CAPACITY-${suffix}`,
-          customerId: actorId,
-          organizationId,
-          cohortId: `cohort-capacity-${suffix}`,
-          lineDescription: 'Capacity test seats',
-          billingContact: {
-            name: 'Billing Contact',
-            email: `billing-capacity-${suffix}@example.test`,
-          },
-          seatCount: 21,
-          pricePerSeatMinor: 1_000,
-          currency: 'DZD',
-        }),
-      ).rejects.toThrow(
-        'Corporate seat count exceeds organization seat limit',
-      );
-    },
-  );
+    await expect(
+      createCorporateInvoice(actor, {
+        number: `M16E-CAPACITY-${suffix}`,
+        customerId: actorId,
+        organizationId,
+        cohortId: `cohort-capacity-${suffix}`,
+        lineDescription: 'Capacity test seats',
+        billingContact: {
+          name: 'Billing Contact',
+          email: `billing-capacity-${suffix}@example.test`,
+        },
+        seatCount: 21,
+        pricePerSeatMinor: 1_000,
+        currency: 'DZD',
+      }),
+    ).rejects.toThrow('Corporate seat count exceeds organization seat limit');
+  });
 });
