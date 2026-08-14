@@ -66,7 +66,7 @@ jobs:
 
           path.write_text(text)
           PY
-          pnpm exec prisma format --schema packages/database/prisma/schema.prisma
+          pnpm --filter @luminol/database exec prisma format --schema prisma/schema.prisma
       - name: Commit schema patch
         run: |
           git config user.name github-actions[bot]
