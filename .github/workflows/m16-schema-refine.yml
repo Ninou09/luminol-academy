@@ -1,0 +1,53 @@
+name: Milestone 16 schema refinement
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-organization-persistence
+    paths:
+      - .github/workflows/m16-schema-refine.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refine:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-16-organization-persistence
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Refine sponsorship history model
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('packages/database/prisma/schema.prisma')
+          text = path.read_text()
+          replacements = {
+              'organizationSponsorship OrganizationEnrollmentSponsorship?': 'organizationSponsorships OrganizationEnrollmentSponsorship[]',
+              'enrollmentId         String             @unique': 'enrollmentId         String',
+              '  @@index([organizationCourseId, active])\n}\n\nmodel Role {': '  @@index([organizationCourseId, active])\n  @@index([enrollmentId, active])\n}\n\nmodel Role {',
+          }
+          for old, new in replacements.items():
+              if text.count(old) != 1:
+                  raise SystemExit(f'Expected one schema anchor for {old!r}, found {text.count(old)}')
+              text = text.replace(old, new, 1)
+          path.write_text(text)
+          PY
+          pnpm --filter @luminol/database exec prisma format --schema prisma/schema.prisma
+      - name: Commit refinement
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add packages/database/prisma/schema.prisma
+          git diff --cached --check
+          git commit -m "Preserve organization sponsorship history"
+          git push origin HEAD:feature/milestone-16-organization-persistence
