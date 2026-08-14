@@ -116,6 +116,7 @@ describe('corporate organization governance', () => {
         organizationId: 'org-1',
         userId: 'user-1',
         role: 'MANAGER',
+        active: true,
       }),
     ).toEqual({
       membershipId: 'membership-1',
@@ -124,6 +125,15 @@ describe('corporate organization governance', () => {
       role: 'MANAGER',
       active: true,
     });
+
+    expect(() =>
+      corporateMembershipSchema.parse({
+        membershipId: 'membership-missing-state',
+        organizationId: 'org-1',
+        userId: 'user-2',
+        role: 'MANAGER',
+      }),
+    ).toThrow();
 
     expect(
       corporateTeamSchema.parse({
