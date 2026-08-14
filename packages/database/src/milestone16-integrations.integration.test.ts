@@ -141,6 +141,36 @@ suite('Milestone 16 verified organization integration constraints', () => {
     );
   });
 
+  test('rejects verified organization events for recipients without membership', async () => {
+    const outsiderId = `m16e-db-event-outsider-${suffix}`;
+    await db.user.create({
+      data: {
+        id: outsiderId,
+        clerkId: `m16e-db-event-outsider-clerk-${suffix}`,
+        email: `m16e-db-event-outsider-${suffix}@example.test`,
+      },
+    });
+
+    await expect(
+      db.notificationEvent.create({
+        data: {
+          idempotencyKey: `m16e-db-event-outsider-${suffix}`,
+          organizationId,
+          organizationRecordId: organizationId,
+          recipientId: outsiderId,
+          templateKey: 'account_notice',
+          category: 'TRANSACTIONAL',
+          payload: {
+            subject: 'Invalid recipient event',
+            message: 'The recipient has no active organization membership.',
+          },
+        },
+      }),
+    ).rejects.toThrow(
+      'Verified notification event requires an active organization recipient',
+    );
+  });
+
   test('rejects unscoped notifications beneath verified organization events', async () => {
     const event = await db.notificationEvent.create({
       data: {
@@ -214,6 +244,71 @@ suite('Milestone 16 verified organization integration constraints', () => {
       }),
     ).rejects.toThrow(
       'Notification recipient must match notification event recipient',
+    );
+  });
+
+  test('rejects new verified notifications after recipient membership ends', async () => {
+    const revokedOrganizationId = `m16e-db-revoked-org-${suffix}`;
+    const revokedUserId = `m16e-db-revoked-user-${suffix}`;
+    await db.organization.create({
+      data: {
+        id: revokedOrganizationId,
+        name: 'Revoked Notification Organization',
+        seatLimit: 2,
+      },
+    });
+    await db.user.create({
+      data: {
+        id: revokedUserId,
+        clerkId: `m16e-db-revoked-clerk-${suffix}`,
+        email: `m16e-db-revoked-${suffix}@example.test`,
+      },
+    });
+    const membership = await db.organizationMembership.create({
+      data: {
+        organizationId: revokedOrganizationId,
+        userId: revokedUserId,
+        role: 'LEARNER',
+        active: true,
+      },
+      select: { id: true },
+    });
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-revoked-event-${suffix}`,
+        organizationId: revokedOrganizationId,
+        organizationRecordId: revokedOrganizationId,
+        recipientId: revokedUserId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Membership ending',
+          message: 'This event was valid while membership was active.',
+        },
+      },
+      select: { id: true },
+    });
+
+    await db.organizationMembership.update({
+      where: { id: membership.id },
+      data: { active: false, endedAt: new Date() },
+    });
+
+    await expect(
+      db.notification.create({
+        data: {
+          eventId: event.id,
+          recipientId: revokedUserId,
+          organizationId: revokedOrganizationId,
+          organizationRecordId: revokedOrganizationId,
+          channel: 'IN_APP',
+          title: 'Membership ended',
+          preview: 'Delivery is no longer allowed.',
+          body: 'Delivery is no longer allowed.',
+        },
+      }),
+    ).rejects.toThrow(
+      'Verified notification requires an active organization recipient',
     );
   });
 });
