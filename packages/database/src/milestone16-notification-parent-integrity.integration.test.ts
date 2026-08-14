@@ -113,6 +113,8 @@ suite('Milestone 16 notification parent identity constraints', () => {
         where: { id: event.id },
         data: { recipientId: secondUserId },
       }),
-    ).rejects.toThrow('Verified notification event recipient is immutable');
+    ).rejects.toThrow(
+      'Notification event recipient is immutable once notifications exist',
+    );
   });
 });
