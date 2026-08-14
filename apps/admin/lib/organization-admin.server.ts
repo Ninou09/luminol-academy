@@ -1,57 +1,124 @@
 import 'server-only';
 
 import { db } from '@luminol/database';
+import { z } from 'zod';
 
-const ORGANIZATION_LIMIT = 25;
-const RELATED_LIMIT = 100;
+const ORGANIZATION_PAGE_SIZE = 25;
+const OPTION_LIMIT = 100;
 
-export async function getOrganizationAdminDashboard() {
-  const [organizations, users, publishedCourses] = await Promise.all([
-    db.organization.findMany({
-      take: ORGANIZATION_LIMIT,
-      orderBy: { name: 'asc' },
-      select: {
-        id: true,
-        name: true,
-        status: true,
-        seatLimit: true,
-        archivedAt: true,
-        memberships: {
-          where: { active: true },
-          take: RELATED_LIMIT,
-          orderBy: { joinedAt: 'desc' },
-          select: {
-            id: true,
-            role: true,
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
+const dashboardQuerySchema = z.object({
+  organizationQuery: z.string().trim().max(160).default(''),
+  organizationPage: z.coerce.number().int().positive().max(10_000).default(1),
+  userQuery: z.string().trim().max(160).default(''),
+  courseQuery: z.string().trim().max(160).default(''),
+});
+
+export type OrganizationAdminDashboardQuery = z.input<
+  typeof dashboardQuerySchema
+>;
+
+export async function getOrganizationAdminDashboard(
+  rawQuery: OrganizationAdminDashboardQuery = {},
+) {
+  const query = dashboardQuerySchema.parse(rawQuery);
+  const organizationWhere = query.organizationQuery
+    ? {
+        name: {
+          contains: query.organizationQuery,
+          mode: 'insensitive' as const,
+        },
+      }
+    : undefined;
+  const userWhere = query.userQuery
+    ? {
+        deletedAt: null,
+        OR: [
+          { email: { contains: query.userQuery, mode: 'insensitive' as const } },
+          {
+            firstName: {
+              contains: query.userQuery,
+              mode: 'insensitive' as const,
+            },
+          },
+          {
+            lastName: {
+              contains: query.userQuery,
+              mode: 'insensitive' as const,
+            },
+          },
+        ],
+      }
+    : { deletedAt: null };
+  const courseWhere = query.courseQuery
+    ? {
+        published: true,
+        OR: [
+          {
+            title: {
+              contains: query.courseQuery,
+              mode: 'insensitive' as const,
+            },
+          },
+          {
+            slug: {
+              contains: query.courseQuery,
+              mode: 'insensitive' as const,
+            },
+          },
+        ],
+      }
+    : { published: true };
+
+  const [organizationCount, organizations, users, publishedCourses] =
+    await Promise.all([
+      db.organization.count({ where: organizationWhere }),
+      db.organization.findMany({
+        where: organizationWhere,
+        skip: (query.organizationPage - 1) * ORGANIZATION_PAGE_SIZE,
+        take: ORGANIZATION_PAGE_SIZE,
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          seatLimit: true,
+          archivedAt: true,
+          memberships: {
+            where: { active: true },
+            orderBy: [{ joinedAt: 'desc' }, { id: 'desc' }],
+            select: {
+              id: true,
+              role: true,
+              user: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
               },
             },
           },
-        },
-        teams: {
-          where: { archivedAt: null },
-          take: RELATED_LIMIT,
-          orderBy: { name: 'asc' },
-          select: {
-            id: true,
-            name: true,
-            memberships: {
-              take: RELATED_LIMIT,
-              select: {
-                id: true,
-                organizationMembership: {
-                  select: {
-                    id: true,
-                    user: {
-                      select: {
-                        firstName: true,
-                        lastName: true,
-                        email: true,
+          teams: {
+            where: { archivedAt: null },
+            orderBy: [{ name: 'asc' }, { id: 'asc' }],
+            select: {
+              id: true,
+              name: true,
+              memberships: {
+                where: { organizationMembership: { active: true } },
+                orderBy: { id: 'asc' },
+                select: {
+                  id: true,
+                  organizationMembership: {
+                    select: {
+                      id: true,
+                      user: {
+                        select: {
+                          firstName: true,
+                          lastName: true,
+                          email: true,
+                        },
                       },
                     },
                   },
@@ -59,60 +126,58 @@ export async function getOrganizationAdminDashboard() {
               },
             },
           },
-        },
-        seats: {
-          take: RELATED_LIMIT,
-          orderBy: { invitedAt: 'desc' },
-          select: {
-            id: true,
-            status: true,
-            userId: true,
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true,
+          seats: {
+            where: { status: { in: ['INVITED', 'ACTIVE'] } },
+            orderBy: [{ invitedAt: 'desc' }, { id: 'desc' }],
+            select: {
+              id: true,
+              status: true,
+              userId: true,
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
               },
             },
           },
-        },
-        courses: {
-          where: { active: true },
-          take: RELATED_LIMIT,
-          orderBy: { assignedAt: 'desc' },
-          select: {
-            id: true,
-            course: { select: { id: true, title: true } },
+          courses: {
+            where: { active: true },
+            orderBy: [{ assignedAt: 'desc' }, { id: 'desc' }],
+            select: {
+              id: true,
+              course: { select: { id: true, title: true } },
+            },
+          },
+          _count: {
+            select: {
+              memberships: true,
+              teams: true,
+              seats: true,
+              courses: true,
+            },
           },
         },
-        _count: {
-          select: {
-            memberships: true,
-            teams: true,
-            seats: true,
-            courses: true,
-          },
+      }),
+      db.user.findMany({
+        take: OPTION_LIMIT,
+        where: userWhere,
+        orderBy: [{ email: 'asc' }, { id: 'asc' }],
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
         },
-      },
-    }),
-    db.user.findMany({
-      take: RELATED_LIMIT,
-      where: { deletedAt: null },
-      orderBy: { email: 'asc' },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-      },
-    }),
-    db.course.findMany({
-      take: RELATED_LIMIT,
-      where: { published: true },
-      orderBy: { title: 'asc' },
-      select: { id: true, title: true },
-    }),
-  ]);
+      }),
+      db.course.findMany({
+        take: OPTION_LIMIT,
+        where: courseWhere,
+        orderBy: [{ title: 'asc' }, { id: 'asc' }],
+        select: { id: true, title: true },
+      }),
+    ]);
 
   const progress = await Promise.all(
     organizations.map(async (organization) => {
@@ -146,6 +211,10 @@ export async function getOrganizationAdminDashboard() {
   const progressByOrganization = new Map(
     progress.map((summary) => [summary.organizationId, summary]),
   );
+  const pageCount = Math.max(
+    1,
+    Math.ceil(organizationCount / ORGANIZATION_PAGE_SIZE),
+  );
 
   return {
     organizations: organizations.map((organization) => ({
@@ -158,9 +227,17 @@ export async function getOrganizationAdminDashboard() {
       },
     })),
     options: { users, publishedCourses },
+    query,
+    pagination: {
+      page: query.organizationPage,
+      pageCount,
+      total: organizationCount,
+      pageSize: ORGANIZATION_PAGE_SIZE,
+      hasPreviousPage: query.organizationPage > 1,
+      hasNextPage: query.organizationPage < pageCount,
+    },
     limits: {
-      organizations: ORGANIZATION_LIMIT,
-      relatedRecordsPerOrganization: RELATED_LIMIT,
+      optionSearchResults: OPTION_LIMIT,
     },
   };
 }
