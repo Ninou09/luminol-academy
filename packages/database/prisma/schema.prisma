@@ -218,6 +218,8 @@ model User {
   organizationMemberships OrganizationMembership[]
   organizationSeats       OrganizationSeat[]
 
+  organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
+
   @@index([email])
   @@index([deletedAt])
 }
@@ -474,6 +476,8 @@ model Organization {
   seats       OrganizationSeat[]
   courses     OrganizationCourse[]
 
+  auditEvents OrganizationAuditEvent[]
+
   @@index([status, name])
   @@index([archivedAt])
 }
@@ -574,6 +578,22 @@ model OrganizationEnrollmentSponsorship {
 
   @@index([organizationCourseId, active])
   @@index([enrollmentId, active])
+}
+
+model OrganizationAuditEvent {
+  id             String       @id @default(cuid())
+  organizationId String
+  actorUserId    String
+  action         String
+  subjectType    String
+  subjectId      String
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  actor          User         @relation("OrganizationAuditActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, createdAt])
+  @@index([actorUserId, createdAt])
+  @@index([subjectType, subjectId, createdAt])
 }
 
 model Role {

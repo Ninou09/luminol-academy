@@ -9,6 +9,16 @@ export const CORPORATE_SEAT_STATUSES = [
 
 export type CorporateSeatStatus = (typeof CORPORATE_SEAT_STATUSES)[number];
 
+export const CORPORATE_SEAT_TRANSITIONS = {
+  INVITED: ['ACTIVE', 'REVOKED'],
+  ACTIVE: ['COMPLETED', 'REVOKED'],
+  COMPLETED: [],
+  REVOKED: [],
+} as const satisfies Record<
+  CorporateSeatStatus,
+  readonly CorporateSeatStatus[]
+>;
+
 export const CORPORATE_ORGANIZATION_STATUSES = [
   'ACTIVE',
   'SUSPENDED',
@@ -252,17 +262,10 @@ export function assertCorporateSeatTransition(
   current: CorporateSeatStatus,
   next: CorporateSeatStatus,
 ) {
-  const allowedTransitions: Record<
-    CorporateSeatStatus,
-    readonly CorporateSeatStatus[]
-  > = {
-    INVITED: ['ACTIVE', 'REVOKED'],
-    ACTIVE: ['COMPLETED', 'REVOKED'],
-    COMPLETED: [],
-    REVOKED: [],
-  };
+  const allowedTransitions: readonly CorporateSeatStatus[] =
+    CORPORATE_SEAT_TRANSITIONS[current];
 
-  if (!allowedTransitions[current].includes(next)) {
+  if (!allowedTransitions.includes(next)) {
     throw new Error(`Invalid corporate seat transition: ${current} -> ${next}`);
   }
 }
