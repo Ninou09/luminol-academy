@@ -10,9 +10,9 @@ The canonical branch is:
 
 `main`
 
-Current repository head at this status update:
+Current canonical `main` head at this status update:
 
-`af92cae363dfae46686e28cb2f68ee3d3dbf9bd9`
+`54a622ac1dd6f7e56100e66aade7eef823bd09ae`
 
 Stable production application aliases:
 
@@ -20,9 +20,9 @@ Stable production application aliases:
 - Learner portal: `https://luminol-academy-portal.vercel.app`
 - Administration: `https://luminol-academy-admin.vercel.app`
 
-Milestones 1 through 15 are complete in the repository. The platform is in post-launch stabilization, public-experience hardening, media governance, and operational verification rather than an active numbered product milestone.
+Milestones 1 through 15 are complete in the repository. Milestone 16 — Organizations and Team Learning — is now active under #214, with its first domain-governance slice developed through PR #215. Post-launch stabilization, public-experience hardening, media governance, and operational verification continue in parallel and remain independent release gates.
 
-Repository progress and production freshness are tracked separately. The current repository head passed its required exact-head GitHub pull-request quality gate before merge. Vercel Free-plan build-rate limits can temporarily prevent a corresponding production build; such quota limits do not block continued repository development, but no quota-blocked change is described as live until a production deployment and post-deploy verification actually exist.
+Repository progress and production freshness are tracked separately. The current canonical `main` head passed its required exact-head GitHub pull-request quality gate before merge. Vercel Free-plan build-rate limits can temporarily prevent a corresponding production build; such quota limits do not block continued repository development, but no quota-blocked change is described as live until a production deployment and post-deploy verification actually exist.
 
 ## Delivered milestones
 
@@ -123,6 +123,35 @@ Repository progress and production freshness are tracked separately. The current
 - Arabic RTL document behavior and mixed-script bidi safeguards
 - localized search/discovery state and protected-route behavior without weakening authorization or privacy boundaries
 
+## Active milestone
+
+### Milestone 16 — Organizations and Team Learning
+
+Status: Active
+
+Governing issue: #214
+
+Current implementation slice: PR #215 — organization/team domain governance before persistence.
+
+The milestone is explicitly bounded to five staged slices:
+
+1. organization lifecycle, membership roles, team contracts, tenant-scope checks, seat mutation scope, privacy-safe manager visibility, and aggregate progress contracts
+2. first-class organization/team persistence and a production-safe migration/backfill path while preserving normal learner enrolments
+3. protected academy administration for organizations, teams, memberships, course assignment, and audited seat operations
+4. a restricted organization-manager experience that is separate from global academy administration and exposes only approved organization-scoped aggregates
+5. safe integration with corporate billing, notifications, certificates, and Arabic/French/English localization
+
+Milestone 16 must preserve these boundaries:
+
+- server-side verification of every organization-scoped read and write
+- organization membership is separate from global RBAC
+- organization identifiers from requests are untrusted and cross-organization access fails closed
+- managers do not receive assessment answers, psychology content, enquiry messages, personal finance data, private certificate metadata, or unrelated learner records
+- existing enrolment, finance, certificate, notification, and search systems are reused rather than replaced
+- SSO/SAML/SCIM, HRIS integrations, AI manager insights, and public organization profiles are outside this milestone
+
+The milestone is not production-live merely because repository slices merge; deployment and post-deploy verification remain separate evidence requirements.
+
 ## Post-milestone public hardening
 
 After Milestone 15, the public experience received a substantial premium visual, accessibility, privacy, and operational hardening programme:
@@ -149,9 +178,9 @@ After Milestone 15, the public experience received a substantial premium visual,
 
 Approved real photography is not fabricated or substituted. The approved founder media is now governed in repository code, while additional branch/programme photography remains dependent on explicit rights and publication approval.
 
-## Current operational phase
+## Parallel operational phase
 
-The platform is in post-launch stabilization. Current work is intentionally operational and governance-focused:
+Post-launch stabilization continues alongside Milestone 16. Current operational and governance work remains:
 
 1. Publish and verify one approved active Sanity programme image with meaningful alternative text, crop, hotspot, and publication approval (#45 and #93).
 2. Configure a restricted administration smoke account when production Clerk access permits it, then enable authenticated browser-smoke storage states and protected journeys (#40).
