@@ -160,48 +160,42 @@ describe('corporate organization governance', () => {
     ).toThrow('Corporate manager access required');
   });
 
-  it(
-    'allows only aggregate manager data and rejects protected learner data',
-    () => {
-      expect(
-        canCorporateManagerViewData('MANAGER', 'SEAT_UTILIZATION'),
-      ).toBe(true);
-      expect(
-        canCorporateManagerViewData('OWNER', 'COMPLETION_TOTALS'),
-      ).toBe(true);
-      expect(
-        canCorporateManagerViewData('MANAGER', 'ASSESSMENT_ANSWERS'),
-      ).toBe(false);
-      expect(
-        canCorporateManagerViewData('MANAGER', 'PSYCHOLOGY_CONTENT'),
-      ).toBe(false);
-      expect(
-        canCorporateManagerViewData('LEARNER', 'ASSIGNMENT_PROGRESS'),
-      ).toBe(false);
-      expect(canCorporateManagerViewData('MANAGER', 'toString')).toBe(false);
-      expect(canCorporateManagerViewData('ADMIN', 'SEAT_UTILIZATION')).toBe(
-        false,
-      );
-    },
-  );
+  it('allows only aggregate manager data and rejects protected learner data', () => {
+    expect(canCorporateManagerViewData('MANAGER', 'SEAT_UTILIZATION')).toBe(
+      true,
+    );
+    expect(canCorporateManagerViewData('OWNER', 'COMPLETION_TOTALS')).toBe(
+      true,
+    );
+    expect(canCorporateManagerViewData('MANAGER', 'ASSESSMENT_ANSWERS')).toBe(
+      false,
+    );
+    expect(canCorporateManagerViewData('MANAGER', 'PSYCHOLOGY_CONTENT')).toBe(
+      false,
+    );
+    expect(canCorporateManagerViewData('LEARNER', 'ASSIGNMENT_PROGRESS')).toBe(
+      false,
+    );
+    expect(canCorporateManagerViewData('MANAGER', 'toString')).toBe(false);
+    expect(canCorporateManagerViewData('ADMIN', 'SEAT_UTILIZATION')).toBe(
+      false,
+    );
+  });
 
-  it(
-    'returns organization-scoped progress aggregates without learner identity',
-    () => {
-      const summary = summarizeCorporateProgress('org-1', [
-        { organizationId: 'org-1', progressPercent: 25, completed: false },
-        { organizationId: 'org-1', progressPercent: 100, completed: true },
-        { organizationId: 'org-2', progressPercent: 100, completed: true },
-      ]);
+  it('returns organization-scoped progress aggregates without learner identity', () => {
+    const summary = summarizeCorporateProgress('org-1', [
+      { organizationId: 'org-1', progressPercent: 25, completed: false },
+      { organizationId: 'org-1', progressPercent: 100, completed: true },
+      { organizationId: 'org-2', progressPercent: 100, completed: true },
+    ]);
 
-      expect(summary).toEqual({
-        assignmentCount: 2,
-        completedAssignments: 1,
-        activeAssignments: 1,
-        averageProgressPercent: 63,
-      });
-      expect(Object.keys(summary)).not.toContain('learnerId');
-      expect(Object.keys(summary)).not.toContain('userId');
-    },
-  );
+    expect(summary).toEqual({
+      assignmentCount: 2,
+      completedAssignments: 1,
+      activeAssignments: 1,
+      averageProgressPercent: 63,
+    });
+    expect(Object.keys(summary)).not.toContain('learnerId');
+    expect(Object.keys(summary)).not.toContain('userId');
+  });
 });
