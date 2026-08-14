@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { beforeAll, describe, expect, test } from 'vitest';
 
 import { db } from './index';
 
@@ -140,70 +140,28 @@ suite('Milestone 16 organization persistence invariants', () => {
     inactiveOrganizationCourseId = inactiveOrganizationCourse.id;
     seatAId = seatA.id;
 
-    await db.organizationSeat.create({
-      data: {
-        organizationId: organizationBId,
-        userId: userBId,
-        status: 'ACTIVE',
-      },
-    });
+    await Promise.all([
+      db.organizationSeat.create({
+        data: {
+          organizationId: organizationAId,
+          userId: userCId,
+          status: 'ACTIVE',
+        },
+      }),
+      db.organizationSeat.create({
+        data: {
+          organizationId: organizationBId,
+          userId: userBId,
+          status: 'ACTIVE',
+        },
+      }),
+    ]);
 
     const team = await db.team.create({
       data: { organizationId: organizationAId, name: `Team ${suffix}` },
       select: { id: true },
     });
     teamId = team.id;
-  });
-
-  afterAll(async () => {
-    await db.organizationEnrollmentSponsorship.deleteMany({
-      where: {
-        organizationCourse: {
-          organizationId: {
-            in: [organizationAId, organizationBId, capacityOrganizationId],
-          },
-        },
-      },
-    });
-    await db.teamMembership.deleteMany({
-      where: {
-        team: { organizationId: { in: [organizationAId, organizationBId] } },
-      },
-    });
-    await db.team.deleteMany({
-      where: { organizationId: { in: [organizationAId, organizationBId] } },
-    });
-    await db.organizationCourse.deleteMany({
-      where: { organizationId: { in: [organizationAId, organizationBId] } },
-    });
-    await db.organizationSeat.deleteMany({
-      where: {
-        organizationId: {
-          in: [organizationAId, organizationBId, capacityOrganizationId],
-        },
-      },
-    });
-    await db.organizationMembership.deleteMany({
-      where: {
-        organizationId: {
-          in: [organizationAId, organizationBId, capacityOrganizationId],
-        },
-      },
-    });
-    await db.enrollment.deleteMany({
-      where: { userId: { in: [userAId, userBId, userCId, userDId] } },
-    });
-    await db.course.deleteMany({
-      where: { id: { in: [courseAId, courseBId, courseCId] } },
-    });
-    await db.organization.deleteMany({
-      where: {
-        id: { in: [organizationAId, organizationBId, capacityOrganizationId] },
-      },
-    });
-    await db.user.deleteMany({
-      where: { id: { in: [userAId, userBId, userCId, userDId] } },
-    });
   });
 
   test('serializes seat capacity under concurrent allocations', async () => {
@@ -224,6 +182,43 @@ suite('Milestone 16 organization persistence invariants', () => {
     ).toHaveLength(1);
   });
 
+  test('requires consistent organization membership lifecycle state', async () => {
+    await expect(
+      db.organizationMembership.create({
+        data: {
+          organizationId: organizationAId,
+          userId: userBId,
+          role: 'LEARNER',
+          active: false,
+        },
+      }),
+    ).rejects.toThrow();
+
+    const membership = await db.organizationMembership.create({
+      data: {
+        organizationId: organizationAId,
+        userId: userBId,
+        role: 'LEARNER',
+        active: true,
+      },
+      select: { id: true },
+    });
+
+    await expect(
+      db.organizationMembership.update({
+        where: { id: membership.id },
+        data: { active: false },
+      }),
+    ).rejects.toThrow();
+
+    await expect(
+      db.organizationMembership.update({
+        where: { id: membership.id },
+        data: { active: false, endedAt: new Date() },
+      }),
+    ).resolves.toMatchObject({ active: false });
+  });
+
   test('rejects sponsorship of a learner outside the organization tenant', async () => {
     await expect(
       db.organizationEnrollmentSponsorship.create({
@@ -232,7 +227,18 @@ suite('Milestone 16 organization persistence invariants', () => {
           enrollmentId: enrollmentBId,
         },
       }),
-    ).rejects.toThrow('Active organization seat required for sponsorship');
+    ).rejects.toThrow('Organization seat required for sponsorship history');
+
+    await expect(
+      db.organizationEnrollmentSponsorship.create({
+        data: {
+          organizationCourseId: organizationCourseAId,
+          enrollmentId: enrollmentBId,
+          active: false,
+          endedAt: new Date(),
+        },
+      }),
+    ).rejects.toThrow('Organization seat required for sponsorship history');
   });
 
   test('rejects active sponsorship from an unassigned organization course', async () => {
@@ -255,6 +261,17 @@ suite('Milestone 16 organization persistence invariants', () => {
         data: { organizationId: organizationBId },
       }),
     ).rejects.toThrow('Team organization identity is immutable');
+  });
+
+  test('rejects seat limits below persisted allocation', async () => {
+    await expect(
+      db.organization.update({
+        where: { id: organizationAId },
+        data: { seatLimit: 1 },
+      }),
+    ).rejects.toThrow(
+      'Organization seat limit cannot be lower than allocated seats',
+    );
   });
 
   test('protects active sponsored learning from parent-side mutations', async () => {
@@ -297,14 +314,38 @@ suite('Milestone 16 organization persistence invariants', () => {
     ).rejects.toThrow(
       'End active sponsorships before deleting organization seat',
     );
+
+    await expect(
+      db.organization.update({
+        where: { id: organizationAId },
+        data: { status: 'SUSPENDED' },
+      }),
+    ).rejects.toThrow(
+      'End active sponsorships before suspending or archiving organization',
+    );
+
+    await expect(
+      db.organizationEnrollmentSponsorship.delete({
+        where: { id: sponsorshipId },
+      }),
+    ).rejects.toThrow('Organization sponsorship history cannot be deleted');
   });
 
-  test('allows lifecycle closure after the sponsorship is ended', async () => {
+  test('keeps ended sponsorship history terminal', async () => {
     await db.organizationEnrollmentSponsorship.update({
       where: { id: sponsorshipId },
       data: { active: false, endedAt: new Date() },
     });
 
+    await expect(
+      db.organizationEnrollmentSponsorship.update({
+        where: { id: sponsorshipId },
+        data: { active: true, endedAt: null },
+      }),
+    ).rejects.toThrow('Ended organization sponsorship is terminal');
+  });
+
+  test('allows lifecycle closure after the sponsorship is ended', async () => {
     await expect(
       db.organizationCourse.update({
         where: { id: organizationCourseAId },
