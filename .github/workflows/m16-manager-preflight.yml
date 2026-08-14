@@ -25,7 +25,31 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --no-frozen-lockfile
+      - name: Fix optional team-filter state
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          path = Path('apps/portal/app/organization/page.tsx')
+          text = path.read_text()
+          old = '''                href={workspaceHref(locale, {
+                  ...baseState,
+                  teamId: undefined,
+                  rosterPage: 1,
+                })}'''
+          new = '''                href={workspaceHref(locale, {
+                  organizationId: baseState.organizationId,
+                  organizationPage: baseState.organizationPage,
+                  rosterPage: 1,
+                  teamPage: baseState.teamPage,
+                  coursePage: baseState.coursePage,
+                })}'''
+          if old not in text:
+              raise SystemExit('Expected team-filter reset block not found')
+          path.write_text(text.replace(old, new, 1))
+          PY
       - run: pnpm exec prettier --write apps/portal/app/organization/page.tsx apps/portal/components/portal-header.tsx apps/portal/lib/organization-manager.ts apps/portal/lib/organization-manager.server.ts apps/portal/lib/organization-manager-localization.ts apps/portal/lib/organization-manager.test.ts apps/portal/app/organization/README.md apps/portal/package.json
+      - run: pnpm db:generate
       - run: pnpm --filter @luminol/portal lint
       - run: pnpm --filter @luminol/portal typecheck
       - run: pnpm --filter @luminol/portal test
