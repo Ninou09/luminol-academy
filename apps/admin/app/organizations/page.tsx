@@ -1,8 +1,21 @@
 import { requirePlatformPermission } from '@luminol/auth';
+import {
+  formatLocalizedNumber,
+  getCommonDictionary,
+  localizeHref,
+  type Locale,
+} from '@luminol/localization';
 import Link from 'next/link';
 
+import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
+import { getAdminEnumLabel } from '../../lib/admin-localization';
+import {
+  ORGANIZATION_MEMBERSHIP_ROLES,
+  ORGANIZATION_SEAT_TRANSITIONS,
+} from '../../lib/organization-admin';
 import { getOrganizationAdminDashboard } from '../../lib/organization-admin.server';
-import { ORGANIZATION_SEAT_TRANSITIONS } from '../../lib/organization-admin';
+import { getOrganizationAdminCopy } from '../../lib/organization-localization';
+import { getAdminRequestLocale } from '../../lib/request-locale';
 import {
   addOrganizationTeamMember,
   allocateOrganizationSeat,
@@ -38,12 +51,15 @@ function firstSearchParam(value: SearchValue) {
   return Array.isArray(value) ? (value[0] ?? '') : (value ?? '');
 }
 
-function dashboardHref(input: {
-  organizationQuery: string;
-  organizationPage: number;
-  userQuery: string;
-  courseQuery: string;
-}) {
+function dashboardHref(
+  locale: Locale,
+  input: {
+    organizationQuery: string;
+    organizationPage: number;
+    userQuery: string;
+    courseQuery: string;
+  },
+) {
   const params = new URLSearchParams();
   if (input.organizationQuery) params.set('q', input.organizationQuery);
   if (input.organizationPage > 1)
@@ -51,13 +67,17 @@ function dashboardHref(input: {
   if (input.userQuery) params.set('user', input.userQuery);
   if (input.courseQuery) params.set('course', input.courseQuery);
   const query = params.toString();
-  return query ? `/organizations?${query}` : '/organizations';
+  const pathname = localizeHref(locale, '/organizations');
+  return query ? `${pathname}?${query}` : pathname;
 }
 
 export default async function OrganizationsAdminPage({
   searchParams,
 }: OrganizationsAdminPageProps) {
   await requirePlatformPermission('academy:manage');
+  const locale = await getAdminRequestLocale();
+  const copy = getOrganizationAdminCopy(locale);
+  const common = getCommonDictionary(locale);
   const params = await searchParams;
   const dashboard = await getOrganizationAdminDashboard({
     organizationQuery: firstSearchParam(params.q),
@@ -65,6 +85,18 @@ export default async function OrganizationsAdminPage({
     userQuery: firstSearchParam(params.user),
     courseQuery: firstSearchParam(params.course),
   });
+  const number = (value: number) => formatLocalizedNumber(value, locale);
+  const percent = (value: number) =>
+    formatLocalizedNumber(value / 100, locale, {
+      style: 'percent',
+      maximumFractionDigits: 0,
+    });
+  const enumLabel = (value: string) =>
+    copy.enumLabels[value] ?? getAdminEnumLabel(locale, value);
+  const selectorLimit = copy.selectorLimit.replace(
+    '{count}',
+    number(dashboard.limits.optionSearchResults),
+  );
 
   return (
     <main
@@ -75,32 +107,34 @@ export default async function OrganizationsAdminPage({
         <div className="admin-content">
           <section className="admin-intro">
             <div>
-              <p className="eyebrow">Milestone 16</p>
-              <h1>Organizations & team learning</h1>
-              <p>
-                Academy-only administration for organization membership, teams,
-                seats, assigned learning and bounded aggregate completion.
-              </p>
+              <p className="eyebrow">{copy.milestoneEyebrow}</p>
+              <h1>{copy.title}</h1>
+              <p>{copy.intro}</p>
             </div>
-            <Link href="/">Back to administration</Link>
+            <div className="admin-account">
+              <Link href={localizeHref(locale, '/')}>{copy.back}</Link>
+              <AdminLanguageSwitcher
+                locale={locale}
+                label={common.languageSelectorLabel}
+              />
+            </div>
           </section>
 
           <section className="admin-panel">
             <div className="panel-heading">
               <div>
-                <p className="eyebrow">Find</p>
-                <h2>Administration search</h2>
+                <p className="eyebrow">{copy.findEyebrow}</p>
+                <h2>{copy.findTitle}</h2>
               </div>
               <span>
-                Page {dashboard.pagination.page} of{' '}
-                {dashboard.pagination.pageCount}
-                {' · '}
-                {dashboard.pagination.total} organizations
+                {copy.page} {number(dashboard.pagination.page)} {copy.of}{' '}
+                {number(dashboard.pagination.pageCount)} ·{' '}
+                {number(dashboard.pagination.total)} {copy.organizationsCount}
               </span>
             </div>
             <form method="get" className="status-form">
               <label>
-                <span>Organization name</span>
+                <span>{copy.organizationName}</span>
                 <input
                   name="q"
                   defaultValue={dashboard.query.organizationQuery}
@@ -108,7 +142,7 @@ export default async function OrganizationsAdminPage({
                 />
               </label>
               <label>
-                <span>User name or email</span>
+                <span>{copy.userSearch}</span>
                 <input
                   name="user"
                   defaultValue={dashboard.query.userQuery}
@@ -116,41 +150,39 @@ export default async function OrganizationsAdminPage({
                 />
               </label>
               <label>
-                <span>Published course</span>
+                <span>{copy.courseSearch}</span>
                 <input
                   name="course"
                   defaultValue={dashboard.query.courseQuery}
                   maxLength={160}
                 />
               </label>
-              <button type="submit">Search</button>
-              <Link href="/organizations">Clear filters</Link>
+              <button type="submit">{copy.search}</button>
+              <Link href={localizeHref(locale, '/organizations')}>
+                {copy.clearFilters}
+              </Link>
             </form>
-            <p className="admin-empty">
-              User and course selectors show up to{' '}
-              {dashboard.limits.optionSearchResults} matching results. Narrow
-              the search to reach records outside the initial result set.
-            </p>
+            <p className="admin-empty">{selectorLimit}</p>
           </section>
 
           <section className="admin-panel">
             <div className="panel-heading">
               <div>
-                <p className="eyebrow">Create</p>
-                <h2>New organization</h2>
+                <p className="eyebrow">{copy.createEyebrow}</p>
+                <h2>{copy.newOrganization}</h2>
               </div>
               <span>
-                Page {dashboard.pagination.page} of{' '}
-                {dashboard.pagination.pageCount}
+                {copy.page} {number(dashboard.pagination.page)} {copy.of}{' '}
+                {number(dashboard.pagination.pageCount)}
               </span>
             </div>
             <form action={createOrganization} className="status-form">
               <label>
-                <span>Organization name</span>
+                <span>{copy.organizationName}</span>
                 <input name="name" minLength={2} maxLength={160} required />
               </label>
               <label>
-                <span>Seat limit</span>
+                <span>{copy.seatLimit}</span>
                 <input
                   name="seatLimit"
                   type="number"
@@ -159,22 +191,22 @@ export default async function OrganizationsAdminPage({
                   required
                 />
               </label>
-              <button type="submit">Create organization</button>
+              <button type="submit">{copy.createOrganization}</button>
             </form>
           </section>
 
           {dashboard.organizations.length === 0 ? (
             <section className="admin-panel">
-              <p className="admin-empty">
-                No organizations have been created yet.
-              </p>
+              <p className="admin-empty">{copy.noOrganizations}</p>
             </section>
           ) : (
             dashboard.organizations.map((organization) => (
               <section className="admin-panel" key={organization.id}>
                 <div className="panel-heading">
                   <div>
-                    <p className="eyebrow">{organization.status}</p>
+                    <p className="eyebrow">
+                      {enumLabel(organization.status)}
+                    </p>
                     <h2 dir="auto">{organization.name}</h2>
                   </div>
                   {organization.status !== 'ARCHIVED' ? (
@@ -184,43 +216,46 @@ export default async function OrganizationsAdminPage({
                         name="organizationId"
                         value={organization.id}
                       />
-                      <button type="submit">Archive organization</button>
+                      <button type="submit">{copy.archived}</button>
                     </form>
                   ) : (
-                    <span>Archived</span>
+                    <span>{copy.archived}</span>
                   )}
                 </div>
 
                 <section
                   className="metric-grid"
-                  aria-label={`${organization.name} organization summary`}
+                  aria-label={`${organization.name} · ${copy.summaryAria}`}
                 >
                   <article>
-                    <span>Seat limit</span>
-                    <strong>{organization.seatLimit}</strong>
+                    <span>{copy.seatLimit}</span>
+                    <strong>{number(organization.seatLimit)}</strong>
                   </article>
                   <article>
-                    <span>Persisted seats</span>
-                    <strong>{organization._count.seats}</strong>
+                    <span>{copy.persistedSeats}</span>
+                    <strong>{number(organization._count.seats)}</strong>
                   </article>
                   <article>
-                    <span>Active memberships</span>
-                    <strong>{organization.memberships.length}</strong>
+                    <span>{copy.activeMemberships}</span>
+                    <strong>{number(organization.memberships.length)}</strong>
                   </article>
                   <article>
-                    <span>Active teams</span>
-                    <strong>{organization.teams.length}</strong>
+                    <span>{copy.activeTeams}</span>
+                    <strong>{number(organization.teams.length)}</strong>
                   </article>
                   <article>
-                    <span>Assigned courses</span>
-                    <strong>{organization.courses.length}</strong>
+                    <span>{copy.assignedCourses}</span>
+                    <strong>{number(organization.courses.length)}</strong>
                   </article>
                   <article>
-                    <span>Sponsored completion</span>
-                    <strong>{organization.progress.completionPercent}%</strong>
+                    <span>{copy.sponsoredCompletion}</span>
+                    <strong>
+                      {percent(organization.progress.completionPercent)}
+                    </strong>
                     <small>
-                      {organization.progress.completedAssignments}/
-                      {organization.progress.assignmentCount} completed
+                      {number(organization.progress.completedAssignments)}/
+                      {number(organization.progress.assignmentCount)}{' '}
+                      {copy.completed}
                     </small>
                   </article>
                 </section>
@@ -230,7 +265,7 @@ export default async function OrganizationsAdminPage({
                     <div className="operations-grid">
                       <section>
                         <div className="panel-heading">
-                          <h3>Memberships</h3>
+                          <h3>{copy.memberships}</h3>
                         </div>
                         <form
                           action={upsertOrganizationMembership}
@@ -242,10 +277,10 @@ export default async function OrganizationsAdminPage({
                             value={organization.id}
                           />
                           <label>
-                            <span>User</span>
+                            <span>{copy.user}</span>
                             <select name="userId" defaultValue="" required>
                               <option value="" disabled>
-                                Select user
+                                {copy.selectUser}
                               </option>
                               {organization.availableMembershipUsers.map(
                                 (user) => (
@@ -257,14 +292,16 @@ export default async function OrganizationsAdminPage({
                             </select>
                           </label>
                           <label>
-                            <span>Role</span>
+                            <span>{copy.role}</span>
                             <select name="role" defaultValue="LEARNER" required>
-                              <option value="OWNER">Owner</option>
-                              <option value="MANAGER">Manager</option>
-                              <option value="LEARNER">Learner</option>
+                              {ORGANIZATION_MEMBERSHIP_ROLES.map((role) => (
+                                <option key={role} value={role}>
+                                  {enumLabel(role)}
+                                </option>
+                              ))}
                             </select>
                           </label>
-                          <button type="submit">Add or reactivate</button>
+                          <button type="submit">{copy.addOrReactivate}</button>
                         </form>
 
                         <div className="compact-list">
@@ -274,7 +311,7 @@ export default async function OrganizationsAdminPage({
                                 <strong dir="auto">
                                   {personLabel(membership.user)}
                                 </strong>
-                                <small>{membership.role}</small>
+                                <small>{enumLabel(membership.role)}</small>
                               </div>
                               <form
                                 action={updateOrganizationMembershipRole}
@@ -293,13 +330,15 @@ export default async function OrganizationsAdminPage({
                                 <select
                                   name="role"
                                   defaultValue={membership.role}
-                                  aria-label="Membership role"
+                                  aria-label={copy.role}
                                 >
-                                  <option value="OWNER">Owner</option>
-                                  <option value="MANAGER">Manager</option>
-                                  <option value="LEARNER">Learner</option>
+                                  {ORGANIZATION_MEMBERSHIP_ROLES.map((role) => (
+                                    <option key={role} value={role}>
+                                      {enumLabel(role)}
+                                    </option>
+                                  ))}
                                 </select>
-                                <button type="submit">Change role</button>
+                                <button type="submit">{copy.changeRole}</button>
                               </form>
                               <form action={deactivateOrganizationMembership}>
                                 <input
@@ -312,7 +351,7 @@ export default async function OrganizationsAdminPage({
                                   name="membershipId"
                                   value={membership.id}
                                 />
-                                <button type="submit">Deactivate</button>
+                                <button type="submit">{copy.deactivate}</button>
                               </form>
                             </article>
                           ))}
@@ -321,7 +360,7 @@ export default async function OrganizationsAdminPage({
 
                       <section>
                         <div className="panel-heading">
-                          <h3>Seats</h3>
+                          <h3>{copy.seats}</h3>
                         </div>
                         <form
                           action={allocateOrganizationSeat}
@@ -333,10 +372,10 @@ export default async function OrganizationsAdminPage({
                             value={organization.id}
                           />
                           <label>
-                            <span>Active member</span>
+                            <span>{copy.activeMember}</span>
                             <select name="userId" defaultValue="" required>
                               <option value="" disabled>
-                                Select member
+                                {copy.selectMember}
                               </option>
                               {organization.availableSeatMemberships.map(
                                 (membership) => (
@@ -350,7 +389,7 @@ export default async function OrganizationsAdminPage({
                               )}
                             </select>
                           </label>
-                          <button type="submit">Allocate seat</button>
+                          <button type="submit">{copy.allocateSeat}</button>
                         </form>
 
                         <div className="compact-list">
@@ -360,7 +399,7 @@ export default async function OrganizationsAdminPage({
                                 <strong dir="auto">
                                   {personLabel(seat.user)}
                                 </strong>
-                                <small>{seat.status}</small>
+                                <small>{enumLabel(seat.status)}</small>
                               </div>
                               {ORGANIZATION_SEAT_TRANSITIONS[seat.status]
                                 .length > 0 ? (
@@ -381,21 +420,21 @@ export default async function OrganizationsAdminPage({
                                   <select
                                     name="toStatus"
                                     defaultValue=""
-                                    aria-label="Next seat status"
+                                    aria-label={copy.nextSeatStatus}
                                     required
                                   >
                                     <option value="" disabled>
-                                      Move to
+                                      {copy.moveTo}
                                     </option>
                                     {ORGANIZATION_SEAT_TRANSITIONS[
                                       seat.status
                                     ].map((status) => (
                                       <option key={status} value={status}>
-                                        {status}
+                                        {enumLabel(status)}
                                       </option>
                                     ))}
                                   </select>
-                                  <button type="submit">Update seat</button>
+                                  <button type="submit">{copy.updateSeat}</button>
                                 </form>
                               ) : null}
                             </article>
@@ -407,7 +446,7 @@ export default async function OrganizationsAdminPage({
                     <div className="operations-grid">
                       <section>
                         <div className="panel-heading">
-                          <h3>Teams</h3>
+                          <h3>{copy.teams}</h3>
                         </div>
                         <form
                           action={createOrganizationTeam}
@@ -419,7 +458,7 @@ export default async function OrganizationsAdminPage({
                             value={organization.id}
                           />
                           <label>
-                            <span>Team name</span>
+                            <span>{copy.teamName}</span>
                             <input
                               name="name"
                               minLength={2}
@@ -427,7 +466,7 @@ export default async function OrganizationsAdminPage({
                               required
                             />
                           </label>
-                          <button type="submit">Create team</button>
+                          <button type="submit">{copy.createTeam}</button>
                         </form>
 
                         <div className="compact-list">
@@ -435,7 +474,9 @@ export default async function OrganizationsAdminPage({
                             <article key={team.id}>
                               <div>
                                 <strong dir="auto">{team.name}</strong>
-                                <small>{team.memberships.length} members</small>
+                                <small>
+                                  {number(team.memberships.length)} {copy.members}
+                                </small>
                               </div>
                               <form
                                 action={addOrganizationTeamMember}
@@ -454,24 +495,22 @@ export default async function OrganizationsAdminPage({
                                 <select
                                   name="membershipId"
                                   defaultValue=""
-                                  aria-label={`Add member to ${team.name}`}
+                                  aria-label={`${copy.addMember}: ${team.name}`}
                                   required
                                 >
                                   <option value="" disabled>
-                                    Add member
+                                    {copy.addMember}
                                   </option>
-                                  {organization.memberships.map(
-                                    (membership) => (
-                                      <option
-                                        key={membership.id}
-                                        value={membership.id}
-                                      >
-                                        {personLabel(membership.user)}
-                                      </option>
-                                    ),
-                                  )}
+                                  {team.availableMemberships.map((membership) => (
+                                    <option
+                                      key={membership.id}
+                                      value={membership.id}
+                                    >
+                                      {personLabel(membership.user)}
+                                    </option>
+                                  ))}
                                 </select>
-                                <button type="submit">Add</button>
+                                <button type="submit">{copy.add}</button>
                               </form>
                               {team.memberships.map((teamMembership) => (
                                 <form
@@ -500,7 +539,7 @@ export default async function OrganizationsAdminPage({
                                         .user,
                                     )}
                                   </span>
-                                  <button type="submit">Remove</button>
+                                  <button type="submit">{copy.remove}</button>
                                 </form>
                               ))}
                               <form action={archiveOrganizationTeam}>
@@ -514,7 +553,7 @@ export default async function OrganizationsAdminPage({
                                   name="teamId"
                                   value={team.id}
                                 />
-                                <button type="submit">Archive team</button>
+                                <button type="submit">{copy.archiveTeam}</button>
                               </form>
                             </article>
                           ))}
@@ -523,7 +562,7 @@ export default async function OrganizationsAdminPage({
 
                       <section>
                         <div className="panel-heading">
-                          <h3>Assigned learning</h3>
+                          <h3>{copy.assignedLearning}</h3>
                         </div>
                         <form
                           action={assignOrganizationCourse}
@@ -535,12 +574,12 @@ export default async function OrganizationsAdminPage({
                             value={organization.id}
                           />
                           <label>
-                            <span>Published course</span>
+                            <span>{copy.publishedCourse}</span>
                             <select name="courseId" defaultValue="" required>
                               <option value="" disabled>
-                                Select course
+                                {copy.selectCourse}
                               </option>
-                              {dashboard.options.publishedCourses.map(
+                              {organization.availablePublishedCourses.map(
                                 (course) => (
                                   <option key={course.id} value={course.id}>
                                     {course.title}
@@ -549,7 +588,7 @@ export default async function OrganizationsAdminPage({
                               )}
                             </select>
                           </label>
-                          <button type="submit">Assign course</button>
+                          <button type="submit">{copy.assignCourse}</button>
                         </form>
 
                         <div className="compact-list">
@@ -569,7 +608,7 @@ export default async function OrganizationsAdminPage({
                                   name="organizationCourseId"
                                   value={organizationCourse.id}
                                 />
-                                <button type="submit">Unassign</button>
+                                <button type="submit">{copy.unassignCourse}</button>
                               </form>
                             </article>
                           ))}
@@ -578,9 +617,7 @@ export default async function OrganizationsAdminPage({
                     </div>
                   </>
                 ) : (
-                  <p className="admin-empty">
-                    Mutations are disabled for archived organizations.
-                  </p>
+                  <p className="admin-empty">{copy.mutationsDisabled}</p>
                 )}
               </section>
             ))
@@ -589,34 +626,33 @@ export default async function OrganizationsAdminPage({
           <section className="admin-panel">
             <div className="panel-heading">
               <span>
-                Page {dashboard.pagination.page} of{' '}
-                {dashboard.pagination.pageCount}
-                {' · '}
-                {dashboard.pagination.total} organizations
+                {copy.page} {number(dashboard.pagination.page)} {copy.of}{' '}
+                {number(dashboard.pagination.pageCount)} ·{' '}
+                {number(dashboard.pagination.total)} {copy.organizationsCount}
               </span>
               <div className="status-form">
                 {dashboard.pagination.hasPreviousPage ? (
                   <Link
-                    href={dashboardHref({
+                    href={dashboardHref(locale, {
                       organizationQuery: dashboard.query.organizationQuery,
                       organizationPage: dashboard.pagination.page - 1,
                       userQuery: dashboard.query.userQuery,
                       courseQuery: dashboard.query.courseQuery,
                     })}
                   >
-                    Previous organizations
+                    {copy.previousOrganizations}
                   </Link>
                 ) : null}
                 {dashboard.pagination.hasNextPage ? (
                   <Link
-                    href={dashboardHref({
+                    href={dashboardHref(locale, {
                       organizationQuery: dashboard.query.organizationQuery,
                       organizationPage: dashboard.pagination.page + 1,
                       userQuery: dashboard.query.userQuery,
                       courseQuery: dashboard.query.courseQuery,
                     })}
                   >
-                    Next organizations
+                    {copy.nextOrganizations}
                   </Link>
                 ) : null}
               </div>
