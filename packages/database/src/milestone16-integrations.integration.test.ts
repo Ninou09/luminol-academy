@@ -34,22 +34,38 @@ suite('Milestone 16 verified organization integration constraints', () => {
     });
   });
 
-  test('rejects new organization-scoped invoices without a verified relation', async () => {
-    await expect(
-      db.invoice.create({
-        data: {
-          number: `M16E-DB-UNVERIFIED-${suffix}`,
-          customerId: userId,
-          organizationId,
-          currency: 'DZD',
-          subtotalMinor: 100,
-          taxMinor: 0,
-          totalMinor: 100,
-        },
-      }),
-    ).rejects.toThrow(
-      'New organization-scoped records require a verified organization',
-    );
+  test('derives verified organization linkage for legacy invoice writers', async () => {
+    const invoice = await db.invoice.create({
+      data: {
+        number: `M16E-DB-LEGACY-${suffix}`,
+        customerId: userId,
+        organizationId,
+        currency: 'DZD',
+        subtotalMinor: 100,
+        taxMinor: 0,
+        totalMinor: 100,
+      },
+      select: { organizationRecordId: true },
+    });
+
+    expect(invoice.organizationRecordId).toBe(organizationId);
+  });
+
+  test('preserves opaque legacy invoice organization identifiers as unverified', async () => {
+    const invoice = await db.invoice.create({
+      data: {
+        number: `M16E-DB-OPAQUE-${suffix}`,
+        customerId: userId,
+        organizationId: `legacy-opaque-org-${suffix}`,
+        currency: 'DZD',
+        subtotalMinor: 100,
+        taxMinor: 0,
+        totalMinor: 100,
+      },
+      select: { organizationRecordId: true },
+    });
+
+    expect(invoice.organizationRecordId).toBeNull();
   });
 
   test('rejects mismatched verified organization identities', async () => {
@@ -78,6 +94,36 @@ suite('Milestone 16 verified organization integration constraints', () => {
     ).rejects.toThrow(
       'Organization identity does not match verified organization',
     );
+  });
+
+  test('derives verified organization linkage for legacy corporate billing writers', async () => {
+    const invoice = await db.invoice.create({
+      data: {
+        number: `M16E-DB-LEGACY-BILLING-${suffix}`,
+        customerId: userId,
+        organizationId,
+        currency: 'DZD',
+        subtotalMinor: 100,
+        taxMinor: 0,
+        totalMinor: 100,
+      },
+      select: { id: true },
+    });
+
+    const billing = await db.corporateBillingRecord.create({
+      data: {
+        organizationId,
+        invoiceId: invoice.id,
+        billingContactName: 'Legacy Billing Contact',
+        billingContactEmail: `legacy-billing-${suffix}@example.test`,
+        seatCount: 1,
+        pricePerSeatMinor: 100,
+        paymentTermsDays: 30,
+      },
+      select: { organizationRecordId: true },
+    });
+
+    expect(billing.organizationRecordId).toBe(organizationId);
   });
 
   test('keeps corporate billing on the same verified organization as its invoice', async () => {
@@ -121,24 +167,51 @@ suite('Milestone 16 verified organization integration constraints', () => {
     );
   });
 
-  test('requires verified organization linkage for new organization notifications', async () => {
-    await expect(
-      db.notificationEvent.create({
-        data: {
-          idempotencyKey: `m16e-db-event-unverified-${suffix}`,
-          organizationId,
-          recipientId: userId,
-          templateKey: 'account_notice',
-          category: 'TRANSACTIONAL',
-          payload: {
-            subject: 'Unverified event',
-            message: 'Should fail before persistence.',
-          },
+  test('derives verified organization linkage for legacy notification event writers', async () => {
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-event-legacy-${suffix}`,
+        organizationId,
+        recipientId: userId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Legacy event',
+          message: 'The verified relation should be derived safely.',
         },
-      }),
-    ).rejects.toThrow(
-      'New organization-scoped records require a verified organization',
-    );
+      },
+      select: { organizationRecordId: true },
+    });
+
+    expect(event.organizationRecordId).toBe(organizationId);
+  });
+
+  test('keeps legacy notification events unverified when membership cannot be proven', async () => {
+    const outsiderId = `m16e-db-legacy-event-outsider-${suffix}`;
+    await db.user.create({
+      data: {
+        id: outsiderId,
+        clerkId: `m16e-db-legacy-event-outsider-clerk-${suffix}`,
+        email: `m16e-db-legacy-event-outsider-${suffix}@example.test`,
+      },
+    });
+
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-event-legacy-outsider-${suffix}`,
+        organizationId,
+        recipientId: outsiderId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Unverified legacy event',
+          message: 'Membership cannot be proven during the expand phase.',
+        },
+      },
+      select: { organizationRecordId: true },
+    });
+
+    expect(event.organizationRecordId).toBeNull();
   });
 
   test('rejects verified organization events for recipients without membership', async () => {
@@ -169,6 +242,38 @@ suite('Milestone 16 verified organization integration constraints', () => {
     ).rejects.toThrow(
       'Verified notification event requires an active organization recipient',
     );
+  });
+
+  test('derives verified organization linkage for legacy child notification writers', async () => {
+    const event = await db.notificationEvent.create({
+      data: {
+        idempotencyKey: `m16e-db-event-legacy-child-${suffix}`,
+        organizationId,
+        recipientId: userId,
+        templateKey: 'account_notice',
+        category: 'TRANSACTIONAL',
+        payload: {
+          subject: 'Legacy child event',
+          message: 'The parent scope should be derived first.',
+        },
+      },
+      select: { id: true },
+    });
+
+    const notification = await db.notification.create({
+      data: {
+        eventId: event.id,
+        recipientId: userId,
+        organizationId,
+        channel: 'IN_APP',
+        title: 'Legacy child notification',
+        preview: 'The verified scope should be derived safely.',
+        body: 'The verified scope should be derived safely.',
+      },
+      select: { organizationRecordId: true },
+    });
+
+    expect(notification.organizationRecordId).toBe(organizationId);
   });
 
   test('rejects unscoped notifications beneath verified organization events', async () => {
