@@ -29,24 +29,24 @@ jobs:
         shell: bash
         run: |
           python <<'PY'
+          import re
           from pathlib import Path
           path = Path('apps/portal/app/organization/page.tsx')
           text = path.read_text()
-          old = '''                href={workspaceHref(locale, {
-                  ...baseState,
-                  teamId: undefined,
-                  rosterPage: 1,
-                })}'''
-          new = '''                href={workspaceHref(locale, {
+          pattern = re.compile(
+              r"href=\{workspaceHref\(locale, \{\s*\.\.\.baseState,\s*teamId: undefined,\s*rosterPage: 1,\s*\}\)\}"
+          )
+          replacement = '''href={workspaceHref(locale, {
                   organizationId: baseState.organizationId,
                   organizationPage: baseState.organizationPage,
                   rosterPage: 1,
                   teamPage: baseState.teamPage,
                   coursePage: baseState.coursePage,
                 })}'''
-          if old not in text:
-              raise SystemExit('Expected team-filter reset block not found')
-          path.write_text(text.replace(old, new, 1))
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'Expected one team-filter reset block, replaced {count}')
+          path.write_text(text)
           PY
       - run: pnpm exec prettier --write apps/portal/app/organization/page.tsx apps/portal/components/portal-header.tsx apps/portal/lib/organization-manager.ts apps/portal/lib/organization-manager.server.ts apps/portal/lib/organization-manager-localization.ts apps/portal/lib/organization-manager.test.ts apps/portal/app/organization/README.md apps/portal/package.json
       - run: pnpm db:generate
