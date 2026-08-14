@@ -50,9 +50,7 @@ suite('Milestone 16 opaque parent identity constraints', () => {
         where: { id: invoice.id },
         data: { organizationId: `opaque-invoice-moved-${suffix}` },
       }),
-    ).rejects.toThrow(
-      'Invoice organization is immutable once corporate billing exists',
-    );
+    ).rejects.toThrow('Invoice organization identity is immutable');
   });
 
   test('rejects changing an opaque event recipient after a notification exists', async () => {
@@ -98,9 +96,7 @@ suite('Milestone 16 opaque parent identity constraints', () => {
         where: { id: event.id },
         data: { recipientId: otherUserId },
       }),
-    ).rejects.toThrow(
-      'Notification event recipient is immutable once notifications exist',
-    );
+    ).rejects.toThrow('Notification event recipient identity is immutable');
   });
 
   test('rejects changing an opaque event organization after a notification exists', async () => {
@@ -137,8 +133,6 @@ suite('Milestone 16 opaque parent identity constraints', () => {
         where: { id: event.id },
         data: { organizationId: `opaque-event-organization-moved-${suffix}` },
       }),
-    ).rejects.toThrow(
-      'Notification event organization is immutable once notifications exist',
-    );
+    ).rejects.toThrow('Notification event organization identity is immutable');
   });
 });

@@ -39,37 +39,22 @@ BEGIN
         legacy_identity_changed := FALSE;
     END CASE;
 
-    -- Parent identities cannot move away from already-materialized children.
-    -- Enforce this during the migration window as well as after permanent guards
-    -- are installed so opaque legacy scope cannot become internally inconsistent.
+    -- Invoice and notification-event identity is write-once. Making the parent
+    -- identity immutable removes the child-insert/parent-update snapshot race for
+    -- both verified and genuinely opaque legacy scope.
     IF TG_TABLE_NAME = 'Invoice'
-       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
-       AND EXISTS (
-         SELECT 1
-         FROM "CorporateBillingRecord" AS billing
-         WHERE billing."invoiceId" = OLD."id"
-       ) THEN
-      RAISE EXCEPTION 'Invoice organization is immutable once corporate billing exists';
+       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId" THEN
+      RAISE EXCEPTION 'Invoice organization identity is immutable';
     END IF;
 
     IF TG_TABLE_NAME = 'NotificationEvent'
-       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
-       AND EXISTS (
-         SELECT 1
-         FROM "Notification" AS notification
-         WHERE notification."eventId" = OLD."id"
-       ) THEN
-      RAISE EXCEPTION 'Notification event organization is immutable once notifications exist';
+       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId" THEN
+      RAISE EXCEPTION 'Notification event organization identity is immutable';
     END IF;
 
     IF TG_TABLE_NAME = 'NotificationEvent'
-       AND OLD."recipientId" IS DISTINCT FROM NEW."recipientId"
-       AND EXISTS (
-         SELECT 1
-         FROM "Notification" AS notification
-         WHERE notification."eventId" = OLD."id"
-       ) THEN
-      RAISE EXCEPTION 'Notification event recipient is immutable once notifications exist';
+       AND OLD."recipientId" IS DISTINCT FROM NEW."recipientId" THEN
+      RAISE EXCEPTION 'Notification event recipient identity is immutable';
     END IF;
 
     -- Backfills in this migration only populate organizationRecordId. They must
@@ -177,6 +162,18 @@ BEGIN
   END IF;
 
   IF can_verify_relationship THEN
+    IF TG_TABLE_NAME = 'CorporateBillingRecord' THEN
+      UPDATE "Invoice"
+      SET "organizationRecordId" = NEW."organizationId"
+      WHERE "id" = NEW."invoiceId"
+        AND "organizationRecordId" IS NULL;
+    ELSIF TG_TABLE_NAME = 'Notification' THEN
+      UPDATE "NotificationEvent"
+      SET "organizationRecordId" = NEW."organizationId"
+      WHERE "id" = NEW."eventId"
+        AND "organizationRecordId" IS NULL;
+    END IF;
+
     NEW."organizationRecordId" := NEW."organizationId";
     RETURN NEW;
   END IF;
@@ -217,41 +214,10 @@ FOR EACH ROW EXECUTE FUNCTION "enforce_expand_phase_organization_identity"();
 
 COMMIT;
 
--- Initial historical backfill. Exact organization identities can be verified for
--- invoices regardless of current lifecycle state because this is historical data.
-UPDATE "Invoice" AS invoice
-SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization
-WHERE invoice."organizationId" = organization."id";
-
--- Corporate billing is verified only when its parent invoice was independently
--- verified for the same first-class Organization. Historical mismatches remain
--- deliberately unverified so later non-identity updates are not bricked.
-UPDATE "CorporateBillingRecord" AS billing
-SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization,
-     "Invoice" AS invoice
-WHERE billing."organizationId" = organization."id"
-  AND invoice."id" = billing."invoiceId"
-  AND invoice."organizationId" = organization."id"
-  AND invoice."organizationRecordId" = organization."id";
-
--- Historical organization-scoped notification events are marked verified only
--- when the Organization and a currently valid recipient membership can be proven.
-UPDATE "NotificationEvent" AS event
-SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization,
-     "OrganizationMembership" AS membership,
-     "User" AS recipient
-WHERE event."organizationId" = organization."id"
-  AND organization."status" = 'ACTIVE'
-  AND organization."archivedAt" IS NULL
-  AND membership."organizationId" = organization."id"
-  AND membership."userId" = event."recipientId"
-  AND membership."active" = TRUE
-  AND membership."endedAt" IS NULL
-  AND recipient."id" = event."recipientId"
-  AND recipient."deletedAt" IS NULL;
+-- Historical verified-organization links are intentionally reconciled after
+-- prisma migrate deploy by a bounded, idempotent backfill. Keeping these scans out
+-- of the migration prevents long-lived row locks while the temporary expand guard
+-- protects all new and identity-changing writes during deployment.
 
 -- Historical child Notification rows are intentionally not backfilled inside
 -- prisma migrate deploy. The verified relation remains nullable for legacy history,
@@ -293,23 +259,13 @@ BEGIN
       OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId";
 
     IF TG_TABLE_NAME = 'Invoice'
-       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
-       AND EXISTS (
-         SELECT 1
-         FROM "CorporateBillingRecord" AS billing
-         WHERE billing."invoiceId" = OLD."id"
-       ) THEN
-      RAISE EXCEPTION 'Invoice organization is immutable once corporate billing exists';
+       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId" THEN
+      RAISE EXCEPTION 'Invoice organization identity is immutable';
     END IF;
 
     IF TG_TABLE_NAME = 'NotificationEvent'
-       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
-       AND EXISTS (
-         SELECT 1
-         FROM "Notification" AS notification
-         WHERE notification."eventId" = OLD."id"
-       ) THEN
-      RAISE EXCEPTION 'Notification event organization is immutable once notifications exist';
+       AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId" THEN
+      RAISE EXCEPTION 'Notification event organization identity is immutable';
     END IF;
 
     IF OLD."organizationRecordId" IS NOT NULL
@@ -350,7 +306,10 @@ BEGIN
             FROM "Invoice" AS invoice
             WHERE invoice."id" = NEW."invoiceId"
               AND invoice."organizationId" = NEW."organizationId"
-              AND invoice."organizationRecordId" = NEW."organizationId"
+              AND (
+                invoice."organizationRecordId" IS NULL
+                OR invoice."organizationRecordId" = NEW."organizationId"
+              )
           ) INTO can_derive_verified_organization;
         WHEN 'NotificationEvent' THEN
           SELECT EXISTS (
@@ -375,7 +334,10 @@ BEGIN
               ON recipient."id" = membership."userId"
             WHERE event."id" = NEW."eventId"
               AND event."organizationId" = NEW."organizationId"
-              AND event."organizationRecordId" = NEW."organizationId"
+              AND (
+                event."organizationRecordId" IS NULL
+                OR event."organizationRecordId" = NEW."organizationId"
+              )
               AND event."recipientId" = NEW."recipientId"
               AND membership."active" = TRUE
               AND membership."endedAt" IS NULL
@@ -455,7 +417,8 @@ BEGIN
   SELECT "organizationId", "organizationRecordId"
     INTO invoice_organization_id, invoice_organization_record_id
   FROM "Invoice"
-  WHERE "id" = NEW."invoiceId";
+  WHERE "id" = NEW."invoiceId"
+  FOR UPDATE;
 
   IF TG_OP = 'INSERT' THEN
     identity_changed := TRUE;
@@ -471,6 +434,16 @@ BEGIN
   IF identity_changed
      AND NEW."organizationId" IS DISTINCT FROM invoice_organization_id THEN
     RAISE EXCEPTION 'Corporate billing organization must match invoice organization';
+  END IF;
+
+  IF NEW."organizationRecordId" IS NOT NULL
+     AND invoice_organization_record_id IS NULL
+     AND NEW."organizationId" IS NOT DISTINCT FROM invoice_organization_id THEN
+    UPDATE "Invoice"
+    SET "organizationRecordId" = NEW."organizationRecordId"
+    WHERE "id" = NEW."invoiceId"
+      AND "organizationRecordId" IS NULL;
+    invoice_organization_record_id := NEW."organizationRecordId";
   END IF;
 
   IF NEW."organizationRecordId" IS NOT NULL
@@ -492,19 +465,8 @@ DECLARE
   recipient_identity_changed BOOLEAN;
 BEGIN
   IF TG_OP = 'UPDATE'
-     AND OLD."recipientId" IS DISTINCT FROM NEW."recipientId"
-     AND EXISTS (
-       SELECT 1
-       FROM "Notification" AS notification
-       WHERE notification."eventId" = OLD."id"
-     ) THEN
-    RAISE EXCEPTION 'Notification event recipient is immutable once notifications exist';
-  END IF;
-
-  IF TG_OP = 'UPDATE'
-     AND OLD."organizationRecordId" IS NOT NULL
      AND OLD."recipientId" IS DISTINCT FROM NEW."recipientId" THEN
-    RAISE EXCEPTION 'Verified notification event recipient is immutable';
+    RAISE EXCEPTION 'Notification event recipient identity is immutable';
   END IF;
 
   IF NEW."organizationRecordId" IS NULL THEN
@@ -556,7 +518,8 @@ BEGIN
   SELECT "organizationId", "organizationRecordId", "recipientId"
     INTO event_organization_id, event_organization_record_id, event_recipient_id
   FROM "NotificationEvent"
-  WHERE "id" = NEW."eventId";
+  WHERE "id" = NEW."eventId"
+  FOR UPDATE;
 
   IF TG_OP = 'INSERT' THEN
     identity_changed := TRUE;
@@ -572,6 +535,17 @@ BEGIN
   IF identity_changed
      AND NEW."organizationId" IS DISTINCT FROM event_organization_id THEN
     RAISE EXCEPTION 'Notification organization must match notification event organization';
+  END IF;
+
+  IF NEW."organizationRecordId" IS NOT NULL
+     AND event_organization_record_id IS NULL
+     AND NEW."organizationId" IS NOT DISTINCT FROM event_organization_id
+     AND NEW."recipientId" IS NOT DISTINCT FROM event_recipient_id THEN
+    UPDATE "NotificationEvent"
+    SET "organizationRecordId" = NEW."organizationRecordId"
+    WHERE "id" = NEW."eventId"
+      AND "organizationRecordId" IS NULL;
+    event_organization_record_id := NEW."organizationRecordId";
   END IF;
 
   IF event_organization_record_id IS NOT NULL
@@ -650,43 +624,6 @@ DROP TRIGGER "00_NotificationEvent_expand_identity_guard" ON "NotificationEvent"
 DROP TRIGGER "00_Notification_expand_identity_guard" ON "Notification";
 DROP FUNCTION "enforce_expand_phase_organization_identity"();
 
--- Re-run safe backfills after all permanent write guards are active. Rows written
--- by a legacy application during the long backfill phase were already derived or
--- rejected by the temporary guard; unmatched opaque identifiers remain unverified.
-UPDATE "Invoice" AS invoice
-SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization
-WHERE invoice."organizationRecordId" IS NULL
-  AND invoice."organizationId" = organization."id"
-  AND organization."status" = 'ACTIVE'
-  AND organization."archivedAt" IS NULL;
-
-UPDATE "CorporateBillingRecord" AS billing
-SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization,
-     "Invoice" AS invoice
-WHERE billing."organizationRecordId" IS NULL
-  AND billing."organizationId" = organization."id"
-  AND organization."status" = 'ACTIVE'
-  AND organization."archivedAt" IS NULL
-  AND invoice."id" = billing."invoiceId"
-  AND invoice."organizationId" = organization."id"
-  AND invoice."organizationRecordId" = organization."id";
-
-UPDATE "NotificationEvent" AS event
-SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization,
-     "OrganizationMembership" AS membership,
-     "User" AS recipient
-WHERE event."organizationRecordId" IS NULL
-  AND event."organizationId" = organization."id"
-  AND organization."status" = 'ACTIVE'
-  AND organization."archivedAt" IS NULL
-  AND membership."organizationId" = organization."id"
-  AND membership."userId" = event."recipientId"
-  AND membership."active" = TRUE
-  AND membership."endedAt" IS NULL
-  AND recipient."id" = event."recipientId"
-  AND recipient."deletedAt" IS NULL;
-
--- Child Notification history is reconciled by the post-migration bounded backfill.
+-- Historical Invoice, CorporateBillingRecord, NotificationEvent and Notification
+-- links are reconciled after schema deployment in bounded committed batches. New
+-- writes are already protected by the permanent guards above.
