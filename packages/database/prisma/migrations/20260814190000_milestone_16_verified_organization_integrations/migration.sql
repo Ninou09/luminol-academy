@@ -14,13 +14,20 @@ SET "organizationRecordId" = organization."id"
 FROM "Organization" AS organization
 WHERE invoice."organizationId" = organization."id";
 
+-- Corporate billing is verified only when its parent invoice was independently
+-- verified for the same first-class Organization. Historical mismatches remain
+-- deliberately unverified so later non-identity updates are not bricked.
 UPDATE "CorporateBillingRecord" AS billing
 SET "organizationRecordId" = organization."id"
-FROM "Organization" AS organization
-WHERE billing."organizationId" = organization."id";
+FROM "Organization" AS organization,
+     "Invoice" AS invoice
+WHERE billing."organizationId" = organization."id"
+  AND invoice."id" = billing."invoiceId"
+  AND invoice."organizationId" = organization."id"
+  AND invoice."organizationRecordId" = organization."id";
 
--- Historical organization-scoped notifications are marked verified only when
--- both the Organization and a recipient membership can be proven.
+-- Historical organization-scoped notification events are marked verified only
+-- when both the Organization and a recipient membership can be proven.
 UPDATE "NotificationEvent" AS event
 SET "organizationRecordId" = organization."id"
 FROM "Organization" AS organization,
@@ -29,22 +36,22 @@ WHERE event."organizationId" = organization."id"
   AND membership."organizationId" = organization."id"
   AND membership."userId" = event."recipientId";
 
+-- A child notification is verified only when its parent event is already
+-- verified for the same Organization, the recipient identity matches the event,
+-- and membership in that Organization can be proven. Historical inconsistent
+-- children remain unverified and continue to support non-identity updates.
 UPDATE "Notification" AS notification
 SET "organizationRecordId" = organization."id"
 FROM "Organization" AS organization,
-     "OrganizationMembership" AS membership
-WHERE notification."organizationId" = organization."id"
+     "OrganizationMembership" AS membership,
+     "NotificationEvent" AS event
+WHERE notification."eventId" = event."id"
+  AND notification."organizationId" = organization."id"
+  AND event."organizationId" = organization."id"
+  AND event."organizationRecordId" = organization."id"
+  AND notification."recipientId" = event."recipientId"
   AND membership."organizationId" = organization."id"
   AND membership."userId" = notification."recipientId";
-
-CREATE INDEX "Invoice_organizationRecordId_status_createdAt_idx"
-  ON "Invoice"("organizationRecordId", "status", "createdAt");
-CREATE INDEX "CorporateBillingRecord_organizationRecordId_createdAt_idx"
-  ON "CorporateBillingRecord"("organizationRecordId", "createdAt");
-CREATE INDEX "NotificationEvent_organizationRecordId_recipientId_createdAt_idx"
-  ON "NotificationEvent"("organizationRecordId", "recipientId", "createdAt");
-CREATE INDEX "Notification_organizationRecordId_status_scheduledAt_idx"
-  ON "Notification"("organizationRecordId", "status", "scheduledAt");
 
 ALTER TABLE "Invoice"
   ADD CONSTRAINT "Invoice_organizationRecordId_fkey"
