@@ -1,0 +1,1 @@
+Temporary CI trigger for PR #219 lifecycle verification hardening.
