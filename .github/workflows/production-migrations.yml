@@ -20,6 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Require canonical main revision
+        env:
+          DISPATCH_REF: ${{ github.ref }}
+        run: |
+          if [ "$DISPATCH_REF" != "refs/heads/main" ]; then
+            echo "Production migrations may only be dispatched from main."
+            exit 1
+          fi
+
       - name: Confirm production migration
         env:
           CONFIRM: ${{ inputs.confirm }}
