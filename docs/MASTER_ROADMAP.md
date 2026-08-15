@@ -92,13 +92,11 @@ Delivered capabilities include the shared typed `ar`/`fr`/`en` locale contract, 
 
 Dynamic learner records, enquiry messages, assessments, finance data, certificate data, psychology content, personal identity data, and governed CMS source content remain source data rather than receiving guessed automatic translations.
 
-## Current product milestone status
-
 ### Milestone 16 — Organizations and Team Learning
 
-Status: Repository complete; production verification pending
+Status: Complete
 
-Issue #214 remains the governing operational completion issue. Milestone 16 repository implementation is complete across Slices A–E through PRs #215–#219. The first-class organization and team-learning layer reuses the platform's existing enrolment, professional-development, finance, notification, certificate, search, localization, and authorization foundations rather than creating a parallel learner system.
+Issue #214 is closed as completed. Milestone 16 repository implementation is complete across Slices A–E through PRs #215–#219, rollout hardening merged through PR #221, and the guarded production database migration/backfill/integrity-verification gate completed successfully on 2026-08-15. The first-class organization and team-learning layer reuses the platform's existing enrolment, professional-development, finance, notification, certificate, search, localization, and authorization foundations rather than creating a parallel learner system.
 
 The delivered repository boundary was staged:
 
@@ -108,7 +106,7 @@ The delivered repository boundary was staged:
 4. **Organization manager experience** — provide a restricted organization-manager surface for the manager's own roster, seat utilization, assigned learning, and approved aggregate progress. Organization membership does not grant academy-wide administration rights.
 5. **Finance, notifications, and localization integration** — connect verified organization records to corporate billing, existing notifications and certificates, and the governed Arabic/French/English localization layer.
 
-Milestone 16 security and privacy invariants are non-negotiable:
+Milestone 16 security and privacy invariants remain non-negotiable:
 
 - every organization-scoped read and write is authorized server-side
 - organization membership and global academy RBAC remain separate concepts
@@ -120,11 +118,13 @@ Milestone 16 security and privacy invariants are non-negotiable:
 
 Explicitly excluded from Milestone 16 are SSO/SAML/SCIM, HRIS integrations, AI-generated manager insights, public organization profiles, and replacement of the existing enrolment, RBAC, finance, certificate, or notification systems.
 
-Repository completion and production-live verification remain separate. The final Slice E head passed exact-head CI #1139 and an independent Codex review with no major issues; PR #219 merged as main commit `57f53df28dcf44f83b219786901bf1cbf67fa979`, and post-merge main CI #1140 plus the three Vercel project checks passed. The production database migration and bounded organization-link backfill remain a separate manual gate, so #214 stays open until that migration and applicable post-deploy organization verification are complete.
+Final repository evidence: the Slice E head passed exact-head CI #1139 and an independent Codex review with no major issues; PR #219 merged as `57f53df28dcf44f83b219786901bf1cbf67fa979`, followed by green main CI #1140 and successful Vercel checks. Production-rollout hardening then merged through PR #221 as `add12f9e0a2fb251fd9459f54cbf2c120345a1c8`, with exact-head CI #1147 and post-merge main CI #1148 green.
+
+Production-live evidence: `Production database migrations` run #3 (`31888530778`) was dispatched from canonical `main` with the exact `APPLY` confirmation. It applied all pending Prisma migrations, ran the bounded organization-link backfill, passed the read-only aggregate integrity verifier with zero eligible-unverified or structural/parent/recipient mismatch counts, and ended with Prisma reporting `Database schema is up to date!`. The prior administration `/finance` Prisma P2022 schema-drift errors disappeared after migration, protected organization routes continued to fail closed for anonymous access, grouped Vercel runtime errors were clear in the post-migration window, and Production health check #53 attempt 2 passed afterward. Restricted authenticated organization-manager/admin browser smoke remains a separate operational dependency under #40 and must not be bypassed.
 
 ## Post-milestone public experience hardening
 
-Status: Repository implementation active and strongly validated; production freshness is evidence-based per change, and governed real-media verification remains operationally incomplete.
+Status: Repository implementation complete and strongly validated; governed programme-media publication remains an independent operational/content dependency.
 
 The premium public redesign was intentionally delivered outside a new numbered product milestone so it could preserve the platform contracts completed in Milestones 1–15. The repository includes:
 
@@ -148,19 +148,19 @@ The premium public redesign was intentionally delivered outside a new numbered p
 - hardened public-enquiry transport boundaries
 - approved founder media on About and the Psychology school hero with localized accessible naming and explicit governance metadata
 
-The later real-photography phase is not complete until additional approved governed assets exist and are verified through the applicable publication path. No synthetic testimonial, private record, unapproved portrait, or undocumented real-person photograph should be introduced merely to complete that visual phase.
+The broad premium redesign issue #93 is closed as completed. Approved founder media is production-verified. Additional real photography must remain rights-cleared and governed; the specific outstanding Sanity programme-image publication/production verification is tracked under #45. No synthetic testimonial, private record, unapproved portrait, or undocumented real-person photograph should be introduced merely to fill that content dependency.
 
-Vercel Free-plan quota or build-rate pressure may temporarily leave stable production aliases behind the repository head. Safe repository development continues behind the exact-head GitHub CI gate, while production-live claims remain blocked until the corresponding deployment and post-deploy checks exist.
+Vercel Free-plan quota or build-rate pressure may temporarily leave stable production aliases behind the repository head. Safe repository development continues behind the exact-head GitHub CI gate, while production-live claims for any future change remain blocked until the corresponding deployment and post-deploy checks exist.
 
 ## Parallel operational phase — Post-launch stabilization
 
-Milestone 16 repository implementation is complete while its production migration/verification and broader operational stabilization continue in parallel. Organization rollout work must not weaken or bypass the remaining production, media, repository-governance, legal, authentication, or recovery gates.
+Milestone 16 is complete. Broader operational stabilization continues independently and must not weaken or bypass the remaining media, repository-governance, legal, authentication, email, Sanity, or recovery gates.
 
 ### Production availability and monitoring
 
 - keep normal `main` deployments and post-deploy verification healthy when deployment capacity is available
 - continue scheduled synthetic checks for the public website, learner portal, and administration application
-- #192 is closed after scheduled Production health check run #52 completed successfully on 2026-08-15; continue scheduled synthetic monitoring
+- #192 is closed; Production health check #53 attempt 2 also passed after the Milestone 16 production rollout
 - verify robots/sitemap, structured data, security headers, canonical metadata, and representative public routes after relevant production changes
 - investigate grouped runtime errors before treating individual log lines as production incidents
 - distinguish quota-blocked deployment freshness from application runtime failures
@@ -178,7 +178,7 @@ Milestone 16 repository implementation is complete while its production migratio
 - publish only approved active Sanity programme media
 - verify meaningful alternative text, crop, hotspot, CDN source, and explicit publication approval
 - keep unapproved or malformed media fail-closed and text-only
-- complete the remaining production checks tracked in #45 and the real-media phase tracked in #93
+- complete the remaining production checks tracked in #45
 - reuse the already approved founder portrait only within its documented governance boundary; require explicit approval for additional real-person assets
 
 ### Sanity Studio operational verification
@@ -226,7 +226,7 @@ Major compiler/CMS changes must preserve strict type checking, schema governance
 
 ## Future platform opportunities
 
-These are not committed milestones and must not displace operational stabilization or Milestone 16 production verification. No Milestone 17 is currently committed:
+These are not committed milestones and must not displace operational stabilization. No Milestone 17 is currently committed:
 
 - richer background-job processing and dedicated queue infrastructure when scale justifies it
 - approved AI-assisted learning tools with explicit privacy and human-review boundaries
