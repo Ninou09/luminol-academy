@@ -31,7 +31,7 @@ GitHub scheduled workflows are approximate and may be delayed. This workflow is 
 
 Workflow: `.github/workflows/production-migrations.yml`
 
-Run this workflow only from the intended `main` revision after the repository quality gate is green and the operator has confirmed that the deployed application revision is compatible with the pending database expansion. The workflow is deliberately manual: it requires the exact `APPLY` confirmation and the production `DATABASE_URL` repository secret.
+Run this workflow only from the intended `main` revision after the repository quality gate is green and the operator has confirmed that the deployed application revision is compatible with the pending database expansion. The workflow rejects dispatches from any ref other than `refs/heads/main`. It is deliberately manual: it requires the exact `APPLY` confirmation and the production `DATABASE_URL` repository secret.
 
 The workflow performs the database work in this order:
 
