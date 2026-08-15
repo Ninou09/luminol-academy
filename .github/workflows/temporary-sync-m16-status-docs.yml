@@ -1,0 +1,85 @@
+name: Temporary sync Milestone 16 status docs
+
+on:
+  push:
+    branches:
+      - docs/milestone-16-repository-complete
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: docs/milestone-16-repository-complete
+          fetch-depth: 0
+      - name: Synchronize roadmap and project status
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          roadmap = Path('docs/MASTER_ROADMAP.md')
+          text = roadmap.read_text()
+
+          replacements = [
+            ('## Active product milestone\n\n### Milestone 16 — Organizations and Team Learning\n\nStatus: Active',
+             '## Current product milestone status\n\n### Milestone 16 — Organizations and Team Learning\n\nStatus: Repository complete; production verification pending'),
+            ('Issue #214 is the governing milestone issue. The milestone adds a first-class organization and team-learning layer by reusing the platform\'s existing enrolment, professional-development, finance, notification, certificate, search, localization, and authorization foundations rather than creating a parallel learner system.',
+             'Issue #214 remains the governing operational completion issue. Milestone 16 repository implementation is complete across Slices A–E through PRs #215–#219. The first-class organization and team-learning layer reuses the platform\'s existing enrolment, professional-development, finance, notification, certificate, search, localization, and authorization foundations rather than creating a parallel learner system.'),
+            ('The delivery boundary is intentionally staged:', 'The delivered repository boundary was staged:'),
+            ('Repository completion and production-live verification remain separate. Milestone 16 must pass the normal exact-head quality and review gates, and no slice is described as production-live until its deployment and applicable post-deploy verification exist.',
+             'Repository completion and production-live verification remain separate. The final Slice E head passed exact-head CI #1139 and an independent Codex review with no major issues; PR #219 merged as main commit `57f53df28dcf44f83b219786901bf1cbf67fa979`, and post-merge main CI #1140 plus the three Vercel project checks passed. The production database migration and bounded organization-link backfill remain a separate manual gate, so #214 stays open until that migration and applicable post-deploy organization verification are complete.'),
+            ('Milestone 16 repository development is active while operational stabilization and governance continue in parallel. New organization work must not weaken or bypass the remaining production, media, repository-governance, legal, authentication, or recovery gates.',
+             'Milestone 16 repository implementation is complete while its production migration/verification and broader operational stabilization continue in parallel. Organization rollout work must not weaken or bypass the remaining production, media, repository-governance, legal, authentication, or recovery gates.'),
+            ('- close #192 only after a fully green post-fix scheduled or manual production-health run',
+             '- #192 is closed after scheduled Production health check run #52 completed successfully on 2026-08-15; continue scheduled synthetic monitoring'),
+            ('These are not committed milestones and must not displace operational stabilization or the bounded Milestone 16 delivery sequence:',
+             'These are not committed milestones and must not displace operational stabilization or Milestone 16 production verification. No Milestone 17 is currently committed:')
+          ]
+
+          for old, new in replacements:
+            if text.count(old) != 1:
+              raise SystemExit(f'roadmap replacement count for {old[:60]!r}: {text.count(old)}')
+            text = text.replace(old, new, 1)
+          roadmap.write_text(text)
+
+          status = Path('docs/PROJECT_STATUS.md')
+          text = status.read_text()
+          replacements = [
+            ('_Last updated: 2026-08-14_', '_Last updated: 2026-08-15_'),
+            ('`54a622ac1dd6f7e56100e66aade7eef823bd09ae`', '`57f53df28dcf44f83b219786901bf1cbf67fa979`'),
+            ('Milestones 1 through 15 are complete in the repository. Milestone 16 — Organizations and Team Learning — is now active under #214, with its first domain-governance slice developed through PR #215. Post-launch stabilization, public-experience hardening, media governance, and operational verification continue in parallel and remain independent release gates.',
+             'Milestones 1 through 15 are complete in the repository. Milestone 16 — Organizations and Team Learning — is also repository-complete across PRs #215–#219. Final Slice E merged through #219 as `57f53df28dcf44f83b219786901bf1cbf67fa979`; production database migration and post-deploy organization verification remain pending under #214. Post-launch stabilization, public-experience hardening, media governance, and operational verification continue in parallel and remain independent release gates.'),
+            ('## Active milestone\n\n### Milestone 16 — Organizations and Team Learning\n\nStatus: Active',
+             '## Current milestone status\n\n### Milestone 16 — Organizations and Team Learning\n\nStatus: Repository complete; production verification pending'),
+            ('Current implementation slice: PR #215 — organization/team domain governance before persistence.',
+             'Repository delivery: Slices A–E merged through PRs #215–#219. The final Slice E exact head passed CI #1139 and independent review with no major issues; post-merge main CI #1140 and all three Vercel project checks passed.'),
+            ('The milestone is not production-live merely because repository slices merge; deployment and post-deploy verification remain separate evidence requirements.',
+             'The milestone is not yet production-live merely because all repository slices are merged. `.github/workflows/production-migrations.yml` remains an explicit manual `workflow_dispatch` gate requiring `APPLY` and the production `DATABASE_URL`; it deploys pending migrations, runs the bounded Milestone 16 verified-organization backfill, and verifies migration status. #214 remains open until that production operation and applicable post-deploy organization verification are complete.'),
+            ('Post-launch stabilization continues alongside Milestone 16. Current operational and governance work remains:',
+             'Post-launch stabilization continues alongside Milestone 16 production verification. Current operational and governance work remains:'),
+            ('6. Confirm the repaired scheduled production-health workflow with a fully green post-fix scheduled or manual run before closing #192.',
+             '6. Continue scheduled production-health monitoring; #192 closed after scheduled run #52 completed successfully on 2026-08-15.'),
+            ('## Current blockers and deferred external inputs\n\n',
+             '## Current blockers and deferred external inputs\n\n- **Milestone 16 production database migration:** repository delivery is complete, but the guarded manual production migration/backfill and post-deploy organization verification still need operational execution; tracked in #214.\n')
+          ]
+
+          for old, new in replacements:
+            if text.count(old) != 1:
+              raise SystemExit(f'status replacement count for {old[:60]!r}: {text.count(old)}')
+            text = text.replace(old, new, 1)
+          status.write_text(text)
+          PY
+
+          git diff --check
+          git rm .github/workflows/temporary-sync-m16-status-docs.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/MASTER_ROADMAP.md docs/PROJECT_STATUS.md
+          git commit -m 'Synchronize Milestone 16 repository status'
+          git push origin HEAD:docs/milestone-16-repository-complete
