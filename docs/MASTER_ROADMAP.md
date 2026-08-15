@@ -92,15 +92,15 @@ Delivered capabilities include the shared typed `ar`/`fr`/`en` locale contract, 
 
 Dynamic learner records, enquiry messages, assessments, finance data, certificate data, psychology content, personal identity data, and governed CMS source content remain source data rather than receiving guessed automatic translations.
 
-## Active product milestone
+## Current product milestone status
 
 ### Milestone 16 — Organizations and Team Learning
 
-Status: Active
+Status: Repository complete; production verification pending
 
-Issue #214 is the governing milestone issue. The milestone adds a first-class organization and team-learning layer by reusing the platform's existing enrolment, professional-development, finance, notification, certificate, search, localization, and authorization foundations rather than creating a parallel learner system.
+Issue #214 remains the governing operational completion issue. Milestone 16 repository implementation is complete across Slices A–E through PRs #215–#219. The first-class organization and team-learning layer reuses the platform's existing enrolment, professional-development, finance, notification, certificate, search, localization, and authorization foundations rather than creating a parallel learner system.
 
-The delivery boundary is intentionally staged:
+The delivered repository boundary was staged:
 
 1. **Organization and team domain foundation** — define organization lifecycle states, organization membership roles, teams, seat-allocation scope, fail-closed manager access, and privacy-safe aggregate learning visibility with unit coverage.
 2. **Persistence and migration** — add first-class organization, membership, team, team-membership, organization-course, and sponsored-enrolment persistence with tenant-safe constraints and a production-safe backfill strategy before any finance foreign key is introduced.
@@ -120,7 +120,7 @@ Milestone 16 security and privacy invariants are non-negotiable:
 
 Explicitly excluded from Milestone 16 are SSO/SAML/SCIM, HRIS integrations, AI-generated manager insights, public organization profiles, and replacement of the existing enrolment, RBAC, finance, certificate, or notification systems.
 
-Repository completion and production-live verification remain separate. Milestone 16 must pass the normal exact-head quality and review gates, and no slice is described as production-live until its deployment and applicable post-deploy verification exist.
+Repository completion and production-live verification remain separate. The final Slice E head passed exact-head CI #1139 and an independent Codex review with no major issues; PR #219 merged as main commit `57f53df28dcf44f83b219786901bf1cbf67fa979`, and post-merge main CI #1140 plus the three Vercel project checks passed. The production database migration and bounded organization-link backfill remain a separate manual gate, so #214 stays open until that migration and applicable post-deploy organization verification are complete.
 
 ## Post-milestone public experience hardening
 
@@ -154,13 +154,13 @@ Vercel Free-plan quota or build-rate pressure may temporarily leave stable produ
 
 ## Parallel operational phase — Post-launch stabilization
 
-Milestone 16 repository development is active while operational stabilization and governance continue in parallel. New organization work must not weaken or bypass the remaining production, media, repository-governance, legal, authentication, or recovery gates.
+Milestone 16 repository implementation is complete while its production migration/verification and broader operational stabilization continue in parallel. Organization rollout work must not weaken or bypass the remaining production, media, repository-governance, legal, authentication, or recovery gates.
 
 ### Production availability and monitoring
 
 - keep normal `main` deployments and post-deploy verification healthy when deployment capacity is available
 - continue scheduled synthetic checks for the public website, learner portal, and administration application
-- close #192 only after a fully green post-fix scheduled or manual production-health run
+- #192 is closed after scheduled Production health check run #52 completed successfully on 2026-08-15; continue scheduled synthetic monitoring
 - verify robots/sitemap, structured data, security headers, canonical metadata, and representative public routes after relevant production changes
 - investigate grouped runtime errors before treating individual log lines as production incidents
 - distinguish quota-blocked deployment freshness from application runtime failures
@@ -226,7 +226,7 @@ Major compiler/CMS changes must preserve strict type checking, schema governance
 
 ## Future platform opportunities
 
-These are not committed milestones and must not displace operational stabilization or the bounded Milestone 16 delivery sequence:
+These are not committed milestones and must not displace operational stabilization or Milestone 16 production verification. No Milestone 17 is currently committed:
 
 - richer background-job processing and dedicated queue infrastructure when scale justifies it
 - approved AI-assisted learning tools with explicit privacy and human-review boundaries
