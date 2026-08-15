@@ -307,8 +307,28 @@ BEGIN
   IF TG_OP = 'INSERT' THEN
     identity_changed := TRUE;
   ELSE
-    identity_changed := OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
-      OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId";
+    -- Child-parent references and notification recipient identity are part of
+    -- tenant identity. Reparenting must never take the routine-update early return.
+    CASE TG_TABLE_NAME
+      WHEN 'Invoice' THEN
+        identity_changed := OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+          OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId";
+      WHEN 'CorporateBillingRecord' THEN
+        identity_changed := OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+          OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId"
+          OR OLD."invoiceId" IS DISTINCT FROM NEW."invoiceId";
+      WHEN 'NotificationEvent' THEN
+        identity_changed := OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+          OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId"
+          OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId";
+      WHEN 'Notification' THEN
+        identity_changed := OLD."organizationId" IS DISTINCT FROM NEW."organizationId"
+          OR OLD."organizationRecordId" IS DISTINCT FROM NEW."organizationRecordId"
+          OR OLD."eventId" IS DISTINCT FROM NEW."eventId"
+          OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId";
+      ELSE
+        identity_changed := FALSE;
+    END CASE;
 
     IF TG_TABLE_NAME = 'Invoice'
        AND OLD."organizationId" IS DISTINCT FROM NEW."organizationId" THEN
