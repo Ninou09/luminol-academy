@@ -13,6 +13,65 @@ ALTER TABLE "CorporateBillingRecord" ADD COLUMN "organizationRecordId" TEXT;
 ALTER TABLE "NotificationEvent" ADD COLUMN "organizationRecordId" TEXT;
 ALTER TABLE "Notification" ADD COLUMN "organizationRecordId" TEXT;
 
+-- Verification helpers acquire row locks on the lifecycle records whose current
+-- state authorizes a first-class tenant link. Holding these locks until the writer
+-- commits serializes verification with organization archival, membership ending,
+-- and recipient soft deletion, including migration-first and direct SQL writers.
+CREATE OR REPLACE FUNCTION "lock_active_organization_for_verification"(
+  organization_id TEXT
+)
+RETURNS BOOLEAN AS $$
+BEGIN
+  PERFORM 1
+  FROM "Organization" AS organization
+  WHERE organization."id" = organization_id
+    AND organization."status" = 'ACTIVE'
+    AND organization."archivedAt" IS NULL
+  FOR SHARE;
+
+  RETURN FOUND;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION "lock_active_organization_recipient_for_verification"(
+  organization_id TEXT,
+  recipient_id TEXT
+)
+RETURNS BOOLEAN AS $$
+BEGIN
+  PERFORM 1
+  FROM "Organization" AS organization
+  WHERE organization."id" = organization_id
+    AND organization."status" = 'ACTIVE'
+    AND organization."archivedAt" IS NULL
+  FOR SHARE;
+
+  IF NOT FOUND THEN
+    RETURN FALSE;
+  END IF;
+
+  PERFORM 1
+  FROM "OrganizationMembership" AS membership
+  WHERE membership."organizationId" = organization_id
+    AND membership."userId" = recipient_id
+    AND membership."active" = TRUE
+    AND membership."endedAt" IS NULL
+  FOR SHARE;
+
+  IF NOT FOUND THEN
+    RETURN FALSE;
+  END IF;
+
+  PERFORM 1
+  FROM "User" AS recipient
+  WHERE recipient."id" = recipient_id
+    AND recipient."deletedAt" IS NULL
+  FOR SHARE;
+
+  RETURN FOUND;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION "enforce_expand_phase_organization_identity"()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -71,7 +130,8 @@ BEGIN
     SELECT invoice."organizationId"
       INTO parent_organization_id
     FROM "Invoice" AS invoice
-    WHERE invoice."id" = NEW."invoiceId";
+    WHERE invoice."id" = NEW."invoiceId"
+    FOR UPDATE;
 
     IF NEW."organizationId" IS DISTINCT FROM parent_organization_id THEN
       RAISE EXCEPTION 'Corporate billing organization must match invoice organization';
@@ -80,7 +140,8 @@ BEGIN
     SELECT event."organizationId", event."recipientId"
       INTO parent_organization_id, parent_recipient_id
     FROM "NotificationEvent" AS event
-    WHERE event."id" = NEW."eventId";
+    WHERE event."id" = NEW."eventId"
+    FOR UPDATE;
 
     IF NEW."organizationId" IS DISTINCT FROM parent_organization_id THEN
       RAISE EXCEPTION 'Notification organization must match notification event organization';
@@ -103,12 +164,15 @@ BEGIN
     RAISE EXCEPTION 'Organization identity does not match verified organization';
   END IF;
 
-  IF EXISTS (
-    SELECT 1
-    FROM "Organization" AS organization
-    WHERE organization."id" = NEW."organizationId"
-      AND organization."status" = 'ACTIVE'
-      AND organization."archivedAt" IS NULL
+  IF (
+    TG_TABLE_NAME IN ('NotificationEvent', 'Notification')
+    AND "lock_active_organization_recipient_for_verification"(
+      NEW."organizationId",
+      NEW."recipientId"
+    )
+  ) OR (
+    TG_TABLE_NAME NOT IN ('NotificationEvent', 'Notification')
+    AND "lock_active_organization_for_verification"(NEW."organizationId")
   ) THEN
     CASE TG_TABLE_NAME
       WHEN 'Invoice' THEN
@@ -125,26 +189,11 @@ BEGIN
             )
         ) INTO can_verify_relationship;
       WHEN 'NotificationEvent' THEN
-        SELECT EXISTS (
-          SELECT 1
-          FROM "OrganizationMembership" AS membership
-          INNER JOIN "User" AS recipient
-            ON recipient."id" = membership."userId"
-          WHERE membership."organizationId" = NEW."organizationId"
-            AND membership."userId" = NEW."recipientId"
-            AND membership."active" = TRUE
-            AND membership."endedAt" IS NULL
-            AND recipient."deletedAt" IS NULL
-        ) INTO can_verify_relationship;
+        can_verify_relationship := TRUE;
       WHEN 'Notification' THEN
         SELECT EXISTS (
           SELECT 1
           FROM "NotificationEvent" AS event
-          INNER JOIN "OrganizationMembership" AS membership
-            ON membership."organizationId" = NEW."organizationId"
-           AND membership."userId" = NEW."recipientId"
-          INNER JOIN "User" AS recipient
-            ON recipient."id" = membership."userId"
           WHERE event."id" = NEW."eventId"
             AND event."organizationId" = NEW."organizationId"
             AND (
@@ -152,9 +201,6 @@ BEGIN
               OR event."organizationRecordId" = NEW."organizationId"
             )
             AND event."recipientId" = NEW."recipientId"
-            AND membership."active" = TRUE
-            AND membership."endedAt" IS NULL
-            AND recipient."deletedAt" IS NULL
         ) INTO can_verify_relationship;
       ELSE
         can_verify_relationship := FALSE;
@@ -290,12 +336,15 @@ BEGIN
       RETURN NEW;
     END IF;
 
-    IF EXISTS (
-      SELECT 1
-      FROM "Organization" AS organization
-      WHERE organization."id" = NEW."organizationId"
-        AND organization."status" = 'ACTIVE'
-        AND organization."archivedAt" IS NULL
+    IF (
+      TG_TABLE_NAME IN ('NotificationEvent', 'Notification')
+      AND "lock_active_organization_recipient_for_verification"(
+        NEW."organizationId",
+        NEW."recipientId"
+      )
+    ) OR (
+      TG_TABLE_NAME NOT IN ('NotificationEvent', 'Notification')
+      AND "lock_active_organization_for_verification"(NEW."organizationId")
     ) THEN
       CASE TG_TABLE_NAME
         WHEN 'Invoice' THEN
@@ -312,26 +361,11 @@ BEGIN
               )
           ) INTO can_derive_verified_organization;
         WHEN 'NotificationEvent' THEN
-          SELECT EXISTS (
-            SELECT 1
-            FROM "OrganizationMembership" AS membership
-            INNER JOIN "User" AS recipient
-              ON recipient."id" = membership."userId"
-            WHERE membership."organizationId" = NEW."organizationId"
-              AND membership."userId" = NEW."recipientId"
-              AND membership."active" = TRUE
-              AND membership."endedAt" IS NULL
-              AND recipient."deletedAt" IS NULL
-          ) INTO can_derive_verified_organization;
+          can_derive_verified_organization := TRUE;
         WHEN 'Notification' THEN
           SELECT EXISTS (
             SELECT 1
             FROM "NotificationEvent" AS event
-            INNER JOIN "OrganizationMembership" AS membership
-              ON membership."organizationId" = NEW."organizationId"
-             AND membership."userId" = NEW."recipientId"
-            INNER JOIN "User" AS recipient
-              ON recipient."id" = membership."userId"
             WHERE event."id" = NEW."eventId"
               AND event."organizationId" = NEW."organizationId"
               AND (
@@ -339,9 +373,6 @@ BEGIN
                 OR event."organizationRecordId" = NEW."organizationId"
               )
               AND event."recipientId" = NEW."recipientId"
-              AND membership."active" = TRUE
-              AND membership."endedAt" IS NULL
-              AND recipient."deletedAt" IS NULL
           ) INTO can_derive_verified_organization;
         ELSE
           can_derive_verified_organization := FALSE;
@@ -374,13 +405,10 @@ BEGIN
   -- New or newly-linked organization scope must resolve to an active first-class
   -- organization. Existing verified historical rows may still receive
   -- non-identity updates after the organization later leaves the active state.
-  IF identity_changed AND NOT EXISTS (
-    SELECT 1
-    FROM "Organization" AS organization
-    WHERE organization."id" = NEW."organizationRecordId"
-      AND organization."status" = 'ACTIVE'
-      AND organization."archivedAt" IS NULL
-  ) THEN
+  IF identity_changed
+     AND NOT "lock_active_organization_for_verification"(
+       NEW."organizationRecordId"
+     ) THEN
     RAISE EXCEPTION 'Verified organization must be active';
   END IF;
 
@@ -480,21 +508,11 @@ BEGIN
       OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId";
   END IF;
 
-  IF recipient_identity_changed AND NOT EXISTS (
-    SELECT 1
-    FROM "Organization" AS organization
-    INNER JOIN "OrganizationMembership" AS membership
-      ON membership."organizationId" = organization."id"
-    INNER JOIN "User" AS recipient
-      ON recipient."id" = membership."userId"
-    WHERE organization."id" = NEW."organizationRecordId"
-      AND organization."status" = 'ACTIVE'
-      AND organization."archivedAt" IS NULL
-      AND membership."userId" = NEW."recipientId"
-      AND membership."active" = TRUE
-      AND membership."endedAt" IS NULL
-      AND recipient."deletedAt" IS NULL
-  ) THEN
+  IF recipient_identity_changed
+     AND NOT "lock_active_organization_recipient_for_verification"(
+       NEW."organizationRecordId",
+       NEW."recipientId"
+     ) THEN
     RAISE EXCEPTION 'Verified notification event requires an active organization recipient';
   END IF;
 
@@ -589,21 +607,11 @@ BEGIN
       OR OLD."recipientId" IS DISTINCT FROM NEW."recipientId";
   END IF;
 
-  IF recipient_identity_changed AND NOT EXISTS (
-    SELECT 1
-    FROM "Organization" AS organization
-    INNER JOIN "OrganizationMembership" AS membership
-      ON membership."organizationId" = organization."id"
-    INNER JOIN "User" AS recipient
-      ON recipient."id" = membership."userId"
-    WHERE organization."id" = NEW."organizationRecordId"
-      AND organization."status" = 'ACTIVE'
-      AND organization."archivedAt" IS NULL
-      AND membership."userId" = NEW."recipientId"
-      AND membership."active" = TRUE
-      AND membership."endedAt" IS NULL
-      AND recipient."deletedAt" IS NULL
-  ) THEN
+  IF recipient_identity_changed
+     AND NOT "lock_active_organization_recipient_for_verification"(
+       NEW."organizationRecordId",
+       NEW."recipientId"
+     ) THEN
     RAISE EXCEPTION 'Verified notification requires an active organization recipient';
   END IF;
 

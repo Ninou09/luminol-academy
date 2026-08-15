@@ -17,7 +17,10 @@ const lockTimeout = '2s';
 const maxBackfillDurationMs = 10 * 60 * 1000;
 const backfillDeadlineAt = Date.now() + maxBackfillDurationMs;
 const retryableDatabaseCodes = new Set(['40P01', '55P03']);
-const client = new Client({ connectionString });
+const client = new Client({
+  connectionString,
+  connectionTimeoutMillis: 10_000,
+});
 
 const backfills = [
   {
@@ -196,19 +199,31 @@ const backfills = [
   },
 ];
 
-function assertWithinDeadline(backfill) {
-  if (Date.now() >= backfillDeadlineAt) {
+function remainingDeadlineMs(backfill) {
+  const remaining = backfillDeadlineAt - Date.now();
+
+  if (remaining <= 0) {
     throw new Error(
       `Milestone 16 organization-link backfill exceeded its ${maxBackfillDurationMs / 60000}-minute global deadline while processing ${backfill.name}.`,
     );
   }
+
+  return remaining;
+}
+
+function deadlineStatementTimeout(backfill) {
+  return Math.max(1, remainingDeadlineMs(backfill));
 }
 
 async function updateBatch(backfill) {
-  assertWithinDeadline(backfill);
+  remainingDeadlineMs(backfill);
   await client.query('BEGIN');
 
   try {
+    const statementTimeoutMs = deadlineStatementTimeout(backfill);
+    await client.query(
+      `SET LOCAL statement_timeout = '${statementTimeoutMs}ms'`,
+    );
     await client.query(`SET LOCAL lock_timeout = '${lockTimeout}'`);
     const result = await client.query(backfill.updateSql, [batchSize]);
     await client.query('COMMIT');
@@ -230,17 +245,29 @@ async function updateBatch(backfill) {
 }
 
 async function hasEligibleRows(backfill) {
-  assertWithinDeadline(backfill);
-  const result = await client.query(
-    `SELECT EXISTS (SELECT 1 ${backfill.eligibleSql}) AS "exists"`,
-  );
-  return result.rows[0]?.exists === true;
+  remainingDeadlineMs(backfill);
+  await client.query('BEGIN');
+
+  try {
+    const statementTimeoutMs = deadlineStatementTimeout(backfill);
+    await client.query(
+      `SET LOCAL statement_timeout = '${statementTimeoutMs}ms'`,
+    );
+    const result = await client.query(
+      `SELECT EXISTS (SELECT 1 ${backfill.eligibleSql}) AS "exists"`,
+    );
+    await client.query('COMMIT');
+    return result.rows[0]?.exists === true;
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  }
 }
 
 async function waitOrFail(backfill) {
-  assertWithinDeadline(backfill);
+  remainingDeadlineMs(backfill);
   await sleep(retryDelayMs);
-  assertWithinDeadline(backfill);
+  remainingDeadlineMs(backfill);
 }
 
 async function runBackfill(backfill) {
