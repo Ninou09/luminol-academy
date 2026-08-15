@@ -85,6 +85,12 @@ jobs:
         with:
           name: test-diagnostics
           path: test.log
+      - name: Reconcile and verify Milestone 16 seeded integration fixtures
+        run: |
+          pnpm --filter @luminol/database backfill:m16-organization-links
+          pnpm --filter @luminol/database verify:m16-organization-links
+        env:
+          DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - run: pnpm build
         env:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
