@@ -1,0 +1,2 @@
+ALTER TABLE "CorporateBillingRecord"
+VALIDATE CONSTRAINT "CorporateBillingRecord_organizationRecordId_fkey";

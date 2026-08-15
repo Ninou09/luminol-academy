@@ -225,31 +225,34 @@ model User {
 }
 
 model Invoice {
-  id                 String                  @id @default(cuid())
-  number             String                  @unique
-  customerId         String
-  organizationId     String?
-  status             InvoiceStatus           @default(DRAFT)
-  currency           String                  @db.Char(3)
-  discountMinor      Int                     @default(0)
-  taxRateBasisPoints Int                     @default(0)
-  subtotalMinor      Int
-  taxMinor           Int
-  totalMinor         Int
-  dueAt              DateTime?
-  paidAt             DateTime?
-  voidedAt           DateTime?
-  createdAt          DateTime                @default(now())
-  updatedAt          DateTime                @updatedAt
-  customer           User                    @relation("InvoiceCustomer", fields: [customerId], references: [id], onDelete: Restrict)
-  lines              InvoiceLineItem[]
-  paymentIntents     PaymentIntent[]
-  receipts           Receipt[]
-  corporateBilling   CorporateBillingRecord?
-  subscriptions      Subscription[]
+  id                   String                  @id @default(cuid())
+  number               String                  @unique
+  customerId           String
+  organizationId       String?
+  organizationRecordId String?
+  status               InvoiceStatus           @default(DRAFT)
+  currency             String                  @db.Char(3)
+  discountMinor        Int                     @default(0)
+  taxRateBasisPoints   Int                     @default(0)
+  subtotalMinor        Int
+  taxMinor             Int
+  totalMinor           Int
+  dueAt                DateTime?
+  paidAt               DateTime?
+  voidedAt             DateTime?
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+  customer             User                    @relation("InvoiceCustomer", fields: [customerId], references: [id], onDelete: Restrict)
+  organizationRecord   Organization?           @relation("VerifiedInvoiceOrganization", fields: [organizationRecordId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  lines                InvoiceLineItem[]
+  paymentIntents       PaymentIntent[]
+  receipts             Receipt[]
+  corporateBilling     CorporateBillingRecord?
+  subscriptions        Subscription[]
 
   @@index([customerId, status, createdAt])
   @@index([organizationId, status, createdAt])
+  @@index([organizationRecordId, status, createdAt])
 }
 
 model InvoiceLineItem {
@@ -446,35 +449,42 @@ model FinanceAuditEvent {
 }
 
 model CorporateBillingRecord {
-  id                     String   @id @default(cuid())
+  id                     String        @id @default(cuid())
   organizationId         String
-  invoiceId              String   @unique
+  organizationRecordId   String?
+  invoiceId              String        @unique
   billingContactName     String
   billingContactEmail    String
   purchaseOrderReference String?
   seatCount              Int
   pricePerSeatMinor      Int
   paymentTermsDays       Int
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
-  invoice                Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  invoice                Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  organizationRecord     Organization? @relation("VerifiedCorporateBillingOrganization", fields: [organizationRecordId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
   @@index([organizationId, createdAt])
+  @@index([organizationRecordId, createdAt])
   @@index([purchaseOrderReference])
 }
 
 model Organization {
-  id          String                   @id @default(cuid())
-  name        String
-  status      OrganizationStatus       @default(ACTIVE)
-  seatLimit   Int
-  archivedAt  DateTime?
-  createdAt   DateTime                 @default(now())
-  updatedAt   DateTime                 @updatedAt
-  memberships OrganizationMembership[]
-  teams       Team[]
-  seats       OrganizationSeat[]
-  courses     OrganizationCourse[]
+  id                      String                   @id @default(cuid())
+  name                    String
+  status                  OrganizationStatus       @default(ACTIVE)
+  seatLimit               Int
+  archivedAt              DateTime?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  memberships             OrganizationMembership[]
+  teams                   Team[]
+  seats                   OrganizationSeat[]
+  courses                 OrganizationCourse[]
+  financeInvoices         Invoice[]                @relation("VerifiedInvoiceOrganization")
+  corporateBillingRecords CorporateBillingRecord[] @relation("VerifiedCorporateBillingOrganization")
+  notificationEvents      NotificationEvent[]      @relation("VerifiedNotificationEventOrganization")
+  notifications           Notification[]           @relation("VerifiedNotificationOrganization")
 
   auditEvents OrganizationAuditEvent[]
 
@@ -866,51 +876,57 @@ model NotificationPreference {
 }
 
 model NotificationEvent {
-  id             String               @id @default(cuid())
-  idempotencyKey String               @unique
-  organizationId String?
-  recipientId    String
-  templateKey    String
-  category       NotificationCategory
-  payload        Json
-  createdAt      DateTime             @default(now())
-  recipient      User                 @relation(fields: [recipientId], references: [id], onDelete: Cascade)
-  notifications  Notification[]
+  id                   String               @id @default(cuid())
+  idempotencyKey       String               @unique
+  organizationId       String?
+  organizationRecordId String?
+  recipientId          String
+  templateKey          String
+  category             NotificationCategory
+  payload              Json
+  createdAt            DateTime             @default(now())
+  recipient            User                 @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  organizationRecord   Organization?        @relation("VerifiedNotificationEventOrganization", fields: [organizationRecordId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  notifications        Notification[]
 
   @@index([organizationId, recipientId, createdAt])
+  @@index([organizationRecordId, recipientId, createdAt])
 }
 
 model Notification {
-  id                String                        @id @default(cuid())
-  eventId           String
-  recipientId       String
-  organizationId    String?
-  channel           NotificationChannel
-  status            NotificationStatus            @default(PENDING)
-  title             String
-  preview           String
-  body              String
-  provider          String?
-  providerReference String?
-  attemptCount      Int                           @default(0)
-  scheduledAt       DateTime                      @default(now())
-  deliveredAt       DateTime?
-  readAt            DateTime?
-  lastErrorCode     String?
-  lockToken         String?                       @unique
-  lockedUntil       DateTime?
-  createdAt         DateTime                      @default(now())
-  updatedAt         DateTime                      @updatedAt
-  event             NotificationEvent             @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  recipient         User                          @relation(fields: [recipientId], references: [id], onDelete: Cascade)
-  attempts          NotificationDeliveryAttempt[]
-  auditEvents       NotificationAuditEvent[]
+  id                   String                        @id @default(cuid())
+  eventId              String
+  recipientId          String
+  organizationId       String?
+  organizationRecordId String?
+  channel              NotificationChannel
+  status               NotificationStatus            @default(PENDING)
+  title                String
+  preview              String
+  body                 String
+  provider             String?
+  providerReference    String?
+  attemptCount         Int                           @default(0)
+  scheduledAt          DateTime                      @default(now())
+  deliveredAt          DateTime?
+  readAt               DateTime?
+  lastErrorCode        String?
+  lockToken            String?                       @unique
+  lockedUntil          DateTime?
+  createdAt            DateTime                      @default(now())
+  updatedAt            DateTime                      @updatedAt
+  event                NotificationEvent             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  recipient            User                          @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  organizationRecord   Organization?                 @relation("VerifiedNotificationOrganization", fields: [organizationRecordId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  attempts             NotificationDeliveryAttempt[]
+  auditEvents          NotificationAuditEvent[]
 
   @@unique([eventId, channel])
   @@unique([provider, providerReference])
   @@index([recipientId, readAt, createdAt])
   @@index([status, scheduledAt])
   @@index([organizationId, status, scheduledAt])
+  @@index([organizationRecordId, status, scheduledAt])
 }
 
 model RateLimitBucket {

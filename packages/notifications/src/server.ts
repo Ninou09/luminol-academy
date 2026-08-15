@@ -8,6 +8,47 @@ import {
   type EmailProvider,
 } from './index';
 
+type VerifiedOrganization = { id: string };
+type VerifiedMembership = { id: string };
+
+async function loadActiveVerifiedOrganization(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+): Promise<VerifiedOrganization> {
+  const rows = await tx.$queryRaw<VerifiedOrganization[]>`
+    SELECT "id"
+    FROM "Organization"
+    WHERE "id" = ${organizationId}
+      AND "status" = 'ACTIVE'
+      AND "archivedAt" IS NULL
+    FOR SHARE
+  `;
+  const organization = rows[0];
+  if (!organization) throw new Error('Active verified organization not found');
+  return organization;
+}
+
+async function requireActiveOrganizationRecipient(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  recipientId: string,
+) {
+  const rows = await tx.$queryRaw<VerifiedMembership[]>`
+    SELECT membership."id"
+    FROM "OrganizationMembership" AS membership
+    INNER JOIN "User" AS recipient
+      ON recipient."id" = membership."userId"
+    WHERE membership."organizationId" = ${organizationId}
+      AND membership."userId" = ${recipientId}
+      AND membership."active" = TRUE
+      AND membership."endedAt" IS NULL
+      AND recipient."deletedAt" IS NULL
+    FOR SHARE OF membership, recipient
+  `;
+  if (!rows[0])
+    throw new Error('Active organization recipient membership not found');
+}
+
 export async function createNotificationEvent(input: unknown) {
   const parsed = notificationEventSchema.parse(input);
   return db.$transaction(async (tx: Prisma.TransactionClient) => {
@@ -16,26 +57,59 @@ export async function createNotificationEvent(input: unknown) {
       include: { notifications: true },
     });
     if (existing) return existing;
+
+    const organization = parsed.organizationId
+      ? await loadActiveVerifiedOrganization(tx, parsed.organizationId)
+      : null;
+    if (organization)
+      await requireActiveOrganizationRecipient(
+        tx,
+        organization.id,
+        parsed.recipientId,
+      );
+
     const preference = await tx.notificationPreference.findMany({
       where: {
         userId: parsed.recipientId,
         category: parsed.category.toUpperCase() as
           'TRANSACTIONAL' | 'MARKETING',
+        ...(organization
+          ? {
+              OR: [
+                { organizationId: organization.id },
+                { organizationId: null },
+              ],
+            }
+          : { organizationId: null }),
       },
     });
-    const channels = parsed.channels.filter((channel) =>
-      shouldDeliver(
+    const channels = parsed.channels.filter((channel) => {
+      const dbChannel = channel.toUpperCase() as 'IN_APP' | 'EMAIL';
+      const scopedPreference = organization
+        ? preference.find(
+            (item) =>
+              item.channel === dbChannel &&
+              item.organizationId === organization.id,
+          )
+        : undefined;
+      const globalPreference = preference.find(
+        (item) => item.channel === dbChannel && item.organizationId === null,
+      );
+      return shouldDeliver(
         parsed.category,
-        preference.find((item) => item.channel === channel.toUpperCase())
-          ?.enabled ?? parsed.category === 'transactional',
-      ),
-    );
+        (scopedPreference ?? globalPreference)?.enabled ??
+          parsed.category === 'transactional',
+      );
+    });
     return tx.notificationEvent.create({
       data: {
         idempotencyKey: parsed.idempotencyKey,
-        recipientId: parsed.recipientId,
-        ...(parsed.organizationId
-          ? { organizationId: parsed.organizationId }
+        recipient: { connect: { id: parsed.recipientId } },
+        ...(organization
+          ? {
+              organizationId: organization.id,
+              organizationRecord: { connect: { id: organization.id } },
+            }
           : {}),
         templateKey: parsed.templateKey,
         category: parsed.category.toUpperCase() as
@@ -44,8 +118,11 @@ export async function createNotificationEvent(input: unknown) {
         notifications: {
           create: channels.map((channel) => ({
             recipient: { connect: { id: parsed.recipientId } },
-            ...(parsed.organizationId
-              ? { organizationId: parsed.organizationId }
+            ...(organization
+              ? {
+                  organizationId: organization.id,
+                  organizationRecord: { connect: { id: organization.id } },
+                }
               : {}),
             channel: channel.toUpperCase() as 'IN_APP' | 'EMAIL',
             title: parsed.payload.subject,

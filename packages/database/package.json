@@ -10,6 +10,7 @@
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
+    "backfill:m16-organization-links": "node scripts/backfill-milestone16-organization-links.mjs",
     "studio": "prisma studio",
     "build": "tsc --noEmit",
     "lint": "eslint .",

@@ -53,6 +53,7 @@ jobs:
         run: |
           pnpm --filter @luminol/database exec prisma validate
           pnpm --filter @luminol/database migrate:deploy
+          pnpm --filter @luminol/database backfill:m16-organization-links
         env:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - run: pnpm lint

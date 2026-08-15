@@ -15,6 +15,10 @@ import {
   canTransitionInvoiceStatus,
   invoiceStatusSchema,
 } from './index';
+import {
+  calculateCorporateInvoice,
+  corporateInvoiceRequestSchema,
+} from './corporate';
 import { canTransitionSubscriptionStatus } from './subscriptions';
 import { currencyCodeSchema } from './currency';
 
@@ -35,6 +39,50 @@ export const createInvoiceInputSchema = z.object({
   dueAt: z.coerce.date().optional(),
 });
 export type CreateInvoiceInput = z.input<typeof createInvoiceInputSchema>;
+
+export const createCorporateInvoiceInputSchema =
+  corporateInvoiceRequestSchema.extend({
+    number: z.string().trim().min(1).max(100),
+    customerId: z.string().min(1),
+    lineDescription: z.string().trim().min(1).max(500),
+  });
+export type CreateCorporateInvoiceInput = z.input<
+  typeof createCorporateInvoiceInputSchema
+>;
+
+type VerifiedOrganization = {
+  id: string;
+  seatLimit: number;
+};
+
+async function loadActiveVerifiedOrganization(
+  transaction: Prisma.TransactionClient,
+  organizationId: string,
+): Promise<VerifiedOrganization> {
+  const rows = await transaction.$queryRaw<VerifiedOrganization[]>`
+    SELECT "id", "seatLimit"
+    FROM "Organization"
+    WHERE "id" = ${organizationId}
+      AND "status" = 'ACTIVE'
+      AND "archivedAt" IS NULL
+    FOR SHARE
+  `;
+  const organization = rows[0];
+  if (!organization) throw new Error('Active verified organization not found');
+  return organization;
+}
+
+async function loadInvoiceCustomer(
+  transaction: Prisma.TransactionClient,
+  customerId: string,
+) {
+  const customer = await transaction.user.findFirst({
+    where: { id: customerId, deletedAt: null },
+    select: { id: true },
+  });
+  if (!customer) throw new Error('Invoice customer not found');
+  return customer;
+}
 
 async function writeAudit(
   transaction: Prisma.TransactionClient,
@@ -80,17 +128,19 @@ export async function createInvoice(
   const totals = calculateInvoiceTotals(domainInvoice);
 
   return db.$transaction(async (transaction: Prisma.TransactionClient) => {
-    const customer = await transaction.user.findFirst({
-      where: { id: parsed.customerId, deletedAt: null },
-      select: { id: true },
-    });
-    if (!customer) throw new Error('Invoice customer not found');
+    const customer = await loadInvoiceCustomer(transaction, parsed.customerId);
+    const organization = parsed.organizationId
+      ? await loadActiveVerifiedOrganization(transaction, parsed.organizationId)
+      : null;
     const invoice = await transaction.invoice.create({
       data: {
         number: parsed.number,
         customerId: customer.id,
-        ...(parsed.organizationId
-          ? { organizationId: parsed.organizationId }
+        ...(organization
+          ? {
+              organizationId: organization.id,
+              organizationRecordId: organization.id,
+            }
           : {}),
         currency: parsed.currency,
         discountMinor: totals.discountMinor,
@@ -118,9 +168,109 @@ export async function createInvoice(
         number: invoice.number,
         totalMinor: invoice.totalMinor,
         currency: invoice.currency,
+        ...(organization ? { organizationId: organization.id } : {}),
       },
     );
     return invoice;
+  });
+}
+
+export async function createCorporateInvoice(
+  actorInput: FinanceActor,
+  input: CreateCorporateInvoiceInput,
+) {
+  const actor = requireFinancePermission(actorInput, 'finance:manage');
+  const parsed = createCorporateInvoiceInputSchema.parse(input);
+  const summary = calculateCorporateInvoice(parsed);
+  if (
+    summary.subtotalMinor > 2_000_000_000 ||
+    summary.totalMinor > 2_000_000_000
+  )
+    throw new Error('Corporate invoice amount exceeds supported limit');
+
+  return db.$transaction(async (transaction: Prisma.TransactionClient) => {
+    const customer = await loadInvoiceCustomer(transaction, parsed.customerId);
+    const organization = await loadActiveVerifiedOrganization(
+      transaction,
+      parsed.organizationId,
+    );
+    if (parsed.seatCount > organization.seatLimit)
+      throw new Error('Corporate seat count exceeds organization seat limit');
+
+    const dueAt = new Date(
+      Date.now() + parsed.paymentTermsDays * 24 * 60 * 60 * 1_000,
+    );
+    const invoice = await transaction.invoice.create({
+      data: {
+        number: parsed.number,
+        customerId: customer.id,
+        organizationId: organization.id,
+        organizationRecordId: organization.id,
+        currency: parsed.currency,
+        discountMinor: summary.creditMinor,
+        taxRateBasisPoints: parsed.taxRateBasisPoints,
+        subtotalMinor: summary.subtotalMinor,
+        taxMinor: summary.taxMinor,
+        totalMinor: summary.totalMinor,
+        dueAt,
+        lines: {
+          create: {
+            description: parsed.lineDescription,
+            quantity: parsed.seatCount,
+            unitAmountMinor: parsed.pricePerSeatMinor,
+            lineTotalMinor: summary.subtotalMinor,
+          },
+        },
+      },
+      include: { lines: true },
+    });
+    const corporateBilling = await transaction.corporateBillingRecord.create({
+      data: {
+        organizationId: organization.id,
+        organizationRecordId: organization.id,
+        invoiceId: invoice.id,
+        billingContactName: parsed.billingContact.name,
+        billingContactEmail: parsed.billingContact.email,
+        ...(parsed.billingContact.purchaseOrderReference
+          ? {
+              purchaseOrderReference:
+                parsed.billingContact.purchaseOrderReference,
+            }
+          : {}),
+        seatCount: parsed.seatCount,
+        pricePerSeatMinor: parsed.pricePerSeatMinor,
+        paymentTermsDays: parsed.paymentTermsDays,
+      },
+    });
+    await writeAudit(
+      transaction,
+      actor.userId,
+      'invoice',
+      invoice.id,
+      'created',
+      {
+        number: invoice.number,
+        totalMinor: invoice.totalMinor,
+        currency: invoice.currency,
+        organizationId: organization.id,
+        cohortId: parsed.cohortId,
+        seatCount: parsed.seatCount,
+      },
+    );
+    await writeAudit(
+      transaction,
+      actor.userId,
+      'corporate_billing',
+      corporateBilling.id,
+      'created',
+      {
+        organizationId: organization.id,
+        invoiceId: invoice.id,
+        cohortId: parsed.cohortId,
+        seatCount: parsed.seatCount,
+      },
+    );
+    return { invoice, corporateBilling };
   });
 }
 
