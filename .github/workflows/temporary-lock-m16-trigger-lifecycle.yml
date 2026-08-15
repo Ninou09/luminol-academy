@@ -1,0 +1,42 @@
+name: Temporary Lock Milestone 16 Trigger Lifecycle
+
+on:
+  push:
+    branches:
+      - feature/milestone-16-finance-integration
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feature/milestone-16-finance-integration
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Apply lifecycle and deadline hardening
+        run: python .github/scripts/temporary_lock_m16_trigger_lifecycle.py
+      - name: Format backfill script
+        run: pnpm exec prettier --write packages/database/scripts/backfill-milestone16-organization-links.mjs
+      - name: Commit reviewed fixes
+        shell: bash
+        run: |
+          git diff --check
+          git rm .github/workflows/temporary-lock-m16-trigger-lifecycle.yml
+          git rm .github/scripts/temporary_lock_m16_trigger_lifecycle.py
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add packages/database/prisma/migrations/20260814190000_milestone_16_verified_organization_integrations/migration.sql
+          git add packages/database/scripts/backfill-milestone16-organization-links.mjs
+          git commit -m 'Serialize trigger lifecycle verification'
+          git push origin HEAD:feature/milestone-16-finance-integration
