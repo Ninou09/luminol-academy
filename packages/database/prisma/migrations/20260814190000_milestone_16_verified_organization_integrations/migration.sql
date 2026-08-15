@@ -164,20 +164,16 @@ BEGIN
     RAISE EXCEPTION 'Organization identity does not match verified organization';
   END IF;
 
-  IF (
-    TG_TABLE_NAME IN ('NotificationEvent', 'Notification')
-    AND "lock_active_organization_recipient_for_verification"(
-      NEW."organizationId",
-      NEW."recipientId"
-    )
-  ) OR (
-    TG_TABLE_NAME NOT IN ('NotificationEvent', 'Notification')
-    AND "lock_active_organization_for_verification"(NEW."organizationId")
-  ) THEN
-    CASE TG_TABLE_NAME
-      WHEN 'Invoice' THEN
+  -- Dispatch by table before referencing table-specific NEW fields. A generic
+  -- trigger record does not expose recipientId on finance tables, even inside a
+  -- boolean expression whose other operand appears to exclude those tables.
+  CASE TG_TABLE_NAME
+    WHEN 'Invoice' THEN
+      IF "lock_active_organization_for_verification"(NEW."organizationId") THEN
         can_verify_relationship := TRUE;
-      WHEN 'CorporateBillingRecord' THEN
+      END IF;
+    WHEN 'CorporateBillingRecord' THEN
+      IF "lock_active_organization_for_verification"(NEW."organizationId") THEN
         SELECT EXISTS (
           SELECT 1
           FROM "Invoice" AS invoice
@@ -188,9 +184,19 @@ BEGIN
               OR invoice."organizationRecordId" = NEW."organizationId"
             )
         ) INTO can_verify_relationship;
-      WHEN 'NotificationEvent' THEN
+      END IF;
+    WHEN 'NotificationEvent' THEN
+      IF "lock_active_organization_recipient_for_verification"(
+        NEW."organizationId",
+        NEW."recipientId"
+      ) THEN
         can_verify_relationship := TRUE;
-      WHEN 'Notification' THEN
+      END IF;
+    WHEN 'Notification' THEN
+      IF "lock_active_organization_recipient_for_verification"(
+        NEW."organizationId",
+        NEW."recipientId"
+      ) THEN
         SELECT EXISTS (
           SELECT 1
           FROM "NotificationEvent" AS event
@@ -202,10 +208,10 @@ BEGIN
             )
             AND event."recipientId" = NEW."recipientId"
         ) INTO can_verify_relationship;
-      ELSE
-        can_verify_relationship := FALSE;
-    END CASE;
-  END IF;
+      END IF;
+    ELSE
+      can_verify_relationship := FALSE;
+  END CASE;
 
   IF can_verify_relationship THEN
     IF TG_TABLE_NAME = 'CorporateBillingRecord' THEN
@@ -351,20 +357,15 @@ BEGIN
       FOR UPDATE;
     END IF;
 
-    IF (
-      TG_TABLE_NAME IN ('NotificationEvent', 'Notification')
-      AND "lock_active_organization_recipient_for_verification"(
-        NEW."organizationId",
-        NEW."recipientId"
-      )
-    ) OR (
-      TG_TABLE_NAME NOT IN ('NotificationEvent', 'Notification')
-      AND "lock_active_organization_for_verification"(NEW."organizationId")
-    ) THEN
-      CASE TG_TABLE_NAME
-        WHEN 'Invoice' THEN
+    -- Dispatch by table before referencing table-specific NEW fields. This keeps
+    -- the shared trigger valid for finance records that do not have recipientId.
+    CASE TG_TABLE_NAME
+      WHEN 'Invoice' THEN
+        IF "lock_active_organization_for_verification"(NEW."organizationId") THEN
           can_derive_verified_organization := TRUE;
-        WHEN 'CorporateBillingRecord' THEN
+        END IF;
+      WHEN 'CorporateBillingRecord' THEN
+        IF "lock_active_organization_for_verification"(NEW."organizationId") THEN
           SELECT EXISTS (
             SELECT 1
             FROM "Invoice" AS invoice
@@ -375,9 +376,19 @@ BEGIN
                 OR invoice."organizationRecordId" = NEW."organizationId"
               )
           ) INTO can_derive_verified_organization;
-        WHEN 'NotificationEvent' THEN
+        END IF;
+      WHEN 'NotificationEvent' THEN
+        IF "lock_active_organization_recipient_for_verification"(
+          NEW."organizationId",
+          NEW."recipientId"
+        ) THEN
           can_derive_verified_organization := TRUE;
-        WHEN 'Notification' THEN
+        END IF;
+      WHEN 'Notification' THEN
+        IF "lock_active_organization_recipient_for_verification"(
+          NEW."organizationId",
+          NEW."recipientId"
+        ) THEN
           SELECT EXISTS (
             SELECT 1
             FROM "NotificationEvent" AS event
@@ -389,10 +400,10 @@ BEGIN
               )
               AND event."recipientId" = NEW."recipientId"
           ) INTO can_derive_verified_organization;
-        ELSE
-          can_derive_verified_organization := FALSE;
-      END CASE;
-    END IF;
+        END IF;
+      ELSE
+        can_derive_verified_organization := FALSE;
+    END CASE;
 
     IF can_derive_verified_organization THEN
       NEW."organizationRecordId" := NEW."organizationId";

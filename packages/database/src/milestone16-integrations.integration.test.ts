@@ -527,7 +527,7 @@ suite('Milestone 16 verified organization integration constraints', () => {
         },
       }),
     ).rejects.toThrow(
-      'First-class organization scope requires a verified relationship',
+      'Verified notification requires an active organization recipient',
     );
   });
 });
