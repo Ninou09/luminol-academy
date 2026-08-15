@@ -27,6 +27,34 @@ A failed workflow is evidence that an operator must investigate. Do not retry re
 
 GitHub scheduled workflows are approximate and may be delayed. This workflow is a low-cost synthetic check, not a guaranteed paging service.
 
+## Milestone 16 production database rollout
+
+Workflow: `.github/workflows/production-migrations.yml`
+
+Run this workflow only from the intended `main` revision after the repository quality gate is green and the operator has confirmed that the deployed application revision is compatible with the pending database expansion. The workflow rejects dispatches from any ref other than `refs/heads/main`. It is deliberately manual: it requires the exact `APPLY` confirmation and the production `DATABASE_URL` repository secret.
+
+The workflow performs the database work in this order:
+
+1. deploy pending Prisma migrations
+2. run the dependency-ordered Milestone 16 organization-link backfill in bounded batches
+3. run the read-only Milestone 16 organization-link integrity verifier
+4. verify Prisma migration status
+
+The backfill preserves deliberately opaque legacy organization identifiers and only establishes first-class links where the required organization, parent, membership, and recipient relationships can be proven. The verifier runs in a repeatable-read, read-only transaction with a bounded statement timeout. It outputs aggregate counts only and must not print organization identifiers, user identifiers, notification content, finance details, or other personal data.
+
+The verifier fails the workflow if any relationship that is currently eligible for verification remains unverified, or if an already verified record has a structural organization, parent, or recipient mismatch. It also reports aggregate counts of first-class rows that remain deliberately unverified; those informational counts are not automatically failures because historical rows may intentionally remain unverified when their relationship cannot be proven safely.
+
+After a successful production migration workflow:
+
+1. Record the workflow run ID, UTC completion time, deployed `main` SHA, and aggregate verifier outcome without copying database credentials or record data.
+2. Confirm the administration organization workspace at `/organizations` loads for an authorized restricted administration account when that test access is available.
+3. Confirm the learner organization-manager workspace at `/organization` loads only for an eligible organization manager test account when that test access is available.
+4. Verify representative organization finance and notification behavior only with approved test records; never copy production finance, notification, assessment, psychology, or identity data into an issue or chat.
+5. Confirm the normal public/portal/admin production health checks remain green and inspect grouped Vercel runtime errors for the affected applications.
+6. If restricted authenticated test access is unavailable, record that verification item as operationally blocked rather than weakening authorization or creating a privileged shortcut.
+
+Milestone 16 should not be described as production-live until the production migration workflow and the applicable post-deploy organization checks are complete.
+
 ## Manual verification after a deployment
 
 1. Confirm the exact Git commit deployed to all affected Vercel projects.
