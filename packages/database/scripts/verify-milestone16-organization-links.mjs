@@ -98,7 +98,7 @@ const invariantChecks = [
         ON organization."id" = invoice."organizationRecordId"
       WHERE invoice."organizationRecordId" IS NOT NULL
         AND (
-          invoice."organizationRecordId" <> invoice."organizationId"
+          invoice."organizationRecordId" IS DISTINCT FROM invoice."organizationId"
           OR organization."id" IS NULL
         )
     `,
@@ -114,10 +114,10 @@ const invariantChecks = [
         ON organization."id" = billing."organizationRecordId"
       WHERE billing."organizationRecordId" IS NOT NULL
         AND (
-          billing."organizationRecordId" <> billing."organizationId"
+          billing."organizationRecordId" IS DISTINCT FROM billing."organizationId"
           OR organization."id" IS NULL
           OR invoice."id" IS NULL
-          OR invoice."organizationId" <> billing."organizationId"
+          OR invoice."organizationId" IS DISTINCT FROM billing."organizationId"
           OR invoice."organizationRecordId" IS DISTINCT FROM billing."organizationRecordId"
         )
     `,
@@ -131,7 +131,7 @@ const invariantChecks = [
         ON organization."id" = event."organizationRecordId"
       WHERE event."organizationRecordId" IS NOT NULL
         AND (
-          event."organizationRecordId" <> event."organizationId"
+          event."organizationRecordId" IS DISTINCT FROM event."organizationId"
           OR organization."id" IS NULL
         )
     `,
@@ -147,12 +147,12 @@ const invariantChecks = [
         ON organization."id" = notification."organizationRecordId"
       WHERE notification."organizationRecordId" IS NOT NULL
         AND (
-          notification."organizationRecordId" <> notification."organizationId"
+          notification."organizationRecordId" IS DISTINCT FROM notification."organizationId"
           OR organization."id" IS NULL
           OR event."id" IS NULL
-          OR event."organizationId" <> notification."organizationId"
+          OR event."organizationId" IS DISTINCT FROM notification."organizationId"
           OR event."organizationRecordId" IS DISTINCT FROM notification."organizationRecordId"
-          OR event."recipientId" <> notification."recipientId"
+          OR event."recipientId" IS DISTINCT FROM notification."recipientId"
         )
     `,
   },
