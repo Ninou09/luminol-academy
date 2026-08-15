@@ -1,6 +1,6 @@
 # Luminol Academy Project Status
 
-_Last updated: 2026-08-14_
+_Last updated: 2026-08-15_
 
 ## Current state
 
@@ -12,7 +12,7 @@ The canonical branch is:
 
 Current canonical `main` head at this status update:
 
-`54a622ac1dd6f7e56100e66aade7eef823bd09ae`
+`57f53df28dcf44f83b219786901bf1cbf67fa979`
 
 Stable production application aliases:
 
@@ -20,7 +20,7 @@ Stable production application aliases:
 - Learner portal: `https://luminol-academy-portal.vercel.app`
 - Administration: `https://luminol-academy-admin.vercel.app`
 
-Milestones 1 through 15 are complete in the repository. Milestone 16 — Organizations and Team Learning — is now active under #214, with its first domain-governance slice developed through PR #215. Post-launch stabilization, public-experience hardening, media governance, and operational verification continue in parallel and remain independent release gates.
+Milestones 1 through 15 are complete in the repository. Milestone 16 — Organizations and Team Learning — is also repository-complete across PRs #215–#219. Final Slice E merged through #219 as `57f53df28dcf44f83b219786901bf1cbf67fa979`; production database migration and post-deploy organization verification remain pending under #214. Post-launch stabilization, public-experience hardening, media governance, and operational verification continue in parallel and remain independent release gates.
 
 Repository progress and production freshness are tracked separately. The current canonical `main` head passed its required exact-head GitHub pull-request quality gate before merge. Vercel Free-plan build-rate limits can temporarily prevent a corresponding production build; such quota limits do not block continued repository development, but no quota-blocked change is described as live until a production deployment and post-deploy verification actually exist.
 
@@ -123,15 +123,15 @@ Repository progress and production freshness are tracked separately. The current
 - Arabic RTL document behavior and mixed-script bidi safeguards
 - localized search/discovery state and protected-route behavior without weakening authorization or privacy boundaries
 
-## Active milestone
+## Current milestone status
 
 ### Milestone 16 — Organizations and Team Learning
 
-Status: Active
+Status: Repository complete; production verification pending
 
 Governing issue: #214
 
-Current implementation slice: PR #215 — organization/team domain governance before persistence.
+Repository delivery: Slices A–E merged through PRs #215–#219. The final Slice E exact head passed CI #1139 and independent review with no major issues; post-merge main CI #1140 and all three Vercel project checks passed.
 
 The milestone is explicitly bounded to five staged slices:
 
@@ -150,7 +150,7 @@ Milestone 16 must preserve these boundaries:
 - existing enrolment, finance, certificate, notification, and search systems are reused rather than replaced
 - SSO/SAML/SCIM, HRIS integrations, AI manager insights, and public organization profiles are outside this milestone
 
-The milestone is not production-live merely because repository slices merge; deployment and post-deploy verification remain separate evidence requirements.
+The milestone is not yet production-live merely because all repository slices are merged. `.github/workflows/production-migrations.yml` remains an explicit manual `workflow_dispatch` gate requiring `APPLY` and the production `DATABASE_URL`; it deploys pending migrations, runs the bounded Milestone 16 verified-organization backfill, and verifies migration status. #214 remains open until that production operation and applicable post-deploy organization verification are complete.
 
 ## Post-milestone public hardening
 
@@ -180,20 +180,21 @@ Approved real photography is not fabricated or substituted. The approved founder
 
 ## Parallel operational phase
 
-Post-launch stabilization continues alongside Milestone 16. Current operational and governance work remains:
+Post-launch stabilization continues alongside Milestone 16 production verification. Current operational and governance work remains:
 
 1. Publish and verify one approved active Sanity programme image with meaningful alternative text, crop, hotspot, and publication approval (#45 and #93).
 2. Configure a restricted administration smoke account when production Clerk access permits it, then enable authenticated browser-smoke storage states and protected journeys (#40).
 3. Launch the migrated Sanity Studio v6 against the intended project/dataset and record non-sensitive operational verification without changing production content (#85).
 4. Verify a Luminol sender domain before enabling real learner email, then complete a monitored outbound delivery and retry/dead-letter check (#40).
 5. Designate a backup operator before wider promotion or any planned primary-operator absence (#40).
-6. Confirm the repaired scheduled production-health workflow with a fully green post-fix scheduled or manual run before closing #192.
+6. Continue scheduled production-health monitoring; #192 closed after scheduled run #52 completed successfully on 2026-08-15.
 7. Configure repository/ruleset protection for `main`, requiring the existing quality gate without deadlocking the single-operator workflow (#186).
 8. Publish reviewed privacy, terms, and cookie notices only after approved legal copy and verified operator details are supplied (#150).
 9. Keep TypeScript 7 deferred until typescript-eslint and the wider toolchain officially support the chosen migration architecture (#115).
 
 ## Current blockers and deferred external inputs
 
+- **Milestone 16 production database migration:** repository delivery is complete, but the guarded manual production migration/backfill and post-deploy organization verification still need operational execution; tracked in #214.
 - **Approved programme media:** rendering and approval infrastructure is complete, but final Sanity production verification still requires an approved active image-bearing programme; tracked in #45 and #93.
 - **Restricted administration smoke access:** production Clerk administration access remains deferred until the required account/service access is available; tracked in #40.
 - **Sanity Studio environment verification:** the v6 code migration is complete, but the Studio still needs to be observed against the intended Sanity project/dataset; tracked in #85.
