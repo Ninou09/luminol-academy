@@ -59,6 +59,11 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
+      - name: Verify Milestone 16 organization-link integrity
+        run: pnpm --filter @luminol/database verify:m16-organization-links
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Verify migration status
         run: pnpm --filter @luminol/database exec prisma migrate status
         env:
