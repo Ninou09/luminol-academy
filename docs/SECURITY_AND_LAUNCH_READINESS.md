@@ -1,6 +1,33 @@
 # Milestone 13 security and launch readiness
 
-This document records the code audit completed in Milestone 13 and the operational work that must still be verified. Passing CI means **code-complete**, not production-ready.
+This document records the security audit completed in Milestone 13, the controlled-launch runbook, and the operational evidence accumulated after launch. Passing CI remains a repository quality gate rather than proof of production health; production claims require deployment and post-deploy evidence. The current platform and milestone state is summarized in `PROJECT_STATUS.md`, while unresolved operational work is tracked primarily in #40.
+
+## Current post-launch verification state
+
+As of 2026-08-15, the controlled Milestone 13 launch is complete and the platform has continued through Milestone 16 without weakening the launch boundaries documented below.
+
+Verified operational evidence includes:
+
+- stable production aliases for the public website, learner portal, and administration application
+- repeated green production health checks, including scheduled run #53 after the Milestone 16 database rollout
+- a completed isolated Neon restore drill with read-only row-count, index, constraint, migration-history, relationship-integrity, administration-summary, and permission-resolution evidence
+- guarded production database migrations with clean Prisma migration status; Milestone 16 migration run #3 also completed its bounded organization-link backfill and read-only integrity verifier successfully
+- a restricted learner smoke account manually verified on learner dashboard, Billing, Notifications, and Account surfaces
+- Clerk sign-in/sign-up entry points and Google OAuth handoff checked in a real browser without completing an unintended registration
+- public homepage/About/Contact and representative discovery/security responses verified with the expected CSP, COOP, HSTS, `nosniff`, anti-framing, metadata, and privacy behavior
+- post-Milestone 16 grouped runtime-error checks clear across web, portal, and administration; the previously observed administration `/finance` Prisma P2022 events are historical pre-migration evidence rather than an active incident
+- primary operational ownership assigned for monitoring review, incident command, Vercel rollback, Neon recovery, Clerk/Sanity administration, dead-letter review, and payment reconciliation
+
+Still intentionally incomplete:
+
+- restricted administration smoke access and explicit learner-to-administration denial verification
+- authenticated Playwright storage-state secrets and protected administration/learner CI journeys
+- actual observation of Sanity Studio v6 against the intended project/dataset (#85)
+- publication and production verification of one approved active Sanity programme image (#45)
+- verified sender-domain setup plus one monitored outbound email delivery and retry/dead-letter check
+- designation of a backup operator before broader promotion or planned primary-operator absence
+- GitHub `main` branch/ruleset protection (#186)
+- reviewed public privacy, terms, and cookie notices once approved legal copy exists (#150)
 
 ## Surface and authorization inventory
 
@@ -15,7 +42,7 @@ This document records the code audit completed in Milestone 13 and the operation
 | Notification delivery worker                                              | Scheduled high-risk job  | Workflow has read-only repository permission, bounded batches and database leases. It exits successfully before checkout when provider configuration is absent.    |
 | Studio                                                                    | Operator-only deployment | Sanity authentication and project authorization; no import from another app.                                                                                       |
 
-Organization-bearing finance and notification queries were reviewed for scoped service inputs. Psychology content currently has no therapy-note or clinical-record persistence surface in this repository; adding one requires a separate threat model and explicit organization/clinician authorization. Certificates are learner/course records and do not currently carry an organization foreign key. A future organization certificate registry must add that key and a migration rather than infer tenancy from submitted form values.
+Organization-bearing finance and notification queries are scoped through verified service inputs. Psychology content currently has no therapy-note or clinical-record persistence surface in this repository; adding one requires a separate threat model and explicit organization/clinician authorization.
 
 The certificate registry and notification-failure console are intentionally
 platform-global operational surfaces. They require both the trusted
@@ -67,20 +94,32 @@ Never log request headers, cookies, authorization values, provider payloads, not
 5. Monitor authentication failures, 4xx/5xx rates, latency, database saturation, rate-limit volume, notification dead letters, payment reconciliation discrepancies and certificate state transitions.
 6. Document timeline, affected tenant/data classes, notifications required, recovery evidence and follow-up owners.
 
-## Controlled launch checklist
+## Current operational checklist
 
-- [ ] CI is green; independent security review and Vercel preview are complete.
-- [ ] Production environment variables are validated by name/presence without printing values; Clerk and Sanity production origins are allowed by CSP.
-- [ ] On the Vercel preview, complete Clerk sign-in and sign-up (including the configured OAuth popup), open Sanity Studio assets, and inspect the browser console/network log for CSP or COOP violations. Record the deployment URL, UTC time, browser, and pass/fail without tokens or personal data. Do not broaden CSP to resolve an unverified report.
-- [ ] Neon backup/PITR retention and a restore drill have been verified by an operator.
-- [ ] Pending migrations were reviewed and applied manually with `pnpm --filter @luminol/database migrate:deploy`; migration status is clean.
-- [ ] Admin and learner smoke credentials exist in a restricted CI environment; authenticated Playwright journeys pass. They must skip when secrets are absent.
-- [ ] Accessibility keyboard/focus, Arabic RTL, reduced motion, mobile widths, metadata, canonical URLs and broken internal links are manually checked on the preview.
-- [ ] Monitoring dashboards and paging owners are active; rollback target and incident commander are named.
-- [ ] A controlled deployment is followed by the public/private verification points in the incident runbook.
+- [x] Exact-head CI, security checks, production builds, and public browser smoke tests are established as the repository merge gate.
+- [x] Stable public, learner, and administration production aliases have been deployed and repeatedly verified.
+- [x] Clerk sign-in/sign-up entry points and Google OAuth handoff have been checked without weakening CSP/COOP boundaries.
+- [x] Neon restore-drill evidence has been completed on an isolated restore branch without production mutation.
+- [x] Production migration status is clean; guarded Milestone 16 migration/backfill/integrity verification completed successfully.
+- [x] Scheduled production health monitoring is active and has produced repeated green runs after the relevant fixes and database rollout.
+- [x] A restricted learner smoke account has been manually verified on learner-owned production surfaces.
+- [ ] Create/configure a restricted administration smoke account when production Clerk access permits it.
+- [ ] Confirm the restricted learner smoke account is denied administration access.
+- [ ] Configure restricted authenticated Playwright storage states and run protected administration/learner journeys in CI.
+- [ ] Observe the migrated Sanity Studio v6 against the intended project/dataset without changing production content (#85).
+- [ ] Publish and verify one approved active Sanity programme image with meaningful alt text, crop, hotspot, and explicit publication approval (#45).
+- [ ] Verify a Luminol sender domain, complete one monitored outbound email delivery, and verify retry/dead-letter behavior.
+- [ ] Designate a backup operator before broader promotion or planned primary-operator absence.
+- [ ] Configure `main` branch/ruleset protection so the existing quality gate is technically enforced without deadlocking the single-operator workflow (#186).
+- [ ] Publish reviewed privacy, terms, and cookie notices only after approved legal copy/operator details exist (#150).
 
 ## Remaining blockers and deferred work
 
-- Operational Neon restore, production migration, Clerk/Sanity/OAuth CSP and COOP preview verification, monitoring and authenticated journey checks cannot be proven from local CI and block a production-ready declaration until operators record evidence.
-- Outbound email activation is deferred and is not a Milestone 13 blocker. The scheduled worker remains skip-safe when `DATABASE_URL`, `RESEND_API_KEY`, or `NOTIFICATION_FROM_EMAIL` is absent; in-app notifications remain active. Activation requires provider approval, corrected adapter idempotency review, green CI, controlled secrets, and a monitored test delivery. PR #36 is not a dependency.
-- No destructive testing is authorized against production. Any critical/high finding discovered during independent review blocks launch until fixed or explicitly risk-accepted by the accountable owner.
+- Restricted authenticated production smoke coverage remains blocked on appropriate administration test access. Do not create privileged shortcuts or weaken authorization to close the gap.
+- Sanity Studio environment verification (#85) requires actual access to or observation of the intended Sanity environment. The code migration/build is already complete.
+- Governed Sanity programme-image verification (#45) requires an approved active image-bearing programme; synthetic or unapproved media must not be substituted.
+- Outbound learner email remains intentionally disabled until a sender domain/provider path is verified and one controlled delivery plus retry/dead-letter behavior is observed. In-app notifications remain available and the worker stays skip-safe when required provider configuration is absent.
+- Backup-operator coverage remains required before broader promotion or a planned primary-operator absence.
+- `main` protection remains a repository-settings task under #186; application code must not be changed merely to simulate enforcement.
+- Public legal notices remain blocked on reviewed approved copy under #150. Legal entity facts, lawful bases, retention periods, transfer claims, cookie categories, or contractual rights must not be invented.
+- No destructive testing is authorized against production. Any critical/high finding discovered during independent review blocks the affected release until fixed or explicitly risk-accepted by the accountable owner.
