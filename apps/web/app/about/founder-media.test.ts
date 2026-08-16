@@ -14,6 +14,6 @@ describe('About founder media governance', () => {
     expect(source).toContain('data-media-approval="2026-08-13"');
     expect(source).toContain('data-media-crop="portrait-center-face"');
     expect(source).toContain("name: 'خداوي فطومة'");
-    expect(source).toContain('alt={founderMedia.alt}');
+    expect(source).toContain('aria-label={founderMedia.alt}');
   });
 });
