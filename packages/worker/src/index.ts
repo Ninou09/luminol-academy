@@ -3,6 +3,12 @@ import { z } from 'zod';
 export const workerEnvironmentSchema = z.object({
   RESEND_API_KEY: z.string().min(1),
   NOTIFICATION_FROM_EMAIL: z.email(),
+  NOTIFICATION_PROVIDER_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .min(1000)
+    .max(120_000)
+    .default(30_000),
   NOTIFICATION_WORKER_BATCH_SIZE: z.coerce
     .number()
     .int()
