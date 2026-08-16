@@ -185,7 +185,10 @@ export default async function ProgrammeDetailPage({
             </Link>
             <span aria-hidden="true">/</span>
             <Link
-              href={localizeHref(locale, `/schools/${programme.school}#programs`)}
+              href={localizeHref(
+                locale,
+                `/schools/${programme.school}#programs`,
+              )}
             >
               {school.name}
             </Link>
