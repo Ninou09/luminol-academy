@@ -9,7 +9,7 @@ describe('About founder media governance', () => {
       'utf8',
     );
 
-    expect(source).toContain('/media/founder-kheddaoui-fettouma.svg');
+    expect(source).toContain('/media/founder-kheddaoui-fettouma.webp');
     expect(source).toContain('data-media-source="user-approved-upload"');
     expect(source).toContain('data-media-approval="2026-08-13"');
     expect(source).toContain('data-media-crop="portrait-center-face"');

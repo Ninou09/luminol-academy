@@ -206,7 +206,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                   position: 'absolute',
                   inset: 0,
                   backgroundImage:
-                    "url('/media/founder-kheddaoui-fettouma.svg')",
+                    "url('/media/founder-kheddaoui-fettouma.webp')",
                   backgroundSize: 'cover',
                   backgroundPosition: '50% 35%',
                   backgroundRepeat: 'no-repeat',
