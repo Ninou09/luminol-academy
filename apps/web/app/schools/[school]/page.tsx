@@ -127,7 +127,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         title: programme.title,
         description: programme.summary,
         slug: programme.slug.current,
-        delivery: localizeProgrammeDelivery(locale, programme.delivery),
+        delivery: localizeProgrammeDelivery(
+          locale,
+          programme.delivery,
+        ),
         image: programme.image
           ? {
               src: buildSanityProgrammeImageUrl(programme.image),
