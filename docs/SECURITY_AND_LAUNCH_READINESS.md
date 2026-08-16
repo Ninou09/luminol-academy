@@ -4,7 +4,7 @@ This document records the security audit completed in Milestone 13, the controll
 
 ## Current post-launch verification state
 
-As of 2026-08-15, the controlled Milestone 13 launch is complete and the platform has continued through Milestone 16 without weakening the launch boundaries documented below.
+As of 2026-08-16, the controlled Milestone 13 launch is complete and the platform has continued through Milestone 16 without weakening the launch boundaries documented below.
 
 Verified operational evidence includes:
 
@@ -16,6 +16,7 @@ Verified operational evidence includes:
 - Clerk sign-in/sign-up entry points and Google OAuth handoff checked in a real browser without completing an unintended registration
 - public homepage/About/Contact and representative discovery/security responses verified with the expected CSP, COOP, HSTS, `nosniff`, anti-framing, metadata, and privacy behavior
 - post-Milestone 16 grouped runtime-error checks clear across web, portal, and administration; the previously observed administration `/finance` Prisma P2022 events are historical pre-migration evidence rather than an active incident
+- repository ruleset `Protect main` active for the default branch, requiring pull requests and the GitHub Actions `quality` check, blocking force pushes/deletion, and requiring review-thread resolution without imposing an unavailable second reviewer
 - primary operational ownership assigned for monitoring review, incident command, Vercel rollback, Neon recovery, Clerk/Sanity administration, dead-letter review, and payment reconciliation
 
 Still intentionally incomplete:
@@ -26,7 +27,6 @@ Still intentionally incomplete:
 - publication and production verification of one approved active Sanity programme image (#45)
 - verified sender-domain setup plus one monitored outbound email delivery and retry/dead-letter check
 - designation of a backup operator before broader promotion or planned primary-operator absence
-- GitHub `main` branch/ruleset protection (#186)
 - reviewed public privacy, terms, and cookie notices once approved legal copy exists (#150)
 
 ## Surface and authorization inventory
@@ -62,6 +62,8 @@ delegation.
 - Added reusable recursive logging redaction and same-origin redirect validation with negative tests.
 - Added public launch smoke coverage for security headers, robots, sitemap, 404 behavior and privacy-uniform unknown certificate behavior.
 - Changed CI to frozen-lockfile installs, minimum read-only GitHub token permissions, tracked-file secret scanning, and a high-severity production dependency audit.
+- Added technical `main` ruleset enforcement so pull requests and the existing `quality` gate are required before merge while force pushes and branch deletion are blocked.
+- Bounded outbound Resend provider requests with a validated application-level timeout while preserving idempotency and the existing retry/dead-letter flow.
 
 ## Data privacy and logging rule
 
@@ -103,6 +105,7 @@ Never log request headers, cookies, authorization values, provider payloads, not
 - [x] Production migration status is clean; guarded Milestone 16 migration/backfill/integrity verification completed successfully.
 - [x] Scheduled production health monitoring is active and has produced repeated green runs after the relevant fixes and database rollout.
 - [x] A restricted learner smoke account has been manually verified on learner-owned production surfaces.
+- [x] Configure `main` ruleset protection so pull requests and the existing `quality` gate are technically enforced without deadlocking the single-operator workflow (#186).
 - [ ] Create/configure a restricted administration smoke account when production Clerk access permits it.
 - [ ] Confirm the restricted learner smoke account is denied administration access.
 - [ ] Configure restricted authenticated Playwright storage states and run protected administration/learner journeys in CI.
@@ -110,7 +113,6 @@ Never log request headers, cookies, authorization values, provider payloads, not
 - [ ] Publish and verify one approved active Sanity programme image with meaningful alt text, crop, hotspot, and explicit publication approval (#45).
 - [ ] Verify a Luminol sender domain, complete one monitored outbound email delivery, and verify retry/dead-letter behavior.
 - [ ] Designate a backup operator before broader promotion or planned primary-operator absence.
-- [ ] Configure `main` branch/ruleset protection so the existing quality gate is technically enforced without deadlocking the single-operator workflow (#186).
 - [ ] Publish reviewed privacy, terms, and cookie notices only after approved legal copy/operator details exist (#150).
 
 ## Remaining blockers and deferred work
@@ -120,6 +122,11 @@ Never log request headers, cookies, authorization values, provider payloads, not
 - Governed Sanity programme-image verification (#45) requires an approved active image-bearing programme; synthetic or unapproved media must not be substituted.
 - Outbound learner email remains intentionally disabled until a sender domain/provider path is verified and one controlled delivery plus retry/dead-letter behavior is observed. In-app notifications remain available and the worker stays skip-safe when required provider configuration is absent.
 - Backup-operator coverage remains required before broader promotion or a planned primary-operator absence.
-- `main` protection remains a repository-settings task under #186; application code must not be changed merely to simulate enforcement.
 - Public legal notices remain blocked on reviewed approved copy under #150. Legal entity facts, lawful bases, retention periods, transfer claims, cookie categories, or contractual rights must not be invented.
 - No destructive testing is authorized against production. Any critical/high finding discovered during independent review blocks the affected release until fixed or explicitly risk-accepted by the accountable owner.
+
+## Repository governance baseline
+
+Repository ruleset `Protect main` was verified active on 2026-08-16 for the default branch. It requires pull requests and the GitHub Actions `quality` check before merge, blocks force pushes and deletion, and requires review-thread resolution. Required approving reviews are intentionally zero while only one operator is available, and no bypass actor was configured at verification time. Issue #186 is completed.
+
+Reverify this baseline after any repository-administration change. Do not weaken the `quality` check or add broad bypass permissions to work around a failing build.

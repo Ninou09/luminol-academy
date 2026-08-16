@@ -114,11 +114,15 @@ External learner email remains deferred. Real learner delivery requires:
 - one monitored delivery to an approved test recipient
 - confirmation that retry and dead-letter behavior remain bounded
 
+The worker now also bounds each provider HTTP request with an explicit validated timeout while preserving its idempotency, retry, lease, and dead-letter contracts. This hardening does not constitute sender-domain verification or activation of real learner email.
+
 Using a provider onboarding/test sender is suitable only for restricted provider testing and not for general learner delivery.
 
 ### Repository governance
 
-`main` is still reported by GitHub as unprotected. Issue #186 tracks configuring branch protection or an equivalent ruleset requiring the existing `quality` gate while preserving the current single-operator workflow. Until GitHub settings enforce it, continue the procedural PR + exact-head CI discipline and do not simulate protection through application code.
+Completed on 2026-08-16. Repository ruleset `Protect main` is active for the default branch and requires changes to reach `main` through a pull request with the GitHub Actions `quality` status check passing. It also blocks force pushes and branch deletion and requires review conversations to be resolved. The current single-operator model intentionally requires zero approving reviews and had no bypass actor configured at verification time. Issue #186 is closed as completed.
+
+Do not weaken or rename the `quality` gate, add broad bypasses, or require an unavailable second reviewer merely to change repository policy. Reverify the ruleset after any GitHub administration change that could affect enforcement.
 
 ### Public legal notices
 

@@ -154,7 +154,7 @@ Vercel Free-plan quota or build-rate pressure may temporarily leave stable produ
 
 ## Parallel operational phase — Post-launch stabilization
 
-Milestone 16 is complete. Broader operational stabilization continues independently and must not weaken or bypass the remaining media, repository-governance, legal, authentication, email, Sanity, or recovery gates.
+Milestone 16 is complete. Broader operational stabilization continues independently and must not weaken or bypass the remaining media, legal, authentication, email, Sanity, or recovery gates. Repository protection is now technically enforced and should be treated as a maintained baseline rather than an outstanding launch blocker.
 
 ### Production availability and monitoring
 
@@ -190,10 +190,11 @@ Milestone 16 is complete. Broader operational stabilization continues independen
 
 ### Repository governance
 
-- configure `main` branch/ruleset protection under #186
-- require the existing quality gate before merge without deadlocking the current single-operator workflow
-- block force pushes and branch deletion
-- preserve the existing PR-based operating discipline until GitHub settings enforce it technically
+- `Protect main` is active for the default branch and issue #186 is closed as completed
+- changes to `main` require a pull request and the existing GitHub Actions `quality` check to pass
+- force pushes and branch deletion are blocked and review conversations must be resolved
+- required approving reviews remain zero for the current single-operator workflow; no bypass actor was configured at verification time
+- reverify the ruleset after repository-administration changes and never weaken the `quality` gate merely to clear a merge
 
 ### Public legal notices
 
@@ -214,6 +215,7 @@ Milestone 16 is complete. Broader operational stabilization continues independen
 - configure the controlled email provider credentials only in the applicable deployment environment
 - complete a monitored delivery to an approved test recipient
 - verify retry and dead-letter behavior before enabling real learner delivery
+- retain the bounded provider-request timeout and idempotency behavior already implemented in the notification worker
 
 ## Planned maintenance work
 
