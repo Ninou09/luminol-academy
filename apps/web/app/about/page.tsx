@@ -6,7 +6,6 @@ import {
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
@@ -111,13 +110,19 @@ export default async function AboutPage() {
             data-media-crop="portrait-center-face"
             data-reveal
           >
-            <Image
-              src="/media/founder-kheddaoui-fettouma.svg"
-              alt={founderMedia.alt}
-              fill
-              priority
-              sizes="(max-width: 1000px) calc(100vw - 2.5rem), 45vw"
-              style={{ objectFit: 'cover', objectPosition: '50% 35%' }}
+            <span
+              role="img"
+              aria-label={founderMedia.alt}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage:
+                  "url('/media/founder-kheddaoui-fettouma.svg')",
+                backgroundSize: 'cover',
+                backgroundPosition: '50% 35%',
+                backgroundRepeat: 'no-repeat',
+                zIndex: 0,
+              }}
             />
             <div className={styles.rays} aria-hidden="true" />
             <span
