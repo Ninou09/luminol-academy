@@ -17,8 +17,10 @@ import {
   type PublicProgrammeDetail,
 } from '../../../lib/programme-detail';
 import { getRequestLocale } from '../../../lib/request-locale';
-import { buildSanityProgrammeImageUrl } from '../../../lib/sanity';
-import type { CmsProgrammeLanguage } from '../../../lib/sanity';
+import {
+  buildSanityProgrammeImageUrl,
+  type CmsProgrammeLanguage,
+} from '../../../lib/sanity';
 import { getSchools } from '../../../lib/schools';
 import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
 import styles from './page.module.css';
@@ -61,7 +63,8 @@ const DETAIL_COPY = {
     exploreSchool: 'Découvrir cette école',
     ask: 'Contacter Luminol',
     nextEyebrow: 'Votre prochaine étape',
-    nextTitle: 'Vous souhaitez savoir si ce programme correspond à votre objectif ?',
+    nextTitle:
+      'Vous souhaitez savoir si ce programme correspond à votre objectif ?',
     nextBody:
       'Partagez votre objectif et l’équipe Luminol pourra vous orienter vers la prochaine étape la plus adaptée.',
     unavailableTitle: 'Programme indisponible',
@@ -177,7 +180,9 @@ export default async function ProgrammeDetailPage({
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero}>
           <nav className={styles.breadcrumbs} aria-label={copy.catalogue}>
-            <Link href={localizeHref(locale, '/programmes')}>{copy.catalogue}</Link>
+            <Link href={localizeHref(locale, '/programmes')}>
+              {copy.catalogue}
+            </Link>
             <span aria-hidden="true">/</span>
             <Link
               href={localizeHref(locale, `/schools/${programme.school}#programs`)}
