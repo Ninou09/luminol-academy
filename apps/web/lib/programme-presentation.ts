@@ -28,7 +28,9 @@ export function localizeProgrammeDelivery(
   const normalized = delivery?.trim();
   if (!normalized) return null;
 
-  return PROGRAMME_DELIVERY_LABELS[locale][
-    normalized as keyof (typeof PROGRAMME_DELIVERY_LABELS)[typeof locale]
-  ] ?? normalized;
+  return (
+    PROGRAMME_DELIVERY_LABELS[locale][
+      normalized as keyof (typeof PROGRAMME_DELIVERY_LABELS)[typeof locale]
+    ] ?? normalized
+  );
 }
