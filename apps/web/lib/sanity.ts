@@ -174,9 +174,10 @@ function placeCropAxis({
 export function buildSanityProgrammeImageUrl(image: ProgrammeImage) {
   const { width: sourceWidth, height: sourceHeight } = image.dimensions;
   const crop = image.crop ?? { top: 0, bottom: 0, left: 0, right: 0 };
+  const isPortrait = sourceHeight > sourceWidth;
   const hotspot = image.hotspot ?? {
     x: 0.5,
-    y: 0.5,
+    y: isPortrait ? 0.37 : 0.5,
     width: 0,
     height: 0,
   };

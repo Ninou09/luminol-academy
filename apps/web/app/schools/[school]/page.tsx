@@ -6,7 +6,6 @@ import {
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -200,15 +199,17 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               data-media-crop="portrait-center-face"
               data-reveal
             >
-              <Image
-                src="/media/founder-kheddaoui-fettouma.svg"
-                alt={founderMedia.alt}
-                fill
-                priority
-                sizes="(max-width: 1000px) calc(100vw - 2.5rem), 45vw"
+              <span
+                role="img"
+                aria-label={founderMedia.alt}
                 style={{
-                  objectFit: 'cover',
-                  objectPosition: '50% 35%',
+                  position: 'absolute',
+                  inset: 0,
+                  backgroundImage:
+                    "url('/media/founder-kheddaoui-fettouma.svg')",
+                  backgroundSize: 'cover',
+                  backgroundPosition: '50% 35%',
+                  backgroundRepeat: 'no-repeat',
                   zIndex: 0,
                 }}
               />

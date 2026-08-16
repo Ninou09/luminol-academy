@@ -25,10 +25,11 @@ test('premium school storytelling preserves landmarks and governed media', async
     'data-media-approval',
     '2026-08-13',
   );
-  await expect(founderMedia.locator('img')).toHaveAttribute(
-    'alt',
-    'Kheddaoui Fettouma, founder of Luminol Academy',
-  );
+  await expect(
+    founderMedia.getByRole('img', {
+      name: 'Kheddaoui Fettouma, founder of Luminol Academy',
+    }),
+  ).toBeVisible();
 
   await expect(page.locator('[data-programme-card]')).not.toHaveCount(0);
 
