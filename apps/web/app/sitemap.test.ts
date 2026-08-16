@@ -8,10 +8,10 @@ afterEach(() => {
 });
 
 describe('public sitemap localization', () => {
-  it('cross-references every supported language with absolute URLs', () => {
+  it('cross-references every supported language with absolute URLs', async () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://academy.example.com/path');
 
-    const entries = sitemap();
+    const entries = await sitemap();
     const frenchAbout = entries.find(
       (entry) => entry.url === 'https://academy.example.com/fr/about',
     );
@@ -25,10 +25,10 @@ describe('public sitemap localization', () => {
     });
   });
 
-  it('keeps the safe fallback origin when the configured site URL is invalid', () => {
+  it('keeps the safe fallback origin when the configured site URL is invalid', async () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'not a url');
 
-    const entries = sitemap();
+    const entries = await sitemap();
     const arabicHome = entries.find(
       (entry) => entry.url === `${fallbackOrigin}/ar`,
     );

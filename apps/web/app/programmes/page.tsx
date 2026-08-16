@@ -9,6 +9,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { localizeProgrammeDelivery } from '../../lib/programme-presentation';
 import {
   filterPublicProgrammes,
