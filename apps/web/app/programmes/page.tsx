@@ -197,7 +197,17 @@ export default async function ProgrammesPage({
                           <span>{copy.featured}</span>
                         ) : null}
                       </div>
-                      <h3 dir="auto">{programme.title}</h3>
+                      <h3 dir="auto">
+                        <Link
+                          className={styles.titleLink}
+                          href={localizeHref(
+                            locale,
+                            `/programmes/${programme.slug.current}`,
+                          )}
+                        >
+                          {programme.title}
+                        </Link>
+                      </h3>
                       <p dir="auto">{programme.summary}</p>
                       <ul className={styles.tags} aria-label={copy.detailsAria}>
                         {programme.languages.map((language) => (
