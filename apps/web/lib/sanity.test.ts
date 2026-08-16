@@ -46,6 +46,20 @@ describe('buildSanityProgrammeImageUrl', () => {
     expect(url.searchParams.get('auto')).toBe('format');
   });
 
+  it('biases portrait poster crops upward when no editor hotspot exists', () => {
+    const url = new URL(
+      buildSanityProgrammeImageUrl({
+        url: 'https://cdn.sanity.io/images/abc123xy/production/programme-1060x1484.png',
+        alt: 'Acceptance and commitment therapy course poster',
+        crop: null,
+        hotspot: null,
+        dimensions: { width: 1060, height: 1484 },
+      }),
+    );
+
+    expect(url.searchParams.get('rect')).toBe('0,251,1060,596');
+  });
+
   it('preserves the editor crop and keeps the hotspot in frame', () => {
     const url = new URL(
       buildSanityProgrammeImageUrl({
