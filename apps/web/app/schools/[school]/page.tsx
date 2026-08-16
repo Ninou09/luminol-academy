@@ -118,6 +118,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     id: string;
     title: string;
     description: string;
+    slug?: string;
     delivery?: string | null;
     image?: EditorialMediaAsset | null;
   }> = cmsProgrammes?.length
@@ -125,6 +126,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         id: programme._id,
         title: programme.title,
         description: programme.summary,
+        slug: programme.slug.current,
         delivery: localizeProgrammeDelivery(locale, programme.delivery),
         image: programme.image
           ? {
@@ -312,7 +314,20 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                   school={school.slug}
                   asset={program.image}
                 />
-                <h3 dir="auto">{program.title}</h3>
+                <h3 dir="auto">
+                  {program.slug ? (
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/programmes/${program.slug}`,
+                      )}
+                    >
+                      {program.title}
+                    </Link>
+                  ) : (
+                    program.title
+                  )}
+                </h3>
                 {program.delivery ? (
                   <small className={styles.programDelivery}>
                     {program.delivery}
