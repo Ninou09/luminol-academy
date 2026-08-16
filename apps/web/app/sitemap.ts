@@ -5,6 +5,8 @@ import {
 } from '@luminol/localization';
 import type { MetadataRoute } from 'next';
 
+import { isPublicProgrammeSlug } from '../lib/programme-detail';
+import { getPublicProgrammes } from '../lib/sanity';
 import { resolvePublicSiteOrigin } from '../lib/site-url';
 
 const routes = [
@@ -28,10 +30,9 @@ function buildAbsoluteLanguageAlternates(origin: string, pathname: string) {
   );
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const origin = resolvePublicSiteOrigin();
-
-  return SUPPORTED_LOCALES.flatMap((locale) =>
+  const staticEntries = SUPPORTED_LOCALES.flatMap((locale) =>
     routes.map((route) => {
       const pathname = route === '' ? '/' : route;
 
@@ -46,4 +47,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
       };
     }),
   );
+
+  const programmes = await getPublicProgrammes();
+  if (!programmes) return staticEntries;
+
+  const seenSlugs = new Set<string>();
+  const programmePaths = programmes.flatMap((programme) => {
+    const slug = programme.slug.current.trim().toLowerCase();
+    if (!isPublicProgrammeSlug(slug) || seenSlugs.has(slug)) return [];
+    seenSlugs.add(slug);
+    return [`/programmes/${slug}`];
+  });
+
+  const programmeEntries = SUPPORTED_LOCALES.flatMap((locale) =>
+    programmePaths.map((pathname) => ({
+      url: `${origin}${localizePathname(locale, pathname)}`,
+      alternates: {
+        languages: buildAbsoluteLanguageAlternates(origin, pathname),
+      },
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
+  );
+
+  return [...staticEntries, ...programmeEntries];
 }

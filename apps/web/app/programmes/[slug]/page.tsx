@@ -16,6 +16,7 @@ import {
   getPublicProgrammeBySlug,
   type PublicProgrammeDetail,
 } from '../../../lib/programme-detail';
+import { localizeProgrammeDelivery } from '../../../lib/programme-presentation';
 import { getRequestLocale } from '../../../lib/request-locale';
 import {
   buildSanityProgrammeImageUrl,
@@ -173,6 +174,7 @@ export default async function ProgrammeDetailPage({
   const languageNames = programme.languages.map(
     (language) => LANGUAGE_NAMES[locale][language],
   );
+  const deliveryLabel = localizeProgrammeDelivery(locale, programme.delivery);
 
   return (
     <>
@@ -205,7 +207,7 @@ export default async function ProgrammeDetailPage({
               <ul className={styles.meta} aria-label={copy.facts}>
                 <li>{school.name}</li>
                 {programme.featured ? <li>{copy.featured}</li> : null}
-                {programme.delivery ? <li>{programme.delivery}</li> : null}
+                {deliveryLabel ? <li>{deliveryLabel}</li> : null}
                 {languageNames.map((language) => (
                   <li key={language}>{language}</li>
                 ))}
@@ -296,7 +298,7 @@ export default async function ProgrammeDetailPage({
                 </div>
                 <div>
                   <dt>{copy.delivery}</dt>
-                  <dd dir="auto">{programme.delivery ?? copy.unspecified}</dd>
+                  <dd dir="auto">{deliveryLabel ?? copy.unspecified}</dd>
                 </div>
                 <div>
                   <dt>{copy.languages}</dt>

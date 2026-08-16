@@ -62,17 +62,20 @@ export type PublicProgrammeDetail = z.infer<typeof publicProgrammeDetailSchema>;
 
 const safeSlugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+export function isPublicProgrammeSlug(slug: string): boolean {
+  const normalizedSlug = slug.trim().toLowerCase();
+  return (
+    normalizedSlug.length > 0 &&
+    normalizedSlug.length <= 96 &&
+    safeSlugPattern.test(normalizedSlug)
+  );
+}
+
 export async function getPublicProgrammeBySlug(
   slug: string,
 ): Promise<PublicProgrammeDetail | null> {
   const normalizedSlug = slug.trim().toLowerCase();
-  if (
-    normalizedSlug.length === 0 ||
-    normalizedSlug.length > 96 ||
-    !safeSlugPattern.test(normalizedSlug)
-  ) {
-    return null;
-  }
+  if (!isPublicProgrammeSlug(normalizedSlug)) return null;
 
   const config = getSanityConfig();
   if (!config) return null;
