@@ -17,10 +17,8 @@ import {
   type PublicProgrammeDetail,
 } from '../../../lib/programme-detail';
 import { getRequestLocale } from '../../../lib/request-locale';
-import {
-  buildSanityProgrammeImageUrl,
-  PROGRAMME_LANGUAGE_CODES,
-} from '../../../lib/sanity';
+import { buildSanityProgrammeImageUrl } from '../../../lib/sanity';
+import type { CmsProgrammeLanguage } from '../../../lib/sanity';
 import { getSchools } from '../../../lib/schools';
 import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
 import styles from './page.module.css';
@@ -95,10 +93,7 @@ const LANGUAGE_NAMES = {
   en: { ar: 'Arabic', fr: 'French', en: 'English' },
   fr: { ar: 'Arabe', fr: 'Français', en: 'Anglais' },
   ar: { ar: 'العربية', fr: 'الفرنسية', en: 'الإنجليزية' },
-} as const satisfies Record<
-  Locale,
-  Record<(typeof PROGRAMME_LANGUAGE_CODES)[number], string>
->;
+} as const satisfies Record<Locale, Record<CmsProgrammeLanguage, string>>;
 
 type ProgrammeDetailPageProps = {
   params: Promise<{ slug: string }>;
