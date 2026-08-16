@@ -9,6 +9,20 @@
   text-decoration: none;
 }
 
+/*
+ * Tailwind utilities are emitted inside cascade layers while the global
+ * anchor reset in globals.css is currently unlayered. Re-assert the public
+ * primary-link foreground here so dark ButtonLink surfaces never inherit the
+ * page ink color and render their labels invisibly.
+ */
+a.bg-brand-ink {
+  color: var(--color-brand-canvas);
+}
+
+a.bg-brand-ink:hover {
+  color: var(--color-brand-ink);
+}
+
 .locale-switcher {
   display: inline-flex;
   align-items: center;
