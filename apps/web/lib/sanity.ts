@@ -185,9 +185,7 @@ export function buildSanityProgrammeImageUrl(image: ProgrammeImage) {
   const editorLeft = Math.ceil(crop.left * sourceWidth);
   const editorTop = Math.ceil(crop.top * sourceHeight);
   const editorRight = Math.floor((1 - crop.right) * sourceWidth);
-  const editorBottom = Math.floor(
-    (1 - crop.bottom) * sourceHeight,
-  );
+  const editorBottom = Math.floor((1 - crop.bottom) * sourceHeight);
   const editorWidth = editorRight - editorLeft;
   const editorHeight = editorBottom - editorTop;
   const targetAspect = PROGRAMME_IMAGE_WIDTH / PROGRAMME_IMAGE_HEIGHT;
