@@ -116,8 +116,7 @@ export default async function AboutPage() {
               style={{
                 position: 'absolute',
                 inset: 0,
-                backgroundImage:
-                  "url('/media/founder-kheddaoui-fettouma.svg')",
+                backgroundImage: "url('/media/founder-kheddaoui-fettouma.svg')",
                 backgroundSize: 'cover',
                 backgroundPosition: '50% 35%',
                 backgroundRepeat: 'no-repeat',
