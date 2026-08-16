@@ -14,6 +14,7 @@ import {
   type EditorialMediaAsset,
 } from '../../../components/editorial-media';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { localizeProgrammeDelivery } from '../../../lib/programme-presentation';
 import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
 import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
@@ -124,7 +125,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         id: programme._id,
         title: programme.title,
         description: programme.summary,
-        delivery: programme.delivery ?? null,
+        delivery: localizeProgrammeDelivery(locale, programme.delivery),
         image: programme.image
           ? {
               src: buildSanityProgrammeImageUrl(programme.image),

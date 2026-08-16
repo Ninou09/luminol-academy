@@ -1,10 +1,24 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const { getPublicProgrammesMock } = vi.hoisted(() => ({
+  getPublicProgrammesMock: vi.fn(),
+}));
+
+vi.mock('../lib/sanity', () => ({
+  getPublicProgrammes: getPublicProgrammesMock,
+}));
+
 import sitemap from './sitemap';
 
 const fallbackOrigin = 'https://luminol-academy-web.vercel.app';
 
+beforeEach(() => {
+  getPublicProgrammesMock.mockResolvedValue(null);
+});
+
 afterEach(() => {
   vi.unstubAllEnvs();
+  vi.clearAllMocks();
 });
 
 describe('public sitemap localization', () => {
@@ -39,5 +53,31 @@ describe('public sitemap localization', () => {
       en: `${fallbackOrigin}/en`,
       'x-default': `${fallbackOrigin}/en`,
     });
+  });
+
+  it('adds governed programme detail routes with localized alternates', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://academy.example.com');
+    getPublicProgrammesMock.mockResolvedValue([
+      { slug: { current: 'acceptance-commitment-therapy-act' } },
+      { slug: { current: '../draft-programme' } },
+    ]);
+
+    const entries = await sitemap();
+    const arabicAct = entries.find(
+      (entry) =>
+        entry.url ===
+        'https://academy.example.com/ar/programmes/acceptance-commitment-therapy-act',
+    );
+
+    expect(arabicAct?.alternates?.languages).toEqual({
+      ar: 'https://academy.example.com/ar/programmes/acceptance-commitment-therapy-act',
+      fr: 'https://academy.example.com/fr/programmes/acceptance-commitment-therapy-act',
+      en: 'https://academy.example.com/en/programmes/acceptance-commitment-therapy-act',
+      'x-default':
+        'https://academy.example.com/en/programmes/acceptance-commitment-therapy-act',
+    });
+    expect(entries.some((entry) => entry.url.includes('draft-programme'))).toBe(
+      false,
+    );
   });
 });
