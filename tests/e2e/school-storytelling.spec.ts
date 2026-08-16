@@ -80,6 +80,27 @@ test('Arabic school storytelling remains RTL and mobile-safe', async ({
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
 });
 
+test('Arabic school primary CTA keeps readable foreground contrast', async ({
+  page,
+}) => {
+  await page.goto('/ar/schools/psychology');
+
+  const primaryCta = page.getByRole('link', { name: /استكشف البرامج/ });
+  await expect(primaryCta).toBeVisible();
+  await expect(primaryCta).toContainText('استكشف البرامج');
+
+  const colors = await primaryCta.evaluate((element) => {
+    const styles = window.getComputedStyle(element);
+    return {
+      foreground: styles.color,
+      background: styles.backgroundColor,
+    };
+  });
+
+  expect(colors.foreground).toBe('rgb(250, 250, 248)');
+  expect(colors.foreground).not.toBe(colors.background);
+});
+
 test('localized school pages publish matching breadcrumb structured data', async ({
   page,
 }) => {
