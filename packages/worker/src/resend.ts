@@ -16,21 +16,24 @@ export function createResendEmailProvider({
 }: ResendEmailProviderOptions): EmailProvider {
   return {
     async send(input) {
-      const response = await fetchImplementation('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-          'Idempotency-Key': input.idempotencyKey,
+      const response = await fetchImplementation(
+        'https://api.resend.com/emails',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+            'Idempotency-Key': input.idempotencyKey,
+          },
+          body: JSON.stringify({
+            from,
+            to: [input.to],
+            subject: input.subject,
+            text: input.text,
+          }),
+          signal: AbortSignal.timeout(timeoutMs),
         },
-        body: JSON.stringify({
-          from,
-          to: [input.to],
-          subject: input.subject,
-          text: input.text,
-        }),
-        signal: AbortSignal.timeout(timeoutMs),
-      });
+      );
 
       if (!response.ok)
         throw new Error(`Email provider returned ${response.status}`);
