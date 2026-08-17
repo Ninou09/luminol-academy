@@ -19,7 +19,9 @@ describe('instructor cohort analytics localization', () => {
 
   it('keeps Arabic and French labels localized', () => {
     expect(getInstructorCohortAnalyticsCopy('ar').title).toContain('المجموعة');
-    expect(getInstructorCohortAnalyticsCopy('ar').attendance).toContain('الحضور');
+    expect(getInstructorCohortAnalyticsCopy('ar').attendance).toContain(
+      'الحضور',
+    );
     expect(getInstructorCohortAnalyticsCopy('fr').title).toContain('groupe');
     expect(getInstructorCohortAnalyticsCopy('fr').attendance).toContain(
       'présence',
