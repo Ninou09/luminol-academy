@@ -26,6 +26,7 @@ import { getSchools } from '../../../lib/schools';
 import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
 import {
   buildBreadcrumbJsonLd,
+  buildCourseJsonLd,
   serializeJsonLd,
 } from '../../../lib/structured-data';
 import styles from './page.module.css';
@@ -180,6 +181,7 @@ export default async function ProgrammeDetailPage({
   );
   const deliveryLabel = localizeProgrammeDelivery(locale, programme.delivery);
   const programmePathname = `/programmes/${programme.slug.current}`;
+  const localizedProgrammeHref = localizeHref(locale, programmePathname);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     {
       name: copy.catalogue,
@@ -191,9 +193,18 @@ export default async function ProgrammeDetailPage({
     },
     {
       name: programme.title,
-      href: localizeHref(locale, programmePathname),
+      href: localizedProgrammeHref,
     },
   ]);
+  const courseJsonLd = buildCourseJsonLd({
+    name: programme.title,
+    description: programme.summary,
+    href: localizedProgrammeHref,
+    languages: programme.languages,
+    ...(programme.image
+      ? { image: buildSanityProgrammeImageUrl(programme.image) }
+      : {}),
+  });
 
   return (
     <>
@@ -202,6 +213,11 @@ export default async function ProgrammeDetailPage({
         type="application/ld+json"
         data-breadcrumb-jsonld
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        data-course-jsonld
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(courseJsonLd) }}
       />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero}>
