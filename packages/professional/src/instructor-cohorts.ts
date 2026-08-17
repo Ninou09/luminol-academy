@@ -8,7 +8,9 @@ export const INSTRUCTOR_COHORT_STATUSES = [
 ] as const;
 
 export const instructorCohortStatusSchema = z.enum(INSTRUCTOR_COHORT_STATUSES);
-export type InstructorCohortStatus = z.infer<typeof instructorCohortStatusSchema>;
+export type InstructorCohortStatus = z.infer<
+  typeof instructorCohortStatusSchema
+>;
 
 export const INSTRUCTOR_ASSIGNMENT_ROLES = [
   'LEAD',
@@ -116,7 +118,9 @@ export function decideInstructorCohortAccess(
   return { allowed: true, authority: 'instructor-assignment' };
 }
 
-export function assertInstructorCohortAccess(input: InstructorCohortAccessInput) {
+export function assertInstructorCohortAccess(
+  input: InstructorCohortAccessInput,
+) {
   const decision = decideInstructorCohortAccess(input);
   if (!decision.allowed) {
     throw new Error(`Instructor cohort access denied: ${decision.reason}`);
