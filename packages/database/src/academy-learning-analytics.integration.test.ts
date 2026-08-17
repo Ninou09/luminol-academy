@@ -191,42 +191,49 @@ suite('Milestone 17 academy analytics read model', () => {
       where: { courseId: { in: [visibleCourseId, suppressedCourseId] } },
     });
     await db.course.deleteMany({
-      where: { id: { in: [visibleCourseId, suppressedCourseId, draftCourseId] } },
+      where: {
+        id: { in: [visibleCourseId, suppressedCourseId, draftCourseId] },
+      },
     });
     await db.user.deleteMany({ where: { id: { in: userIds } } });
     await db.$disconnect();
   });
 
-  test('returns detailed aggregates only for sufficiently large published programmes', async () => {
-    const analytics = await getAcademyProgrammeAnalytics(now);
-    const visible = analytics.find(({ courseId }) => courseId === visibleCourseId);
-    const suppressed = analytics.find(
-      ({ courseId }) => courseId === suppressedCourseId,
-    );
+  test(
+    'returns detailed aggregates only for sufficiently large published programmes',
+    async () => {
+      const analytics = await getAcademyProgrammeAnalytics(now);
+      const visible = analytics.find(
+        ({ courseId }) => courseId === visibleCourseId,
+      );
+      const suppressed = analytics.find(
+        ({ courseId }) => courseId === suppressedCourseId,
+      );
 
-    expect(visible).toEqual({
-      state: 'visible',
-      courseId: visibleCourseId,
-      title: `A visible programme ${suffix}`,
-      participantCount: ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE,
-      minimumGroupSize: ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE,
-      activeEnrollments: 2,
-      completedEnrollments: 2,
-      recentLearningRecords: 2,
-      activeCertificates: 2,
-      reviewRequiredAttempts: 2,
-    });
-    expect(suppressed).toEqual({
-      state: 'suppressed',
-      courseId: suppressedCourseId,
-      title: `B suppressed programme ${suffix}`,
-      participantCount: ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE - 1,
-      minimumGroupSize: ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE,
-    });
-    expect(
-      analytics.some(({ courseId }) => courseId === draftCourseId),
-    ).toBe(false);
-  });
+      expect(visible).toEqual({
+        state: 'visible',
+        courseId: visibleCourseId,
+        title: `A visible programme ${suffix}`,
+        participantCount: ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE,
+        minimumGroupSize: ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE,
+        activeEnrollments: 2,
+        completedEnrollments: 2,
+        recentLearningRecords: 2,
+        activeCertificates: 2,
+        reviewRequiredAttempts: 2,
+      });
+      expect(suppressed).toEqual({
+        state: 'suppressed',
+        courseId: suppressedCourseId,
+        title: `B suppressed programme ${suffix}`,
+        participantCount: ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE - 1,
+        minimumGroupSize: ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE,
+      });
+      expect(
+        analytics.some(({ courseId }) => courseId === draftCourseId),
+      ).toBe(false);
+    },
+  );
 
   test('rejects an invalid activity-window anchor', async () => {
     await expect(
