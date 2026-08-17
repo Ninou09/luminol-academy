@@ -87,9 +87,7 @@ export default async function CohortSessionOperationsPage() {
                     {cohort.sessions.map((session) => (
                       <article key={session.id}>
                         <div>
-                          <h3 dir="auto">
-                            {session.title || copy.sessions}
-                          </h3>
+                          <h3 dir="auto">{session.title || copy.sessions}</h3>
                           <p>
                             {enumLabel(session.status)} ·{' '}
                             {date(session.startsAt, session.timeZone)} —{' '}
