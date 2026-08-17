@@ -43,7 +43,8 @@ describe('analytics audience boundaries', () => {
   });
 
   it('returns only metrics available to the requested audience', () => {
-    const managerMetrics = getAccessibleAnalyticsMetrics('organization-manager');
+    const managerMetrics =
+      getAccessibleAnalyticsMetrics('organization-manager');
 
     expect(managerMetrics).toContain('organization-seat-utilization');
     expect(managerMetrics).toContain('organization-aggregate-progress');
