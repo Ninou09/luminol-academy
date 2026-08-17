@@ -17,7 +17,9 @@ describe('analytics audience boundaries', () => {
 
     expect(canAccessAnalyticsMetric('learner-self', metric)).toBe(true);
     expect(canAccessAnalyticsMetric('academy-admin', metric)).toBe(false);
-    expect(canAccessAnalyticsMetric('organization-manager', metric)).toBe(false);
+    expect(canAccessAnalyticsMetric('organization-manager', metric)).toBe(
+      false,
+    );
   });
 
   it('separates organization aggregates from learner analytics', () => {
