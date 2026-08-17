@@ -5,6 +5,7 @@ import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
 import { getLearnerOutcomesCopy } from '../lib/learner-outcomes';
+import { getOrganizationAnalyticsCopy } from '../lib/organization-analytics-localization';
 import { getOrganizationManagerCopy } from '../lib/organization-manager-localization';
 import { hasOrganizationManagerAccess } from '../lib/organization-manager.server';
 import { getPortalCopy } from '../lib/portal-localization';
@@ -17,6 +18,7 @@ export async function PortalHeader() {
   const copy = getPortalCopy(locale);
   const outcomesCopy = getLearnerOutcomesCopy(locale);
   const managerCopy = getOrganizationManagerCopy(locale);
+  const organizationAnalyticsCopy = getOrganizationAnalyticsCopy(locale);
   const common = getCommonDictionary(locale);
   const canManageOrganization = await hasOrganizationManagerAccess(user.id);
 
@@ -39,9 +41,14 @@ export async function PortalHeader() {
             {copy.shell.search}
           </Link>
           {canManageOrganization ? (
-            <Link href={localizeHref(locale, '/organization')}>
-              {managerCopy.nav}
-            </Link>
+            <>
+              <Link href={localizeHref(locale, '/organization')}>
+                {managerCopy.nav}
+              </Link>
+              <Link href={localizeHref(locale, '/organization/analytics')}>
+                {organizationAnalyticsCopy.title}
+              </Link>
+            </>
           ) : null}
           <Link href={localizeHref(locale, '/notifications')}>
             {copy.shell.notifications}
