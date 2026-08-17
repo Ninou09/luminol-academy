@@ -80,7 +80,8 @@ const ACADEMY_ANALYTICS_COPY: Record<Locale, AcademyAnalyticsCopy> = {
     suppressedTitle: 'Petits groupes protégés',
     suppressedReason:
       "Les métriques détaillées restent masquées jusqu'à ce que le programme atteigne le groupe minimal de confidentialité.",
-    noProgrammes: "Aucun programme publié n'est encore disponible pour l'analytique.",
+    noProgrammes:
+      "Aucun programme publié n'est encore disponible pour l'analytique.",
     privacyTitle: 'Limite de confidentialité',
     privacyBody:
       "Cette vue n'expose jamais l'identité des apprenants, les réponses ou scores d'évaluation, le contenu psychologique, les demandes, les détails de paiement, les métadonnées privées des certificats, les textes rédigés par les apprenants, les recherches brutes, les identifiants de session ou les adresses IP. Elle ne classe pas les apprenants et n'infère aucun diagnostic, bien-être, intelligence, personnalité ou employabilité.",
