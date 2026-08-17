@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   buildBreadcrumbJsonLd,
+  buildCourseJsonLd,
   buildOrganizationJsonLd,
   serializeJsonLd,
 } from './structured-data';
@@ -72,6 +73,48 @@ describe('Breadcrumb structured data', () => {
     expect(jsonLd.itemListElement[1]?.item).toBe(
       'https://luminol-academy-web.vercel.app/ar/schools/psychology',
     );
+  });
+});
+
+describe('Course structured data', () => {
+  it('uses only governed programme fields and links the verified provider', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://academy.example.com/base/');
+
+    expect(
+      buildCourseJsonLd({
+        name: 'ACT Essentials',
+        description: 'A governed public programme summary.',
+        href: '/fr/programmes/act-essentials',
+        languages: ['ar', 'fr'],
+        image: 'https://cdn.sanity.io/images/example/course.jpg',
+      }),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'Course',
+      name: 'ACT Essentials',
+      description: 'A governed public programme summary.',
+      url: 'https://academy.example.com/fr/programmes/act-essentials',
+      provider: {
+        '@type': 'EducationalOrganization',
+        '@id': 'https://academy.example.com/#organization',
+        name: 'Luminol Academy',
+        url: 'https://academy.example.com',
+      },
+      inLanguage: ['ar', 'fr'],
+      image: 'https://cdn.sanity.io/images/example/course.jpg',
+    });
+  });
+
+  it('omits optional course fields when governed data does not provide them', () => {
+    const jsonLd = buildCourseJsonLd({
+      name: 'Programme',
+      description: 'Summary',
+      href: '/programmes/programme',
+      languages: [],
+    });
+
+    expect(jsonLd).not.toHaveProperty('inLanguage');
+    expect(jsonLd).not.toHaveProperty('image');
   });
 });
 
