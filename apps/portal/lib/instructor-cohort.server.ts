@@ -15,6 +15,12 @@ function normalizeCohortId(cohortId: string) {
   return normalized;
 }
 
+function normalizeSessionId(sessionId: string) {
+  const normalized = sessionId.trim();
+  if (!normalized) throw new TypeError('sessionId is required');
+  return normalized;
+}
+
 export async function getAuthorizedInstructorCohortTeachingView(
   cohortId: string,
 ) {
@@ -45,6 +51,20 @@ export async function getAuthorizedInstructorCohortTeachingView(
       startsAt: true,
       endsAt: true,
       course: { select: { id: true, title: true } },
+      sessions: {
+        where: { status: { not: 'CANCELLED' } },
+        take: 24,
+        orderBy: [{ startsAt: 'desc' }, { id: 'desc' }],
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          startsAt: true,
+          endsAt: true,
+          timeZone: true,
+          _count: { select: { attendance: true } },
+        },
+      },
       enrollments: {
         where: {
           active: true,
@@ -140,6 +160,15 @@ export async function getAuthorizedInstructorCohortTeachingView(
       courseTitle: cohort.course.title,
     },
     assignmentRole: assignment.role,
+    sessions: cohort.sessions.map((session) => ({
+      id: session.id,
+      title: session.title,
+      status: session.status,
+      startsAt: session.startsAt,
+      endsAt: session.endsAt,
+      timeZone: session.timeZone,
+      attendanceCount: session._count.attendance,
+    })),
     learners: cohort.enrollments.map(({ id, joinedAt, enrollment }) => {
       const progress = progressByLearner.get(enrollment.user.id) ?? {
         completedLessons: 0,
@@ -153,6 +182,121 @@ export async function getAuthorizedInstructorCohortTeachingView(
         enrollmentStatus: enrollment.status,
         joinedAt,
         ...progress,
+      };
+    }),
+  };
+}
+
+export async function getAuthorizedInstructorSessionAttendanceView(
+  cohortId: string,
+  sessionId: string,
+) {
+  const user = await requireUser();
+  const normalizedCohortId = normalizeCohortId(cohortId);
+  const normalizedSessionId = normalizeSessionId(sessionId);
+  const assignment = await getActiveInstructorCohortAssignment(
+    user.id,
+    normalizedCohortId,
+  );
+
+  if (!assignment) return null;
+
+  assertInstructorCohortAccess({
+    actorUserId: user.id,
+    cohortId: normalizedCohortId,
+    assignment,
+  });
+
+  const session = await db.cohortSession.findFirst({
+    where: {
+      id: normalizedSessionId,
+      cohortId: normalizedCohortId,
+      status: { not: 'CANCELLED' },
+      cohort: { status: { not: 'CANCELLED' } },
+    },
+    select: {
+      id: true,
+      title: true,
+      status: true,
+      startsAt: true,
+      endsAt: true,
+      timeZone: true,
+      attendance: {
+        select: {
+          cohortEnrollmentId: true,
+          status: true,
+          recordedAt: true,
+        },
+      },
+      cohort: {
+        select: {
+          id: true,
+          name: true,
+          course: { select: { title: true } },
+          enrollments: {
+            where: {
+              active: true,
+              enrollment: {
+                status: EnrollmentStatus.ACTIVE,
+                user: { deletedAt: null },
+              },
+            },
+            orderBy: [{ joinedAt: 'asc' }, { id: 'asc' }],
+            select: {
+              id: true,
+              enrollment: {
+                select: {
+                  status: true,
+                  user: {
+                    select: {
+                      id: true,
+                      firstName: true,
+                      lastName: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!session) return null;
+
+  const attendanceByMembership = new Map(
+    session.attendance.map((attendance) => [
+      attendance.cohortEnrollmentId,
+      attendance,
+    ]),
+  );
+
+  return {
+    assignmentRole: assignment.role,
+    cohort: {
+      id: session.cohort.id,
+      name: session.cohort.name,
+      courseTitle: session.cohort.course.title,
+    },
+    session: {
+      id: session.id,
+      title: session.title,
+      status: session.status,
+      startsAt: session.startsAt,
+      endsAt: session.endsAt,
+      timeZone: session.timeZone,
+    },
+    learners: session.cohort.enrollments.map(({ id, enrollment }) => {
+      const attendance = attendanceByMembership.get(id);
+      return {
+        cohortEnrollmentId: id,
+        learnerUserId: enrollment.user.id,
+        firstName: enrollment.user.firstName,
+        lastName: enrollment.user.lastName,
+        enrollmentStatus: enrollment.status,
+        attendanceStatus: attendance?.status ?? null,
+        attendanceRecordedAt: attendance?.recordedAt ?? null,
       };
     }),
   };

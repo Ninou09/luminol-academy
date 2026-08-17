@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { PortalHeader } from '../../../../components/portal-header';
+import { getInstructorAttendanceCopy } from '../../../../lib/instructor-attendance-localization';
 import { getInstructorCohortAnalyticsCopy } from '../../../../lib/instructor-cohort-analytics-localization';
 import { getInstructorCohortCopy } from '../../../../lib/instructor-cohort-localization';
 import { getAuthorizedInstructorCohortTeachingView } from '../../../../lib/instructor-cohort.server';
@@ -31,6 +32,7 @@ export default async function InstructorCohortPage({
   const { cohort: cohortId } = await params;
   const locale = await getPortalRequestLocale();
   const copy = getInstructorCohortCopy(locale);
+  const attendanceCopy = getInstructorAttendanceCopy(locale);
   const analyticsCopy = getInstructorCohortAnalyticsCopy(locale);
   const view = await getAuthorizedInstructorCohortTeachingView(cohortId);
 
@@ -42,6 +44,15 @@ export default async function InstructorCohortPage({
       day: 'numeric',
       month: 'long',
       year: 'numeric',
+    });
+  const sessionDate = (value: Date, timeZone: string) =>
+    formatLocalizedDate(value, locale, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone,
     });
   const schedule = view.cohort.startsAt
     ? `${copy.starts}: ${date(view.cohort.startsAt)}${
@@ -106,6 +117,58 @@ export default async function InstructorCohortPage({
             </div>
           </div>
           <p>{schedule}</p>
+        </section>
+
+        <section
+          className="dashboard-section"
+          aria-labelledby="cohort-sessions-title"
+        >
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">{attendanceCopy.attendance}</p>
+              <h2 id="cohort-sessions-title">{attendanceCopy.sessions}</h2>
+            </div>
+          </div>
+
+          {view.sessions.length > 0 ? (
+            <div className="course-grid">
+              {view.sessions.map((session) => (
+                <article className="course-card" key={session.id}>
+                  <div className="course-content">
+                    <p className="eyebrow">
+                      {attendanceCopy.sessionStatuses[session.status]}
+                    </p>
+                    <h3 dir="auto">
+                      {session.title || attendanceCopy.session}
+                    </h3>
+                    <p>
+                      {attendanceCopy.starts}:{' '}
+                      {sessionDate(session.startsAt, session.timeZone)} ·{' '}
+                      {attendanceCopy.ends}:{' '}
+                      {sessionDate(session.endsAt, session.timeZone)}
+                    </p>
+                    <p>
+                      {attendanceCopy.attendanceCount}:{' '}
+                      {number(session.attendanceCount)}
+                    </p>
+                    <Link
+                      className="course-link"
+                      href={localizeHref(
+                        locale,
+                        `/instructor/cohorts/${view.cohort.id}/sessions/${session.id}`,
+                      )}
+                    >
+                      {attendanceCopy.openAttendance}
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <p>{attendanceCopy.noSessions}</p>
+            </div>
+          )}
         </section>
 
         <section
