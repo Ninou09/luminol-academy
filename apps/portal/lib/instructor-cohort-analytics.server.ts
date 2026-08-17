@@ -34,7 +34,10 @@ function activityCutoff(now: Date) {
 }
 
 function attendanceCount(
-  groups: readonly { status: CohortAttendanceStatus; _count: { _all: number } }[],
+  groups: readonly {
+    status: CohortAttendanceStatus;
+    _count: { _all: number };
+  }[],
   status: CohortAttendanceStatus,
 ) {
   return groups.find((group) => group.status === status)?._count._all ?? 0;
@@ -115,7 +118,9 @@ export async function getAuthorizedInstructorCohortAnalytics(
   const learnerIds = cohort.enrollments.map(
     ({ enrollment }) => enrollment.userId,
   );
-  const enrollmentIds = cohort.enrollments.map(({ enrollmentId }) => enrollmentId);
+  const enrollmentIds = cohort.enrollments.map(
+    ({ enrollmentId }) => enrollmentId,
+  );
   const participantCount = learnerIds.length;
 
   if (participantCount < INSTRUCTOR_COHORT_ANALYTICS_MINIMUM_GROUP_SIZE) {
