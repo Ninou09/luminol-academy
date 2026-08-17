@@ -88,21 +88,9 @@ suite('Milestone 20 professional submission persistence', () => {
   });
 
   afterAll(async () => {
-    await db.$executeRaw`DELETE FROM "ProfessionalSubmissionAuditEvent" WHERE "submissionId" = ${submissionId}`;
-    await db.$executeRaw`DELETE FROM "ProfessionalProjectSubmission" WHERE "id" = ${submissionId}`;
-    await db.$executeRaw`
-      DELETE FROM "ProfessionalProject"
-      WHERE "id" IN (${projectId}, ${otherProjectId})
-    `;
-    await db.enrollment.deleteMany({
-      where: { id: { in: [enrollmentId, otherEnrollmentId].filter(Boolean) } },
-    });
-    await db.user.deleteMany({
-      where: { id: { in: [learnerId, reviewerId, otherLearnerId] } },
-    });
-    await db.course.deleteMany({
-      where: { id: { in: [courseId, otherCourseId] } },
-    });
+    // Test IDs are unique and CI runs against an ephemeral database. Keep the
+    // append-only audit/submission history intact instead of weakening the
+    // production immutability contract for teardown convenience.
     await db.$disconnect();
   });
 
