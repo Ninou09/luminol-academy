@@ -24,6 +24,15 @@ export type CohortOperationsCopy = {
   noSchedule: string;
   instructors: string;
   learners: string;
+  sessions: string;
+  sessionTitle: string;
+  timeZone: string;
+  createSession: string;
+  rescheduleSession: string;
+  cancelSession: string;
+  attendanceRecords: string;
+  noSessions: string;
+  sessionNotice: string;
   assignInstructor: string;
   reassignInstructor: string;
   endAssignment: string;
@@ -43,10 +52,10 @@ export type CohortOperationsCopy = {
 
 const COPY: Record<Locale, CohortOperationsCopy> = {
   en: {
-    eyebrow: 'Milestone 18 · Delivery operations',
-    title: 'Cohorts and instructor delivery',
+    eyebrow: 'Milestone 19 · Delivery operations',
+    title: 'Cohorts, sessions and instructor delivery',
     intro:
-      'Academy-authorized operations for cohort schedules, instructor assignment history and learner cohort placement. Enrolment remains the learning source of truth.',
+      'Academy-authorized operations for cohort schedules, first-party sessions, instructor assignment history and learner cohort placement. Enrolment remains the learning source of truth.',
     back: 'Back to administration',
     createTitle: 'Create planned cohort',
     cohortName: 'Cohort name',
@@ -67,6 +76,16 @@ const COPY: Record<Locale, CohortOperationsCopy> = {
     noSchedule: 'Schedule not set',
     instructors: 'Active instructors',
     learners: 'Active cohort learners',
+    sessions: 'Sessions',
+    sessionTitle: 'Session title (optional)',
+    timeZone: 'IANA timezone',
+    createSession: 'Create session',
+    rescheduleSession: 'Reschedule session',
+    cancelSession: 'Cancel session',
+    attendanceRecords: 'Attendance records',
+    noSessions: 'No first-party sessions have been scheduled.',
+    sessionNotice:
+      'Session times are stored as exact instants and displayed with their saved IANA timezone. Sessions may be created or rescheduled only while the cohort is planned or active.',
     assignInstructor: 'Assign instructor',
     reassignInstructor: 'Replace assignment',
     endAssignment: 'End assignment',
@@ -86,10 +105,10 @@ const COPY: Record<Locale, CohortOperationsCopy> = {
       'Reassignment and learner movement end the previous persisted relationship and create a new one; enrolment and course completion records are not rewritten.',
   },
   fr: {
-    eyebrow: 'Jalon 18 · Opérations de prestation',
-    title: 'Groupes et prestation des formateurs',
+    eyebrow: 'Jalon 19 · Opérations de prestation',
+    title: 'Groupes, séances et prestation des formateurs',
     intro:
-      'Opérations autorisées par l’académie pour les calendriers des groupes, l’historique des affectations des formateurs et le placement des apprenants. L’inscription reste la source de vérité pédagogique.',
+      'Opérations autorisées par l’académie pour les calendriers des groupes, les séances de première partie, l’historique des affectations des formateurs et le placement des apprenants. L’inscription reste la source de vérité pédagogique.',
     back: 'Retour à l’administration',
     createTitle: 'Créer un groupe planifié',
     cohortName: 'Nom du groupe',
@@ -110,6 +129,16 @@ const COPY: Record<Locale, CohortOperationsCopy> = {
     noSchedule: 'Calendrier non défini',
     instructors: 'Formateurs actifs',
     learners: 'Apprenants actifs du groupe',
+    sessions: 'Séances',
+    sessionTitle: 'Titre de la séance (facultatif)',
+    timeZone: 'Fuseau horaire IANA',
+    createSession: 'Créer la séance',
+    rescheduleSession: 'Replanifier la séance',
+    cancelSession: 'Annuler la séance',
+    attendanceRecords: 'Présences enregistrées',
+    noSessions: 'Aucune séance de première partie n’est planifiée.',
+    sessionNotice:
+      'Les horaires sont enregistrés comme des instants exacts et affichés avec le fuseau IANA sauvegardé. Une séance ne peut être créée ou replanifiée que pour un groupe planifié ou actif.',
     assignInstructor: 'Affecter un formateur',
     reassignInstructor: 'Remplacer l’affectation',
     endAssignment: 'Terminer l’affectation',
@@ -129,10 +158,10 @@ const COPY: Record<Locale, CohortOperationsCopy> = {
       'Le remplacement d’un formateur ou le déplacement d’un apprenant clôt la relation persistée précédente et en crée une nouvelle ; les inscriptions et achèvements de cours ne sont pas réécrits.',
   },
   ar: {
-    eyebrow: 'المرحلة 18 · عمليات تقديم البرامج',
-    title: 'المجموعات وإدارة تقديم المدرّسين',
+    eyebrow: 'المرحلة 19 · عمليات تقديم البرامج',
+    title: 'المجموعات والجلسات وإدارة تقديم المدرّسين',
     intro:
-      'عمليات مخوّلة من إدارة الأكاديمية لجداول المجموعات وسجل إسناد المدرّسين ووضع المتعلمين داخل المجموعات. يبقى التسجيل هو مصدر الحقيقة للتعلّم.',
+      'عمليات مخوّلة من إدارة الأكاديمية لجداول المجموعات والجلسات المسجلة داخل المنصة وسجل إسناد المدرّسين ووضع المتعلمين داخل المجموعات. يبقى التسجيل هو مصدر الحقيقة للتعلّم.',
     back: 'العودة إلى الإدارة',
     createTitle: 'إنشاء مجموعة مخططة',
     cohortName: 'اسم المجموعة',
@@ -153,6 +182,16 @@ const COPY: Record<Locale, CohortOperationsCopy> = {
     noSchedule: 'لم يُحدد الجدول',
     instructors: 'المدرّسون النشطون',
     learners: 'متعلمو المجموعة النشطون',
+    sessions: 'الجلسات',
+    sessionTitle: 'عنوان الجلسة (اختياري)',
+    timeZone: 'المنطقة الزمنية IANA',
+    createSession: 'إنشاء جلسة',
+    rescheduleSession: 'إعادة جدولة الجلسة',
+    cancelSession: 'إلغاء الجلسة',
+    attendanceRecords: 'سجلات الحضور',
+    noSessions: 'لم تتم جدولة جلسات داخل المنصة بعد.',
+    sessionNotice:
+      'تُحفظ أوقات الجلسات كلحظات زمنية دقيقة وتُعرض وفق المنطقة الزمنية IANA المحفوظة. لا يمكن إنشاء الجلسة أو إعادة جدولتها إلا عندما تكون المجموعة مخططة أو نشطة.',
     assignInstructor: 'إسناد مدرّس',
     reassignInstructor: 'استبدال الإسناد',
     endAssignment: 'إنهاء الإسناد',

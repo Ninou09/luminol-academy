@@ -5,6 +5,7 @@ import { db } from '@luminol/database';
 const COHORT_LIMIT = 50;
 const OPTION_LIMIT = 100;
 const ENROLLMENT_OPTION_LIMIT = 200;
+const SESSION_LIMIT = 100;
 
 export async function getCohortOperationsDashboard() {
   const now = new Date();
@@ -21,6 +22,19 @@ export async function getCohortOperationsDashboard() {
         endsAt: true,
         courseId: true,
         course: { select: { title: true } },
+        sessions: {
+          take: SESSION_LIMIT,
+          orderBy: [{ startsAt: 'asc' }, { id: 'asc' }],
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            startsAt: true,
+            endsAt: true,
+            timeZone: true,
+            _count: { select: { attendance: true } },
+          },
+        },
         instructorAssignments: {
           where: { active: true },
           take: OPTION_LIMIT,
@@ -65,6 +79,7 @@ export async function getCohortOperationsDashboard() {
           select: {
             instructorAssignments: { where: { active: true } },
             enrollments: { where: { active: true } },
+            sessions: true,
           },
         },
       },
@@ -145,6 +160,7 @@ export async function getCohortOperationsDashboard() {
       cohorts: COHORT_LIMIT,
       options: OPTION_LIMIT,
       enrollmentOptions: ENROLLMENT_OPTION_LIMIT,
+      sessions: SESSION_LIMIT,
     },
   };
 }
