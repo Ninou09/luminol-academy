@@ -5,6 +5,7 @@ import { db } from '@luminol/database';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { auditCohortDelivery } from '../../lib/cohort-delivery-audit.server';
 import { parseOptionalLocalDateTime } from '../../lib/cohort-operations';
 
 const scheduleSchema = z.object({
@@ -12,7 +13,7 @@ const scheduleSchema = z.object({
 });
 
 export async function updateCohortSchedule(formData: FormData) {
-  await requirePlatformPermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const { cohortId } = scheduleSchema.parse({
     cohortId: formData.get('cohortId'),
   });
@@ -23,16 +24,27 @@ export async function updateCohortSchedule(formData: FormData) {
     throw new Error('Cohort end must not precede start');
   }
 
-  const updated = await db.cohort.updateMany({
-    where: {
-      id: cohortId,
-      status: { in: ['PLANNED', 'ACTIVE'] },
-    },
-    data: { startsAt, endsAt },
+  await db.$transaction(async (transaction) => {
+    const updated = await transaction.cohort.updateMany({
+      where: {
+        id: cohortId,
+        status: { in: ['PLANNED', 'ACTIVE'] },
+      },
+      data: { startsAt, endsAt },
+    });
+    if (updated.count !== 1) {
+      throw new Error('Mutable cohort not found');
+    }
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohortId,
+      'cohort.schedule.updated',
+      'cohort',
+      cohortId,
+    );
   });
-  if (updated.count !== 1) {
-    throw new Error('Mutable cohort not found');
-  }
 
   revalidatePath('/cohorts');
   revalidatePath('/instructor');
