@@ -24,7 +24,8 @@ function normalizeCohortId(cohortId: string) {
 
 function activityCutoff(now: Date) {
   const timestamp = now.getTime();
-  if (!Number.isFinite(timestamp)) throw new TypeError('now must be a valid date');
+  if (!Number.isFinite(timestamp))
+    throw new TypeError('now must be a valid date');
   return new Date(
     timestamp - ACADEMY_ANALYTICS_ACTIVITY_WINDOW_DAYS * 24 * 60 * 60 * 1000,
   );

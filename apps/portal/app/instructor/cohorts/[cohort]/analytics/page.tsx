@@ -1,7 +1,4 @@
-import {
-  formatLocalizedNumber,
-  localizeHref,
-} from '@luminol/localization';
+import { formatLocalizedNumber, localizeHref } from '@luminol/localization';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -25,7 +22,10 @@ export default async function InstructorCohortAnalyticsPage({
   if (!view) notFound();
 
   const number = (value: number) => formatLocalizedNumber(value, locale);
-  const cohortHref = localizeHref(locale, `/instructor/cohorts/${view.cohort.id}`);
+  const cohortHref = localizeHref(
+    locale,
+    `/instructor/cohorts/${view.cohort.id}`,
+  );
 
   return (
     <main>
@@ -53,15 +53,11 @@ export default async function InstructorCohortAnalyticsPage({
             <div className="section-heading">
               <div>
                 <p className="eyebrow">{copy.privacyTitle}</p>
-                <h2 id="analytics-suppressed-title">
-                  {copy.suppressedTitle}
-                </h2>
+                <h2 id="analytics-suppressed-title">{copy.suppressedTitle}</h2>
               </div>
             </div>
             <div className="empty-state">
-              <p>
-                {copy.suppressedBody(view.analytics.minimumGroupSize)}
-              </p>
+              <p>{copy.suppressedBody(view.analytics.minimumGroupSize)}</p>
             </div>
           </section>
         ) : (
