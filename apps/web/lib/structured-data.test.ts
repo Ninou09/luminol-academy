@@ -116,6 +116,27 @@ describe('Course structured data', () => {
     expect(jsonLd).not.toHaveProperty('inLanguage');
     expect(jsonLd).not.toHaveProperty('image');
   });
+
+  it('uses the stable fallback origin for the course URL and provider identity', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'not a url');
+
+    const jsonLd = buildCourseJsonLd({
+      name: 'Programme',
+      description: 'Summary',
+      href: '/ar/programmes/programme',
+      languages: ['ar'],
+    });
+
+    expect(jsonLd.url).toBe(
+      'https://luminol-academy-web.vercel.app/ar/programmes/programme',
+    );
+    expect(jsonLd.provider['@id']).toBe(
+      'https://luminol-academy-web.vercel.app/#organization',
+    );
+    expect(jsonLd.provider.url).toBe(
+      'https://luminol-academy-web.vercel.app',
+    );
+  });
 });
 
 describe('JSON-LD serialization', () => {
