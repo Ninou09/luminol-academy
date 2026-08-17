@@ -25,8 +25,6 @@ jobs:
       - run: pnpm install --lockfile-only
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec prettier --write apps/portal/package.json apps/portal/lib/instructor-cohort-analytics.ts apps/portal/lib/instructor-cohort-analytics.server.ts apps/portal/lib/instructor-cohort-analytics-localization.ts apps/portal/lib/instructor-cohort-analytics.test.ts apps/portal/lib/instructor-cohort-analytics-localization.test.ts 'apps/portal/app/instructor/cohorts/[cohort]/page.tsx' 'apps/portal/app/instructor/cohorts/[cohort]/analytics/page.tsx' docs/LEARNING_ANALYTICS.md
-      - run: pnpm --filter @luminol/portal typecheck
-      - run: pnpm --filter @luminol/portal test
       - name: Commit generated lock and formatting
         run: |
           if git diff --quiet; then
@@ -37,3 +35,6 @@ jobs:
           git add pnpm-lock.yaml apps/portal/package.json apps/portal/lib/instructor-cohort-analytics.ts apps/portal/lib/instructor-cohort-analytics.server.ts apps/portal/lib/instructor-cohort-analytics-localization.ts apps/portal/lib/instructor-cohort-analytics.test.ts apps/portal/lib/instructor-cohort-analytics-localization.test.ts 'apps/portal/app/instructor/cohorts/[cohort]/page.tsx' 'apps/portal/app/instructor/cohorts/[cohort]/analytics/page.tsx' docs/LEARNING_ANALYTICS.md
           git commit -m "Format and lock instructor cohort analytics"
           git push origin HEAD:feature/milestone-18-instructor-analytics
+      - run: pnpm db:generate
+      - run: pnpm --filter @luminol/portal typecheck
+      - run: pnpm --filter @luminol/portal test
