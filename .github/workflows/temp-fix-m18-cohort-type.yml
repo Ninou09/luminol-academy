@@ -1,0 +1,36 @@
+name: Temporary Milestone 18 cohort type narrowing
+
+on:
+  push:
+    branches:
+      - feature/milestone-18-cohort-delivery-operations
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-18-cohort-delivery-operations
+      - name: Narrow exact cohort row
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('apps/admin/app/cohorts/actions.ts')
+          text = path.read_text()
+          old = '  return cohorts[0];\n'
+          new = '  return cohorts[0]!;\n'
+          if text.count(old) != 1:
+              raise SystemExit('mutable cohort return anchor changed')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/cohorts/actions.ts
+          git commit -m "Narrow locked cohort row for TypeScript"
+          git push origin HEAD:feature/milestone-18-cohort-delivery-operations
