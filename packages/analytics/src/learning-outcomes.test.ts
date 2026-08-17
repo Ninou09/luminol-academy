@@ -43,9 +43,7 @@ describe('analytics audience boundaries', () => {
   });
 
   it('returns only metrics available to the requested audience', () => {
-    const managerMetrics = getAccessibleAnalyticsMetrics(
-      'organization-manager',
-    );
+    const managerMetrics = getAccessibleAnalyticsMetrics('organization-manager');
 
     expect(managerMetrics).toContain('organization-seat-utilization');
     expect(managerMetrics).toContain('organization-aggregate-progress');
@@ -88,9 +86,7 @@ describe('bounded analytics calculations', () => {
 
   it('rejects negative or non-finite inputs', () => {
     expect(() => calculateBoundedPercentage(-1, 3)).toThrow(RangeError);
-    expect(() => calculateBoundedPercentage(1, Number.NaN)).toThrow(
-      RangeError,
-    );
+    expect(() => calculateBoundedPercentage(1, Number.NaN)).toThrow(RangeError);
   });
 });
 
