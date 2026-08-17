@@ -41,7 +41,8 @@ const COPY: Record<Locale, InstructorAttendanceCopy> = {
     attendance: 'Attendance',
     attendanceCount: 'Recorded attendance',
     openAttendance: 'Open attendance',
-    noSessions: 'No available first-party sessions are recorded for this cohort.',
+    noSessions:
+      'No available first-party sessions are recorded for this cohort.',
     back: 'Back to cohort teaching view',
     course: 'Programme',
     role: 'Your role',
@@ -83,7 +84,8 @@ const COPY: Record<Locale, InstructorAttendanceCopy> = {
     attendance: 'Présence',
     attendanceCount: 'Présences enregistrées',
     openAttendance: 'Ouvrir la présence',
-    noSessions: "Aucune séance interne disponible n'est enregistrée pour ce groupe.",
+    noSessions:
+      "Aucune séance interne disponible n'est enregistrée pour ce groupe.",
     back: "Retour à la vue d'enseignement du groupe",
     course: 'Programme',
     role: 'Votre rôle',
@@ -143,7 +145,8 @@ const COPY: Record<Locale, InstructorAttendanceCopy> = {
     readonlyTitle: 'الحضور للقراءة فقط',
     readonlyBody:
       'يمكن للمراجع الاطلاع على حالة الحضور، لكنه لا يستطيع إنشاء سجلات الحضور أو تعديلها.',
-    noEligibleLearners: 'لا توجد عضويات نشطة لمتعلمين مؤهلين للحضور في هذه الجلسة.',
+    noEligibleLearners:
+      'لا توجد عضويات نشطة لمتعلمين مؤهلين للحضور في هذه الجلسة.',
     futureSession: 'يمكن تسجيل الحضور فقط بعد وقت بداية الجلسة.',
     statusLabels: {
       PRESENT: 'حاضر',
