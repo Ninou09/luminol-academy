@@ -231,6 +231,7 @@ model User {
   organizationMemberships     OrganizationMembership[]
   organizationSeats           OrganizationSeat[]
   cohortInstructorAssignments CohortInstructorAssignment[]
+  cohortDeliveryAuditEvents   CohortDeliveryAuditEvent[]   @relation("CohortDeliveryAuditActor")
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
@@ -693,6 +694,7 @@ model Cohort {
   course                Course                       @relation(fields: [courseId], references: [id], onDelete: Restrict)
   instructorAssignments CohortInstructorAssignment[]
   enrollments           CohortEnrollment[]
+  auditEvents           CohortDeliveryAuditEvent[]
 
   @@index([courseId, status])
   @@index([status, startsAt])
@@ -1101,4 +1103,20 @@ model SearchTelemetryDaily {
 
   @@unique([day, surface, outcome, resultBucket])
   @@index([surface, day])
+}
+
+model CohortDeliveryAuditEvent {
+  id          String   @id
+  cohortId    String
+  actorUserId String
+  action      String
+  subjectType String
+  subjectId   String
+  occurredAt  DateTime @default(now())
+  cohort      Cohort   @relation(fields: [cohortId], references: [id], onDelete: Restrict)
+  actor       User     @relation("CohortDeliveryAuditActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([cohortId, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([subjectType, subjectId, occurredAt])
 }
