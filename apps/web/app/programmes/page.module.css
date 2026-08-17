@@ -143,6 +143,17 @@
   letter-spacing: -0.025em;
 }
 
+.titleLink {
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: 0.2rem;
+}
+
+.titleLink:hover,
+.titleLink:focus-visible {
+  text-decoration: underline;
+}
+
 .card p {
   color: var(--color-brand-ink-soft);
   line-height: 1.65;
