@@ -89,8 +89,8 @@ const COPY: Record<Locale, CohortOperationsCopy> = {
     eyebrow: 'Jalon 18 · Opérations de prestation',
     title: 'Groupes et prestation des formateurs',
     intro:
-      "Opérations autorisées par l’académie pour les calendriers des groupes, l’historique des affectations des formateurs et le placement des apprenants. L’inscription reste la source de vérité pédagogique.",
-    back: "Retour à l’administration",
+      'Opérations autorisées par l’académie pour les calendriers des groupes, l’historique des affectations des formateurs et le placement des apprenants. L’inscription reste la source de vérité pédagogique.',
+    back: 'Retour à l’administration',
     createTitle: 'Créer un groupe planifié',
     cohortName: 'Nom du groupe',
     programme: 'Programme',

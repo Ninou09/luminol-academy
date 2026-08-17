@@ -67,12 +67,19 @@ async function requireAssignableInstructor(
   return instructor;
 }
 
-async function requireMutableCohort(transaction: Transaction, cohortId: string) {
+async function requireMutableCohort(
+  transaction: Transaction,
+  cohortId: string,
+) {
   const cohort = await transaction.cohort.findUnique({
     where: { id: cohortId },
     select: { id: true, courseId: true, status: true },
   });
-  if (!cohort || cohort.status === 'COMPLETED' || cohort.status === 'CANCELLED') {
+  if (
+    !cohort ||
+    cohort.status === 'COMPLETED' ||
+    cohort.status === 'CANCELLED'
+  ) {
     throw new Error('Mutable cohort not found');
   }
   return cohort;
@@ -253,14 +260,16 @@ export async function endCohortInstructorAssignment(formData: FormData) {
     if (!assignment) throw new Error('Active instructor assignment not found');
 
     if (cohort.status === 'ACTIVE' && assignment.role === 'LEAD') {
-      const otherLeadCount = await transaction.cohortInstructorAssignment.count({
-        where: {
-          cohortId: cohort.id,
-          active: true,
-          role: 'LEAD',
-          id: { not: assignment.id },
+      const otherLeadCount = await transaction.cohortInstructorAssignment.count(
+        {
+          where: {
+            cohortId: cohort.id,
+            active: true,
+            role: 'LEAD',
+            id: { not: assignment.id },
+          },
         },
-      });
+      );
       if (otherLeadCount === 0) {
         throw new Error('Active cohort must retain a lead instructor');
       }
@@ -342,7 +351,8 @@ export async function removeEnrollmentFromCohort(formData: FormData) {
     },
     data: { active: false, endedAt: new Date() },
   });
-  if (updated.count !== 1) throw new Error('Active cohort enrollment not found');
+  if (updated.count !== 1)
+    throw new Error('Active cohort enrollment not found');
 
   revalidateCohortSurfaces(input.cohortId);
 }

@@ -103,7 +103,8 @@ export default async function CohortOperationsPage() {
                 <h2>{copy.createTitle}</h2>
               </div>
               <span>
-                {number(dashboard.cohorts.length)} / {number(dashboard.limits.cohorts)}
+                {number(dashboard.cohorts.length)} /{' '}
+                {number(dashboard.limits.cohorts)}
               </span>
             </div>
             <form action={createCohort} className="status-form">
@@ -192,7 +193,8 @@ export default async function CohortOperationsPage() {
                   </div>
                   <span>
                     {copy.learners}: {number(cohort._count.enrollments)} ·{' '}
-                    {copy.instructors}: {number(cohort._count.instructorAssignments)}
+                    {copy.instructors}:{' '}
+                    {number(cohort._count.instructorAssignments)}
                   </span>
                 </div>
 
@@ -203,8 +205,15 @@ export default async function CohortOperationsPage() {
                       {copy.current}: {enumLabel(cohort.status)}
                     </p>
                     {transitions.length > 0 ? (
-                      <form action={transitionCohortStatus} className="status-form">
-                        <input type="hidden" name="cohortId" value={cohort.id} />
+                      <form
+                        action={transitionCohortStatus}
+                        className="status-form"
+                      >
+                        <input
+                          type="hidden"
+                          name="cohortId"
+                          value={cohort.id}
+                        />
                         <label>
                           <span>{copy.transition}</span>
                           <select name="toStatus" defaultValue="" required>
@@ -226,12 +235,22 @@ export default async function CohortOperationsPage() {
                   <section>
                     <h3>{copy.schedule}</h3>
                     <p className="admin-empty">
-                      {cohort.startsAt ? date(cohort.startsAt) : copy.noSchedule}
+                      {cohort.startsAt
+                        ? date(cohort.startsAt)
+                        : copy.noSchedule}
                       {cohort.endsAt ? ` · ${date(cohort.endsAt)}` : ''}
                     </p>
-                    {cohort.status === 'PLANNED' || cohort.status === 'ACTIVE' ? (
-                      <form action={updateCohortSchedule} className="status-form">
-                        <input type="hidden" name="cohortId" value={cohort.id} />
+                    {cohort.status === 'PLANNED' ||
+                    cohort.status === 'ACTIVE' ? (
+                      <form
+                        action={updateCohortSchedule}
+                        className="status-form"
+                      >
+                        <input
+                          type="hidden"
+                          name="cohortId"
+                          value={cohort.id}
+                        />
                         <label>
                           <span>{copy.startsAt}</span>
                           <input
@@ -267,10 +286,12 @@ export default async function CohortOperationsPage() {
                               {displayCohortPersonName(assignment.instructor)}
                             </h3>
                             <p>
-                              {enumLabel(assignment.role)} · {date(assignment.assignedAt)}
+                              {enumLabel(assignment.role)} ·{' '}
+                              {date(assignment.assignedAt)}
                             </p>
                           </div>
-                          {cohort.status === 'PLANNED' || cohort.status === 'ACTIVE' ? (
+                          {cohort.status === 'PLANNED' ||
+                          cohort.status === 'ACTIVE' ? (
                             <>
                               <form
                                 action={reassignCohortInstructor}
@@ -299,10 +320,14 @@ export default async function CohortOperationsPage() {
                                     {dashboard.instructors
                                       .filter(
                                         (instructor) =>
-                                          instructor.id !== assignment.instructorUserId,
+                                          instructor.id !==
+                                          assignment.instructorUserId,
                                       )
                                       .map((instructor) => (
-                                        <option key={instructor.id} value={instructor.id}>
+                                        <option
+                                          key={instructor.id}
+                                          value={instructor.id}
+                                        >
                                           {displayCohortPersonName(instructor)}
                                         </option>
                                       ))}
@@ -337,7 +362,9 @@ export default async function CohortOperationsPage() {
                                   name="assignmentId"
                                   value={assignment.id}
                                 />
-                                <button type="submit">{copy.endAssignment}</button>
+                                <button type="submit">
+                                  {copy.endAssignment}
+                                </button>
                               </form>
                             </>
                           ) : null}
@@ -347,11 +374,18 @@ export default async function CohortOperationsPage() {
                   )}
 
                   {cohort.status === 'PLANNED' || cohort.status === 'ACTIVE' ? (
-                    <form action={assignCohortInstructor} className="status-form">
+                    <form
+                      action={assignCohortInstructor}
+                      className="status-form"
+                    >
                       <input type="hidden" name="cohortId" value={cohort.id} />
                       <label>
                         <span>{copy.instructor}</span>
-                        <select name="instructorUserId" defaultValue="" required>
+                        <select
+                          name="instructorUserId"
+                          defaultValue=""
+                          required
+                        >
                           <option value="" disabled>
                             {copy.instructor}
                           </option>
@@ -387,14 +421,17 @@ export default async function CohortOperationsPage() {
                         <article key={membership.id}>
                           <div>
                             <h3 dir="auto">
-                              {displayCohortPersonName(membership.enrollment.user)}
+                              {displayCohortPersonName(
+                                membership.enrollment.user,
+                              )}
                             </h3>
                             <p>
-                              {enumLabel(membership.enrollment.status)} · {copy.joined}:{' '}
-                              {date(membership.joinedAt)}
+                              {enumLabel(membership.enrollment.status)} ·{' '}
+                              {copy.joined}: {date(membership.joinedAt)}
                             </p>
                           </div>
-                          {cohort.status === 'PLANNED' || cohort.status === 'ACTIVE' ? (
+                          {cohort.status === 'PLANNED' ||
+                          cohort.status === 'ACTIVE' ? (
                             <form action={removeEnrollmentFromCohort}>
                               <input
                                 type="hidden"
@@ -411,7 +448,9 @@ export default async function CohortOperationsPage() {
                                 name="cohortEnrollmentId"
                                 value={membership.id}
                               />
-                              <button type="submit">{copy.removeLearner}</button>
+                              <button type="submit">
+                                {copy.removeLearner}
+                              </button>
                             </form>
                           ) : null}
                         </article>
@@ -419,9 +458,13 @@ export default async function CohortOperationsPage() {
                     </div>
                   )}
 
-                  {(cohort.status === 'PLANNED' || cohort.status === 'ACTIVE') &&
+                  {(cohort.status === 'PLANNED' ||
+                    cohort.status === 'ACTIVE') &&
                   eligibleEnrollments.length > 0 ? (
-                    <form action={placeEnrollmentInCohort} className="status-form">
+                    <form
+                      action={placeEnrollmentInCohort}
+                      className="status-form"
+                    >
                       <input type="hidden" name="cohortId" value={cohort.id} />
                       <label>
                         <span>{copy.learner}</span>

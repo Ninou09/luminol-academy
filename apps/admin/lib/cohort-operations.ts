@@ -14,12 +14,13 @@ export const COHORT_INSTRUCTOR_ROLES = [
 export type CohortStatus = (typeof COHORT_STATUSES)[number];
 export type CohortInstructorRole = (typeof COHORT_INSTRUCTOR_ROLES)[number];
 
-const COHORT_STATUS_TRANSITIONS: Record<CohortStatus, readonly CohortStatus[]> = {
-  PLANNED: ['ACTIVE', 'CANCELLED'],
-  ACTIVE: ['COMPLETED', 'CANCELLED'],
-  COMPLETED: [],
-  CANCELLED: [],
-};
+const COHORT_STATUS_TRANSITIONS: Record<CohortStatus, readonly CohortStatus[]> =
+  {
+    PLANNED: ['ACTIVE', 'CANCELLED'],
+    ACTIVE: ['COMPLETED', 'CANCELLED'],
+    COMPLETED: [],
+    CANCELLED: [],
+  };
 
 export function getCohortStatusTransitions(status: CohortStatus) {
   return COHORT_STATUS_TRANSITIONS[status];
