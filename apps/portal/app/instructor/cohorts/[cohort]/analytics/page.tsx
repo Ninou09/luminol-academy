@@ -85,6 +85,12 @@ export default async function InstructorCohortAnalyticsPage({
                   {number(view.analytics.value.certificatePercent)}%
                 </strong>
               </article>
+              <article>
+                <span>{copy.attendanceRate}</span>
+                <strong>
+                  {number(view.analytics.value.attendancePercent)}%
+                </strong>
+              </article>
             </section>
 
             <section
@@ -158,6 +164,35 @@ export default async function InstructorCohortAnalyticsPage({
                         <dd>
                           {number(view.analytics.value.certificatePercent)}%
                         </dd>
+                      </div>
+                    </dl>
+                  </div>
+                </article>
+
+                <article className="course-card">
+                  <div className="course-content">
+                    <h3>{copy.attendance}</h3>
+                    <p>{copy.attendanceBody}</p>
+                    <dl>
+                      <div>
+                        <dt>{copy.attendanceRecords}</dt>
+                        <dd>{number(view.analytics.value.attendanceRecords)}</dd>
+                      </div>
+                      <div>
+                        <dt>{copy.attendedRecords}</dt>
+                        <dd>{number(view.analytics.value.attendedRecords)}</dd>
+                      </div>
+                      <div>
+                        <dt>{copy.absentRecords}</dt>
+                        <dd>{number(view.analytics.value.absentRecords)}</dd>
+                      </div>
+                      <div>
+                        <dt>{copy.excusedRecords}</dt>
+                        <dd>{number(view.analytics.value.excusedRecords)}</dd>
+                      </div>
+                      <div>
+                        <dt>{copy.attendanceRate}</dt>
+                        <dd>{number(view.analytics.value.attendancePercent)}%</dd>
                       </div>
                     </dl>
                   </div>
