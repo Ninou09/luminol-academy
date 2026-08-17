@@ -176,11 +176,15 @@ export default async function InstructorCohortAnalyticsPage({
                     <dl>
                       <div>
                         <dt>{copy.attendanceRecords}</dt>
-                        <dd>{number(view.analytics.value.attendanceRecords)}</dd>
+                        <dd>
+                          {number(view.analytics.value.attendanceRecords)}
+                        </dd>
                       </div>
                       <div>
                         <dt>{copy.attendedRecords}</dt>
-                        <dd>{number(view.analytics.value.attendedRecords)}</dd>
+                        <dd>
+                          {number(view.analytics.value.attendedRecords)}
+                        </dd>
                       </div>
                       <div>
                         <dt>{copy.absentRecords}</dt>
@@ -192,7 +196,9 @@ export default async function InstructorCohortAnalyticsPage({
                       </div>
                       <div>
                         <dt>{copy.attendanceRate}</dt>
-                        <dd>{number(view.analytics.value.attendancePercent)}%</dd>
+                        <dd>
+                          {number(view.analytics.value.attendancePercent)}%
+                        </dd>
                       </div>
                     </dl>
                   </div>
