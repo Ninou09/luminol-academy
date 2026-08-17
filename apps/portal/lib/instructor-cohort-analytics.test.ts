@@ -7,7 +7,7 @@ import {
 } from './instructor-cohort-analytics';
 
 describe('instructor cohort analytics', () => {
-  it('calculates bounded explainable cohort metrics', () => {
+  it('calculates bounded explainable cohort and attendance metrics', () => {
     const summary = summarizeInstructorCohortAnalytics({
       participantCount: 10,
       completedEnrollments: 7,
@@ -15,6 +15,10 @@ describe('instructor cohort analytics', () => {
       activeCertificates: 5,
       reviewRequiredAttempts: 3,
       activityWindowDays: 30,
+      presentAttendanceRecords: 14,
+      lateAttendanceRecords: 2,
+      absentAttendanceRecords: 3,
+      excusedAttendanceRecords: 1,
     });
 
     expect(summary).toEqual({
@@ -27,10 +31,15 @@ describe('instructor cohort analytics', () => {
       certificatePercent: 50,
       reviewRequiredAttempts: 3,
       activityWindowDays: 30,
+      attendanceRecords: 20,
+      attendedRecords: 16,
+      attendancePercent: 80,
+      absentRecords: 3,
+      excusedRecords: 1,
     });
   });
 
-  it('suppresses small cohorts without returning their exact size', () => {
+  it('suppresses small cohorts without returning their exact size or attendance', () => {
     const protectedAnalytics = protectInstructorCohortAnalytics(
       summarizeInstructorCohortAnalytics({
         participantCount: INSTRUCTOR_COHORT_ANALYTICS_MINIMUM_GROUP_SIZE - 1,
@@ -39,6 +48,10 @@ describe('instructor cohort analytics', () => {
         activeCertificates: 1,
         reviewRequiredAttempts: 1,
         activityWindowDays: 30,
+        presentAttendanceRecords: 3,
+        lateAttendanceRecords: 0,
+        absentAttendanceRecords: 1,
+        excusedAttendanceRecords: 0,
       }),
     );
 
@@ -51,7 +64,7 @@ describe('instructor cohort analytics', () => {
     expect('value' in protectedAnalytics).toBe(false);
   });
 
-  it('returns metrics only when the Milestone 17 minimum is met', () => {
+  it('returns aggregate attendance only when the minimum group size is met', () => {
     const protectedAnalytics = protectInstructorCohortAnalytics(
       summarizeInstructorCohortAnalytics({
         participantCount: INSTRUCTOR_COHORT_ANALYTICS_MINIMUM_GROUP_SIZE,
@@ -60,6 +73,10 @@ describe('instructor cohort analytics', () => {
         activeCertificates: 2,
         reviewRequiredAttempts: 0,
         activityWindowDays: 30,
+        presentAttendanceRecords: 8,
+        lateAttendanceRecords: 1,
+        absentAttendanceRecords: 1,
+        excusedAttendanceRecords: 0,
       }),
     );
 
@@ -67,10 +84,30 @@ describe('instructor cohort analytics', () => {
     if (protectedAnalytics.state === 'visible') {
       expect(protectedAnalytics.value.participantCount).toBe(5);
       expect(protectedAnalytics.value.completionPercent).toBe(60);
+      expect(protectedAnalytics.value.attendanceRecords).toBe(10);
+      expect(protectedAnalytics.value.attendancePercent).toBe(90);
     }
   });
 
-  it('rejects impossible counts rather than clipping them', () => {
+  it('returns zero attendance rate when no attendance has been recorded', () => {
+    const summary = summarizeInstructorCohortAnalytics({
+      participantCount: 5,
+      completedEnrollments: 0,
+      recentlyActiveLearners: 0,
+      activeCertificates: 0,
+      reviewRequiredAttempts: 0,
+      activityWindowDays: 30,
+      presentAttendanceRecords: 0,
+      lateAttendanceRecords: 0,
+      absentAttendanceRecords: 0,
+      excusedAttendanceRecords: 0,
+    });
+
+    expect(summary.attendanceRecords).toBe(0);
+    expect(summary.attendancePercent).toBe(0);
+  });
+
+  it('rejects impossible participant-bounded counts rather than clipping them', () => {
     expect(() =>
       summarizeInstructorCohortAnalytics({
         participantCount: 5,
@@ -79,6 +116,10 @@ describe('instructor cohort analytics', () => {
         activeCertificates: 1,
         reviewRequiredAttempts: 0,
         activityWindowDays: 30,
+        presentAttendanceRecords: 0,
+        lateAttendanceRecords: 0,
+        absentAttendanceRecords: 0,
+        excusedAttendanceRecords: 0,
       }),
     ).toThrow();
   });
