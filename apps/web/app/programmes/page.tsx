@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import { localizeProgrammeDelivery } from '../../lib/programme-presentation';
 import {
   filterPublicProgrammes,
   parseProgrammeDiscoveryParams,
@@ -177,52 +178,72 @@ export default async function ProgrammesPage({
               </div>
 
               <div className={styles.grid}>
-                {programmes.map((programme) => (
-                  <article className={styles.card} key={programme._id}>
-                    {programme.image ? (
-                      <Image
-                        className={styles.image}
-                        src={buildSanityProgrammeImageUrl(programme.image)}
-                        alt={programme.image.alt}
-                        width={1200}
-                        height={675}
-                        sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                      />
-                    ) : null}
+                {programmes.map((programme) => {
+                  const deliveryLabel = localizeProgrammeDelivery(
+                    locale,
+                    programme.delivery,
+                  );
 
-                    <div className={styles.cardBody}>
-                      <div className={styles.meta}>
-                        <span>{schools[programme.school].name}</span>
-                        {programme.featured ? (
-                          <span>{copy.featured}</span>
-                        ) : null}
-                      </div>
-                      <h3 dir="auto">{programme.title}</h3>
-                      <p dir="auto">{programme.summary}</p>
-                      <ul className={styles.tags} aria-label={copy.detailsAria}>
-                        {programme.languages.map((language) => (
-                          <li key={language}>{copy.languageNames[language]}</li>
-                        ))}
-                        {programme.delivery ? (
-                          <li>{programme.delivery}</li>
-                        ) : null}
-                      </ul>
-                      <div className={styles.cardActions}>
-                        <Link
-                          href={localizeHref(
-                            locale,
-                            `/schools/${programme.school}#programs`,
-                          )}
+                  return (
+                    <article className={styles.card} key={programme._id}>
+                      {programme.image ? (
+                        <Image
+                          className={styles.image}
+                          src={buildSanityProgrammeImageUrl(programme.image)}
+                          alt={programme.image.alt}
+                          width={1200}
+                          height={675}
+                          sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                        />
+                      ) : null}
+
+                      <div className={styles.cardBody}>
+                        <div className={styles.meta}>
+                          <span>{schools[programme.school].name}</span>
+                          {programme.featured ? (
+                            <span>{copy.featured}</span>
+                          ) : null}
+                        </div>
+                        <h3 dir="auto">
+                          <Link
+                            className={styles.titleLink}
+                            href={localizeHref(
+                              locale,
+                              `/programmes/${programme.slug.current}`,
+                            )}
+                          >
+                            {programme.title}
+                          </Link>
+                        </h3>
+                        <p dir="auto">{programme.summary}</p>
+                        <ul
+                          className={styles.tags}
+                          aria-label={copy.detailsAria}
                         >
-                          {copy.viewSchool}
-                        </Link>
-                        <Link href={localizeHref(locale, '/contact')}>
-                          {copy.askLuminol}
-                        </Link>
+                          {programme.languages.map((language) => (
+                            <li key={language}>
+                              {copy.languageNames[language]}
+                            </li>
+                          ))}
+                          {deliveryLabel ? <li>{deliveryLabel}</li> : null}
+                        </ul>
+                        <div className={styles.cardActions}>
+                          <Link
+                            href={localizeHref(
+                              locale,
+                              `/schools/${programme.school}#programs`,
+                            )}
+                          >
+                            {copy.viewSchool}
+                          </Link>
+                          <Link href={localizeHref(locale, '/contact')}>
+                            {copy.askLuminol}
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             </div>
           )}
