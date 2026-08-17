@@ -4,6 +4,8 @@ import { getCommonDictionary, localizeHref } from '@luminol/localization';
 import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
+import { getInstructorWorkspaceCopy } from '../lib/instructor-workspace-localization';
+import { hasInstructorWorkspaceAccess } from '../lib/instructor-workspace.server';
 import { getLearnerOutcomesCopy } from '../lib/learner-outcomes';
 import { getOrganizationAnalyticsCopy } from '../lib/organization-analytics-localization';
 import { getOrganizationManagerCopy } from '../lib/organization-manager-localization';
@@ -17,10 +19,14 @@ export async function PortalHeader() {
   const locale = await getPortalRequestLocale();
   const copy = getPortalCopy(locale);
   const outcomesCopy = getLearnerOutcomesCopy(locale);
+  const instructorCopy = getInstructorWorkspaceCopy(locale);
   const managerCopy = getOrganizationManagerCopy(locale);
   const organizationAnalyticsCopy = getOrganizationAnalyticsCopy(locale);
   const common = getCommonDictionary(locale);
-  const canManageOrganization = await hasOrganizationManagerAccess(user.id);
+  const [canTeachCohorts, canManageOrganization] = await Promise.all([
+    hasInstructorWorkspaceAccess(user.id),
+    hasOrganizationManagerAccess(user.id),
+  ]);
 
   return (
     <header className="portal-header">
@@ -37,6 +43,11 @@ export async function PortalHeader() {
           <Link href={localizeHref(locale, '/progress')}>
             {outcomesCopy.nav}
           </Link>
+          {canTeachCohorts ? (
+            <Link href={localizeHref(locale, '/instructor')}>
+              {instructorCopy.nav}
+            </Link>
+          ) : null}
           <Link href={localizeHref(locale, '/search')}>
             {copy.shell.search}
           </Link>
