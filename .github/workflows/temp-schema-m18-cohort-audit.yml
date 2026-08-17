@@ -1,0 +1,67 @@
+name: Temporary Milestone 18 cohort-audit schema sync
+
+on:
+  push:
+    branches:
+      - feature/milestone-18-cohort-delivery-operations
+
+permissions:
+  contents: write
+
+jobs:
+  sync-schema:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/milestone-18-cohort-delivery-operations
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Add cohort delivery audit model
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('packages/database/prisma/schema.prisma')
+          schema = path.read_text()
+
+          if 'model CohortDeliveryAuditEvent {' not in schema:
+              user_needle = '  cohortInstructorAssignments CohortInstructorAssignment[]\n'
+              if schema.count(user_needle) != 1:
+                  raise SystemExit('User cohort assignment relation anchor changed')
+              schema = schema.replace(
+                  user_needle,
+                  user_needle + '  cohortDeliveryAuditEvents    CohortDeliveryAuditEvent[]    @relation("CohortDeliveryAuditActor")\n',
+                  1,
+              )
+
+              cohort_needle = '  enrollments           CohortEnrollment[]\n\n  @@index([courseId, status])'
+              if schema.count(cohort_needle) != 1:
+                  raise SystemExit('Cohort relation anchor changed')
+              schema = schema.replace(
+                  cohort_needle,
+                  '  enrollments           CohortEnrollment[]\n  auditEvents           CohortDeliveryAuditEvent[]\n\n  @@index([courseId, status])',
+                  1,
+              )
+
+              schema += '''\nmodel CohortDeliveryAuditEvent {\n  id          String   @id\n  cohortId    String\n  actorUserId String\n  action      String\n  subjectType String\n  subjectId   String\n  occurredAt  DateTime @default(now())\n  cohort      Cohort   @relation(fields: [cohortId], references: [id], onDelete: Restrict)\n  actor       User     @relation("CohortDeliveryAuditActor", fields: [actorUserId], references: [id], onDelete: Restrict)\n\n  @@index([cohortId, occurredAt])\n  @@index([actorUserId, occurredAt])\n  @@index([subjectType, subjectId, occurredAt])\n}\n'''
+              path.write_text(schema)
+          PY
+      - run: pnpm --filter @luminol/database exec prisma format
+      - run: pnpm --filter @luminol/database exec prisma validate
+      - name: Commit schema sync if needed
+        run: |
+          if git diff --quiet packages/database/prisma/schema.prisma; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/database/prisma/schema.prisma
+          git commit -m "Model cohort delivery audit history"
+          git push origin HEAD:feature/milestone-18-cohort-delivery-operations
