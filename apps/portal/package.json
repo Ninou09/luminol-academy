@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.28.1",
+    "@luminol/analytics": "workspace:*",
     "@luminol/auth": "workspace:*",
     "@luminol/config": "workspace:*",
     "@luminol/database": "workspace:*",

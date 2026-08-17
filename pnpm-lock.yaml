@@ -114,6 +114,9 @@ importers:
       '@clerk/nextjs':
         specifier: ^6.28.1
         version: 6.39.6(next@16.3.0(@playwright/test@1.62.1)(@types/node@20.19.43)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@luminol/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
       '@luminol/auth':
         specifier: workspace:*
         version: link:../../packages/auth
