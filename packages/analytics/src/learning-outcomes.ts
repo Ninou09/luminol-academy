@@ -68,9 +68,9 @@ export function canAccessAnalyticsMetric(
   audience: AnalyticsAudience,
   metric: AnalyticsMetric,
 ): boolean {
-  return (ANALYTICS_METRIC_AUDIENCES[metric] as readonly AnalyticsAudience[]).includes(
-    audience,
-  );
+  return (
+    ANALYTICS_METRIC_AUDIENCES[metric] as readonly AnalyticsAudience[]
+  ).includes(audience);
 }
 
 export function getAccessibleAnalyticsMetrics(
