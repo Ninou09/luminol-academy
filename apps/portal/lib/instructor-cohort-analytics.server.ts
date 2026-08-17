@@ -4,6 +4,7 @@ import { requireUser } from '@luminol/auth';
 import {
   ACADEMY_ANALYTICS_ACTIVITY_WINDOW_DAYS,
   CertificateStatus,
+  CohortAttendanceStatus,
   EnrollmentStatus,
   PlacementAttemptStatus,
   db,
@@ -32,6 +33,16 @@ function activityCutoff(now: Date) {
   );
 }
 
+function attendanceCount(
+  groups: readonly {
+    status: CohortAttendanceStatus;
+    _count: { _all: number };
+  }[],
+  status: CohortAttendanceStatus,
+) {
+  return groups.find((group) => group.status === status)?._count._all ?? 0;
+}
+
 /**
  * Resolves exact persisted instructor authority before any cross-learner
  * analytics records are read. Browser-supplied cohort ids are selectors only.
@@ -39,6 +50,8 @@ function activityCutoff(now: Date) {
  * authorization and are never returned by this read model. Authored text,
  * assessment answers/scores, psychology, enquiry, finance, certificate metadata,
  * search/session and network data are neither selected for metrics nor exposed.
+ * Attendance is aggregated across eligible learner memberships only; no learner,
+ * session or attendance-recorder identity is returned.
  */
 export async function getAuthorizedInstructorCohortAnalytics(
   cohortId: string,
@@ -78,6 +91,7 @@ export async function getAuthorizedInstructorCohortAnalytics(
           },
         },
         select: {
+          enrollmentId: true,
           enrollment: {
             select: {
               userId: true,
@@ -104,6 +118,9 @@ export async function getAuthorizedInstructorCohortAnalytics(
   const learnerIds = cohort.enrollments.map(
     ({ enrollment }) => enrollment.userId,
   );
+  const enrollmentIds = cohort.enrollments.map(
+    ({ enrollmentId }) => enrollmentId,
+  );
   const participantCount = learnerIds.length;
 
   if (participantCount < INSTRUCTOR_COHORT_ANALYTICS_MINIMUM_GROUP_SIZE) {
@@ -117,6 +134,10 @@ export async function getAuthorizedInstructorCohortAnalytics(
           activeCertificates: 0,
           reviewRequiredAttempts: 0,
           activityWindowDays: ACADEMY_ANALYTICS_ACTIVITY_WINDOW_DAYS,
+          presentAttendanceRecords: 0,
+          lateAttendanceRecords: 0,
+          absentAttendanceRecords: 0,
+          excusedAttendanceRecords: 0,
         }),
       ),
     };
@@ -126,34 +147,49 @@ export async function getAuthorizedInstructorCohortAnalytics(
   const completedEnrollments = cohort.enrollments.filter(
     ({ enrollment }) => enrollment.status === EnrollmentStatus.COMPLETED,
   ).length;
-  const [recentActivityRows, certificateRows, reviewRequiredAttempts] =
-    await Promise.all([
-      db.learningRecord.findMany({
-        where: {
-          courseId: cohort.course.id,
-          userId: { in: learnerIds },
-          lastActivityAt: { gte: recentCutoff },
+  const [
+    recentActivityRows,
+    certificateRows,
+    reviewRequiredAttempts,
+    attendanceGroups,
+  ] = await Promise.all([
+    db.learningRecord.findMany({
+      where: {
+        courseId: cohort.course.id,
+        userId: { in: learnerIds },
+        lastActivityAt: { gte: recentCutoff },
+      },
+      distinct: ['userId'],
+      select: { userId: true },
+    }),
+    db.certificate.findMany({
+      where: {
+        courseId: cohort.course.id,
+        userId: { in: learnerIds },
+        status: CertificateStatus.ACTIVE,
+      },
+      distinct: ['userId'],
+      select: { userId: true },
+    }),
+    db.placementAttempt.count({
+      where: {
+        userId: { in: learnerIds },
+        status: PlacementAttemptStatus.REVIEW_REQUIRED,
+        assessment: { courseId: cohort.course.id },
+      },
+    }),
+    db.cohortSessionAttendance.groupBy({
+      by: ['status'],
+      where: {
+        session: { cohortId: cohort.id },
+        cohortEnrollment: {
+          active: true,
+          enrollmentId: { in: enrollmentIds },
         },
-        distinct: ['userId'],
-        select: { userId: true },
-      }),
-      db.certificate.findMany({
-        where: {
-          courseId: cohort.course.id,
-          userId: { in: learnerIds },
-          status: CertificateStatus.ACTIVE,
-        },
-        distinct: ['userId'],
-        select: { userId: true },
-      }),
-      db.placementAttempt.count({
-        where: {
-          userId: { in: learnerIds },
-          status: PlacementAttemptStatus.REVIEW_REQUIRED,
-          assessment: { courseId: cohort.course.id },
-        },
-      }),
-    ]);
+      },
+      _count: { _all: true },
+    }),
+  ]);
 
   const value = summarizeInstructorCohortAnalytics({
     participantCount,
@@ -162,6 +198,22 @@ export async function getAuthorizedInstructorCohortAnalytics(
     activeCertificates: certificateRows.length,
     reviewRequiredAttempts,
     activityWindowDays: ACADEMY_ANALYTICS_ACTIVITY_WINDOW_DAYS,
+    presentAttendanceRecords: attendanceCount(
+      attendanceGroups,
+      CohortAttendanceStatus.PRESENT,
+    ),
+    lateAttendanceRecords: attendanceCount(
+      attendanceGroups,
+      CohortAttendanceStatus.LATE,
+    ),
+    absentAttendanceRecords: attendanceCount(
+      attendanceGroups,
+      CohortAttendanceStatus.ABSENT,
+    ),
+    excusedAttendanceRecords: attendanceCount(
+      attendanceGroups,
+      CohortAttendanceStatus.EXCUSED,
+    ),
   });
 
   return {
