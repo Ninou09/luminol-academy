@@ -1,6 +1,7 @@
 import 'server-only';
 
 import type { Prisma } from '@luminol/database';
+import { randomUUID } from 'node:crypto';
 
 export async function auditCohortDelivery(
   transaction: Prisma.TransactionClient,
@@ -10,10 +11,11 @@ export async function auditCohortDelivery(
   subjectType: string,
   subjectId: string,
 ) {
+  const id = randomUUID();
   await transaction.$executeRaw`
     INSERT INTO "CohortDeliveryAuditEvent"
-      ("cohortId", "actorUserId", "action", "subjectType", "subjectId")
+      ("id", "cohortId", "actorUserId", "action", "subjectType", "subjectId")
     VALUES
-      (${cohortId}, ${actorUserId}, ${action}, ${subjectType}, ${subjectId})
+      (${id}, ${cohortId}, ${actorUserId}, ${action}, ${subjectType}, ${subjectId})
   `;
 }
