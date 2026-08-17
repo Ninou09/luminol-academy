@@ -1,4 +1,4 @@
-import { db } from './client';
+import type { PrismaClient } from '../generated/prisma/client';
 
 export const PROFESSIONAL_SUBMISSION_STATUSES = [
   'DRAFT',
@@ -29,20 +29,25 @@ export type PersistedProfessionalSubmission = {
   updatedAt: Date;
 };
 
+type SubmissionQueryDatabase = Pick<PrismaClient, '$queryRaw'>;
+
 function normalizeId(value: string, label: string) {
   const normalized = value.trim();
   if (!normalized) throw new TypeError(`${label} is required`);
   return normalized;
 }
 
-export async function getProfessionalSubmissionForLearner(input: {
-  submissionId: string;
-  learnerUserId: string;
-}) {
+export async function getProfessionalSubmissionForLearner(
+  database: SubmissionQueryDatabase,
+  input: {
+    submissionId: string;
+    learnerUserId: string;
+  },
+) {
   const submissionId = normalizeId(input.submissionId, 'submissionId');
   const learnerUserId = normalizeId(input.learnerUserId, 'learnerUserId');
 
-  const rows = await db.$queryRaw<PersistedProfessionalSubmission[]>`
+  const rows = await database.$queryRaw<PersistedProfessionalSubmission[]>`
     SELECT
       "id",
       "learnerUserId",
@@ -67,14 +72,17 @@ export async function getProfessionalSubmissionForLearner(input: {
   return rows[0] ?? null;
 }
 
-export async function getProfessionalSubmissionForReviewer(input: {
-  submissionId: string;
-  reviewerUserId: string;
-}) {
+export async function getProfessionalSubmissionForReviewer(
+  database: SubmissionQueryDatabase,
+  input: {
+    submissionId: string;
+    reviewerUserId: string;
+  },
+) {
   const submissionId = normalizeId(input.submissionId, 'submissionId');
   const reviewerUserId = normalizeId(input.reviewerUserId, 'reviewerUserId');
 
-  const rows = await db.$queryRaw<PersistedProfessionalSubmission[]>`
+  const rows = await database.$queryRaw<PersistedProfessionalSubmission[]>`
     SELECT
       "id",
       "learnerUserId",
