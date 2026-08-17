@@ -1,0 +1,36 @@
+name: Temporary public programme slug type fix
+
+on:
+  push:
+    branches:
+      - feature/public-programme-details-refresh
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feature/public-programme-details-refresh
+      - name: Guard optional CMS programme slug
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('apps/web/app/schools/[school]/page.tsx')
+          text = path.read_text()
+          old = 'slug: programme.slug.current,'
+          new = 'slug: programme.slug?.current,'
+          if text.count(old) != 1:
+              raise SystemExit('programme slug anchor changed')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 'apps/web/app/schools/[school]/page.tsx'
+          git commit -m "Guard optional CMS programme slug"
+          git push origin HEAD:feature/public-programme-details-refresh
