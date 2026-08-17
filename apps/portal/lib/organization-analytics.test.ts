@@ -22,9 +22,7 @@ describe('organization analytics privacy helpers', () => {
   });
 
   it('returns aggregate values once the minimum group is met', () => {
-    expect(
-      protectOrganizationAnalytics(5, { completionPercent: 60 }),
-    ).toEqual({
+    expect(protectOrganizationAnalytics(5, { completionPercent: 60 })).toEqual({
       state: 'visible',
       minimumGroupSize: ORGANIZATION_ANALYTICS_MINIMUM_GROUP_SIZE,
       value: { completionPercent: 60 },

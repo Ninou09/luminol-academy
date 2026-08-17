@@ -186,7 +186,10 @@ export default async function OrganizationAnalyticsPage({
           {analytics.courses.length > 0 ? (
             <div className="course-grid">
               {analytics.courses.map((course) => (
-                <article className="course-card" key={course.organizationCourseId}>
+                <article
+                  className="course-card"
+                  key={course.organizationCourseId}
+                >
                   <div className="course-content">
                     <h3 dir="auto">{course.title}</h3>
                     {course.analytics.state === 'visible' ? (

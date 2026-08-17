@@ -63,10 +63,26 @@ export function summarizeOrganizationSeatAnalytics(
   >,
 ) {
   const limit = z.number().int().positive().parse(seatLimit);
-  const invited = z.number().int().nonnegative().parse(counts.INVITED ?? 0);
-  const active = z.number().int().nonnegative().parse(counts.ACTIVE ?? 0);
-  const completed = z.number().int().nonnegative().parse(counts.COMPLETED ?? 0);
-  const revoked = z.number().int().nonnegative().parse(counts.REVOKED ?? 0);
+  const invited = z
+    .number()
+    .int()
+    .nonnegative()
+    .parse(counts.INVITED ?? 0);
+  const active = z
+    .number()
+    .int()
+    .nonnegative()
+    .parse(counts.ACTIVE ?? 0);
+  const completed = z
+    .number()
+    .int()
+    .nonnegative()
+    .parse(counts.COMPLETED ?? 0);
+  const revoked = z
+    .number()
+    .int()
+    .nonnegative()
+    .parse(counts.REVOKED ?? 0);
   const allocated = invited + active + completed;
 
   return {

@@ -3,16 +3,19 @@ import { describe, expect, it } from 'vitest';
 import { getOrganizationAnalyticsCopy } from './organization-analytics-localization';
 
 describe('organization analytics localization', () => {
-  it.each(['en', 'fr', 'ar'] as const)('provides complete %s copy', (locale) => {
-    const copy = getOrganizationAnalyticsCopy(locale);
+  it.each(['en', 'fr', 'ar'] as const)(
+    'provides complete %s copy',
+    (locale) => {
+      const copy = getOrganizationAnalyticsCopy(locale);
 
-    expect(copy.title).toBeTruthy();
-    expect(copy.intro).toBeTruthy();
-    expect(copy.protectedBody).toBeTruthy();
-    expect(copy.courseAnalytics).toBeTruthy();
-    expect(copy.teamAnalytics).toBeTruthy();
-    expect(copy.privacyBody).toBeTruthy();
-  });
+      expect(copy.title).toBeTruthy();
+      expect(copy.intro).toBeTruthy();
+      expect(copy.protectedBody).toBeTruthy();
+      expect(copy.courseAnalytics).toBeTruthy();
+      expect(copy.teamAnalytics).toBeTruthy();
+      expect(copy.privacyBody).toBeTruthy();
+    },
+  );
 
   it('keeps Arabic analytics labels localized', () => {
     const copy = getOrganizationAnalyticsCopy('ar');
