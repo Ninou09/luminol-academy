@@ -60,10 +60,7 @@ export default async function LearnerSessionSchedulePage() {
                   <div>
                     <dt>{copy.attendanceRecordedAt}</dt>
                     <dd>
-                      {dateTime(
-                        session.attendanceRecordedAt,
-                        session.timeZone,
-                      )}
+                      {dateTime(session.attendanceRecordedAt, session.timeZone)}
                     </dd>
                   </div>
                 ) : null}
@@ -119,7 +116,10 @@ export default async function LearnerSessionSchedulePage() {
           )}
         </section>
 
-        <section className="dashboard-section" aria-labelledby="schedule-privacy-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="schedule-privacy-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.privacyTitle}</p>
