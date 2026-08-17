@@ -103,6 +103,15 @@ export default async function InstructorWorkspacePage() {
                         <dd>{schedule}</dd>
                       </div>
                     </dl>
+                    <Link
+                      className="course-link"
+                      href={localizeHref(
+                        locale,
+                        `/instructor/cohorts/${cohort.cohortId}`,
+                      )}
+                    >
+                      {copy.openCohort}
+                    </Link>
                   </div>
                 </article>
               );
