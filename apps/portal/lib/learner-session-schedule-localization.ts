@@ -37,7 +37,8 @@ const COPY: Record<Locale, LearnerSessionScheduleCopy> = {
       'See your own upcoming and previous cohort sessions. Attendance shown here belongs only to your learner membership and is not a comparison or ranking.',
     upcoming: 'Upcoming sessions',
     past: 'Past and closed sessions',
-    noUpcoming: 'No upcoming sessions are currently scheduled for your active cohort memberships.',
+    noUpcoming:
+      'No upcoming sessions are currently scheduled for your active cohort memberships.',
     noPast: 'No previous sessions are available yet.',
     session: 'Session',
     cohort: 'Cohort',
@@ -114,7 +115,8 @@ const COPY: Record<Locale, LearnerSessionScheduleCopy> = {
       'اطّلع على جلسات مجموعتك القادمة والسابقة الخاصة بك. حالة الحضور المعروضة هنا مرتبطة بعضويتك التعليمية أنت فقط، وليست مقارنة أو ترتيباً.',
     upcoming: 'الجلسات القادمة',
     past: 'الجلسات السابقة والمغلقة',
-    noUpcoming: 'لا توجد جلسات قادمة مجدولة حالياً لعضوياتك النشطة في المجموعات.',
+    noUpcoming:
+      'لا توجد جلسات قادمة مجدولة حالياً لعضوياتك النشطة في المجموعات.',
     noPast: 'لا توجد جلسات سابقة متاحة بعد.',
     session: 'الجلسة',
     cohort: 'المجموعة',
