@@ -201,6 +201,19 @@ enum CohortInstructorRole {
   REVIEWER
 }
 
+enum CohortSessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum CohortAttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
 model User {
   id                          String                       @id @default(cuid())
   clerkId                     String                       @unique
@@ -232,6 +245,7 @@ model User {
   organizationSeats           OrganizationSeat[]
   cohortInstructorAssignments CohortInstructorAssignment[]
   cohortDeliveryAuditEvents   CohortDeliveryAuditEvent[]   @relation("CohortDeliveryAuditActor")
+  cohortAttendanceRecords     CohortSessionAttendance[]    @relation("CohortAttendanceRecorder")
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
@@ -694,6 +708,7 @@ model Cohort {
   course                Course                       @relation(fields: [courseId], references: [id], onDelete: Restrict)
   instructorAssignments CohortInstructorAssignment[]
   enrollments           CohortEnrollment[]
+  sessions              CohortSession[]
   auditEvents           CohortDeliveryAuditEvent[]
 
   @@index([courseId, status])
@@ -718,19 +733,55 @@ model CohortInstructorAssignment {
 }
 
 model CohortEnrollment {
-  id           String     @id @default(cuid())
-  cohortId     String
-  enrollmentId String
-  active       Boolean    @default(true)
-  joinedAt     DateTime   @default(now())
-  endedAt      DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  cohort       Cohort     @relation(fields: [cohortId], references: [id], onDelete: Restrict)
-  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
+  id                String                    @id @default(cuid())
+  cohortId          String
+  enrollmentId      String
+  active            Boolean                   @default(true)
+  joinedAt          DateTime                  @default(now())
+  endedAt           DateTime?
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  cohort            Cohort                    @relation(fields: [cohortId], references: [id], onDelete: Restrict)
+  enrollment        Enrollment                @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
+  attendanceRecords CohortSessionAttendance[]
 
   @@index([enrollmentId, active])
   @@index([cohortId, active])
+}
+
+model CohortSession {
+  id         String                    @id @default(cuid())
+  cohortId   String
+  title      String?
+  status     CohortSessionStatus       @default(SCHEDULED)
+  startsAt   DateTime
+  endsAt     DateTime
+  timeZone   String
+  createdAt  DateTime                  @default(now())
+  updatedAt  DateTime                  @updatedAt
+  cohort     Cohort                    @relation(fields: [cohortId], references: [id], onDelete: Restrict)
+  attendance CohortSessionAttendance[]
+
+  @@index([cohortId, status, startsAt])
+  @@index([startsAt, status])
+}
+
+model CohortSessionAttendance {
+  id                 String                 @id @default(cuid())
+  sessionId          String
+  cohortEnrollmentId String
+  status             CohortAttendanceStatus
+  recordedByUserId   String
+  recordedAt         DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  session            CohortSession          @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+  cohortEnrollment   CohortEnrollment       @relation(fields: [cohortEnrollmentId], references: [id], onDelete: Restrict)
+  recordedBy         User                   @relation("CohortAttendanceRecorder", fields: [recordedByUserId], references: [id], onDelete: Restrict)
+
+  @@unique([sessionId, cohortEnrollmentId])
+  @@index([cohortEnrollmentId, recordedAt])
+  @@index([sessionId, status])
+  @@index([recordedByUserId, recordedAt])
 }
 
 model LanguageCourseProfile {
