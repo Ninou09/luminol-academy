@@ -138,7 +138,9 @@ export default async function InstructorCohortPage({
                     <p className="eyebrow">
                       {attendanceCopy.sessionStatuses[session.status]}
                     </p>
-                    <h3 dir="auto">{session.title || attendanceCopy.session}</h3>
+                    <h3 dir="auto">
+                      {session.title || attendanceCopy.session}
+                    </h3>
                     <p>
                       {attendanceCopy.starts}:{' '}
                       {sessionDate(session.startsAt, session.timeZone)} ·{' '}
