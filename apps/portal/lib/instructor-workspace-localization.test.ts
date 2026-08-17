@@ -3,18 +3,21 @@ import { describe, expect, it } from 'vitest';
 import { getInstructorWorkspaceCopy } from './instructor-workspace-localization';
 
 describe('instructor workspace localization', () => {
-  it.each(['en', 'fr', 'ar'] as const)('provides complete %s copy', (locale) => {
-    const copy = getInstructorWorkspaceCopy(locale);
+  it.each(['en', 'fr', 'ar'] as const)(
+    'provides complete %s copy',
+    (locale) => {
+      const copy = getInstructorWorkspaceCopy(locale);
 
-    expect(copy.nav).toBeTruthy();
-    expect(copy.title).toBeTruthy();
-    expect(copy.intro).toBeTruthy();
-    expect(copy.roles.LEAD).toBeTruthy();
-    expect(copy.roles.ASSISTANT).toBeTruthy();
-    expect(copy.roles.REVIEWER).toBeTruthy();
-    expect(copy.statuses.ACTIVE).toBeTruthy();
-    expect(copy.privacyBody).toBeTruthy();
-  });
+      expect(copy.nav).toBeTruthy();
+      expect(copy.title).toBeTruthy();
+      expect(copy.intro).toBeTruthy();
+      expect(copy.roles.LEAD).toBeTruthy();
+      expect(copy.roles.ASSISTANT).toBeTruthy();
+      expect(copy.roles.REVIEWER).toBeTruthy();
+      expect(copy.statuses.ACTIVE).toBeTruthy();
+      expect(copy.privacyBody).toBeTruthy();
+    },
+  );
 
   it('keeps Arabic labels localized', () => {
     const copy = getInstructorWorkspaceCopy('ar');

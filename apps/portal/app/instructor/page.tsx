@@ -77,7 +77,9 @@ export default async function InstructorWorkspacePage() {
             {workspace.cohorts.map((cohort) => {
               const schedule = cohort.startsAt
                 ? `${copy.starts}: ${date(cohort.startsAt)}${
-                    cohort.endsAt ? ` · ${copy.ends}: ${date(cohort.endsAt)}` : ''
+                    cohort.endsAt
+                      ? ` · ${copy.ends}: ${date(cohort.endsAt)}`
+                      : ''
                   }`
                 : copy.unscheduled;
 
