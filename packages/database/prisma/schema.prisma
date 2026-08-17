@@ -188,35 +188,49 @@ enum OrganizationSeatStatus {
   REVOKED
 }
 
+enum CohortStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum CohortInstructorRole {
+  LEAD
+  ASSISTANT
+  REVIEWER
+}
+
 model User {
-  id                      String                   @id @default(cuid())
-  clerkId                 String                   @unique
-  email                   String                   @unique
-  firstName               String?
-  lastName                String?
-  imageUrl                String?
-  lastSignInAt            DateTime?
-  deletedAt               DateTime?
-  createdAt               DateTime                 @default(now())
-  updatedAt               DateTime                 @updatedAt
-  roles                   UserRole[]
-  enrollments             Enrollment[]
-  records                 LearningRecord[]
-  certificates            Certificate[]
-  enquiryStatusEvents     EnquiryStatusEvent[]
-  enrollmentStatusEvents  EnrollmentStatusEvent[]
-  placementAttempts       PlacementAttempt[]       @relation("PlacementLearner")
-  placementReviews        PlacementAttempt[]       @relation("PlacementReviewer")
-  invoices                Invoice[]                @relation("InvoiceCustomer")
-  subscriptions           Subscription[]
-  financeAuditEvents      FinanceAuditEvent[]      @relation("FinanceAuditActor")
-  notifications           Notification[]
-  notificationPreferences NotificationPreference[]
-  notificationEvents      NotificationEvent[]
-  certificateAuditEvents  CertificateAuditEvent[]  @relation("CertificateAuditActor")
-  certificateRevocations  CertificateRevocation[]  @relation("CertificateRevocationActor")
-  organizationMemberships OrganizationMembership[]
-  organizationSeats       OrganizationSeat[]
+  id                          String                       @id @default(cuid())
+  clerkId                     String                       @unique
+  email                       String                       @unique
+  firstName                   String?
+  lastName                    String?
+  imageUrl                    String?
+  lastSignInAt                DateTime?
+  deletedAt                   DateTime?
+  createdAt                   DateTime                     @default(now())
+  updatedAt                   DateTime                     @updatedAt
+  roles                       UserRole[]
+  enrollments                 Enrollment[]
+  records                     LearningRecord[]
+  certificates                Certificate[]
+  enquiryStatusEvents         EnquiryStatusEvent[]
+  enrollmentStatusEvents      EnrollmentStatusEvent[]
+  placementAttempts           PlacementAttempt[]           @relation("PlacementLearner")
+  placementReviews            PlacementAttempt[]           @relation("PlacementReviewer")
+  invoices                    Invoice[]                    @relation("InvoiceCustomer")
+  subscriptions               Subscription[]
+  financeAuditEvents          FinanceAuditEvent[]          @relation("FinanceAuditActor")
+  notifications               Notification[]
+  notificationPreferences     NotificationPreference[]
+  notificationEvents          NotificationEvent[]
+  certificateAuditEvents      CertificateAuditEvent[]      @relation("CertificateAuditActor")
+  certificateRevocations      CertificateRevocation[]      @relation("CertificateRevocationActor")
+  organizationMemberships     OrganizationMembership[]
+  organizationSeats           OrganizationSeat[]
+  cohortInstructorAssignments CohortInstructorAssignment[]
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
@@ -661,9 +675,60 @@ model Course {
   languageProfile      LanguageCourseProfile?
   placementAssessments PlacementAssessment[]
   organizationCourses  OrganizationCourse[]
+  cohorts              Cohort[]
 
   @@index([title(ops: raw("gin_trgm_ops"))], type: Gin, map: "Course_title_trgm_idx")
   @@index([slug(ops: raw("gin_trgm_ops"))], type: Gin, map: "Course_slug_trgm_idx")
+}
+
+model Cohort {
+  id                    String                       @id @default(cuid())
+  courseId              String
+  name                  String
+  status                CohortStatus                 @default(PLANNED)
+  startsAt              DateTime?
+  endsAt                DateTime?
+  createdAt             DateTime                     @default(now())
+  updatedAt             DateTime                     @updatedAt
+  course                Course                       @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  instructorAssignments CohortInstructorAssignment[]
+  enrollments           CohortEnrollment[]
+
+  @@index([courseId, status])
+  @@index([status, startsAt])
+}
+
+model CohortInstructorAssignment {
+  id               String               @id @default(cuid())
+  cohortId         String
+  instructorUserId String
+  role             CohortInstructorRole
+  active           Boolean              @default(true)
+  assignedAt       DateTime             @default(now())
+  endedAt          DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  cohort           Cohort               @relation(fields: [cohortId], references: [id], onDelete: Restrict)
+  instructor       User                 @relation(fields: [instructorUserId], references: [id], onDelete: Restrict)
+
+  @@index([instructorUserId, active])
+  @@index([cohortId, active, role])
+}
+
+model CohortEnrollment {
+  id           String     @id @default(cuid())
+  cohortId     String
+  enrollmentId String
+  active       Boolean    @default(true)
+  joinedAt     DateTime   @default(now())
+  endedAt      DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  cohort       Cohort     @relation(fields: [cohortId], references: [id], onDelete: Restrict)
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Restrict)
+
+  @@index([enrollmentId, active])
+  @@index([cohortId, active])
 }
 
 model LanguageCourseProfile {
@@ -787,6 +852,7 @@ model Enrollment {
   course                   Course                              @relation(fields: [courseId], references: [id], onDelete: Restrict)
   statusEvents             EnrollmentStatusEvent[]
   organizationSponsorships OrganizationEnrollmentSponsorship[]
+  cohortEnrollments        CohortEnrollment[]
 
   @@unique([userId, courseId])
   @@index([courseId, status])
