@@ -1,5 +1,5 @@
 CREATE TABLE "CohortDeliveryAuditEvent" (
-  "id" TEXT NOT NULL DEFAULT gen_random_uuid()::text,
+  "id" TEXT NOT NULL,
   "cohortId" TEXT NOT NULL,
   "actorUserId" TEXT NOT NULL,
   "action" TEXT NOT NULL,
