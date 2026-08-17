@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { getInstructorWorkspaceCopy } from '../lib/instructor-workspace-localization';
 import { hasInstructorWorkspaceAccess } from '../lib/instructor-workspace.server';
 import { getLearnerOutcomesCopy } from '../lib/learner-outcomes';
+import { getLearnerSessionScheduleCopy } from '../lib/learner-session-schedule-localization';
 import { getOrganizationAnalyticsCopy } from '../lib/organization-analytics-localization';
 import { getOrganizationManagerCopy } from '../lib/organization-manager-localization';
 import { hasOrganizationManagerAccess } from '../lib/organization-manager.server';
@@ -19,6 +20,7 @@ export async function PortalHeader() {
   const locale = await getPortalRequestLocale();
   const copy = getPortalCopy(locale);
   const outcomesCopy = getLearnerOutcomesCopy(locale);
+  const scheduleCopy = getLearnerSessionScheduleCopy(locale);
   const instructorCopy = getInstructorWorkspaceCopy(locale);
   const managerCopy = getOrganizationManagerCopy(locale);
   const organizationAnalyticsCopy = getOrganizationAnalyticsCopy(locale);
@@ -42,6 +44,9 @@ export async function PortalHeader() {
           <Link href={localizeHref(locale, '/')}>{copy.shell.dashboard}</Link>
           <Link href={localizeHref(locale, '/progress')}>
             {outcomesCopy.nav}
+          </Link>
+          <Link href={localizeHref(locale, '/schedule')}>
+            {scheduleCopy.nav}
           </Link>
           {canTeachCohorts ? (
             <Link href={localizeHref(locale, '/instructor')}>
