@@ -127,10 +127,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         title: programme.title,
         description: programme.summary,
         slug: programme.slug.current,
-        delivery: localizeProgrammeDelivery(
-          locale,
-          programme.delivery,
-        ),
+        delivery: localizeProgrammeDelivery(locale, programme.delivery),
         image: programme.image
           ? {
               src: buildSanityProgrammeImageUrl(programme.image),
@@ -320,10 +317,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 <h3 dir="auto">
                   {program.slug ? (
                     <Link
-                      href={localizeHref(
-                        locale,
-                        `/programmes/${program.slug}`,
-                      )}
+                      href={localizeHref(locale, `/programmes/${program.slug}`)}
                     >
                       {program.title}
                     </Link>
