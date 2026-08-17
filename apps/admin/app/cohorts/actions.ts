@@ -45,6 +45,11 @@ const cohortEnrollmentMutationSchema = cohortEnrollmentSchema.extend({
 });
 
 type Transaction = Prisma.TransactionClient;
+type MutableCohort = {
+  id: string;
+  courseId: string;
+  status: 'PLANNED' | 'ACTIVE';
+};
 
 function revalidateCohortSurfaces(cohortId?: string) {
   revalidatePath('/cohorts');
@@ -72,18 +77,15 @@ async function requireMutableCohort(
   transaction: Transaction,
   cohortId: string,
 ) {
-  const cohort = await transaction.cohort.findUnique({
-    where: { id: cohortId },
-    select: { id: true, courseId: true, status: true },
-  });
-  if (
-    !cohort ||
-    cohort.status === 'COMPLETED' ||
-    cohort.status === 'CANCELLED'
-  ) {
-    throw new Error('Mutable cohort not found');
-  }
-  return cohort;
+  const cohorts = await transaction.$queryRaw<MutableCohort[]>`
+    SELECT "id", "courseId", "status"
+    FROM "Cohort"
+    WHERE "id" = ${cohortId}
+      AND "status" IN ('PLANNED'::"CohortStatus", 'ACTIVE'::"CohortStatus")
+    FOR UPDATE
+  `;
+  if (cohorts.length !== 1) throw new Error('Mutable cohort not found');
+  return cohorts[0];
 }
 
 export async function createCohort(formData: FormData) {
@@ -137,11 +139,7 @@ export async function transitionCohortStatus(formData: FormData) {
   });
 
   await db.$transaction(async (transaction: Transaction) => {
-    const cohort = await transaction.cohort.findUnique({
-      where: { id: input.cohortId },
-      select: { id: true, status: true },
-    });
-    if (!cohort) throw new Error('Cohort not found');
+    const cohort = await requireMutableCohort(transaction, input.cohortId);
     if (!isCohortStatusTransitionAllowed(cohort.status, input.toStatus)) {
       throw new Error('Invalid cohort status transition');
     }
@@ -227,7 +225,7 @@ export async function reassignCohortInstructor(formData: FormData) {
   const now = new Date();
 
   await db.$transaction(async (transaction: Transaction) => {
-    await requireMutableCohort(transaction, input.cohortId);
+    const cohort = await requireMutableCohort(transaction, input.cohortId);
     await requireAssignableInstructor(transaction, input.instructorUserId);
 
     const current = await transaction.cohortInstructorAssignment.findFirst({
@@ -236,7 +234,7 @@ export async function reassignCohortInstructor(formData: FormData) {
         cohortId: input.cohortId,
         active: true,
       },
-      select: { id: true, instructorUserId: true },
+      select: { id: true, instructorUserId: true, role: true },
     });
     if (!current) throw new Error('Active instructor assignment not found');
     if (current.instructorUserId === input.instructorUserId) {
@@ -252,6 +250,24 @@ export async function reassignCohortInstructor(formData: FormData) {
       select: { id: true },
     });
     if (duplicate) throw new Error('Replacement instructor already assigned');
+
+    if (
+      cohort.status === 'ACTIVE' &&
+      current.role === 'LEAD' &&
+      input.role !== 'LEAD'
+    ) {
+      const otherLeadCount = await transaction.cohortInstructorAssignment.count({
+        where: {
+          cohortId: cohort.id,
+          active: true,
+          role: 'LEAD',
+          id: { not: current.id },
+        },
+      });
+      if (otherLeadCount === 0) {
+        throw new Error('Active cohort must retain a lead instructor');
+      }
+    }
 
     const ended = await transaction.cohortInstructorAssignment.updateMany({
       where: { id: current.id, active: true },
@@ -309,16 +325,14 @@ export async function endCohortInstructorAssignment(formData: FormData) {
     if (!assignment) throw new Error('Active instructor assignment not found');
 
     if (cohort.status === 'ACTIVE' && assignment.role === 'LEAD') {
-      const otherLeadCount = await transaction.cohortInstructorAssignment.count(
-        {
-          where: {
-            cohortId: cohort.id,
-            active: true,
-            role: 'LEAD',
-            id: { not: assignment.id },
-          },
+      const otherLeadCount = await transaction.cohortInstructorAssignment.count({
+        where: {
+          cohortId: cohort.id,
+          active: true,
+          role: 'LEAD',
+          id: { not: assignment.id },
         },
-      );
+      });
       if (otherLeadCount === 0) {
         throw new Error('Active cohort must retain a lead instructor');
       }
