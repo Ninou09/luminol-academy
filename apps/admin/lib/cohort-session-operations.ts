@@ -86,7 +86,9 @@ export function parseZonedSessionDateTime(
     resolved.minute !== minute ||
     resolved.second !== second
   ) {
-    throw new Error('Session local time does not exist in the selected timezone');
+    throw new Error(
+      'Session local time does not exist in the selected timezone',
+    );
   }
 
   return instant;
