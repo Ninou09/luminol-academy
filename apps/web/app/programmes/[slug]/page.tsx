@@ -24,6 +24,10 @@ import {
 } from '../../../lib/sanity';
 import { getSchools } from '../../../lib/schools';
 import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
+import {
+  buildBreadcrumbJsonLd,
+  serializeJsonLd,
+} from '../../../lib/structured-data';
 import styles from './page.module.css';
 
 const DETAIL_COPY = {
@@ -175,10 +179,30 @@ export default async function ProgrammeDetailPage({
     (language) => LANGUAGE_NAMES[locale][language],
   );
   const deliveryLabel = localizeProgrammeDelivery(locale, programme.delivery);
+  const programmePathname = `/programmes/${programme.slug.current}`;
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    {
+      name: copy.catalogue,
+      href: localizeHref(locale, '/programmes'),
+    },
+    {
+      name: school.name,
+      href: localizeHref(locale, `/schools/${programme.school}`),
+    },
+    {
+      name: programme.title,
+      href: localizeHref(locale, programmePathname),
+    },
+  ]);
 
   return (
     <>
       <SiteHeader />
+      <script
+        type="application/ld+json"
+        data-breadcrumb-jsonld
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
+      />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero}>
           <nav className={styles.breadcrumbs} aria-label={copy.catalogue}>
