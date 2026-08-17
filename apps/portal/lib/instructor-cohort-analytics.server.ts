@@ -12,6 +12,7 @@ import {
 import { assertInstructorCohortAccess } from '@luminol/professional';
 
 import {
+  INSTRUCTOR_COHORT_ANALYTICS_MINIMUM_GROUP_SIZE,
   protectInstructorCohortAnalytics,
   summarizeInstructorCohortAnalytics,
 } from './instructor-cohort-analytics';
@@ -34,9 +35,10 @@ function activityCutoff(now: Date) {
 /**
  * Resolves exact persisted instructor authority before any cross-learner
  * analytics records are read. Browser-supplied cohort ids are selectors only.
- * Returned analytics contain aggregate learning state only; no learner identity,
- * authored text, assessment answers/scores, psychology, enquiry, finance,
- * certificate metadata, search/session or network data are selected or exposed.
+ * Internal learner ids are used only to scope first-party source records after
+ * authorization and are never returned by this read model. Authored text,
+ * assessment answers/scores, psychology, enquiry, finance, certificate metadata,
+ * search/session and network data are neither selected for metrics nor exposed.
  */
 export async function getAuthorizedInstructorCohortAnalytics(
   cohortId: string,
@@ -57,7 +59,6 @@ export async function getAuthorizedInstructorCohortAnalytics(
     assignment,
   });
 
-  const recentCutoff = activityCutoff(now);
   const cohort = await db.cohort.findFirst({
     where: {
       id: normalizedCohortId,
@@ -90,44 +91,69 @@ export async function getAuthorizedInstructorCohortAnalytics(
 
   if (!cohort) return null;
 
+  const baseView = {
+    cohort: {
+      id: cohort.id,
+      name: cohort.name,
+      status: cohort.status,
+      courseId: cohort.course.id,
+      courseTitle: cohort.course.title,
+    },
+    assignmentRole: assignment.role,
+  };
   const learnerIds = cohort.enrollments.map(
     ({ enrollment }) => enrollment.userId,
   );
   const participantCount = learnerIds.length;
+
+  if (participantCount < INSTRUCTOR_COHORT_ANALYTICS_MINIMUM_GROUP_SIZE) {
+    return {
+      ...baseView,
+      analytics: protectInstructorCohortAnalytics(
+        summarizeInstructorCohortAnalytics({
+          participantCount,
+          completedEnrollments: 0,
+          recentlyActiveLearners: 0,
+          activeCertificates: 0,
+          reviewRequiredAttempts: 0,
+          activityWindowDays: ACADEMY_ANALYTICS_ACTIVITY_WINDOW_DAYS,
+        }),
+      ),
+    };
+  }
+
+  const recentCutoff = activityCutoff(now);
   const completedEnrollments = cohort.enrollments.filter(
     ({ enrollment }) => enrollment.status === EnrollmentStatus.COMPLETED,
   ).length;
-
   const [recentActivityRows, certificateRows, reviewRequiredAttempts] =
-    participantCount === 0
-      ? [[], [], 0]
-      : await Promise.all([
-          db.learningRecord.findMany({
-            where: {
-              courseId: cohort.course.id,
-              userId: { in: learnerIds },
-              lastActivityAt: { gte: recentCutoff },
-            },
-            distinct: ['userId'],
-            select: { userId: true },
-          }),
-          db.certificate.findMany({
-            where: {
-              courseId: cohort.course.id,
-              userId: { in: learnerIds },
-              status: CertificateStatus.ACTIVE,
-            },
-            distinct: ['userId'],
-            select: { userId: true },
-          }),
-          db.placementAttempt.count({
-            where: {
-              userId: { in: learnerIds },
-              status: PlacementAttemptStatus.REVIEW_REQUIRED,
-              assessment: { courseId: cohort.course.id },
-            },
-          }),
-        ]);
+    await Promise.all([
+      db.learningRecord.findMany({
+        where: {
+          courseId: cohort.course.id,
+          userId: { in: learnerIds },
+          lastActivityAt: { gte: recentCutoff },
+        },
+        distinct: ['userId'],
+        select: { userId: true },
+      }),
+      db.certificate.findMany({
+        where: {
+          courseId: cohort.course.id,
+          userId: { in: learnerIds },
+          status: CertificateStatus.ACTIVE,
+        },
+        distinct: ['userId'],
+        select: { userId: true },
+      }),
+      db.placementAttempt.count({
+        where: {
+          userId: { in: learnerIds },
+          status: PlacementAttemptStatus.REVIEW_REQUIRED,
+          assessment: { courseId: cohort.course.id },
+        },
+      }),
+    ]);
 
   const value = summarizeInstructorCohortAnalytics({
     participantCount,
@@ -139,14 +165,7 @@ export async function getAuthorizedInstructorCohortAnalytics(
   });
 
   return {
-    cohort: {
-      id: cohort.id,
-      name: cohort.name,
-      status: cohort.status,
-      courseId: cohort.course.id,
-      courseTitle: cohort.course.title,
-    },
-    assignmentRole: assignment.role,
+    ...baseView,
     analytics: protectInstructorCohortAnalytics(value),
   };
 }
