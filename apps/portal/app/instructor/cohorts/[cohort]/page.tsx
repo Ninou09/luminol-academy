@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { PortalHeader } from '../../../../components/portal-header';
+import { getInstructorCohortAnalyticsCopy } from '../../../../lib/instructor-cohort-analytics-localization';
 import { getInstructorCohortCopy } from '../../../../lib/instructor-cohort-localization';
 import { getAuthorizedInstructorCohortTeachingView } from '../../../../lib/instructor-cohort.server';
 import { getPortalRequestLocale } from '../../../../lib/request-locale';
@@ -30,6 +31,7 @@ export default async function InstructorCohortPage({
   const { cohort: cohortId } = await params;
   const locale = await getPortalRequestLocale();
   const copy = getInstructorCohortCopy(locale);
+  const analyticsCopy = getInstructorCohortAnalyticsCopy(locale);
   const view = await getAuthorizedInstructorCohortTeachingView(cohortId);
 
   if (!view) notFound();
@@ -62,6 +64,15 @@ export default async function InstructorCohortPage({
             </h1>
             <p>{copy.intro}</p>
             <Link href={localizeHref(locale, '/instructor')}>{copy.back}</Link>
+            {' · '}
+            <Link
+              href={localizeHref(
+                locale,
+                `/instructor/cohorts/${view.cohort.id}/analytics`,
+              )}
+            >
+              {analyticsCopy.title}
+            </Link>
           </div>
         </section>
 
