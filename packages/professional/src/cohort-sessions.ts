@@ -216,7 +216,9 @@ export function decideAttendanceMutationAccess(
     actorUserId: input.actorUserId,
     cohortId: session.cohortId,
     assignment,
-    academyOverride: input.academyOverride,
+    ...(input.academyOverride !== undefined
+      ? { academyOverride: input.academyOverride }
+      : {}),
   });
 
   if (!instructorDecision.allowed) return instructorDecision;
