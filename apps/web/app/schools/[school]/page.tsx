@@ -126,7 +126,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         id: programme._id,
         title: programme.title,
         description: programme.summary,
-        slug: programme.slug.current,
+        slug: programme.slug?.current,
         delivery: localizeProgrammeDelivery(locale, programme.delivery),
         image: programme.image
           ? {
