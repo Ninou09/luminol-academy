@@ -182,9 +182,7 @@ export default async function InstructorCohortAnalyticsPage({
                       </div>
                       <div>
                         <dt>{copy.attendedRecords}</dt>
-                        <dd>
-                          {number(view.analytics.value.attendedRecords)}
-                        </dd>
+                        <dd>{number(view.analytics.value.attendedRecords)}</dd>
                       </div>
                       <div>
                         <dt>{copy.absentRecords}</dt>
