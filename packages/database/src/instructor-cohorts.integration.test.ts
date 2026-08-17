@@ -143,7 +143,9 @@ suite('Milestone 18 cohort persistence', () => {
     await db.user.deleteMany({
       where: { id: { in: [instructorId, learnerAId, learnerBId] } },
     });
-    await db.course.deleteMany({ where: { id: { in: [courseAId, courseBId] } } });
+    await db.course.deleteMany({
+      where: { id: { in: [courseAId, courseBId] } },
+    });
     await db.$disconnect();
   });
 

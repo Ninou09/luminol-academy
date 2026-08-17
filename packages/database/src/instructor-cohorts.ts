@@ -1,7 +1,4 @@
-import {
-  CohortInstructorRole,
-  CohortStatus,
-} from '../generated/prisma/client';
+import { CohortInstructorRole, CohortStatus } from '../generated/prisma/client';
 
 import { db } from './index';
 
