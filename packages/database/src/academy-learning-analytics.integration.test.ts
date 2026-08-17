@@ -229,8 +229,8 @@ suite('Milestone 17 academy analytics read model', () => {
   });
 
   test('rejects an invalid activity-window anchor', async () => {
-    await expect(getAcademyProgrammeAnalytics(new Date(Number.NaN))).rejects.toThrow(
-      'now must be a valid date',
-    );
+    await expect(
+      getAcademyProgrammeAnalytics(new Date(Number.NaN)),
+    ).rejects.toThrow('now must be a valid date');
   });
 });
