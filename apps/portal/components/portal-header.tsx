@@ -4,6 +4,7 @@ import { getCommonDictionary, localizeHref } from '@luminol/localization';
 import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
+import { getLearnerOutcomesCopy } from '../lib/learner-outcomes';
 import { getOrganizationManagerCopy } from '../lib/organization-manager-localization';
 import { hasOrganizationManagerAccess } from '../lib/organization-manager.server';
 import { getPortalCopy } from '../lib/portal-localization';
@@ -14,6 +15,7 @@ export async function PortalHeader() {
   const user = await requireUser();
   const locale = await getPortalRequestLocale();
   const copy = getPortalCopy(locale);
+  const outcomesCopy = getLearnerOutcomesCopy(locale);
   const managerCopy = getOrganizationManagerCopy(locale);
   const common = getCommonDictionary(locale);
   const canManageOrganization = await hasOrganizationManagerAccess(user.id);
@@ -30,6 +32,9 @@ export async function PortalHeader() {
       <div className="portal-account">
         <nav className="portal-nav" aria-label={copy.shell.portal}>
           <Link href={localizeHref(locale, '/')}>{copy.shell.dashboard}</Link>
+          <Link href={localizeHref(locale, '/progress')}>
+            {outcomesCopy.nav}
+          </Link>
           <Link href={localizeHref(locale, '/search')}>
             {copy.shell.search}
           </Link>
