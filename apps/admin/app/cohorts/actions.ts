@@ -6,6 +6,7 @@ import type { Prisma } from '@luminol/database';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { auditCohortDelivery } from '../../lib/cohort-delivery-audit.server';
 import {
   COHORT_INSTRUCTOR_ROLES,
   COHORT_STATUSES,
@@ -86,7 +87,7 @@ async function requireMutableCohort(
 }
 
 export async function createCohort(formData: FormData) {
-  await requirePlatformPermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = cohortCreateSchema.parse({
     courseId: formData.get('courseId'),
     name: formData.get('name'),
@@ -104,7 +105,7 @@ export async function createCohort(formData: FormData) {
     });
     if (!course) throw new Error('Published course not found');
 
-    await transaction.cohort.create({
+    const cohort = await transaction.cohort.create({
       data: {
         courseId: course.id,
         name: input.name,
@@ -112,14 +113,24 @@ export async function createCohort(formData: FormData) {
         endsAt,
         status: 'PLANNED',
       },
+      select: { id: true },
     });
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohort.id,
+      'cohort.created',
+      'cohort',
+      cohort.id,
+    );
   });
 
   revalidateCohortSurfaces();
 }
 
 export async function transitionCohortStatus(formData: FormData) {
-  await requirePlatformPermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = cohortTransitionSchema.parse({
     cohortId: formData.get('cohortId'),
     toStatus: formData.get('toStatus'),
@@ -151,13 +162,22 @@ export async function transitionCohortStatus(formData: FormData) {
     if (updated.count !== 1) {
       throw new Error('Cohort was updated concurrently');
     }
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohort.id,
+      `cohort.status.${cohort.status.toLowerCase()}.${input.toStatus.toLowerCase()}`,
+      'cohort',
+      cohort.id,
+    );
   });
 
   revalidateCohortSurfaces(input.cohortId);
 }
 
 export async function assignCohortInstructor(formData: FormData) {
-  await requirePlatformPermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = assignmentSchema.parse({
     cohortId: formData.get('cohortId'),
     instructorUserId: formData.get('instructorUserId'),
@@ -178,16 +198,26 @@ export async function assignCohortInstructor(formData: FormData) {
     });
     if (existing) throw new Error('Instructor already assigned to cohort');
 
-    await transaction.cohortInstructorAssignment.create({
+    const assignment = await transaction.cohortInstructorAssignment.create({
       data: input,
+      select: { id: true },
     });
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      input.cohortId,
+      'instructor_assignment.created',
+      'cohortInstructorAssignment',
+      assignment.id,
+    );
   });
 
   revalidateCohortSurfaces(input.cohortId);
 }
 
 export async function reassignCohortInstructor(formData: FormData) {
-  await requirePlatformPermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = reassignSchema.parse({
     cohortId: formData.get('cohortId'),
     assignmentId: formData.get('assignmentId'),
@@ -231,20 +261,39 @@ export async function reassignCohortInstructor(formData: FormData) {
       throw new Error('Instructor assignment was updated concurrently');
     }
 
-    await transaction.cohortInstructorAssignment.create({
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      input.cohortId,
+      'instructor_assignment.ended_for_reassignment',
+      'cohortInstructorAssignment',
+      current.id,
+    );
+
+    const replacement = await transaction.cohortInstructorAssignment.create({
       data: {
         cohortId: input.cohortId,
         instructorUserId: input.instructorUserId,
         role: input.role,
       },
+      select: { id: true },
     });
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      input.cohortId,
+      'instructor_assignment.created_by_reassignment',
+      'cohortInstructorAssignment',
+      replacement.id,
+    );
   });
 
   revalidateCohortSurfaces(input.cohortId);
 }
 
 export async function endCohortInstructorAssignment(formData: FormData) {
-  await requirePlatformPermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = assignmentMutationSchema.parse({
     cohortId: formData.get('cohortId'),
     assignmentId: formData.get('assignmentId'),
@@ -282,13 +331,22 @@ export async function endCohortInstructorAssignment(formData: FormData) {
     if (ended.count !== 1) {
       throw new Error('Instructor assignment was updated concurrently');
     }
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohort.id,
+      'instructor_assignment.ended',
+      'cohortInstructorAssignment',
+      assignment.id,
+    );
   });
 
   revalidateCohortSurfaces(input.cohortId);
 }
 
 export async function placeEnrollmentInCohort(formData: FormData) {
-  await requirePlatformPermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = cohortEnrollmentSchema.parse({
     cohortId: formData.get('cohortId'),
     enrollmentId: formData.get('enrollmentId'),
@@ -324,35 +382,67 @@ export async function placeEnrollmentInCohort(formData: FormData) {
       if (ended.count !== 1) {
         throw new Error('Cohort enrollment was updated concurrently');
       }
+
+      await auditCohortDelivery(
+        transaction,
+        administrator.id,
+        current.cohortId,
+        'cohort_enrollment.ended_for_move',
+        'cohortEnrollment',
+        current.id,
+      );
     }
 
-    await transaction.cohortEnrollment.create({
+    const membership = await transaction.cohortEnrollment.create({
       data: { cohortId: cohort.id, enrollmentId: enrollment.id },
+      select: { id: true },
     });
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohort.id,
+      current ? 'cohort_enrollment.moved' : 'cohort_enrollment.placed',
+      'cohortEnrollment',
+      membership.id,
+    );
   });
 
   revalidateCohortSurfaces(input.cohortId);
 }
 
 export async function removeEnrollmentFromCohort(formData: FormData) {
-  await requirePlatformPermission('academy:manage');
+  const administrator = await requirePlatformPermission('academy:manage');
   const input = cohortEnrollmentMutationSchema.parse({
     cohortId: formData.get('cohortId'),
     enrollmentId: formData.get('enrollmentId'),
     cohortEnrollmentId: formData.get('cohortEnrollmentId'),
   });
 
-  const updated = await db.cohortEnrollment.updateMany({
-    where: {
-      id: input.cohortEnrollmentId,
-      cohortId: input.cohortId,
-      enrollmentId: input.enrollmentId,
-      active: true,
-    },
-    data: { active: false, endedAt: new Date() },
+  await db.$transaction(async (transaction: Transaction) => {
+    await requireMutableCohort(transaction, input.cohortId);
+    const updated = await transaction.cohortEnrollment.updateMany({
+      where: {
+        id: input.cohortEnrollmentId,
+        cohortId: input.cohortId,
+        enrollmentId: input.enrollmentId,
+        active: true,
+      },
+      data: { active: false, endedAt: new Date() },
+    });
+    if (updated.count !== 1) {
+      throw new Error('Active cohort enrollment not found');
+    }
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      input.cohortId,
+      'cohort_enrollment.removed',
+      'cohortEnrollment',
+      input.cohortEnrollmentId,
+    );
   });
-  if (updated.count !== 1)
-    throw new Error('Active cohort enrollment not found');
 
   revalidateCohortSurfaces(input.cohortId);
 }
