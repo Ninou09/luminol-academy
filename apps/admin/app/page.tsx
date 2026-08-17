@@ -10,6 +10,7 @@ import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
+import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import {
   displayPersonName,
@@ -28,6 +29,7 @@ export default async function Page() {
   const administrator = await requirePermission('academy:manage');
   const locale = await getAdminRequestLocale();
   const copy = getAdminCopy(locale);
+  const analyticsCopy = getAcademyAnalyticsCopy(locale);
   const common = getCommonDictionary(locale);
   const operations = await getOperationsDashboard();
   const administratorName = displayPersonName(
@@ -67,6 +69,9 @@ export default async function Page() {
           </Link>
           <Link href={localizeHref(locale, '/finance')}>
             <span>06</span> {copy.shell.finance}
+          </Link>
+          <Link href={localizeHref(locale, '/analytics')}>
+            <span>07</span> {analyticsCopy.title}
           </Link>
         </nav>
         <div className="admin-sidebar-note">
