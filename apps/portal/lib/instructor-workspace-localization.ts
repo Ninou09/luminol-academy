@@ -15,6 +15,7 @@ export type InstructorWorkspaceCopy = {
   unscheduled: string;
   starts: string;
   ends: string;
+  openCohort: string;
   noCohorts: string;
   roles: Record<'LEAD' | 'ASSISTANT' | 'REVIEWER', string>;
   statuses: Record<'PLANNED' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED', string>;
@@ -39,6 +40,7 @@ const INSTRUCTOR_WORKSPACE_COPY: Record<Locale, InstructorWorkspaceCopy> = {
     unscheduled: 'Schedule not set',
     starts: 'Starts',
     ends: 'Ends',
+    openCohort: 'Open teaching view',
     noCohorts: 'No active instructor cohort assignments are available.',
     roles: {
       LEAD: 'Lead instructor',
@@ -71,6 +73,7 @@ const INSTRUCTOR_WORKSPACE_COPY: Record<Locale, InstructorWorkspaceCopy> = {
     unscheduled: 'Calendrier non défini',
     starts: 'Début',
     ends: 'Fin',
+    openCohort: "Ouvrir la vue d'enseignement",
     noCohorts: "Aucune affectation active de groupe n'est disponible.",
     roles: {
       LEAD: 'Formateur principal',
@@ -85,7 +88,7 @@ const INSTRUCTOR_WORKSPACE_COPY: Record<Locale, InstructorWorkspaceCopy> = {
     },
     privacyTitle: "Limite d'accès du formateur",
     privacyBody:
-      "Cet espace n'accorde aucun droit d'administration de l'académie ni de gestion d'organisation. Il n'expose pas le contenu ou les notes psychologiques, les messages de demande, les données financières ou de paiement personnelles, les métadonnées privées des certificats, les textes bruts rédigés par les apprenants, les recherches brutes, les identifiants de session, les adresses IP ou les données d'organisations sans rapport. L'accès à un groupe existe uniquement tant qu'une affectation persistée exacte du formateur est active.",
+      "Cet espace n'accorde aucun droit d'administration de l'académie ni de gestion d'organisation. Il n'expose pas le contenu ou les notes psychologiques, les messages de demande, les données financières ou de paiement personnelles, les métadonnées privées des certificats, les textes rédigés par les apprenants, les recherches brutes, les identifiants de session, les adresses IP ou les données d'organisations sans rapport. L'accès à un groupe existe uniquement tant qu'une affectation persistée exacte du formateur est active.",
   },
   ar: {
     nav: 'المدرّس',
@@ -103,6 +106,7 @@ const INSTRUCTOR_WORKSPACE_COPY: Record<Locale, InstructorWorkspaceCopy> = {
     unscheduled: 'لم يُحدد الجدول بعد',
     starts: 'البداية',
     ends: 'النهاية',
+    openCohort: 'فتح عرض التدريس',
     noCohorts: 'لا توجد حاليًا إسنادات نشطة لمجموعات تدريس.',
     roles: {
       LEAD: 'المدرّس الرئيسي',
