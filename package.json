@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --write apps/portal/app/instructor/attendance-actions.ts apps/portal/app/instructor/cohorts/[cohort]/page.tsx apps/portal/app/instructor/cohorts/[cohort]/sessions/[session]/page.tsx apps/portal/lib/instructor-attendance-localization.ts && git diff --exit-code",
+    "format:check": "prettier --check .",
     "security:check": "node scripts/security-check.mjs && node scripts/check-action-pins.mjs",
     "db:generate": "node scripts/generate-prisma-client.mjs",
     "db:migrate": "pnpm --filter @luminol/database migrate",
