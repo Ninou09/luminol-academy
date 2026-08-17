@@ -89,7 +89,10 @@ export default async function InstructorSessionAttendancePage({
           </article>
         </section>
 
-        <section className="dashboard-section" aria-labelledby="session-time-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="session-time-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.session}</p>
@@ -103,7 +106,10 @@ export default async function InstructorSessionAttendancePage({
         </section>
 
         {view.assignmentRole === 'REVIEWER' ? (
-          <section className="dashboard-section" aria-labelledby="readonly-title">
+          <section
+            className="dashboard-section"
+            aria-labelledby="readonly-title"
+          >
             <div className="section-heading">
               <div>
                 <p className="eyebrow">{copy.attendance}</p>
@@ -118,7 +124,10 @@ export default async function InstructorSessionAttendancePage({
           </section>
         ) : null}
 
-        <section className="dashboard-section" aria-labelledby="attendance-roster-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="attendance-roster-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.attendance}</p>
@@ -129,7 +138,10 @@ export default async function InstructorSessionAttendancePage({
           {view.learners.length > 0 ? (
             <div className="course-grid">
               {view.learners.map((learner) => (
-                <article className="course-card" key={learner.cohortEnrollmentId}>
+                <article
+                  className="course-card"
+                  key={learner.cohortEnrollmentId}
+                >
                   <div className="course-content">
                     <p className="eyebrow">{copy.learner}</p>
                     <h3 dir="auto">
@@ -158,8 +170,16 @@ export default async function InstructorSessionAttendancePage({
 
                     {canMutate ? (
                       <form action={recordInstructorAttendance}>
-                        <input type="hidden" name="cohortId" value={view.cohort.id} />
-                        <input type="hidden" name="sessionId" value={view.session.id} />
+                        <input
+                          type="hidden"
+                          name="cohortId"
+                          value={view.cohort.id}
+                        />
+                        <input
+                          type="hidden"
+                          name="sessionId"
+                          value={view.session.id}
+                        />
                         <input
                           type="hidden"
                           name="cohortEnrollmentId"
