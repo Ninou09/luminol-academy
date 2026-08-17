@@ -1,0 +1,466 @@
+'use server';
+
+import { requirePlatformPermission } from '@luminol/auth';
+import { db } from '@luminol/database';
+import type { Prisma } from '@luminol/database';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+
+import { auditCohortDelivery } from '../../lib/cohort-delivery-audit.server';
+import {
+  COHORT_INSTRUCTOR_ROLES,
+  COHORT_STATUSES,
+  isCohortStatusTransitionAllowed,
+  parseOptionalLocalDateTime,
+} from '../../lib/cohort-operations';
+
+const idSchema = z.string().min(1).max(128);
+const cohortCreateSchema = z.object({
+  courseId: idSchema,
+  name: z.string().trim().min(2).max(160),
+});
+const cohortTransitionSchema = z.object({
+  cohortId: idSchema,
+  toStatus: z.enum(COHORT_STATUSES),
+});
+const assignmentSchema = z.object({
+  cohortId: idSchema,
+  instructorUserId: idSchema,
+  role: z.enum(COHORT_INSTRUCTOR_ROLES),
+});
+const assignmentMutationSchema = z.object({
+  cohortId: idSchema,
+  assignmentId: idSchema,
+});
+const reassignSchema = assignmentMutationSchema.extend({
+  instructorUserId: idSchema,
+  role: z.enum(COHORT_INSTRUCTOR_ROLES),
+});
+const cohortEnrollmentSchema = z.object({
+  cohortId: idSchema,
+  enrollmentId: idSchema,
+});
+const cohortEnrollmentMutationSchema = cohortEnrollmentSchema.extend({
+  cohortEnrollmentId: idSchema,
+});
+
+type Transaction = Prisma.TransactionClient;
+type MutableCohort = {
+  id: string;
+  courseId: string;
+  status: 'PLANNED' | 'ACTIVE';
+};
+
+function revalidateCohortSurfaces(cohortId?: string) {
+  revalidatePath('/cohorts');
+  revalidatePath('/instructor');
+  if (cohortId) revalidatePath(`/instructor/cohorts/${cohortId}`);
+}
+
+async function requireAssignableInstructor(
+  transaction: Transaction,
+  instructorUserId: string,
+) {
+  const instructor = await transaction.user.findFirst({
+    where: {
+      id: instructorUserId,
+      deletedAt: null,
+      roles: { some: { role: { key: { in: ['staff', 'admin'] } } } },
+    },
+    select: { id: true },
+  });
+  if (!instructor) throw new Error('Assignable instructor not found');
+  return instructor;
+}
+
+async function requireMutableCohort(
+  transaction: Transaction,
+  cohortId: string,
+) {
+  const cohorts = await transaction.$queryRaw<MutableCohort[]>`
+    SELECT "id", "courseId", "status"
+    FROM "Cohort"
+    WHERE "id" = ${cohortId}
+      AND "status" IN ('PLANNED'::"CohortStatus", 'ACTIVE'::"CohortStatus")
+    FOR UPDATE
+  `;
+  if (cohorts.length !== 1) throw new Error('Mutable cohort not found');
+  return cohorts[0]!;
+}
+
+export async function createCohort(formData: FormData) {
+  const administrator = await requirePlatformPermission('academy:manage');
+  const input = cohortCreateSchema.parse({
+    courseId: formData.get('courseId'),
+    name: formData.get('name'),
+  });
+  const startsAt = parseOptionalLocalDateTime(formData.get('startsAt'));
+  const endsAt = parseOptionalLocalDateTime(formData.get('endsAt'));
+  if (startsAt && endsAt && endsAt < startsAt) {
+    throw new Error('Cohort end must not precede start');
+  }
+
+  await db.$transaction(async (transaction: Transaction) => {
+    const course = await transaction.course.findFirst({
+      where: { id: input.courseId, published: true },
+      select: { id: true },
+    });
+    if (!course) throw new Error('Published course not found');
+
+    const cohort = await transaction.cohort.create({
+      data: {
+        courseId: course.id,
+        name: input.name,
+        startsAt,
+        endsAt,
+        status: 'PLANNED',
+      },
+      select: { id: true },
+    });
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohort.id,
+      'cohort.created',
+      'cohort',
+      cohort.id,
+    );
+  });
+
+  revalidateCohortSurfaces();
+}
+
+export async function transitionCohortStatus(formData: FormData) {
+  const administrator = await requirePlatformPermission('academy:manage');
+  const input = cohortTransitionSchema.parse({
+    cohortId: formData.get('cohortId'),
+    toStatus: formData.get('toStatus'),
+  });
+
+  await db.$transaction(async (transaction: Transaction) => {
+    const cohort = await requireMutableCohort(transaction, input.cohortId);
+    if (!isCohortStatusTransitionAllowed(cohort.status, input.toStatus)) {
+      throw new Error('Invalid cohort status transition');
+    }
+
+    if (input.toStatus === 'ACTIVE') {
+      const leadCount = await transaction.cohortInstructorAssignment.count({
+        where: { cohortId: cohort.id, active: true, role: 'LEAD' },
+      });
+      if (leadCount === 0) {
+        throw new Error('An active cohort requires a lead instructor');
+      }
+    }
+
+    const updated = await transaction.cohort.updateMany({
+      where: { id: cohort.id, status: cohort.status },
+      data: { status: input.toStatus },
+    });
+    if (updated.count !== 1) {
+      throw new Error('Cohort was updated concurrently');
+    }
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohort.id,
+      `cohort.status.${cohort.status.toLowerCase()}.${input.toStatus.toLowerCase()}`,
+      'cohort',
+      cohort.id,
+    );
+  });
+
+  revalidateCohortSurfaces(input.cohortId);
+}
+
+export async function assignCohortInstructor(formData: FormData) {
+  const administrator = await requirePlatformPermission('academy:manage');
+  const input = assignmentSchema.parse({
+    cohortId: formData.get('cohortId'),
+    instructorUserId: formData.get('instructorUserId'),
+    role: formData.get('role'),
+  });
+
+  await db.$transaction(async (transaction: Transaction) => {
+    await requireMutableCohort(transaction, input.cohortId);
+    await requireAssignableInstructor(transaction, input.instructorUserId);
+
+    const existing = await transaction.cohortInstructorAssignment.findFirst({
+      where: {
+        cohortId: input.cohortId,
+        instructorUserId: input.instructorUserId,
+        active: true,
+      },
+      select: { id: true },
+    });
+    if (existing) throw new Error('Instructor already assigned to cohort');
+
+    const assignment = await transaction.cohortInstructorAssignment.create({
+      data: input,
+      select: { id: true },
+    });
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      input.cohortId,
+      'instructor_assignment.created',
+      'cohortInstructorAssignment',
+      assignment.id,
+    );
+  });
+
+  revalidateCohortSurfaces(input.cohortId);
+}
+
+export async function reassignCohortInstructor(formData: FormData) {
+  const administrator = await requirePlatformPermission('academy:manage');
+  const input = reassignSchema.parse({
+    cohortId: formData.get('cohortId'),
+    assignmentId: formData.get('assignmentId'),
+    instructorUserId: formData.get('instructorUserId'),
+    role: formData.get('role'),
+  });
+  const now = new Date();
+
+  await db.$transaction(async (transaction: Transaction) => {
+    const cohort = await requireMutableCohort(transaction, input.cohortId);
+    await requireAssignableInstructor(transaction, input.instructorUserId);
+
+    const current = await transaction.cohortInstructorAssignment.findFirst({
+      where: {
+        id: input.assignmentId,
+        cohortId: input.cohortId,
+        active: true,
+      },
+      select: { id: true, instructorUserId: true, role: true },
+    });
+    if (!current) throw new Error('Active instructor assignment not found');
+    if (current.instructorUserId === input.instructorUserId) {
+      throw new Error('Replacement instructor must be different');
+    }
+
+    const duplicate = await transaction.cohortInstructorAssignment.findFirst({
+      where: {
+        cohortId: input.cohortId,
+        instructorUserId: input.instructorUserId,
+        active: true,
+      },
+      select: { id: true },
+    });
+    if (duplicate) throw new Error('Replacement instructor already assigned');
+
+    if (
+      cohort.status === 'ACTIVE' &&
+      current.role === 'LEAD' &&
+      input.role !== 'LEAD'
+    ) {
+      const otherLeadCount = await transaction.cohortInstructorAssignment.count(
+        {
+          where: {
+            cohortId: cohort.id,
+            active: true,
+            role: 'LEAD',
+            id: { not: current.id },
+          },
+        },
+      );
+      if (otherLeadCount === 0) {
+        throw new Error('Active cohort must retain a lead instructor');
+      }
+    }
+
+    const ended = await transaction.cohortInstructorAssignment.updateMany({
+      where: { id: current.id, active: true },
+      data: { active: false, endedAt: now },
+    });
+    if (ended.count !== 1) {
+      throw new Error('Instructor assignment was updated concurrently');
+    }
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      input.cohortId,
+      'instructor_assignment.ended_for_reassignment',
+      'cohortInstructorAssignment',
+      current.id,
+    );
+
+    const replacement = await transaction.cohortInstructorAssignment.create({
+      data: {
+        cohortId: input.cohortId,
+        instructorUserId: input.instructorUserId,
+        role: input.role,
+      },
+      select: { id: true },
+    });
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      input.cohortId,
+      'instructor_assignment.created_by_reassignment',
+      'cohortInstructorAssignment',
+      replacement.id,
+    );
+  });
+
+  revalidateCohortSurfaces(input.cohortId);
+}
+
+export async function endCohortInstructorAssignment(formData: FormData) {
+  const administrator = await requirePlatformPermission('academy:manage');
+  const input = assignmentMutationSchema.parse({
+    cohortId: formData.get('cohortId'),
+    assignmentId: formData.get('assignmentId'),
+  });
+  const now = new Date();
+
+  await db.$transaction(async (transaction: Transaction) => {
+    const cohort = await requireMutableCohort(transaction, input.cohortId);
+    const assignment = await transaction.cohortInstructorAssignment.findFirst({
+      where: { id: input.assignmentId, cohortId: cohort.id, active: true },
+      select: { id: true, role: true },
+    });
+    if (!assignment) throw new Error('Active instructor assignment not found');
+
+    if (cohort.status === 'ACTIVE' && assignment.role === 'LEAD') {
+      const otherLeadCount = await transaction.cohortInstructorAssignment.count(
+        {
+          where: {
+            cohortId: cohort.id,
+            active: true,
+            role: 'LEAD',
+            id: { not: assignment.id },
+          },
+        },
+      );
+      if (otherLeadCount === 0) {
+        throw new Error('Active cohort must retain a lead instructor');
+      }
+    }
+
+    const ended = await transaction.cohortInstructorAssignment.updateMany({
+      where: { id: assignment.id, active: true },
+      data: { active: false, endedAt: now },
+    });
+    if (ended.count !== 1) {
+      throw new Error('Instructor assignment was updated concurrently');
+    }
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohort.id,
+      'instructor_assignment.ended',
+      'cohortInstructorAssignment',
+      assignment.id,
+    );
+  });
+
+  revalidateCohortSurfaces(input.cohortId);
+}
+
+export async function placeEnrollmentInCohort(formData: FormData) {
+  const administrator = await requirePlatformPermission('academy:manage');
+  const input = cohortEnrollmentSchema.parse({
+    cohortId: formData.get('cohortId'),
+    enrollmentId: formData.get('enrollmentId'),
+  });
+  const now = new Date();
+
+  await db.$transaction(async (transaction: Transaction) => {
+    const cohort = await requireMutableCohort(transaction, input.cohortId);
+    const enrollment = await transaction.enrollment.findFirst({
+      where: {
+        id: input.enrollmentId,
+        courseId: cohort.courseId,
+        status: { in: ['PENDING', 'ACTIVE'] },
+        user: { deletedAt: null },
+      },
+      select: { id: true },
+    });
+    if (!enrollment) throw new Error('Eligible enrollment not found');
+
+    const current = await transaction.cohortEnrollment.findFirst({
+      where: { enrollmentId: enrollment.id, active: true },
+      select: { id: true, cohortId: true },
+    });
+    if (current?.cohortId === cohort.id) {
+      throw new Error('Enrollment already belongs to this cohort');
+    }
+
+    if (current) {
+      const ended = await transaction.cohortEnrollment.updateMany({
+        where: { id: current.id, active: true },
+        data: { active: false, endedAt: now },
+      });
+      if (ended.count !== 1) {
+        throw new Error('Cohort enrollment was updated concurrently');
+      }
+
+      await auditCohortDelivery(
+        transaction,
+        administrator.id,
+        current.cohortId,
+        'cohort_enrollment.ended_for_move',
+        'cohortEnrollment',
+        current.id,
+      );
+    }
+
+    const membership = await transaction.cohortEnrollment.create({
+      data: { cohortId: cohort.id, enrollmentId: enrollment.id },
+      select: { id: true },
+    });
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      cohort.id,
+      current ? 'cohort_enrollment.moved' : 'cohort_enrollment.placed',
+      'cohortEnrollment',
+      membership.id,
+    );
+  });
+
+  revalidateCohortSurfaces(input.cohortId);
+}
+
+export async function removeEnrollmentFromCohort(formData: FormData) {
+  const administrator = await requirePlatformPermission('academy:manage');
+  const input = cohortEnrollmentMutationSchema.parse({
+    cohortId: formData.get('cohortId'),
+    enrollmentId: formData.get('enrollmentId'),
+    cohortEnrollmentId: formData.get('cohortEnrollmentId'),
+  });
+
+  await db.$transaction(async (transaction: Transaction) => {
+    await requireMutableCohort(transaction, input.cohortId);
+    const updated = await transaction.cohortEnrollment.updateMany({
+      where: {
+        id: input.cohortEnrollmentId,
+        cohortId: input.cohortId,
+        enrollmentId: input.enrollmentId,
+        active: true,
+      },
+      data: { active: false, endedAt: new Date() },
+    });
+    if (updated.count !== 1) {
+      throw new Error('Active cohort enrollment not found');
+    }
+
+    await auditCohortDelivery(
+      transaction,
+      administrator.id,
+      input.cohortId,
+      'cohort_enrollment.removed',
+      'cohortEnrollment',
+      input.cohortEnrollmentId,
+    );
+  });
+
+  revalidateCohortSurfaces(input.cohortId);
+}
