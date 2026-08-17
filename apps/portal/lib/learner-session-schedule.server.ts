@@ -32,10 +32,7 @@ export async function getLearnerSessionSchedule(now = new Date()) {
           },
         },
         {
-          OR: [
-            { status: { not: 'SCHEDULED' } },
-            { startsAt: { lt: now } },
-          ],
+          OR: [{ status: { not: 'SCHEDULED' } }, { startsAt: { lt: now } }],
           cohort: {
             enrollments: {
               some: {
