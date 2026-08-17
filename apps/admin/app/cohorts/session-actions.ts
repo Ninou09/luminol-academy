@@ -74,7 +74,8 @@ async function requireScheduledSession(
       AND "status" = 'SCHEDULED'::"CohortSessionStatus"
     FOR UPDATE
   `;
-  if (sessions.length !== 1) throw new Error('Scheduled cohort session not found');
+  if (sessions.length !== 1)
+    throw new Error('Scheduled cohort session not found');
   return sessions[0]!;
 }
 
