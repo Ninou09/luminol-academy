@@ -256,14 +256,16 @@ export async function reassignCohortInstructor(formData: FormData) {
       current.role === 'LEAD' &&
       input.role !== 'LEAD'
     ) {
-      const otherLeadCount = await transaction.cohortInstructorAssignment.count({
-        where: {
-          cohortId: cohort.id,
-          active: true,
-          role: 'LEAD',
-          id: { not: current.id },
+      const otherLeadCount = await transaction.cohortInstructorAssignment.count(
+        {
+          where: {
+            cohortId: cohort.id,
+            active: true,
+            role: 'LEAD',
+            id: { not: current.id },
+          },
         },
-      });
+      );
       if (otherLeadCount === 0) {
         throw new Error('Active cohort must retain a lead instructor');
       }
@@ -325,14 +327,16 @@ export async function endCohortInstructorAssignment(formData: FormData) {
     if (!assignment) throw new Error('Active instructor assignment not found');
 
     if (cohort.status === 'ACTIVE' && assignment.role === 'LEAD') {
-      const otherLeadCount = await transaction.cohortInstructorAssignment.count({
-        where: {
-          cohortId: cohort.id,
-          active: true,
-          role: 'LEAD',
-          id: { not: assignment.id },
+      const otherLeadCount = await transaction.cohortInstructorAssignment.count(
+        {
+          where: {
+            cohortId: cohort.id,
+            active: true,
+            role: 'LEAD',
+            id: { not: assignment.id },
+          },
         },
-      });
+      );
       if (otherLeadCount === 0) {
         throw new Error('Active cohort must retain a lead instructor');
       }
