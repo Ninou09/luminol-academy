@@ -63,27 +63,27 @@ suite('Milestone 17 academy analytics read model', () => {
     await db.enrollment.createMany({
       data: [
         {
-          userId: userIds[0],
+          userId: userIds[0]!,
           courseId: visibleCourseId,
           status: EnrollmentStatus.ACTIVE,
         },
         {
-          userId: userIds[1],
+          userId: userIds[1]!,
           courseId: visibleCourseId,
           status: EnrollmentStatus.ACTIVE,
         },
         {
-          userId: userIds[2],
+          userId: userIds[2]!,
           courseId: visibleCourseId,
           status: EnrollmentStatus.COMPLETED,
         },
         {
-          userId: userIds[3],
+          userId: userIds[3]!,
           courseId: visibleCourseId,
           status: EnrollmentStatus.COMPLETED,
         },
         {
-          userId: userIds[4],
+          userId: userIds[4]!,
           courseId: visibleCourseId,
           status: EnrollmentStatus.CANCELLED,
         },
@@ -98,21 +98,21 @@ suite('Milestone 17 academy analytics read model', () => {
     await db.learningRecord.createMany({
       data: [
         {
-          userId: userIds[0],
+          userId: userIds[0]!,
           courseId: visibleCourseId,
           lessonId: `recent-1-${suffix}`,
           status: LearningRecordStatus.IN_PROGRESS,
           lastActivityAt: new Date(now.getTime() - 24 * 60 * 60 * 1000),
         },
         {
-          userId: userIds[1],
+          userId: userIds[1]!,
           courseId: visibleCourseId,
           lessonId: `recent-2-${suffix}`,
           status: LearningRecordStatus.COMPLETED,
           lastActivityAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
         },
         {
-          userId: userIds[2],
+          userId: userIds[2]!,
           courseId: visibleCourseId,
           lessonId: `old-${suffix}`,
           status: LearningRecordStatus.COMPLETED,
@@ -131,17 +131,17 @@ suite('Milestone 17 academy analytics read model', () => {
     await db.certificate.createMany({
       data: [
         {
-          userId: userIds[0],
+          userId: userIds[0]!,
           courseId: visibleCourseId,
           status: CertificateStatus.ACTIVE,
         },
         {
-          userId: userIds[1],
+          userId: userIds[1]!,
           courseId: visibleCourseId,
           status: CertificateStatus.ACTIVE,
         },
         {
-          userId: userIds[2],
+          userId: userIds[2]!,
           courseId: visibleCourseId,
           status: CertificateStatus.REVOKED,
           revokedAt: now,
@@ -162,17 +162,17 @@ suite('Milestone 17 academy analytics read model', () => {
       data: [
         {
           assessmentId,
-          userId: userIds[0],
+          userId: userIds[0]!,
           status: PlacementAttemptStatus.REVIEW_REQUIRED,
         },
         {
           assessmentId,
-          userId: userIds[1],
+          userId: userIds[1]!,
           status: PlacementAttemptStatus.REVIEW_REQUIRED,
         },
         {
           assessmentId,
-          userId: userIds[2],
+          userId: userIds[2]!,
           status: PlacementAttemptStatus.COMPLETED,
         },
       ],
