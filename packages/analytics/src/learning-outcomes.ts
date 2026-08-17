@@ -84,7 +84,9 @@ export function getAccessibleAnalyticsMetrics(
 export function isForbiddenAnalyticsDataClass(
   value: string,
 ): value is ForbiddenAnalyticsDataClass {
-  return (FORBIDDEN_ANALYTICS_DATA_CLASSES as readonly string[]).includes(value);
+  return (FORBIDDEN_ANALYTICS_DATA_CLASSES as readonly string[]).includes(
+    value,
+  );
 }
 
 function assertNonNegativeFinite(value: number, label: string) {
