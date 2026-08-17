@@ -17,7 +17,7 @@ function managerMembershipWhere(userId: string, organizationId?: string) {
   return {
     userId,
     active: true,
-    role: { in: ['OWNER', 'MANAGER'] as const },
+    role: { in: ['OWNER', 'MANAGER'] },
     organization: { archivedAt: null },
     ...(organizationId ? { organizationId } : {}),
   };
