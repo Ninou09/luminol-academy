@@ -129,7 +129,9 @@ export async function recordInstructorAttendance(formData: FormData) {
     });
 
     if (session.startsAt > now) {
-      throw new Error('Attendance cannot be recorded before the session starts');
+      throw new Error(
+        'Attendance cannot be recorded before the session starts',
+      );
     }
 
     const existing = await transaction.cohortSessionAttendance.findUnique({
