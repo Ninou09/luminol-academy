@@ -18,6 +18,11 @@ export type InstructorCohortAnalyticsValue = {
   certificatePercent: number;
   reviewRequiredAttempts: number;
   activityWindowDays: number;
+  attendanceRecords: number;
+  attendedRecords: number;
+  attendancePercent: number;
+  absentRecords: number;
+  excusedRecords: number;
 };
 
 export type ProtectedInstructorCohortAnalytics =
@@ -41,6 +46,10 @@ export function summarizeInstructorCohortAnalytics(input: {
   activeCertificates: number;
   reviewRequiredAttempts: number;
   activityWindowDays: number;
+  presentAttendanceRecords: number;
+  lateAttendanceRecords: number;
+  absentAttendanceRecords: number;
+  excusedAttendanceRecords: number;
 }): InstructorCohortAnalyticsValue {
   const participantCount = analyticsCountSchema.parse(input.participantCount);
   const completedEnrollments = analyticsCountSchema
@@ -61,6 +70,24 @@ export function summarizeInstructorCohortAnalytics(input: {
     .positive()
     .max(366)
     .parse(input.activityWindowDays);
+  const presentAttendanceRecords = analyticsCountSchema.parse(
+    input.presentAttendanceRecords,
+  );
+  const lateAttendanceRecords = analyticsCountSchema.parse(
+    input.lateAttendanceRecords,
+  );
+  const absentAttendanceRecords = analyticsCountSchema.parse(
+    input.absentAttendanceRecords,
+  );
+  const excusedAttendanceRecords = analyticsCountSchema.parse(
+    input.excusedAttendanceRecords,
+  );
+  const attendanceRecords =
+    presentAttendanceRecords +
+    lateAttendanceRecords +
+    absentAttendanceRecords +
+    excusedAttendanceRecords;
+  const attendedRecords = presentAttendanceRecords + lateAttendanceRecords;
 
   return {
     participantCount,
@@ -81,6 +108,14 @@ export function summarizeInstructorCohortAnalytics(input: {
     ),
     reviewRequiredAttempts,
     activityWindowDays,
+    attendanceRecords,
+    attendedRecords,
+    attendancePercent: calculateBoundedPercentage(
+      attendedRecords,
+      attendanceRecords,
+    ),
+    absentRecords: absentAttendanceRecords,
+    excusedRecords: excusedAttendanceRecords,
   };
 }
 
