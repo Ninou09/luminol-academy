@@ -180,6 +180,10 @@ BEGIN
     END IF;
   END IF;
 
+  IF NEW."reviewerUserId" IS NOT NULL AND NEW."reviewerUserId" = NEW."learnerUserId" THEN
+    RAISE EXCEPTION 'Professional submissions cannot be self-reviewed';
+  END IF;
+
   IF NEW."status" IN ('IN_REVIEW', 'REVISION_REQUIRED', 'APPROVED', 'REJECTED')
     AND NEW."reviewerUserId" IS NULL THEN
     RAISE EXCEPTION 'Reviewed professional work requires an assigned reviewer';
