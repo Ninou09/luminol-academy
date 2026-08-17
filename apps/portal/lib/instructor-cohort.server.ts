@@ -121,7 +121,8 @@ export async function getAuthorizedInstructorCohortTeachingView(
     const latest = group._max.lastActivityAt;
     if (
       latest &&
-      (!current.lastActivityAt || latest.getTime() > current.lastActivityAt.getTime())
+      (!current.lastActivityAt ||
+        latest.getTime() > current.lastActivityAt.getTime())
     ) {
       current.lastActivityAt = latest;
     }

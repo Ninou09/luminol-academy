@@ -3,15 +3,18 @@ import { describe, expect, it } from 'vitest';
 import { getInstructorCohortCopy } from './instructor-cohort-localization';
 
 describe('instructor cohort localization', () => {
-  it.each(['en', 'fr', 'ar'] as const)('provides complete %s copy', (locale) => {
-    const copy = getInstructorCohortCopy(locale);
+  it.each(['en', 'fr', 'ar'] as const)(
+    'provides complete %s copy',
+    (locale) => {
+      const copy = getInstructorCohortCopy(locale);
 
-    expect(copy.title).toBeTruthy();
-    expect(copy.roster).toBeTruthy();
-    expect(copy.completedLessons).toBeTruthy();
-    expect(copy.inProgressLessons).toBeTruthy();
-    expect(copy.privacyBody).toBeTruthy();
-  });
+      expect(copy.title).toBeTruthy();
+      expect(copy.roster).toBeTruthy();
+      expect(copy.completedLessons).toBeTruthy();
+      expect(copy.inProgressLessons).toBeTruthy();
+      expect(copy.privacyBody).toBeTruthy();
+    },
+  );
 
   it('keeps Arabic teaching labels localized', () => {
     const copy = getInstructorCohortCopy('ar');

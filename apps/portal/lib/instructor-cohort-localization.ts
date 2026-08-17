@@ -60,7 +60,8 @@ const INSTRUCTOR_COHORT_COPY: Record<Locale, InstructorCohortCopy> = {
     inProgressLessons: 'Lessons in progress',
     latestActivity: 'Latest learning activity',
     noActivity: 'No learning activity recorded',
-    noLearners: 'No active learner memberships are currently assigned to this cohort.',
+    noLearners:
+      'No active learner memberships are currently assigned to this cohort.',
     roles: {
       LEAD: 'Lead instructor',
       ASSISTANT: 'Assistant instructor',
@@ -105,7 +106,8 @@ const INSTRUCTOR_COHORT_COPY: Record<Locale, InstructorCohortCopy> = {
     inProgressLessons: 'Leçons en cours',
     latestActivity: "Dernière activité d'apprentissage",
     noActivity: "Aucune activité d'apprentissage enregistrée",
-    noLearners: "Aucune appartenance active d'apprenant n'est actuellement attribuée à ce groupe.",
+    noLearners:
+      "Aucune appartenance active d'apprenant n'est actuellement attribuée à ce groupe.",
     roles: {
       LEAD: 'Formateur principal',
       ASSISTANT: 'Formateur assistant',
