@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { db } from '@luminol/database';
+import { db, type Prisma } from '@luminol/database';
 import {
   assertCorporateManagerAccess,
   type CorporateMembershipRole,
@@ -13,7 +13,10 @@ import {
   summarizeOrganizationSeatAnalytics,
 } from './organization-analytics';
 
-function managerMembershipWhere(userId: string, organizationId?: string) {
+function managerMembershipWhere(
+  userId: string,
+  organizationId?: string,
+): Prisma.OrganizationMembershipWhereInput {
   return {
     userId,
     active: true,
