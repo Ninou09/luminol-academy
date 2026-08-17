@@ -85,7 +85,7 @@ async function requireMutableCohort(
     FOR UPDATE
   `;
   if (cohorts.length !== 1) throw new Error('Mutable cohort not found');
-  return cohorts[0];
+  return cohorts[0]!;
 }
 
 export async function createCohort(formData: FormData) {
