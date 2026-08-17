@@ -17,6 +17,7 @@ const reviewerId = `m20-reviewer-${suffix}`;
 const otherLearnerId = `m20-other-learner-${suffix}`;
 const submissionId = `m20-submission-${suffix}`;
 const projectId = `portfolio-project-${suffix}`;
+const otherProjectId = `portfolio-project-other-${suffix}`;
 let enrollmentId = '';
 let otherEnrollmentId = '';
 
@@ -75,11 +76,24 @@ suite('Milestone 20 professional submission persistence', () => {
       },
     });
     otherEnrollmentId = otherEnrollment.id;
+
+    const now = new Date();
+    await db.$executeRaw`
+      INSERT INTO "ProfessionalProject" (
+        "id", "courseId", "title", "active", "createdAt", "updatedAt"
+      ) VALUES
+        (${projectId}, ${courseId}, ${`Portfolio project ${suffix}`}, true, ${now}, ${now}),
+        (${otherProjectId}, ${otherCourseId}, ${`Other portfolio project ${suffix}`}, true, ${now}, ${now})
+    `;
   });
 
   afterAll(async () => {
     await db.$executeRaw`DELETE FROM "ProfessionalSubmissionAuditEvent" WHERE "submissionId" = ${submissionId}`;
     await db.$executeRaw`DELETE FROM "ProfessionalProjectSubmission" WHERE "id" = ${submissionId}`;
+    await db.$executeRaw`
+      DELETE FROM "ProfessionalProject"
+      WHERE "id" IN (${projectId}, ${otherProjectId})
+    `;
     await db.enrollment.deleteMany({
       where: { id: { in: [enrollmentId, otherEnrollmentId].filter(Boolean) } },
     });
@@ -126,7 +140,7 @@ suite('Milestone 20 professional submission persistence', () => {
     ).resolves.toBeNull();
   });
 
-  test('rejects learner/course scope changes and invalid submission content', async () => {
+  test('rejects learner, course and governed project scope changes', async () => {
     await expect(
       db.$executeRaw`
         UPDATE "ProfessionalProjectSubmission"
@@ -135,6 +149,22 @@ suite('Milestone 20 professional submission persistence', () => {
       `,
     ).rejects.toThrow();
 
+    const otherSubmissionId = `m20-other-scope-${suffix}`;
+    const now = new Date();
+    await expect(
+      db.$executeRaw`
+        INSERT INTO "ProfessionalProjectSubmission" (
+          "id", "learnerUserId", "courseId", "enrollmentId", "projectId",
+          "status", "createdAt", "updatedAt"
+        ) VALUES (
+          ${otherSubmissionId}, ${learnerId}, ${courseId}, ${enrollmentId}, ${otherProjectId},
+          'DRAFT'::"ProfessionalSubmissionStatus", ${now}, ${now}
+        )
+      `,
+    ).rejects.toThrow();
+  });
+
+  test('rejects invalid submission content', async () => {
     await expect(
       db.$executeRaw`
         UPDATE "ProfessionalProjectSubmission"
@@ -163,6 +193,14 @@ suite('Milestone 20 professional submission persistence', () => {
       db.$executeRaw`
         UPDATE "ProfessionalProjectSubmission"
         SET "status" = 'APPROVED'::"ProfessionalSubmissionStatus", "updatedAt" = ${new Date()}
+        WHERE "id" = ${submissionId}
+      `,
+    ).rejects.toThrow();
+
+    await expect(
+      db.$executeRaw`
+        UPDATE "ProfessionalProjectSubmission"
+        SET "reviewerUserId" = ${learnerId}, "status" = 'IN_REVIEW'::"ProfessionalSubmissionStatus", "updatedAt" = ${new Date()}
         WHERE "id" = ${submissionId}
       `,
     ).rejects.toThrow();
@@ -223,5 +261,20 @@ suite('Milestone 20 professional submission persistence', () => {
         action: 'professional_submission.review_started',
       },
     ]);
+
+    await expect(
+      db.$executeRaw`
+        UPDATE "ProfessionalSubmissionAuditEvent"
+        SET "action" = ${'tampered'}
+        WHERE "id" = ${auditId}
+      `,
+    ).rejects.toThrow();
+
+    await expect(
+      db.$executeRaw`
+        DELETE FROM "ProfessionalSubmissionAuditEvent"
+        WHERE "id" = ${auditId}
+      `,
+    ).rejects.toThrow();
   });
 });
