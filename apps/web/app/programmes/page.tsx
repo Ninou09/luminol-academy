@@ -23,6 +23,10 @@ import {
   getPublicProgrammes,
 } from '../../lib/sanity';
 import { getSchools } from '../../lib/schools';
+import {
+  buildProgrammeListJsonLd,
+  serializeJsonLd,
+} from '../../lib/structured-data';
 import styles from './page.module.css';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -71,6 +75,22 @@ export default async function ProgrammesPage({
   const programmes = sourceProgrammes
     ? filterPublicProgrammes(sourceProgrammes, filters)
     : null;
+  const isUnfilteredCatalogue =
+    filters.query.length === 0 &&
+    filters.school === undefined &&
+    filters.language === undefined;
+  const programmeListJsonLd =
+    programmes !== null && programmes.length > 0 && isUnfilteredCatalogue
+      ? buildProgrammeListJsonLd(
+          programmes.map((programme) => ({
+            name: programme.title,
+            href: localizeHref(
+              locale,
+              `/programmes/${programme.slug.current}`,
+            ),
+          })),
+        )
+      : null;
 
   if (programmes !== null && filters.query.length >= 2) {
     await recordSearchTelemetry({
@@ -81,6 +101,15 @@ export default async function ProgrammesPage({
 
   return (
     <>
+      {programmeListJsonLd ? (
+        <script
+          type="application/ld+json"
+          data-programme-list-jsonld
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(programmeListJsonLd),
+          }}
+        />
+      ) : null}
       <SiteHeader />
       <main id="main-content" tabIndex={-1}>
         <section className={`section-shell ${styles.hero}`}>
