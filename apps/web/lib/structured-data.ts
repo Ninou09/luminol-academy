@@ -13,6 +13,11 @@ type CourseJsonLdInput = {
   image?: string;
 };
 
+type ProgrammeListItem = {
+  name: string;
+  href: string;
+};
+
 export function buildOrganizationJsonLd(description: string) {
   const origin = resolvePublicSiteOrigin();
 
@@ -64,6 +69,27 @@ export function buildCourseJsonLd({
     },
     ...(languages.length > 0 ? { inLanguage: languages } : {}),
     ...(image ? { image } : {}),
+  } as const;
+}
+
+export function buildProgrammeListJsonLd(
+  items: readonly ProgrammeListItem[],
+) {
+  const origin = resolvePublicSiteOrigin();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Course',
+        name: item.name,
+        url: new URL(item.href, `${origin}/`).toString(),
+      },
+    })),
   } as const;
 }
 
