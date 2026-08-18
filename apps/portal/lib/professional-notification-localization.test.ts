@@ -9,15 +9,18 @@ import {
 const locales = ['en', 'fr', 'ar'] as const;
 
 describe('professional notification localization', () => {
-  it.each(locales)('localizes every professional notification for %s', (locale) => {
-    for (const templateKey of PROFESSIONAL_NOTIFICATION_TEMPLATE_KEYS) {
-      const copy = getProfessionalNotificationCopy(locale, templateKey);
+  it.each(locales)(
+    'localizes every professional notification for %s',
+    (locale) => {
+      for (const templateKey of PROFESSIONAL_NOTIFICATION_TEMPLATE_KEYS) {
+        const copy = getProfessionalNotificationCopy(locale, templateKey);
 
-      expect(copy?.title.trim()).not.toBe('');
-      expect(copy?.message.trim()).not.toBe('');
-      expect(copy?.action.trim()).not.toBe('');
-    }
-  });
+        expect(copy?.title.trim()).not.toBe('');
+        expect(copy?.message.trim()).not.toBe('');
+        expect(copy?.action.trim()).not.toBe('');
+      }
+    },
+  );
 
   it('routes reviewer notices to reviews and learner notices to projects', () => {
     expect(

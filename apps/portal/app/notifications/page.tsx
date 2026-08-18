@@ -62,9 +62,7 @@ export default async function NotificationsPage() {
                       <h2 dir="auto">
                         {professionalCopy?.title ?? item.title}
                       </h2>
-                      <p dir="auto">
-                        {professionalCopy?.message ?? item.body}
-                      </p>
+                      <p dir="auto">{professionalCopy?.message ?? item.body}</p>
                       <small>
                         {formatLocalizedDate(item.createdAt, locale, {
                           day: 'numeric',
