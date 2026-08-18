@@ -105,7 +105,7 @@ describe('programme discovery filters', () => {
     ).toBe('programme-leadership');
 
     const frenchResults = filterPublicProgrammes(programmes, {
-      query: 'Français',
+      query: 'Francais',
     }).map((programme) => programme._id);
 
     expect(frenchResults).toHaveLength(2);
