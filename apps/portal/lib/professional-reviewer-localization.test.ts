@@ -19,7 +19,8 @@ describe('professional reviewer localization', () => {
     expect(copy.nav.trim()).not.toBe('');
     expect(copy.title.trim()).not.toBe('');
     expect(copy.privacyBody.trim()).not.toBe('');
-    expect(copy.readOnlyBody.trim()).not.toBe('');
+    expect(copy.decisionBody.trim()).not.toBe('');
+    expect(copy.governanceBody.trim()).not.toBe('');
     expect(copy.noArtifact.trim()).not.toBe('');
 
     for (const status of statuses) {

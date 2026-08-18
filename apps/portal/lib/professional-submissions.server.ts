@@ -18,6 +18,10 @@ export type LearnerProfessionalProject = {
   submittedAt: Date | null;
   reviewedAt: Date | null;
   updatedAt: Date | null;
+  latestReviewScore: number | null;
+  latestReviewFeedback: string | null;
+  latestReviewStatus: ProfessionalSubmissionStatus | null;
+  latestReviewAt: Date | null;
 };
 
 export function isLearnerSubmissionEditable(
@@ -42,7 +46,11 @@ export async function getLearnerProfessionalProjects() {
       submission."reflection" AS "reflection",
       submission."submittedAt" AS "submittedAt",
       submission."reviewedAt" AS "reviewedAt",
-      submission."updatedAt" AS "updatedAt"
+      submission."updatedAt" AS "updatedAt",
+      latest_review."score" AS "latestReviewScore",
+      latest_review."feedback" AS "latestReviewFeedback",
+      latest_review."toStatus" AS "latestReviewStatus",
+      latest_review."createdAt" AS "latestReviewAt"
     FROM "ProfessionalProject" AS project
     JOIN "Course" AS course
       ON course."id" = project."courseId"
@@ -58,6 +66,17 @@ export async function getLearnerProfessionalProjects() {
     LEFT JOIN "ProfessionalProjectSubmission" AS submission
       ON submission."learnerUserId" = ${user.id}
       AND submission."projectId" = project."id"
+    LEFT JOIN LATERAL (
+      SELECT
+        review."score",
+        review."feedback",
+        review."toStatus",
+        review."createdAt"
+      FROM "ProfessionalSubmissionReview" AS review
+      WHERE review."submissionId" = submission."id"
+      ORDER BY review."createdAt" DESC, review."id" DESC
+      LIMIT 1
+    ) AS latest_review ON TRUE
     WHERE submission."id" IS NOT NULL
       OR (project."active" = true AND enrollment."id" IS NOT NULL)
     ORDER BY course."title" ASC, project."title" ASC, project."id" ASC

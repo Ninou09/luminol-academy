@@ -86,6 +86,29 @@ export default async function LearnerProjectsPage() {
                         {copy.programme}: {project.courseTitle}
                       </p>
 
+                      {project.latestReviewFeedback &&
+                      project.latestReviewStatus &&
+                      project.latestReviewScore !== null ? (
+                        <div className={styles.reviewFeedback}>
+                          <strong>{copy.reviewFeedbackTitle}</strong>
+                          <div className="course-meta">
+                            <span>
+                              {copy.statuses[project.latestReviewStatus]}
+                            </span>
+                            <span>
+                              {copy.reviewScore}: {project.latestReviewScore}
+                            </span>
+                            {project.latestReviewAt ? (
+                              <span>
+                                {copy.reviewRecorded}:{' '}
+                                {date(project.latestReviewAt)}
+                              </span>
+                            ) : null}
+                          </div>
+                          <p dir="auto">{project.latestReviewFeedback}</p>
+                        </div>
+                      ) : null}
+
                       {!project.submissionId ? (
                         <form action={createProfessionalSubmissionDraft}>
                           <input

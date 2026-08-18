@@ -6,6 +6,10 @@ import { PortalHeader } from '../../../components/portal-header';
 import { getProfessionalReviewerCopy } from '../../../lib/professional-reviewer-localization';
 import { getAssignedProfessionalSubmissionDetail } from '../../../lib/professional-reviewer.server';
 import { getPortalRequestLocale } from '../../../lib/request-locale';
+import {
+  decideProfessionalSubmissionReview,
+  startProfessionalSubmissionReview,
+} from './actions';
 import styles from '../page.module.css';
 
 type ReviewerSubmissionPageProps = {
@@ -122,17 +126,135 @@ export default async function ReviewerSubmissionPage({
           </div>
         </section>
 
+        {submission.status === 'SUBMITTED' ? (
+          <section
+            className="dashboard-section"
+            aria-labelledby="start-review-title"
+          >
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">{copy.statuses.SUBMITTED}</p>
+                <h2 id="start-review-title">{copy.startReviewTitle}</h2>
+              </div>
+            </div>
+            <p>{copy.startReviewBody}</p>
+            <form action={startProfessionalSubmissionReview}>
+              <input
+                type="hidden"
+                name="submissionId"
+                value={submission.submissionId}
+              />
+              <button className={styles.actionButton} type="submit">
+                {copy.startReview}
+              </button>
+            </form>
+          </section>
+        ) : null}
+
+        {submission.status === 'IN_REVIEW' ? (
+          <section
+            className="dashboard-section"
+            aria-labelledby="review-decision-title"
+          >
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">{copy.statuses.IN_REVIEW}</p>
+                <h2 id="review-decision-title">{copy.decisionTitle}</h2>
+              </div>
+            </div>
+            <p>{copy.decisionBody}</p>
+            <form
+              className={styles.reviewForm}
+              action={decideProfessionalSubmissionReview}
+            >
+              <input
+                type="hidden"
+                name="submissionId"
+                value={submission.submissionId}
+              />
+              <label>
+                <span>{copy.score}</span>
+                <input
+                  type="number"
+                  name="score"
+                  min={0}
+                  max={100}
+                  step={1}
+                  required
+                  inputMode="numeric"
+                />
+                <small>{copy.scoreHint}</small>
+              </label>
+              <label>
+                <span>{copy.feedback}</span>
+                <textarea
+                  name="feedback"
+                  minLength={10}
+                  maxLength={5000}
+                  rows={8}
+                  required
+                  dir="auto"
+                />
+                <small>{copy.feedbackHint}</small>
+              </label>
+              <label className={styles.checkbox}>
+                <input type="checkbox" name="requiresRevision" />
+                <span>{copy.requiresRevision}</span>
+              </label>
+              <button className={styles.actionButton} type="submit">
+                {copy.submitDecision}
+              </button>
+            </form>
+          </section>
+        ) : null}
+
         <section
           className="dashboard-section"
-          aria-labelledby="review-readonly-title"
+          aria-labelledby="decision-history-title"
         >
           <div className="section-heading">
             <div>
-              <p className="eyebrow">{copy.readOnlyTitle}</p>
-              <h2 id="review-readonly-title">{copy.readOnlyTitle}</h2>
+              <p className="eyebrow">{copy.history}</p>
+              <h2 id="decision-history-title">{copy.decisionHistory}</h2>
             </div>
           </div>
-          <p>{copy.readOnlyBody}</p>
+          {submission.reviews.length > 0 ? (
+            <ol className={styles.historyList}>
+              {submission.reviews.map((review) => (
+                <li className={styles.detailCard} key={review.id}>
+                  <div className={styles.meta}>
+                    <span>{copy.statuses[review.toStatus]}</span>
+                    <span>
+                      {copy.score}: {review.score}
+                    </span>
+                    <span>
+                      {copy.decisionRecorded}: {date(review.createdAt)}
+                    </span>
+                  </div>
+                  <p className={styles.feedback} dir="auto">
+                    {review.feedback}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="empty-state">
+              <p>{copy.noDecisionHistory}</p>
+            </div>
+          )}
+        </section>
+
+        <section
+          className="dashboard-section"
+          aria-labelledby="review-governance-title"
+        >
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">{copy.privacyTitle}</p>
+              <h2 id="review-governance-title">{copy.governanceTitle}</h2>
+            </div>
+          </div>
+          <p>{copy.governanceBody}</p>
         </section>
       </div>
     </main>
