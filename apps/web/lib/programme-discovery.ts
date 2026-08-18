@@ -48,6 +48,7 @@ function fold(value: string) {
     .replace(/[أإآ]/g, 'ا')
     .replace(/ى/g, 'ي')
     .replace(/ة/g, 'ه')
+    .replace(/[-‐‑‒–—_/]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
