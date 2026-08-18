@@ -16,6 +16,7 @@ import {
   saveProfessionalSubmissionDraft,
   submitProfessionalSubmission,
 } from './actions';
+import styles from './page.module.css';
 
 function getSafeHttpHref(value: string | null) {
   if (!value || /\s/.test(value)) return null;
@@ -56,7 +57,10 @@ export default async function LearnerProjectsPage() {
           </div>
         </section>
 
-        <section className="dashboard-section" aria-labelledby="available-projects-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="available-projects-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.status}</p>
@@ -92,11 +96,13 @@ export default async function LearnerProjectsPage() {
                             name="projectId"
                             value={project.projectId}
                           />
-                          <button type="submit">{copy.startDraft}</button>
+                          <button className={styles.startButton} type="submit">
+                            {copy.startDraft}
+                          </button>
                         </form>
                       ) : editable ? (
                         <form
-                          className="submission-form"
+                          className={styles.form}
                           action={saveProfessionalSubmissionDraft}
                         >
                           <input
@@ -128,7 +134,7 @@ export default async function LearnerProjectsPage() {
                             />
                             <small>{copy.reflectionHint}</small>
                           </label>
-                          <div className="submission-actions">
+                          <div className={styles.actions}>
                             <button type="submit">{copy.saveDraft}</button>
                             <button
                               type="submit"
@@ -141,7 +147,7 @@ export default async function LearnerProjectsPage() {
                           </div>
                         </form>
                       ) : (
-                        <div className="submission-summary">
+                        <div className={styles.summary}>
                           {safeArtifactHref ? (
                             <a
                               href={safeArtifactHref}
@@ -178,7 +184,10 @@ export default async function LearnerProjectsPage() {
           )}
         </section>
 
-        <section className="dashboard-section" aria-labelledby="project-privacy-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="project-privacy-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.privacyTitle}</p>
