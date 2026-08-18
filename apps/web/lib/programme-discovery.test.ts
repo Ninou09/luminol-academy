@@ -114,7 +114,25 @@ describe('programme discovery filters', () => {
     );
   });
 
-  it('ranks featured programmes first and stays deterministic', () => {
+  it('ranks stronger search matches ahead of featured status', () => {
+    const searchableProgrammes = programmes.map((programme) =>
+      programme._id === 'programme-english'
+        ? {
+            ...programme,
+            summary:
+              'A broad overview of leadership vocabulary for English learners.',
+          }
+        : programme,
+    );
+
+    expect(
+      filterPublicProgrammes(searchableProgrammes, {
+        query: 'leadership',
+      }).map((programme) => programme._id),
+    ).toEqual(['programme-leadership', 'programme-english']);
+  });
+
+  it('ranks featured programmes first and stays deterministic without search', () => {
     expect(
       filterPublicProgrammes(programmes, { query: '' }).map(
         (programme) => programme._id,
