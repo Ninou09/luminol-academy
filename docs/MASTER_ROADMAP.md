@@ -6,11 +6,11 @@ This document is the canonical delivery sequence for Luminol Academy. `PROJECT_S
 
 - One connected academy with Psychology, Languages, and Professional Development schools.
 - Authentication, authorization, validation, privacy, and auditability are required platform behavior.
-- Shared capabilities must be implemented once and reused across schools.
-- Sensitive psychology information must never be exposed through general learning or administration views.
-- Every milestone includes tests, documentation, accessibility, and production build validation.
+- Shared capabilities are implemented once and reused across schools.
+- Sensitive psychology information must never be exposed through general learning, analytics, instructor, organization, or administration views.
+- Every milestone includes tests, documentation, accessibility, and production-build validation.
 - Dynamic, personal, sensitive, or governed content must not be automatically translated or publicly published without its applicable approval boundary.
-- Repository completion and production-live verification are separate evidence gates; deployment quota pressure must not be mistaken for product completion or used to stop safe repository work.
+- Repository completion and production-live verification are separate evidence gates. Deployment or external-service constraints must not be mistaken for product implementation failure or used to weaken repository safeguards.
 
 ## Delivered platform
 
@@ -74,165 +74,109 @@ Delivered capabilities include in-app notifications, durable worker claims and l
 
 Status: Complete
 
-Delivered capabilities include the security and privacy audit, response hardening, dependency checks, migration and recovery runbooks, public smoke tests, controlled production deployment, and production verification.
+Delivered capabilities include security and privacy hardening, dependency checks, migration and recovery runbooks, public smoke tests, controlled production deployment, and production verification.
 
 ### Milestone 14 — Search and Discovery
 
 Status: Complete
 
-Delivered capabilities include privacy-safe learner search scoped to eligible enrolled and published learning content, governed public programme discovery, protected administration search, literal wildcard-safe PostgreSQL matching, indexed operational contains searches, and privacy-safe aggregate search outcome telemetry. The milestone does not store raw search queries, user identities, sessions, or IP addresses in search telemetry.
-
-AI/vector search and external paid search providers remain explicitly out of scope until the deterministic search layer is proven in broader use.
+Delivered capabilities include privacy-safe learner search, governed public programme discovery, protected administration search, literal wildcard-safe matching, indexed operational search, and aggregate search-outcome telemetry that stores no raw query text, user identity, session identifier, or IP address.
 
 ### Milestone 15 — Arabic, French, and English Localization
 
 Status: Complete
 
-Delivered capabilities include the shared typed `ar`/`fr`/`en` locale contract, locale-aware routing and persistence, localized public/learner/administration interfaces, Arabic RTL behavior, mixed-script bidi safeguards, localized canonical/`hreflang`/metadata behavior, and preservation of protected search and authorization boundaries across locales.
-
-Dynamic learner records, enquiry messages, assessments, finance data, certificate data, psychology content, personal identity data, and governed CMS source content remain source data rather than receiving guessed automatic translations.
+Delivered capabilities include the shared typed `ar`/`fr`/`en` locale contract, localized routing and persistence, Arabic RTL behavior, mixed-script safeguards, localized canonical/`hreflang`/metadata behavior, and preservation of protected source records without guessed automatic translation.
 
 ### Milestone 16 — Organizations and Team Learning
 
 Status: Complete
 
-Issue #214 is closed as completed. Milestone 16 repository implementation is complete across Slices A–E through PRs #215–#219, rollout hardening merged through PR #221, and the guarded production database migration/backfill/integrity-verification gate completed successfully on 2026-08-15. The first-class organization and team-learning layer reuses the platform's existing enrolment, professional-development, finance, notification, certificate, search, localization, and authorization foundations rather than creating a parallel learner system.
+Governing issue: #214 — closed as completed.
 
-The delivered repository boundary was staged:
+Delivered capabilities include first-class organizations, memberships, teams, seats, assigned learning, organization-manager scope, audited academy operations, verified organization links into existing finance/notification flows, and tenant-safe aggregate learning visibility. The production database migration/backfill/integrity-verification gate completed successfully on 2026-08-15.
 
-1. **Organization and team domain foundation** — define organization lifecycle states, organization membership roles, teams, seat-allocation scope, fail-closed manager access, and privacy-safe aggregate learning visibility with unit coverage.
-2. **Persistence and migration** — add first-class organization, membership, team, team-membership, organization-course, and sponsored-enrolment persistence with tenant-safe constraints and a production-safe backfill strategy before any finance foreign key is introduced.
-3. **Administration operations** — add protected organization/team administration under the existing `academy:manage` boundary, with audited mutations and server-side organization scope checks.
-4. **Organization manager experience** — provide a restricted organization-manager surface for the manager's own roster, seat utilization, assigned learning, and approved aggregate progress. Organization membership does not grant academy-wide administration rights.
-5. **Finance, notifications, and localization integration** — connect verified organization records to corporate billing, existing notifications and certificates, and the governed Arabic/French/English localization layer.
+### Milestone 17 — Privacy-safe Learning Analytics and Outcomes
 
-Milestone 16 security and privacy invariants remain non-negotiable:
+Status: Repository implementation complete; production-live verification remains tracked separately in #246.
 
-- every organization-scoped read and write is authorized server-side
-- organization membership and global academy RBAC remain separate concepts
-- URL/form organization identifiers are untrusted input and must be verified against the signed-in user's membership
-- managers receive only explicitly approved aggregate learning and seat information
-- assessment answers, psychology content, enquiry messages, personal finance records, private certificate metadata, and unrelated learner data are not exposed to organization managers
-- cross-organization roster, search, learning, finance, and mutation access fails closed
-- there is no public organization directory and no guessed translation of identity or sensitive learner data
+Delivered through PRs #247–#252:
 
-Explicitly excluded from Milestone 16 are SSO/SAML/SCIM, HRIS integrations, AI-generated manager insights, public organization profiles, and replacement of the existing enrolment, RBAC, finance, certificate, or notification systems.
+- typed analytics privacy and visibility contracts
+- learner-self learning/outcome read models and protected portal presentation
+- academy programme aggregates behind `academy:manage`
+- minimum-group suppression with a threshold of five
+- organization-manager aggregates scoped to existing organization membership
+- Arabic/French/English analytics presentation and documentation
 
-Final repository evidence: the Slice E head passed exact-head CI #1139 and an independent Codex review with no major issues; PR #219 merged as `57f53df28dcf44f83b219786901bf1cbf67fa979`, followed by green main CI #1140 and successful Vercel checks. Production-rollout hardening then merged through PR #221 as `add12f9e0a2fb251fd9459f54cbf2c120345a1c8`, with exact-head CI #1147 and post-merge main CI #1148 green.
+The milestone does not create learner rankings, hidden behavioral scoring, sensitive-trait inference, or a parallel raw analytics event store.
 
-Production-live evidence: `Production database migrations` run #3 (`31888530778`) was dispatched from canonical `main` with the exact `APPLY` confirmation. It applied all pending Prisma migrations, ran the bounded organization-link backfill, passed the read-only aggregate integrity verifier with zero eligible-unverified or structural/parent/recipient mismatch counts, and ended with Prisma reporting `Database schema is up to date!`. The prior administration `/finance` Prisma P2022 schema-drift errors disappeared after migration, protected organization routes continued to fail closed for anonymous access, grouped Vercel runtime errors were clear in the post-migration window, and Production health check #53 attempt 2 passed afterward. Restricted authenticated organization-manager/admin browser smoke remains a separate operational dependency under #40 and must not be bypassed.
+### Milestone 18 — Instructor Cohorts, Ownership, and Delivery Operations
+
+Status: Repository implementation complete; production-live verification remains tracked separately in #253.
+
+Delivered through PRs #254–#259:
+
+- first-class cohort lifecycle and instructor assignment contracts
+- persisted cohorts, instructor assignments, and cohort memberships linked to existing courses and enrolments
+- exact-assignment instructor workspace and cohort teaching views
+- academy-authorized cohort delivery and assignment/reassignment operations with audit history
+- privacy-suppressed instructor/cohort analytics using Milestone 17 rules
+
+Instructor authority remains distinct from academy RBAC and organization-manager authority. Ownership is never inferred from names, activity, submissions, or historical coincidence.
+
+### Milestone 19 — Cohort Sessions, Attendance, and Learner Schedule
+
+Status: Repository implementation complete; production-live verification remains tracked separately in #263.
+
+Delivered through PRs #264–#269:
+
+- session lifecycle and attendance domain contracts
+- session and attendance persistence with cohort/enrolment invariants
+- academy session creation, rescheduling, cancellation, and audit history
+- instructor attendance recording only for eligible learners in assigned cohorts
+- learner self-only upcoming/past schedule and attendance state
+- privacy-bounded attendance aggregates
+
+Session time is persisted as UTC instants with an IANA timezone for display semantics. No external calendar or video provider was invented.
+
+### Milestone 20 — Professional Project Submissions and Review Workflow
+
+Status: Repository implementation complete. Governing issue #270 is closed as completed.
+
+Delivered through PRs #271–#276, ending at implementation merge `3b65c6160de6fd35cb350d39ac13c22b25deef55`:
+
+- persistent professional project/submission lifecycle and audit history
+- learner draft, submit, status, revision, and resubmission workspace
+- exact persisted reviewer assignment and bounded reviewer inbox/detail access
+- human review decisions with append-only structured review history and learner-visible feedback
+- privacy-safe, idempotent in-app notices for meaningful submission/review transitions using the existing notification infrastructure
+- academy professional-project workflow aggregates with minimum-group suppression and no learner-authored content in analytics
+
+Review decisions remain human-entered. There is no AI grading, automatic reviewer assignment, learner ranking, or automatic certification decision.
 
 ## Post-milestone public experience hardening
 
-Status: Repository implementation complete and strongly validated; governed programme-media publication remains an independent operational/content dependency.
+Status: Ongoing as no-cost repository polish where it does not depend on external approvals or account settings; tracked primarily through #235 and specific blocker issues.
 
-The premium public redesign was intentionally delivered outside a new numbered product milestone so it could preserve the platform contracts completed in Milestones 1–15. The repository includes:
+Delivered hardening includes premium localized public layouts, reduced-motion behavior, mobile navigation, keyboard skip navigation/focus states, governed CMS media publication, localized metadata and structured data, robots/sitemap hardening, public browser regression coverage, safer enquiry transport, production dependency auditing, learner-portal indexing exclusion, bounded social-preview caching, and approved founder media within its documented governance boundary.
 
-- immersive localized homepage storytelling and a reusable reduced-motion-aware motion controller
-- premium sticky public navigation and footer treatment
-- premium school, About, and Contact experiences using token-governed RTL-safe responsive layouts
-- governed editorial media fallbacks that do not require unapproved photography
-- an explicit Sanity programme-image publication approval field whose safe default is `false`
-- public projection rules that omit unapproved or malformed programme imagery
-- a localized premium 404 recovery experience
-- localized keyboard skip-to-content navigation and stable main-content targets
-- mobile primary navigation that stays available on narrow screens
-- reduced-motion-safe scrolling, sticky-header anchor offsets, and explicit public-shell keyboard focus rings
-- structured-data, metadata, sitemap/robots, responsive, accessibility, and browser-regression hardening
-- Vercel affected-package checks and opt-in non-production preview deployment policy to reduce monorepo deployment pressure
-- repaired production dependency auditing and continued exact-head security checks
-- explicit learner-portal indexing exclusion
-- accessible enquiry submission-state announcements
-- bounded shared caching for generated social previews
-- protection-aware synthetic sign-in monitoring
-- hardened public-enquiry transport boundaries
-- approved founder media on About and the Psychology school hero with localized accessible naming and explicit governance metadata
-
-The broad premium redesign issue #93 is closed as completed. Approved founder media is production-verified. Additional real photography must remain rights-cleared and governed; the specific outstanding Sanity programme-image publication/production verification is tracked under #45. No synthetic testimonial, private record, unapproved portrait, or undocumented real-person photograph should be introduced merely to fill that content dependency.
-
-Vercel Free-plan quota or build-rate pressure may temporarily leave stable production aliases behind the repository head. Safe repository development continues behind the exact-head GitHub CI gate, while production-live claims for any future change remain blocked until the corresponding deployment and post-deploy checks exist.
+Current public-site discoverability remains separately blocked by the production Vercel Deployment Protection setting tracked in #241. Application code must not weaken Clerk protection on learner or administration surfaces to work around that project-level setting.
 
 ## Parallel operational phase — Post-launch stabilization
 
-Milestone 16 is complete. Broader operational stabilization continues independently and must not weaken or bypass the remaining media, legal, authentication, email, Sanity, or recovery gates. Repository protection is now technically enforced and should be treated as a maintained baseline rather than an outstanding launch blocker.
+Repository work and production-live evidence remain separate. The active operational dependencies are:
 
-### Production availability and monitoring
+- #40 — restricted administration smoke access, authenticated browser state/configuration, sender-domain activation and monitored email delivery, and backup-operator readiness
+- #241 — remove Vercel Authentication/SSO from the public production website while retaining appropriate protection elsewhere
+- #150 — publish privacy, terms, and cookie notices only after reviewed approved legal copy and verified operator details are supplied
+- #85 — observe the migrated Sanity Studio against the intended project/dataset without changing production content merely for verification
+- #115 — keep TypeScript 7 migration deferred until the repository toolchain has official compatible support
 
-- keep normal `main` deployments and post-deploy verification healthy when deployment capacity is available
-- continue scheduled synthetic checks for the public website, learner portal, and administration application
-- #192 is closed; Production health check #53 attempt 2 also passed after the Milestone 16 production rollout
-- verify robots/sitemap, structured data, security headers, canonical metadata, and representative public routes after relevant production changes
-- investigate grouped runtime errors before treating individual log lines as production incidents
-- distinguish quota-blocked deployment freshness from application runtime failures
+The `Protect main` ruleset and exact-head GitHub Actions `quality` gate remain mandatory. Authenticated preview smoke may be skipped only when the protected credentials/configuration are genuinely unavailable; that skip is an operational evidence gap, not permission to claim the protected journeys have been verified.
 
-### Authenticated production verification
+## Next product milestone
 
-- obtain a restricted administration smoke account when production Clerk access permits it
-- verify the restricted learner smoke account remains denied administration access
-- configure authenticated Playwright storage-state secrets and stable protected test targets
-- run protected administration and learner browser journeys in CI
-- preserve Clerk, OAuth, CSP, and server-side authorization boundaries
+No Milestone 21 is currently committed. Do not invent one solely because Milestone 20 repository implementation is complete. New numbered product work should be opened only after a concrete product objective is selected and its authorization, privacy, data-governance, testing, and operational boundaries are written down.
 
-### Governed media verification
-
-- publish only approved active Sanity programme media
-- verify meaningful alternative text, crop, hotspot, CDN source, and explicit publication approval
-- keep unapproved or malformed media fail-closed and text-only
-- complete the remaining production checks tracked in #45
-- reuse the already approved founder portrait only within its documented governance boundary; require explicit approval for additional real-person assets
-
-### Sanity Studio operational verification
-
-- the coordinated Studio v3 → v6 code migration is complete through PR #112
-- launch the migrated Studio against the intended Sanity project/dataset without modifying production content solely for verification
-- confirm the governed schema and expected desks/document types load successfully
-- retain sanitized verification evidence under #85
-
-### Repository governance
-
-- `Protect main` is active for the default branch and issue #186 is closed as completed
-- changes to `main` require a pull request and the existing GitHub Actions `quality` check to pass
-- force pushes and branch deletion are blocked and review conversations must be resolved
-- required approving reviews remain zero for the current single-operator workflow; no bypass actor was configured at verification time
-- reverify the ruleset after repository-administration changes and never weaken the `quality` gate merely to clear a merge
-
-### Public legal notices
-
-- add privacy, terms, and cookie notices only from reviewed approved copy under #150
-- do not infer legal entity facts, controller details, retention periods, lawful bases, transfer claims, cookie categories, or contractual rights
-- keep current enquiry consent behavior intact while legal copy remains pending
-
-### Data recovery and operations
-
-- maintain the completed Neon restore-drill evidence and recovery runbooks
-- retain production migration evidence without exposing secrets
-- keep monitoring, incident command, Vercel rollback, and Neon recovery ownership explicit
-- designate a backup operator before broader promotion or planned primary-operator absence
-
-### Outbound email activation
-
-- verify a Luminol sender domain
-- configure the controlled email provider credentials only in the applicable deployment environment
-- complete a monitored delivery to an approved test recipient
-- verify retry and dead-letter behavior before enabling real learner delivery
-- retain the bounded provider-request timeout and idempotency behavior already implemented in the notification worker
-
-## Planned maintenance work
-
-These are coordinated maintenance initiatives, not active product milestones, and should remain isolated from unrelated feature work:
-
-- TypeScript 7 toolchain migration — #115 — deliberately deferred until typescript-eslint and the wider toolchain officially support the chosen migration architecture
-- Sanity Studio v6 environment verification — #85 — code migration complete; only operational observation against the intended environment remains
-
-Major compiler/CMS changes must preserve strict type checking, schema governance, production builds, and the complete CI/browser gate. They should not be merged as isolated dependency-major bumps merely because Dependabot opened an update.
-
-## Future platform opportunities
-
-These are not committed milestones and must not displace operational stabilization. No Milestone 17 is currently committed:
-
-- richer background-job processing and dedicated queue infrastructure when scale justifies it
-- approved AI-assisted learning tools with explicit privacy and human-review boundaries
-- SSO/SCIM and external HR-system integrations only after the first-party organization model is proven
-- native mobile applications
-- dedicated external uptime and paging service
-- deeper analytics only where data minimization and consent requirements are satisfied
+Until then, prioritize non-blocked stabilization and public-experience polish under the existing issues without fabricating external approvals, legal facts, production evidence, or provider integrations.
