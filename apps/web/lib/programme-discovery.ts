@@ -75,6 +75,16 @@ export function parseProgrammeDiscoveryParams(
   return filters;
 }
 
+export function hasProgrammeDiscoveryFilters(
+  filters: ProgrammeDiscoveryFilters,
+) {
+  return (
+    filters.query.length > 0 ||
+    filters.school !== undefined ||
+    filters.language !== undefined
+  );
+}
+
 function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
   if (!foldedQuery) return 0;
 
