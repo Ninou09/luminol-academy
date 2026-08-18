@@ -105,9 +105,7 @@ export default async function ProgrammesPage({
         <script
           type="application/ld+json"
           data-programme-list-jsonld
-          dangerouslySetInnerHTML={{
-            __html: serializeJsonLd(programmeListJsonLd),
-          }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(programmeListJsonLd) }}
         />
       ) : null}
       <SiteHeader />
