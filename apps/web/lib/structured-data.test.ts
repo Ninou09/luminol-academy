@@ -133,9 +133,7 @@ describe('Course structured data', () => {
     expect(jsonLd.provider['@id']).toBe(
       'https://luminol-academy-web.vercel.app/#organization',
     );
-    expect(jsonLd.provider.url).toBe(
-      'https://luminol-academy-web.vercel.app',
-    );
+    expect(jsonLd.provider.url).toBe('https://luminol-academy-web.vercel.app');
   });
 });
 
