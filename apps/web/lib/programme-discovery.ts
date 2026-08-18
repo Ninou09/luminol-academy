@@ -135,8 +135,8 @@ export function filterPublicProgrammes(
     })
     .sort(
       (a, b) =>
-        Number(b.programme.featured) - Number(a.programme.featured) ||
         b.score - a.score ||
+        Number(b.programme.featured) - Number(a.programme.featured) ||
         a.programme.title.localeCompare(b.programme.title) ||
         a.programme._id.localeCompare(b.programme._id),
     )
