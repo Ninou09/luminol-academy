@@ -40,7 +40,10 @@ describe('localizeProgrammeViewAction', () => {
     ['en', 'View programme'],
     ['fr', 'Voir le programme'],
     ['ar', 'عرض البرنامج'],
-  ] as const)('localizes the %s programme detail action', (locale, expected) => {
-    expect(localizeProgrammeViewAction(locale)).toBe(expected);
-  });
+  ] as const)(
+    'localizes the %s programme detail action',
+    (locale, expected) => {
+      expect(localizeProgrammeViewAction(locale)).toBe(expected);
+    },
+  );
 });
