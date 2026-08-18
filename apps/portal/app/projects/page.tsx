@@ -1,7 +1,4 @@
-import {
-  formatLocalizedDate,
-  localizeHref,
-} from '@luminol/localization';
+import { formatLocalizedDate, localizeHref } from '@luminol/localization';
 import Link from 'next/link';
 
 import { PortalHeader } from '../../components/portal-header';
