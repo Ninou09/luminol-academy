@@ -13,7 +13,7 @@ const statuses = [
 ] as const;
 
 describe('professional submission localization', () => {
-  it.each(locales)('provides complete learner project copy for %s', (locale) => {
+  it.each(locales)('has complete learner copy for %s', (locale) => {
     const copy = getProfessionalSubmissionCopy(locale);
 
     expect(copy.nav.trim()).not.toBe('');
@@ -27,7 +27,7 @@ describe('professional submission localization', () => {
     }
   });
 
-  it('keeps learner-facing copy localized instead of exposing lifecycle keys', () => {
+  it('localizes lifecycle labels', () => {
     const arabic = getProfessionalSubmissionCopy('ar');
     const french = getProfessionalSubmissionCopy('fr');
 
