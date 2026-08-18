@@ -11,6 +11,8 @@ import {
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { createProfessionalTransitionNotification } from '../../lib/professional-notifications.server';
+
 const projectIdSchema = z.string().trim().min(1).max(160);
 const submissionIdSchema = z.string().trim().min(1).max(128);
 
@@ -49,6 +51,7 @@ const submittedContentSchema = editableContentSchema.extend({
 type LockedSubmission = {
   id: string;
   status: ProfessionalSubmissionStatus;
+  reviewerUserId: string | null;
 };
 
 type SubmissionTransaction = Pick<PrismaClient, '$queryRaw'>;
@@ -59,7 +62,7 @@ async function getLockedLearnerSubmission(
   learnerUserId: string,
 ) {
   const rows = await transaction.$queryRaw<LockedSubmission[]>`
-    SELECT "id", "status"
+    SELECT "id", "status", "reviewerUserId"
     FROM "ProfessionalProjectSubmission"
     WHERE "id" = ${submissionId}
       AND "learnerUserId" = ${learnerUserId}
@@ -71,6 +74,7 @@ async function getLockedLearnerSubmission(
 
 function revalidateLearnerProjects() {
   revalidatePath('/projects');
+  revalidatePath('/notifications');
   revalidatePath('/');
 }
 
@@ -230,17 +234,29 @@ export async function submitProfessionalSubmission(formData: FormData) {
       submission.status === 'REVISION_REQUIRED'
         ? 'professional_submission.resubmitted'
         : 'professional_submission.submitted';
+    const auditEventId = randomUUID();
 
     await transaction.$executeRaw`
       INSERT INTO "ProfessionalSubmissionAuditEvent" (
         "id", "submissionId", "actorUserId", "action", "fromStatus", "toStatus", "occurredAt"
       ) VALUES (
-        ${randomUUID()}, ${submission.id}, ${user.id}, ${action},
+        ${auditEventId}, ${submission.id}, ${user.id}, ${action},
         ${submission.status}::"ProfessionalSubmissionStatus",
         'SUBMITTED'::"ProfessionalSubmissionStatus",
         ${now}
       )
     `;
+
+    if (submission.reviewerUserId) {
+      await createProfessionalTransitionNotification(transaction, {
+        auditEventId,
+        recipientUserId: submission.reviewerUserId,
+        templateKey:
+          submission.status === 'REVISION_REQUIRED'
+            ? 'professional_submission_resubmitted'
+            : 'professional_submission_submitted',
+      });
+    }
   });
 
   revalidateLearnerProjects();

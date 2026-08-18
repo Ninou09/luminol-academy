@@ -5,15 +5,22 @@ export const notificationCategorySchema = z.enum([
   'marketing',
 ]);
 export const notificationChannelSchema = z.enum(['in_app', 'email']);
+export const notificationTemplateKeySchema = z.enum([
+  'course_completed',
+  'certificate_issued',
+  'account_notice',
+  'professional_submission_submitted',
+  'professional_submission_resubmitted',
+  'professional_review_started',
+  'professional_revision_requested',
+  'professional_submission_approved',
+  'professional_submission_rejected',
+]);
 export const notificationEventSchema = z.object({
   idempotencyKey: z.string().trim().min(8).max(255),
   organizationId: z.string().trim().min(1).max(128).optional(),
   recipientId: z.string().trim().min(1).max(128),
-  templateKey: z.enum([
-    'course_completed',
-    'certificate_issued',
-    'account_notice',
-  ]),
+  templateKey: notificationTemplateKeySchema,
   category: notificationCategorySchema,
   payload: z
     .object({

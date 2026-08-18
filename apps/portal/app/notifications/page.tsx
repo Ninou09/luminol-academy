@@ -6,6 +6,10 @@ import Link from 'next/link';
 import { PortalHeader } from '../../components/portal-header';
 import { getPortalCopy } from '../../lib/portal-localization';
 import { getPortalArrow } from '../../lib/portal-direction';
+import {
+  getProfessionalNotificationCopy,
+  getProfessionalNotificationHref,
+} from '../../lib/professional-notification-localization';
 import { getPortalRequestLocale } from '../../lib/request-locale';
 import { setNotificationRead, updateMarketingPreference } from './actions';
 
@@ -17,6 +21,7 @@ export default async function NotificationsPage() {
   const [items, preference] = await Promise.all([
     db.notification.findMany({
       where: { recipientId: user.id, channel: 'IN_APP' },
+      include: { event: { select: { templateKey: true } } },
       orderBy: { createdAt: 'desc' },
       take: 50,
     }),
@@ -42,36 +47,55 @@ export default async function NotificationsPage() {
           <h1>{copy.title}</h1>
           {items.length ? (
             <div className="certificate-list">
-              {items.map((item) => (
-                <article key={item.id}>
-                  <div>
-                    <h2 dir="auto">{item.title}</h2>
-                    <p dir="auto">{item.body}</p>
-                    <small>
-                      {formatLocalizedDate(item.createdAt, locale, {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </small>
-                  </div>
-                  <form action={setNotificationRead}>
-                    <input
-                      type="hidden"
-                      name="notificationId"
-                      value={item.id}
-                    />
-                    <input
-                      type="hidden"
-                      name="read"
-                      value={item.readAt ? 'false' : 'true'}
-                    />
-                    <button type="submit">
-                      {item.readAt ? copy.markUnread : copy.markRead}
-                    </button>
-                  </form>
-                </article>
-              ))}
+              {items.map((item) => {
+                const professionalCopy = getProfessionalNotificationCopy(
+                  locale,
+                  item.event.templateKey,
+                );
+                const professionalHref = getProfessionalNotificationHref(
+                  item.event.templateKey,
+                );
+
+                return (
+                  <article key={item.id}>
+                    <div>
+                      <h2 dir="auto">
+                        {professionalCopy?.title ?? item.title}
+                      </h2>
+                      <p dir="auto">{professionalCopy?.message ?? item.body}</p>
+                      <small>
+                        {formatLocalizedDate(item.createdAt, locale, {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </small>
+                      {professionalCopy && professionalHref ? (
+                        <p>
+                          <Link href={localizeHref(locale, professionalHref)}>
+                            {professionalCopy.action}
+                          </Link>
+                        </p>
+                      ) : null}
+                    </div>
+                    <form action={setNotificationRead}>
+                      <input
+                        type="hidden"
+                        name="notificationId"
+                        value={item.id}
+                      />
+                      <input
+                        type="hidden"
+                        name="read"
+                        value={item.readAt ? 'false' : 'true'}
+                      />
+                      <button type="submit">
+                        {item.readAt ? copy.markUnread : copy.markRead}
+                      </button>
+                    </form>
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <p>{copy.empty}</p>
