@@ -1,5 +1,6 @@
 import {
   ACADEMY_ANALYTICS_MINIMUM_GROUP_SIZE,
+  type AcademyProfessionalProjectAnalytics,
   type AcademyProgrammeAnalytics,
 } from '@luminol/database';
 import {
@@ -11,7 +12,7 @@ import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../../lib/academy-analytics-localization';
-import { getAuthorizedAcademyProgrammeAnalytics } from '../../lib/academy-analytics.server';
+import { getAuthorizedAcademyAnalytics } from '../../lib/academy-analytics.server';
 import { getAdminRequestLocale } from '../../lib/request-locale';
 
 function visibleProgramme(
@@ -20,13 +21,29 @@ function visibleProgramme(
   return programme.state === 'visible';
 }
 
+function visibleProfessionalProgramme(
+  programme: AcademyProfessionalProjectAnalytics,
+): programme is Extract<
+  AcademyProfessionalProjectAnalytics,
+  { state: 'visible' }
+> {
+  return programme.state === 'visible';
+}
+
 export default async function AcademyAnalyticsPage() {
   const locale = await getAdminRequestLocale();
   const copy = getAcademyAnalyticsCopy(locale);
   const common = getCommonDictionary(locale);
-  const analytics = await getAuthorizedAcademyProgrammeAnalytics();
+  const { programmes: analytics, professionalProjects } =
+    await getAuthorizedAcademyAnalytics();
   const visibleProgrammes = analytics.filter(visibleProgramme);
   const suppressedProgrammes = analytics.filter(
+    (programme) => programme.state === 'suppressed',
+  );
+  const visibleProfessionalProjects = professionalProjects.filter(
+    visibleProfessionalProgramme,
+  );
+  const suppressedProfessionalProjects = professionalProjects.filter(
     (programme) => programme.state === 'suppressed',
   );
   const number = (value: number) => formatLocalizedNumber(value, locale);
@@ -159,6 +176,108 @@ export default async function AcademyAnalyticsPage() {
               </p>
               <div className="compact-list">
                 {suppressedProgrammes.map((programme) => (
+                  <article key={programme.courseId}>
+                    <div>
+                      <h3 dir="auto">{programme.title}</h3>
+                    </div>
+                    <div>
+                      <span className="data-status">{copy.privacyGuard}</span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{copy.professionalTitle}</p>
+                <h2>{copy.professionalTitle}</h2>
+                <p
+                  style={{
+                    margin: '0.65rem 0 0',
+                    maxWidth: '800px',
+                    color: 'var(--color-brand-muted)',
+                    lineHeight: 1.6,
+                    fontSize: '0.76rem',
+                  }}
+                >
+                  {copy.professionalIntro}
+                </p>
+              </div>
+            </div>
+
+            {visibleProfessionalProjects.length > 0 ? (
+              <div
+                className="portfolio-table"
+                aria-label={copy.professionalTitle}
+              >
+                <div
+                  className="portfolio-header"
+                  aria-hidden="true"
+                  style={{
+                    gridTemplateColumns:
+                      'minmax(220px, 1.4fr) repeat(7, minmax(90px, 0.55fr))',
+                  }}
+                >
+                  <span>{copy.programme}</span>
+                  <span>{copy.participants}</span>
+                  <span>{copy.professionalSubmitted}</span>
+                  <span>{copy.professionalWaitingReview}</span>
+                  <span>{copy.professionalInReview}</span>
+                  <span>{copy.professionalRevisionRequired}</span>
+                  <span>{copy.professionalApproved}</span>
+                  <span>{copy.professionalRejected}</span>
+                </div>
+                {visibleProfessionalProjects.map((programme) => (
+                  <article
+                    key={programme.courseId}
+                    style={{
+                      gridTemplateColumns:
+                        'minmax(220px, 1.4fr) repeat(7, minmax(90px, 0.55fr))',
+                    }}
+                  >
+                    <h3 dir="auto">{programme.title}</h3>
+                    <span>{number(programme.participantCount)}</span>
+                    <span>{number(programme.submittedProjects)}</span>
+                    <span>{number(programme.waitingReview)}</span>
+                    <span>{number(programme.inReview)}</span>
+                    <span>{number(programme.revisionRequired)}</span>
+                    <span>{number(programme.approved)}</span>
+                    <span>{number(programme.rejected)}</span>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="admin-empty">
+                {professionalProjects.length > 0
+                  ? copy.professionalSuppressedReason
+                  : copy.professionalNoProgrammes}
+              </p>
+            )}
+          </section>
+
+          {suppressedProfessionalProjects.length > 0 ? (
+            <section className="admin-panel portfolio-panel">
+              <div className="panel-heading">
+                <div>
+                  <p className="eyebrow">{copy.privacyGuard}</p>
+                  <h2>{copy.professionalSuppressedTitle}</h2>
+                </div>
+              </div>
+              <p
+                style={{
+                  margin: '0 0 1.5rem',
+                  color: 'var(--color-brand-muted)',
+                  lineHeight: 1.6,
+                  fontSize: '0.76rem',
+                }}
+              >
+                {copy.professionalSuppressedReason}
+              </p>
+              <div className="compact-list">
+                {suppressedProfessionalProjects.map((programme) => (
                   <article key={programme.courseId}>
                     <div>
                       <h3 dir="auto">{programme.title}</h3>

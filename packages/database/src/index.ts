@@ -168,5 +168,6 @@ export async function recordSearchTelemetry({
 
 export * from './instructor-cohorts';
 export * from './learning-analytics';
+export * from './professional-analytics';
 export * from './professional-submissions';
 export * from '../generated/prisma/client';

@@ -13,6 +13,9 @@ describe('academy analytics localization', () => {
       expect(copy.summaryAria).toBeTruthy();
       expect(copy.tableTitle).toBeTruthy();
       expect(copy.suppressedReason).toBeTruthy();
+      expect(copy.professionalTitle).toBeTruthy();
+      expect(copy.professionalIntro).toBeTruthy();
+      expect(copy.professionalSuppressedReason).toBeTruthy();
       expect(copy.privacyBody).toBeTruthy();
     },
   );
@@ -22,14 +25,20 @@ describe('academy analytics localization', () => {
 
     expect(copy.title).toBe('تحليلات الأكاديمية');
     expect(copy.participants).toBe('المشاركون');
+    expect(copy.professionalTitle).toBe('سير عمل المشاريع المهنية');
     expect(copy.privacyTitle).toBe('حدود الخصوصية');
   });
 
-  it('states the privacy and non-ranking boundaries', () => {
+  it('states the privacy, project-content and non-ranking boundaries', () => {
     const copy = getAcademyAnalyticsCopy('en');
 
     expect(copy.privacyBody).toContain('never exposes learner identities');
+    expect(copy.privacyBody).toContain('learner reflections');
+    expect(copy.privacyBody).toContain('reviewer feedback');
     expect(copy.privacyBody).toContain('does not rank learners');
     expect(copy.suppressedReason).toContain('minimum privacy group');
+    expect(copy.professionalSuppressedReason).toContain(
+      'distinct learners have submitted work',
+    );
   });
 });
