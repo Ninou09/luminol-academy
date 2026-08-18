@@ -21,6 +21,12 @@ const PROGRAMME_DELIVERY_LABELS = {
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
+const PROGRAMME_VIEW_ACTION_LABELS = {
+  en: 'View programme',
+  fr: 'Voir le programme',
+  ar: 'عرض البرنامج',
+} as const satisfies Record<Locale, string>;
+
 export function localizeProgrammeDelivery(
   locale: Locale,
   delivery: string | null | undefined,
@@ -33,4 +39,8 @@ export function localizeProgrammeDelivery(
       normalized as keyof (typeof PROGRAMME_DELIVERY_LABELS)[typeof locale]
     ] ?? normalized
   );
+}
+
+export function localizeProgrammeViewAction(locale: Locale): string {
+  return PROGRAMME_VIEW_ACTION_LABELS[locale];
 }
