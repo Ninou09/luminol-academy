@@ -1,6 +1,6 @@
 # Luminol Academy Project Status
 
-_Last updated: 2026-08-18_
+_Last updated: 2026-08-19_
 
 ## Current state
 
@@ -18,7 +18,7 @@ Stable production application aliases:
 - Learner portal: `https://luminol-academy-portal.vercel.app`
 - Administration: `https://luminol-academy-admin.vercel.app`
 
-Milestones 1 through 16 are complete with their previously recorded production evidence. Milestones 17 through 20 are repository-implemented and protected by the same exact-head GitHub Actions quality gate. Production-live verification for the newer protected learner/admin/instructor/session surfaces remains a separate evidence requirement and must not be inferred from repository completion.
+Milestones 1 through 18 are complete with recorded production evidence. Milestone 19 is repository-complete but remains open for its explicitly required exact-merged-head protected deployment evidence. Milestone 20 is repository-complete and its governing issue is closed; protected authenticated browser journeys remain a separate operational evidence requirement under #40 rather than a reason to weaken application authorization.
 
 Milestone 20 implementation issue #270 is closed as completed after Slices A–F merged through PRs #271–#276. The final Slice F exact-head quality run passed frozen install, security/dependency checks, Prisma generation and migration-chain validation, lint, strict repository formatting, type checking, tests, fixture reconciliation, production builds, Playwright installation, and public smoke tests. The protected authenticated preview journey remained skipped because the required protected test state/configuration is not available, so this status does not claim that protected production browser verification is complete.
 
@@ -45,7 +45,7 @@ Milestone 16 production database migration/backfill/integrity verification compl
 
 ### Milestone 17 — Privacy-safe Learning Analytics and Outcomes
 
-Repository status: Complete through PRs #247–#252.
+Status: Complete through PRs #247–#252; governing issue #246 is closed as completed after production deployment verification.
 
 Delivered:
 
@@ -57,11 +57,11 @@ Delivered:
 - organization-manager aggregates scoped to existing organization membership
 - Arabic/French/English presentation and analytics documentation
 
-Production-live follow-up remains tracked under #246. No learner ranking, sensitive-trait inference, or parallel raw analytics event store was introduced.
+Production evidence now covers both protected application sides: the READY administration production build at `e548b8a4850a752a62a71ccef3fca74d5bc794a5` is a descendant of the final Milestone 17 merge and explicitly contains `/analytics`, while the READY portal production build at `3b65c6160de6fd35cb350d39ac13c22b25deef55` contains the learner/organization analytics surfaces. Signed-out verification fails closed and fresh runtime-error checks are clear. Full authenticated smoke-account journeys remain separately tracked under #40. No learner ranking, sensitive-trait inference, or parallel raw analytics event store was introduced.
 
 ### Milestone 18 — Instructor Cohorts, Ownership, and Delivery Operations
 
-Repository status: Complete through PRs #254–#259.
+Status: Complete through PRs #254–#259; governing issue #253 is closed as completed after production deployment verification.
 
 Delivered:
 
@@ -71,7 +71,7 @@ Delivered:
 - audited academy cohort delivery and assignment/reassignment operations
 - privacy-suppressed instructor/cohort analytics
 
-Production-live follow-up remains tracked under #253. Instructor access is derived only from persisted server-verified assignment or an explicit academy authority; it is never inferred from request input or activity history.
+The READY portal production build at `3b65c6160de6fd35cb350d39ac13c22b25deef55` is a descendant of the final Milestone 18 merge and its production build output includes `/instructor`, `/instructor/cohorts/[cohort]`, and `/instructor/cohorts/[cohort]/analytics`. Signed-out verification fails closed and the production runtime-error check is clear. Instructor access is derived only from persisted server-verified assignment or an explicit academy authority; it is never inferred from request input or activity history.
 
 ### Milestone 19 — Cohort Sessions, Attendance, and Learner Schedule
 
@@ -86,7 +86,7 @@ Delivered:
 - learner self-only session schedule and attendance state
 - privacy-bounded attendance aggregates
 
-Production-live follow-up remains tracked under #263. No external calendar/video integration was invented.
+Production-live follow-up remains tracked under #263 because that issue explicitly requires protected portal/admin deployment verification on the exact merged head. No external calendar/video integration was invented.
 
 ### Milestone 20 — Professional Project Submissions and Review Workflow
 
@@ -108,7 +108,7 @@ The implementation keeps learner-authored project content, reviewer feedback and
 
 The premium public-site hardening stream remains active through #235 where work is free and not blocked by external approvals/settings. Existing work includes premium localized layouts, governed programme/founder media, skip navigation and focus states, reduced-motion behavior, mobile navigation, metadata/canonical/`hreflang` improvements, robots/sitemap hardening, structured data, safer enquiry transport, public regression coverage, bounded social-preview caching and production dependency-audit safeguards.
 
-The canonical roadmap/status documents were found to be stale after Milestones 17–20 and are being synchronized so they no longer state that no Milestone 17 exists or describe Milestone 16 as the latest repository delivery.
+The canonical roadmap/status documents are kept synchronized with completed milestone evidence so repository completion, production deployment evidence, and still-blocked authenticated/browser requirements are not conflated.
 
 ## Active external or operational dependencies
 
@@ -117,7 +117,6 @@ The canonical roadmap/status documents were found to be stale after Milestones 1
 - **Outbound learner email — #40:** a verified Luminol sender domain and a controlled monitored delivery/retry/dead-letter check are still required before real learner email is enabled.
 - **Backup operations — #40:** a backup operator is still required before broader promotion or planned primary-operator absence.
 - **Reviewed public legal notices — #150:** privacy, terms and cookie copy must come from reviewed approved legal/operator information rather than technical inference.
-- **Sanity Studio environment observation — #85:** the v6 code migration is complete, but the migrated Studio still needs non-sensitive operational verification against the intended project/dataset.
 - **TypeScript 7 — #115:** migration remains deliberately deferred until the repository's lint/tooling ecosystem officially supports the chosen architecture.
 
 ## Repository governance baseline

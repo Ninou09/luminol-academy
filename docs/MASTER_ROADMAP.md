@@ -98,7 +98,7 @@ Delivered capabilities include first-class organizations, memberships, teams, se
 
 ### Milestone 17 — Privacy-safe Learning Analytics and Outcomes
 
-Status: Repository implementation complete; production-live verification remains tracked separately in #246.
+Status: Complete; governing issue #246 is closed as completed after protected production deployment verification.
 
 Delivered through PRs #247–#252:
 
@@ -109,11 +109,11 @@ Delivered through PRs #247–#252:
 - organization-manager aggregates scoped to existing organization membership
 - Arabic/French/English analytics presentation and documentation
 
-The milestone does not create learner rankings, hidden behavioral scoring, sensitive-trait inference, or a parallel raw analytics event store.
+Production verification confirms the protected administration deployment contains `/analytics` on a main descendant of the final Milestone 17 merge, and the READY learner portal deployment contains the learner/organization analytics surfaces. Signed-out requests fail closed and fresh runtime-error checks are clear. Full authenticated smoke-account journeys remain an operational follow-up under #40. The milestone does not create learner rankings, hidden behavioral scoring, sensitive-trait inference, or a parallel raw analytics event store.
 
 ### Milestone 18 — Instructor Cohorts, Ownership, and Delivery Operations
 
-Status: Repository implementation complete; production-live verification remains tracked separately in #253.
+Status: Complete; governing issue #253 is closed as completed after protected production deployment verification.
 
 Delivered through PRs #254–#259:
 
@@ -123,11 +123,11 @@ Delivered through PRs #254–#259:
 - academy-authorized cohort delivery and assignment/reassignment operations with audit history
 - privacy-suppressed instructor/cohort analytics using Milestone 17 rules
 
-Instructor authority remains distinct from academy RBAC and organization-manager authority. Ownership is never inferred from names, activity, submissions, or historical coincidence.
+The READY learner portal production build is a descendant of the final Milestone 18 merge and explicitly contains `/instructor`, `/instructor/cohorts/[cohort]`, and `/instructor/cohorts/[cohort]/analytics`. Signed-out access fails closed and fresh production runtime-error verification is clear. Instructor authority remains distinct from academy RBAC and organization-manager authority. Ownership is never inferred from names, activity, submissions, or historical coincidence.
 
 ### Milestone 19 — Cohort Sessions, Attendance, and Learner Schedule
 
-Status: Repository implementation complete; production-live verification remains tracked separately in #263.
+Status: Repository implementation complete; exact-merged-head production-live verification remains tracked separately in #263.
 
 Delivered through PRs #264–#269:
 
@@ -159,7 +159,7 @@ Review decisions remain human-entered. There is no AI grading, automatic reviewe
 
 Status: Ongoing as no-cost repository polish where it does not depend on external approvals or account settings; tracked primarily through #235 and specific blocker issues.
 
-Delivered hardening includes premium localized public layouts, reduced-motion behavior, mobile navigation, keyboard skip navigation/focus states, governed CMS media publication, localized metadata and structured data, robots/sitemap hardening, public browser regression coverage, safer enquiry transport, production dependency auditing, learner-portal indexing exclusion, bounded social-preview caching, and approved founder media within its documented governance boundary.
+Delivered hardening includes premium localized public layouts, reduced-motion behavior, mobile navigation, keyboard skip navigation/focus states, governed CMS media publication, localized metadata and structured data, robots/sitemap hardening, public browser regression coverage, safer enquiry transport, production dependency auditing, learner-portal indexing exclusion, bounded social-preview caching, approved founder media within its documented governance boundary, and progressively more forgiving multilingual programme discovery without storing raw search text.
 
 Current public-site discoverability remains separately blocked by the production Vercel Deployment Protection setting tracked in #241. Application code must not weaken Clerk protection on learner or administration surfaces to work around that project-level setting.
 
@@ -170,7 +170,6 @@ Repository work and production-live evidence remain separate. The active operati
 - #40 — restricted administration smoke access, authenticated browser state/configuration, sender-domain activation and monitored email delivery, and backup-operator readiness
 - #241 — remove Vercel Authentication/SSO from the public production website while retaining appropriate protection elsewhere
 - #150 — publish privacy, terms, and cookie notices only after reviewed approved legal copy and verified operator details are supplied
-- #85 — observe the migrated Sanity Studio against the intended project/dataset without changing production content merely for verification
 - #115 — keep TypeScript 7 migration deferred until the repository toolchain has official compatible support
 
 The `Protect main` ruleset and exact-head GitHub Actions `quality` gate remain mandatory. Authenticated preview smoke may be skipped only when the protected credentials/configuration are genuinely unavailable; that skip is an operational evidence gap, not permission to claim the protected journeys have been verified.
