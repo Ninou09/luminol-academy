@@ -28,11 +28,10 @@ describe('professional submission localization', () => {
   });
 
   it('keeps learner-facing copy localized instead of exposing lifecycle keys', () => {
-    expect(
-      getProfessionalSubmissionCopy('ar').statuses.REVISION_REQUIRED,
-    ).not.toBe('REVISION_REQUIRED');
-    expect(getProfessionalSubmissionCopy('fr').statuses.IN_REVIEW).not.toBe(
-      'IN_REVIEW',
-    );
+    const arabic = getProfessionalSubmissionCopy('ar');
+    const french = getProfessionalSubmissionCopy('fr');
+
+    expect(arabic.statuses.REVISION_REQUIRED).not.toBe('REVISION_REQUIRED');
+    expect(french.statuses.IN_REVIEW).not.toBe('IN_REVIEW');
   });
 });
