@@ -70,7 +70,10 @@ export default async function ProfessionalReviewsPage() {
           </div>
         </section>
 
-        <section className="dashboard-section" aria-labelledby="review-queue-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="review-queue-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.status}</p>
@@ -105,7 +108,10 @@ export default async function ProfessionalReviewsPage() {
           )}
         </section>
 
-        <section className="dashboard-section" aria-labelledby="review-privacy-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="review-privacy-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.privacyTitle}</p>
