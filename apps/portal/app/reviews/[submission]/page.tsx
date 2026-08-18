@@ -32,9 +32,8 @@ export default async function ReviewerSubmissionPage({
     params,
     getPortalRequestLocale(),
   ]);
-  const submission = await getAssignedProfessionalSubmissionDetail(
-    submissionId,
-  );
+  const submission =
+    await getAssignedProfessionalSubmissionDetail(submissionId);
   if (!submission) notFound();
 
   const copy = getProfessionalReviewerCopy(locale);
