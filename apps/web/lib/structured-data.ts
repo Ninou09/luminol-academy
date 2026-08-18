@@ -5,6 +5,14 @@ type BreadcrumbItem = {
   href: string;
 };
 
+type CourseJsonLdInput = {
+  name: string;
+  description: string;
+  href: string;
+  languages: readonly string[];
+  image?: string;
+};
+
 export function buildOrganizationJsonLd(description: string) {
   const origin = resolvePublicSiteOrigin();
 
@@ -30,6 +38,32 @@ export function buildBreadcrumbJsonLd(items: readonly BreadcrumbItem[]) {
       name: item.name,
       item: new URL(item.href, `${origin}/`).toString(),
     })),
+  } as const;
+}
+
+export function buildCourseJsonLd({
+  name,
+  description,
+  href,
+  languages,
+  image,
+}: CourseJsonLdInput) {
+  const origin = resolvePublicSiteOrigin();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name,
+    description,
+    url: new URL(href, `${origin}/`).toString(),
+    provider: {
+      '@type': 'EducationalOrganization',
+      '@id': `${origin}/#organization`,
+      name: 'Luminol Academy',
+      url: origin,
+    },
+    ...(languages.length > 0 ? { inLanguage: languages } : {}),
+    ...(image ? { image } : {}),
   } as const;
 }
 
