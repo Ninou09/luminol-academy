@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { localizeProgrammeDelivery } from './programme-presentation';
 import {
   PROGRAMME_LANGUAGE_CODES,
   type CmsProgrammeLanguage,
@@ -90,7 +91,14 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
 
   const title = fold(programme.title);
   const summary = fold(programme.summary);
-  const delivery = fold(programme.delivery ?? '');
+  const delivery = fold(
+    (['ar', 'fr', 'en'] as const)
+      .map(
+        (locale) =>
+          localizeProgrammeDelivery(locale, programme.delivery) ?? '',
+      )
+      .join(' '),
+  );
   const school = fold(
     (['ar', 'fr', 'en'] as const)
       .map((locale) => getSchools(locale)[programme.school].name)
