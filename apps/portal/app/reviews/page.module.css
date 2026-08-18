@@ -40,11 +40,13 @@
 }
 
 .detailCard h2,
+.detailCard h3,
 .detailCard p {
   margin: 0;
 }
 
-.reflection {
+.reflection,
+.feedback {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -52,4 +54,67 @@
 .link {
   width: fit-content;
   font-weight: 700;
+}
+
+.reviewForm {
+  display: grid;
+  gap: 1rem;
+}
+
+.reviewForm label {
+  display: grid;
+  gap: 0.45rem;
+  font-weight: 600;
+}
+
+.reviewForm input[type='number'],
+.reviewForm textarea {
+  width: 100%;
+  border: 1px solid rgb(24 42 51 / 0.18);
+  border-radius: 0.75rem;
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+  padding: 0.75rem 0.85rem;
+  font: inherit;
+}
+
+.reviewForm textarea {
+  min-height: 9rem;
+  resize: vertical;
+}
+
+.reviewForm small {
+  font-weight: 400;
+  opacity: 0.72;
+}
+
+.checkbox {
+  display: flex !important;
+  grid-template-columns: none;
+  align-items: flex-start;
+  gap: 0.65rem !important;
+}
+
+.checkbox input {
+  margin-top: 0.25rem;
+}
+
+.actionButton {
+  width: fit-content;
+  border: 1px solid var(--color-brand-ink);
+  border-radius: 999px;
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+  padding: 0.65rem 1rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.historyList {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
