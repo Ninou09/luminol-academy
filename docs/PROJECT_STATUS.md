@@ -117,7 +117,6 @@ The canonical roadmap/status documents are kept synchronized with completed mile
 - **Outbound learner email — #40:** a verified Luminol sender domain and a controlled monitored delivery/retry/dead-letter check are still required before real learner email is enabled.
 - **Backup operations — #40:** a backup operator is still required before broader promotion or planned primary-operator absence.
 - **Reviewed public legal notices — #150:** privacy, terms and cookie copy must come from reviewed approved legal/operator information rather than technical inference.
-- **Sanity Studio environment observation — #85:** the v6 code migration is complete, but the migrated Studio still needs non-sensitive operational verification against the intended project/dataset.
 - **TypeScript 7 — #115:** migration remains deliberately deferred until the repository's lint/tooling ecosystem officially supports the chosen architecture.
 
 ## Repository governance baseline
