@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   filterPublicProgrammes,
+  hasProgrammeDiscoveryFilters,
   parseProgrammeDiscoveryParams,
 } from './programme-discovery';
 import type { PublicCmsProgramme } from './sanity';
@@ -59,6 +60,27 @@ describe('programme discovery filters', () => {
         language: 'de',
       }),
     ).toEqual({ query: '' });
+  });
+
+  it('distinguishes canonical catalogue views from valid filtered variants', () => {
+    expect(hasProgrammeDiscoveryFilters({ query: '' })).toBe(false);
+    expect(hasProgrammeDiscoveryFilters({ query: 'leadership' })).toBe(true);
+    expect(
+      hasProgrammeDiscoveryFilters({ query: '', school: 'psychology' }),
+    ).toBe(true);
+    expect(hasProgrammeDiscoveryFilters({ query: '', language: 'fr' })).toBe(
+      true,
+    );
+
+    expect(
+      hasProgrammeDiscoveryFilters(
+        parseProgrammeDiscoveryParams({
+          q: ['one', 'two'],
+          school: 'unknown',
+          language: 'de',
+        }),
+      ),
+    ).toBe(false);
   });
 
   it('filters by school and delivery language', () => {
