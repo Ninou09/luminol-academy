@@ -84,10 +84,7 @@ export default async function ProgrammesPage({
       ? buildProgrammeListJsonLd(
           programmes.map((programme) => ({
             name: programme.title,
-            href: localizeHref(
-              locale,
-              `/programmes/${programme.slug.current}`,
-            ),
+            href: localizeHref(locale, `/programmes/${programme.slug.current}`),
           })),
         )
       : null;
@@ -105,7 +102,9 @@ export default async function ProgrammesPage({
         <script
           type="application/ld+json"
           data-programme-list-jsonld
-          dangerouslySetInnerHTML={{ __html: serializeJsonLd(programmeListJsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(programmeListJsonLd),
+          }}
         />
       ) : null}
       <SiteHeader />
