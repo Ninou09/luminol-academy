@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { AuthorizationError, requireUser } from '@luminol/auth';
 import {
   db,
+  type PrismaClient,
   type ProfessionalSubmissionStatus,
 } from '@luminol/database';
 import { revalidatePath } from 'next/cache';
@@ -50,8 +51,10 @@ type LockedSubmission = {
   status: ProfessionalSubmissionStatus;
 };
 
+type SubmissionTransaction = Pick<PrismaClient, '$queryRaw'>;
+
 async function getLockedLearnerSubmission(
-  transaction: Parameters<Parameters<typeof db.$transaction>[0]>[0],
+  transaction: SubmissionTransaction,
   submissionId: string,
   learnerUserId: string,
 ) {
