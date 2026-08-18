@@ -132,6 +132,32 @@ describe('programme discovery filters', () => {
     ).toEqual(['programme-leadership', 'programme-english']);
   });
 
+  it('uses featured status to break equal search relevance ties', () => {
+    const tiedProgrammes = programmes.map((programme) => {
+      if (programme._id === 'programme-english') {
+        return {
+          ...programme,
+          summary: 'Communication practice for everyday English learners.',
+        };
+      }
+
+      if (programme._id === 'programme-leadership') {
+        return {
+          ...programme,
+          summary: 'Communication practice for managers and team leads.',
+        };
+      }
+
+      return programme;
+    });
+
+    expect(
+      filterPublicProgrammes(tiedProgrammes, {
+        query: 'communication',
+      }).map((programme) => programme._id),
+    ).toEqual(['programme-english', 'programme-leadership']);
+  });
+
   it('ranks featured programmes first and stays deterministic without search', () => {
     expect(
       filterPublicProgrammes(programmes, { query: '' }).map(
