@@ -21,6 +21,7 @@ type ReviewerCopy = {
   detailEyebrow: string;
   artifact: string;
   openArtifact: string;
+  noArtifact: string;
   reflection: string;
   noReflection: string;
   privacyTitle: string;
@@ -52,6 +53,7 @@ const COPY = {
     detailEyebrow: 'Assigned submission',
     artifact: 'Project artifact',
     openArtifact: 'Open project artifact',
+    noArtifact: 'No valid project artifact link is available.',
     reflection: 'Learner reflection',
     noReflection: 'No reflection is available for this submission.',
     privacyTitle: 'Exact assignment only',
@@ -90,6 +92,7 @@ const COPY = {
     detailEyebrow: 'Projet attribué',
     artifact: 'Livrable du projet',
     openArtifact: 'Ouvrir le livrable',
+    noArtifact: 'Aucun lien de livrable valide n’est disponible.',
     reflection: 'Réflexion de l’apprenant',
     noReflection: 'Aucune réflexion n’est disponible pour ce projet.',
     privacyTitle: 'Attribution exacte uniquement',
@@ -128,6 +131,7 @@ const COPY = {
     detailEyebrow: 'مشروع معيّن',
     artifact: 'مخرج المشروع',
     openArtifact: 'فتح مخرج المشروع',
+    noArtifact: 'لا يوجد رابط صالح لمخرج المشروع.',
     reflection: 'انعكاس المتعلم',
     noReflection: 'لا يوجد انعكاس متاح لهذا المشروع.',
     privacyTitle: 'التعيين الصريح فقط',
