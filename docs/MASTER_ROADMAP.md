@@ -170,7 +170,6 @@ Repository work and production-live evidence remain separate. The active operati
 - #40 — restricted administration smoke access, authenticated browser state/configuration, sender-domain activation and monitored email delivery, and backup-operator readiness
 - #241 — remove Vercel Authentication/SSO from the public production website while retaining appropriate protection elsewhere
 - #150 — publish privacy, terms, and cookie notices only after reviewed approved legal copy and verified operator details are supplied
-- #85 — observe the migrated Sanity Studio against the intended project/dataset without changing production content merely for verification
 - #115 — keep TypeScript 7 migration deferred until the repository toolchain has official compatible support
 
 The `Protect main` ruleset and exact-head GitHub Actions `quality` gate remain mandatory. Authenticated preview smoke may be skipped only when the protected credentials/configuration are genuinely unavailable; that skip is an operational evidence gap, not permission to claim the protected journeys have been verified.
