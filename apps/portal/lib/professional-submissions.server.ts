@@ -1,10 +1,7 @@
 import 'server-only';
 
 import { requireUser } from '@luminol/auth';
-import {
-  db,
-  type ProfessionalSubmissionStatus,
-} from '@luminol/database';
+import { db, type ProfessionalSubmissionStatus } from '@luminol/database';
 
 export const LEARNER_PROJECT_LIMIT = 50;
 
