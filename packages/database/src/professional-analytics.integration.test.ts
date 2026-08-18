@@ -176,7 +176,9 @@ suite('Milestone 20 professional project aggregate analytics', () => {
 
   test('returns current workflow counts only after the submitter privacy threshold is met', async () => {
     const analytics = await getAcademyProfessionalProjectAnalytics();
-    const visible = analytics.find(({ courseId }) => courseId === visibleCourseId);
+    const visible = analytics.find(
+      ({ courseId }) => courseId === visibleCourseId,
+    );
     const suppressed = analytics.find(
       ({ courseId }) => courseId === suppressedCourseId,
     );
