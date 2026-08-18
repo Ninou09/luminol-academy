@@ -4,6 +4,8 @@ import { requireUser } from '@luminol/auth';
 import {
   db,
   getProfessionalSubmissionForReviewer,
+  getProfessionalSubmissionReviewsForReviewer,
+  type PersistedProfessionalSubmissionReview,
   type ProfessionalSubmissionStatus,
 } from '@luminol/database';
 
@@ -23,6 +25,7 @@ export type ReviewerSubmissionSummary = {
 export type ReviewerSubmissionDetail = ReviewerSubmissionSummary & {
   artifactUrl: string | null;
   reflection: string | null;
+  reviews: PersistedProfessionalSubmissionReview[];
 };
 
 export function isActiveReviewerWork(status: ProfessionalSubmissionStatus) {
@@ -104,19 +107,23 @@ export async function getAssignedProfessionalSubmissionDetail(
   });
   if (!submission || submission.status === 'DRAFT') return null;
 
-  const labels = await db.$queryRaw<
-    Array<{ projectTitle: string; courseTitle: string }>
-  >`
-    SELECT
-      project."title" AS "projectTitle",
-      course."title" AS "courseTitle"
-    FROM "ProfessionalProject" AS project
-    JOIN "Course" AS course
-      ON course."id" = project."courseId"
-    WHERE project."id" = ${submission.projectId}
-      AND project."courseId" = ${submission.courseId}
-    LIMIT 1
-  `;
+  const [labels, reviews] = await Promise.all([
+    db.$queryRaw<Array<{ projectTitle: string; courseTitle: string }>>`
+      SELECT
+        project."title" AS "projectTitle",
+        course."title" AS "courseTitle"
+      FROM "ProfessionalProject" AS project
+      JOIN "Course" AS course
+        ON course."id" = project."courseId"
+      WHERE project."id" = ${submission.projectId}
+        AND project."courseId" = ${submission.courseId}
+      LIMIT 1
+    `,
+    getProfessionalSubmissionReviewsForReviewer(db, {
+      submissionId: submission.id,
+      reviewerUserId: user.id,
+    }),
+  ]);
   const label = labels[0];
   if (!label) return null;
 
@@ -131,5 +138,6 @@ export async function getAssignedProfessionalSubmissionDetail(
     reviewStartedAt: submission.reviewStartedAt,
     reviewedAt: submission.reviewedAt,
     updatedAt: submission.updatedAt,
+    reviews,
   } satisfies ReviewerSubmissionDetail;
 }
