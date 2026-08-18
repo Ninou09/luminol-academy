@@ -13,10 +13,10 @@
 .form input,
 .form textarea {
   width: 100%;
-  border: 1px solid var(--border, #d8d8d8);
+  border: 1px solid rgb(24 42 51 / 0.18);
   border-radius: 0.75rem;
-  background: var(--surface, #fff);
-  color: inherit;
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
   padding: 0.75rem 0.85rem;
   font: inherit;
 }
@@ -39,10 +39,10 @@
 
 .actions button,
 .startButton {
-  border: 1px solid currentColor;
+  border: 1px solid var(--color-brand-ink);
   border-radius: 999px;
   background: transparent;
-  color: inherit;
+  color: var(--color-brand-ink);
   padding: 0.65rem 1rem;
   font: inherit;
   font-weight: 700;
@@ -50,11 +50,9 @@
 }
 
 .actions button:last-child {
-  background: currentColor;
-}
-
-.actions button:last-child::first-line {
-  color: var(--surface, #fff);
+  border-color: var(--color-brand-ink);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
 }
 
 .summary {
