@@ -130,6 +130,26 @@ describe('programme discovery filters', () => {
     ).toEqual(['programme-english']);
   });
 
+  it('normalizes common visual separators without stripping other punctuation', () => {
+    expect(
+      filterPublicProgrammes(programmes, { query: 'in-person' })[0]?._id,
+    ).toBe('programme-stress');
+
+    expect(
+      filterPublicProgrammes(programmes, {
+        query: 'English—Hybride',
+      }).map((programme) => programme._id),
+    ).toEqual(['programme-english']);
+
+    expect(
+      filterPublicProgrammes(programmes, {
+        query: 'Leadership/Francais',
+      }).map((programme) => programme._id),
+    ).toEqual(['programme-leadership']);
+
+    expect(filterPublicProgrammes(programmes, { query: 'C++' })).toEqual([]);
+  });
+
   it('matches multi-term searches across indexed programme concepts', () => {
     expect(
       filterPublicProgrammes(programmes, {
