@@ -12,6 +12,8 @@ import { getOrganizationAnalyticsCopy } from '../lib/organization-analytics-loca
 import { getOrganizationManagerCopy } from '../lib/organization-manager-localization';
 import { hasOrganizationManagerAccess } from '../lib/organization-manager.server';
 import { getPortalCopy } from '../lib/portal-localization';
+import { getProfessionalReviewerCopy } from '../lib/professional-reviewer-localization';
+import { hasProfessionalReviewerAccess } from '../lib/professional-reviewer.server';
 import { getProfessionalSubmissionCopy } from '../lib/professional-submission-localization';
 import { getPortalRequestLocale } from '../lib/request-locale';
 import { PortalLanguageSwitcher } from './portal-language-switcher';
@@ -23,14 +25,17 @@ export async function PortalHeader() {
   const outcomesCopy = getLearnerOutcomesCopy(locale);
   const scheduleCopy = getLearnerSessionScheduleCopy(locale);
   const projectsCopy = getProfessionalSubmissionCopy(locale);
+  const reviewsCopy = getProfessionalReviewerCopy(locale);
   const instructorCopy = getInstructorWorkspaceCopy(locale);
   const managerCopy = getOrganizationManagerCopy(locale);
   const organizationAnalyticsCopy = getOrganizationAnalyticsCopy(locale);
   const common = getCommonDictionary(locale);
-  const [canTeachCohorts, canManageOrganization] = await Promise.all([
-    hasInstructorWorkspaceAccess(user.id),
-    hasOrganizationManagerAccess(user.id),
-  ]);
+  const [canTeachCohorts, canReviewProjects, canManageOrganization] =
+    await Promise.all([
+      hasInstructorWorkspaceAccess(user.id),
+      hasProfessionalReviewerAccess(user.id),
+      hasOrganizationManagerAccess(user.id),
+    ]);
 
   return (
     <header className="portal-header">
@@ -53,6 +58,11 @@ export async function PortalHeader() {
           <Link href={localizeHref(locale, '/projects')}>
             {projectsCopy.nav}
           </Link>
+          {canReviewProjects ? (
+            <Link href={localizeHref(locale, '/reviews')}>
+              {reviewsCopy.nav}
+            </Link>
+          ) : null}
           {canTeachCohorts ? (
             <Link href={localizeHref(locale, '/instructor')}>
               {instructorCopy.nav}
