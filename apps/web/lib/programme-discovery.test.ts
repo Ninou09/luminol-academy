@@ -114,6 +114,22 @@ describe('programme discovery filters', () => {
     );
   });
 
+  it('matches localized delivery concepts across interface languages', () => {
+    expect(
+      filterPublicProgrammes(programmes, { query: 'Hybride' })[0]?._id,
+    ).toBe('programme-english');
+
+    expect(filterPublicProgrammes(programmes, { query: 'حضوري' })[0]?._id).toBe(
+      'programme-stress',
+    );
+
+    expect(
+      filterPublicProgrammes(programmes, {
+        query: 'English Hybride',
+      }).map((programme) => programme._id),
+    ).toEqual(['programme-english']);
+  });
+
   it('matches multi-term searches across indexed programme concepts', () => {
     expect(
       filterPublicProgrammes(programmes, {
