@@ -52,7 +52,10 @@ export default async function ReviewerSubmissionPage({
     <main>
       <PortalHeader />
       <div className="dashboard-shell">
-        <section className="dashboard-intro" aria-labelledby="review-detail-title">
+        <section
+          className="dashboard-intro"
+          aria-labelledby="review-detail-title"
+        >
           <div>
             <p className="eyebrow">{copy.detailEyebrow}</p>
             <h1 id="review-detail-title" dir="auto">
