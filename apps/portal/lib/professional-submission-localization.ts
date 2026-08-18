@@ -41,7 +41,8 @@ const copy = {
     noProjects: 'No eligible professional project work is available yet.',
     startDraft: 'Start draft',
     artifactUrl: 'Project link',
-    artifactHint: 'Use a valid https:// or http:// link to your project artifact.',
+    artifactHint:
+      'Use a valid https:// or http:// link to your project artifact.',
     reflection: 'Reflection',
     reflectionHint:
       'When submitting, include at least 20 characters describing your work and decisions.',
@@ -73,7 +74,8 @@ const copy = {
     available: 'Projets disponibles',
     programme: 'Programme',
     status: 'Statut',
-    noProjects: 'Aucun projet professionnel éligible n’est disponible pour le moment.',
+    noProjects:
+      'Aucun projet professionnel éligible n’est disponible pour le moment.',
     startDraft: 'Commencer un brouillon',
     artifactUrl: 'Lien du projet',
     artifactHint: 'Utilisez un lien valide commençant par https:// ou http://.',
