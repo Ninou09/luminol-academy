@@ -12,6 +12,7 @@ import { getOrganizationAnalyticsCopy } from '../lib/organization-analytics-loca
 import { getOrganizationManagerCopy } from '../lib/organization-manager-localization';
 import { hasOrganizationManagerAccess } from '../lib/organization-manager.server';
 import { getPortalCopy } from '../lib/portal-localization';
+import { getProfessionalSubmissionCopy } from '../lib/professional-submission-localization';
 import { getPortalRequestLocale } from '../lib/request-locale';
 import { PortalLanguageSwitcher } from './portal-language-switcher';
 
@@ -21,6 +22,7 @@ export async function PortalHeader() {
   const copy = getPortalCopy(locale);
   const outcomesCopy = getLearnerOutcomesCopy(locale);
   const scheduleCopy = getLearnerSessionScheduleCopy(locale);
+  const projectsCopy = getProfessionalSubmissionCopy(locale);
   const instructorCopy = getInstructorWorkspaceCopy(locale);
   const managerCopy = getOrganizationManagerCopy(locale);
   const organizationAnalyticsCopy = getOrganizationAnalyticsCopy(locale);
@@ -47,6 +49,9 @@ export async function PortalHeader() {
           </Link>
           <Link href={localizeHref(locale, '/schedule')}>
             {scheduleCopy.nav}
+          </Link>
+          <Link href={localizeHref(locale, '/projects')}>
+            {projectsCopy.nav}
           </Link>
           {canTeachCohorts ? (
             <Link href={localizeHref(locale, '/instructor')}>
