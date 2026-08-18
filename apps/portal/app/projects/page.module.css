@@ -64,3 +64,22 @@
 .summary p {
   margin: 0;
 }
+
+.reviewFeedback {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  border: 1px solid rgb(24 42 51 / 0.14);
+  border-radius: 0.85rem;
+  padding: 0.9rem;
+}
+
+.reviewFeedback strong,
+.reviewFeedback p {
+  margin: 0;
+}
+
+.reviewFeedback p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
