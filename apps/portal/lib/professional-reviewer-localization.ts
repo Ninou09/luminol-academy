@@ -83,7 +83,8 @@ const COPY = {
     score: 'Score (0–100)',
     scoreHint: 'Enter the score you assigned after reviewing the project.',
     feedback: 'Learner-visible feedback',
-    feedbackHint: 'Write 10–5000 characters. Do not include private reviewer notes.',
+    feedbackHint:
+      'Write 10–5000 characters. Do not include private reviewer notes.',
     requiresRevision: 'Request a revision instead of a final decision',
     submitDecision: 'Record review decision',
     decisionHistory: 'Review decision history',
@@ -143,7 +144,8 @@ const COPY = {
     requiresRevision: 'Demander une révision au lieu d’une décision finale',
     submitDecision: 'Enregistrer la décision',
     decisionHistory: 'Historique des décisions',
-    noDecisionHistory: 'Aucune décision d’évaluation n’a encore été enregistrée.',
+    noDecisionHistory:
+      'Aucune décision d’évaluation n’a encore été enregistrée.',
     decisionRecorded: 'Enregistré',
     governanceTitle: 'Évaluation humaine uniquement',
     governanceBody:
