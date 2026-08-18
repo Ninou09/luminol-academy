@@ -101,6 +101,17 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
       .map((code) => programmeLanguageSearchLabels[code])
       .join(' '),
   );
+  const queryTerms = [...new Set(foldedQuery.split(' ').filter(Boolean))];
+  const searchableText = [title, summary, school, delivery, languageText].join(
+    ' ',
+  );
+
+  if (
+    queryTerms.length > 1 &&
+    queryTerms.some((term) => !searchableText.includes(term))
+  ) {
+    return 0;
+  }
 
   let score = 0;
   if (title === foldedQuery) score += 120;
@@ -111,6 +122,19 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
   if (school.includes(foldedQuery)) score += 20;
   if (delivery.includes(foldedQuery)) score += 10;
   if (languageText.includes(foldedQuery)) score += 10;
+
+  if (score > 0 || queryTerms.length <= 1) return score;
+
+  for (const term of queryTerms) {
+    if (title === term) score += 60;
+    else if (title.startsWith(term)) score += 45;
+    else if (title.includes(term)) score += 35;
+
+    if (summary.includes(term)) score += 15;
+    if (school.includes(term)) score += 10;
+    if (delivery.includes(term)) score += 5;
+    if (languageText.includes(term)) score += 5;
+  }
 
   return score;
 }
