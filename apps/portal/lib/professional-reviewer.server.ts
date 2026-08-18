@@ -37,6 +37,7 @@ export async function hasProfessionalReviewerAccess(userId: string) {
     SELECT 1 AS "found"
     FROM "ProfessionalProjectSubmission"
     WHERE "reviewerUserId" = ${normalizedUserId}
+      AND "status" <> 'DRAFT'::"ProfessionalSubmissionStatus"
     LIMIT 1
   `;
 
@@ -62,6 +63,7 @@ export async function getAssignedProfessionalSubmissions() {
     JOIN "Course" AS course
       ON course."id" = submission."courseId"
     WHERE submission."reviewerUserId" = ${user.id}
+      AND submission."status" <> 'DRAFT'::"ProfessionalSubmissionStatus"
     ORDER BY
       CASE
         WHEN submission."status" = 'IN_REVIEW'::"ProfessionalSubmissionStatus" THEN 0
@@ -83,11 +85,24 @@ export async function getAssignedProfessionalSubmissionDetail(
   submissionId: string,
 ) {
   const user = await requireUser();
+  const normalizedSubmissionId = submissionId.trim();
+  if (!normalizedSubmissionId) return null;
+
+  const authorized = await db.$queryRaw<Array<{ status: string }>>`
+    SELECT "status"::text AS "status"
+    FROM "ProfessionalProjectSubmission"
+    WHERE "id" = ${normalizedSubmissionId}
+      AND "reviewerUserId" = ${user.id}
+      AND "status" <> 'DRAFT'::"ProfessionalSubmissionStatus"
+    LIMIT 1
+  `;
+  if (authorized.length === 0) return null;
+
   const submission = await getProfessionalSubmissionForReviewer(db, {
-    submissionId,
+    submissionId: normalizedSubmissionId,
     reviewerUserId: user.id,
   });
-  if (!submission) return null;
+  if (!submission || submission.status === 'DRAFT') return null;
 
   const labels = await db.$queryRaw<
     Array<{ projectTitle: string; courseTitle: string }>
@@ -97,7 +112,7 @@ export async function getAssignedProfessionalSubmissionDetail(
       course."title" AS "courseTitle"
     FROM "ProfessionalProject" AS project
     JOIN "Course" AS course
-      ON course."id" = ${submission.courseId}
+      ON course."id" = project."courseId"
     WHERE project."id" = ${submission.projectId}
       AND project."courseId" = ${submission.courseId}
     LIMIT 1
