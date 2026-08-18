@@ -114,6 +114,26 @@ describe('programme discovery filters', () => {
     );
   });
 
+  it('matches multi-term searches across indexed programme concepts', () => {
+    expect(
+      filterPublicProgrammes(programmes, {
+        query: 'Leadership Francais',
+      }).map((programme) => programme._id),
+    ).toEqual(['programme-leadership']);
+
+    expect(
+      filterPublicProgrammes(programmes, {
+        query: 'English Hybrid',
+      }).map((programme) => programme._id),
+    ).toEqual(['programme-english']);
+
+    expect(
+      filterPublicProgrammes(programmes, {
+        query: 'Leadership Arabic',
+      }),
+    ).toEqual([]);
+  });
+
   it('ranks stronger search matches ahead of featured status', () => {
     const searchableProgrammes = programmes.map((programme) =>
       programme._id === 'programme-english'
