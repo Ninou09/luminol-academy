@@ -41,9 +41,9 @@ function parseSingleParam(value: unknown, maxLength: number) {
 
 function fold(value: string) {
   return value
-    .normalize('NFKC')
+    .normalize('NFKD')
     .toLocaleLowerCase('en')
-    .replace(/[\u064B-\u065F\u0670]/g, '')
+    .replace(/[\u0300-\u036f\u064B-\u065F\u0670]/g, '')
     .replace(/[أإآ]/g, 'ا')
     .replace(/ى/g, 'ي')
     .replace(/ة/g, 'ه')
