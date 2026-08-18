@@ -13,6 +13,7 @@ import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { localizeProgrammeDelivery } from '../../lib/programme-presentation';
 import {
   filterPublicProgrammes,
+  hasProgrammeDiscoveryFilters,
   parseProgrammeDiscoveryParams,
 } from '../../lib/programme-discovery';
 import { getPublicCopy } from '../../lib/public-localization';
@@ -29,11 +30,19 @@ import {
 } from '../../lib/structured-data';
 import styles from './page.module.css';
 
-export async function generateMetadata(): Promise<Metadata> {
+type ProgrammesPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export async function generateMetadata({
+  searchParams,
+}: ProgrammesPageProps): Promise<Metadata> {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale).programmes;
   const route = localizePathname(locale, '/programmes');
   const socialPreview = getSocialPreviewImage(locale);
+  const filters = parseProgrammeDiscoveryParams(await searchParams);
+  const isFilteredCatalogue = hasProgrammeDiscoveryFilters(filters);
 
   return {
     title: copy.title,
@@ -42,6 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: route,
       languages: buildLanguageAlternates('/programmes'),
     },
+    robots: isFilteredCatalogue ? { index: false, follow: true } : undefined,
     openGraph: {
       title: copy.title,
       description: copy.description,
@@ -60,10 +70,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-type ProgrammesPageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
-
 export default async function ProgrammesPage({
   searchParams,
 }: ProgrammesPageProps) {
@@ -75,10 +81,7 @@ export default async function ProgrammesPage({
   const programmes = sourceProgrammes
     ? filterPublicProgrammes(sourceProgrammes, filters)
     : null;
-  const isUnfilteredCatalogue =
-    filters.query.length === 0 &&
-    filters.school === undefined &&
-    filters.language === undefined;
+  const isUnfilteredCatalogue = !hasProgrammeDiscoveryFilters(filters);
   const programmeListJsonLd =
     programmes !== null && programmes.length > 0 && isUnfilteredCatalogue
       ? buildProgrammeListJsonLd(
