@@ -12,6 +12,8 @@ import { determineReviewOutcome } from '@luminol/professional';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { createProfessionalTransitionNotification } from '../../../lib/professional-notifications.server';
+
 const submissionIdSchema = z.string().trim().min(1).max(128);
 const decisionSchema = z.object({
   submissionId: submissionIdSchema,
@@ -24,6 +26,7 @@ type ReviewTransaction = Pick<PrismaClient, '$queryRaw'>;
 
 type LockedReviewerSubmission = {
   id: string;
+  learnerUserId: string;
   status: ProfessionalSubmissionStatus;
 };
 
@@ -33,7 +36,7 @@ async function getLockedReviewerSubmission(
   reviewerUserId: string,
 ) {
   const rows = await transaction.$queryRaw<LockedReviewerSubmission[]>`
-    SELECT "id", "status"
+    SELECT "id", "learnerUserId", "status"
     FROM "ProfessionalProjectSubmission"
     WHERE "id" = ${submissionId}
       AND "reviewerUserId" = ${reviewerUserId}
@@ -48,6 +51,7 @@ function revalidateReviewWorkspace(submissionId: string) {
   revalidatePath('/reviews');
   revalidatePath(`/reviews/${submissionId}`);
   revalidatePath('/projects');
+  revalidatePath('/notifications');
 }
 
 export async function startProfessionalSubmissionReview(formData: FormData) {
@@ -76,15 +80,22 @@ export async function startProfessionalSubmissionReview(formData: FormData) {
         AND "reviewerUserId" = ${user.id}
     `;
 
+    const auditEventId = randomUUID();
     await transaction.$executeRaw`
       INSERT INTO "ProfessionalSubmissionAuditEvent" (
         "id", "submissionId", "actorUserId", "action", "fromStatus", "toStatus", "occurredAt"
       ) VALUES (
-        ${randomUUID()}, ${submission.id}, ${user.id}, ${'professional_submission.review_started'},
+        ${auditEventId}, ${submission.id}, ${user.id}, ${'professional_submission.review_started'},
         'SUBMITTED'::"ProfessionalSubmissionStatus",
         'IN_REVIEW'::"ProfessionalSubmissionStatus", ${now}
       )
     `;
+
+    await createProfessionalTransitionNotification(transaction, {
+      auditEventId,
+      recipientUserId: submission.learnerUserId,
+      templateKey: 'professional_review_started',
+    });
   });
 
   revalidateReviewWorkspace(submissionId);
@@ -144,16 +155,28 @@ export async function decideProfessionalSubmissionReview(formData: FormData) {
         : outcome.status === 'APPROVED'
           ? 'professional_submission.approved'
           : 'professional_submission.rejected';
+    const auditEventId = randomUUID();
 
     await transaction.$executeRaw`
       INSERT INTO "ProfessionalSubmissionAuditEvent" (
         "id", "submissionId", "actorUserId", "action", "fromStatus", "toStatus", "occurredAt"
       ) VALUES (
-        ${randomUUID()}, ${submission.id}, ${user.id}, ${action},
+        ${auditEventId}, ${submission.id}, ${user.id}, ${action},
         'IN_REVIEW'::"ProfessionalSubmissionStatus",
         ${outcome.status}::"ProfessionalSubmissionStatus", ${now}
       )
     `;
+
+    await createProfessionalTransitionNotification(transaction, {
+      auditEventId,
+      recipientUserId: submission.learnerUserId,
+      templateKey:
+        outcome.status === 'REVISION_REQUIRED'
+          ? 'professional_revision_requested'
+          : outcome.status === 'APPROVED'
+            ? 'professional_submission_approved'
+            : 'professional_submission_rejected',
+    });
   });
 
   revalidateReviewWorkspace(input.submissionId);
