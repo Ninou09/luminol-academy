@@ -58,10 +58,8 @@ jobs:
         env:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - run: pnpm lint
-      - name: Print professional analytics Prettier diff
-        run: |
-          pnpm exec prettier --write packages/database/src/professional-analytics.integration.test.ts
-          git diff -- packages/database/src/professional-analytics.integration.test.ts
+      - name: Check repository formatting
+        run: pnpm format:check
       - name: Run typecheck
         shell: bash
         run: |
