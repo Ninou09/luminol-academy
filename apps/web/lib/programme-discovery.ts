@@ -94,8 +94,7 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
   const delivery = fold(
     (['ar', 'fr', 'en'] as const)
       .map(
-        (locale) =>
-          localizeProgrammeDelivery(locale, programme.delivery) ?? '',
+        (locale) => localizeProgrammeDelivery(locale, programme.delivery) ?? '',
       )
       .join(' '),
   );

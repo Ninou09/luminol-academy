@@ -119,9 +119,9 @@ describe('programme discovery filters', () => {
       filterPublicProgrammes(programmes, { query: 'Hybride' })[0]?._id,
     ).toBe('programme-english');
 
-    expect(
-      filterPublicProgrammes(programmes, { query: 'حضوري' })[0]?._id,
-    ).toBe('programme-stress');
+    expect(filterPublicProgrammes(programmes, { query: 'حضوري' })[0]?._id).toBe(
+      'programme-stress',
+    );
 
     expect(
       filterPublicProgrammes(programmes, {
