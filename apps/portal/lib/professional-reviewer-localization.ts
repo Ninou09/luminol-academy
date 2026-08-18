@@ -1,5 +1,5 @@
-import type { Locale } from '@luminol/localization';
 import type { ProfessionalSubmissionStatus } from '@luminol/database';
+import type { Locale } from '@luminol/localization';
 
 type ReviewerCopy = {
   nav: string;
@@ -196,8 +196,7 @@ const COPY = {
     score: 'الدرجة (0–100)',
     scoreHint: 'أدخل الدرجة التي منحتها بعد مراجعة المشروع.',
     feedback: 'تغذية راجعة مرئية للمتعلم',
-    feedbackHint:
-      'اكتب من 10 إلى 5000 حرف. لا تُدرج ملاحظات خاصة بالمراجع.',
+    feedbackHint: 'اكتب من 10 إلى 5000 حرف. لا تُدرج ملاحظات خاصة بالمراجع.',
     requiresRevision: 'طلب تعديل بدلاً من قرار نهائي',
     submitDecision: 'تسجيل قرار المراجعة',
     decisionHistory: 'سجل قرارات المراجعة',
