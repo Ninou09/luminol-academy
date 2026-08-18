@@ -80,7 +80,10 @@ export default async function ReviewerSubmissionPage({
           </div>
         </section>
 
-        <section className="dashboard-section" aria-labelledby="review-content-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="review-content-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.project}</p>
@@ -100,7 +103,7 @@ export default async function ReviewerSubmissionPage({
                   {copy.openArtifact}
                 </a>
               ) : (
-                <p>{copy.noReflection}</p>
+                <p>{copy.noArtifact}</p>
               )}
             </article>
 
@@ -117,7 +120,10 @@ export default async function ReviewerSubmissionPage({
           </div>
         </section>
 
-        <section className="dashboard-section" aria-labelledby="review-readonly-title">
+        <section
+          className="dashboard-section"
+          aria-labelledby="review-readonly-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{copy.readOnlyTitle}</p>
