@@ -72,9 +72,7 @@ export function buildCourseJsonLd({
   } as const;
 }
 
-export function buildProgrammeListJsonLd(
-  items: readonly ProgrammeListItem[],
-) {
+export function buildProgrammeListJsonLd(items: readonly ProgrammeListItem[]) {
   const origin = resolvePublicSiteOrigin();
 
   return {
