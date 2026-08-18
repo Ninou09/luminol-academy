@@ -22,6 +22,9 @@ type SubmissionCopy = {
   submittedOn: string;
   reviewedOn: string;
   openArtifact: string;
+  reviewFeedbackTitle: string;
+  reviewScore: string;
+  reviewRecorded: string;
   privacyTitle: string;
   privacyBody: string;
   statuses: Record<ProfessionalSubmissionStatus, string>;
@@ -52,9 +55,12 @@ const copy = {
     submittedOn: 'Submitted',
     reviewedOn: 'Last reviewed',
     openArtifact: 'Open submitted project',
+    reviewFeedbackTitle: 'Latest reviewer feedback',
+    reviewScore: 'Score',
+    reviewRecorded: 'Recorded',
     privacyTitle: 'Private by design',
     privacyBody:
-      'Only your own project records are shown here. Project content is not used for learner ranking or aggregate analytics.',
+      'Only your own project records are shown here. Project content and reviewer feedback are not used for learner ranking or aggregate analytics.',
     statuses: {
       DRAFT: 'Draft',
       SUBMITTED: 'Submitted',
@@ -88,9 +94,12 @@ const copy = {
     submittedOn: 'Envoyé',
     reviewedOn: 'Dernière évaluation',
     openArtifact: 'Ouvrir le projet soumis',
+    reviewFeedbackTitle: 'Dernier retour de l’évaluateur',
+    reviewScore: 'Note',
+    reviewRecorded: 'Enregistré',
     privacyTitle: 'Privé par conception',
     privacyBody:
-      'Seuls vos propres projets sont affichés ici. Le contenu de vos projets n’est pas utilisé pour classer les apprenants ni pour les analyses agrégées.',
+      'Seuls vos propres projets sont affichés ici. Le contenu de vos projets et les retours des évaluateurs ne sont pas utilisés pour classer les apprenants ni pour les analyses agrégées.',
     statuses: {
       DRAFT: 'Brouillon',
       SUBMITTED: 'Envoyé',
@@ -123,9 +132,12 @@ const copy = {
     submittedOn: 'تاريخ الإرسال',
     reviewedOn: 'آخر مراجعة',
     openArtifact: 'فتح المشروع المقدم',
+    reviewFeedbackTitle: 'آخر تغذية راجعة من المراجع',
+    reviewScore: 'الدرجة',
+    reviewRecorded: 'تم التسجيل',
     privacyTitle: 'الخصوصية من الأساس',
     privacyBody:
-      'تظهر هنا مشاريعك أنت فقط. ولا يُستخدم محتوى مشاريعك لترتيب المتعلمين أو في التحليلات التجميعية.',
+      'تظهر هنا مشاريعك أنت فقط. ولا يُستخدم محتوى مشاريعك أو تغذية المراجعين الراجعة لترتيب المتعلمين أو في التحليلات التجميعية.',
     statuses: {
       DRAFT: 'مسودة',
       SUBMITTED: 'تم الإرسال',
