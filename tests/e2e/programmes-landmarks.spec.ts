@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 for (const locale of ['en', 'fr', 'ar'] as const) {
-  test(`${locale} programmes hero and search are named landmarks`, async ({
+  test(`${locale} programmes hero, search, results and cards have accessible names`, async ({
     page,
   }) => {
     const response = await page.goto(`/${locale}/programmes`);
@@ -24,5 +24,38 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
     await expect(
       page.getByRole('search', { name: searchName, exact: true }),
     ).toBeVisible();
+
+    const programmeCards = page.locator('[data-programme-card]');
+    const programmeCardCount = await programmeCards.count();
+
+    if (programmeCardCount === 0) {
+      await expect(
+        page.locator('main [role="status"], main [aria-live="polite"]').first(),
+      ).toBeVisible();
+      await expect(page.locator('#programme-results-title')).toHaveCount(0);
+      return;
+    }
+
+    const resultsHeading = page.locator('#programme-results-title');
+    await expect(resultsHeading).toBeVisible();
+    const resultsName = ((await resultsHeading.textContent()) ?? '').trim();
+    expect(resultsName).not.toBe('');
+    await expect(
+      page.getByRole('region', { name: resultsName, exact: true }),
+    ).toBeVisible();
+
+    for (let index = 0; index < programmeCardCount; index += 1) {
+      const card = programmeCards.nth(index);
+      const labelId = await card.getAttribute('aria-labelledby');
+      expect(labelId).toBeTruthy();
+
+      const cardHeading = page.locator(`#${labelId}`);
+      await expect(cardHeading).toHaveJSProperty('tagName', 'H3');
+      const articleName = ((await cardHeading.textContent()) ?? '').trim();
+      expect(articleName).not.toBe('');
+      await expect(
+        page.getByRole('article', { name: articleName, exact: true }),
+      ).toBeVisible();
+    }
   });
 }
