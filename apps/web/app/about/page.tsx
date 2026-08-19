@@ -155,10 +155,13 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        <section className={`${styles.section} ${styles.origin}`}>
+        <section
+          className={`${styles.section} ${styles.origin}`}
+          aria-labelledby="about-origin-title"
+        >
           <div data-reveal>
             <p className={styles.eyebrow}>{copy.originEyebrow}</p>
-            <h2>{copy.originTitle}</h2>
+            <h2 id="about-origin-title">{copy.originTitle}</h2>
           </div>
           <div className={styles.originCopy} data-reveal>
             <p className={styles.originLede}>{copy.originLede}</p>
@@ -234,12 +237,16 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        <section className={styles.cta} data-reveal>
+        <section
+          className={styles.cta}
+          aria-labelledby="about-cta-title"
+          data-reveal
+        >
           <div className={styles.ctaText}>
             <p className={`${styles.eyebrow} ${styles.eyebrowLight}`}>
               {copy.ctaEyebrow}
             </p>
-            <h2>{copy.ctaTitle}</h2>
+            <h2 id="about-cta-title">{copy.ctaTitle}</h2>
             <p>{copy.ctaBody}</p>
           </div>
           <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
