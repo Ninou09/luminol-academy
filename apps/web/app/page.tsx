@@ -149,6 +149,7 @@ export default async function Page() {
                 className={`${styles.schoolCard} ${schoolTone[school.slug]}`}
                 id={school.slug}
                 key={school.slug}
+                aria-labelledby={`home-school-${school.slug}-title`}
                 data-school-card
                 data-reveal
               >
@@ -156,7 +157,7 @@ export default async function Page() {
                   <span>{school.number}</span>
                   <span className={styles.schoolGlyph} aria-hidden="true" />
                 </div>
-                <h3>{school.name}</h3>
+                <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
                 <p className={styles.schoolPromise}>{school.promise}</p>
                 <p className={styles.schoolDescription}>
                   {school.introduction}
