@@ -1,7 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 for (const locale of ['en', 'fr', 'ar'] as const) {
-  test(`${locale} programmes hero is a named region`, async ({ page }) => {
+  test(`${locale} programmes hero and search are named landmarks`, async ({
+    page,
+  }) => {
     const response = await page.goto(`/${locale}/programmes`);
     expect(response).not.toBeNull();
     expect(response!.ok()).toBeTruthy();
@@ -14,6 +16,13 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
     expect(regionName).not.toBe('');
     await expect(
       page.getByRole('region', { name: regionName, exact: true }),
+    ).toBeVisible();
+
+    const searchLabel = page.locator('label[for="programme-query"] span');
+    const searchName = ((await searchLabel.textContent()) ?? '').trim();
+    expect(searchName).not.toBe('');
+    await expect(
+      page.getByRole('search', { name: searchName, exact: true }),
     ).toBeVisible();
   });
 }
