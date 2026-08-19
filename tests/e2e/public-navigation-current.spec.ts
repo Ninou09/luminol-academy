@@ -16,6 +16,21 @@ for (const scenario of [
     currentHref: '/ar/contact',
     inactiveHref: '/ar/about',
   },
+  {
+    route: '/en/schools/psychology',
+    currentHref: '/en#schools',
+    inactiveHref: '/en/programmes',
+  },
+  {
+    route: '/ar/schools/languages',
+    currentHref: '/ar#schools',
+    inactiveHref: '/ar/programmes',
+  },
+  {
+    route: '/fr/schools/training',
+    currentHref: '/fr#schools',
+    inactiveHref: '/fr/about',
+  },
 ] as const) {
   test(`${scenario.route} marks its current header and footer destinations`, async ({
     page,
