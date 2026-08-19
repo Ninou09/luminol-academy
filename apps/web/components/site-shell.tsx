@@ -36,13 +36,14 @@ export async function SiteHeader() {
       </a>
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <Link
+          <CurrentPageLink
             className={styles.brand}
             href={localizeHref(locale, '/')}
-            aria-label={copy.site.nav.homeAria}
+            activePathname="/"
+            ariaLabel={copy.site.nav.homeAria}
           >
             <Wordmark />
-          </Link>
+          </CurrentPageLink>
           <nav className={styles.nav} aria-label={copy.site.nav.primaryAria}>
             <CurrentPageLink
               href={localizeHref(locale, '/#schools')}
@@ -99,12 +100,13 @@ export async function SiteFooter() {
     <footer className={styles.footer}>
       <div className={styles.footerMain}>
         <div className={styles.footerBrand}>
-          <Link
+          <CurrentPageLink
             href={localizeHref(locale, '/')}
-            aria-label={copy.site.nav.homeAria}
+            activePathname="/"
+            ariaLabel={copy.site.nav.homeAria}
           >
             <Wordmark className={styles.footerWordmark ?? ''} />
-          </Link>
+          </CurrentPageLink>
           <p>{copy.site.footerDisciplines}</p>
         </div>
         <div className={styles.footerColumn}>

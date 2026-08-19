@@ -2,6 +2,11 @@ import { expect, test } from '@playwright/test';
 
 for (const scenario of [
   {
+    route: '/en',
+    currentHref: '/en',
+    inactiveHref: '/en/about',
+  },
+  {
     route: '/en/programmes',
     currentHref: '/en/programmes',
     inactiveHref: '/en/about',
