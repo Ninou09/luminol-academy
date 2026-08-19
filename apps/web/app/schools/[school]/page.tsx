@@ -313,6 +313,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               <article
                 className={styles.programCard}
                 key={program.id}
+                aria-labelledby={`school-programme-${index + 1}-title`}
                 data-programme-card
                 data-reveal
               >
@@ -324,7 +325,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                   school={school.slug}
                   asset={program.image}
                 />
-                <h3 dir="auto">
+                <h3
+                  id={`school-programme-${index + 1}-title`}
+                  dir="auto"
+                >
                   {program.slug ? (
                     <Link
                       href={localizeHref(locale, `/programmes/${program.slug}`)}

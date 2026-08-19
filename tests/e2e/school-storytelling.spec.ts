@@ -41,9 +41,23 @@ test('premium school storytelling preserves landmarks and governed media', async
     }),
   ).toBeVisible();
 
-  await expect(page.locator('[data-programme-card]')).not.toHaveCount(0);
+  const programmeCards = page.locator('[data-programme-card]');
+  await expect(programmeCards).not.toHaveCount(0);
 
-  const firstProgrammeCard = page.locator('[data-programme-card]').first();
+  for (let index = 0; index < (await programmeCards.count()); index += 1) {
+    const card = programmeCards.nth(index);
+    const labelId = await card.getAttribute('aria-labelledby');
+    expect(labelId).toBeTruthy();
+    const heading = page.locator(`#${labelId}`);
+    await expect(heading).toHaveJSProperty('tagName', 'H3');
+    const articleName = ((await heading.textContent()) ?? '').trim();
+    expect(articleName).not.toBe('');
+    await expect(
+      page.getByRole('article', { name: articleName, exact: true }),
+    ).toBeVisible();
+  }
+
+  const firstProgrammeCard = programmeCards.first();
   const firstProgrammeTitle = (
     await firstProgrammeCard.getByRole('heading', { level: 3 }).innerText()
   ).trim();
