@@ -112,15 +112,25 @@ export async function SiteFooter() {
             <Link href={localizeHref(locale, '/#schools')}>
               {copy.site.nav.schools}
             </Link>
-            <Link href={localizeHref(locale, '/programmes')}>
+            <CurrentPageLink
+              href={localizeHref(locale, '/programmes')}
+              activePathname="/programmes"
+              matchDescendants
+            >
               {copy.site.nav.programmes}
-            </Link>
-            <Link href={localizeHref(locale, '/about')}>
+            </CurrentPageLink>
+            <CurrentPageLink
+              href={localizeHref(locale, '/about')}
+              activePathname="/about"
+            >
               {copy.site.nav.about}
-            </Link>
-            <Link href={localizeHref(locale, '/contact')}>
+            </CurrentPageLink>
+            <CurrentPageLink
+              href={localizeHref(locale, '/contact')}
+              activePathname="/contact"
+            >
               {copy.site.nav.contact}
-            </Link>
+            </CurrentPageLink>
           </nav>
         </div>
         <div className={styles.footerColumn}>
