@@ -29,14 +29,10 @@ for (const scenario of [
       page.getByRole('contentinfo'),
     ]) {
       await expect(
-        landmark.locator(
-          `a[href="${scenario.currentHref}"]:not([hreflang])`,
-        ),
+        landmark.locator(`a[href="${scenario.currentHref}"]:not([hreflang])`),
       ).toHaveAttribute('aria-current', 'page');
       await expect(
-        landmark.locator(
-          `a[href="${scenario.inactiveHref}"]:not([hreflang])`,
-        ),
+        landmark.locator(`a[href="${scenario.inactiveHref}"]:not([hreflang])`),
       ).not.toHaveAttribute('aria-current');
     }
   });
