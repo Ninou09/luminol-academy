@@ -17,6 +17,12 @@ const skipToContentLabel = {
   en: 'Skip to main content',
 } as const satisfies Record<Locale, string>;
 
+const footerNavigationLabel = {
+  ar: 'التنقل في تذييل الصفحة',
+  fr: 'Navigation du pied de page',
+  en: 'Footer navigation',
+} as const satisfies Record<Locale, string>;
+
 export async function SiteHeader() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
@@ -75,7 +81,6 @@ export async function SiteHeader() {
 export async function SiteFooter() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
-  const footerNavigationLabel = `${copy.site.nav.about} · ${copy.site.nav.programmes}`;
 
   return (
     <footer className={styles.footer}>
@@ -91,7 +96,10 @@ export async function SiteFooter() {
         </div>
         <div className={styles.footerColumn}>
           <span>{copy.site.nav.primaryAria}</span>
-          <nav className={styles.footerNav} aria-label={footerNavigationLabel}>
+          <nav
+            className={styles.footerNav}
+            aria-label={footerNavigationLabel[locale]}
+          >
             <Link href={localizeHref(locale, '/#schools')}>
               {copy.site.nav.schools}
             </Link>
