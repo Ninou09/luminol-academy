@@ -215,7 +215,7 @@ export default async function ProgrammesPage({
               </div>
 
               <div className={styles.grid}>
-                {programmes.map((programme) => {
+                {programmes.map((programme, index) => {
                   const deliveryLabel = localizeProgrammeDelivery(
                     locale,
                     programme.delivery,
@@ -228,9 +228,15 @@ export default async function ProgrammesPage({
                   const programmeActionLabel = `${viewProgrammeLabel}: ${programme.title}`;
                   const schoolActionLabel = `${copy.viewSchool}: ${schoolName}`;
                   const contactActionLabel = `${copy.askLuminol}: ${programme.title}`;
+                  const titleId = `programme-card-${index + 1}-title`;
 
                   return (
-                    <article className={styles.card} key={programme._id}>
+                    <article
+                      className={styles.card}
+                      key={programme._id}
+                      aria-labelledby={titleId}
+                      data-programme-card
+                    >
                       {programme.image ? (
                         <Image
                           className={styles.image}
@@ -249,7 +255,7 @@ export default async function ProgrammesPage({
                             <span>{copy.featured}</span>
                           ) : null}
                         </div>
-                        <h3 dir="auto">
+                        <h3 id={titleId} dir="auto">
                           <Link
                             className={styles.titleLink}
                             href={programmeHref}
