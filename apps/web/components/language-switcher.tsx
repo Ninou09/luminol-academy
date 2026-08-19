@@ -35,13 +35,16 @@ export function LanguageSwitcher({ locale, label }: LanguageSwitcherProps) {
       {SUPPORTED_LOCALES.map((target) => {
         const localizedPathname = localizePathname(target, basePathname);
         const href = `${localizedPathname}${search ? `?${search}` : ''}${hash}`;
+        const definition = LOCALE_DEFINITIONS[target];
 
         return (
           <a
             href={href}
             key={target}
             lang={target}
-            dir={LOCALE_DEFINITIONS[target].direction}
+            hrefLang={target}
+            dir={definition.direction}
+            aria-label={definition.nativeLabel}
             aria-current={target === locale ? 'page' : undefined}
           >
             {target.toUpperCase()}
