@@ -44,9 +44,13 @@ export async function SiteHeader() {
             <Wordmark />
           </Link>
           <nav className={styles.nav} aria-label={copy.site.nav.primaryAria}>
-            <Link href={localizeHref(locale, '/#schools')}>
+            <CurrentPageLink
+              href={localizeHref(locale, '/#schools')}
+              activePathname="/schools"
+              matchDescendants
+            >
               {copy.site.nav.schools}
-            </Link>
+            </CurrentPageLink>
             <CurrentPageLink
               href={localizeHref(locale, '/programmes')}
               activePathname="/programmes"
@@ -109,9 +113,13 @@ export async function SiteFooter() {
             className={styles.footerNav}
             aria-label={footerNavigationLabel[locale]}
           >
-            <Link href={localizeHref(locale, '/#schools')}>
+            <CurrentPageLink
+              href={localizeHref(locale, '/#schools')}
+              activePathname="/schools"
+              matchDescendants
+            >
               {copy.site.nav.schools}
-            </Link>
+            </CurrentPageLink>
             <CurrentPageLink
               href={localizeHref(locale, '/programmes')}
               activePathname="/programmes"
