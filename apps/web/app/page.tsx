@@ -131,11 +131,15 @@ export default async function Page() {
           </div>
         </section>
 
-        <section id="schools" className={styles.section}>
+        <section
+          id="schools"
+          className={styles.section}
+          aria-labelledby="home-schools-title"
+        >
           <div className={styles.sectionHeading} data-reveal>
             <div>
               <p className={styles.eyebrow}>{copy.schoolsEyebrow}</p>
-              <h2>{copy.schoolsTitle}</h2>
+              <h2 id="home-schools-title">{copy.schoolsTitle}</h2>
             </div>
             <p>{copy.schoolsIntro}</p>
           </div>
@@ -174,12 +178,16 @@ export default async function Page() {
           </div>
         </section>
 
-        <section id="approach" className={styles.approach}>
+        <section
+          id="approach"
+          className={styles.approach}
+          aria-labelledby="home-approach-title"
+        >
           <div className={styles.approachIntro} data-reveal>
             <p className={`${styles.eyebrow} ${styles.light}`}>
               {copy.approachEyebrow}
             </p>
-            <h2>{copy.approachTitle}</h2>
+            <h2 id="home-approach-title">{copy.approachTitle}</h2>
             <p>{copy.approachIntro}</p>
           </div>
           <ol className={styles.principles}>
@@ -195,14 +203,18 @@ export default async function Page() {
           </ol>
         </section>
 
-        <section id="about" className={`${styles.section} ${styles.about}`}>
+        <section
+          id="about"
+          className={`${styles.section} ${styles.about}`}
+          aria-labelledby="home-about-title"
+        >
           <div className={styles.aboutVisual} aria-hidden="true" data-reveal>
             <div className={styles.monogram}>L</div>
             <p>{copy.aboutVisual}</p>
           </div>
           <div className={styles.aboutCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.aboutEyebrow}</p>
-            <h2>{copy.aboutTitle}</h2>
+            <h2 id="home-about-title">{copy.aboutTitle}</h2>
             <p className={styles.aboutLede}>{copy.aboutLede}</p>
             <p>{copy.aboutBody}</p>
             <div className={styles.values}>
@@ -240,12 +252,17 @@ export default async function Page() {
           </div>
         </section>
 
-        <section id="contact" className={styles.cta} data-reveal>
+        <section
+          id="contact"
+          className={styles.cta}
+          aria-labelledby="home-contact-title"
+          data-reveal
+        >
           <div>
             <p className={`${styles.eyebrow} ${styles.light}`}>
               {copy.ctaEyebrow}
             </p>
-            <h2>{copy.ctaTitle}</h2>
+            <h2 id="home-contact-title">{copy.ctaTitle}</h2>
             <p>{copy.ctaBody}</p>
           </div>
           <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
