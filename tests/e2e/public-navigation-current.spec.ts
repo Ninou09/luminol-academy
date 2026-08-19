@@ -26,10 +26,14 @@ for (const scenario of [
 
     const header = page.getByRole('banner');
     await expect(
-      header.locator(`a[href="${scenario.currentHref}"]`),
+      header.locator(
+        `a[href="${scenario.currentHref}"]:not([hreflang])`,
+      ),
     ).toHaveAttribute('aria-current', 'page');
     await expect(
-      header.locator(`a[href="${scenario.inactiveHref}"]`),
+      header.locator(
+        `a[href="${scenario.inactiveHref}"]:not([hreflang])`,
+      ),
     ).not.toHaveAttribute('aria-current');
   });
 }
