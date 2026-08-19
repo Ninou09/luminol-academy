@@ -286,8 +286,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           )}
         </section>
 
-        <section className={styles.promiseBand} data-reveal>
-          <p>{copy.promiseLabel}</p>
+        <section
+          className={styles.promiseBand}
+          aria-labelledby="school-promise-title"
+          data-reveal
+        >
+          <p id="school-promise-title">{copy.promiseLabel}</p>
           <blockquote>{school.promise}</blockquote>
         </section>
 
@@ -422,12 +426,16 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           </div>
         </section>
 
-        <section className={styles.finalCta} data-reveal>
+        <section
+          className={styles.finalCta}
+          aria-labelledby="school-cta-title"
+          data-reveal
+        >
           <div className={styles.finalCtaText}>
             <p className={`${styles.eyebrow} ${styles.eyebrowLight}`}>
               {copy.ctaEyebrow}
             </p>
-            <h2>{copy.ctaTitle}</h2>
+            <h2 id="school-cta-title">{copy.ctaTitle}</h2>
             <p>{copy.ctaBody}</p>
           </div>
           <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
