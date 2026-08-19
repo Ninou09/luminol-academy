@@ -288,6 +288,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
         <section
           className={styles.promiseBand}
+          role="region"
           aria-labelledby="school-promise-title"
           data-reveal
         >
@@ -428,6 +429,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
 
         <section
           className={styles.finalCta}
+          role="region"
           aria-labelledby="school-cta-title"
           data-reveal
         >
