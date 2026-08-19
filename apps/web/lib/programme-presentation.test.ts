@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { localizeProgrammeDelivery } from './programme-presentation';
+import {
+  localizeProgrammeDelivery,
+  localizeProgrammeViewAction,
+} from './programme-presentation';
 
 describe('localizeProgrammeDelivery', () => {
   it.each([
@@ -30,4 +33,17 @@ describe('localizeProgrammeDelivery', () => {
     expect(localizeProgrammeDelivery('fr', null)).toBeNull();
     expect(localizeProgrammeDelivery('fr', '   ')).toBeNull();
   });
+});
+
+describe('localizeProgrammeViewAction', () => {
+  it.each([
+    ['en', 'View programme'],
+    ['fr', 'Voir le programme'],
+    ['ar', 'عرض البرنامج'],
+  ] as const)(
+    'localizes the %s programme detail action',
+    (locale, expected) => {
+      expect(localizeProgrammeViewAction(locale)).toBe(expected);
+    },
+  );
 });

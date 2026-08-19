@@ -10,7 +10,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
-import { localizeProgrammeDelivery } from '../../lib/programme-presentation';
+import {
+  localizeProgrammeDelivery,
+  localizeProgrammeViewAction,
+} from '../../lib/programme-presentation';
 import {
   filterPublicProgrammes,
   hasProgrammeDiscoveryFilters,
@@ -76,6 +79,7 @@ export default async function ProgrammesPage({
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale).programmes;
   const schools = getSchools(locale);
+  const viewProgrammeLabel = localizeProgrammeViewAction(locale);
   const filters = parseProgrammeDiscoveryParams(await searchParams);
   const sourceProgrammes = await getPublicProgrammes();
   const programmes = sourceProgrammes
@@ -212,6 +216,10 @@ export default async function ProgrammesPage({
                     locale,
                     programme.delivery,
                   );
+                  const programmeHref = localizeHref(
+                    locale,
+                    `/programmes/${programme.slug.current}`,
+                  );
 
                   return (
                     <article className={styles.card} key={programme._id}>
@@ -236,10 +244,7 @@ export default async function ProgrammesPage({
                         <h3 dir="auto">
                           <Link
                             className={styles.titleLink}
-                            href={localizeHref(
-                              locale,
-                              `/programmes/${programme.slug.current}`,
-                            )}
+                            href={programmeHref}
                           >
                             {programme.title}
                           </Link>
@@ -257,6 +262,7 @@ export default async function ProgrammesPage({
                           {deliveryLabel ? <li>{deliveryLabel}</li> : null}
                         </ul>
                         <div className={styles.cardActions}>
+                          <Link href={programmeHref}>{viewProgrammeLabel}</Link>
                           <Link
                             href={localizeHref(
                               locale,
