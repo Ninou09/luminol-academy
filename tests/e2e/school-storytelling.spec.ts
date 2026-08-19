@@ -13,6 +13,15 @@ test('premium school storytelling preserves landmarks and governed media', async
   await expect(page.locator('[data-school-hero="psychology"]')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
+  for (const labelId of ['school-promise-title', 'school-cta-title']) {
+    const label = page.locator(`#${labelId}`);
+    await expect(label).toBeVisible();
+    const regionName = (await label.innerText()).trim();
+    await expect(
+      page.getByRole('region', { name: regionName, exact: true }),
+    ).toBeVisible();
+  }
+
   const founderMedia = page.locator(
     '[data-school-hero="psychology"] [data-founder-media]',
   );
