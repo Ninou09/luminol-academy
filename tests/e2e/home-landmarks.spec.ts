@@ -14,9 +14,7 @@ test('homepage story sections expose named landmarks without changing their head
 
   for (const [sectionId, titleId] of landmarks) {
     await expect(
-      page.locator(
-        `section#${sectionId}[aria-labelledby="${titleId}"]`,
-      ),
+      page.locator(`section#${sectionId}[aria-labelledby="${titleId}"]`),
     ).toBeVisible();
     await expect(page.locator(`#${titleId}`)).toHaveJSProperty(
       'tagName',
