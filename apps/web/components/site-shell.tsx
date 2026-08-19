@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
+import { CurrentPageLink } from './current-page-link';
 import { LanguageSwitcher } from './language-switcher';
 import styles from './site-shell.module.css';
 
@@ -46,31 +47,39 @@ export async function SiteHeader() {
             <Link href={localizeHref(locale, '/#schools')}>
               {copy.site.nav.schools}
             </Link>
-            <Link href={localizeHref(locale, '/programmes')}>
+            <CurrentPageLink
+              href={localizeHref(locale, '/programmes')}
+              activePathname="/programmes"
+              matchDescendants
+            >
               {copy.site.nav.programmes}
-            </Link>
+            </CurrentPageLink>
             <Link href={localizeHref(locale, '/#approach')}>
               {copy.site.nav.approach}
             </Link>
-            <Link href={localizeHref(locale, '/about')}>
+            <CurrentPageLink
+              href={localizeHref(locale, '/about')}
+              activePathname="/about"
+            >
               {copy.site.nav.about}
-            </Link>
+            </CurrentPageLink>
           </nav>
           <div className={`${styles.actions} site-header-actions`}>
             <LanguageSwitcher
               locale={locale}
               label={common.languageSelectorLabel}
             />
-            <Link
+            <CurrentPageLink
               className={styles.contactLink}
               href={localizeHref(locale, '/contact')}
-              aria-label={copy.site.nav.contact}
+              activePathname="/contact"
+              ariaLabel={copy.site.nav.contact}
             >
               <span className={styles.contactLabel}>
                 {copy.site.nav.contact}
               </span>{' '}
               <span aria-hidden="true">↗</span>
-            </Link>
+            </CurrentPageLink>
           </div>
         </div>
       </header>
