@@ -105,7 +105,7 @@ test('Arabic About and Contact storytelling stay RTL and mobile-safe', async ({
     const horizontalOverflow = await page.evaluate(
       () =>
         document.documentElement.scrollWidth -
-      document.documentElement.clientWidth,
+        document.documentElement.clientWidth,
     );
     expect(horizontalOverflow).toBeLessThanOrEqual(1);
   }
