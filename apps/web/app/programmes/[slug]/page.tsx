@@ -234,6 +234,10 @@ export default async function ProgrammeDetailPage({
             >
               {school.name}
             </Link>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page" dir="auto">
+              {programme.title}
+            </span>
           </nav>
 
           <div className={styles.heroGrid}>
