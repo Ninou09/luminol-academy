@@ -63,11 +63,12 @@ export function EnquiryForm({ locale, copy }: EnquiryFormProps) {
     <form
       className="enquiry-form"
       aria-busy={isSubmitting}
+      aria-labelledby="enquiry-form-title"
       onSubmit={submitEnquiry}
     >
       <div className="form-heading">
         <p className="eyebrow">{copy.eyebrow}</p>
-        <h2>{copy.title}</h2>
+        <h2 id="enquiry-form-title">{copy.title}</h2>
         <p>{copy.intro}</p>
       </div>
 
