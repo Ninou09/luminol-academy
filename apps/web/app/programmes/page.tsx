@@ -116,9 +116,12 @@ export default async function ProgrammesPage({
       ) : null}
       <SiteHeader />
       <main id="main-content" tabIndex={-1}>
-        <section className={`section-shell ${styles.hero}`}>
+        <section
+          className={`section-shell ${styles.hero}`}
+          aria-labelledby="programmes-hero-title"
+        >
           <p className="eyebrow">{copy.eyebrow}</p>
-          <h1>{copy.heroTitle}</h1>
+          <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
           <p>{copy.heroBody}</p>
         </section>
 
