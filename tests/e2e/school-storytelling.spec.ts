@@ -37,10 +37,10 @@ test('premium school storytelling preserves landmarks and governed media', async
   const firstProgrammeTitle = (
     await firstProgrammeCard.getByRole('heading', { level: 3 }).innerText()
   ).trim();
-  await expect(firstProgrammeCard.locator('a[href="/en/contact"]')).toHaveAttribute(
-    'aria-label',
-    new RegExp(firstProgrammeTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
-  );
+  const contactActionLabel = await firstProgrammeCard
+    .locator('a[href="/en/contact"]')
+    .getAttribute('aria-label');
+  expect(contactActionLabel).toContain(firstProgrammeTitle);
 
   const mediaSources = await page
     .locator('[data-programme-card] [data-media-source]')
