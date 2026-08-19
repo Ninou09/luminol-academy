@@ -131,6 +131,7 @@ export default async function ProgrammesPage({
             action={localizeHref(locale, '/programmes')}
             method="get"
             role="search"
+            aria-label={copy.searchLabel}
           >
             <label className={styles.queryField} htmlFor="programme-query">
               <span>{copy.searchLabel}</span>
