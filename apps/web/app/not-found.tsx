@@ -88,7 +88,7 @@ export default async function NotFound() {
               <span>4</span>
             </div>
             <div className={styles.note}>
-              <p id="not-found-note-title">{copy.noteTitle}</p>
+              <h2 id="not-found-note-title">{copy.noteTitle}</h2>
               <span>{copy.noteBody}</span>
             </div>
           </aside>
