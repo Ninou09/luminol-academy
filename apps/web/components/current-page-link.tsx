@@ -9,9 +9,9 @@ type CurrentPageLinkProps = {
   href: string;
   activePathname: string;
   children: ReactNode;
-  className?: string;
-  ariaLabel?: string;
-  matchDescendants?: boolean;
+  className?: string | undefined;
+  ariaLabel?: string | undefined;
+  matchDescendants?: boolean | undefined;
 };
 
 export function CurrentPageLink({
