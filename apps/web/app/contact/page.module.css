@@ -122,7 +122,7 @@
   font-weight: 800;
 }
 
-.pathCard h2 {
+.pathCard h3 {
   margin: auto 0 1rem;
   font-family: var(--font-display);
   font-size: clamp(2.3rem, 3.8vw, 4rem);

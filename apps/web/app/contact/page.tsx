@@ -95,9 +95,9 @@ export default async function ContactPage() {
           aria-labelledby="contact-paths-title"
         >
           <div className={styles.pathsHeading} data-reveal>
-            <p className={styles.eyebrow} id="contact-paths-title">
+            <h2 className={styles.eyebrow} id="contact-paths-title">
               {copy.exploreEyebrow}
-            </p>
+            </h2>
           </div>
           <div className={styles.pathGrid}>
             {contactPaths.map((path) => (
@@ -109,7 +109,7 @@ export default async function ContactPage() {
                 data-reveal
               >
                 <span>{path.number}</span>
-                <h2>{path.school.name}</h2>
+                <h3>{path.school.name}</h3>
                 <p>{path.description}</p>
                 <b aria-hidden="true">↗</b>
               </Link>
