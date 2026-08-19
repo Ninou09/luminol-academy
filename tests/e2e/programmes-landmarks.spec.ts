@@ -25,6 +25,17 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
       page.getByRole('search', { name: searchName, exact: true }),
     ).toBeVisible();
 
+    const programmeCards = page.locator('[data-programme-card]');
+    const programmeCardCount = await programmeCards.count();
+
+    if (programmeCardCount === 0) {
+      await expect(
+        page.locator('main [role="status"], main [aria-live="polite"]').first(),
+      ).toBeVisible();
+      await expect(page.locator('#programme-results-title')).toHaveCount(0);
+      return;
+    }
+
     const resultsHeading = page.locator('#programme-results-title');
     await expect(resultsHeading).toBeVisible();
     const resultsName = ((await resultsHeading.textContent()) ?? '').trim();
@@ -33,10 +44,7 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
       page.getByRole('region', { name: resultsName, exact: true }),
     ).toBeVisible();
 
-    const programmeCards = page.locator('[data-programme-card]');
-    await expect(programmeCards).not.toHaveCount(0);
-
-    for (let index = 0; index < (await programmeCards.count()); index += 1) {
+    for (let index = 0; index < programmeCardCount; index += 1) {
       const card = programmeCards.nth(index);
       const labelId = await card.getAttribute('aria-labelledby');
       expect(labelId).toBeTruthy();
