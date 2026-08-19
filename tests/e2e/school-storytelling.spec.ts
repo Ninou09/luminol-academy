@@ -33,6 +33,15 @@ test('premium school storytelling preserves landmarks and governed media', async
 
   await expect(page.locator('[data-programme-card]')).not.toHaveCount(0);
 
+  const firstProgrammeCard = page.locator('[data-programme-card]').first();
+  const firstProgrammeTitle = (
+    await firstProgrammeCard.getByRole('heading', { level: 3 }).innerText()
+  ).trim();
+  const contactActionLabel = await firstProgrammeCard
+    .locator('a[href="/en/contact"]')
+    .getAttribute('aria-label');
+  expect(contactActionLabel).toContain(firstProgrammeTitle);
+
   const mediaSources = await page
     .locator('[data-programme-card] [data-media-source]')
     .evaluateAll((elements) =>
@@ -133,14 +142,14 @@ test('localized school pages publish matching breadcrumb structured data', async
     expect(currentUrl.pathname).toBe(route);
     expect(currentUrl.origin).toBe(firstUrl.origin);
 
-    const visibleBreadcrumb = page
+    const ancestorLink = page
       .locator(`main a[href="${firstUrl.pathname}${firstUrl.hash}"]`)
       .first();
-    await expect(visibleBreadcrumb).toContainText(
-      jsonLd.itemListElement[0]!.name,
-    );
-    await expect(visibleBreadcrumb).toContainText(
-      jsonLd.itemListElement[1]!.name,
-    );
+    const visibleBreadcrumb = ancestorLink.locator('..');
+    const currentCrumb = visibleBreadcrumb.locator('[aria-current="page"]');
+
+    await expect(ancestorLink).toHaveText(jsonLd.itemListElement[0]!.name);
+    await expect(currentCrumb).toContainText(jsonLd.itemListElement[1]!.name);
+    await expect(currentCrumb).not.toHaveAttribute('href');
   }
 });

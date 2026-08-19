@@ -169,13 +169,18 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           data-school-hero={school.slug}
         >
           <div className={styles.heroCopy} data-reveal>
-            <Link
-              className={styles.breadcrumb}
-              href={localizeHref(locale, '/#schools')}
-            >
-              {copy.schoolsLabel} <span aria-hidden="true">/</span>{' '}
-              {school.name}
-            </Link>
+            <nav className={styles.breadcrumb} aria-label={copy.schoolsLabel}>
+              <Link
+                href={localizeHref(locale, '/#schools')}
+                style={{ color: 'inherit', textDecoration: 'none' }}
+              >
+                {copy.schoolsLabel}
+              </Link>
+              <span aria-hidden="true">/</span>
+              <span aria-current="page" dir="auto">
+                {school.name}
+              </span>
+            </nav>
             <p className={styles.eyebrow}>{school.eyebrow}</p>
             <h1 id="school-hero-title">{school.headline}</h1>
             <p className={styles.heroLede}>{school.introduction}</p>
@@ -331,7 +336,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                   </small>
                 ) : null}
                 <p dir="auto">{program.description}</p>
-                <Link href={localizeHref(locale, '/contact')}>
+                <Link
+                  href={localizeHref(locale, '/contact')}
+                  aria-label={`${copy.askProgram}: ${program.title}`}
+                >
                   {copy.askProgram} <b aria-hidden="true">→</b>
                 </Link>
               </article>
