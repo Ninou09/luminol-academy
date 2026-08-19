@@ -133,8 +133,9 @@
   border-top: 1px solid var(--color-brand-line);
 }
 
-.note p {
+.note h2 {
   margin: 0;
+  font-size: inherit;
   font-weight: 800;
 }
 

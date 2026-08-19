@@ -6,6 +6,7 @@ const localeCases = [
     heading: 'This path ends here.',
     home: 'Return home',
     programmes: 'Explore programmes',
+    noteTitle: 'You are still inside Luminol.',
     direction: 'ltr',
   },
   {
@@ -13,6 +14,7 @@ const localeCases = [
     heading: 'Cette page s’arrête ici.',
     home: 'Retour à l’accueil',
     programmes: 'Voir les programmes',
+    noteTitle: 'Vous êtes toujours chez Luminol.',
     direction: 'ltr',
   },
   {
@@ -20,6 +22,7 @@ const localeCases = [
     heading: 'هذا المسار ينتهي هنا.',
     home: 'العودة إلى الرئيسية',
     programmes: 'استكشف البرامج',
+    noteTitle: 'ما زلت داخل Luminol.',
     direction: 'rtl',
   },
 ] as const;
@@ -47,6 +50,12 @@ for (const localeCase of localeCases) {
     await expect(page.locator('[data-not-found]')).toBeVisible();
     await expect(
       page.getByRole('heading', { level: 1, name: localeCase.heading }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('complementary', { name: localeCase.noteTitle }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { level: 2, name: localeCase.noteTitle }),
     ).toBeVisible();
     await expect(
       page.getByRole('link', { name: localeCase.home }),
