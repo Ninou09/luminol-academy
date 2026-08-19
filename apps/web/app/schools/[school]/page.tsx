@@ -325,10 +325,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                   school={school.slug}
                   asset={program.image}
                 />
-                <h3
-                  id={`school-programme-${index + 1}-title`}
-                  dir="auto"
-                >
+                <h3 id={`school-programme-${index + 1}-title`} dir="auto">
                   {program.slug ? (
                     <Link
                       href={localizeHref(locale, `/programmes/${program.slug}`)}
