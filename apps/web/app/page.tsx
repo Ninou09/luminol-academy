@@ -165,6 +165,7 @@ export default async function Page() {
                 <Link
                   className={styles.textLink}
                   href={localizeHref(locale, `/schools/${school.slug}`)}
+                  aria-label={`${copy.discoverSchool}: ${school.name}`}
                 >
                   {copy.discoverSchool} <span aria-hidden="true">→</span>
                 </Link>
