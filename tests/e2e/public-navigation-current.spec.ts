@@ -17,19 +17,27 @@ for (const scenario of [
     inactiveHref: '/ar/about',
   },
 ] as const) {
-  test(`${scenario.route} marks its current header destination`, async ({
+  test(`${scenario.route} marks its current header and footer destinations`, async ({
     page,
   }) => {
     const response = await page.goto(scenario.route);
     expect(response).not.toBeNull();
     expect(response!.ok()).toBeTruthy();
 
-    const header = page.getByRole('banner');
-    await expect(
-      header.locator(`a[href="${scenario.currentHref}"]:not([hreflang])`),
-    ).toHaveAttribute('aria-current', 'page');
-    await expect(
-      header.locator(`a[href="${scenario.inactiveHref}"]:not([hreflang])`),
-    ).not.toHaveAttribute('aria-current');
+    for (const landmark of [
+      page.getByRole('banner'),
+      page.getByRole('contentinfo'),
+    ]) {
+      await expect(
+        landmark.locator(
+          `a[href="${scenario.currentHref}"]:not([hreflang])`,
+        ),
+      ).toHaveAttribute('aria-current', 'page');
+      await expect(
+        landmark.locator(
+          `a[href="${scenario.inactiveHref}"]:not([hreflang])`,
+        ),
+      ).not.toHaveAttribute('aria-current');
+    }
   });
 }
