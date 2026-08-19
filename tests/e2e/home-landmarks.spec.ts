@@ -1,8 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('homepage story sections expose named landmarks without changing their heading levels', async ({
-  page,
-}) => {
+test('homepage story sections expose named landmarks', async ({ page }) => {
   await page.goto('/en');
 
   const landmarks = [
