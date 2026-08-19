@@ -171,14 +171,14 @@ export default async function AboutPage() {
         </section>
 
         <section className={styles.missionVision}>
-          <article data-reveal>
+          <article aria-labelledby="about-mission-title" data-reveal>
             <span>{copy.missionLabel}</span>
-            <h2>{copy.missionTitle}</h2>
+            <h2 id="about-mission-title">{copy.missionTitle}</h2>
             <p>{copy.missionBody}</p>
           </article>
-          <article data-reveal>
+          <article aria-labelledby="about-vision-title" data-reveal>
             <span>{copy.visionLabel}</span>
-            <h2>{copy.visionTitle}</h2>
+            <h2 id="about-vision-title">{copy.visionTitle}</h2>
             <p>{copy.visionBody}</p>
           </article>
         </section>
