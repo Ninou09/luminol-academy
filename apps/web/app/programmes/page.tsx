@@ -220,6 +220,10 @@ export default async function ProgrammesPage({
                     locale,
                     `/programmes/${programme.slug.current}`,
                   );
+                  const schoolName = schools[programme.school].name;
+                  const programmeActionLabel = `${viewProgrammeLabel}: ${programme.title}`;
+                  const schoolActionLabel = `${copy.viewSchool}: ${schoolName}`;
+                  const contactActionLabel = `${copy.askLuminol}: ${programme.title}`;
 
                   return (
                     <article className={styles.card} key={programme._id}>
@@ -236,7 +240,7 @@ export default async function ProgrammesPage({
 
                       <div className={styles.cardBody}>
                         <div className={styles.meta}>
-                          <span>{schools[programme.school].name}</span>
+                          <span>{schoolName}</span>
                           {programme.featured ? (
                             <span>{copy.featured}</span>
                           ) : null}
@@ -262,16 +266,25 @@ export default async function ProgrammesPage({
                           {deliveryLabel ? <li>{deliveryLabel}</li> : null}
                         </ul>
                         <div className={styles.cardActions}>
-                          <Link href={programmeHref}>{viewProgrammeLabel}</Link>
+                          <Link
+                            href={programmeHref}
+                            aria-label={programmeActionLabel}
+                          >
+                            {viewProgrammeLabel}
+                          </Link>
                           <Link
                             href={localizeHref(
                               locale,
                               `/schools/${programme.school}#programs`,
                             )}
+                            aria-label={schoolActionLabel}
                           >
                             {copy.viewSchool}
                           </Link>
-                          <Link href={localizeHref(locale, '/contact')}>
+                          <Link
+                            href={localizeHref(locale, '/contact')}
+                            aria-label={contactActionLabel}
+                          >
                             {copy.askLuminol}
                           </Link>
                         </div>
