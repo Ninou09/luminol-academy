@@ -62,9 +62,14 @@ export default async function CertificateVerificationPage({
     <>
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className={styles.page}>
-        <section className={styles.intro}>
+        <section
+          className={styles.intro}
+          aria-labelledby="certificate-verification-title"
+        >
           <p>{copy.eyebrow}</p>
-          <h1>{valid ? copy.verifiedTitle : copy.revokedTitle}</h1>
+          <h1 id="certificate-verification-title">
+            {valid ? copy.verifiedTitle : copy.revokedTitle}
+          </h1>
           <p>{copy.registryBody}</p>
         </section>
 
@@ -114,8 +119,11 @@ export default async function CertificateVerificationPage({
           {!valid && <p className={styles.notice}>{copy.revokedNotice}</p>}
         </section>
 
-        <aside className={styles.privacy}>
-          <strong>{copy.privacyTitle}</strong>
+        <aside
+          className={styles.privacy}
+          aria-labelledby="certificate-privacy-title"
+        >
+          <strong id="certificate-privacy-title">{copy.privacyTitle}</strong>
           <p>{copy.privacyBody}</p>
         </aside>
       </main>
