@@ -35,7 +35,21 @@ test('premium About storytelling preserves public landmarks and school pathways'
     ).toBeVisible();
   }
 
-  await expect(page.locator('[data-value-card]')).not.toHaveCount(0);
+  const valueCards = page.locator('[data-value-card]');
+  await expect(valueCards).not.toHaveCount(0);
+  for (let index = 0; index < (await valueCards.count()); index += 1) {
+    const card = valueCards.nth(index);
+    const labelId = await card.getAttribute('aria-labelledby');
+    expect(labelId).toBeTruthy();
+    const heading = page.locator(`#${labelId}`);
+    await expect(heading).toHaveJSProperty('tagName', 'H3');
+    const articleName = ((await heading.textContent()) ?? '').trim();
+    expect(articleName).not.toBe('');
+    await expect(
+      page.getByRole('article', { name: articleName, exact: true }),
+    ).toBeVisible();
+  }
+
   await expect(page.locator('[data-ecosystem-school]')).toHaveCount(3);
 });
 

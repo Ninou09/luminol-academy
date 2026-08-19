@@ -192,18 +192,23 @@ export default async function AboutPage() {
             <p>{copy.valuesBody}</p>
           </div>
           <div className={styles.valueGrid}>
-            {copy.values.map((value) => (
-              <article
-                className={styles.valueCard}
-                key={value.number}
-                data-value-card
-                data-reveal
-              >
-                <span>{value.number}</span>
-                <h3>{value.title}</h3>
-                <p>{value.description}</p>
-              </article>
-            ))}
+            {copy.values.map((value) => {
+              const valueTitleId = `about-value-${value.number}-title`;
+
+              return (
+                <article
+                  className={styles.valueCard}
+                  key={value.number}
+                  aria-labelledby={valueTitleId}
+                  data-value-card
+                  data-reveal
+                >
+                  <span>{value.number}</span>
+                  <h3 id={valueTitleId}>{value.title}</h3>
+                  <p>{value.description}</p>
+                </article>
+              );
+            })}
           </div>
         </section>
 
