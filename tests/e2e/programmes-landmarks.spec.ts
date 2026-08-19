@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 for (const locale of ['en', 'fr', 'ar'] as const) {
-  test(`${locale} programmes hero, search and cards have accessible names`, async ({
+  test(`${locale} programmes hero, search, results and cards have accessible names`, async ({
     page,
   }) => {
     const response = await page.goto(`/${locale}/programmes`);
@@ -23,6 +23,14 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
     expect(searchName).not.toBe('');
     await expect(
       page.getByRole('search', { name: searchName, exact: true }),
+    ).toBeVisible();
+
+    const resultsHeading = page.locator('#programme-results-title');
+    await expect(resultsHeading).toBeVisible();
+    const resultsName = ((await resultsHeading.textContent()) ?? '').trim();
+    expect(resultsName).not.toBe('');
+    await expect(
+      page.getByRole('region', { name: resultsName, exact: true }),
     ).toBeVisible();
 
     const programmeCards = page.locator('[data-programme-card]');

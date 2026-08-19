@@ -203,10 +203,10 @@ export default async function ProgrammesPage({
               </Link>
             </div>
           ) : (
-            <div>
+            <section aria-labelledby="programme-results-title">
               <div className={styles.resultHeading} aria-live="polite">
                 <p className="eyebrow">{copy.published}</p>
-                <h2>
+                <h2 id="programme-results-title">
                   {programmes.length}{' '}
                   {programmes.length === 1
                     ? copy.programmeSingular
@@ -303,7 +303,7 @@ export default async function ProgrammesPage({
                   );
                 })}
               </div>
-            </div>
+            </section>
           )}
         </section>
       </main>
