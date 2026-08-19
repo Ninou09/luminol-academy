@@ -16,7 +16,8 @@ test('premium school storytelling preserves landmarks and governed media', async
   for (const labelId of ['school-promise-title', 'school-cta-title']) {
     const label = page.locator(`#${labelId}`);
     await expect(label).toBeVisible();
-    const regionName = (await label.innerText()).trim();
+    const regionName = ((await label.textContent()) ?? '').trim();
+    expect(regionName).not.toBe('');
     await expect(
       page.getByRole('region', { name: regionName, exact: true }),
     ).toBeVisible();
