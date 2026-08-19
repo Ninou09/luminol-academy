@@ -10,6 +10,20 @@ test('premium About storytelling preserves public landmarks and school pathways'
   await expect(page.getByRole('contentinfo')).toBeVisible();
   await expect(page.locator('[data-about-hero]')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(
+    page.locator('section[aria-labelledby="about-origin-title"]'),
+  ).toBeVisible();
+  await expect(page.locator('#about-origin-title')).toHaveJSProperty(
+    'tagName',
+    'H2',
+  );
+  await expect(
+    page.locator('section[aria-labelledby="about-cta-title"]'),
+  ).toBeVisible();
+  await expect(page.locator('#about-cta-title')).toHaveJSProperty(
+    'tagName',
+    'H2',
+  );
   await expect(page.locator('[data-value-card]')).not.toHaveCount(0);
   await expect(page.locator('[data-ecosystem-school]')).toHaveCount(3);
 });
