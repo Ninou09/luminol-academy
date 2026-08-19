@@ -25,10 +25,9 @@ for (const scenario of [
     expect(response!.ok()).toBeTruthy();
 
     const header = page.getByRole('banner');
-    await expect(header.locator(`a[href="${scenario.currentHref}"]`)).toHaveAttribute(
-      'aria-current',
-      'page',
-    );
+    await expect(
+      header.locator(`a[href="${scenario.currentHref}"]`),
+    ).toHaveAttribute('aria-current', 'page');
     await expect(
       header.locator(`a[href="${scenario.inactiveHref}"]`),
     ).not.toHaveAttribute('aria-current');
