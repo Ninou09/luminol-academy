@@ -291,8 +291,8 @@ export default async function ProgrammeDetailPage({
         <section className={styles.content}>
           <div className={styles.contentInner}>
             {bodyParagraphs.length > 0 ? (
-              <div className={styles.overview}>
-                <p className={styles.sectionLabel}>{copy.overview}</p>
+              <section className={styles.overview}>
+                <h2 className={styles.sectionLabel}>{copy.overview}</h2>
                 <div className={styles.bodyText}>
                   {bodyParagraphs.map((paragraph, index) => (
                     <p key={`${programme._id}-body-${index}`} dir="auto">
@@ -300,7 +300,7 @@ export default async function ProgrammeDetailPage({
                     </p>
                   ))}
                 </div>
-              </div>
+              </section>
             ) : null}
 
             {programme.outcomes.length > 0 || programme.audience.length > 0 ? (
@@ -334,7 +334,7 @@ export default async function ProgrammeDetailPage({
             ) : null}
 
             <section className={styles.facts}>
-              <p className={styles.sectionLabel}>{copy.facts}</p>
+              <h2 className={styles.sectionLabel}>{copy.facts}</h2>
               <dl>
                 <div>
                   <dt>{copy.school}</dt>
