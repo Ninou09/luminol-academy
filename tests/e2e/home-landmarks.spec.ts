@@ -47,7 +47,7 @@ test('homepage sections, pathway navigation and school articles have accessible 
       continue;
     }
 
-    const visibleName = ((await link.textContent()) ?? '')
+    const visibleName = (await link.innerText())
       .replace('↗', '')
       .replace(/\s+/g, ' ')
       .trim();
