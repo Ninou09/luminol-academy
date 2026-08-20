@@ -50,7 +50,18 @@ test('premium About storytelling preserves public landmarks and school pathways'
     ).toBeVisible();
   }
 
-  await expect(page.locator('[data-ecosystem-school]')).toHaveCount(3);
+  const ecosystemSchools = page.locator('[data-ecosystem-school]');
+  await expect(ecosystemSchools).toHaveCount(3);
+  for (let index = 0; index < (await ecosystemSchools.count()); index += 1) {
+    const school = ecosystemSchools.nth(index);
+    const labelId = await school.getAttribute('aria-labelledby');
+    expect(labelId).toBeTruthy();
+    const heading = page.locator(`#${labelId}`);
+    await expect(heading).toHaveJSProperty('tagName', 'H3');
+    const schoolName = ((await heading.textContent()) ?? '').trim();
+    expect(schoolName).not.toBe('');
+    await expect(school).toHaveAccessibleName(schoolName);
+  }
 });
 
 test('About reduced motion keeps the centered brand core in place', async ({
