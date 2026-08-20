@@ -75,12 +75,24 @@ test('premium Contact page preserves the enquiry form contract', async ({
   await expect(page.getByRole('main')).toBeVisible();
   await expect(page.getByRole('contentinfo')).toBeVisible();
   await expect(page.locator('[data-contact-hero]')).toBeVisible();
-  await expect(page.locator('[data-contact-path]')).toHaveCount(3);
+  const contactPaths = page.locator('[data-contact-path]');
+  await expect(contactPaths).toHaveCount(3);
   await expect(page.locator('#contact-paths-title')).toHaveJSProperty(
     'tagName',
     'H2',
   );
   await expect(page.locator('[data-contact-path] h3')).toHaveCount(3);
+
+  for (let index = 0; index < (await contactPaths.count()); index += 1) {
+    const path = contactPaths.nth(index);
+    const labelId = await path.getAttribute('aria-labelledby');
+    expect(labelId).toBeTruthy();
+    const heading = page.locator(`#${labelId}`);
+    await expect(heading).toHaveJSProperty('tagName', 'H3');
+    const pathName = ((await heading.textContent()) ?? '').trim();
+    expect(pathName).not.toBe('');
+    await expect(path).toHaveAccessibleName(pathName);
+  }
 
   const form = page.locator('[data-contact-form] form.enquiry-form');
   await expect(form).toBeVisible();
