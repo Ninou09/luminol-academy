@@ -39,7 +39,9 @@ test('homepage sections, pathway navigation and school articles have accessible 
     const href = await link.getAttribute('href');
     expect(href).toMatch(/^\/en\/schools\/(psychology|languages|training)$/);
 
-    const accessibleName = ((await link.getAttribute('aria-label')) ?? '').trim();
+    const accessibleName = (
+      (await link.getAttribute('aria-label')) ?? ''
+    ).trim();
     if (accessibleName) {
       await expect(link).toHaveAccessibleName(accessibleName);
       continue;
