@@ -25,9 +25,33 @@ test('homepage sections, pathway navigation and school articles have accessible 
   const pathwayHeading = page.locator('#pathway-title');
   const pathwayName = ((await pathwayHeading.textContent()) ?? '').trim();
   expect(pathwayName).not.toBe('');
-  await expect(
-    page.getByRole('navigation', { name: pathwayName, exact: true }),
-  ).toBeVisible();
+  const pathwayNavigation = page.getByRole('navigation', {
+    name: pathwayName,
+    exact: true,
+  });
+  await expect(pathwayNavigation).toBeVisible();
+
+  const pathwayLinks = pathwayNavigation.getByRole('link');
+  await expect(pathwayLinks).toHaveCount(3);
+
+  for (let index = 0; index < (await pathwayLinks.count()); index += 1) {
+    const link = pathwayLinks.nth(index);
+    const href = await link.getAttribute('href');
+    expect(href).toMatch(/^\/en\/schools\/(psychology|languages|training)$/);
+
+    const accessibleName = ((await link.getAttribute('aria-label')) ?? '').trim();
+    if (accessibleName) {
+      await expect(link).toHaveAccessibleName(accessibleName);
+      continue;
+    }
+
+    const visibleName = ((await link.textContent()) ?? '')
+      .replace('↗', '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    expect(visibleName).not.toBe('');
+    await expect(link).toHaveAccessibleName(visibleName);
+  }
 
   const schoolCards = page.locator('[data-school-card]');
   await expect(schoolCards).toHaveCount(3);
