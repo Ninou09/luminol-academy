@@ -414,17 +414,23 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             <p>{copy.relatedBody}</p>
           </div>
           <div className={styles.relatedGrid}>
-            {relatedSchools.map((related) => (
-              <Link
-                href={localizeHref(locale, `/schools/${related.slug}`)}
-                key={related.slug}
-                data-reveal
-              >
-                <span>{related.number}</span>
-                <h3>{related.name}</h3>
-                <b aria-hidden="true">↗</b>
-              </Link>
-            ))}
+            {relatedSchools.map((related) => {
+              const relatedTitleId = `related-school-${related.slug}-title`;
+
+              return (
+                <Link
+                  href={localizeHref(locale, `/schools/${related.slug}`)}
+                  key={related.slug}
+                  aria-labelledby={relatedTitleId}
+                  data-related-school={related.slug}
+                  data-reveal
+                >
+                  <span aria-hidden="true">{related.number}</span>
+                  <h3 id={relatedTitleId}>{related.name}</h3>
+                  <b aria-hidden="true">↗</b>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
