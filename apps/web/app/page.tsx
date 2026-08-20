@@ -234,7 +234,11 @@ export default async function Page() {
             <p className={styles.eyebrow}>{copy.pathwayEyebrow}</p>
             <h2 id="pathway-title">{copy.pathwayTitle}</h2>
           </div>
-          <div className={styles.pathwayLinks} data-reveal>
+          <nav
+            className={styles.pathwayLinks}
+            aria-labelledby="pathway-title"
+            data-reveal
+          >
             <Link href={localizeHref(locale, '/schools/psychology')}>
               <span>01</span>
               {copy.pathwayPsychology}
@@ -250,7 +254,7 @@ export default async function Page() {
               {copy.pathwayTraining}
               <b aria-hidden="true">↗</b>
             </Link>
-          </div>
+          </nav>
         </section>
 
         <section
