@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('homepage sections and school articles have accessible names', async ({
+test('homepage sections, pathway navigation and school articles have accessible names', async ({
   page,
 }) => {
   await page.goto('/en');
@@ -21,6 +21,13 @@ test('homepage sections and school articles have accessible names', async ({
     'aria-labelledby',
     'home-contact-title',
   );
+
+  const pathwayHeading = page.locator('#pathway-title');
+  const pathwayName = ((await pathwayHeading.textContent()) ?? '').trim();
+  expect(pathwayName).not.toBe('');
+  await expect(
+    page.getByRole('navigation', { name: pathwayName, exact: true }),
+  ).toBeVisible();
 
   const schoolCards = page.locator('[data-school-card]');
   await expect(schoolCards).toHaveCount(3);
