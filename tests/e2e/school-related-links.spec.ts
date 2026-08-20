@@ -26,10 +26,7 @@ test('school pages name related-school links from their headings', async ({
       expect(relatedName).not.toBe('');
 
       await expect(link).toHaveAccessibleName(relatedName);
-      await expect(link).toHaveAttribute(
-        'href',
-        `/en/schools/${relatedSlug}`,
-      );
+      await expect(link).toHaveAttribute('href', `/en/schools/${relatedSlug}`);
     }
   }
 });
