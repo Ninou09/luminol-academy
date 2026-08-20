@@ -105,11 +105,14 @@ export default async function ContactPage() {
                 className={`${styles.pathCard} ${path.tone}`}
                 href={localizeHref(locale, `/schools/${path.school.slug}`)}
                 key={path.school.slug}
+                aria-labelledby={`contact-path-${path.school.slug}-title`}
                 data-contact-path={path.school.slug}
                 data-reveal
               >
                 <span>{path.number}</span>
-                <h3>{path.school.name}</h3>
+                <h3 id={`contact-path-${path.school.slug}-title`}>
+                  {path.school.name}
+                </h3>
                 <p>{path.description}</p>
                 <b aria-hidden="true">↗</b>
               </Link>
