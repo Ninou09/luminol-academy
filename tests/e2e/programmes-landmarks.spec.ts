@@ -58,4 +58,36 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
       ).toBeVisible();
     }
   });
+
+  test(`${locale} programme detail sections have accessible names`, async ({
+    page,
+  }) => {
+    await page.goto(`/${locale}/programmes`);
+
+    const programmeLink = page.locator('[data-programme-card] h3 a').first();
+    await expect(programmeLink).toBeVisible();
+    const programmeHref = await programmeLink.getAttribute('href');
+    expect(programmeHref).toMatch(
+      new RegExp(`^/${locale}/programmes/[^/?#]+$`),
+    );
+
+    await page.goto(programmeHref!);
+
+    const regions = page.locator('[data-programme-detail-region]');
+    expect(await regions.count()).toBeGreaterThanOrEqual(3);
+
+    for (let index = 0; index < (await regions.count()); index += 1) {
+      const region = regions.nth(index);
+      const labelId = await region.getAttribute('aria-labelledby');
+      expect(labelId).toBeTruthy();
+
+      const heading = page.locator(`#${labelId}`);
+      await expect(heading).toHaveRole('heading');
+      const regionName = ((await heading.textContent()) ?? '').trim();
+      expect(regionName).not.toBe('');
+      await expect(
+        page.getByRole('region', { name: regionName, exact: true }),
+      ).toBeVisible();
+    }
+  });
 }
