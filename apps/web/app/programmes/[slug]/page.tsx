@@ -220,7 +220,11 @@ export default async function ProgrammeDetailPage({
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(courseJsonLd) }}
       />
       <main id="main-content" tabIndex={-1} className={styles.page}>
-        <section className={styles.hero}>
+        <section
+          className={styles.hero}
+          aria-labelledby="programme-detail-title"
+          data-programme-detail-region="hero"
+        >
           <nav className={styles.breadcrumbs} aria-label={copy.catalogue}>
             <Link href={localizeHref(locale, '/programmes')}>
               {copy.catalogue}
@@ -243,7 +247,9 @@ export default async function ProgrammeDetailPage({
           <div className={styles.heroGrid}>
             <div className={styles.heroCopy}>
               <p className="eyebrow">{copy.eyebrow}</p>
-              <h1 dir="auto">{programme.title}</h1>
+              <h1 id="programme-detail-title" dir="auto">
+                {programme.title}
+              </h1>
               <p className={styles.summary} dir="auto">
                 {programme.summary}
               </p>
@@ -291,8 +297,17 @@ export default async function ProgrammeDetailPage({
         <section className={styles.content}>
           <div className={styles.contentInner}>
             {bodyParagraphs.length > 0 ? (
-              <section className={styles.overview}>
-                <h2 className={styles.sectionLabel}>{copy.overview}</h2>
+              <section
+                className={styles.overview}
+                aria-labelledby="programme-overview-title"
+                data-programme-detail-region="overview"
+              >
+                <h2
+                  id="programme-overview-title"
+                  className={styles.sectionLabel}
+                >
+                  {copy.overview}
+                </h2>
                 <div className={styles.bodyText}>
                   {bodyParagraphs.map((paragraph, index) => (
                     <p key={`${programme._id}-body-${index}`} dir="auto">
@@ -306,8 +321,12 @@ export default async function ProgrammeDetailPage({
             {programme.outcomes.length > 0 || programme.audience.length > 0 ? (
               <div className={styles.detailGrid}>
                 {programme.outcomes.length > 0 ? (
-                  <section className={styles.detailCard}>
-                    <h2>{copy.outcomes}</h2>
+                  <section
+                    className={styles.detailCard}
+                    aria-labelledby="programme-outcomes-title"
+                    data-programme-detail-region="outcomes"
+                  >
+                    <h2 id="programme-outcomes-title">{copy.outcomes}</h2>
                     <ul>
                       {programme.outcomes.map((outcome) => (
                         <li key={outcome} dir="auto">
@@ -319,8 +338,12 @@ export default async function ProgrammeDetailPage({
                 ) : null}
 
                 {programme.audience.length > 0 ? (
-                  <section className={styles.detailCard}>
-                    <h2>{copy.audience}</h2>
+                  <section
+                    className={styles.detailCard}
+                    aria-labelledby="programme-audience-title"
+                    data-programme-detail-region="audience"
+                  >
+                    <h2 id="programme-audience-title">{copy.audience}</h2>
                     <ul>
                       {programme.audience.map((audience) => (
                         <li key={audience} dir="auto">
@@ -333,8 +356,14 @@ export default async function ProgrammeDetailPage({
               </div>
             ) : null}
 
-            <section className={styles.facts}>
-              <h2 className={styles.sectionLabel}>{copy.facts}</h2>
+            <section
+              className={styles.facts}
+              aria-labelledby="programme-facts-title"
+              data-programme-detail-region="facts"
+            >
+              <h2 id="programme-facts-title" className={styles.sectionLabel}>
+                {copy.facts}
+              </h2>
               <dl>
                 <div>
                   <dt>{copy.school}</dt>
@@ -357,9 +386,13 @@ export default async function ProgrammeDetailPage({
           </div>
         </section>
 
-        <section className={styles.footerCta}>
+        <section
+          className={styles.footerCta}
+          aria-labelledby="programme-next-title"
+          data-programme-detail-region="next-step"
+        >
           <p className={styles.sectionLabel}>{copy.nextEyebrow}</p>
-          <h2>{copy.nextTitle}</h2>
+          <h2 id="programme-next-title">{copy.nextTitle}</h2>
           <p>{copy.nextBody}</p>
           <div className={styles.footerActions}>
             <ButtonLink href={localizeHref(locale, '/contact')}>
