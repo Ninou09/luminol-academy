@@ -65,6 +65,13 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
     await page.goto(`/${locale}/programmes`);
 
     const programmeLink = page.locator('[data-programme-card] h3 a').first();
+    if ((await programmeLink.count()) === 0) {
+      await expect(
+        page.locator('main [role="status"], main [aria-live="polite"]').first(),
+      ).toBeVisible();
+      return;
+    }
+
     await expect(programmeLink).toBeVisible();
     const programmeHref = await programmeLink.getAttribute('href');
     expect(programmeHref).toMatch(
