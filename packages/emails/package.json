@@ -13,11 +13,11 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "resend": "^6.18.1"
+    "resend": "^6.21.0"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",
-    "eslint": "^10.8.0",
+    "eslint": "^10.9.0",
     "typescript": "^5.8.3",
     "vitest": "^4.1.11"
   }
