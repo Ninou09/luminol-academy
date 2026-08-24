@@ -313,8 +313,8 @@ importers:
         specifier: ^0.0.1
         version: 0.0.1
       svix:
-        specifier: ^1.69.0
-        version: 1.99.1
+        specifier: ^2.0.0
+        version: 2.0.0
       zod:
         specifier: ^4.0.10
         version: 4.4.3
@@ -6172,8 +6172,9 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  svix@1.99.1:
-    resolution: {integrity: sha512-JfpvbAg5iT5NagDAfOq3e6Ci6NbOMbMm6C3DnfDBB60m2JDK+Z2hXPE9XNAmutb53DCdPoih1V70IbklZnX09A==}
+  svix@2.0.0:
+    resolution: {integrity: sha512-rywid6EHCJZwonqXCuo3nF/tovnz+CIoHlH0sMdxCTtgKwTRNmqJn2TCM40DTvMZUgshLhiP1KUfOZoTrli2/Q==}
+    engines: {node: '>=22'}
 
   swr@2.3.4:
     resolution: {integrity: sha512-bYd2lrhc+VarcpkgWclcUi92wYCpOgMws9Sd1hG1ntAu0NEy+14CbotuFjshBU2kt9rYj9TSmDcybpxpeTU1fg==}
@@ -12736,7 +12737,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svix@1.99.1:
+  svix@2.0.0:
     dependencies:
       standardwebhooks: 1.0.0
 
