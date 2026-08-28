@@ -4,7 +4,10 @@ import type { PublicProgrammeDetail } from './programme-detail';
 import { isProgrammeWaitlist } from './programme-presentation';
 
 export type PublicEnquirySchool =
-  'GENERAL' | 'PSYCHOLOGY' | 'LANGUAGES' | 'TRAINING';
+  | 'GENERAL'
+  | 'PSYCHOLOGY'
+  | 'LANGUAGES'
+  | 'TRAINING';
 
 const SCHOOL_TO_ENQUIRY = {
   psychology: 'PSYCHOLOGY',
