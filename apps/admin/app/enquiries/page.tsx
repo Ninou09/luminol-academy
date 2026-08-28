@@ -12,12 +12,16 @@ import { AdminLanguageSwitcher } from '../../components/admin-language-switcher'
 import { getAdminEnumLabel } from '../../lib/admin-localization';
 import { getEnquiryDeskCopy } from '../../lib/enquiry-desk-localization';
 import {
+  displayPersonName,
   enquiryStatuses,
   getEnquiryTransitions,
   type EnquiryStatusValue,
 } from '../../lib/operations';
 import { getAdminRequestLocale } from '../../lib/request-locale';
-import { transitionEnquiryStatus } from './actions';
+import {
+  transitionEnquiryStatus,
+  updateEnquiryOwnership,
+} from './actions';
 import styles from './page.module.css';
 
 type EnquiryPageProps = {
@@ -38,7 +42,7 @@ function parseStatus(
 export default async function EnquiriesAdminPage({
   searchParams,
 }: EnquiryPageProps) {
-  await requirePermission('academy:manage');
+  const administrator = await requirePermission('academy:manage');
   const locale = await getAdminRequestLocale();
   const copy = getEnquiryDeskCopy(locale);
   const common = getCommonDictionary(locale);
@@ -59,6 +63,14 @@ export default async function EnquiriesAdminPage({
       status: true,
       source: true,
       createdAt: true,
+      owner: {
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
     },
   });
   const number = (value: number) => formatLocalizedNumber(value, locale);
@@ -123,111 +135,169 @@ export default async function EnquiriesAdminPage({
 
           {enquiries.length > 0 ? (
             <section className={styles.list} aria-live="polite">
-              {enquiries.map((enquiry) => (
-                <article className={styles.card} key={enquiry.id}>
-                  <header className={styles.cardHeader}>
-                    <div className={styles.identity}>
-                      <h2 dir="auto">{enquiry.name}</h2>
-                      <p dir="auto">{enquiry.email}</p>
-                    </div>
-                    <div>
-                      <span
-                        className={`data-status status-${enquiry.status.toLowerCase()}`}
-                      >
-                        {getAdminEnumLabel(locale, enquiry.status)}
-                      </span>
-                    </div>
-                  </header>
+              {enquiries.map((enquiry) => {
+                const ownerName = enquiry.owner
+                  ? displayPersonName(
+                      enquiry.owner.firstName,
+                      enquiry.owner.lastName,
+                      enquiry.owner.email,
+                    )
+                  : copy.unassigned;
+                const ownedByAdministrator =
+                  enquiry.owner?.id === administrator.id;
 
-                  <div className={styles.metaGrid}>
-                    <div className={styles.metaItem}>
-                      <span>{copy.received}</span>
-                      <p>{date(enquiry.createdAt)}</p>
-                    </div>
-                    <div className={styles.metaItem}>
-                      <span>{copy.school}</span>
-                      <p>{getAdminEnumLabel(locale, enquiry.school)}</p>
-                    </div>
-                    <div className={styles.metaItem}>
-                      <span>{copy.language}</span>
-                      <p dir="auto">{enquiry.locale.toUpperCase()}</p>
-                    </div>
-                    <div className={styles.metaItem}>
-                      <span>{copy.source}</span>
-                      <p dir="auto">{enquiry.source}</p>
-                    </div>
-                    <div className={styles.metaItem}>
-                      <span>{copy.contact}</span>
-                      <p dir="auto">{enquiry.phone || copy.noPhone}</p>
-                    </div>
-                  </div>
+                return (
+                  <article className={styles.card} key={enquiry.id}>
+                    <header className={styles.cardHeader}>
+                      <div className={styles.identity}>
+                        <h2 dir="auto">{enquiry.name}</h2>
+                        <p dir="auto">{enquiry.email}</p>
+                      </div>
+                      <div>
+                        <span
+                          className={`data-status status-${enquiry.status.toLowerCase()}`}
+                        >
+                          {getAdminEnumLabel(locale, enquiry.status)}
+                        </span>
+                      </div>
+                    </header>
 
-                  <div className={styles.messageBlock}>
-                    <span className={styles.messageLabel}>{copy.message}</span>
-                    <p className={styles.messageBody} dir="auto">
-                      {enquiry.message}
-                    </p>
-                    <p className={styles.privacyNote}>
-                      {copy.protectedMessage}
-                    </p>
-                  </div>
+                    <div className={styles.metaGrid}>
+                      <div className={styles.metaItem}>
+                        <span>{copy.received}</span>
+                        <p>{date(enquiry.createdAt)}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.school}</span>
+                        <p>{getAdminEnumLabel(locale, enquiry.school)}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.language}</span>
+                        <p dir="auto">{enquiry.locale.toUpperCase()}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.source}</span>
+                        <p dir="auto">{enquiry.source}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.contact}</span>
+                        <p dir="auto">{enquiry.phone || copy.noPhone}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.owner}</span>
+                        <p dir="auto">
+                          {ownedByAdministrator ? copy.assignedToYou : ownerName}
+                        </p>
+                      </div>
+                    </div>
 
-                  <div className={styles.statusRow}>
-                    <div className={styles.actions}>
-                      <a
-                        className={styles.contactLink}
-                        href={`mailto:${enquiry.email}`}
-                      >
-                        {copy.email}
-                      </a>
-                      {enquiry.phone ? (
+                    <div className={styles.messageBlock}>
+                      <span className={styles.messageLabel}>{copy.message}</span>
+                      <p className={styles.messageBody} dir="auto">
+                        {enquiry.message}
+                      </p>
+                      <p className={styles.privacyNote}>
+                        {copy.protectedMessage}
+                      </p>
+                    </div>
+
+                    <div className={styles.statusRow}>
+                      <div className={styles.actions}>
                         <a
                           className={styles.contactLink}
-                          href={`tel:${enquiry.phone}`}
+                          href={`mailto:${enquiry.email}`}
                         >
-                          {copy.call}
+                          {copy.email}
                         </a>
-                      ) : (
-                        <span className={styles.muted}>{copy.noPhone}</span>
-                      )}
-                    </div>
+                        {enquiry.phone ? (
+                          <a
+                            className={styles.contactLink}
+                            href={`tel:${enquiry.phone}`}
+                          >
+                            {copy.call}
+                          </a>
+                        ) : (
+                          <span className={styles.muted}>{copy.noPhone}</span>
+                        )}
+                        {!ownedByAdministrator ? (
+                          <form action={updateEnquiryOwnership}>
+                            <input
+                              type="hidden"
+                              name="enquiryId"
+                              value={enquiry.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="operation"
+                              value="assign-to-me"
+                            />
+                            <button
+                              className={styles.ownershipButton}
+                              type="submit"
+                            >
+                              {copy.assignToMe}
+                            </button>
+                          </form>
+                        ) : null}
+                        {enquiry.owner ? (
+                          <form action={updateEnquiryOwnership}>
+                            <input
+                              type="hidden"
+                              name="enquiryId"
+                              value={enquiry.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="operation"
+                              value="unassign"
+                            />
+                            <button
+                              className={styles.ownershipButton}
+                              type="submit"
+                            >
+                              {copy.unassign}
+                            </button>
+                          </form>
+                        ) : null}
+                      </div>
 
-                    <form
-                      action={transitionEnquiryStatus}
-                      className={styles.statusForm}
-                    >
-                      <input
-                        type="hidden"
-                        name="enquiryId"
-                        value={enquiry.id}
-                      />
-                      <label>
-                        <span className="sr-only">
-                          {copy.updateStatus}: {enquiry.name}
-                        </span>
-                        <select
-                          name="toStatus"
-                          defaultValue=""
-                          required
-                          aria-label={`${copy.updateStatus}: ${enquiry.name}`}
-                        >
-                          <option value="" disabled>
-                            {copy.moveTo}
-                          </option>
-                          {getEnquiryTransitions(enquiry.status).map(
-                            (status) => (
-                              <option key={status} value={status}>
-                                {getAdminEnumLabel(locale, status)}
-                              </option>
-                            ),
-                          )}
-                        </select>
-                      </label>
-                      <button type="submit">{copy.update}</button>
-                    </form>
-                  </div>
-                </article>
-              ))}
+                      <form
+                        action={transitionEnquiryStatus}
+                        className={styles.statusForm}
+                      >
+                        <input
+                          type="hidden"
+                          name="enquiryId"
+                          value={enquiry.id}
+                        />
+                        <label>
+                          <span className="sr-only">
+                            {copy.updateStatus}: {enquiry.name}
+                          </span>
+                          <select
+                            name="toStatus"
+                            defaultValue=""
+                            required
+                            aria-label={`${copy.updateStatus}: ${enquiry.name}`}
+                          >
+                            <option value="" disabled>
+                              {copy.moveTo}
+                            </option>
+                            {getEnquiryTransitions(enquiry.status).map(
+                              (status) => (
+                                <option key={status} value={status}>
+                                  {getAdminEnumLabel(locale, status)}
+                                </option>
+                              ),
+                            )}
+                          </select>
+                        </label>
+                        <button type="submit">{copy.update}</button>
+                      </form>
+                    </div>
+                  </article>
+                );
+              })}
             </section>
           ) : (
             <section className="admin-panel">
