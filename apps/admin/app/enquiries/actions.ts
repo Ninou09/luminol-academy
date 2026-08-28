@@ -36,6 +36,18 @@ const followUpPlanSchema = z.discriminatedUnion('operation', [
   }),
 ]);
 
+const outcomeSchema = z.discriminatedUnion('operation', [
+  z.object({
+    enquiryId: enquiryIdSchema,
+    operation: z.literal('save'),
+    outcome: z.string().trim().min(1).max(240),
+  }),
+  z.object({
+    enquiryId: enquiryIdSchema,
+    operation: z.literal('clear'),
+  }),
+]);
+
 function parseDateOnly(value: string) {
   const date = new Date(`${value}T00:00:00.000Z`);
   if (
@@ -185,6 +197,56 @@ export async function updateEnquiryFollowUpPlan(formData: FormData) {
         toNextFollowUpAt,
         fromNextAction: enquiry.nextAction,
         toNextAction,
+      },
+    });
+  });
+
+  revalidatePath('/enquiries');
+}
+
+export async function updateEnquiryOutcome(formData: FormData) {
+  const administrator = await requirePermission('academy:manage');
+  const operation = formData.get('operation');
+  const input = outcomeSchema.parse({
+    enquiryId: formData.get('enquiryId'),
+    operation,
+    ...(operation === 'save' ? { outcome: formData.get('outcome') } : {}),
+  });
+  const toOutcome = input.operation === 'save' ? input.outcome : null;
+  const toOutcomeAt = input.operation === 'save' ? new Date() : null;
+
+  await db.$transaction(async (transaction: Prisma.TransactionClient) => {
+    const enquiry = await transaction.enquiry.findUnique({
+      where: { id: input.enquiryId },
+      select: { id: true, outcome: true, outcomeAt: true },
+    });
+
+    if (!enquiry) throw new Error('Enquiry not found');
+    if (input.operation === 'clear' && !enquiry.outcome && !enquiry.outcomeAt) {
+      return;
+    }
+
+    const updated = await transaction.enquiry.updateMany({
+      where: {
+        id: enquiry.id,
+        outcome: enquiry.outcome,
+        outcomeAt: enquiry.outcomeAt,
+      },
+      data: { outcome: toOutcome, outcomeAt: toOutcomeAt },
+    });
+
+    if (updated.count !== 1) {
+      throw new Error('Enquiry outcome was updated by another administrator');
+    }
+
+    await transaction.enquiryOutcomeEvent.create({
+      data: {
+        enquiryId: enquiry.id,
+        actorUserId: administrator.id,
+        fromOutcome: enquiry.outcome,
+        toOutcome,
+        fromOutcomeAt: enquiry.outcomeAt,
+        toOutcomeAt,
       },
     });
   });

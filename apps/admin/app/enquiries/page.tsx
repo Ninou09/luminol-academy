@@ -27,6 +27,7 @@ import { getAdminRequestLocale } from '../../lib/request-locale';
 import {
   transitionEnquiryStatus,
   updateEnquiryFollowUpPlan,
+  updateEnquiryOutcome,
   updateEnquiryOwnership,
 } from './actions';
 import styles from './page.module.css';
@@ -123,6 +124,8 @@ export default async function EnquiriesAdminPage({
       createdAt: true,
       nextFollowUpAt: true,
       nextAction: true,
+      outcome: true,
+      outcomeAt: true,
       owner: {
         select: {
           id: true,
@@ -261,6 +264,9 @@ export default async function EnquiriesAdminPage({
                   enquiry.owner?.id === administrator.id;
                 const hasFollowUpPlan = Boolean(
                   enquiry.nextFollowUpAt && enquiry.nextAction,
+                );
+                const hasOutcome = Boolean(
+                  enquiry.outcome && enquiry.outcomeAt,
                 );
 
                 return (
@@ -419,6 +425,64 @@ export default async function EnquiriesAdminPage({
                             type="submit"
                           >
                             {copy.clearFollowUp}
+                          </button>
+                        </form>
+                      ) : null}
+                    </section>
+
+                    <section className={styles.followUpBlock}>
+                      <div className={styles.followUpHeading}>
+                        <div>
+                          <span className={styles.messageLabel}>
+                            {copy.outcome}
+                          </span>
+                          <p dir="auto">{enquiry.outcome || copy.noOutcome}</p>
+                          {enquiry.outcomeAt ? (
+                            <p className={styles.privacyNote}>
+                              {copy.outcomeRecorded}: {date(enquiry.outcomeAt)}
+                            </p>
+                          ) : null}
+                          <p className={styles.privacyNote}>
+                            {copy.outcomeGuidance}
+                          </p>
+                        </div>
+                      </div>
+                      <form
+                        action={updateEnquiryOutcome}
+                        className={styles.followUpForm}
+                      >
+                        <input
+                          type="hidden"
+                          name="enquiryId"
+                          value={enquiry.id}
+                        />
+                        <input type="hidden" name="operation" value="save" />
+                        <label className={styles.followUpField}>
+                          <span>{copy.outcome}</span>
+                          <input
+                            type="text"
+                            name="outcome"
+                            defaultValue={enquiry.outcome ?? ''}
+                            maxLength={240}
+                            required
+                            dir="auto"
+                          />
+                        </label>
+                        <button type="submit">{copy.saveOutcome}</button>
+                      </form>
+                      {hasOutcome ? (
+                        <form action={updateEnquiryOutcome}>
+                          <input
+                            type="hidden"
+                            name="enquiryId"
+                            value={enquiry.id}
+                          />
+                          <input type="hidden" name="operation" value="clear" />
+                          <button
+                            className={styles.clearFollowUpButton}
+                            type="submit"
+                          >
+                            {copy.clearOutcome}
                           </button>
                         </form>
                       ) : null}
