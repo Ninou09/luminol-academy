@@ -11,8 +11,11 @@ import Link from 'next/link';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import {
+  isProgrammeWaitlist,
   localizeProgrammeDelivery,
   localizeProgrammeViewAction,
+  localizeProgrammeWaitlistAction,
+  localizeProgrammeWaitlistLabel,
 } from '../../lib/programme-presentation';
 import {
   filterPublicProgrammes,
@@ -216,10 +219,18 @@ export default async function ProgrammesPage({
 
               <div className={styles.grid}>
                 {programmes.map((programme, index) => {
-                  const deliveryLabel = localizeProgrammeDelivery(
-                    locale,
-                    programme.delivery,
+                  const isWaitlist = isProgrammeWaitlist(
+                    programme.slug.current,
                   );
+                  const waitlistLabel = isWaitlist
+                    ? localizeProgrammeWaitlistLabel(locale)
+                    : null;
+                  const contactLabel = isWaitlist
+                    ? localizeProgrammeWaitlistAction(locale)
+                    : copy.askLuminol;
+                  const deliveryLabel = isWaitlist
+                    ? null
+                    : localizeProgrammeDelivery(locale, programme.delivery);
                   const programmeHref = localizeHref(
                     locale,
                     `/programmes/${programme.slug.current}`,
@@ -227,7 +238,7 @@ export default async function ProgrammesPage({
                   const schoolName = schools[programme.school].name;
                   const programmeActionLabel = `${viewProgrammeLabel}: ${programme.title}`;
                   const schoolActionLabel = `${copy.viewSchool}: ${schoolName}`;
-                  const contactActionLabel = `${copy.askLuminol}: ${programme.title}`;
+                  const contactActionLabel = `${contactLabel}: ${programme.title}`;
                   const titleId = `programme-card-${index + 1}-title`;
 
                   return (
@@ -237,7 +248,7 @@ export default async function ProgrammesPage({
                       aria-labelledby={titleId}
                       data-programme-card
                     >
-                      {programme.image ? (
+                      {!isWaitlist && programme.image ? (
                         <Image
                           className={styles.image}
                           src={buildSanityProgrammeImageUrl(programme.image)}
@@ -254,6 +265,7 @@ export default async function ProgrammesPage({
                           {programme.featured ? (
                             <span>{copy.featured}</span>
                           ) : null}
+                          {waitlistLabel ? <span>{waitlistLabel}</span> : null}
                         </div>
                         <h3 id={titleId} dir="auto">
                           <Link
@@ -264,17 +276,19 @@ export default async function ProgrammesPage({
                           </Link>
                         </h3>
                         <p dir="auto">{programme.summary}</p>
-                        <ul
-                          className={styles.tags}
-                          aria-label={copy.detailsAria}
-                        >
-                          {programme.languages.map((language) => (
-                            <li key={language}>
-                              {copy.languageNames[language]}
-                            </li>
-                          ))}
-                          {deliveryLabel ? <li>{deliveryLabel}</li> : null}
-                        </ul>
+                        {!isWaitlist ? (
+                          <ul
+                            className={styles.tags}
+                            aria-label={copy.detailsAria}
+                          >
+                            {programme.languages.map((language) => (
+                              <li key={language}>
+                                {copy.languageNames[language]}
+                              </li>
+                            ))}
+                            {deliveryLabel ? <li>{deliveryLabel}</li> : null}
+                          </ul>
+                        ) : null}
                         <div className={styles.cardActions}>
                           <Link
                             href={programmeHref}
@@ -295,7 +309,7 @@ export default async function ProgrammesPage({
                             href={localizeHref(locale, '/contact')}
                             aria-label={contactActionLabel}
                           >
-                            {copy.askLuminol}
+                            {contactLabel}
                           </Link>
                         </div>
                       </div>
