@@ -53,4 +53,5 @@ export async function transitionEnquiryStatus(formData: FormData) {
   });
 
   revalidatePath('/');
+  revalidatePath('/enquiries');
 }
