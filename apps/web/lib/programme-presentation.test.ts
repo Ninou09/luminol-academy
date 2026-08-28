@@ -54,9 +54,9 @@ describe('localizeProgrammeViewAction', () => {
 describe('programme waitlist presentation', () => {
   it('marks only the operator-approved ACT slug as next-cohort waitlist', () => {
     expect(isProgrammeWaitlist('acceptance-commitment-therapy-act')).toBe(true);
-    expect(
-      isProgrammeWaitlist(' ACCEPTANCE-COMMITMENT-THERAPY-ACT '),
-    ).toBe(true);
+    expect(isProgrammeWaitlist(' ACCEPTANCE-COMMITMENT-THERAPY-ACT ')).toBe(
+      true,
+    );
     expect(isProgrammeWaitlist('english-conversation')).toBe(false);
   });
 
