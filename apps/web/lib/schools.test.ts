@@ -49,7 +49,7 @@ describe('Luminol school content', () => {
       ar: {
         title: 'العلاج النفسي والاستشارات',
         therapy: 'العلاج النفسي',
-        consultation: 'الاستشارة',
+        consultation: 'الاستشار',
       },
     } as const;
 
