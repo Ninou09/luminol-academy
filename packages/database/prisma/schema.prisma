@@ -229,7 +229,9 @@ model User {
   enrollments                 Enrollment[]
   records                     LearningRecord[]
   certificates                Certificate[]
+  assignedEnquiries           Enquiry[]                    @relation("EnquiryOwner")
   enquiryStatusEvents         EnquiryStatusEvent[]
+  enquiryOwnershipEvents      EnquiryOwnershipEvent[]      @relation("EnquiryOwnershipActor")
   enrollmentStatusEvents      EnrollmentStatusEvent[]
   placementAttempts           PlacementAttempt[]           @relation("PlacementLearner")
   placementReviews            PlacementAttempt[]           @relation("PlacementReviewer")
@@ -1108,21 +1110,25 @@ model CertificateAuditEvent {
 }
 
 model Enquiry {
-  id           String               @id @default(cuid())
-  name         String
-  email        String
-  phone        String?
-  school       EnquirySchool
-  message      String
-  locale       String               @default("en")
-  consent      Boolean
-  status       EnquiryStatus        @default(NEW)
-  source       String               @default("website")
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  statusEvents EnquiryStatusEvent[]
+  id              String                  @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  school          EnquirySchool
+  message         String
+  locale          String                  @default("en")
+  consent         Boolean
+  status          EnquiryStatus           @default(NEW)
+  source          String                  @default("website")
+  ownerUserId     String?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+  owner           User?                   @relation("EnquiryOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  statusEvents    EnquiryStatusEvent[]
+  ownershipEvents EnquiryOwnershipEvent[]
 
   @@index([status, createdAt])
+  @@index([ownerUserId, status, createdAt])
   @@index([email])
   @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "Enquiry_name_trgm_idx")
   @@index([email(ops: raw("gin_trgm_ops"))], type: Gin, map: "Enquiry_email_trgm_idx")
@@ -1137,6 +1143,20 @@ model EnquiryStatusEvent {
   createdAt   DateTime      @default(now())
   enquiry     Enquiry       @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
   actor       User          @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([enquiryId, createdAt])
+  @@index([actorUserId, createdAt])
+}
+
+model EnquiryOwnershipEvent {
+  id              String   @id @default(cuid())
+  enquiryId       String
+  actorUserId     String
+  fromOwnerUserId String?
+  toOwnerUserId   String?
+  createdAt       DateTime @default(now())
+  enquiry         Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  actor           User     @relation("EnquiryOwnershipActor", fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([enquiryId, createdAt])
   @@index([actorUserId, createdAt])

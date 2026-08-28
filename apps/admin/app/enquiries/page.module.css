@@ -117,15 +117,30 @@
   flex-wrap: wrap;
 }
 
-.contactLink {
+.actions form {
+  display: inline-flex;
+}
+
+.contactLink,
+.ownershipButton {
   display: inline-flex;
   align-items: center;
   min-height: 2.35rem;
   padding: 0.45rem 0.8rem;
   border-radius: 0.65rem;
   border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
-  text-decoration: none;
+  font: inherit;
   font-weight: 650;
+}
+
+.contactLink {
+  text-decoration: none;
+}
+
+.ownershipButton {
+  cursor: pointer;
+  background: transparent;
+  color: inherit;
 }
 
 .muted {
