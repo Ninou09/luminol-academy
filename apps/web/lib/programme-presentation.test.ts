@@ -54,16 +54,14 @@ describe('localizeProgrammeViewAction', () => {
 describe('programme waitlist presentation', () => {
   it('marks only the operator-approved ACT slug as next-cohort waitlist', () => {
     expect(isProgrammeWaitlist('acceptance-commitment-therapy-act')).toBe(true);
-    expect(isProgrammeWaitlist(' ACCEPTANCE-COMMITMENT-THERAPY-ACT ')).toBe(
-      true,
-    );
+    expect(
+      isProgrammeWaitlist(' ACCEPTANCE-COMMITMENT-THERAPY-ACT '),
+    ).toBe(true);
     expect(isProgrammeWaitlist('english-conversation')).toBe(false);
   });
 
   it('provides localized waitlist labels and contact actions', () => {
-    expect(localizeProgrammeWaitlistLabel('en')).toBe(
-      'Next cohort · Waitlist',
-    );
+    expect(localizeProgrammeWaitlistLabel('en')).toBe('Next cohort · Waitlist');
     expect(localizeProgrammeWaitlistLabel('fr')).toBe(
       'Prochaine cohorte · Liste d’attente',
     );
@@ -71,9 +69,7 @@ describe('programme waitlist presentation', () => {
       'الفوج القادم · قائمة الانتظار',
     );
 
-    expect(localizeProgrammeWaitlistAction('en')).toBe(
-      'Ask about next cohort',
-    );
+    expect(localizeProgrammeWaitlistAction('en')).toBe('Ask about next cohort');
     expect(localizeProgrammeWaitlistAction('fr')).toBe(
       'Demander la prochaine cohorte',
     );
