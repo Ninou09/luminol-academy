@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { getSchools, isSchoolSlug, schools } from './schools';
+
+import { getSchool, getSchools, isSchoolSlug, schools } from './schools';
 
 describe('Luminol school content', () => {
   it('keeps the three public school routes stable', () => {
@@ -33,4 +34,33 @@ describe('Luminol school content', () => {
     expect(getSchools('fr').training.name).toBe('Formation professionnelle');
     expect(getSchools('en').languages.slug).toBe('languages');
   });
+
+  it.each([
+    ['en', 'Therapy & consultations'],
+    ['fr', 'Thérapie & consultations'],
+    ['ar', 'العلاج النفسي والاستشارات'],
+  ] as const)('makes therapy and consultations visible for %s', (locale, title) => {
+    const psychology = getSchool(locale, 'psychology');
+
+    expect(psychology.programs[0]?.title).toBe(title);
+    expect(psychology.introduction).toContain(
+      locale === 'ar' ? 'الاستشارات' : 'consult',
+    );
+  });
+
+  it.each(['en', 'fr', 'ar'] as const)(
+    'distinguishes clinical and educational pathways in the safety note for %s',
+    (locale) => {
+      const note = getSchool(locale, 'psychology').note;
+
+      expect(note).toMatch(
+        locale === 'ar' ? /العلاج النفسي|الاستشارات/ : /thérapie|therapy/i,
+      );
+      expect(note).toMatch(
+        locale === 'ar'
+          ? /البرامج التعليمية/
+          : /programmes? éducatifs|educational programmes/i,
+      );
+    },
+  );
 });
