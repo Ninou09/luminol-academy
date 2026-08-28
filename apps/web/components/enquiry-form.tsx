@@ -4,10 +4,12 @@ import type { Locale } from '@luminol/localization';
 import { Button } from '@luminol/ui';
 import { useState, type FormEvent } from 'react';
 
+import { getEnquiryQualificationCopy } from '../lib/enquiry-qualification-localization';
 import type { PublicEnquirySchool } from '../lib/programme-enquiry';
 import type { getPublicCopy } from '../lib/public-localization';
 
 type FormCopy = ReturnType<typeof getPublicCopy>['form'];
+type ContactPreference = '' | 'EMAIL' | 'PHONE' | 'WHATSAPP';
 
 type SubmissionState =
   | { status: 'idle'; message: '' }
@@ -28,11 +30,16 @@ export function EnquiryForm({
   initialSchool = 'GENERAL',
   initialMessage = '',
 }: EnquiryFormProps) {
+  const qualification = getEnquiryQualificationCopy(locale);
+  const [preferredContact, setPreferredContact] =
+    useState<ContactPreference>('');
   const [submission, setSubmission] = useState<SubmissionState>({
     status: 'idle',
     message: '',
   });
   const isSubmitting = submission.status === 'submitting';
+  const requiresPhone =
+    preferredContact === 'PHONE' || preferredContact === 'WHATSAPP';
 
   async function submitEnquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -49,6 +56,10 @@ export function EnquiryForm({
           name: formData.get('name'),
           email: formData.get('email'),
           phone: formData.get('phone'),
+          city: formData.get('city'),
+          preferredContact: formData.get('preferredContact'),
+          deliveryPreference: formData.get('deliveryPreference'),
+          timingPreference: formData.get('timingPreference'),
           school: formData.get('school'),
           message: formData.get('message'),
           locale,
@@ -61,6 +72,7 @@ export function EnquiryForm({
       if (!response.ok || !payload.submitted) throw new Error(copy.error);
 
       form.reset();
+      setPreferredContact('');
       setSubmission({ status: 'success', message: copy.success });
     } catch {
       setSubmission({ status: 'error', message: copy.error });
@@ -103,10 +115,71 @@ export function EnquiryForm({
           />
         </label>
         <label>
+          <span>{qualification.city}</span>
+          <input
+            autoComplete="address-level2"
+            maxLength={120}
+            minLength={2}
+            name="city"
+            required
+            type="text"
+          />
+        </label>
+        <label>
+          <span>{qualification.preferredContact}</span>
+          <select
+            defaultValue=""
+            name="preferredContact"
+            onChange={(event) =>
+              setPreferredContact(event.currentTarget.value as ContactPreference)
+            }
+            required
+          >
+            <option value="" disabled>
+              {qualification.chooseContact}
+            </option>
+            <option value="EMAIL">{qualification.contactEmail}</option>
+            <option value="PHONE">{qualification.contactPhone}</option>
+            <option value="WHATSAPP">{qualification.contactWhatsapp}</option>
+          </select>
+        </label>
+        <label>
           <span>
-            {copy.phone} <small>{copy.optional}</small>
+            {copy.phone}{' '}
+            {!requiresPhone ? <small>{copy.optional}</small> : null}
           </span>
-          <input autoComplete="tel" maxLength={30} name="phone" type="tel" />
+          <input
+            autoComplete="tel"
+            maxLength={30}
+            name="phone"
+            required={requiresPhone}
+            type="tel"
+          />
+          <small>{qualification.phoneHint}</small>
+        </label>
+        <label>
+          <span>{qualification.deliveryPreference}</span>
+          <select defaultValue="" name="deliveryPreference" required>
+            <option value="" disabled>
+              {qualification.chooseDelivery}
+            </option>
+            <option value="IN_PERSON">{qualification.inPerson}</option>
+            <option value="ONLINE">{qualification.online}</option>
+            <option value="FLEXIBLE">{qualification.flexible}</option>
+            <option value="NOT_SURE">{qualification.notSure}</option>
+          </select>
+        </label>
+        <label>
+          <span>{qualification.timingPreference}</span>
+          <select defaultValue="" name="timingPreference" required>
+            <option value="" disabled>
+              {qualification.chooseTiming}
+            </option>
+            <option value="SOON">{qualification.soon}</option>
+            <option value="WITHIN_MONTH">{qualification.withinMonth}</option>
+            <option value="LATER">{qualification.later}</option>
+            <option value="NOT_SURE">{qualification.notSure}</option>
+          </select>
         </label>
         <label>
           <span>{copy.interest}</span>
