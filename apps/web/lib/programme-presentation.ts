@@ -27,6 +27,20 @@ const PROGRAMME_VIEW_ACTION_LABELS = {
   ar: 'عرض البرنامج',
 } as const satisfies Record<Locale, string>;
 
+const PROGRAMME_WAITLIST_LABELS = {
+  en: 'Next cohort · Waitlist',
+  fr: 'Prochaine cohorte · Liste d’attente',
+  ar: 'الفوج القادم · قائمة الانتظار',
+} as const satisfies Record<Locale, string>;
+
+const PROGRAMME_WAITLIST_ACTION_LABELS = {
+  en: 'Ask about next cohort',
+  fr: 'Demander la prochaine cohorte',
+  ar: 'اسأل عن الفوج القادم',
+} as const satisfies Record<Locale, string>;
+
+const waitlistProgrammeSlugs = new Set(['acceptance-commitment-therapy-act']);
+
 export function localizeProgrammeDelivery(
   locale: Locale,
   delivery: string | null | undefined,
@@ -43,4 +57,16 @@ export function localizeProgrammeDelivery(
 
 export function localizeProgrammeViewAction(locale: Locale): string {
   return PROGRAMME_VIEW_ACTION_LABELS[locale];
+}
+
+export function isProgrammeWaitlist(slug: string): boolean {
+  return waitlistProgrammeSlugs.has(slug.trim().toLowerCase());
+}
+
+export function localizeProgrammeWaitlistLabel(locale: Locale): string {
+  return PROGRAMME_WAITLIST_LABELS[locale];
+}
+
+export function localizeProgrammeWaitlistAction(locale: Locale): string {
+  return PROGRAMME_WAITLIST_ACTION_LABELS[locale];
 }

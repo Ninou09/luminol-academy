@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  isProgrammeWaitlist,
   localizeProgrammeDelivery,
   localizeProgrammeViewAction,
+  localizeProgrammeWaitlistAction,
+  localizeProgrammeWaitlistLabel,
 } from './programme-presentation';
 
 describe('localizeProgrammeDelivery', () => {
@@ -46,4 +49,30 @@ describe('localizeProgrammeViewAction', () => {
       expect(localizeProgrammeViewAction(locale)).toBe(expected);
     },
   );
+});
+
+describe('programme waitlist presentation', () => {
+  it('marks only the operator-approved ACT slug as next-cohort waitlist', () => {
+    expect(isProgrammeWaitlist('acceptance-commitment-therapy-act')).toBe(true);
+    expect(isProgrammeWaitlist(' ACCEPTANCE-COMMITMENT-THERAPY-ACT ')).toBe(
+      true,
+    );
+    expect(isProgrammeWaitlist('english-conversation')).toBe(false);
+  });
+
+  it('provides localized waitlist labels and contact actions', () => {
+    expect(localizeProgrammeWaitlistLabel('en')).toBe('Next cohort · Waitlist');
+    expect(localizeProgrammeWaitlistLabel('fr')).toBe(
+      'Prochaine cohorte · Liste d’attente',
+    );
+    expect(localizeProgrammeWaitlistLabel('ar')).toBe(
+      'الفوج القادم · قائمة الانتظار',
+    );
+
+    expect(localizeProgrammeWaitlistAction('en')).toBe('Ask about next cohort');
+    expect(localizeProgrammeWaitlistAction('fr')).toBe(
+      'Demander la prochaine cohorte',
+    );
+    expect(localizeProgrammeWaitlistAction('ar')).toBe('اسأل عن الفوج القادم');
+  });
 });
