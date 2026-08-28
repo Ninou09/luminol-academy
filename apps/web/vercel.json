@@ -1,11 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "git": {
-    "deploymentEnabled": {
-      "*": false,
-      "main": true,
-      "preview-*": true
-    }
-  },
-  "ignoreCommand": "if [ -z \"$VERCEL_GIT_PREVIOUS_SHA\" ]; then exit 1; fi; turbo query affected --base=\"$VERCEL_GIT_PREVIOUS_SHA\" --packages @luminol/web --exit-code"
+  "ignoreCommand": "cd ../.. && turbo query affected --base=${VERCEL_GIT_PREVIOUS_SHA:-HEAD^1} --packages @luminol/web --exit-code"
 }
