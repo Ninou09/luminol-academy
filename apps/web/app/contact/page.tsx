@@ -56,7 +56,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
-  const [locale, params] = await Promise.all([getRequestLocale(), searchParams]);
+  const [locale, params] = await Promise.all([
+    getRequestLocale(),
+    searchParams,
+  ]);
   const publicCopy = getPublicCopy(locale);
   const copy = publicCopy.contact;
   const schools = getSchools(locale);
