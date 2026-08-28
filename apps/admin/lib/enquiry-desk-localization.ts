@@ -2,15 +2,9 @@ import type { Locale } from '@luminol/localization';
 
 export type EnquiryContactPreferenceValue = 'EMAIL' | 'PHONE' | 'WHATSAPP';
 export type EnquiryDeliveryPreferenceValue =
-  | 'IN_PERSON'
-  | 'ONLINE'
-  | 'FLEXIBLE'
-  | 'NOT_SURE';
+  'IN_PERSON' | 'ONLINE' | 'FLEXIBLE' | 'NOT_SURE';
 export type EnquiryTimingPreferenceValue =
-  | 'SOON'
-  | 'WITHIN_MONTH'
-  | 'LATER'
-  | 'NOT_SURE';
+  'SOON' | 'WITHIN_MONTH' | 'LATER' | 'NOT_SURE';
 
 export type EnquiryDeskCopy = {
   eyebrow: string;
@@ -263,19 +257,25 @@ export function getEnquiryContactPreferenceLabel(
   locale: Locale,
   value: EnquiryContactPreferenceValue | null,
 ): string {
-  return value ? CONTACT_LABELS[locale][value] : ENQUIRY_DESK_COPY[locale].notProvided;
+  return value
+    ? CONTACT_LABELS[locale][value]
+    : ENQUIRY_DESK_COPY[locale].notProvided;
 }
 
 export function getEnquiryDeliveryPreferenceLabel(
   locale: Locale,
   value: EnquiryDeliveryPreferenceValue | null,
 ): string {
-  return value ? DELIVERY_LABELS[locale][value] : ENQUIRY_DESK_COPY[locale].notProvided;
+  return value
+    ? DELIVERY_LABELS[locale][value]
+    : ENQUIRY_DESK_COPY[locale].notProvided;
 }
 
 export function getEnquiryTimingPreferenceLabel(
   locale: Locale,
   value: EnquiryTimingPreferenceValue | null,
 ): string {
-  return value ? TIMING_LABELS[locale][value] : ENQUIRY_DESK_COPY[locale].notProvided;
+  return value
+    ? TIMING_LABELS[locale][value]
+    : ENQUIRY_DESK_COPY[locale].notProvided;
 }

@@ -131,7 +131,9 @@ export function EnquiryForm({
             defaultValue=""
             name="preferredContact"
             onChange={(event) =>
-              setPreferredContact(event.currentTarget.value as ContactPreference)
+              setPreferredContact(
+                event.currentTarget.value as ContactPreference,
+              )
             }
             required
           >

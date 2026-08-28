@@ -43,7 +43,8 @@ suite('enquiry qualification persistence', () => {
         name: `Legacy Qualification Test ${suffix}`,
         email: `enquiry-qualification-legacy-${suffix}@example.test`,
         school: 'GENERAL',
-        message: 'This row verifies the new qualification fields remain nullable.',
+        message:
+          'This row verifies the new qualification fields remain nullable.',
         consent: true,
       },
       select: {
