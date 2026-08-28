@@ -15,6 +15,11 @@ const transitionSchema = z.object({
   toStatus: z.enum(enquiryStatuses),
 });
 
+const ownershipSchema = z.object({
+  enquiryId: z.string().min(1).max(128),
+  operation: z.enum(['assign-to-me', 'unassign']),
+});
+
 export async function transitionEnquiryStatus(formData: FormData) {
   const administrator = await requirePermission('academy:manage');
   const input = transitionSchema.parse({
@@ -53,5 +58,47 @@ export async function transitionEnquiryStatus(formData: FormData) {
   });
 
   revalidatePath('/');
+  revalidatePath('/enquiries');
+}
+
+export async function updateEnquiryOwnership(formData: FormData) {
+  const administrator = await requirePermission('academy:manage');
+  const input = ownershipSchema.parse({
+    enquiryId: formData.get('enquiryId'),
+    operation: formData.get('operation'),
+  });
+
+  await db.$transaction(async (transaction: Prisma.TransactionClient) => {
+    const enquiry = await transaction.enquiry.findUnique({
+      where: { id: input.enquiryId },
+      select: { id: true, ownerUserId: true },
+    });
+
+    if (!enquiry) throw new Error('Enquiry not found');
+
+    const toOwnerUserId =
+      input.operation === 'assign-to-me' ? administrator.id : null;
+
+    if (enquiry.ownerUserId === toOwnerUserId) return;
+
+    const updated = await transaction.enquiry.updateMany({
+      where: { id: enquiry.id, ownerUserId: enquiry.ownerUserId },
+      data: { ownerUserId: toOwnerUserId },
+    });
+
+    if (updated.count !== 1) {
+      throw new Error('Enquiry ownership was updated by another administrator');
+    }
+
+    await transaction.enquiryOwnershipEvent.create({
+      data: {
+        enquiryId: enquiry.id,
+        actorUserId: administrator.id,
+        fromOwnerUserId: enquiry.ownerUserId,
+        toOwnerUserId,
+      },
+    });
+  });
+
   revalidatePath('/enquiries');
 }
