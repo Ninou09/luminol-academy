@@ -10,15 +10,42 @@ import {
   isEnquiryTransitionAllowed,
 } from '../../lib/operations';
 
+const enquiryIdSchema = z.string().min(1).max(128);
+
 const transitionSchema = z.object({
-  enquiryId: z.string().min(1).max(128),
+  enquiryId: enquiryIdSchema,
   toStatus: z.enum(enquiryStatuses),
 });
 
 const ownershipSchema = z.object({
-  enquiryId: z.string().min(1).max(128),
+  enquiryId: enquiryIdSchema,
   operation: z.enum(['assign-to-me', 'unassign']),
 });
+
+const dateOnlySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+const followUpPlanSchema = z.discriminatedUnion('operation', [
+  z.object({
+    enquiryId: enquiryIdSchema,
+    operation: z.literal('save'),
+    nextFollowUpOn: dateOnlySchema,
+    nextAction: z.string().trim().min(1).max(240),
+  }),
+  z.object({
+    enquiryId: enquiryIdSchema,
+    operation: z.literal('clear'),
+  }),
+]);
+
+function parseDateOnly(value: string) {
+  const date = new Date(`${value}T00:00:00.000Z`);
+  if (
+    Number.isNaN(date.getTime()) ||
+    date.toISOString().slice(0, 10) !== value
+  ) {
+    throw new Error('Invalid follow-up date');
+  }
+  return date;
+}
 
 export async function transitionEnquiryStatus(formData: FormData) {
   const administrator = await requirePermission('academy:manage');
@@ -96,6 +123,68 @@ export async function updateEnquiryOwnership(formData: FormData) {
         actorUserId: administrator.id,
         fromOwnerUserId: enquiry.ownerUserId,
         toOwnerUserId,
+      },
+    });
+  });
+
+  revalidatePath('/enquiries');
+}
+
+export async function updateEnquiryFollowUpPlan(formData: FormData) {
+  const administrator = await requirePermission('academy:manage');
+  const operation = formData.get('operation');
+  const input = followUpPlanSchema.parse({
+    enquiryId: formData.get('enquiryId'),
+    operation,
+    ...(operation === 'save'
+      ? {
+          nextFollowUpOn: formData.get('nextFollowUpOn'),
+          nextAction: formData.get('nextAction'),
+        }
+      : {}),
+  });
+  const toNextFollowUpAt =
+    input.operation === 'save' ? parseDateOnly(input.nextFollowUpOn) : null;
+  const toNextAction = input.operation === 'save' ? input.nextAction : null;
+
+  await db.$transaction(async (transaction: Prisma.TransactionClient) => {
+    const enquiry = await transaction.enquiry.findUnique({
+      where: { id: input.enquiryId },
+      select: { id: true, nextFollowUpAt: true, nextAction: true },
+    });
+
+    if (!enquiry) throw new Error('Enquiry not found');
+
+    const currentDate = enquiry.nextFollowUpAt?.getTime() ?? null;
+    const nextDate = toNextFollowUpAt?.getTime() ?? null;
+    if (currentDate === nextDate && enquiry.nextAction === toNextAction) return;
+
+    const updated = await transaction.enquiry.updateMany({
+      where: {
+        id: enquiry.id,
+        nextFollowUpAt: enquiry.nextFollowUpAt,
+        nextAction: enquiry.nextAction,
+      },
+      data: {
+        nextFollowUpAt: toNextFollowUpAt,
+        nextAction: toNextAction,
+      },
+    });
+
+    if (updated.count !== 1) {
+      throw new Error(
+        'Enquiry follow-up plan was updated by another administrator',
+      );
+    }
+
+    await transaction.enquiryFollowUpEvent.create({
+      data: {
+        enquiryId: enquiry.id,
+        actorUserId: administrator.id,
+        fromNextFollowUpAt: enquiry.nextFollowUpAt,
+        toNextFollowUpAt,
+        fromNextAction: enquiry.nextAction,
+        toNextAction,
       },
     });
   });
