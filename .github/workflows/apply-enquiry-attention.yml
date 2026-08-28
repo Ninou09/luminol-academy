@@ -31,6 +31,8 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm db:generate
       - name: Apply attention queue patches
         run: python scripts/apply-enquiry-attention-patch.py
       - name: Format changed files
