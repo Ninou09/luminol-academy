@@ -13,14 +13,14 @@
     "@luminol/config": "workspace:*",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "styled-components": "^6.5.0"
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
-    "@sanity/vision": "6.9.1",
+    "@sanity/vision": "6.10.1",
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.18",
-    "eslint": "^10.8.0",
-    "sanity": "6.9.1",
+    "eslint": "^10.9.1",
+    "sanity": "6.10.1",
     "typescript": "^5.8.3",
     "vitest": "^4.1.11"
   },
