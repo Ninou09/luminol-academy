@@ -15,7 +15,7 @@ const SCHOOL_TO_ENQUIRY = {
   training: 'TRAINING',
 } as const satisfies Record<
   PublicProgrammeDetail['school'],
-  Exclude<PublicEnquirySchool, 'GENERAL'>
+  Exclude<PublicEnquirySchool, 'GENERAL'>,
 >;
 
 const INTEREST_COPY = {
@@ -39,7 +39,7 @@ const INTEREST_COPY = {
   {
     programme: (title: string) => string;
     waitlist: (title: string) => string;
-  }
+  },
 >;
 
 export function getProgrammeEnquiryDefaults(
