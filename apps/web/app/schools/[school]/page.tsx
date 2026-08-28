@@ -14,7 +14,12 @@ import {
   type EditorialMediaAsset,
 } from '../../../components/editorial-media';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
-import { localizeProgrammeDelivery } from '../../../lib/programme-presentation';
+import {
+  isProgrammeWaitlist,
+  localizeProgrammeDelivery,
+  localizeProgrammeWaitlistAction,
+  localizeProgrammeWaitlistLabel,
+} from '../../../lib/programme-presentation';
 import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
 import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
@@ -120,22 +125,36 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     description: string;
     slug?: string;
     delivery?: string | null;
+    actionLabel?: string;
     image?: EditorialMediaAsset | null;
   }> = cmsProgrammes?.length
-    ? cmsProgrammes.map((programme) => ({
-        id: programme._id,
-        title: programme.title,
-        description: programme.summary,
-        slug: programme.slug?.current,
-        delivery: localizeProgrammeDelivery(locale, programme.delivery),
-        image: programme.image
-          ? {
-              src: buildSanityProgrammeImageUrl(programme.image),
-              alt: programme.image.alt,
-              source: 'sanity' as const,
-            }
-          : null,
-      }))
+    ? cmsProgrammes.map((programme) => {
+        const programmeSlug = programme.slug?.current;
+        const isWaitlist = programmeSlug
+          ? isProgrammeWaitlist(programmeSlug)
+          : false;
+
+        return {
+          id: programme._id,
+          title: programme.title,
+          description: programme.summary,
+          slug: programmeSlug,
+          delivery: isWaitlist
+            ? localizeProgrammeWaitlistLabel(locale)
+            : localizeProgrammeDelivery(locale, programme.delivery),
+          actionLabel: isWaitlist
+            ? localizeProgrammeWaitlistAction(locale)
+            : copy.askProgram,
+          image:
+            !isWaitlist && programme.image
+              ? {
+                  src: buildSanityProgrammeImageUrl(programme.image),
+                  alt: programme.image.alt,
+                  source: 'sanity' as const,
+                }
+              : null,
+        };
+      })
     : school.programs.map((programme) => ({
         id: programme.title,
         title: programme.title,
@@ -344,9 +363,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 <p dir="auto">{program.description}</p>
                 <Link
                   href={localizeHref(locale, '/contact')}
-                  aria-label={`${copy.askProgram}: ${program.title}`}
+                  aria-label={`${program.actionLabel ?? copy.askProgram}: ${program.title}`}
                 >
-                  {copy.askProgram} <b aria-hidden="true">→</b>
+                  {program.actionLabel ?? copy.askProgram}{' '}
+                  <b aria-hidden="true">→</b>
                 </Link>
               </article>
             ))}
