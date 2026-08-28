@@ -8,7 +8,7 @@ describe('psychology contact pathway copy', () => {
       'Therapy & consultations · Child and family guidance · Coaching programs',
     );
     expect(getPsychologyContactPathDescription('fr')).toBe(
-      'Thérapie et consultations · Accompagnement enfant et famille · Programmes de coaching',
+      'Thérapie & consultations · Accompagnement enfant et famille · Programmes de coaching',
     );
     expect(getPsychologyContactPathDescription('ar')).toBe(
       'العلاج النفسي والاستشارات · إرشاد الطفل والعائلة · برامج الكوتشينغ',
