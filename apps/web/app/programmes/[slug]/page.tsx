@@ -16,7 +16,12 @@ import {
   getPublicProgrammeBySlug,
   type PublicProgrammeDetail,
 } from '../../../lib/programme-detail';
-import { localizeProgrammeDelivery } from '../../../lib/programme-presentation';
+import {
+  isProgrammeWaitlist,
+  localizeProgrammeDelivery,
+  localizeProgrammeWaitlistAction,
+  localizeProgrammeWaitlistLabel,
+} from '../../../lib/programme-presentation';
 import { getRequestLocale } from '../../../lib/request-locale';
 import {
   buildSanityProgrammeImageUrl,
@@ -41,12 +46,17 @@ const DETAIL_COPY = {
     audience: 'Who this programme is for',
     facts: 'Programme information',
     school: 'School',
+    status: 'Status',
     delivery: 'Delivery',
     languages: 'Languages',
     unspecified: 'Ask Luminol',
     back: 'Back to programmes',
     exploreSchool: 'Explore this school',
     ask: 'Ask Luminol',
+    waitlistNextEyebrow: 'Next cohort',
+    waitlistNextTitle: 'Interested in the next ACT cohort?',
+    waitlistNextBody:
+      'The next cohort has not been scheduled publicly yet. Contact Luminol to register your interest without relying on an expired date or unconfirmed delivery details.',
     nextEyebrow: 'Your next step',
     nextTitle: 'Want to know whether this programme fits your goal?',
     nextBody:
@@ -62,12 +72,17 @@ const DETAIL_COPY = {
     audience: 'À qui s’adresse ce programme',
     facts: 'Informations sur le programme',
     school: 'École',
+    status: 'Statut',
     delivery: 'Format',
     languages: 'Langues',
     unspecified: 'Contacter Luminol',
     back: 'Retour aux programmes',
     exploreSchool: 'Découvrir cette école',
     ask: 'Contacter Luminol',
+    waitlistNextEyebrow: 'Prochaine cohorte',
+    waitlistNextTitle: 'Intéressé par la prochaine cohorte ACT ?',
+    waitlistNextBody:
+      'La prochaine cohorte n’est pas encore programmée publiquement. Contactez Luminol pour signaler votre intérêt sans vous fier à une ancienne date ni à des modalités non confirmées.',
     nextEyebrow: 'Votre prochaine étape',
     nextTitle:
       'Vous souhaitez savoir si ce programme correspond à votre objectif ?',
@@ -84,12 +99,17 @@ const DETAIL_COPY = {
     audience: 'لمن صُمم هذا البرنامج',
     facts: 'معلومات البرنامج',
     school: 'المدرسة',
+    status: 'الحالة',
     delivery: 'نمط التقديم',
     languages: 'لغات التقديم',
     unspecified: 'اسأل لومينول',
     back: 'العودة إلى البرامج',
     exploreSchool: 'استكشف هذه المدرسة',
     ask: 'اسأل لومينول',
+    waitlistNextEyebrow: 'الفوج القادم',
+    waitlistNextTitle: 'هل أنت مهتم بالفوج القادم لدورة ACT؟',
+    waitlistNextBody:
+      'لم يُعلن عن موعد الفوج القادم بعد. تواصل مع لومينول لتسجيل اهتمامك دون الاعتماد على تاريخ منتهٍ أو تفاصيل تقديم لم يتم تأكيدها.',
     nextEyebrow: 'خطوتك التالية',
     nextTitle: 'هل تريد معرفة ما إذا كان هذا البرنامج يناسب هدفك؟',
     nextBody:
@@ -131,7 +151,8 @@ export async function generateMetadata({
 
   const pathname = `/programmes/${programme.slug.current}`;
   const route = localizePathname(locale, pathname);
-  const socialImage = programme.image
+  const isWaitlist = isProgrammeWaitlist(programme.slug.current);
+  const socialImage = !isWaitlist && programme.image
     ? {
         url: buildSanityProgrammeImageUrl(programme.image),
         width: 1200,
@@ -175,11 +196,22 @@ export default async function ProgrammeDetailPage({
   const copy = DETAIL_COPY[locale];
   const schools = getSchools(locale);
   const school = schools[programme.school];
-  const bodyParagraphs = getBodyParagraphs(programme);
-  const languageNames = programme.languages.map(
-    (language) => LANGUAGE_NAMES[locale][language],
-  );
-  const deliveryLabel = localizeProgrammeDelivery(locale, programme.delivery);
+  const isWaitlist = isProgrammeWaitlist(programme.slug.current);
+  const waitlistLabel = isWaitlist
+    ? localizeProgrammeWaitlistLabel(locale)
+    : null;
+  const primaryActionLabel = isWaitlist
+    ? localizeProgrammeWaitlistAction(locale)
+    : copy.ask;
+  const bodyParagraphs = isWaitlist ? [] : getBodyParagraphs(programme);
+  const languageNames = isWaitlist
+    ? []
+    : programme.languages.map(
+        (language) => LANGUAGE_NAMES[locale][language],
+      );
+  const deliveryLabel = isWaitlist
+    ? null
+    : localizeProgrammeDelivery(locale, programme.delivery);
   const programmePathname = `/programmes/${programme.slug.current}`;
   const localizedProgrammeHref = localizeHref(locale, programmePathname);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
@@ -200,8 +232,8 @@ export default async function ProgrammeDetailPage({
     name: programme.title,
     description: programme.summary,
     href: localizedProgrammeHref,
-    languages: programme.languages,
-    ...(programme.image
+    languages: isWaitlist ? [] : programme.languages,
+    ...(!isWaitlist && programme.image
       ? { image: buildSanityProgrammeImageUrl(programme.image) }
       : {}),
   });
@@ -246,7 +278,7 @@ export default async function ProgrammeDetailPage({
 
           <div className={styles.heroGrid}>
             <div className={styles.heroCopy}>
-              <p className="eyebrow">{copy.eyebrow}</p>
+              <p className="eyebrow">{waitlistLabel ?? copy.eyebrow}</p>
               <h1 id="programme-detail-title" dir="auto">
                 {programme.title}
               </h1>
@@ -257,6 +289,7 @@ export default async function ProgrammeDetailPage({
               <ul className={styles.meta} aria-label={copy.facts}>
                 <li>{school.name}</li>
                 {programme.featured ? <li>{copy.featured}</li> : null}
+                {waitlistLabel ? <li>{waitlistLabel}</li> : null}
                 {deliveryLabel ? <li>{deliveryLabel}</li> : null}
                 {languageNames.map((language) => (
                   <li key={language}>{language}</li>
@@ -265,7 +298,7 @@ export default async function ProgrammeDetailPage({
 
               <div className={styles.actions}>
                 <ButtonLink href={localizeHref(locale, '/contact')}>
-                  {copy.ask}
+                  {primaryActionLabel}
                 </ButtonLink>
                 <ButtonLink
                   href={localizeHref(
@@ -279,7 +312,7 @@ export default async function ProgrammeDetailPage({
               </div>
             </div>
 
-            {programme.image ? (
+            {!isWaitlist && programme.image ? (
               <figure className={styles.mediaFrame}>
                 <Image
                   src={buildSanityProgrammeImageUrl(programme.image)}
@@ -369,18 +402,27 @@ export default async function ProgrammeDetailPage({
                   <dt>{copy.school}</dt>
                   <dd>{school.name}</dd>
                 </div>
-                <div>
-                  <dt>{copy.delivery}</dt>
-                  <dd dir="auto">{deliveryLabel ?? copy.unspecified}</dd>
-                </div>
-                <div>
-                  <dt>{copy.languages}</dt>
-                  <dd>
-                    {languageNames.length > 0
-                      ? languageNames.join(' · ')
-                      : copy.unspecified}
-                  </dd>
-                </div>
+                {isWaitlist ? (
+                  <div>
+                    <dt>{copy.status}</dt>
+                    <dd>{waitlistLabel}</dd>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <dt>{copy.delivery}</dt>
+                      <dd dir="auto">{deliveryLabel ?? copy.unspecified}</dd>
+                    </div>
+                    <div>
+                      <dt>{copy.languages}</dt>
+                      <dd>
+                        {languageNames.length > 0
+                          ? languageNames.join(' · ')
+                          : copy.unspecified}
+                      </dd>
+                    </div>
+                  </>
+                )}
               </dl>
             </section>
           </div>
@@ -391,12 +433,16 @@ export default async function ProgrammeDetailPage({
           aria-labelledby="programme-next-title"
           data-programme-detail-region="next-step"
         >
-          <p className={styles.sectionLabel}>{copy.nextEyebrow}</p>
-          <h2 id="programme-next-title">{copy.nextTitle}</h2>
-          <p>{copy.nextBody}</p>
+          <p className={styles.sectionLabel}>
+            {isWaitlist ? copy.waitlistNextEyebrow : copy.nextEyebrow}
+          </p>
+          <h2 id="programme-next-title">
+            {isWaitlist ? copy.waitlistNextTitle : copy.nextTitle}
+          </h2>
+          <p>{isWaitlist ? copy.waitlistNextBody : copy.nextBody}</p>
           <div className={styles.footerActions}>
             <ButtonLink href={localizeHref(locale, '/contact')}>
-              {copy.ask}
+              {primaryActionLabel}
             </ButtonLink>
             <ButtonLink
               href={localizeHref(locale, '/programmes')}
