@@ -34,7 +34,9 @@ describe('Vercel Git deployment controls', () => {
       expect(config.ignoreCommand).toContain(
         'if [ -z "$VERCEL_GIT_PREVIOUS_SHA" ]; then exit 1; fi;',
       );
-      expect(config.ignoreCommand).toContain(`--packages ${workspace} --exit-code`);
+      expect(config.ignoreCommand).toContain(
+        `--packages ${workspace} --exit-code`,
+      );
     },
   );
 });
