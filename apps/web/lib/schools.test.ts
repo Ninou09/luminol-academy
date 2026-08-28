@@ -39,14 +39,17 @@ describe('Luminol school content', () => {
     ['en', 'Therapy & consultations'],
     ['fr', 'Thérapie & consultations'],
     ['ar', 'العلاج النفسي والاستشارات'],
-  ] as const)('makes therapy and consultations visible for %s', (locale, title) => {
-    const psychology = getSchool(locale, 'psychology');
+  ] as const)(
+    'makes therapy and consultations visible for %s',
+    (locale, title) => {
+      const psychology = getSchool(locale, 'psychology');
 
-    expect(psychology.programs[0]?.title).toBe(title);
-    expect(psychology.introduction).toContain(
-      locale === 'ar' ? 'الاستشارات' : 'consult',
-    );
-  });
+      expect(psychology.programs[0]?.title).toBe(title);
+      expect(psychology.introduction).toContain(
+        locale === 'ar' ? 'الاستشارات' : 'consult',
+      );
+    },
+  );
 
   it.each(['en', 'fr', 'ar'] as const)(
     'distinguishes clinical and educational pathways in the safety note for %s',
