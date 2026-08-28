@@ -1,0 +1,172 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.filterLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.activeFilter {
+  background: currentColor;
+}
+
+.activeFilter > span {
+  color: var(--admin-surface, white);
+}
+
+.list {
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.15rem;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--admin-surface, white) 96%, transparent);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.identity {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.identity h2 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.identity p,
+.metaGrid p,
+.messageBlock p {
+  margin: 0;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.8rem;
+}
+
+.metaItem {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.metaItem span,
+.messageLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.66;
+}
+
+.messageBlock {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.9rem;
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, currentColor 5%, transparent);
+}
+
+.messageBody {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
+
+.privacyNote {
+  font-size: 0.78rem;
+  opacity: 0.68;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.35rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.65rem;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  text-decoration: none;
+  font-weight: 650;
+}
+
+.muted {
+  font-size: 0.85rem;
+  opacity: 0.62;
+}
+
+.statusRow {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.statusForm {
+  display: flex;
+  align-items: end;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.statusForm label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.statusForm select,
+.statusForm button {
+  min-height: 2.35rem;
+}
+
+@media (max-width: 700px) {
+  .card {
+    padding: 1rem;
+  }
+
+  .statusForm,
+  .statusForm label,
+  .statusForm select,
+  .statusForm button {
+    width: 100%;
+  }
+}

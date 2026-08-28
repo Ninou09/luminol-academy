@@ -55,9 +55,9 @@ export default async function Page() {
           <a className="active" href="#overview">
             <span>01</span> {copy.shell.overview}
           </a>
-          <a href="#enquiries">
+          <Link href={localizeHref(locale, '/enquiries')}>
             <span>02</span> {copy.shell.enquiries}
-          </a>
+          </Link>
           <a href="#learners">
             <span>03</span> {copy.shell.learners}
           </a>
