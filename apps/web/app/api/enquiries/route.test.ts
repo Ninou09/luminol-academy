@@ -14,6 +14,10 @@ const validEnquiry = {
   name: 'Luminol Learner',
   email: 'learner@example.com',
   phone: '',
+  city: 'Blida',
+  preferredContact: 'EMAIL',
+  deliveryPreference: 'FLEXIBLE',
+  timingPreference: 'WITHIN_MONTH',
   school: 'PSYCHOLOGY',
   message: 'I would like help choosing the most suitable program.',
   locale: 'en',
@@ -48,7 +52,7 @@ describe('POST /api/enquiries', () => {
     vi.unstubAllEnvs();
   });
 
-  it('stores a valid same-origin enquiry without retaining request metadata', async () => {
+  it('stores a qualified same-origin enquiry without retaining request metadata', async () => {
     const response = await POST(
       createRequest(validEnquiry, '203.0.113.10', {
         'content-type': 'application/json; charset=utf-8',
@@ -64,6 +68,10 @@ describe('POST /api/enquiries', () => {
         name: validEnquiry.name,
         email: validEnquiry.email,
         phone: null,
+        city: validEnquiry.city,
+        preferredContact: validEnquiry.preferredContact,
+        deliveryPreference: validEnquiry.deliveryPreference,
+        timingPreference: validEnquiry.timingPreference,
         school: validEnquiry.school,
         message: validEnquiry.message,
         locale: validEnquiry.locale,
@@ -119,6 +127,40 @@ describe('POST /api/enquiries', () => {
     expect(invalid.headers.get('cache-control')).toBe('no-store');
     expect(honeypot.headers.get('cache-control')).toBe('no-store');
     expect(createEnquiry).not.toHaveBeenCalled();
+  });
+
+  it('rejects missing qualification fields and contact preferences that require a phone', async () => {
+    const missingCity = await POST(
+      createRequest({ ...validEnquiry, city: '' }, '203.0.113.18'),
+    );
+    const missingPhone = await POST(
+      createRequest(
+        { ...validEnquiry, preferredContact: 'WHATSAPP', phone: '' },
+        '203.0.113.19',
+      ),
+    );
+
+    expect(missingCity.status).toBe(400);
+    expect(missingPhone.status).toBe(400);
+    expect(createEnquiry).not.toHaveBeenCalled();
+  });
+
+  it('persists a phone number when WhatsApp follow-up is requested', async () => {
+    const enquiry = {
+      ...validEnquiry,
+      preferredContact: 'WHATSAPP',
+      phone: '+213 555 12 34 56',
+    };
+
+    const response = await POST(createRequest(enquiry, '203.0.113.20'));
+
+    expect(response.status).toBe(201);
+    expect(createEnquiry).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        phone: enquiry.phone,
+        preferredContact: 'WHATSAPP',
+      }),
+    });
   });
 
   it('returns a safe error when persistence fails', async () => {

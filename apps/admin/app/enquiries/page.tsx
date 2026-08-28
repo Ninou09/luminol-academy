@@ -11,7 +11,12 @@ import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAdminEnumLabel } from '../../lib/admin-localization';
-import { getEnquiryDeskCopy } from '../../lib/enquiry-desk-localization';
+import {
+  getEnquiryContactPreferenceLabel,
+  getEnquiryDeliveryPreferenceLabel,
+  getEnquiryDeskCopy,
+  getEnquiryTimingPreferenceLabel,
+} from '../../lib/enquiry-desk-localization';
 import {
   displayPersonName,
   enquiryStatuses,
@@ -106,6 +111,10 @@ export default async function EnquiriesAdminPage({
       name: true,
       email: true,
       phone: true,
+      city: true,
+      preferredContact: true,
+      deliveryPreference: true,
+      timingPreference: true,
       school: true,
       message: true,
       locale: true,
@@ -290,6 +299,37 @@ export default async function EnquiriesAdminPage({
                       <div className={styles.metaItem}>
                         <span>{copy.contact}</span>
                         <p dir="auto">{enquiry.phone || copy.noPhone}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.city}</span>
+                        <p dir="auto">{enquiry.city || copy.notProvided}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.preferredContact}</span>
+                        <p>
+                          {getEnquiryContactPreferenceLabel(
+                            locale,
+                            enquiry.preferredContact,
+                          )}
+                        </p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.deliveryPreference}</span>
+                        <p>
+                          {getEnquiryDeliveryPreferenceLabel(
+                            locale,
+                            enquiry.deliveryPreference,
+                          )}
+                        </p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.timingPreference}</span>
+                        <p>
+                          {getEnquiryTimingPreferenceLabel(
+                            locale,
+                            enquiry.timingPreference,
+                          )}
+                        </p>
                       </div>
                       <div className={styles.metaItem}>
                         <span>{copy.owner}</span>

@@ -1,5 +1,11 @@
 import type { Locale } from '@luminol/localization';
 
+export type EnquiryContactPreferenceValue = 'EMAIL' | 'PHONE' | 'WHATSAPP';
+export type EnquiryDeliveryPreferenceValue =
+  'IN_PERSON' | 'ONLINE' | 'FLEXIBLE' | 'NOT_SURE';
+export type EnquiryTimingPreferenceValue =
+  'SOON' | 'WITHIN_MONTH' | 'LATER' | 'NOT_SURE';
+
 export type EnquiryDeskCopy = {
   eyebrow: string;
   title: string;
@@ -17,6 +23,11 @@ export type EnquiryDeskCopy = {
   email: string;
   call: string;
   noPhone: string;
+  city: string;
+  preferredContact: string;
+  deliveryPreference: string;
+  timingPreference: string;
+  notProvided: string;
   school: string;
   language: string;
   source: string;
@@ -59,6 +70,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     email: 'Email',
     call: 'Call',
     noPhone: 'No phone provided',
+    city: 'City / area',
+    preferredContact: 'Preferred contact',
+    deliveryPreference: 'Preferred format',
+    timingPreference: 'Preferred timing',
+    notProvided: 'Not provided',
     school: 'School',
     language: 'Language',
     source: 'Source',
@@ -100,6 +116,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     email: 'E-mail',
     call: 'Appeler',
     noPhone: 'Aucun téléphone fourni',
+    city: 'Ville / région',
+    preferredContact: 'Contact préféré',
+    deliveryPreference: 'Format préféré',
+    timingPreference: 'Délai souhaité',
+    notProvided: 'Non renseigné',
     school: 'Pôle',
     language: 'Langue',
     source: 'Source',
@@ -141,6 +162,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     email: 'البريد الإلكتروني',
     call: 'اتصال',
     noPhone: 'لم يتم تقديم رقم هاتف',
+    city: 'المدينة / المنطقة',
+    preferredContact: 'وسيلة التواصل المفضلة',
+    deliveryPreference: 'طريقة الحضور المفضلة',
+    timingPreference: 'التوقيت المفضل',
+    notProvided: 'غير مذكور',
     school: 'المجال',
     language: 'اللغة',
     source: 'المصدر',
@@ -166,6 +192,90 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
   },
 };
 
+const CONTACT_LABELS: Record<
+  Locale,
+  Record<EnquiryContactPreferenceValue, string>
+> = {
+  en: { EMAIL: 'Email', PHONE: 'Phone', WHATSAPP: 'WhatsApp' },
+  fr: { EMAIL: 'E-mail', PHONE: 'Téléphone', WHATSAPP: 'WhatsApp' },
+  ar: { EMAIL: 'البريد الإلكتروني', PHONE: 'الهاتف', WHATSAPP: 'واتساب' },
+};
+
+const DELIVERY_LABELS: Record<
+  Locale,
+  Record<EnquiryDeliveryPreferenceValue, string>
+> = {
+  en: {
+    IN_PERSON: 'In person',
+    ONLINE: 'Online',
+    FLEXIBLE: 'Either / flexible',
+    NOT_SURE: 'Not sure yet',
+  },
+  fr: {
+    IN_PERSON: 'En présentiel',
+    ONLINE: 'En ligne',
+    FLEXIBLE: 'Les deux / flexible',
+    NOT_SURE: 'Pas encore sûr',
+  },
+  ar: {
+    IN_PERSON: 'حضوري',
+    ONLINE: 'عن بُعد',
+    FLEXIBLE: 'كلاهما / مرن',
+    NOT_SURE: 'لست متأكدًا بعد',
+  },
+};
+
+const TIMING_LABELS: Record<
+  Locale,
+  Record<EnquiryTimingPreferenceValue, string>
+> = {
+  en: {
+    SOON: 'As soon as practical',
+    WITHIN_MONTH: 'Within a month',
+    LATER: 'Later',
+    NOT_SURE: 'Not sure yet',
+  },
+  fr: {
+    SOON: 'Dès que possible',
+    WITHIN_MONTH: 'Dans le mois',
+    LATER: 'Plus tard',
+    NOT_SURE: 'Pas encore sûr',
+  },
+  ar: {
+    SOON: 'في أقرب وقت مناسب',
+    WITHIN_MONTH: 'خلال شهر',
+    LATER: 'لاحقًا',
+    NOT_SURE: 'لست متأكدًا بعد',
+  },
+};
+
 export function getEnquiryDeskCopy(locale: Locale): EnquiryDeskCopy {
   return ENQUIRY_DESK_COPY[locale];
+}
+
+export function getEnquiryContactPreferenceLabel(
+  locale: Locale,
+  value: EnquiryContactPreferenceValue | null,
+): string {
+  return value
+    ? CONTACT_LABELS[locale][value]
+    : ENQUIRY_DESK_COPY[locale].notProvided;
+}
+
+export function getEnquiryDeliveryPreferenceLabel(
+  locale: Locale,
+  value: EnquiryDeliveryPreferenceValue | null,
+): string {
+  return value
+    ? DELIVERY_LABELS[locale][value]
+    : ENQUIRY_DESK_COPY[locale].notProvided;
+}
+
+export function getEnquiryTimingPreferenceLabel(
+  locale: Locale,
+  value: EnquiryTimingPreferenceValue | null,
+): string {
+  return value
+    ? TIMING_LABELS[locale][value]
+    : ENQUIRY_DESK_COPY[locale].notProvided;
 }
