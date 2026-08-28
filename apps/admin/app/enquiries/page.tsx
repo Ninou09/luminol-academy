@@ -18,10 +18,7 @@ import {
   type EnquiryStatusValue,
 } from '../../lib/operations';
 import { getAdminRequestLocale } from '../../lib/request-locale';
-import {
-  transitionEnquiryStatus,
-  updateEnquiryOwnership,
-} from './actions';
+import { transitionEnquiryStatus, updateEnquiryOwnership } from './actions';
 import styles from './page.module.css';
 
 type EnquiryPageProps = {
@@ -186,13 +183,17 @@ export default async function EnquiriesAdminPage({
                       <div className={styles.metaItem}>
                         <span>{copy.owner}</span>
                         <p dir="auto">
-                          {ownedByAdministrator ? copy.assignedToYou : ownerName}
+                          {ownedByAdministrator
+                            ? copy.assignedToYou
+                            : ownerName}
                         </p>
                       </div>
                     </div>
 
                     <div className={styles.messageBlock}>
-                      <span className={styles.messageLabel}>{copy.message}</span>
+                      <span className={styles.messageLabel}>
+                        {copy.message}
+                      </span>
                       <p className={styles.messageBody} dir="auto">
                         {enquiry.message}
                       </p>
