@@ -33,4 +33,37 @@ describe('Luminol school content', () => {
     expect(getSchools('fr').training.name).toBe('Formation professionnelle');
     expect(getSchools('en').languages.slug).toBe('languages');
   });
+
+  it('keeps therapy and consultations explicit and distinct in every locale', () => {
+    const expected = {
+      en: {
+        title: 'Therapy & consultations',
+        therapy: 'therapy',
+        consultation: 'consultation',
+      },
+      fr: {
+        title: 'Thérapie et consultations',
+        therapy: 'thérapie',
+        consultation: 'consultation',
+      },
+      ar: {
+        title: 'العلاج النفسي والاستشارات',
+        therapy: 'العلاج النفسي',
+        consultation: 'الاستشارة',
+      },
+    } as const;
+
+    for (const locale of ['ar', 'fr', 'en'] as const) {
+      const psychology = getSchools(locale).psychology;
+      const copy = expected[locale];
+      const introduction = psychology.introduction.toLocaleLowerCase(locale);
+      const note = psychology.note.toLocaleLowerCase(locale);
+
+      expect(psychology.programs[0]?.title).toBe(copy.title);
+      expect(introduction).toContain(copy.therapy);
+      expect(introduction).toContain(copy.consultation);
+      expect(note).toContain(copy.therapy);
+      expect(note).toContain(copy.consultation);
+    }
+  });
 });
