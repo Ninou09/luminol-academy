@@ -13,6 +13,11 @@ export type EnquiryDeskCopy = {
   back: string;
   filterByStatus: string;
   filterByFollowUp: string;
+  attentionQueue: string;
+  filterByAttention: string;
+  allAttention: string;
+  unassignedActive: string;
+  closedWithoutOutcome: string;
   all: string;
   allFollowUps: string;
   dueToday: string;
@@ -66,6 +71,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     back: 'Back to overview',
     filterByStatus: 'Filter by status',
     filterByFollowUp: 'Filter by follow-up',
+    attentionQueue: 'Attention queue',
+    filterByAttention: 'Filter by attention',
+    allAttention: 'Any attention state',
+    unassignedActive: 'Active & unassigned',
+    closedWithoutOutcome: 'Closed without outcome',
     all: 'All',
     allFollowUps: 'Any follow-up',
     dueToday: 'Due today',
@@ -119,6 +129,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     back: 'Retour à la vue d’ensemble',
     filterByStatus: 'Filtrer par statut',
     filterByFollowUp: 'Filtrer par suivi',
+    attentionQueue: 'Points d’attention',
+    filterByAttention: 'Filtrer par point d’attention',
+    allAttention: 'Tous les points d’attention',
+    unassignedActive: 'Actives non attribuées',
+    closedWithoutOutcome: 'Clôturées sans résultat',
     all: 'Toutes',
     allFollowUps: 'Tous les suivis',
     dueToday: 'À faire aujourd’hui',
@@ -172,6 +187,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     back: 'العودة إلى النظرة العامة',
     filterByStatus: 'التصفية حسب الحالة',
     filterByFollowUp: 'التصفية حسب المتابعة',
+    attentionQueue: 'حالات تحتاج متابعة',
+    filterByAttention: 'التصفية حسب حالة المتابعة',
+    allAttention: 'كل حالات المتابعة',
+    unassignedActive: 'نشطة وغير مسندة',
+    closedWithoutOutcome: 'مغلقة دون نتيجة',
     all: 'الكل',
     allFollowUps: 'كل مواعيد المتابعة',
     dueToday: 'مستحق اليوم',
