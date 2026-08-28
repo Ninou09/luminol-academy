@@ -152,14 +152,15 @@ export async function generateMetadata({
   const pathname = `/programmes/${programme.slug.current}`;
   const route = localizePathname(locale, pathname);
   const isWaitlist = isProgrammeWaitlist(programme.slug.current);
-  const socialImage = !isWaitlist && programme.image
-    ? {
-        url: buildSanityProgrammeImageUrl(programme.image),
-        width: 1200,
-        height: 675,
-        alt: programme.image.alt,
-      }
-    : getSocialPreviewImage(locale);
+  const socialImage =
+    !isWaitlist && programme.image
+      ? {
+          url: buildSanityProgrammeImageUrl(programme.image),
+          width: 1200,
+          height: 675,
+          alt: programme.image.alt,
+        }
+      : getSocialPreviewImage(locale);
 
   return {
     title: programme.title,
@@ -206,9 +207,7 @@ export default async function ProgrammeDetailPage({
   const bodyParagraphs = isWaitlist ? [] : getBodyParagraphs(programme);
   const languageNames = isWaitlist
     ? []
-    : programme.languages.map(
-        (language) => LANGUAGE_NAMES[locale][language],
-      );
+    : programme.languages.map((language) => LANGUAGE_NAMES[locale][language]);
   const deliveryLabel = isWaitlist
     ? null
     : localizeProgrammeDelivery(locale, programme.delivery);
