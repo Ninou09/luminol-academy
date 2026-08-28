@@ -16,6 +16,11 @@ export type EnquiryDeskCopy = {
   school: string;
   language: string;
   source: string;
+  owner: string;
+  unassigned: string;
+  assignedToYou: string;
+  assignToMe: string;
+  unassign: string;
   message: string;
   protectedMessage: string;
   updateStatus: string;
@@ -29,7 +34,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     eyebrow: 'Growth operations',
     title: 'Enquiry follow-up desk',
     intro:
-      'Review the full submitted context, contact the lead, and move each enquiry through the existing audited workflow.',
+      'Review the full submitted context, assign ownership, contact the lead, and move each enquiry through the existing audited workflow.',
     back: 'Back to overview',
     filterByStatus: 'Filter by status',
     all: 'All',
@@ -42,6 +47,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     school: 'School',
     language: 'Language',
     source: 'Source',
+    owner: 'Owner',
+    unassigned: 'Unassigned',
+    assignedToYou: 'Assigned to you',
+    assignToMe: 'Assign to me',
+    unassign: 'Unassign',
     message: 'Message',
     protectedMessage:
       'Protected enquiry message — use only for operational follow-up.',
@@ -54,7 +64,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     eyebrow: 'Opérations de développement',
     title: 'Suivi des demandes',
     intro:
-      'Consultez le contexte complet transmis, contactez le prospect et faites avancer chaque demande dans le flux de suivi audité existant.',
+      'Consultez le contexte complet transmis, attribuez un responsable, contactez le prospect et faites avancer chaque demande dans le flux de suivi audité existant.',
     back: 'Retour à la vue d’ensemble',
     filterByStatus: 'Filtrer par statut',
     all: 'Toutes',
@@ -67,6 +77,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     school: 'Pôle',
     language: 'Langue',
     source: 'Source',
+    owner: 'Responsable',
+    unassigned: 'Non attribuée',
+    assignedToYou: 'Attribuée à vous',
+    assignToMe: 'Me l’attribuer',
+    unassign: 'Désattribuer',
     message: 'Message',
     protectedMessage:
       'Message de demande protégé — à utiliser uniquement pour le suivi opérationnel.',
@@ -79,7 +94,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     eyebrow: 'عمليات النمو',
     title: 'مكتب متابعة الطلبات',
     intro:
-      'راجع كامل المعلومات المرسلة، وتواصل مع صاحب الطلب، ثم انقل كل طلب عبر مسار المتابعة الحالي الموثق.',
+      'راجع كامل المعلومات المرسلة، وحدد مسؤول المتابعة، وتواصل مع صاحب الطلب، ثم انقل كل طلب عبر مسار المتابعة الحالي الموثق.',
     back: 'العودة إلى النظرة العامة',
     filterByStatus: 'التصفية حسب الحالة',
     all: 'الكل',
@@ -92,6 +107,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     school: 'المجال',
     language: 'اللغة',
     source: 'المصدر',
+    owner: 'مسؤول المتابعة',
+    unassigned: 'غير مسند',
+    assignedToYou: 'مسند إليك',
+    assignToMe: 'إسناده إليّ',
+    unassign: 'إلغاء الإسناد',
     message: 'الرسالة',
     protectedMessage:
       'رسالة طلب محمية — تُستخدم فقط لأغراض المتابعة التشغيلية.',
