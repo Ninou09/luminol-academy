@@ -6,7 +6,11 @@ export type EnquiryDeskCopy = {
   intro: string;
   back: string;
   filterByStatus: string;
+  filterByFollowUp: string;
   all: string;
+  allFollowUps: string;
+  dueToday: string;
+  overdue: string;
   enquiries: string;
   received: string;
   contact: string;
@@ -23,6 +27,13 @@ export type EnquiryDeskCopy = {
   unassign: string;
   message: string;
   protectedMessage: string;
+  followUpPlan: string;
+  nextFollowUp: string;
+  noFollowUp: string;
+  nextAction: string;
+  noNextAction: string;
+  saveFollowUp: string;
+  clearFollowUp: string;
   updateStatus: string;
   moveTo: string;
   update: string;
@@ -34,10 +45,14 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     eyebrow: 'Growth operations',
     title: 'Enquiry follow-up desk',
     intro:
-      'Review the full submitted context, assign ownership, contact the lead, and move each enquiry through the existing audited workflow.',
+      'Review the submitted context, assign ownership, schedule the next action, contact the lead, and move each enquiry through the audited workflow.',
     back: 'Back to overview',
     filterByStatus: 'Filter by status',
+    filterByFollowUp: 'Filter by follow-up',
     all: 'All',
+    allFollowUps: 'Any follow-up',
+    dueToday: 'Due today',
+    overdue: 'Overdue',
     enquiries: 'enquiries',
     received: 'Received',
     contact: 'Contact',
@@ -55,19 +70,30 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     message: 'Message',
     protectedMessage:
       'Protected enquiry message — use only for operational follow-up.',
+    followUpPlan: 'Next follow-up plan',
+    nextFollowUp: 'Follow-up date',
+    noFollowUp: 'No follow-up scheduled',
+    nextAction: 'Next action',
+    noNextAction: 'No next action recorded',
+    saveFollowUp: 'Save follow-up',
+    clearFollowUp: 'Clear follow-up',
     updateStatus: 'Update enquiry status',
     moveTo: 'Move to…',
     update: 'Update',
-    noMatches: 'No enquiries match this filter.',
+    noMatches: 'No enquiries match these filters.',
   },
   fr: {
     eyebrow: 'Opérations de développement',
     title: 'Suivi des demandes',
     intro:
-      'Consultez le contexte complet transmis, attribuez un responsable, contactez le prospect et faites avancer chaque demande dans le flux de suivi audité existant.',
+      'Consultez le contexte transmis, attribuez un responsable, planifiez la prochaine action, contactez le prospect et faites avancer chaque demande dans le flux audité.',
     back: 'Retour à la vue d’ensemble',
     filterByStatus: 'Filtrer par statut',
+    filterByFollowUp: 'Filtrer par suivi',
     all: 'Toutes',
+    allFollowUps: 'Tous les suivis',
+    dueToday: 'À faire aujourd’hui',
+    overdue: 'En retard',
     enquiries: 'demandes',
     received: 'Reçue le',
     contact: 'Contact',
@@ -85,19 +111,30 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     message: 'Message',
     protectedMessage:
       'Message de demande protégé — à utiliser uniquement pour le suivi opérationnel.',
+    followUpPlan: 'Prochain suivi',
+    nextFollowUp: 'Date de suivi',
+    noFollowUp: 'Aucun suivi planifié',
+    nextAction: 'Prochaine action',
+    noNextAction: 'Aucune prochaine action enregistrée',
+    saveFollowUp: 'Enregistrer le suivi',
+    clearFollowUp: 'Effacer le suivi',
     updateStatus: 'Modifier le statut de la demande',
     moveTo: 'Passer à…',
     update: 'Mettre à jour',
-    noMatches: 'Aucune demande ne correspond à ce filtre.',
+    noMatches: 'Aucune demande ne correspond à ces filtres.',
   },
   ar: {
     eyebrow: 'عمليات النمو',
     title: 'مكتب متابعة الطلبات',
     intro:
-      'راجع كامل المعلومات المرسلة، وحدد مسؤول المتابعة، وتواصل مع صاحب الطلب، ثم انقل كل طلب عبر مسار المتابعة الحالي الموثق.',
+      'راجع المعلومات المرسلة، وحدد مسؤول المتابعة، وخطط للخطوة التالية، وتواصل مع صاحب الطلب، ثم انقل الطلب عبر المسار الموثق.',
     back: 'العودة إلى النظرة العامة',
     filterByStatus: 'التصفية حسب الحالة',
+    filterByFollowUp: 'التصفية حسب المتابعة',
     all: 'الكل',
+    allFollowUps: 'كل مواعيد المتابعة',
+    dueToday: 'مستحق اليوم',
+    overdue: 'متأخر',
     enquiries: 'طلبات',
     received: 'تاريخ الاستلام',
     contact: 'التواصل',
@@ -115,10 +152,17 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     message: 'الرسالة',
     protectedMessage:
       'رسالة طلب محمية — تُستخدم فقط لأغراض المتابعة التشغيلية.',
+    followUpPlan: 'خطة المتابعة التالية',
+    nextFollowUp: 'تاريخ المتابعة',
+    noFollowUp: 'لا توجد متابعة مجدولة',
+    nextAction: 'الخطوة التالية',
+    noNextAction: 'لم تُسجل خطوة تالية',
+    saveFollowUp: 'حفظ المتابعة',
+    clearFollowUp: 'مسح المتابعة',
     updateStatus: 'تحديث حالة الطلب',
     moveTo: 'نقل إلى…',
     update: 'تحديث',
-    noMatches: 'لا توجد طلبات تطابق هذا الفلتر.',
+    noMatches: 'لا توجد طلبات تطابق هذه الفلاتر.',
   },
 };
 
