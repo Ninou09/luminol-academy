@@ -38,18 +38,24 @@ describe('Luminol school content', () => {
     const expected = {
       en: {
         title: 'Therapy & consultations',
-        therapy: 'therapy',
-        consultation: 'consultation',
+        introductionTherapy: 'therapy',
+        introductionConsultation: 'consultation',
+        noteTherapy: 'therapy',
+        noteConsultation: 'consultation',
       },
       fr: {
         title: 'Thérapie et consultations',
-        therapy: 'thérapie',
-        consultation: 'consultation',
+        introductionTherapy: 'thérapie',
+        introductionConsultation: 'consultation',
+        noteTherapy: 'thérapie',
+        noteConsultation: 'consultation',
       },
       ar: {
         title: 'العلاج النفسي والاستشارات',
-        therapy: 'العلاج النفسي',
-        consultation: 'الاستشار',
+        introductionTherapy: 'للعلاج النفسي',
+        introductionConsultation: 'الاستشارات',
+        noteTherapy: 'العلاج النفسي',
+        noteConsultation: 'الاستشارة',
       },
     } as const;
 
@@ -60,10 +66,10 @@ describe('Luminol school content', () => {
       const note = psychology.note.toLocaleLowerCase(locale);
 
       expect(psychology.programs[0]?.title).toBe(copy.title);
-      expect(introduction).toContain(copy.therapy);
-      expect(introduction).toContain(copy.consultation);
-      expect(note).toContain(copy.therapy);
-      expect(note).toContain(copy.consultation);
+      expect(introduction).toContain(copy.introductionTherapy);
+      expect(introduction).toContain(copy.introductionConsultation);
+      expect(note).toContain(copy.noteTherapy);
+      expect(note).toContain(copy.noteConsultation);
     }
   });
 });
