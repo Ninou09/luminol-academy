@@ -19,6 +19,8 @@ describe('enquiry desk localization', () => {
       nextAction: 'Next action',
       dueToday: 'Due today',
       saveFollowUp: 'Save follow-up',
+      outcome: 'Operational outcome',
+      saveOutcome: 'Save outcome',
     });
     expect(getEnquiryDeskCopy('fr')).toMatchObject({
       title: 'Suivi des demandes',
@@ -30,6 +32,8 @@ describe('enquiry desk localization', () => {
       nextAction: 'Prochaine action',
       dueToday: 'À faire aujourd’hui',
       saveFollowUp: 'Enregistrer le suivi',
+      outcome: 'Résultat opérationnel',
+      saveOutcome: 'Enregistrer le résultat',
     });
     expect(getEnquiryDeskCopy('ar')).toMatchObject({
       title: 'مكتب متابعة الطلبات',
@@ -41,6 +45,8 @@ describe('enquiry desk localization', () => {
       nextAction: 'الخطوة التالية',
       dueToday: 'مستحق اليوم',
       saveFollowUp: 'حفظ المتابعة',
+      outcome: 'النتيجة التشغيلية',
+      saveOutcome: 'حفظ النتيجة',
     });
   });
 

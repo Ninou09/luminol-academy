@@ -253,6 +253,7 @@ model User {
   enquiryStatusEvents         EnquiryStatusEvent[]
   enquiryOwnershipEvents      EnquiryOwnershipEvent[]      @relation("EnquiryOwnershipActor")
   enquiryFollowUpEvents       EnquiryFollowUpEvent[]       @relation("EnquiryFollowUpActor")
+  enquiryOutcomeEvents        EnquiryOutcomeEvent[]        @relation("EnquiryOutcomeActor")
   enrollmentStatusEvents      EnrollmentStatusEvent[]
   placementAttempts           PlacementAttempt[]           @relation("PlacementLearner")
   placementReviews            PlacementAttempt[]           @relation("PlacementReviewer")
@@ -1148,12 +1149,15 @@ model Enquiry {
   ownerUserId        String?
   nextFollowUpAt     DateTime?
   nextAction         String?
+  outcome            String?
+  outcomeAt          DateTime?
   createdAt          DateTime                   @default(now())
   updatedAt          DateTime                   @updatedAt
   owner              User?                      @relation("EnquiryOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
   statusEvents       EnquiryStatusEvent[]
   ownershipEvents    EnquiryOwnershipEvent[]
   followUpEvents     EnquiryFollowUpEvent[]
+  outcomeEvents      EnquiryOutcomeEvent[]
 
   @@index([status, createdAt])
   @@index([ownerUserId, status, createdAt])
@@ -1202,6 +1206,22 @@ model EnquiryFollowUpEvent {
   createdAt          DateTime  @default(now())
   enquiry            Enquiry   @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
   actor              User      @relation("EnquiryFollowUpActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([enquiryId, createdAt])
+  @@index([actorUserId, createdAt])
+}
+
+model EnquiryOutcomeEvent {
+  id            String    @id @default(cuid())
+  enquiryId     String
+  actorUserId   String
+  fromOutcome   String?
+  toOutcome     String?
+  fromOutcomeAt DateTime?
+  toOutcomeAt   DateTime?
+  createdAt     DateTime  @default(now())
+  enquiry       Enquiry   @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  actor         User      @relation("EnquiryOutcomeActor", fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([enquiryId, createdAt])
   @@index([actorUserId, createdAt])

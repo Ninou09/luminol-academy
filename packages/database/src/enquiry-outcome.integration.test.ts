@@ -25,7 +25,8 @@ suite('enquiry operational outcome persistence', () => {
         name: `Outcome Test ${suffix}`,
         email: `enquiry-outcome-${suffix}@example.test`,
         school: 'GENERAL',
-        message: 'Please contact me about the available pathways and next steps.',
+        message:
+          'Please contact me about the available pathways and next steps.',
         consent: true,
         outcome: 'Follow-up completed; no further action requested.',
         outcomeAt: new Date('2026-08-28T12:00:00.000Z'),
@@ -74,7 +75,7 @@ suite('enquiry operational outcome persistence', () => {
     expect(legacy).toEqual({ outcome: null, outcomeAt: null });
   });
 
-  test('rejects partial and blank outcome pairs at the database boundary', async () => {
+  test('rejects partial, blank and oversized outcome pairs at the database boundary', async () => {
     await expect(
       db.enquiry.create({
         data: {
@@ -99,6 +100,21 @@ suite('enquiry operational outcome persistence', () => {
           message: 'This row should fail because the outcome text is blank.',
           consent: true,
           outcome: '   ',
+          outcomeAt: new Date('2026-08-28T12:00:00.000Z'),
+        },
+      }),
+    ).rejects.toThrow();
+
+    await expect(
+      db.enquiry.create({
+        data: {
+          id: `enquiry-outcome-oversized-${suffix}`,
+          name: `Outcome Oversized Test ${suffix}`,
+          email: `enquiry-outcome-oversized-${suffix}@example.test`,
+          school: 'GENERAL',
+          message: 'This row should fail because the outcome text is too long.',
+          consent: true,
+          outcome: 'x'.repeat(241),
           outcomeAt: new Date('2026-08-28T12:00:00.000Z'),
         },
       }),

@@ -45,6 +45,12 @@ export type EnquiryDeskCopy = {
   noNextAction: string;
   saveFollowUp: string;
   clearFollowUp: string;
+  outcome: string;
+  outcomeRecorded: string;
+  noOutcome: string;
+  outcomeGuidance: string;
+  saveOutcome: string;
+  clearOutcome: string;
   updateStatus: string;
   moveTo: string;
   update: string;
@@ -93,6 +99,13 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     noNextAction: 'No next action recorded',
     saveFollowUp: 'Save follow-up',
     clearFollowUp: 'Clear follow-up',
+    outcome: 'Operational outcome',
+    outcomeRecorded: 'Recorded',
+    noOutcome: 'No operational outcome recorded',
+    outcomeGuidance:
+      'Record only the operational result of follow-up. Do not add clinical notes, diagnoses, symptoms or treatment decisions.',
+    saveOutcome: 'Save outcome',
+    clearOutcome: 'Clear outcome',
     updateStatus: 'Update enquiry status',
     moveTo: 'Move to…',
     update: 'Update',
@@ -139,6 +152,13 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     noNextAction: 'Aucune prochaine action enregistrée',
     saveFollowUp: 'Enregistrer le suivi',
     clearFollowUp: 'Effacer le suivi',
+    outcome: 'Résultat opérationnel',
+    outcomeRecorded: 'Enregistré le',
+    noOutcome: 'Aucun résultat opérationnel enregistré',
+    outcomeGuidance:
+      'Indiquez uniquement le résultat opérationnel du suivi. N’ajoutez pas de notes cliniques, diagnostics, symptômes ou décisions thérapeutiques.',
+    saveOutcome: 'Enregistrer le résultat',
+    clearOutcome: 'Effacer le résultat',
     updateStatus: 'Modifier le statut de la demande',
     moveTo: 'Passer à…',
     update: 'Mettre à jour',
@@ -185,6 +205,13 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     noNextAction: 'لم تُسجل خطوة تالية',
     saveFollowUp: 'حفظ المتابعة',
     clearFollowUp: 'مسح المتابعة',
+    outcome: 'النتيجة التشغيلية',
+    outcomeRecorded: 'تاريخ التسجيل',
+    noOutcome: 'لم تُسجل نتيجة تشغيلية',
+    outcomeGuidance:
+      'سجّل فقط النتيجة التشغيلية للمتابعة. لا تضف ملاحظات سريرية أو تشخيصات أو أعراضًا أو قرارات علاجية.',
+    saveOutcome: 'حفظ النتيجة',
+    clearOutcome: 'مسح النتيجة',
     updateStatus: 'تحديث حالة الطلب',
     moveTo: 'نقل إلى…',
     update: 'تحديث',
