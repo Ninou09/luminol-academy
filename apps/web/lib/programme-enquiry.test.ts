@@ -32,28 +32,37 @@ describe('getProgrammeEnquiryDefaults', () => {
     });
   });
 
-  it('uses the programme school and generic interest copy for non-waitlist programmes', () => {
-    expect(
-      getProgrammeEnquiryDefaults('en', {
-        school: 'languages',
-        slug: { current: 'english-conversation' },
-        title: 'English Conversation',
-      }),
-    ).toEqual({
-      school: 'LANGUAGES',
-      message: "I'd like to know more about English Conversation.",
-    });
-  });
+  it(
+    'uses the programme school and generic interest copy for non-waitlist programmes',
+    () => {
+      expect(
+        getProgrammeEnquiryDefaults('en', {
+          school: 'languages',
+          slug: { current: 'english-conversation' },
+          title: 'English Conversation',
+        }),
+      ).toEqual({
+        school: 'LANGUAGES',
+        message: "I'd like to know more about English Conversation.",
+      });
+    },
+  );
 });
 
 describe('getProgrammeSlugFromPathname', () => {
   it.each([
-    ['/en/programmes/acceptance-commitment-therapy-act', 'acceptance-commitment-therapy-act'],
+    [
+      '/en/programmes/acceptance-commitment-therapy-act',
+      'acceptance-commitment-therapy-act',
+    ],
     ['/fr/programmes/english-conversation/', 'english-conversation'],
     ['/ar/programmes/act-101', 'act-101'],
-  ] as const)('extracts a safe localized programme slug from %s', (pathname, slug) => {
-    expect(getProgrammeSlugFromPathname(pathname)).toBe(slug);
-  });
+  ] as const)(
+    'extracts a safe localized programme slug from %s',
+    (pathname, slug) => {
+      expect(getProgrammeSlugFromPathname(pathname)).toBe(slug);
+    },
+  );
 
   it.each([
     '/en/programmes',
