@@ -25,15 +25,15 @@ const englishSchools: Record<SchoolSlug, SchoolDefinition> = {
     eyebrow: 'Wellbeing · Awareness · Personal development',
     headline: 'Understand what you feel. Build what helps you thrive.',
     introduction:
-      'Luminol Psychology creates a thoughtful space for emotional awareness, supportive guidance and meaningful personal development across different stages of life.',
+      'Luminol Psychology offers clear pathways for therapy and consultations, alongside child and family guidance, coaching and psychology education—each routed according to the person’s goal and need.',
     promise:
       'Scientific thinking, human warmth and practical tools—brought together with care.',
     visualWords: ['Awareness', 'Balance', 'Connection'],
     programs: [
       {
-        title: 'Individual support',
+        title: 'Therapy & consultations',
         description:
-          'Structured conversations and practical guidance for people navigating stress, change, confidence and emotional growth.',
+          'A clear first step for people seeking therapy or a consultation, helping the team understand the need and guide the person toward an appropriate next step.',
       },
       {
         title: 'Child and family guidance',
@@ -69,7 +69,7 @@ const englishSchools: Record<SchoolSlug, SchoolDefinition> = {
       },
     ],
     audiences: ['Individuals', 'Parents and families', 'Young people', 'Teams'],
-    note: 'Luminol Psychology programs are educational and supportive. They do not replace emergency, psychiatric or medical care. Appropriate professional referral should always be used when a person needs a different level of support.',
+    note: 'Luminol Psychology may include therapy, consultations, education or coaching depending on the request. Social content and educational programmes do not replace emergency, psychiatric or medical care. Urgent or higher-level needs should be referred to appropriate qualified care.',
   },
   languages: {
     slug: 'languages',
@@ -198,15 +198,15 @@ const frenchSchools: Record<SchoolSlug, SchoolDefinition> = {
     headline:
       'Comprenez ce que vous ressentez. Construisez ce qui vous aide à avancer.',
     introduction:
-      'Luminol Psychologie crée un espace réfléchi pour développer la conscience émotionnelle, bénéficier d’un accompagnement bienveillant et progresser personnellement à différentes étapes de la vie.',
+      'Luminol Psychologie propose des parcours clairs pour la thérapie et les consultations, aux côtés de l’accompagnement enfant-famille, du coaching et de l’éducation en psychologie, afin d’orienter chaque demande selon son objectif et son besoin.',
     promise:
       'Rigueur scientifique, chaleur humaine et outils pratiques réunis avec attention.',
     visualWords: ['Conscience', 'Équilibre', 'Lien'],
     programs: [
       {
-        title: 'Accompagnement individuel',
+        title: 'Thérapie & consultations',
         description:
-          'Des échanges structurés et des outils pratiques pour traverser le stress, le changement, le manque de confiance et les étapes de croissance émotionnelle.',
+          'Une première étape claire pour les personnes recherchant une thérapie ou une consultation, afin d’aider l’équipe à comprendre le besoin et à orienter vers la suite appropriée.',
       },
       {
         title: 'Accompagnement enfant et famille',
@@ -242,7 +242,7 @@ const frenchSchools: Record<SchoolSlug, SchoolDefinition> = {
       },
     ],
     audiences: ['Individus', 'Parents et familles', 'Jeunes', 'Équipes'],
-    note: 'Les programmes de Luminol Psychologie sont éducatifs et soutenants. Ils ne remplacent pas les soins d’urgence, psychiatriques ou médicaux. Une orientation professionnelle adaptée doit toujours être utilisée lorsqu’une personne a besoin d’un autre niveau de prise en charge.',
+    note: 'Luminol Psychologie peut inclure thérapie, consultations, éducation ou coaching selon la demande. Les contenus sociaux et les programmes éducatifs ne remplacent pas les soins d’urgence, psychiatriques ou médicaux. Les besoins urgents ou nécessitant un niveau de prise en charge supérieur doivent être orientés vers des soins qualifiés adaptés.',
   },
   languages: {
     slug: 'languages',
@@ -370,14 +370,14 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
     eyebrow: 'توازن نفسي · وعي · تطوير شخصي',
     headline: 'افهم ما تشعر به. وابنِ ما يساعدك على الازدهار.',
     introduction:
-      'توفّر لومينول لعلم النفس مساحة مدروسة لتنمية الوعي العاطفي والحصول على توجيه داعم وتحقيق تطور شخصي ذي معنى عبر مراحل الحياة المختلفة.',
+      'توفّر لومينول لعلم النفس مسارات واضحة للعلاج النفسي والاستشارات، إلى جانب إرشاد الطفل والعائلة والكوتشينغ والتثقيف النفسي، مع توجيه كل طلب بحسب الهدف والحاجة.',
     promise: 'تفكير علمي ودفء إنساني وأدوات عملية، مجتمعة بعناية.',
     visualWords: ['وعي', 'توازن', 'تواصل'],
     programs: [
       {
-        title: 'دعم فردي',
+        title: 'العلاج النفسي والاستشارات',
         description:
-          'حوارات منظّمة وتوجيه عملي للأشخاص الذين يواجهون الضغط أو التغيير أو تحديات الثقة أو النمو العاطفي.',
+          'خطوة أولى واضحة لمن يبحث عن العلاج النفسي أو الاستشارة، تساعد الفريق على فهم الحاجة وتوجيه الشخص نحو الخطوة المناسبة.',
       },
       {
         title: 'إرشاد الطفل والعائلة',
@@ -413,7 +413,7 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
       },
     ],
     audiences: ['الأفراد', 'الأولياء والعائلات', 'الشباب', 'الفرق'],
-    note: 'برامج لومينول في علم النفس تعليمية وداعمة ولا تعوّض الرعاية الاستعجالية أو النفسية الطبية أو العلاج الطبي. يجب استخدام الإحالة المهنية المناسبة عندما يحتاج الشخص إلى مستوى مختلف من الرعاية.',
+    note: 'قد تشمل خدمات لومينول في علم النفس العلاج النفسي أو الاستشارات أو التثقيف أو الكوتشينغ بحسب الطلب. المحتوى المنشور والبرامج التعليمية لا تعوّض الرعاية الاستعجالية أو النفسية الطبية أو العلاج الطبي. يجب توجيه الحالات العاجلة أو التي تحتاج إلى مستوى أعلى من الرعاية إلى رعاية مهنية مؤهلة ومناسبة.',
   },
   languages: {
     slug: 'languages',
