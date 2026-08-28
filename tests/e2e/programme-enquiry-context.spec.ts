@@ -37,9 +37,8 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
       new RegExp(`/${locale}/contact\\?programme=${slug}$`),
     );
     await expect(page.locator('select[name="school"]')).not.toHaveValue('GENERAL');
-    await expect(page.locator('textarea[name="message"]')).toContainText(
-      programmeTitle,
-    );
+    const message = await page.locator('textarea[name="message"]').inputValue();
+    expect(message).toContain(programmeTitle);
   });
 
   test(`${locale} generic contact keeps generic enquiry defaults`, async ({ page }) => {
