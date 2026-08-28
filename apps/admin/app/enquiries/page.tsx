@@ -24,7 +24,9 @@ type EnquiryPageProps = {
   searchParams?: Promise<{ status?: string | string[] | undefined }>;
 };
 
-function parseStatus(value: string | string[] | undefined): EnquiryStatusValue | null {
+function parseStatus(
+  value: string | string[] | undefined,
+): EnquiryStatusValue | null {
   const candidate = Array.isArray(value) ? value[0] : value;
   if (!candidate) return null;
 
@@ -165,7 +167,9 @@ export default async function EnquiriesAdminPage({
                     <p className={styles.messageBody} dir="auto">
                       {enquiry.message}
                     </p>
-                    <p className={styles.privacyNote}>{copy.protectedMessage}</p>
+                    <p className={styles.privacyNote}>
+                      {copy.protectedMessage}
+                    </p>
                   </div>
 
                   <div className={styles.statusRow}>
@@ -192,7 +196,11 @@ export default async function EnquiriesAdminPage({
                       action={transitionEnquiryStatus}
                       className={styles.statusForm}
                     >
-                      <input type="hidden" name="enquiryId" value={enquiry.id} />
+                      <input
+                        type="hidden"
+                        name="enquiryId"
+                        value={enquiry.id}
+                      />
                       <label>
                         <span className="sr-only">
                           {copy.updateStatus}: {enquiry.name}
@@ -206,11 +214,13 @@ export default async function EnquiriesAdminPage({
                           <option value="" disabled>
                             {copy.moveTo}
                           </option>
-                          {getEnquiryTransitions(enquiry.status).map((status) => (
-                            <option key={status} value={status}>
-                              {getAdminEnumLabel(locale, status)}
-                            </option>
-                          ))}
+                          {getEnquiryTransitions(enquiry.status).map(
+                            (status) => (
+                              <option key={status} value={status}>
+                                {getAdminEnumLabel(locale, status)}
+                              </option>
+                            ),
+                          )}
                         </select>
                       </label>
                       <button type="submit">{copy.update}</button>

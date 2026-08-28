@@ -43,7 +43,8 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     language: 'Language',
     source: 'Source',
     message: 'Message',
-    protectedMessage: 'Protected enquiry message — use only for operational follow-up.',
+    protectedMessage:
+      'Protected enquiry message — use only for operational follow-up.',
     updateStatus: 'Update enquiry status',
     moveTo: 'Move to…',
     update: 'Update',
