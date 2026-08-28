@@ -32,21 +32,18 @@ describe('getProgrammeEnquiryDefaults', () => {
     });
   });
 
-  it(
-    'uses the programme school and generic interest copy for non-waitlist programmes',
-    () => {
-      expect(
-        getProgrammeEnquiryDefaults('en', {
-          school: 'languages',
-          slug: { current: 'english-conversation' },
-          title: 'English Conversation',
-        }),
-      ).toEqual({
-        school: 'LANGUAGES',
-        message: "I'd like to know more about English Conversation.",
-      });
-    },
-  );
+  it('uses the programme school and generic interest copy for non-waitlist programmes', () => {
+    expect(
+      getProgrammeEnquiryDefaults('en', {
+        school: 'languages',
+        slug: { current: 'english-conversation' },
+        title: 'English Conversation',
+      }),
+    ).toEqual({
+      school: 'LANGUAGES',
+      message: "I'd like to know more about English Conversation.",
+    });
+  });
 });
 
 describe('getProgrammeSlugFromPathname', () => {
