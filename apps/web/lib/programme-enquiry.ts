@@ -25,8 +25,7 @@ const INTEREST_COPY = {
       `I'd like to register my interest in the next cohort of ${title}.`,
   },
   fr: {
-    programme: (title: string) =>
-      `Je souhaite en savoir plus sur ${title}.`,
+    programme: (title: string) => `Je souhaite en savoir plus sur ${title}.`,
     waitlist: (title: string) =>
       `Je souhaite signaler mon intérêt pour la prochaine cohorte de ${title}.`,
   },
