@@ -64,8 +64,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   const publicCopy = getPublicCopy(locale);
   const copy = publicCopy.contact;
   const schools = getSchools(locale);
-  const psychologyPathDescription =
-    getPsychologyContactPathDescription(locale);
+  const psychologyPathDescription = getPsychologyContactPathDescription(locale);
   const rawProgramme = params.programme;
   const programmeSlug =
     typeof rawProgramme === 'string' && isPublicProgrammeSlug(rawProgramme)
