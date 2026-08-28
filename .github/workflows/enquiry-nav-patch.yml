@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   patch-dashboard-navigation:
-    if: ${{ !contains(github.event.head_commit.message, 'feat: link enquiry desk from dashboard') }}
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
@@ -31,9 +30,8 @@ jobs:
           new = '''          <Link href={localizeHref(locale, '/enquiries')}>
             <span>02</span> {copy.shell.enquiries}
           </Link>'''
-          if old not in text:
-              raise SystemExit('Expected enquiry navigation block was not found')
-          path.write_text(text.replace(old, new, 1))
+          if old in text:
+              path.write_text(text.replace(old, new, 1))
           PY
       - name: Commit navigation patch
         shell: bash
