@@ -36,17 +36,24 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
     await expect(page).toHaveURL(
       new RegExp(`/${locale}/contact\\?programme=${slug}$`),
     );
-    await expect(page.locator('select[name="school"]')).not.toHaveValue('GENERAL');
+    await expect(page.locator('select[name="school"]')).not.toHaveValue(
+      'GENERAL',
+    );
     const message = await page.locator('textarea[name="message"]').inputValue();
     expect(message).toContain(programmeTitle);
   });
 
-  test(`${locale} generic contact keeps generic enquiry defaults`, async ({ page }) => {
-    await page.goto(`/${locale}/contact`);
+  test(
+    `${locale} generic contact keeps generic enquiry defaults`,
+    async ({ page }) => {
+      await page.goto(`/${locale}/contact`);
 
-    await expect(page.locator('select[name="school"]')).toHaveValue('GENERAL');
-    await expect(page.locator('textarea[name="message"]')).toHaveValue('');
-  });
+      await expect(page.locator('select[name="school"]')).toHaveValue(
+        'GENERAL',
+      );
+      await expect(page.locator('textarea[name="message"]')).toHaveValue('');
+    },
+  );
 
   test(`${locale} unsafe programme context fails closed`, async ({ page }) => {
     await page.goto(`/${locale}/contact?programme=../draft`);
