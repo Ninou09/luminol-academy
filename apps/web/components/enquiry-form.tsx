@@ -1,9 +1,10 @@
 'use client';
 
 import type { Locale } from '@luminol/localization';
-import { useState, type FormEvent } from 'react';
 import { Button } from '@luminol/ui';
+import { useState, type FormEvent } from 'react';
 
+import type { PublicEnquirySchool } from '../lib/programme-enquiry';
 import type { getPublicCopy } from '../lib/public-localization';
 
 type FormCopy = ReturnType<typeof getPublicCopy>['form'];
@@ -17,9 +18,16 @@ type SubmissionState =
 type EnquiryFormProps = {
   locale: Locale;
   copy: FormCopy;
+  initialSchool?: PublicEnquirySchool | undefined;
+  initialMessage?: string | undefined;
 };
 
-export function EnquiryForm({ locale, copy }: EnquiryFormProps) {
+export function EnquiryForm({
+  locale,
+  copy,
+  initialSchool = 'GENERAL',
+  initialMessage = '',
+}: EnquiryFormProps) {
   const [submission, setSubmission] = useState<SubmissionState>({
     status: 'idle',
     message: '',
@@ -102,7 +110,7 @@ export function EnquiryForm({ locale, copy }: EnquiryFormProps) {
         </label>
         <label>
           <span>{copy.interest}</span>
-          <select defaultValue="GENERAL" name="school" required>
+          <select defaultValue={initialSchool} name="school" required>
             <option value="GENERAL">{copy.choose}</option>
             <option value="PSYCHOLOGY">{copy.psychology}</option>
             <option value="LANGUAGES">{copy.languages}</option>
@@ -112,6 +120,7 @@ export function EnquiryForm({ locale, copy }: EnquiryFormProps) {
         <label className="message-field">
           <span>{copy.message}</span>
           <textarea
+            defaultValue={initialMessage}
             maxLength={2000}
             minLength={10}
             name="message"

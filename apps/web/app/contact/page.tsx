@@ -9,11 +9,20 @@ import Link from 'next/link';
 
 import { EnquiryForm } from '../../components/enquiry-form';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import { getProgrammeEnquiryDefaults } from '../../lib/programme-enquiry';
+import {
+  getPublicProgrammeBySlug,
+  isPublicProgrammeSlug,
+} from '../../lib/programme-detail';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import { getSchools } from '../../lib/schools';
 import styles from './page.module.css';
+
+type ContactPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -46,11 +55,25 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ContactPage() {
-  const locale = await getRequestLocale();
+export default async function ContactPage({ searchParams }: ContactPageProps) {
+  const [locale, params] = await Promise.all([
+    getRequestLocale(),
+    searchParams,
+  ]);
   const publicCopy = getPublicCopy(locale);
   const copy = publicCopy.contact;
   const schools = getSchools(locale);
+  const rawProgramme = params.programme;
+  const programmeSlug =
+    typeof rawProgramme === 'string' && isPublicProgrammeSlug(rawProgramme)
+      ? rawProgramme
+      : null;
+  const programme = programmeSlug
+    ? await getPublicProgrammeBySlug(programmeSlug)
+    : null;
+  const enquiryDefaults = programme
+    ? getProgrammeEnquiryDefaults(locale, programme)
+    : null;
   const contactPaths = [
     {
       number: '01',
@@ -140,7 +163,12 @@ export default async function ContactPage() {
             <p className={styles.privacyNote}>{copy.privacyNote}</p>
           </div>
           <div className={styles.formSurface} data-contact-form data-reveal>
-            <EnquiryForm locale={locale} copy={publicCopy.form} />
+            <EnquiryForm
+              locale={locale}
+              copy={publicCopy.form}
+              initialSchool={enquiryDefaults?.school}
+              initialMessage={enquiryDefaults?.message}
+            />
           </div>
         </section>
       </main>
