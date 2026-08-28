@@ -21,6 +21,8 @@ describe('enquiry desk localization', () => {
       saveFollowUp: 'Save follow-up',
       outcome: 'Operational outcome',
       saveOutcome: 'Save outcome',
+      unassignedActive: 'Active & unassigned',
+      closedWithoutOutcome: 'Closed without outcome',
     });
     expect(getEnquiryDeskCopy('fr')).toMatchObject({
       title: 'Suivi des demandes',
@@ -34,6 +36,8 @@ describe('enquiry desk localization', () => {
       saveFollowUp: 'Enregistrer le suivi',
       outcome: 'Résultat opérationnel',
       saveOutcome: 'Enregistrer le résultat',
+      unassignedActive: 'Actives non attribuées',
+      closedWithoutOutcome: 'Clôturées sans résultat',
     });
     expect(getEnquiryDeskCopy('ar')).toMatchObject({
       title: 'مكتب متابعة الطلبات',
@@ -47,6 +51,8 @@ describe('enquiry desk localization', () => {
       saveFollowUp: 'حفظ المتابعة',
       outcome: 'النتيجة التشغيلية',
       saveOutcome: 'حفظ النتيجة',
+      unassignedActive: 'نشطة وغير مسندة',
+      closedWithoutOutcome: 'مغلقة دون نتيجة',
     });
   });
 

@@ -1,5 +1,5 @@
 import { requirePermission } from '@luminol/auth';
-import { db } from '@luminol/database';
+import { db, type Prisma } from '@luminol/database';
 import {
   formatLocalizedDate,
   formatLocalizedNumber,
@@ -11,6 +11,13 @@ import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAdminEnumLabel } from '../../lib/admin-localization';
+import {
+  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
+  CLOSED_WITHOUT_OUTCOME_WHERE,
+  getEnquiryAttentionWhere,
+  parseEnquiryAttentionFilter,
+  type EnquiryAttentionFilter,
+} from '../../lib/enquiry-attention';
 import {
   getEnquiryContactPreferenceLabel,
   getEnquiryDeliveryPreferenceLabel,
@@ -38,6 +45,7 @@ type EnquiryPageProps = {
   searchParams?: Promise<{
     status?: string | string[] | undefined;
     followUp?: string | string[] | undefined;
+    attention?: string | string[] | undefined;
   }>;
 };
 
@@ -69,10 +77,12 @@ function enquiryHref(
   locale: Locale,
   status: EnquiryStatusValue | null,
   followUp: FollowUpFilter | null,
+  attention: EnquiryAttentionFilter | null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
   if (followUp) query.set('followUp', followUp);
+  if (attention) query.set('attention', attention);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -91,51 +101,68 @@ export default async function EnquiriesAdminPage({
   const params = searchParams ? await searchParams : undefined;
   const activeStatus = parseStatus(params?.status);
   const activeFollowUp = parseFollowUp(params?.followUp);
+  const activeAttention = parseEnquiryAttentionFilter(params?.attention);
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
   const tomorrowUtc = new Date(todayUtc.getTime() + 86_400_000);
-  const statusFilter = activeStatus ? { status: activeStatus } : {};
-  const followUpFilter =
-    activeFollowUp === 'overdue'
-      ? { nextFollowUpAt: { lt: todayUtc } }
-      : activeFollowUp === 'due-today'
-        ? { nextFollowUpAt: { gte: todayUtc, lt: tomorrowUtc } }
-        : {};
-  const enquiries = await db.enquiry.findMany({
-    ...(activeStatus || activeFollowUp
-      ? { where: { ...statusFilter, ...followUpFilter } }
-      : {}),
-    orderBy: { createdAt: 'desc' },
-    take: 100,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      phone: true,
-      city: true,
-      preferredContact: true,
-      deliveryPreference: true,
-      timingPreference: true,
-      school: true,
-      message: true,
-      locale: true,
-      status: true,
-      source: true,
-      createdAt: true,
-      nextFollowUpAt: true,
-      nextAction: true,
-      outcome: true,
-      outcomeAt: true,
-      owner: {
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
+  const filters: Prisma.EnquiryWhereInput[] = [];
+  if (activeStatus) filters.push({ status: activeStatus });
+  if (activeFollowUp === 'overdue') {
+    filters.push({ nextFollowUpAt: { lt: todayUtc } });
+  } else if (activeFollowUp === 'due-today') {
+    filters.push({ nextFollowUpAt: { gte: todayUtc, lt: tomorrowUtc } });
+  }
+  const attentionWhere = getEnquiryAttentionWhere(activeAttention);
+  if (attentionWhere) filters.push(attentionWhere);
+  const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
+
+  const [
+    enquiries,
+    unassignedActiveCount,
+    dueTodayCount,
+    overdueCount,
+    closedWithoutOutcomeCount,
+  ] = await Promise.all([
+    db.enquiry.findMany({
+      ...(enquiryWhere ? { where: enquiryWhere } : {}),
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        city: true,
+        preferredContact: true,
+        deliveryPreference: true,
+        timingPreference: true,
+        school: true,
+        message: true,
+        locale: true,
+        status: true,
+        source: true,
+        createdAt: true,
+        nextFollowUpAt: true,
+        nextAction: true,
+        outcome: true,
+        outcomeAt: true,
+        owner: {
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+          },
         },
       },
-    },
-  });
+    }),
+    db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
+    db.enquiry.count({
+      where: { nextFollowUpAt: { gte: todayUtc, lt: tomorrowUtc } },
+    }),
+    db.enquiry.count({ where: { nextFollowUpAt: { lt: todayUtc } } }),
+    db.enquiry.count({ where: CLOSED_WITHOUT_OUTCOME_WHERE }),
+  ]);
   const number = (value: number) => formatLocalizedNumber(value, locale);
   const date = (value: Date) => formatLocalizedDate(value, locale);
 
@@ -171,6 +198,75 @@ export default async function EnquiriesAdminPage({
               </div>
             </div>
 
+            <div className={styles.attentionSection}>
+              <span className={styles.filterLabel}>{copy.attentionQueue}</span>
+              <div className={styles.attentionGrid}>
+                <Link
+                  className={`${styles.attentionCard} ${
+                    activeAttention === 'unassigned'
+                      ? styles.activeAttentionCard
+                      : ''
+                  }`}
+                  href={enquiryHref(locale, null, null, 'unassigned')}
+                  aria-current={
+                    activeAttention === 'unassigned' ? 'page' : undefined
+                  }
+                >
+                  <span>{copy.unassignedActive}</span>
+                  <strong>{number(unassignedActiveCount)}</strong>
+                </Link>
+                <Link
+                  className={`${styles.attentionCard} ${
+                    activeFollowUp === 'due-today'
+                      ? styles.activeAttentionCard
+                      : ''
+                  }`}
+                  href={enquiryHref(locale, null, 'due-today', null)}
+                  aria-current={
+                    activeFollowUp === 'due-today' ? 'page' : undefined
+                  }
+                >
+                  <span>{copy.dueToday}</span>
+                  <strong>{number(dueTodayCount)}</strong>
+                </Link>
+                <Link
+                  className={`${styles.attentionCard} ${
+                    activeFollowUp === 'overdue'
+                      ? styles.activeAttentionCard
+                      : ''
+                  }`}
+                  href={enquiryHref(locale, null, 'overdue', null)}
+                  aria-current={
+                    activeFollowUp === 'overdue' ? 'page' : undefined
+                  }
+                >
+                  <span>{copy.overdue}</span>
+                  <strong>{number(overdueCount)}</strong>
+                </Link>
+                <Link
+                  className={`${styles.attentionCard} ${
+                    activeAttention === 'closed-without-outcome'
+                      ? styles.activeAttentionCard
+                      : ''
+                  }`}
+                  href={enquiryHref(
+                    locale,
+                    null,
+                    null,
+                    'closed-without-outcome',
+                  )}
+                  aria-current={
+                    activeAttention === 'closed-without-outcome'
+                      ? 'page'
+                      : undefined
+                  }
+                >
+                  <span>{copy.closedWithoutOutcome}</span>
+                  <strong>{number(closedWithoutOutcomeCount)}</strong>
+                </Link>
+              </div>
+            </div>
+
             <div className={styles.filterGroups}>
               <div className={styles.filterGroup}>
                 <span className={styles.filterLabel}>
@@ -184,7 +280,12 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeStatus === null ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(locale, null, activeFollowUp)}
+                    href={enquiryHref(
+                      locale,
+                      null,
+                      activeFollowUp,
+                      activeAttention,
+                    )}
                     aria-current={activeStatus === null ? 'page' : undefined}
                   >
                     <span>{copy.all}</span>
@@ -195,7 +296,12 @@ export default async function EnquiriesAdminPage({
                       className={`${styles.filterLink} ${
                         activeStatus === status ? styles.activeFilter : ''
                       }`}
-                      href={enquiryHref(locale, status, activeFollowUp)}
+                      href={enquiryHref(
+                        locale,
+                        status,
+                        activeFollowUp,
+                        activeAttention,
+                      )}
                       aria-current={
                         activeStatus === status ? 'page' : undefined
                       }
@@ -218,7 +324,12 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeFollowUp === null ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(locale, activeStatus, null)}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      null,
+                      activeAttention,
+                    )}
                     aria-current={activeFollowUp === null ? 'page' : undefined}
                   >
                     <span>{copy.allFollowUps}</span>
@@ -227,7 +338,12 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeFollowUp === 'due-today' ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(locale, activeStatus, 'due-today')}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      'due-today',
+                      activeAttention,
+                    )}
                     aria-current={
                       activeFollowUp === 'due-today' ? 'page' : undefined
                     }
@@ -238,12 +354,80 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeFollowUp === 'overdue' ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(locale, activeStatus, 'overdue')}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      'overdue',
+                      activeAttention,
+                    )}
                     aria-current={
                       activeFollowUp === 'overdue' ? 'page' : undefined
                     }
                   >
                     <span>{copy.overdue}</span>
+                  </Link>
+                </nav>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <span className={styles.filterLabel}>
+                  {copy.filterByAttention}
+                </span>
+                <nav
+                  className={styles.filters}
+                  aria-label={copy.filterByAttention}
+                >
+                  <Link
+                    className={`${styles.filterLink} ${
+                      activeAttention === null ? styles.activeFilter : ''
+                    }`}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      null,
+                    )}
+                    aria-current={activeAttention === null ? 'page' : undefined}
+                  >
+                    <span>{copy.allAttention}</span>
+                  </Link>
+                  <Link
+                    className={`${styles.filterLink} ${
+                      activeAttention === 'unassigned'
+                        ? styles.activeFilter
+                        : ''
+                    }`}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      'unassigned',
+                    )}
+                    aria-current={
+                      activeAttention === 'unassigned' ? 'page' : undefined
+                    }
+                  >
+                    <span>{copy.unassignedActive}</span>
+                  </Link>
+                  <Link
+                    className={`${styles.filterLink} ${
+                      activeAttention === 'closed-without-outcome'
+                        ? styles.activeFilter
+                        : ''
+                    }`}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      'closed-without-outcome',
+                    )}
+                    aria-current={
+                      activeAttention === 'closed-without-outcome'
+                        ? 'page'
+                        : undefined
+                    }
+                  >
+                    <span>{copy.closedWithoutOutcome}</span>
                   </Link>
                 </nav>
               </div>
