@@ -9,6 +9,7 @@ import Link from 'next/link';
 
 import { EnquiryForm } from '../../components/enquiry-form';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import { getPsychologyContactPathDescription } from '../../lib/contact-paths';
 import { getProgrammeEnquiryDefaults } from '../../lib/programme-enquiry';
 import {
   getPublicProgrammeBySlug,
@@ -63,6 +64,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   const publicCopy = getPublicCopy(locale);
   const copy = publicCopy.contact;
   const schools = getSchools(locale);
+  const psychologyPathDescription = getPsychologyContactPathDescription(locale);
   const rawProgramme = params.programme;
   const programmeSlug =
     typeof rawProgramme === 'string' && isPublicProgrammeSlug(rawProgramme)
@@ -78,7 +80,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     {
       number: '01',
       school: schools.psychology,
-      description: copy.pathDescriptions.psychology,
+      description: psychologyPathDescription,
       tone: styles.psychology ?? '',
     },
     {
