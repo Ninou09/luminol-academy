@@ -45,7 +45,7 @@ export default async function EnquiriesAdminPage({
   const params = searchParams ? await searchParams : undefined;
   const activeStatus = parseStatus(params?.status);
   const enquiries = await db.enquiry.findMany({
-    where: activeStatus ? { status: activeStatus } : undefined,
+    ...(activeStatus ? { where: { status: activeStatus } } : {}),
     orderBy: { createdAt: 'desc' },
     take: 100,
     select: {
