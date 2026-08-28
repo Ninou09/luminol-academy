@@ -1,0 +1,61 @@
+name: Apply enquiry qualification schema
+
+on:
+  push:
+    branches:
+      - feat/enquiry-qualification
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-qualification
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Apply schema and admin patches
+        run: python scripts/apply-enquiry-qualification-schema.py
+      - name: Format Prisma schema
+        run: pnpm --filter @luminol/database exec prisma format
+      - name: Validate Prisma schema
+        run: pnpm --filter @luminol/database exec prisma validate
+      - name: Format changed TypeScript
+        run: |
+          pnpm exec prettier --write \
+            packages/validation/src/index.ts \
+            packages/validation/src/index.test.ts \
+            apps/web/lib/enquiry-qualification-localization.ts \
+            apps/web/lib/enquiry-qualification-localization.test.ts \
+            apps/web/components/enquiry-form.tsx \
+            apps/web/app/api/enquiries/route.ts \
+            apps/web/app/api/enquiries/route.test.ts \
+            packages/database/src/enquiry-qualification.integration.test.ts \
+            apps/admin/lib/enquiry-desk-localization.ts \
+            apps/admin/lib/enquiry-desk-localization.test.ts \
+            apps/admin/app/enquiries/page.tsx
+      - name: Remove temporary patch tooling
+        run: |
+          rm .github/workflows/apply-enquiry-qualification.yml
+          rm scripts/apply-enquiry-qualification-schema.py
+      - name: Commit qualification slice
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: add structured enquiry qualification"
+          git push origin HEAD:feat/enquiry-qualification
