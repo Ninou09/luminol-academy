@@ -1,0 +1,49 @@
+name: Apply enquiry never-contacted attention
+
+on:
+  push:
+    branches:
+      - feat/enquiry-never-contacted-attention
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-never-contacted-attention
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: python scripts/apply-enquiry-never-contacted-attention.py
+      - run: |
+          pnpm exec prettier --write \
+            apps/admin/app/enquiries/page.tsx \
+            apps/admin/lib/enquiry-attention.ts \
+            apps/admin/lib/enquiry-attention.test.ts \
+            apps/admin/lib/enquiry-attention-localization.ts \
+            apps/admin/lib/enquiry-attention-localization.test.ts
+      - run: git diff --check
+      - name: Commit implementation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/apply-enquiry-never-contacted-attention.yml
+          git rm scripts/apply-enquiry-never-contacted-attention.py
+          git add apps/admin/app/enquiries/page.tsx \
+            apps/admin/lib/enquiry-attention.ts \
+            apps/admin/lib/enquiry-attention.test.ts \
+            apps/admin/lib/enquiry-attention-localization.ts \
+            apps/admin/lib/enquiry-attention-localization.test.ts
+          git commit -m "Surface active enquiries with no recorded contact"
+          git push origin HEAD:feat/enquiry-never-contacted-attention
