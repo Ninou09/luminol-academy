@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
+import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
 import { getEnquiryWorkflowCopy } from '../lib/enquiry-workflow-localization';
 import {
@@ -32,6 +33,7 @@ export default async function Page() {
   const locale = await getAdminRequestLocale();
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
+  const campaignCopy = getEnquiryCampaignReportingCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
   const workflowCopy = getEnquiryWorkflowCopy(locale);
   const common = getCommonDictionary(locale);
@@ -253,6 +255,87 @@ export default async function Page() {
               </div>
             ) : (
               <p className="admin-empty">{programmeMixCopy.noData}</p>
+            )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{campaignCopy.eyebrow}</p>
+                <h2>{campaignCopy.title}</h2>
+                <p>{campaignCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div className="metric-grid" aria-label={campaignCopy.title}>
+              <article>
+                <span>{campaignCopy.tagged}</span>
+                <strong>
+                  {number(operations.campaignEnquiryMixLast30Days.taggedTotal)}
+                </strong>
+                <small>{campaignCopy.taggedNote}</small>
+              </article>
+              <article>
+                <span>{campaignCopy.untagged}</span>
+                <strong>
+                  {number(
+                    operations.campaignEnquiryMixLast30Days.untaggedTotal,
+                  )}
+                </strong>
+                <small>{campaignCopy.untaggedNote}</small>
+              </article>
+            </div>
+            <div className="panel-heading">
+              <div>
+                <h3>{campaignCopy.sourceMix}</h3>
+              </div>
+            </div>
+            {operations.campaignEnquiryMixLast30Days.sourceMix.length > 0 ? (
+              <div className="metric-grid" aria-label={campaignCopy.sourceMix}>
+                {operations.campaignEnquiryMixLast30Days.sourceMix.map(
+                  (item) => (
+                    <article key={item.utmSource}>
+                      <span dir="auto">{item.utmSource}</span>
+                      <strong>{number(item.count)}</strong>
+                      <small>
+                        {campaignCopy.enquiryCount(number(item.count))}
+                      </small>
+                    </article>
+                  ),
+                )}
+              </div>
+            ) : (
+              <p className="admin-empty">{campaignCopy.noSources}</p>
+            )}
+            <div className="panel-heading">
+              <div>
+                <h3>{campaignCopy.campaignMix}</h3>
+              </div>
+            </div>
+            {operations.campaignEnquiryMixLast30Days.campaignMix.length > 0 ? (
+              <div
+                className="metric-grid"
+                aria-label={campaignCopy.campaignMix}
+              >
+                {operations.campaignEnquiryMixLast30Days.campaignMix.map(
+                  (item) => (
+                    <article key={`${item.utmSource}:${item.utmCampaign}`}>
+                      <span dir="auto">
+                        {campaignCopy.campaignPair(
+                          item.utmSource,
+                          item.utmCampaign,
+                        )}
+                      </span>
+                      <strong>{number(item.count)}</strong>
+                      <small>
+                        {campaignCopy.enquiryCount(number(item.count))}
+                      </small>
+                    </article>
+                  ),
+                )}
+              </div>
+            ) : (
+              <p className="admin-empty">{campaignCopy.noCampaigns}</p>
             )}
           </section>
 

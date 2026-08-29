@@ -8,14 +8,21 @@ import {
 } from './enquiry-attention';
 import {
   calculateEnquiryCoveragePercent,
+  calculateUntaggedEnquiryCount,
+  getCampaignAttributedRecentEnquiryWhere,
+  getCampaignNamedRecentEnquiryWhere,
   getProgrammeAttributedRecentEnquiryWhere,
   getRecentActiveEnquiryWhere,
   getRecentActiveFollowUpPlannedEnquiryWhere,
   getRecentActiveOwnedEnquiryWhere,
   getRecentActiveQualifiedEnquiryWhere,
   getRecentEnquiryWhere,
+  normalizeCampaignPairMix,
+  normalizeCampaignSourceMix,
   normalizeEnquirySchoolMix,
   normalizeProgrammeEnquiryMix,
+  type CampaignPairMixItem,
+  type CampaignSourceMixItem,
   type EnquirySchoolValue,
   type ProgrammeEnquiryMixItem,
 } from './enquiry-pipeline-reporting';
@@ -86,6 +93,12 @@ export type OperationsDashboard = {
     count: number;
   }>;
   programmeEnquiryMixLast30Days: ProgrammeEnquiryMixItem[];
+  campaignEnquiryMixLast30Days: {
+    taggedTotal: number;
+    untaggedTotal: number;
+    sourceMix: CampaignSourceMixItem[];
+    campaignMix: CampaignPairMixItem[];
+  };
   enquiryWorkflowCoverageLast30Days: {
     activeTotal: number;
     ownerCovered: number;
@@ -113,6 +126,7 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     newEnquiries,
     enquiriesLast30Days,
     programmeAttributedLast30Days,
+    campaignAttributedLast30Days,
     activeEnquiries,
     unassignedActiveEnquiries,
     recentActiveEnquiries,
@@ -123,6 +137,8 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     trackedEnrollments,
     enquirySchoolGroupsLast30Days,
     programmeEnquiryGroupsLast30Days,
+    campaignSourceGroupsLast30Days,
+    campaignPairGroupsLast30Days,
     recentEnquiries,
     recentEnrollments,
     coursePortfolio,
@@ -137,6 +153,7 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enquiry.count({
       where: getProgrammeAttributedRecentEnquiryWhere(now),
     }),
+    db.enquiry.count({ where: getCampaignAttributedRecentEnquiryWhere(now) }),
     db.enquiry.count({ where: ACTIVE_ENQUIRY_WHERE }),
     db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
     db.enquiry.count({ where: getRecentActiveEnquiryWhere(now) }),
@@ -155,6 +172,16 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enquiry.groupBy({
       by: ['programmeSlug', 'programmeTitleSnapshot'],
       where: getProgrammeAttributedRecentEnquiryWhere(now),
+      _count: { _all: true },
+    }),
+    db.enquiry.groupBy({
+      by: ['utmSource'],
+      where: getCampaignAttributedRecentEnquiryWhere(now),
+      _count: { _all: true },
+    }),
+    db.enquiry.groupBy({
+      by: ['utmSource', 'utmCampaign'],
+      where: getCampaignNamedRecentEnquiryWhere(now),
       _count: { _all: true },
     }),
     db.enquiry.findMany({
@@ -247,6 +274,15 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     programmeEnquiryMixLast30Days: normalizeProgrammeEnquiryMix(
       programmeEnquiryGroupsLast30Days,
     ),
+    campaignEnquiryMixLast30Days: {
+      taggedTotal: campaignAttributedLast30Days,
+      untaggedTotal: calculateUntaggedEnquiryCount(
+        enquiriesLast30Days,
+        campaignAttributedLast30Days,
+      ),
+      sourceMix: normalizeCampaignSourceMix(campaignSourceGroupsLast30Days),
+      campaignMix: normalizeCampaignPairMix(campaignPairGroupsLast30Days),
+    },
     enquiryWorkflowCoverageLast30Days: {
       activeTotal: recentActiveEnquiries,
       ownerCovered: recentActiveOwnedEnquiries,
