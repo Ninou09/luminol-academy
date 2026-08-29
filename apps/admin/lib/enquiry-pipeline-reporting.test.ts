@@ -10,7 +10,9 @@ import {
   getRecentActiveQualifiedEnquiryWhere,
   getRecentEnquiryWhere,
   getThirtyDayEnquiryStart,
+  MAX_PROGRAMME_ENQUIRY_MIX_ITEMS,
   normalizeEnquirySchoolMix,
+  normalizeProgrammeEnquiryMix,
 } from './enquiry-pipeline-reporting';
 
 describe('enquiry pipeline reporting', () => {
@@ -80,6 +82,82 @@ describe('enquiry pipeline reporting', () => {
       { school: 'PSYCHOLOGY', count: 7 },
       { school: 'GENERAL', count: 2 },
     ]);
+  });
+
+  it('keeps only atomic verified programme pairs, sorts them and bounds the result', () => {
+    const groups = [
+      {
+        programmeSlug: 'programme-z',
+        programmeTitleSnapshot: 'Zeta Programme',
+        _count: { _all: 2 },
+      },
+      {
+        programmeSlug: 'programme-b',
+        programmeTitleSnapshot: 'Beta Programme',
+        _count: { _all: 5 },
+      },
+      {
+        programmeSlug: 'programme-a',
+        programmeTitleSnapshot: 'Alpha Programme',
+        _count: { _all: 5 },
+      },
+      {
+        programmeSlug: null,
+        programmeTitleSnapshot: 'Missing slug',
+        _count: { _all: 99 },
+      },
+      {
+        programmeSlug: 'missing-title',
+        programmeTitleSnapshot: null,
+        _count: { _all: 99 },
+      },
+      {
+        programmeSlug: 'zero-count',
+        programmeTitleSnapshot: 'Zero Count',
+        _count: { _all: 0 },
+      },
+      ...Array.from({ length: MAX_PROGRAMME_ENQUIRY_MIX_ITEMS }, (_, index) => ({
+        programmeSlug: `extra-${index}`,
+        programmeTitleSnapshot: `Extra ${index}`,
+        _count: { _all: 1 },
+      })),
+    ];
+
+    const result = normalizeProgrammeEnquiryMix(groups);
+
+    expect(result).toHaveLength(MAX_PROGRAMME_ENQUIRY_MIX_ITEMS);
+    expect(result.slice(0, 3)).toEqual([
+      {
+        programmeSlug: 'programme-a',
+        programmeTitleSnapshot: 'Alpha Programme',
+        count: 5,
+      },
+      {
+        programmeSlug: 'programme-b',
+        programmeTitleSnapshot: 'Beta Programme',
+        count: 5,
+      },
+      {
+        programmeSlug: 'programme-z',
+        programmeTitleSnapshot: 'Zeta Programme',
+        count: 2,
+      },
+    ]);
+  });
+
+  it('allows a zero programme-mix limit without returning records', () => {
+    expect(
+      normalizeProgrammeEnquiryMix(
+        [
+          {
+            programmeSlug: 'programme-a',
+            programmeTitleSnapshot: 'Programme A',
+            _count: { _all: 3 },
+          },
+        ],
+        0,
+      ),
+    ).toEqual([]);
   });
 
   it('keeps the protected pipeline snapshot labelled in every admin locale', () => {
