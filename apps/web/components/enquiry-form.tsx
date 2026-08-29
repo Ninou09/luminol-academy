@@ -4,6 +4,7 @@ import type { Locale } from '@luminol/localization';
 import { Button } from '@luminol/ui';
 import { useState, type FormEvent } from 'react';
 
+import { getCurrentEnquiryAttribution } from '../lib/enquiry-attribution';
 import { getEnquiryQualificationCopy } from '../lib/enquiry-qualification-localization';
 import type { PublicEnquirySchool } from '../lib/programme-enquiry';
 import type { getPublicCopy } from '../lib/public-localization';
@@ -47,6 +48,10 @@ export function EnquiryForm({
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const attribution = getCurrentEnquiryAttribution({
+      pathname: window.location.pathname,
+      search: window.location.search,
+    });
 
     setSubmission({ status: 'submitting', message: copy.sending });
 
@@ -64,6 +69,7 @@ export function EnquiryForm({
           timingPreference: formData.get('timingPreference'),
           school: formData.get('school'),
           programmeSlug: initialProgrammeSlug,
+          ...attribution,
           message: formData.get('message'),
           locale,
           consent: formData.get('consent') === 'on',

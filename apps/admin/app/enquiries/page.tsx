@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAdminEnumLabel } from '../../lib/admin-localization';
+import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';
 import {
   buildEnquiryAuditTimeline,
   ENQUIRY_AUDIT_RELATION_LIMIT,
@@ -115,6 +116,7 @@ export default async function EnquiriesAdminPage({
   const administrator = await requirePermission('academy:manage');
   const locale = await getAdminRequestLocale();
   const copy = getEnquiryDeskCopy(locale);
+  const attributionCopy = getEnquiryAttributionCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
   const common = getCommonDictionary(locale);
@@ -169,6 +171,11 @@ export default async function EnquiriesAdminPage({
         locale: true,
         status: true,
         source: true,
+        landingPath: true,
+        utmSource: true,
+        utmMedium: true,
+        utmCampaign: true,
+        utmContent: true,
         createdAt: true,
         nextFollowUpAt: true,
         nextAction: true,
@@ -691,6 +698,22 @@ export default async function EnquiriesAdminPage({
                 const hasOutcome = Boolean(
                   enquiry.outcome && enquiry.outcomeAt,
                 );
+                const campaignAttribution = [
+                  enquiry.utmSource
+                    ? `${attributionCopy.source}: ${enquiry.utmSource}`
+                    : null,
+                  enquiry.utmMedium
+                    ? `${attributionCopy.medium}: ${enquiry.utmMedium}`
+                    : null,
+                  enquiry.utmCampaign
+                    ? `${attributionCopy.campaign}: ${enquiry.utmCampaign}`
+                    : null,
+                  enquiry.utmContent
+                    ? `${attributionCopy.content}: ${enquiry.utmContent}`
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ');
                 const firstResponseSteps = buildEnquiryFirstResponseSteps({
                   programmeTitleSnapshot: enquiry.programmeTitleSnapshot,
                   city: enquiry.city,
@@ -745,6 +768,18 @@ export default async function EnquiriesAdminPage({
                         <span>{copy.source}</span>
                         <p dir="auto">{enquiry.source}</p>
                       </div>
+                      {campaignAttribution ? (
+                        <div className={styles.metaItem}>
+                          <span>{attributionCopy.campaignAttribution}</span>
+                          <p dir="auto">{campaignAttribution}</p>
+                        </div>
+                      ) : null}
+                      {enquiry.landingPath ? (
+                        <div className={styles.metaItem}>
+                          <span>{attributionCopy.landingPath}</span>
+                          <p dir="auto">{enquiry.landingPath}</p>
+                        </div>
+                      ) : null}
                       <div className={styles.metaItem}>
                         <span>{copy.contact}</span>
                         <p dir="auto">{enquiry.phone || copy.noPhone}</p>
