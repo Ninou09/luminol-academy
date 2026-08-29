@@ -1,0 +1,50 @@
+name: Fix delivery preference return
+
+on:
+  push:
+    branches:
+      - feat/delivery-preference-mix
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/delivery-preference-mix
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Add delivery preference summary to dashboard return
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('apps/admin/lib/operations.server.ts')
+          text = path.read_text()
+          marker = """    enquiryContactPreferenceMixLast30Days: normalizeEnquiryContactPreferenceMix(\n      preferredContactGroupsLast30Days,\n      enquiriesLast30Days,\n    ),\n"""
+          addition = marker + """    enquiryDeliveryPreferenceMixLast30Days: normalizeEnquiryDeliveryPreferenceMix(\n      deliveryPreferenceGroupsLast30Days,\n      enquiriesLast30Days,\n    ),\n"""
+          if marker not in text:
+              raise SystemExit('contact preference return marker not found')
+          if 'enquiryDeliveryPreferenceMixLast30Days: normalizeEnquiryDeliveryPreferenceMix(' not in text:
+              text = text.replace(marker, addition, 1)
+          path.write_text(text)
+          PY
+      - run: pnpm exec prettier --write apps/admin/lib/operations.server.ts
+      - run: git diff --check
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/lib/operations.server.ts
+          git commit -m "Wire delivery preference mix into dashboard return"
+          git push origin HEAD:feat/delivery-preference-mix
