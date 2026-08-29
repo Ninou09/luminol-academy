@@ -1,11 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { createEnquiry } = vi.hoisted(() => ({
+const { createEnquiry, getPublicProgrammeBySlug } = vi.hoisted(() => ({
   createEnquiry: vi.fn(),
+  getPublicProgrammeBySlug: vi.fn(),
 }));
 
 vi.mock('@luminol/database', () => ({
   db: { enquiry: { create: createEnquiry } },
+}));
+
+vi.mock('../../../lib/programme-detail', () => ({
+  getPublicProgrammeBySlug,
 }));
 
 import { POST } from './route';
@@ -46,6 +51,8 @@ describe('POST /api/enquiries', () => {
     vi.stubEnv('VERCEL', '1');
     createEnquiry.mockReset();
     createEnquiry.mockResolvedValue({ id: 'enquiry_1' });
+    getPublicProgrammeBySlug.mockReset();
+    getPublicProgrammeBySlug.mockResolvedValue(null);
   });
 
   afterEach(() => {
@@ -73,6 +80,8 @@ describe('POST /api/enquiries', () => {
         deliveryPreference: validEnquiry.deliveryPreference,
         timingPreference: validEnquiry.timingPreference,
         school: validEnquiry.school,
+        programmeSlug: null,
+        programmeTitleSnapshot: null,
         message: validEnquiry.message,
         locale: validEnquiry.locale,
         consent: true,
@@ -159,6 +168,53 @@ describe('POST /api/enquiries', () => {
       data: expect.objectContaining({
         phone: enquiry.phone,
         preferredContact: 'WHATSAPP',
+      }),
+    });
+  });
+
+  it('persists only server-verified public programme context', async () => {
+    getPublicProgrammeBySlug.mockResolvedValueOnce({
+      title: 'Acceptance and Commitment Therapy',
+      slug: { current: 'acceptance-commitment-therapy' },
+    });
+
+    const response = await POST(
+      createRequest(
+        {
+          ...validEnquiry,
+          programmeSlug: 'acceptance-commitment-therapy',
+        },
+        '203.0.113.21',
+      ),
+    );
+
+    expect(response.status).toBe(201);
+    expect(getPublicProgrammeBySlug).toHaveBeenCalledWith(
+      'acceptance-commitment-therapy',
+    );
+    expect(createEnquiry).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        programmeSlug: 'acceptance-commitment-therapy',
+        programmeTitleSnapshot: 'Acceptance and Commitment Therapy',
+      }),
+    });
+  });
+
+  it('keeps lead capture available when programme verification fails', async () => {
+    getPublicProgrammeBySlug.mockResolvedValueOnce(null);
+
+    const response = await POST(
+      createRequest(
+        { ...validEnquiry, programmeSlug: 'retired-programme' },
+        '203.0.113.22',
+      ),
+    );
+
+    expect(response.status).toBe(201);
+    expect(createEnquiry).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        programmeSlug: null,
+        programmeTitleSnapshot: null,
       }),
     });
   });

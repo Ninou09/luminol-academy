@@ -170,6 +170,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               copy={publicCopy.form}
               initialSchool={enquiryDefaults?.school}
               initialMessage={enquiryDefaults?.message}
+              initialProgrammeSlug={programme?.slug.current}
             />
           </div>
         </section>

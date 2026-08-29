@@ -1,6 +1,8 @@
 import { db } from '@luminol/database';
 import { contactSchema } from '@luminol/validation';
 
+import { getPublicProgrammeBySlug } from '../../../lib/programme-detail';
+
 const MAX_BODY_SIZE = 20_000;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1_000;
 const RATE_LIMIT_MAX = 5;
@@ -127,6 +129,12 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
+  const programme = result.data.programmeSlug
+    ? await getPublicProgrammeBySlug(result.data.programmeSlug).catch(
+        () => null,
+      )
+    : null;
+
   try {
     await db.enquiry.create({
       data: {
@@ -138,6 +146,8 @@ export async function POST(request: Request): Promise<Response> {
         deliveryPreference: result.data.deliveryPreference,
         timingPreference: result.data.timingPreference,
         school: result.data.school,
+        programmeSlug: programme?.slug.current ?? null,
+        programmeTitleSnapshot: programme?.title ?? null,
         message: result.data.message,
         locale: result.data.locale,
         consent: result.data.consent,
