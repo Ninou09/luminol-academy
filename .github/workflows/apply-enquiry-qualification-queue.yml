@@ -1,0 +1,60 @@
+name: Apply enquiry qualification queue patch
+
+on:
+  push:
+    branches:
+      - feat/enquiry-qualification-queue
+    paths:
+      - scripts/apply-enquiry-qualification-queue-patch.py
+      - .github/workflows/apply-enquiry-qualification-queue.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-qualification-queue
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm db:generate
+      - name: Apply qualification queue patch
+        run: python scripts/apply-enquiry-qualification-queue-patch.py
+      - name: Format changed files
+        run: >-
+          pnpm exec prettier --write
+          apps/admin/lib/enquiry-attention.ts
+          apps/admin/lib/enquiry-attention.test.ts
+          apps/admin/lib/enquiry-desk-localization.ts
+          apps/admin/lib/enquiry-desk-localization.test.ts
+          apps/admin/app/enquiries/page.tsx
+      - name: Run focused tests
+        run: >-
+          pnpm exec vitest run
+          apps/admin/lib/enquiry-attention.test.ts
+          apps/admin/lib/enquiry-desk-localization.test.ts
+      - name: Typecheck admin
+        run: pnpm --filter @luminol/admin typecheck
+      - name: Remove temporary patch tooling
+        run: rm scripts/apply-enquiry-qualification-queue-patch.py .github/workflows/apply-enquiry-qualification-queue.yml
+      - name: Commit qualification queue slice
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: surface incomplete enquiry qualification"
+          git push origin HEAD:feat/enquiry-qualification-queue
