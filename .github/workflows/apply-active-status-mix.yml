@@ -1,0 +1,118 @@
+name: Apply active enquiry status mix
+
+on:
+  push:
+    branches:
+      - feat/active-enquiry-status-mix
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/active-enquiry-status-mix
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate status mix into dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          ops = Path('apps/admin/lib/operations.server.ts')
+          text = ops.read_text()
+          text = text.replace(
+              "import {\n  getActiveEnquiryAgeWhere,\n  summarizeActiveEnquiryAge,\n  type ActiveEnquiryAgeSummary,\n} from './enquiry-age-reporting';\n",
+              "import {\n  getActiveEnquiryAgeWhere,\n  summarizeActiveEnquiryAge,\n  type ActiveEnquiryAgeSummary,\n} from './enquiry-age-reporting';\nimport {\n  normalizeActiveEnquiryStatusMix,\n  type ActiveEnquiryStatusMixSummary,\n} from './enquiry-status-mix-reporting';\n",
+          )
+          text = text.replace(
+              "  activeEnquiryAge: ActiveEnquiryAgeSummary;\n",
+              "  activeEnquiryAge: ActiveEnquiryAgeSummary;\n  activeEnquiryStatusMix: ActiveEnquiryStatusMixSummary;\n",
+          )
+          text = text.replace(
+              "    campaignPairGroupsLast30Days,\n    recentEnquiries,\n",
+              "    campaignPairGroupsLast30Days,\n    activeEnquiryStatusGroups,\n    recentEnquiries,\n",
+          )
+          text = text.replace(
+              "    db.enquiry.groupBy({\n      by: ['utmSource', 'utmCampaign'],\n      where: getCampaignNamedRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.findMany({\n",
+              "    db.enquiry.groupBy({\n      by: ['utmSource', 'utmCampaign'],\n      where: getCampaignNamedRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.groupBy({\n      by: ['status'],\n      where: ACTIVE_ENQUIRY_WHERE,\n      _count: { _all: true },\n    }),\n    db.enquiry.findMany({\n",
+          )
+          text = text.replace(
+              "    activeEnquiryAge: summarizeActiveEnquiryAge({\n      under24Hours: activeUnder24Hours,\n      oneToThreeDays: activeOneToThreeDays,\n      fourToSevenDays: activeFourToSevenDays,\n      overSevenDays: activeOverSevenDays,\n    }),\n",
+              "    activeEnquiryAge: summarizeActiveEnquiryAge({\n      under24Hours: activeUnder24Hours,\n      oneToThreeDays: activeOneToThreeDays,\n      fourToSevenDays: activeFourToSevenDays,\n      overSevenDays: activeOverSevenDays,\n    }),\n    activeEnquiryStatusMix: normalizeActiveEnquiryStatusMix(\n      activeEnquiryStatusGroups,\n    ),\n",
+          )
+          ops.write_text(text)
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+          text = text.replace(
+              "import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';\n",
+              "import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';\nimport { getEnquiryStatusMixCopy } from '../lib/enquiry-status-mix-localization';\n",
+          )
+          text = text.replace(
+              "  const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);\n",
+              "  const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);\n  const statusMixCopy = getEnquiryStatusMixCopy(locale);\n",
+          )
+          marker = '          <div className="operations-grid">\n'
+          panel = "\n".join([
+              '          <section className="admin-panel">',
+              '            <div className="panel-heading">',
+              '              <div>',
+              '                <p className="eyebrow">{statusMixCopy.eyebrow}</p>',
+              '                <h2>{statusMixCopy.title}</h2>',
+              '                <p>{statusMixCopy.intro}</p>',
+              '              </div>',
+              '              <span>{number(operations.activeEnquiryStatusMix.activeTotal)}</span>',
+              '            </div>',
+              '            {operations.activeEnquiryStatusMix.items.length > 0 ? (',
+              '              <div className="metric-grid" aria-label={statusMixCopy.title}>',
+              '                {operations.activeEnquiryStatusMix.items.map((item) => (',
+              '                  <article key={item.status}>',
+              '                    <span>{getAdminEnumLabel(locale, item.status)}</span>',
+              '                    <strong>{number(item.count)}</strong>',
+              '                    <small>{statusMixCopy.count(number(item.count))}</small>',
+              '                  </article>',
+              '                ))}',
+              '              </div>',
+              '            ) : (',
+              '              <p className="admin-empty">{statusMixCopy.noData}</p>',
+              '            )}',
+              '          </section>',
+              '',
+          ]) + "\n"
+          text = text.replace(marker, panel + marker, 1)
+          page.write_text(text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-status-mix-reporting.ts \
+            apps/admin/lib/enquiry-status-mix-reporting.test.ts \
+            apps/admin/lib/enquiry-status-mix-localization.ts \
+            apps/admin/lib/enquiry-status-mix-localization.test.ts
+      - run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-status-mix-reporting.ts \
+            apps/admin/lib/enquiry-status-mix-reporting.test.ts \
+            apps/admin/lib/enquiry-status-mix-localization.ts \
+            apps/admin/lib/enquiry-status-mix-localization.test.ts
+          git commit -m "Integrate active enquiry status mix"
+          git push origin HEAD:feat/active-enquiry-status-mix
