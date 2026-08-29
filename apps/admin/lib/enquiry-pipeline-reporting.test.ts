@@ -234,7 +234,9 @@ describe('enquiry pipeline reporting', () => {
       { utmSource: 'bad', utmCampaign: null, _count: { _all: 50 } },
     ];
 
-    expect(normalizeCampaignPairMix(groups, MAX_CAMPAIGN_PAIR_MIX_ITEMS)).toEqual([
+    expect(
+      normalizeCampaignPairMix(groups, MAX_CAMPAIGN_PAIR_MIX_ITEMS),
+    ).toEqual([
       { utmSource: 'facebook', utmCampaign: 'august-a', count: 4 },
       { utmSource: 'instagram', utmCampaign: 'august-a', count: 4 },
       { utmSource: 'instagram', utmCampaign: 'august-b', count: 4 },

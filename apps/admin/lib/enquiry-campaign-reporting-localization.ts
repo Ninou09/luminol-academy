@@ -46,7 +46,8 @@ const COPY: Record<Locale, EnquiryCampaignReportingCopy> = {
     campaignMix: 'Principaux couples source + campagne',
     campaignPair: (source, campaign) => `${source} · ${campaign}`,
     enquiryCount: (count) => `${count} demandes`,
-    noSources: 'Aucune source UTM balisée n’a été enregistrée sur cette période.',
+    noSources:
+      'Aucune source UTM balisée n’a été enregistrée sur cette période.',
     noCampaigns:
       'Aucun couple source + campagne n’a été enregistré sur cette période.',
   },

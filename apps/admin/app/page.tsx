@@ -278,7 +278,9 @@ export default async function Page() {
               <article>
                 <span>{campaignCopy.untagged}</span>
                 <strong>
-                  {number(operations.campaignEnquiryMixLast30Days.untaggedTotal)}
+                  {number(
+                    operations.campaignEnquiryMixLast30Days.untaggedTotal,
+                  )}
                 </strong>
                 <small>{campaignCopy.untaggedNote}</small>
               </article>
@@ -290,13 +292,17 @@ export default async function Page() {
             </div>
             {operations.campaignEnquiryMixLast30Days.sourceMix.length > 0 ? (
               <div className="metric-grid" aria-label={campaignCopy.sourceMix}>
-                {operations.campaignEnquiryMixLast30Days.sourceMix.map((item) => (
-                  <article key={item.utmSource}>
-                    <span dir="auto">{item.utmSource}</span>
-                    <strong>{number(item.count)}</strong>
-                    <small>{campaignCopy.enquiryCount(number(item.count))}</small>
-                  </article>
-                ))}
+                {operations.campaignEnquiryMixLast30Days.sourceMix.map(
+                  (item) => (
+                    <article key={item.utmSource}>
+                      <span dir="auto">{item.utmSource}</span>
+                      <strong>{number(item.count)}</strong>
+                      <small>
+                        {campaignCopy.enquiryCount(number(item.count))}
+                      </small>
+                    </article>
+                  ),
+                )}
               </div>
             ) : (
               <p className="admin-empty">{campaignCopy.noSources}</p>
@@ -307,19 +313,26 @@ export default async function Page() {
               </div>
             </div>
             {operations.campaignEnquiryMixLast30Days.campaignMix.length > 0 ? (
-              <div className="metric-grid" aria-label={campaignCopy.campaignMix}>
-                {operations.campaignEnquiryMixLast30Days.campaignMix.map((item) => (
-                  <article key={`${item.utmSource}:${item.utmCampaign}`}>
-                    <span dir="auto">
-                      {campaignCopy.campaignPair(
-                        item.utmSource,
-                        item.utmCampaign,
-                      )}
-                    </span>
-                    <strong>{number(item.count)}</strong>
-                    <small>{campaignCopy.enquiryCount(number(item.count))}</small>
-                  </article>
-                ))}
+              <div
+                className="metric-grid"
+                aria-label={campaignCopy.campaignMix}
+              >
+                {operations.campaignEnquiryMixLast30Days.campaignMix.map(
+                  (item) => (
+                    <article key={`${item.utmSource}:${item.utmCampaign}`}>
+                      <span dir="auto">
+                        {campaignCopy.campaignPair(
+                          item.utmSource,
+                          item.utmCampaign,
+                        )}
+                      </span>
+                      <strong>{number(item.count)}</strong>
+                      <small>
+                        {campaignCopy.enquiryCount(number(item.count))}
+                      </small>
+                    </article>
+                  ),
+                )}
               </div>
             ) : (
               <p className="admin-empty">{campaignCopy.noCampaigns}</p>

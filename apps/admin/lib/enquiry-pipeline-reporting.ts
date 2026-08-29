@@ -102,7 +102,10 @@ export function calculateUntaggedEnquiryCount(
   if (!Number.isFinite(total) || total <= 0) return 0;
   if (!Number.isFinite(campaignAttributed)) return Math.max(0, total);
 
-  return Math.max(0, Math.floor(total) - Math.max(0, Math.floor(campaignAttributed)));
+  return Math.max(
+    0,
+    Math.floor(total) - Math.max(0, Math.floor(campaignAttributed)),
+  );
 }
 
 export const ENQUIRY_SCHOOLS = [
