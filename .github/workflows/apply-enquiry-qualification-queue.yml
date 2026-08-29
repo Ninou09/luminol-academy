@@ -58,3 +58,5 @@ jobs:
           git add -A
           git commit -m "feat: surface incomplete enquiry qualification"
           git push origin HEAD:feat/enquiry-qualification-queue
+
+# Trigger after rebasing the branch onto latest main.
