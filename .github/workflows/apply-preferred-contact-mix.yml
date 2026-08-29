@@ -1,0 +1,95 @@
+name: Apply preferred contact mix
+
+on:
+  push:
+    branches:
+      - feat/preferred-contact-mix
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/preferred-contact-mix
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate preferred contact mix into dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          ops = Path('apps/admin/lib/operations.server.ts')
+          text = ops.read_text()
+          text = text.replace(
+              "import {\n  summarizeEnquiryFirstContactTurnaround,\n  type EnquiryFirstContactTurnaroundSummary,\n} from './enquiry-contact-turnaround';\n",
+              "import {\n  normalizeEnquiryContactPreferenceMix,\n  type EnquiryContactPreferenceMixSummary,\n} from './enquiry-contact-preference-reporting';\nimport {\n  summarizeEnquiryFirstContactTurnaround,\n  type EnquiryFirstContactTurnaroundSummary,\n} from './enquiry-contact-turnaround';\n",
+          )
+          text = text.replace(
+              "  campaignEnquiryMixLast30Days: {\n    taggedTotal: number;\n    untaggedTotal: number;\n    sourceMix: CampaignSourceMixItem[];\n    campaignMix: CampaignPairMixItem[];\n  };\n",
+              "  campaignEnquiryMixLast30Days: {\n    taggedTotal: number;\n    untaggedTotal: number;\n    sourceMix: CampaignSourceMixItem[];\n    campaignMix: CampaignPairMixItem[];\n  };\n  enquiryContactPreferenceMixLast30Days: EnquiryContactPreferenceMixSummary;\n",
+          )
+          text = text.replace(
+              "    campaignPairGroupsLast30Days,\n    activeEnquiryStatusGroups,\n",
+              "    campaignPairGroupsLast30Days,\n    preferredContactGroupsLast30Days,\n    activeEnquiryStatusGroups,\n",
+          )
+          text = text.replace(
+              "    db.enquiry.groupBy({\n      by: ['utmSource', 'utmCampaign'],\n      where: getCampaignNamedRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.groupBy({\n      by: ['status'],\n",
+              "    db.enquiry.groupBy({\n      by: ['utmSource', 'utmCampaign'],\n      where: getCampaignNamedRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.groupBy({\n      by: ['preferredContact'],\n      where: getRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.groupBy({\n      by: ['status'],\n",
+          )
+          text = text.replace(
+              "    campaignEnquiryMixLast30Days: {\n      taggedTotal: campaignAttributedLast30Days,\n      untaggedTotal: calculateUntaggedEnquiryCount(\n        enquiriesLast30Days,\n        campaignAttributedLast30Days,\n      ),\n      sourceMix: normalizeCampaignSourceMix(campaignSourceGroupsLast30Days),\n      campaignMix: normalizeCampaignPairMix(campaignPairGroupsLast30Days),\n    },\n",
+              "    campaignEnquiryMixLast30Days: {\n      taggedTotal: campaignAttributedLast30Days,\n      untaggedTotal: calculateUntaggedEnquiryCount(\n        enquiriesLast30Days,\n        campaignAttributedLast30Days,\n      ),\n      sourceMix: normalizeCampaignSourceMix(campaignSourceGroupsLast30Days),\n      campaignMix: normalizeCampaignPairMix(campaignPairGroupsLast30Days),\n    },\n    enquiryContactPreferenceMixLast30Days:\n      normalizeEnquiryContactPreferenceMix(\n        preferredContactGroupsLast30Days,\n        enquiriesLast30Days,\n      ),\n",
+          )
+          ops.write_text(text)
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+          text = text.replace(
+              "import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';\n",
+              "import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';\nimport { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';\n",
+          )
+          text = text.replace(
+              "  const campaignCopy = getEnquiryCampaignReportingCopy(locale);\n",
+              "  const campaignCopy = getEnquiryCampaignReportingCopy(locale);\n  const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);\n",
+          )
+          marker = """          <section className=\"admin-panel\">\n            <div className=\"panel-heading\">\n              <div>\n                <p className=\"eyebrow\">{outcomeCoverageCopy.eyebrow}</p>\n"""
+          panel = """          <section className=\"admin-panel\">\n            <div className=\"panel-heading\">\n              <div>\n                <p className=\"eyebrow\">{contactPreferenceCopy.eyebrow}</p>\n                <h2>{contactPreferenceCopy.title}</h2>\n                <p>{contactPreferenceCopy.intro}</p>\n              </div>\n              <span>{copy.dashboard.rollingThirtyDays}</span>\n            </div>\n            <div className=\"metric-grid\" aria-label={contactPreferenceCopy.title}>\n              <article>\n                <span>{contactPreferenceCopy.missing}</span>\n                <strong>\n                  {number(operations.enquiryContactPreferenceMixLast30Days.missing)}\n                </strong>\n                <small>\n                  {contactPreferenceCopy.count(\n                    number(operations.enquiryContactPreferenceMixLast30Days.missing),\n                  )}\n                </small>\n              </article>\n              {operations.enquiryContactPreferenceMixLast30Days.items.map(\n                (item) => (\n                  <article key={item.preferredContact}>\n                    <span>\n                      {item.preferredContact === 'EMAIL'\n                        ? contactPreferenceCopy.email\n                        : item.preferredContact === 'PHONE'\n                          ? contactPreferenceCopy.phone\n                          : contactPreferenceCopy.whatsapp}\n                    </span>\n                    <strong>{number(item.count)}</strong>\n                    <small>{contactPreferenceCopy.count(number(item.count))}</small>\n                  </article>\n                ),\n              )}\n            </div>\n          </section>\n\n"""
+          if marker not in text:
+              raise SystemExit('outcome panel marker not found')
+          text = text.replace(marker, panel + marker, 1)
+          page.write_text(text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-contact-preference-reporting.ts \
+            apps/admin/lib/enquiry-contact-preference-reporting.test.ts \
+            apps/admin/lib/enquiry-contact-preference-localization.ts \
+            apps/admin/lib/enquiry-contact-preference-localization.test.ts
+      - run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-contact-preference-reporting.ts \
+            apps/admin/lib/enquiry-contact-preference-reporting.test.ts \
+            apps/admin/lib/enquiry-contact-preference-localization.ts \
+            apps/admin/lib/enquiry-contact-preference-localization.test.ts
+          git commit -m "Integrate preferred contact mix reporting"
+          git push origin HEAD:feat/preferred-contact-mix
