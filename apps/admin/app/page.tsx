@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
+import { getEnquiryWorkflowCopy } from '../lib/enquiry-workflow-localization';
 import {
   displayPersonName,
   getEnrollmentTransitions,
@@ -30,6 +31,7 @@ export default async function Page() {
   const locale = await getAdminRequestLocale();
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
+  const workflowCopy = getEnquiryWorkflowCopy(locale);
   const common = getCommonDictionary(locale);
   const operations = await getOperationsDashboard();
   const administratorName = displayPersonName(
@@ -38,6 +40,11 @@ export default async function Page() {
     copy.shell.administrator,
   );
   const number = (value: number) => formatLocalizedNumber(value, locale);
+  const percent = (value: number) =>
+    formatLocalizedNumber(value / 100, locale, {
+      style: 'percent',
+      maximumFractionDigits: 1,
+    });
   const date = (value: Date) => formatLocalizedDate(value, locale);
 
   return (
@@ -219,6 +226,80 @@ export default async function Page() {
             ) : (
               <p className="admin-empty">{copy.dashboard.noSchoolMix}</p>
             )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{workflowCopy.eyebrow}</p>
+                <h2>{workflowCopy.title}</h2>
+                <p>{workflowCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div className="metric-grid" aria-label={workflowCopy.title}>
+              <article>
+                <span>{workflowCopy.ownerCoverage}</span>
+                <strong>
+                  {percent(
+                    operations.enquiryWorkflowCoverageLast30Days.ownerPercent,
+                  )}
+                </strong>
+                <small>
+                  {workflowCopy.coveredOfActive(
+                    number(
+                      operations.enquiryWorkflowCoverageLast30Days.ownerCovered,
+                    ),
+                    number(
+                      operations.enquiryWorkflowCoverageLast30Days.activeTotal,
+                    ),
+                  )}{' '}
+                  · {workflowCopy.ownerCoverageNote}
+                </small>
+              </article>
+              <article>
+                <span>{workflowCopy.followUpCoverage}</span>
+                <strong>
+                  {percent(
+                    operations.enquiryWorkflowCoverageLast30Days
+                      .followUpPercent,
+                  )}
+                </strong>
+                <small>
+                  {workflowCopy.coveredOfActive(
+                    number(
+                      operations.enquiryWorkflowCoverageLast30Days
+                        .followUpCovered,
+                    ),
+                    number(
+                      operations.enquiryWorkflowCoverageLast30Days.activeTotal,
+                    ),
+                  )}{' '}
+                  · {workflowCopy.followUpCoverageNote}
+                </small>
+              </article>
+              <article>
+                <span>{workflowCopy.qualificationCoverage}</span>
+                <strong>
+                  {percent(
+                    operations.enquiryWorkflowCoverageLast30Days
+                      .qualificationPercent,
+                  )}
+                </strong>
+                <small>
+                  {workflowCopy.coveredOfActive(
+                    number(
+                      operations.enquiryWorkflowCoverageLast30Days
+                        .qualificationCovered,
+                    ),
+                    number(
+                      operations.enquiryWorkflowCoverageLast30Days.activeTotal,
+                    ),
+                  )}{' '}
+                  · {workflowCopy.qualificationCoverageNote}
+                </small>
+              </article>
+            </div>
           </section>
 
           <div className="operations-grid">
