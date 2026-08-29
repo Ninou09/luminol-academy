@@ -12,6 +12,10 @@ import Link from 'next/link';
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAdminEnumLabel } from '../../lib/admin-localization';
 import {
+  buildEnquiryAuditTimeline,
+  ENQUIRY_AUDIT_RELATION_LIMIT,
+} from '../../lib/enquiry-audit-history';
+import {
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
   ACTIVE_WITHOUT_FOLLOW_UP_WHERE,
   CLOSED_WITHOUT_OUTCOME_WHERE,
@@ -26,6 +30,7 @@ import {
 } from '../../lib/enquiry-owner-filter';
 import { buildEnquiryFirstResponseSteps } from '../../lib/enquiry-first-response';
 import {
+  getEnquiryAuditActionLabel,
   getEnquiryContactPreferenceLabel,
   getEnquiryDeliveryPreferenceLabel,
   getEnquiryDeskCopy,
@@ -170,6 +175,74 @@ export default async function EnquiriesAdminPage({
             email: true,
             firstName: true,
             lastName: true,
+          },
+        },
+        statusEvents: {
+          take: ENQUIRY_AUDIT_RELATION_LIMIT,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            fromStatus: true,
+            toStatus: true,
+            createdAt: true,
+            actor: {
+              select: {
+                email: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+        ownershipEvents: {
+          take: ENQUIRY_AUDIT_RELATION_LIMIT,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            fromOwnerUserId: true,
+            toOwnerUserId: true,
+            createdAt: true,
+            actor: {
+              select: {
+                email: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+        followUpEvents: {
+          take: ENQUIRY_AUDIT_RELATION_LIMIT,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            fromNextFollowUpAt: true,
+            toNextFollowUpAt: true,
+            createdAt: true,
+            actor: {
+              select: {
+                email: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+        outcomeEvents: {
+          take: ENQUIRY_AUDIT_RELATION_LIMIT,
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            fromOutcomeAt: true,
+            toOutcomeAt: true,
+            createdAt: true,
+            actor: {
+              select: {
+                email: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
           },
         },
       },
@@ -577,6 +650,12 @@ export default async function EnquiriesAdminPage({
                   timingPreference: enquiry.timingPreference,
                   phone: enquiry.phone,
                 });
+                const auditTimeline = buildEnquiryAuditTimeline({
+                  statusEvents: enquiry.statusEvents,
+                  ownershipEvents: enquiry.ownershipEvents,
+                  followUpEvents: enquiry.followUpEvents,
+                  outcomeEvents: enquiry.outcomeEvents,
+                });
 
                 return (
                   <article className={styles.card} key={enquiry.id}>
@@ -822,6 +901,62 @@ export default async function EnquiriesAdminPage({
                           </button>
                         </form>
                       ) : null}
+                    </section>
+
+                    <section className={styles.auditBlock}>
+                      <div>
+                        <span className={styles.messageLabel}>
+                          {copy.recentAuditChanges}
+                        </span>
+                        <p className={styles.privacyNote}>
+                          {copy.recentAuditIntro}
+                        </p>
+                      </div>
+                      {auditTimeline.length > 0 ? (
+                        <ol className={styles.auditList}>
+                          {auditTimeline.map((event) => {
+                            const actorName = displayPersonName(
+                              event.actor.firstName,
+                              event.actor.lastName,
+                              event.actor.email,
+                            );
+                            return (
+                              <li key={event.id}>
+                                <div className={styles.auditEventHeading}>
+                                  <strong>
+                                    {getEnquiryAuditActionLabel(
+                                      locale,
+                                      event.action,
+                                    )}
+                                  </strong>
+                                  <small>
+                                    {date(event.createdAt)} · {copy.auditBy}{' '}
+                                    <span dir="auto">{actorName}</span>
+                                  </small>
+                                </div>
+                                {event.action === 'status-changed' &&
+                                event.fromStatus &&
+                                event.toStatus ? (
+                                  <span>
+                                    {getAdminEnumLabel(
+                                      locale,
+                                      event.fromStatus,
+                                    )}{' '}
+                                    →{' '}
+                                    {getAdminEnumLabel(locale, event.toStatus)}
+                                  </span>
+                                ) : event.followUpAt ? (
+                                  <span>{date(event.followUpAt)}</span>
+                                ) : null}
+                              </li>
+                            );
+                          })}
+                        </ol>
+                      ) : (
+                        <p className={styles.privacyNote}>
+                          {copy.auditNoChanges}
+                        </p>
+                      )}
                     </section>
 
                     <div className={styles.statusRow}>

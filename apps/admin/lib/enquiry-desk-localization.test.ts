@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  getEnquiryAuditActionLabel,
   getEnquiryContactPreferenceLabel,
   getEnquiryDeliveryPreferenceLabel,
   getEnquiryDeskCopy,
@@ -29,6 +30,7 @@ describe('enquiry desk localization', () => {
       filterByOwner: 'Filter by owner',
       myEnquiries: 'Assigned to me',
       firstResponseGuide: 'First-response guide',
+      recentAuditChanges: 'Recent audited changes',
     });
     expect(getEnquiryDeskCopy('fr')).toMatchObject({
       title: 'Suivi des demandes',
@@ -49,6 +51,7 @@ describe('enquiry desk localization', () => {
       filterByOwner: 'Filtrer par responsable',
       myEnquiries: 'Attribuées à moi',
       firstResponseGuide: 'Guide de première réponse',
+      recentAuditChanges: 'Modifications auditées récentes',
     });
     expect(getEnquiryDeskCopy('ar')).toMatchObject({
       title: 'مكتب متابعة الطلبات',
@@ -69,6 +72,7 @@ describe('enquiry desk localization', () => {
       filterByOwner: 'التصفية حسب المسؤول',
       myEnquiries: 'مسندة إليّ',
       firstResponseGuide: 'دليل الرد الأول',
+      recentAuditChanges: 'أحدث التغييرات المدققة',
     });
   });
 
@@ -93,5 +97,17 @@ describe('enquiry desk localization', () => {
     expect(
       getEnquiryFirstResponseStepLabel('ar', 'schedule-follow-up'),
     ).toContain('تاريخ المتابعة');
+  });
+
+  it('localizes audit event actions in every admin locale', () => {
+    expect(getEnquiryAuditActionLabel('en', 'status-changed')).toBe(
+      'Status changed',
+    );
+    expect(getEnquiryAuditActionLabel('fr', 'follow-up-cleared')).toBe(
+      'Suivi supprimé',
+    );
+    expect(getEnquiryAuditActionLabel('ar', 'outcome-recorded')).toBe(
+      'تم تسجيل النتيجة',
+    );
   });
 });
