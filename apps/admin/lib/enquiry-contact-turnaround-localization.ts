@@ -30,9 +30,11 @@ const copy: Record<SupportedLocale, Copy> = {
     contacted: 'Recorded as contacted',
     contactedNote: 'Recent enquiries with a structured Contacted status event.',
     uncontacted: 'No Contacted event yet',
-    uncontactedNote: 'Recent enquiries without a recorded Contacted transition.',
+    uncontactedNote:
+      'Recent enquiries without a recorded Contacted transition.',
     median: 'Median recorded turnaround',
-    medianNote: 'Median time from enquiry creation to the first Contacted event.',
+    medianNote:
+      'Median time from enquiry creation to the first Contacted event.',
     noMedian: 'No recorded contacts',
     bucketsTitle: 'Recorded-contact turnaround buckets',
     underOneHour: 'Under 1 hour',
@@ -41,7 +43,8 @@ const copy: Record<SupportedLocale, Copy> = {
     overTwentyFourHours: '24+ hours',
     minutes: (value) => `${value} min`,
     hours: (value) => `${value} h`,
-    recordedCount: (value) => `${value} recorded contact${value === '1' ? '' : 's'}`,
+    recordedCount: (value) =>
+      `${value} recorded contact${value === '1' ? '' : 's'}`,
   },
   fr: {
     eyebrow: 'Délai de contact enregistré',
@@ -49,11 +52,14 @@ const copy: Record<SupportedLocale, Copy> = {
     intro:
       'Mesure opérationnelle fondée sur la première transition de statut enregistrée vers « Contacté » pour les demandes reçues au cours des 30 derniers jours. Elle ne prouve ni la livraison d’un message, ni la réception d’une réponse, ni l’aboutissement d’un appel, ni une conversion ou la qualité d’un prospect.',
     contacted: 'Contact enregistré',
-    contactedNote: 'Demandes récentes avec un événement structuré « Contacté ».',
+    contactedNote:
+      'Demandes récentes avec un événement structuré « Contacté ».',
     uncontacted: 'Aucun événement « Contacté »',
-    uncontactedNote: 'Demandes récentes sans transition enregistrée vers « Contacté ».',
+    uncontactedNote:
+      'Demandes récentes sans transition enregistrée vers « Contacté ».',
     median: 'Délai médian enregistré',
-    medianNote: 'Temps médian entre la création de la demande et le premier événement « Contacté ».',
+    medianNote:
+      'Temps médian entre la création de la demande et le premier événement « Contacté ».',
     noMedian: 'Aucun contact enregistré',
     bucketsTitle: 'Répartition des délais de contact enregistrés',
     underOneHour: 'Moins de 1 heure',

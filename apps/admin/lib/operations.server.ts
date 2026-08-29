@@ -7,6 +7,10 @@ import {
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
 } from './enquiry-attention';
 import {
+  summarizeEnquiryFirstContactTurnaround,
+  type EnquiryFirstContactTurnaroundSummary,
+} from './enquiry-contact-turnaround';
+import {
   calculateEnquiryCoveragePercent,
   calculateMissingOutcomeCount,
   calculateUntaggedEnquiryCount,
@@ -117,6 +121,7 @@ export type OperationsDashboard = {
     missingTotal: number;
     coveragePercent: number;
   };
+  enquiryContactTurnaroundLast30Days: EnquiryFirstContactTurnaroundSummary;
   recentEnquiries: RecentEnquiry[];
   recentEnrollments: RecentEnrollment[];
   coursePortfolio: CoursePortfolioItem[];
@@ -144,6 +149,7 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     recentActiveQualifiedEnquiries,
     recentClosedEnquiries,
     recentClosedWithOutcomeEnquiries,
+    recentEnquiryContactSamples,
     completedEnrollments,
     trackedEnrollments,
     enquirySchoolGroupsLast30Days,
@@ -175,6 +181,18 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enquiry.count({ where: getRecentActiveQualifiedEnquiryWhere(now) }),
     db.enquiry.count({ where: getRecentClosedEnquiryWhere(now) }),
     db.enquiry.count({ where: getRecentClosedEnquiryWithOutcomeWhere(now) }),
+    db.enquiry.findMany({
+      where: getRecentEnquiryWhere(now),
+      select: {
+        createdAt: true,
+        statusEvents: {
+          where: { toStatus: 'CONTACTED' },
+          orderBy: { createdAt: 'asc' },
+          take: 1,
+          select: { createdAt: true },
+        },
+      },
+    }),
     db.enrollment.count({ where: { status: 'COMPLETED' } }),
     db.enrollment.count({ where: { status: { in: ['ACTIVE', 'COMPLETED'] } } }),
     db.enquiry.groupBy({
@@ -326,6 +344,9 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
         recentClosedEnquiries,
       ),
     },
+    enquiryContactTurnaroundLast30Days: summarizeEnquiryFirstContactTurnaround(
+      recentEnquiryContactSamples,
+    ),
     recentEnquiries: recentEnquiries as RecentEnquiry[],
     recentEnrollments: recentEnrollments as RecentEnrollment[],
     coursePortfolio: coursePortfolio as CoursePortfolioItem[],

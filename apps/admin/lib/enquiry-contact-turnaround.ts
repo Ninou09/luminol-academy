@@ -25,7 +25,8 @@ function getEarliestRecordedContactAt(
 
   for (const event of statusEvents) {
     if (!Number.isFinite(event.createdAt.getTime())) continue;
-    if (earliest === null || event.createdAt < earliest) earliest = event.createdAt;
+    if (earliest === null || event.createdAt < earliest)
+      earliest = event.createdAt;
   }
 
   return earliest;
@@ -63,7 +64,9 @@ export function summarizeEnquiryFirstContactTurnaround(
 
     const elapsedMinutes = Math.max(
       0,
-      Math.round((firstContactAt.getTime() - sample.createdAt.getTime()) / MINUTE_MS),
+      Math.round(
+        (firstContactAt.getTime() - sample.createdAt.getTime()) / MINUTE_MS,
+      ),
     );
     turnaroundMinutes.push(elapsedMinutes);
 

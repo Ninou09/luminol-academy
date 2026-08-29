@@ -31,6 +31,8 @@ describe('enquiry contact turnaround localization', () => {
   it('formats localized duration units', () => {
     expect(getEnquiryContactTurnaroundCopy('en').minutes('45')).toBe('45 min');
     expect(getEnquiryContactTurnaroundCopy('fr').hours('2,5')).toBe('2,5 h');
-    expect(getEnquiryContactTurnaroundCopy('ar').minutes('٤٥')).toBe('٤٥ دقيقة');
+    expect(getEnquiryContactTurnaroundCopy('ar').minutes('٤٥')).toBe(
+      '٤٥ دقيقة',
+    );
   });
 });
