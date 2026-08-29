@@ -198,6 +198,29 @@ export default async function Page() {
             </div>
           </section>
 
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{copy.dashboard.rollingThirtyDays}</p>
+                <h2>{copy.dashboard.enquirySchoolMix}</h2>
+                <p>{copy.dashboard.enquirySchoolMixIntro}</p>
+              </div>
+            </div>
+            {operations.enquirySchoolMixLast30Days.length > 0 ? (
+              <div className="metric-grid">
+                {operations.enquirySchoolMixLast30Days.map((item) => (
+                  <article key={item.school}>
+                    <span>{getAdminEnumLabel(locale, item.school)}</span>
+                    <strong>{number(item.count)}</strong>
+                    <small>{copy.dashboard.rollingThirtyDays}</small>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="admin-empty">{copy.dashboard.noSchoolMix}</p>
+            )}
+          </section>
+
           <div className="operations-grid">
             <section className="admin-panel enquiries-panel" id="enquiries">
               <div className="panel-heading">

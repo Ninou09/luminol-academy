@@ -9,6 +9,8 @@ import {
 import {
   getProgrammeAttributedRecentEnquiryWhere,
   getRecentEnquiryWhere,
+  normalizeEnquirySchoolMix,
+  type EnquirySchoolValue,
 } from './enquiry-pipeline-reporting';
 import {
   calculateCompletionRate,
@@ -72,6 +74,10 @@ export type OperationsDashboard = {
     unassignedActiveEnquiries: number;
     completionRate: number;
   };
+  enquirySchoolMixLast30Days: Array<{
+    school: EnquirySchoolValue;
+    count: number;
+  }>;
   recentEnquiries: RecentEnquiry[];
   recentEnrollments: RecentEnrollment[];
   coursePortfolio: CoursePortfolioItem[];
@@ -94,6 +100,7 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     unassignedActiveEnquiries,
     completedEnrollments,
     trackedEnrollments,
+    enquirySchoolGroupsLast30Days,
     recentEnquiries,
     recentEnrollments,
     coursePortfolio,
@@ -112,6 +119,11 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
     db.enrollment.count({ where: { status: 'COMPLETED' } }),
     db.enrollment.count({ where: { status: { in: ['ACTIVE', 'COMPLETED'] } } }),
+    db.enquiry.groupBy({
+      by: ['school'],
+      where: getRecentEnquiryWhere(now),
+      _count: { _all: true },
+    }),
     db.enquiry.findMany({
       take: 6,
       orderBy: { createdAt: 'desc' },
@@ -196,6 +208,9 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
         trackedEnrollments,
       ),
     },
+    enquirySchoolMixLast30Days: normalizeEnquirySchoolMix(
+      enquirySchoolGroupsLast30Days,
+    ),
     recentEnquiries: recentEnquiries as RecentEnquiry[],
     recentEnrollments: recentEnrollments as RecentEnrollment[],
     coursePortfolio: coursePortfolio as CoursePortfolioItem[],
