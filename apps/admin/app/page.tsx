@@ -15,6 +15,7 @@ import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
+import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
@@ -42,6 +43,7 @@ export default async function Page() {
   const ageCopy = getEnquiryAgeCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
   const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);
+  const deliveryPreferenceCopy = getEnquiryDeliveryPreferenceCopy(locale);
   const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
   const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
@@ -476,6 +478,56 @@ export default async function Page() {
                     <strong>{number(item.count)}</strong>
                     <small>
                       {contactPreferenceCopy.count(number(item.count))}
+                    </small>
+                  </article>
+                ),
+              )}
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{deliveryPreferenceCopy.eyebrow}</p>
+                <h2>{deliveryPreferenceCopy.title}</h2>
+                <p>{deliveryPreferenceCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={deliveryPreferenceCopy.title}
+            >
+              <article>
+                <span>{deliveryPreferenceCopy.missing}</span>
+                <strong>
+                  {number(
+                    operations.enquiryDeliveryPreferenceMixLast30Days.missing,
+                  )}
+                </strong>
+                <small>
+                  {deliveryPreferenceCopy.count(
+                    number(
+                      operations.enquiryDeliveryPreferenceMixLast30Days.missing,
+                    ),
+                  )}
+                </small>
+              </article>
+              {operations.enquiryDeliveryPreferenceMixLast30Days.items.map(
+                (item) => (
+                  <article key={item.deliveryPreference}>
+                    <span>
+                      {item.deliveryPreference === 'IN_PERSON'
+                        ? deliveryPreferenceCopy.inPerson
+                        : item.deliveryPreference === 'ONLINE'
+                          ? deliveryPreferenceCopy.online
+                          : item.deliveryPreference === 'FLEXIBLE'
+                            ? deliveryPreferenceCopy.flexible
+                            : deliveryPreferenceCopy.notSure}
+                    </span>
+                    <strong>{number(item.count)}</strong>
+                    <small>
+                      {deliveryPreferenceCopy.count(number(item.count))}
                     </small>
                   </article>
                 ),
