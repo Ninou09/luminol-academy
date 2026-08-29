@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { getAdminCopy } from './admin-localization';
 import {
   calculateEnquiryCoveragePercent,
+  calculateMissingOutcomeCount,
   calculateUntaggedEnquiryCount,
   getCampaignAttributedRecentEnquiryWhere,
   getCampaignNamedRecentEnquiryWhere,
@@ -11,6 +12,8 @@ import {
   getRecentActiveFollowUpPlannedEnquiryWhere,
   getRecentActiveOwnedEnquiryWhere,
   getRecentActiveQualifiedEnquiryWhere,
+  getRecentClosedEnquiryWhere,
+  getRecentClosedEnquiryWithOutcomeWhere,
   getRecentEnquiryWhere,
   getThirtyDayEnquiryStart,
   MAX_CAMPAIGN_PAIR_MIX_ITEMS,
@@ -58,6 +61,26 @@ describe('enquiry pipeline reporting', () => {
     });
   });
 
+  it('defines recent closed enquiries from structured close events', () => {
+    const now = new Date('2026-08-29T06:00:00.000Z');
+    const base = {
+      status: 'CLOSED',
+      statusEvents: {
+        some: {
+          toStatus: 'CLOSED',
+          createdAt: { gte: new Date('2026-07-30T06:00:00.000Z') },
+        },
+      },
+    };
+
+    expect(getRecentClosedEnquiryWhere(now)).toEqual(base);
+    expect(getRecentClosedEnquiryWithOutcomeWhere(now)).toEqual({
+      ...base,
+      outcome: { not: null },
+      outcomeAt: { not: null },
+    });
+  });
+
   it('keeps recent workflow coverage limited to active enquiries', () => {
     const now = new Date('2026-08-29T06:00:00.000Z');
     const base = {
@@ -90,6 +113,13 @@ describe('enquiry pipeline reporting', () => {
     expect(calculateEnquiryCoveragePercent(0, 0)).toBe(0);
     expect(calculateEnquiryCoveragePercent(12, 10)).toBe(100);
     expect(calculateEnquiryCoveragePercent(-2, 10)).toBe(0);
+  });
+
+  it('calculates missing outcome volume without producing negative counts', () => {
+    expect(calculateMissingOutcomeCount(10, 7)).toBe(3);
+    expect(calculateMissingOutcomeCount(4, 9)).toBe(0);
+    expect(calculateMissingOutcomeCount(0, 0)).toBe(0);
+    expect(calculateMissingOutcomeCount(8, Number.NaN)).toBe(8);
   });
 
   it('calculates untagged enquiry volume without producing negative counts', () => {

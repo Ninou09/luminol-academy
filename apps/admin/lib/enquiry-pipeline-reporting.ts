@@ -43,6 +43,30 @@ export function getCampaignNamedRecentEnquiryWhere(
   };
 }
 
+export function getRecentClosedEnquiryWhere(
+  now: Date,
+): Prisma.EnquiryWhereInput {
+  return {
+    status: 'CLOSED',
+    statusEvents: {
+      some: {
+        toStatus: 'CLOSED',
+        createdAt: { gte: getThirtyDayEnquiryStart(now) },
+      },
+    },
+  };
+}
+
+export function getRecentClosedEnquiryWithOutcomeWhere(
+  now: Date,
+): Prisma.EnquiryWhereInput {
+  return {
+    ...getRecentClosedEnquiryWhere(now),
+    outcome: { not: null },
+    outcomeAt: { not: null },
+  };
+}
+
 export function getRecentActiveEnquiryWhere(
   now: Date,
 ): Prisma.EnquiryWhereInput {
@@ -105,6 +129,20 @@ export function calculateUntaggedEnquiryCount(
   return Math.max(
     0,
     Math.floor(total) - Math.max(0, Math.floor(campaignAttributed)),
+  );
+}
+
+export function calculateMissingOutcomeCount(
+  closedTotal: number,
+  recordedTotal: number,
+): number {
+  if (!Number.isFinite(closedTotal) || closedTotal <= 0) return 0;
+  if (!Number.isFinite(recordedTotal))
+    return Math.max(0, Math.floor(closedTotal));
+
+  return Math.max(
+    0,
+    Math.floor(closedTotal) - Math.max(0, Math.floor(recordedTotal)),
   );
 }
 

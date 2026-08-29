@@ -8,6 +8,7 @@ import {
 } from './enquiry-attention';
 import {
   calculateEnquiryCoveragePercent,
+  calculateMissingOutcomeCount,
   calculateUntaggedEnquiryCount,
   getCampaignAttributedRecentEnquiryWhere,
   getCampaignNamedRecentEnquiryWhere,
@@ -16,6 +17,8 @@ import {
   getRecentActiveFollowUpPlannedEnquiryWhere,
   getRecentActiveOwnedEnquiryWhere,
   getRecentActiveQualifiedEnquiryWhere,
+  getRecentClosedEnquiryWhere,
+  getRecentClosedEnquiryWithOutcomeWhere,
   getRecentEnquiryWhere,
   normalizeCampaignPairMix,
   normalizeCampaignSourceMix,
@@ -108,6 +111,12 @@ export type OperationsDashboard = {
     qualificationCovered: number;
     qualificationPercent: number;
   };
+  enquiryOutcomeCoverageLast30Days: {
+    closedTotal: number;
+    recordedTotal: number;
+    missingTotal: number;
+    coveragePercent: number;
+  };
   recentEnquiries: RecentEnquiry[];
   recentEnrollments: RecentEnrollment[];
   coursePortfolio: CoursePortfolioItem[];
@@ -133,6 +142,8 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     recentActiveOwnedEnquiries,
     recentActiveFollowUpPlannedEnquiries,
     recentActiveQualifiedEnquiries,
+    recentClosedEnquiries,
+    recentClosedWithOutcomeEnquiries,
     completedEnrollments,
     trackedEnrollments,
     enquirySchoolGroupsLast30Days,
@@ -162,6 +173,8 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       where: getRecentActiveFollowUpPlannedEnquiryWhere(now),
     }),
     db.enquiry.count({ where: getRecentActiveQualifiedEnquiryWhere(now) }),
+    db.enquiry.count({ where: getRecentClosedEnquiryWhere(now) }),
+    db.enquiry.count({ where: getRecentClosedEnquiryWithOutcomeWhere(now) }),
     db.enrollment.count({ where: { status: 'COMPLETED' } }),
     db.enrollment.count({ where: { status: { in: ['ACTIVE', 'COMPLETED'] } } }),
     db.enquiry.groupBy({
@@ -299,6 +312,18 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       qualificationPercent: calculateEnquiryCoveragePercent(
         recentActiveQualifiedEnquiries,
         recentActiveEnquiries,
+      ),
+    },
+    enquiryOutcomeCoverageLast30Days: {
+      closedTotal: recentClosedEnquiries,
+      recordedTotal: recentClosedWithOutcomeEnquiries,
+      missingTotal: calculateMissingOutcomeCount(
+        recentClosedEnquiries,
+        recentClosedWithOutcomeEnquiries,
+      ),
+      coveragePercent: calculateEnquiryCoveragePercent(
+        recentClosedWithOutcomeEnquiries,
+        recentClosedEnquiries,
       ),
     },
     recentEnquiries: recentEnquiries as RecentEnquiry[],
