@@ -66,10 +66,6 @@ describe('normalizeEnquiryContactPreferenceMix', () => {
   });
 
   it('documents the supported persisted contact methods', () => {
-    expect(ENQUIRY_CONTACT_PREFERENCES).toEqual([
-      'EMAIL',
-      'PHONE',
-      'WHATSAPP',
-    ]);
+    expect(ENQUIRY_CONTACT_PREFERENCES).toEqual(['EMAIL', 'PHONE', 'WHATSAPP']);
   });
 });

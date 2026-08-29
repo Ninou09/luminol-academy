@@ -14,6 +14,7 @@ import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
+import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
@@ -40,6 +41,7 @@ export default async function Page() {
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
   const ageCopy = getEnquiryAgeCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
+  const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);
   const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
   const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
@@ -430,6 +432,54 @@ export default async function Page() {
                   · {workflowCopy.qualificationCoverageNote}
                 </small>
               </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{contactPreferenceCopy.eyebrow}</p>
+                <h2>{contactPreferenceCopy.title}</h2>
+                <p>{contactPreferenceCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={contactPreferenceCopy.title}
+            >
+              <article>
+                <span>{contactPreferenceCopy.missing}</span>
+                <strong>
+                  {number(
+                    operations.enquiryContactPreferenceMixLast30Days.missing,
+                  )}
+                </strong>
+                <small>
+                  {contactPreferenceCopy.count(
+                    number(
+                      operations.enquiryContactPreferenceMixLast30Days.missing,
+                    ),
+                  )}
+                </small>
+              </article>
+              {operations.enquiryContactPreferenceMixLast30Days.items.map(
+                (item) => (
+                  <article key={item.preferredContact}>
+                    <span>
+                      {item.preferredContact === 'EMAIL'
+                        ? contactPreferenceCopy.email
+                        : item.preferredContact === 'PHONE'
+                          ? contactPreferenceCopy.phone
+                          : contactPreferenceCopy.whatsapp}
+                    </span>
+                    <strong>{number(item.count)}</strong>
+                    <small>
+                      {contactPreferenceCopy.count(number(item.count))}
+                    </small>
+                  </article>
+                ),
+              )}
             </div>
           </section>
 
