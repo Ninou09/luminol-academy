@@ -1,6 +1,18 @@
-import type { AdminLocale } from './admin-localization';
+import type { Locale } from '@luminol/localization';
 
-const copy = {
+type Copy = {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  activeTotal: string;
+  under24Hours: string;
+  oneToThreeDays: string;
+  fourToSevenDays: string;
+  overSevenDays: string;
+  count: (value: string) => string;
+};
+
+const copy: Record<Locale, Copy> = {
   en: {
     eyebrow: 'Operational backlog age',
     title: 'Active enquiry age',
@@ -37,8 +49,8 @@ const copy = {
     overSevenDays: 'أكثر من 7 أيام',
     count: (value: string) => `${value} طلبات نشطة`,
   },
-} as const;
+};
 
-export function getEnquiryAgeCopy(locale: AdminLocale) {
+export function getEnquiryAgeCopy(locale: Locale): Copy {
   return copy[locale];
 }
