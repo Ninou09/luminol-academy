@@ -16,6 +16,11 @@ import {
   type EnquiryFirstContactTurnaroundSummary,
 } from './enquiry-contact-turnaround';
 import {
+  getActiveEnquiryFollowUpTimingWhere,
+  summarizeFollowUpTiming,
+  type FollowUpTimingSummary,
+} from './enquiry-follow-up-timing-reporting';
+import {
   calculateEnquiryCoveragePercent,
   calculateMissingOutcomeCount,
   calculateUntaggedEnquiryCount,
@@ -128,6 +133,7 @@ export type OperationsDashboard = {
   };
   enquiryContactTurnaroundLast30Days: EnquiryFirstContactTurnaroundSummary;
   activeEnquiryAge: ActiveEnquiryAgeSummary;
+  activeEnquiryFollowUpTiming: FollowUpTimingSummary;
   recentEnquiries: RecentEnquiry[];
   recentEnrollments: RecentEnrollment[];
   coursePortfolio: CoursePortfolioItem[];
@@ -153,6 +159,11 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     activeOneToThreeDays,
     activeFourToSevenDays,
     activeOverSevenDays,
+    followUpMissingPlan,
+    followUpPastDue,
+    followUpNext24Hours,
+    followUpOneToThreeDays,
+    followUpLater,
     recentActiveEnquiries,
     recentActiveOwnedEnquiries,
     recentActiveFollowUpPlannedEnquiries,
@@ -191,6 +202,21 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       where: getActiveEnquiryAgeWhere(now, 'fourToSevenDays'),
     }),
     db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'overSevenDays') }),
+    db.enquiry.count({
+      where: getActiveEnquiryFollowUpTimingWhere(now, 'missingPlan'),
+    }),
+    db.enquiry.count({
+      where: getActiveEnquiryFollowUpTimingWhere(now, 'pastDue'),
+    }),
+    db.enquiry.count({
+      where: getActiveEnquiryFollowUpTimingWhere(now, 'next24Hours'),
+    }),
+    db.enquiry.count({
+      where: getActiveEnquiryFollowUpTimingWhere(now, 'oneToThreeDays'),
+    }),
+    db.enquiry.count({
+      where: getActiveEnquiryFollowUpTimingWhere(now, 'later'),
+    }),
     db.enquiry.count({ where: getRecentActiveEnquiryWhere(now) }),
     db.enquiry.count({ where: getRecentActiveOwnedEnquiryWhere(now) }),
     db.enquiry.count({
@@ -370,6 +396,13 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       oneToThreeDays: activeOneToThreeDays,
       fourToSevenDays: activeFourToSevenDays,
       overSevenDays: activeOverSevenDays,
+    }),
+    activeEnquiryFollowUpTiming: summarizeFollowUpTiming({
+      missingPlan: followUpMissingPlan,
+      pastDue: followUpPastDue,
+      next24Hours: followUpNext24Hours,
+      oneToThreeDays: followUpOneToThreeDays,
+      later: followUpLater,
     }),
     recentEnquiries: recentEnquiries as RecentEnquiry[],
     recentEnrollments: recentEnrollments as RecentEnrollment[],

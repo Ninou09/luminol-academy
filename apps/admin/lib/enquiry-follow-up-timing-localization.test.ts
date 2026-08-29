@@ -28,8 +28,6 @@ describe('enquiry follow-up timing localization', () => {
     expect(getEnquiryFollowUpTimingCopy('fr').count('3')).toBe(
       '3 demandes actives',
     );
-    expect(getEnquiryFollowUpTimingCopy('ar').count('3')).toBe(
-      '3 طلبات نشطة',
-    );
+    expect(getEnquiryFollowUpTimingCopy('ar').count('3')).toBe('3 طلبات نشطة');
   });
 });

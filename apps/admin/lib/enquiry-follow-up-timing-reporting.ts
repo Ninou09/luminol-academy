@@ -4,11 +4,7 @@ const DAY_MS = 24 * 60 * 60 * 1_000;
 const ACTIVE_STATUSES_EXCLUDED = ['CLOSED', 'SPAM'] as const;
 
 export type FollowUpTimingBucket =
-  | 'missingPlan'
-  | 'pastDue'
-  | 'next24Hours'
-  | 'oneToThreeDays'
-  | 'later';
+  'missingPlan' | 'pastDue' | 'next24Hours' | 'oneToThreeDays' | 'later';
 
 export type FollowUpTimingSummary = {
   activeTotal: number;
