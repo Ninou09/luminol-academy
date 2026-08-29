@@ -16,6 +16,7 @@ import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
+import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
@@ -44,6 +45,7 @@ export default async function Page() {
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
   const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);
   const deliveryPreferenceCopy = getEnquiryDeliveryPreferenceCopy(locale);
+  const timingPreferenceCopy = getEnquiryTimingPreferenceCopy(locale);
   const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
   const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
@@ -528,6 +530,56 @@ export default async function Page() {
                     <strong>{number(item.count)}</strong>
                     <small>
                       {deliveryPreferenceCopy.count(number(item.count))}
+                    </small>
+                  </article>
+                ),
+              )}
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{timingPreferenceCopy.eyebrow}</p>
+                <h2>{timingPreferenceCopy.title}</h2>
+                <p>{timingPreferenceCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={timingPreferenceCopy.title}
+            >
+              <article>
+                <span>{timingPreferenceCopy.missing}</span>
+                <strong>
+                  {number(
+                    operations.enquiryTimingPreferenceMixLast30Days.missing,
+                  )}
+                </strong>
+                <small>
+                  {timingPreferenceCopy.count(
+                    number(
+                      operations.enquiryTimingPreferenceMixLast30Days.missing,
+                    ),
+                  )}
+                </small>
+              </article>
+              {operations.enquiryTimingPreferenceMixLast30Days.items.map(
+                (item) => (
+                  <article key={item.timingPreference}>
+                    <span>
+                      {item.timingPreference === 'SOON'
+                        ? timingPreferenceCopy.soon
+                        : item.timingPreference === 'WITHIN_MONTH'
+                          ? timingPreferenceCopy.withinMonth
+                          : item.timingPreference === 'LATER'
+                            ? timingPreferenceCopy.later
+                            : timingPreferenceCopy.notSure}
+                    </span>
+                    <strong>{number(item.count)}</strong>
+                    <small>
+                      {timingPreferenceCopy.count(number(item.count))}
                     </small>
                   </article>
                 ),
