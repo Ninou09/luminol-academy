@@ -12,6 +12,10 @@ import {
   type ActiveEnquiryAgeSummary,
 } from './enquiry-age-reporting';
 import {
+  normalizeActiveEnquiryStatusMix,
+  type ActiveEnquiryStatusMixSummary,
+} from './enquiry-status-mix-reporting';
+import {
   summarizeEnquiryFirstContactTurnaround,
   type EnquiryFirstContactTurnaroundSummary,
 } from './enquiry-contact-turnaround';
@@ -133,6 +137,7 @@ export type OperationsDashboard = {
   };
   enquiryContactTurnaroundLast30Days: EnquiryFirstContactTurnaroundSummary;
   activeEnquiryAge: ActiveEnquiryAgeSummary;
+  activeEnquiryStatusMix: ActiveEnquiryStatusMixSummary;
   activeEnquiryFollowUpTiming: FollowUpTimingSummary;
   recentEnquiries: RecentEnquiry[];
   recentEnrollments: RecentEnrollment[];
@@ -177,6 +182,7 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     programmeEnquiryGroupsLast30Days,
     campaignSourceGroupsLast30Days,
     campaignPairGroupsLast30Days,
+    activeEnquiryStatusGroups,
     recentEnquiries,
     recentEnrollments,
     coursePortfolio,
@@ -257,6 +263,11 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enquiry.groupBy({
       by: ['utmSource', 'utmCampaign'],
       where: getCampaignNamedRecentEnquiryWhere(now),
+      _count: { _all: true },
+    }),
+    db.enquiry.groupBy({
+      by: ['status'],
+      where: ACTIVE_ENQUIRY_WHERE,
       _count: { _all: true },
     }),
     db.enquiry.findMany({
@@ -397,6 +408,9 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       fourToSevenDays: activeFourToSevenDays,
       overSevenDays: activeOverSevenDays,
     }),
+    activeEnquiryStatusMix: normalizeActiveEnquiryStatusMix(
+      activeEnquiryStatusGroups,
+    ),
     activeEnquiryFollowUpTiming: summarizeFollowUpTiming({
       missingPlan: followUpMissingPlan,
       pastDue: followUpPastDue,
