@@ -13,6 +13,7 @@ import { AdminLanguageSwitcher } from '../../components/admin-language-switcher'
 import { getAdminEnumLabel } from '../../lib/admin-localization';
 import {
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
+  ACTIVE_WITHOUT_FOLLOW_UP_WHERE,
   CLOSED_WITHOUT_OUTCOME_WHERE,
   getEnquiryAttentionWhere,
   parseEnquiryAttentionFilter,
@@ -130,6 +131,7 @@ export default async function EnquiriesAdminPage({
   const [
     enquiries,
     unassignedActiveCount,
+    activeWithoutFollowUpCount,
     dueTodayCount,
     overdueCount,
     closedWithoutOutcomeCount,
@@ -169,6 +171,7 @@ export default async function EnquiriesAdminPage({
       },
     }),
     db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
+    db.enquiry.count({ where: ACTIVE_WITHOUT_FOLLOW_UP_WHERE }),
     db.enquiry.count({
       where: { nextFollowUpAt: { gte: todayUtc, lt: tomorrowUtc } },
     }),
@@ -227,6 +230,28 @@ export default async function EnquiriesAdminPage({
                 >
                   <span>{copy.unassignedActive}</span>
                   <strong>{number(unassignedActiveCount)}</strong>
+                </Link>
+                <Link
+                  className={`${styles.attentionCard} ${
+                    activeAttention === 'active-without-follow-up'
+                      ? styles.activeAttentionCard
+                      : ''
+                  }`}
+                  href={enquiryHref(
+                    locale,
+                    null,
+                    null,
+                    'active-without-follow-up',
+                    null,
+                  )}
+                  aria-current={
+                    activeAttention === 'active-without-follow-up'
+                      ? 'page'
+                      : undefined
+                  }
+                >
+                  <span>{copy.activeWithoutFollowUp}</span>
+                  <strong>{number(activeWithoutFollowUpCount)}</strong>
                 </Link>
                 <Link
                   className={`${styles.attentionCard} ${
@@ -474,6 +499,27 @@ export default async function EnquiriesAdminPage({
                     }
                   >
                     <span>{copy.unassignedActive}</span>
+                  </Link>
+                  <Link
+                    className={`${styles.filterLink} ${
+                      activeAttention === 'active-without-follow-up'
+                        ? styles.activeFilter
+                        : ''
+                    }`}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      'active-without-follow-up',
+                      activeOwner,
+                    )}
+                    aria-current={
+                      activeAttention === 'active-without-follow-up'
+                        ? 'page'
+                        : undefined
+                    }
+                  >
+                    <span>{copy.activeWithoutFollowUp}</span>
                   </Link>
                   <Link
                     className={`${styles.filterLink} ${

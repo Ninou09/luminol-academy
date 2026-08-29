@@ -20,6 +20,7 @@ export type EnquiryDeskCopy = {
   myEnquiries: string;
   allAttention: string;
   unassignedActive: string;
+  activeWithoutFollowUp: string;
   closedWithoutOutcome: string;
   all: string;
   allFollowUps: string;
@@ -81,6 +82,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     myEnquiries: 'Assigned to me',
     allAttention: 'Any attention state',
     unassignedActive: 'Active & unassigned',
+    activeWithoutFollowUp: 'Active without follow-up',
     closedWithoutOutcome: 'Closed without outcome',
     all: 'All',
     allFollowUps: 'Any follow-up',
@@ -142,6 +144,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     myEnquiries: 'Attribuées à moi',
     allAttention: 'Tous les points d’attention',
     unassignedActive: 'Actives non attribuées',
+    activeWithoutFollowUp: 'Actives sans suivi planifié',
     closedWithoutOutcome: 'Clôturées sans résultat',
     all: 'Toutes',
     allFollowUps: 'Tous les suivis',
@@ -203,6 +206,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     myEnquiries: 'مسندة إليّ',
     allAttention: 'كل حالات المتابعة',
     unassignedActive: 'نشطة وغير مسندة',
+    activeWithoutFollowUp: 'نشطة دون متابعة مجدولة',
     closedWithoutOutcome: 'مغلقة دون نتيجة',
     all: 'الكل',
     allFollowUps: 'كل مواعيد المتابعة',
