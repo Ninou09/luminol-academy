@@ -24,10 +24,12 @@ import {
   parseEnquiryOwnerFilter,
   type EnquiryOwnerFilter,
 } from '../../lib/enquiry-owner-filter';
+import { buildEnquiryFirstResponseSteps } from '../../lib/enquiry-first-response';
 import {
   getEnquiryContactPreferenceLabel,
   getEnquiryDeliveryPreferenceLabel,
   getEnquiryDeskCopy,
+  getEnquiryFirstResponseStepLabel,
   getEnquiryTimingPreferenceLabel,
 } from '../../lib/enquiry-desk-localization';
 import {
@@ -567,6 +569,14 @@ export default async function EnquiriesAdminPage({
                 const hasOutcome = Boolean(
                   enquiry.outcome && enquiry.outcomeAt,
                 );
+                const firstResponseSteps = buildEnquiryFirstResponseSteps({
+                  programmeTitleSnapshot: enquiry.programmeTitleSnapshot,
+                  city: enquiry.city,
+                  preferredContact: enquiry.preferredContact,
+                  deliveryPreference: enquiry.deliveryPreference,
+                  timingPreference: enquiry.timingPreference,
+                  phone: enquiry.phone,
+                });
 
                 return (
                   <article className={styles.card} key={enquiry.id}>
@@ -671,6 +681,27 @@ export default async function EnquiriesAdminPage({
                         {copy.protectedMessage}
                       </p>
                     </div>
+
+                    <section className={styles.responseGuideBlock}>
+                      <div>
+                        <span className={styles.messageLabel}>
+                          {copy.firstResponseGuide}
+                        </span>
+                        <p className={styles.privacyNote}>
+                          {copy.firstResponseGuideIntro}
+                        </p>
+                      </div>
+                      <ol className={styles.responseGuideList}>
+                        {firstResponseSteps.map((step) => (
+                          <li key={step}>
+                            {getEnquiryFirstResponseStepLabel(locale, step)}
+                          </li>
+                        ))}
+                      </ol>
+                      <p className={styles.privacyNote}>
+                        {copy.firstResponseBoundary}
+                      </p>
+                    </section>
 
                     <section className={styles.followUpBlock}>
                       <div className={styles.followUpHeading}>
