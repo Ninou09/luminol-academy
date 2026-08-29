@@ -19,14 +19,8 @@ describe('enquiry status mix localization', () => {
   });
 
   it('keeps counts raw and operational', () => {
-    expect(getEnquiryStatusMixCopy('en').count('6')).toBe(
-      '6 active enquiries',
-    );
-    expect(getEnquiryStatusMixCopy('fr').count('6')).toBe(
-      '6 demandes actives',
-    );
-    expect(getEnquiryStatusMixCopy('ar').count('6')).toBe(
-      '6 طلبات نشطة',
-    );
+    expect(getEnquiryStatusMixCopy('en').count('6')).toBe('6 active enquiries');
+    expect(getEnquiryStatusMixCopy('fr').count('6')).toBe('6 demandes actives');
+    expect(getEnquiryStatusMixCopy('ar').count('6')).toBe('6 طلبات نشطة');
   });
 });

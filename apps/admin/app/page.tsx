@@ -18,6 +18,7 @@ import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnarou
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
+import { getEnquiryStatusMixCopy } from '../lib/enquiry-status-mix-localization';
 import { getEnquiryWorkflowCopy } from '../lib/enquiry-workflow-localization';
 import {
   displayPersonName,
@@ -43,6 +44,7 @@ export default async function Page() {
   const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
+  const statusMixCopy = getEnquiryStatusMixCopy(locale);
   const workflowCopy = getEnquiryWorkflowCopy(locale);
   const common = getCommonDictionary(locale);
   const operations = await getOperationsDashboard();
@@ -749,6 +751,32 @@ export default async function Page() {
                 </small>
               </article>
             </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{statusMixCopy.eyebrow}</p>
+                <h2>{statusMixCopy.title}</h2>
+                <p>{statusMixCopy.intro}</p>
+              </div>
+              <span>
+                {number(operations.activeEnquiryStatusMix.activeTotal)}
+              </span>
+            </div>
+            {operations.activeEnquiryStatusMix.items.length > 0 ? (
+              <div className="metric-grid" aria-label={statusMixCopy.title}>
+                {operations.activeEnquiryStatusMix.items.map((item) => (
+                  <article key={item.status}>
+                    <span>{getAdminEnumLabel(locale, item.status)}</span>
+                    <strong>{number(item.count)}</strong>
+                    <small>{statusMixCopy.count(number(item.count))}</small>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="admin-empty">{statusMixCopy.noData}</p>
+            )}
           </section>
 
           <div className="operations-grid">
