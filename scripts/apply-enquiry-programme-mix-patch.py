@@ -59,7 +59,11 @@ reporting_test = replace_once(
 )
 anchor = "  it('keeps the protected pipeline snapshot labelled in every admin locale', () => {\n"
 new_test = """  it('keeps only verified atomic programme groups, sorted and bounded', () => {
-    const groups = Array.from({ length: MAX_PROGRAMME_MIX_ITEMS + 3 }, (_, index) => ({
+    const groups: Array<{
+      programmeSlug: string | null;
+      programmeTitleSnapshot: string | null;
+      _count: { _all: number };
+    }> = Array.from({ length: MAX_PROGRAMME_MIX_ITEMS + 3 }, (_, index) => ({
       programmeSlug: `programme-${index}`,
       programmeTitleSnapshot: `Programme ${String(index).padStart(2, '0')}`,
       _count: { _all: index + 1 },
