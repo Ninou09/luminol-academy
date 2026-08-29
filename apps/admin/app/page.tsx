@@ -13,6 +13,7 @@ import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
+import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
 import { getEnquiryWorkflowCopy } from '../lib/enquiry-workflow-localization';
@@ -35,6 +36,7 @@ export default async function Page() {
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
+  const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
   const workflowCopy = getEnquiryWorkflowCopy(locale);
@@ -51,6 +53,16 @@ export default async function Page() {
       style: 'percent',
       maximumFractionDigits: 1,
     });
+  const contactTurnaround = (minutes: number | null) => {
+    if (minutes === null) return contactTurnaroundCopy.noMedian;
+    if (minutes < 60) return contactTurnaroundCopy.minutes(number(minutes));
+
+    return contactTurnaroundCopy.hours(
+      formatLocalizedNumber(minutes / 60, locale, {
+        maximumFractionDigits: 1,
+      }),
+    );
+  };
   const date = (value: Date) => formatLocalizedDate(value, locale);
 
   return (
@@ -460,6 +472,127 @@ export default async function Page() {
                     ),
                   )}{' '}
                   · {outcomeCoverageCopy.coverageNote}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{contactTurnaroundCopy.eyebrow}</p>
+                <h2>{contactTurnaroundCopy.title}</h2>
+                <p>{contactTurnaroundCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={contactTurnaroundCopy.title}
+            >
+              <article>
+                <span>{contactTurnaroundCopy.contacted}</span>
+                <strong>
+                  {number(
+                    operations.enquiryContactTurnaroundLast30Days.contacted,
+                  )}
+                </strong>
+                <small>{contactTurnaroundCopy.contactedNote}</small>
+              </article>
+              <article>
+                <span>{contactTurnaroundCopy.uncontacted}</span>
+                <strong>
+                  {number(
+                    operations.enquiryContactTurnaroundLast30Days.uncontacted,
+                  )}
+                </strong>
+                <small>{contactTurnaroundCopy.uncontactedNote}</small>
+              </article>
+              <article>
+                <span>{contactTurnaroundCopy.median}</span>
+                <strong>
+                  {contactTurnaround(
+                    operations.enquiryContactTurnaroundLast30Days.medianMinutes,
+                  )}
+                </strong>
+                <small>{contactTurnaroundCopy.medianNote}</small>
+              </article>
+            </div>
+            <div className="panel-heading">
+              <div>
+                <h3>{contactTurnaroundCopy.bucketsTitle}</h3>
+              </div>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={contactTurnaroundCopy.bucketsTitle}
+            >
+              <article>
+                <span>{contactTurnaroundCopy.underOneHour}</span>
+                <strong>
+                  {number(
+                    operations.enquiryContactTurnaroundLast30Days.buckets
+                      .underOneHour,
+                  )}
+                </strong>
+                <small>
+                  {contactTurnaroundCopy.recordedCount(
+                    number(
+                      operations.enquiryContactTurnaroundLast30Days.buckets
+                        .underOneHour,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{contactTurnaroundCopy.oneToFourHours}</span>
+                <strong>
+                  {number(
+                    operations.enquiryContactTurnaroundLast30Days.buckets
+                      .oneToFourHours,
+                  )}
+                </strong>
+                <small>
+                  {contactTurnaroundCopy.recordedCount(
+                    number(
+                      operations.enquiryContactTurnaroundLast30Days.buckets
+                        .oneToFourHours,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{contactTurnaroundCopy.fourToTwentyFourHours}</span>
+                <strong>
+                  {number(
+                    operations.enquiryContactTurnaroundLast30Days.buckets
+                      .fourToTwentyFourHours,
+                  )}
+                </strong>
+                <small>
+                  {contactTurnaroundCopy.recordedCount(
+                    number(
+                      operations.enquiryContactTurnaroundLast30Days.buckets
+                        .fourToTwentyFourHours,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{contactTurnaroundCopy.overTwentyFourHours}</span>
+                <strong>
+                  {number(
+                    operations.enquiryContactTurnaroundLast30Days.buckets
+                      .overTwentyFourHours,
+                  )}
+                </strong>
+                <small>
+                  {contactTurnaroundCopy.recordedCount(
+                    number(
+                      operations.enquiryContactTurnaroundLast30Days.buckets
+                        .overTwentyFourHours,
+                    ),
+                  )}
                 </small>
               </article>
             </div>
