@@ -23,6 +23,8 @@ describe('enquiry desk localization', () => {
       saveOutcome: 'Save outcome',
       unassignedActive: 'Active & unassigned',
       closedWithoutOutcome: 'Closed without outcome',
+      filterByOwner: 'Filter by owner',
+      myEnquiries: 'Assigned to me',
     });
     expect(getEnquiryDeskCopy('fr')).toMatchObject({
       title: 'Suivi des demandes',
@@ -38,6 +40,8 @@ describe('enquiry desk localization', () => {
       saveOutcome: 'Enregistrer le résultat',
       unassignedActive: 'Actives non attribuées',
       closedWithoutOutcome: 'Clôturées sans résultat',
+      filterByOwner: 'Filtrer par responsable',
+      myEnquiries: 'Attribuées à moi',
     });
     expect(getEnquiryDeskCopy('ar')).toMatchObject({
       title: 'مكتب متابعة الطلبات',
@@ -53,6 +57,8 @@ describe('enquiry desk localization', () => {
       saveOutcome: 'حفظ النتيجة',
       unassignedActive: 'نشطة وغير مسندة',
       closedWithoutOutcome: 'مغلقة دون نتيجة',
+      filterByOwner: 'التصفية حسب المسؤول',
+      myEnquiries: 'مسندة إليّ',
     });
   });
 

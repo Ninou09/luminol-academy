@@ -19,6 +19,11 @@ import {
   type EnquiryAttentionFilter,
 } from '../../lib/enquiry-attention';
 import {
+  getEnquiryOwnerWhere,
+  parseEnquiryOwnerFilter,
+  type EnquiryOwnerFilter,
+} from '../../lib/enquiry-owner-filter';
+import {
   getEnquiryContactPreferenceLabel,
   getEnquiryDeliveryPreferenceLabel,
   getEnquiryDeskCopy,
@@ -46,6 +51,7 @@ type EnquiryPageProps = {
     status?: string | string[] | undefined;
     followUp?: string | string[] | undefined;
     attention?: string | string[] | undefined;
+    owner?: string | string[] | undefined;
   }>;
 };
 
@@ -78,11 +84,13 @@ function enquiryHref(
   status: EnquiryStatusValue | null,
   followUp: FollowUpFilter | null,
   attention: EnquiryAttentionFilter | null,
+  owner: EnquiryOwnerFilter | null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
   if (followUp) query.set('followUp', followUp);
   if (attention) query.set('attention', attention);
+  if (owner) query.set('owner', owner);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -102,6 +110,7 @@ export default async function EnquiriesAdminPage({
   const activeStatus = parseStatus(params?.status);
   const activeFollowUp = parseFollowUp(params?.followUp);
   const activeAttention = parseEnquiryAttentionFilter(params?.attention);
+  const activeOwner = parseEnquiryOwnerFilter(params?.owner);
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
   const tomorrowUtc = new Date(todayUtc.getTime() + 86_400_000);
@@ -114,6 +123,8 @@ export default async function EnquiriesAdminPage({
   }
   const attentionWhere = getEnquiryAttentionWhere(activeAttention);
   if (attentionWhere) filters.push(attentionWhere);
+  const ownerWhere = getEnquiryOwnerWhere(activeOwner, administrator.id);
+  if (ownerWhere) filters.push(ownerWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
 
   const [
@@ -122,6 +133,7 @@ export default async function EnquiriesAdminPage({
     dueTodayCount,
     overdueCount,
     closedWithoutOutcomeCount,
+    assignedToMeCount,
   ] = await Promise.all([
     db.enquiry.findMany({
       ...(enquiryWhere ? { where: enquiryWhere } : {}),
@@ -162,6 +174,7 @@ export default async function EnquiriesAdminPage({
     }),
     db.enquiry.count({ where: { nextFollowUpAt: { lt: todayUtc } } }),
     db.enquiry.count({ where: CLOSED_WITHOUT_OUTCOME_WHERE }),
+    db.enquiry.count({ where: { ownerUserId: administrator.id } }),
   ]);
   const number = (value: number) => formatLocalizedNumber(value, locale);
   const date = (value: Date) => formatLocalizedDate(value, locale);
@@ -207,7 +220,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(locale, null, null, 'unassigned')}
+                  href={enquiryHref(locale, null, null, 'unassigned', null)}
                   aria-current={
                     activeAttention === 'unassigned' ? 'page' : undefined
                   }
@@ -221,7 +234,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(locale, null, 'due-today', null)}
+                  href={enquiryHref(locale, null, 'due-today', null, null)}
                   aria-current={
                     activeFollowUp === 'due-today' ? 'page' : undefined
                   }
@@ -235,7 +248,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(locale, null, 'overdue', null)}
+                  href={enquiryHref(locale, null, 'overdue', null, null)}
                   aria-current={
                     activeFollowUp === 'overdue' ? 'page' : undefined
                   }
@@ -254,6 +267,7 @@ export default async function EnquiriesAdminPage({
                     null,
                     null,
                     'closed-without-outcome',
+                    null,
                   )}
                   aria-current={
                     activeAttention === 'closed-without-outcome'
@@ -263,6 +277,16 @@ export default async function EnquiriesAdminPage({
                 >
                   <span>{copy.closedWithoutOutcome}</span>
                   <strong>{number(closedWithoutOutcomeCount)}</strong>
+                </Link>
+                <Link
+                  className={`${styles.attentionCard} ${
+                    activeOwner === 'mine' ? styles.activeAttentionCard : ''
+                  }`}
+                  href={enquiryHref(locale, null, null, null, 'mine')}
+                  aria-current={activeOwner === 'mine' ? 'page' : undefined}
+                >
+                  <span>{copy.myEnquiries}</span>
+                  <strong>{number(assignedToMeCount)}</strong>
                 </Link>
               </div>
             </div>
@@ -285,6 +309,7 @@ export default async function EnquiriesAdminPage({
                       null,
                       activeFollowUp,
                       activeAttention,
+                      activeOwner,
                     )}
                     aria-current={activeStatus === null ? 'page' : undefined}
                   >
@@ -301,6 +326,7 @@ export default async function EnquiriesAdminPage({
                         status,
                         activeFollowUp,
                         activeAttention,
+                        activeOwner,
                       )}
                       aria-current={
                         activeStatus === status ? 'page' : undefined
@@ -329,6 +355,7 @@ export default async function EnquiriesAdminPage({
                       activeStatus,
                       null,
                       activeAttention,
+                      activeOwner,
                     )}
                     aria-current={activeFollowUp === null ? 'page' : undefined}
                   >
@@ -343,6 +370,7 @@ export default async function EnquiriesAdminPage({
                       activeStatus,
                       'due-today',
                       activeAttention,
+                      activeOwner,
                     )}
                     aria-current={
                       activeFollowUp === 'due-today' ? 'page' : undefined
@@ -359,6 +387,7 @@ export default async function EnquiriesAdminPage({
                       activeStatus,
                       'overdue',
                       activeAttention,
+                      activeOwner,
                     )}
                     aria-current={
                       activeFollowUp === 'overdue' ? 'page' : undefined
@@ -369,6 +398,41 @@ export default async function EnquiriesAdminPage({
                 </nav>
               </div>
 
+              <div className={styles.filterGroup}>
+                <span className={styles.filterLabel}>{copy.filterByOwner}</span>
+                <nav className={styles.filters} aria-label={copy.filterByOwner}>
+                  <Link
+                    className={`${styles.filterLink} ${
+                      activeOwner === null ? styles.activeFilter : ''
+                    }`}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      null,
+                    )}
+                    aria-current={activeOwner === null ? 'page' : undefined}
+                  >
+                    <span>{copy.anyOwner}</span>
+                  </Link>
+                  <Link
+                    className={`${styles.filterLink} ${
+                      activeOwner === 'mine' ? styles.activeFilter : ''
+                    }`}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      'mine',
+                    )}
+                    aria-current={activeOwner === 'mine' ? 'page' : undefined}
+                  >
+                    <span>{copy.myEnquiries}</span>
+                  </Link>
+                </nav>
+              </div>
               <div className={styles.filterGroup}>
                 <span className={styles.filterLabel}>
                   {copy.filterByAttention}
@@ -386,6 +450,7 @@ export default async function EnquiriesAdminPage({
                       activeStatus,
                       activeFollowUp,
                       null,
+                      activeOwner,
                     )}
                     aria-current={activeAttention === null ? 'page' : undefined}
                   >
@@ -402,6 +467,7 @@ export default async function EnquiriesAdminPage({
                       activeStatus,
                       activeFollowUp,
                       'unassigned',
+                      activeOwner,
                     )}
                     aria-current={
                       activeAttention === 'unassigned' ? 'page' : undefined
@@ -420,6 +486,7 @@ export default async function EnquiriesAdminPage({
                       activeStatus,
                       activeFollowUp,
                       'closed-without-outcome',
+                      activeOwner,
                     )}
                     aria-current={
                       activeAttention === 'closed-without-outcome'
