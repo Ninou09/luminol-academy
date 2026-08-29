@@ -5,6 +5,7 @@ import {
   ACTIVE_INCOMPLETE_QUALIFICATION_WHERE,
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
   ACTIVE_WITHOUT_FOLLOW_UP_WHERE,
+  ACTIVE_WITHOUT_RECORDED_CONTACT_WHERE,
   CLOSED_WITHOUT_OUTCOME_WHERE,
   getEnquiryAttentionWhere,
   parseEnquiryAttentionFilter,
@@ -18,6 +19,9 @@ describe('enquiry attention filters', () => {
     );
     expect(parseEnquiryAttentionFilter('active-incomplete-qualification')).toBe(
       'active-incomplete-qualification',
+    );
+    expect(parseEnquiryAttentionFilter('active-without-recorded-contact')).toBe(
+      'active-without-recorded-contact',
     );
     expect(parseEnquiryAttentionFilter('closed-without-outcome')).toBe(
       'closed-without-outcome',
@@ -59,6 +63,15 @@ describe('enquiry attention filters', () => {
         { deliveryPreference: null },
         { timingPreference: null },
       ],
+    });
+    expect(getEnquiryAttentionWhere('active-without-recorded-contact')).toEqual(
+      ACTIVE_WITHOUT_RECORDED_CONTACT_WHERE,
+    );
+    expect(ACTIVE_WITHOUT_RECORDED_CONTACT_WHERE).toEqual({
+      status: { notIn: ['CLOSED', 'SPAM'] },
+      statusEvents: {
+        none: { toStatus: 'CONTACTED' },
+      },
     });
     expect(getEnquiryAttentionWhere('closed-without-outcome')).toEqual(
       CLOSED_WITHOUT_OUTCOME_WHERE,
