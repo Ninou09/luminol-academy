@@ -395,6 +395,11 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       preferredContactGroupsLast30Days,
       enquiriesLast30Days,
     ),
+    enquiryDeliveryPreferenceMixLast30Days:
+      normalizeEnquiryDeliveryPreferenceMix(
+        deliveryPreferenceGroupsLast30Days,
+        enquiriesLast30Days,
+      ),
     enquiryWorkflowCoverageLast30Days: {
       activeTotal: recentActiveEnquiries,
       ownerCovered: recentActiveOwnedEnquiries,
