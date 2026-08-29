@@ -16,11 +16,15 @@ import {
   buildEnquiryAuditTimeline,
   ENQUIRY_AUDIT_RELATION_LIMIT,
 } from '../../lib/enquiry-audit-history';
-import { getIncompleteQualificationAttentionLabel } from '../../lib/enquiry-attention-localization';
+import {
+  getIncompleteQualificationAttentionLabel,
+  getNoRecordedContactAttentionCopy,
+} from '../../lib/enquiry-attention-localization';
 import {
   ACTIVE_INCOMPLETE_QUALIFICATION_WHERE,
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
   ACTIVE_WITHOUT_FOLLOW_UP_WHERE,
+  ACTIVE_WITHOUT_RECORDED_CONTACT_WHERE,
   CLOSED_WITHOUT_OUTCOME_WHERE,
   getEnquiryAttentionWhere,
   parseEnquiryAttentionFilter,
@@ -119,6 +123,7 @@ export default async function EnquiriesAdminPage({
   const attributionCopy = getEnquiryAttributionCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
+  const noRecordedContactCopy = getNoRecordedContactAttentionCopy(locale);
   const common = getCommonDictionary(locale);
   const params = searchParams ? await searchParams : undefined;
   const activeStatus = parseStatus(params?.status);
@@ -146,6 +151,7 @@ export default async function EnquiriesAdminPage({
     unassignedActiveCount,
     activeWithoutFollowUpCount,
     incompleteQualificationCount,
+    noRecordedContactCount,
     dueTodayCount,
     overdueCount,
     closedWithoutOutcomeCount,
@@ -262,6 +268,7 @@ export default async function EnquiriesAdminPage({
     db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
     db.enquiry.count({ where: ACTIVE_WITHOUT_FOLLOW_UP_WHERE }),
     db.enquiry.count({ where: ACTIVE_INCOMPLETE_QUALIFICATION_WHERE }),
+    db.enquiry.count({ where: ACTIVE_WITHOUT_RECORDED_CONTACT_WHERE }),
     db.enquiry.count({
       where: { nextFollowUpAt: { gte: todayUtc, lt: tomorrowUtc } },
     }),
@@ -367,6 +374,28 @@ export default async function EnquiriesAdminPage({
                 </Link>
                 <Link
                   className={`${styles.attentionCard} ${
+                    activeAttention === 'active-without-recorded-contact'
+                      ? styles.activeAttentionCard
+                      : ''
+                  }`}
+                  href={enquiryHref(
+                    locale,
+                    null,
+                    null,
+                    'active-without-recorded-contact',
+                    null,
+                  )}
+                  aria-current={
+                    activeAttention === 'active-without-recorded-contact'
+                      ? 'page'
+                      : undefined
+                  }
+                >
+                  <span>{noRecordedContactCopy.label}</span>
+                  <strong>{number(noRecordedContactCount)}</strong>
+                </Link>
+                <Link
+                  className={`${styles.attentionCard} ${
                     activeFollowUp === 'due-today'
                       ? styles.activeAttentionCard
                       : ''
@@ -426,6 +455,7 @@ export default async function EnquiriesAdminPage({
                   <strong>{number(assignedToMeCount)}</strong>
                 </Link>
               </div>
+              <p className={styles.filterLabel}>{noRecordedContactCopy.note}</p>
             </div>
 
             <div className={styles.filterGroups}>
