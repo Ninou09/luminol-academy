@@ -34,7 +34,9 @@ jobs:
       - name: Generate Prisma client
         run: pnpm db:generate
       - name: Apply owner queue patches
-        run: python scripts/apply-enquiry-owner-queue-patch.py
+        run: |
+          python scripts/apply-enquiry-owner-queue-patch.py
+          python scripts/fix-enquiry-owner-href.py
       - name: Format changed files
         run: |
           pnpm exec prettier --write \
@@ -45,14 +47,13 @@ jobs:
             apps/admin/lib/enquiry-desk-localization.test.ts
       - name: Run focused tests
         run: pnpm exec vitest run apps/admin/lib/enquiry-owner-filter.test.ts apps/admin/lib/enquiry-desk-localization.test.ts apps/admin/lib/enquiry-attention.test.ts
-      - name: Show href arity diagnostic
-        run: nl -ba apps/admin/app/enquiries/page.tsx | sed -n '315,335p'
       - name: Typecheck admin
         run: pnpm --filter @luminol/admin typecheck
       - name: Remove temporary patch tooling
         run: |
           rm .github/workflows/apply-enquiry-owner-queue.yml
           rm scripts/apply-enquiry-owner-queue-patch.py
+          rm scripts/fix-enquiry-owner-href.py
       - name: Commit owner queue slice
         shell: bash
         run: |
