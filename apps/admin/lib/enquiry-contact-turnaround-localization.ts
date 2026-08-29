@@ -1,4 +1,4 @@
-import type { SupportedLocale } from '@luminol/localization';
+import type { Locale } from '@luminol/localization';
 
 type Copy = {
   eyebrow: string;
@@ -21,7 +21,7 @@ type Copy = {
   recordedCount: (value: string) => string;
 };
 
-const copy: Record<SupportedLocale, Copy> = {
+const copy: Record<Locale, Copy> = {
   en: {
     eyebrow: 'Recorded response timing',
     title: '30-day enquiry first-contact turnaround',
@@ -93,6 +93,6 @@ const copy: Record<SupportedLocale, Copy> = {
   },
 };
 
-export function getEnquiryContactTurnaroundCopy(locale: SupportedLocale): Copy {
+export function getEnquiryContactTurnaroundCopy(locale: Locale): Copy {
   return copy[locale];
 }
