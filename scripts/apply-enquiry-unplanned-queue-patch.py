@@ -34,8 +34,8 @@ attention_test_path = Path('apps/admin/lib/enquiry-attention.test.ts')
 attention_test = attention_test_path.read_text()
 attention_test = replace_once(
     attention_test,
-    "  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,\n",
-    "  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,\n  ACTIVE_WITHOUT_FOLLOW_UP_WHERE,\n",
+    "  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,\n  CLOSED_WITHOUT_OUTCOME_WHERE,\n",
+    "  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,\n  ACTIVE_WITHOUT_FOLLOW_UP_WHERE,\n  CLOSED_WITHOUT_OUTCOME_WHERE,\n",
     'attention test import',
 )
 attention_test = replace_once(
