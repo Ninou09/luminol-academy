@@ -1,5 +1,6 @@
 import type { Locale } from '@luminol/localization';
 
+import type { EnquiryAuditAction } from './enquiry-audit-history';
 import type { EnquiryFirstResponseStep } from './enquiry-first-response';
 
 export type EnquiryContactPreferenceValue = 'EMAIL' | 'PHONE' | 'WHATSAPP';
@@ -53,6 +54,10 @@ export type EnquiryDeskCopy = {
   firstResponseGuide: string;
   firstResponseGuideIntro: string;
   firstResponseBoundary: string;
+  recentAuditChanges: string;
+  recentAuditIntro: string;
+  auditBy: string;
+  auditNoChanges: string;
   followUpPlan: string;
   nextFollowUp: string;
   noFollowUp: string;
@@ -122,6 +127,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
       'Use this checklist to keep the first contact consistent with the information already provided.',
     firstResponseBoundary:
       'Operational guidance only — do not add diagnoses, treatment recommendations or clinical claims to the reply.',
+    recentAuditChanges: 'Recent audited changes',
+    recentAuditIntro:
+      'Latest protected workflow events. Historical message, next-action and outcome text are not repeated here.',
+    auditBy: 'by',
+    auditNoChanges: 'No audited workflow changes recorded yet.',
     followUpPlan: 'Next follow-up plan',
     nextFollowUp: 'Follow-up date',
     noFollowUp: 'No follow-up scheduled',
@@ -190,6 +200,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
       'Utilisez cette liste pour garder un premier contact cohérent avec les informations déjà fournies.',
     firstResponseBoundary:
       'Guide opérationnel uniquement — n’ajoutez pas de diagnostic, recommandation thérapeutique ou affirmation clinique à la réponse.',
+    recentAuditChanges: 'Modifications auditées récentes',
+    recentAuditIntro:
+      'Derniers événements protégés du flux. Les anciens messages, prochaines actions et textes de résultat ne sont pas répétés ici.',
+    auditBy: 'par',
+    auditNoChanges: 'Aucune modification auditée du flux pour le moment.',
     followUpPlan: 'Prochain suivi',
     nextFollowUp: 'Date de suivi',
     noFollowUp: 'Aucun suivi planifié',
@@ -258,6 +273,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
       'استخدم هذه القائمة للحفاظ على تواصل أول متسق مع المعلومات التي قدمها صاحب الطلب.',
     firstResponseBoundary:
       'إرشاد تشغيلي فقط — لا تضف تشخيصات أو توصيات علاجية أو ادعاءات سريرية إلى الرد.',
+    recentAuditChanges: 'أحدث التغييرات المدققة',
+    recentAuditIntro:
+      'أحدث أحداث سير العمل المحمية. لا نكرر هنا نصوص الرسائل أو الإجراءات التالية أو النتائج السابقة.',
+    auditBy: 'بواسطة',
+    auditNoChanges: 'لا توجد تغييرات مدققة في سير العمل حتى الآن.',
     followUpPlan: 'خطة المتابعة التالية',
     nextFollowUp: 'تاريخ المتابعة',
     noFollowUp: 'لا توجد متابعة مجدولة',
@@ -276,6 +296,48 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     moveTo: 'نقل إلى…',
     update: 'تحديث',
     noMatches: 'لا توجد طلبات تطابق هذه الفلاتر.',
+  },
+};
+
+const AUDIT_ACTION_LABELS: Record<
+  Locale,
+  Record<EnquiryAuditAction, string>
+> = {
+  en: {
+    'status-changed': 'Status changed',
+    'ownership-assigned': 'Owner assigned',
+    'ownership-reassigned': 'Owner reassigned',
+    'ownership-cleared': 'Ownership cleared',
+    'follow-up-planned': 'Follow-up planned',
+    'follow-up-updated': 'Follow-up updated',
+    'follow-up-cleared': 'Follow-up cleared',
+    'outcome-recorded': 'Outcome recorded',
+    'outcome-updated': 'Outcome updated',
+    'outcome-cleared': 'Outcome cleared',
+  },
+  fr: {
+    'status-changed': 'Statut modifié',
+    'ownership-assigned': 'Responsable attribué',
+    'ownership-reassigned': 'Responsable réattribué',
+    'ownership-cleared': 'Attribution retirée',
+    'follow-up-planned': 'Suivi planifié',
+    'follow-up-updated': 'Suivi modifié',
+    'follow-up-cleared': 'Suivi supprimé',
+    'outcome-recorded': 'Résultat enregistré',
+    'outcome-updated': 'Résultat modifié',
+    'outcome-cleared': 'Résultat supprimé',
+  },
+  ar: {
+    'status-changed': 'تم تغيير الحالة',
+    'ownership-assigned': 'تم إسناد مسؤول',
+    'ownership-reassigned': 'تم تغيير المسؤول',
+    'ownership-cleared': 'تم إلغاء الإسناد',
+    'follow-up-planned': 'تمت جدولة المتابعة',
+    'follow-up-updated': 'تم تحديث المتابعة',
+    'follow-up-cleared': 'تم إلغاء المتابعة',
+    'outcome-recorded': 'تم تسجيل النتيجة',
+    'outcome-updated': 'تم تحديث النتيجة',
+    'outcome-cleared': 'تم حذف النتيجة',
   },
 };
 
@@ -425,6 +487,13 @@ const TIMING_LABELS: Record<
 
 export function getEnquiryDeskCopy(locale: Locale): EnquiryDeskCopy {
   return ENQUIRY_DESK_COPY[locale];
+}
+
+export function getEnquiryAuditActionLabel(
+  locale: Locale,
+  action: EnquiryAuditAction,
+): string {
+  return AUDIT_ACTION_LABELS[locale][action];
 }
 
 export function getEnquiryFirstResponseStepLabel(

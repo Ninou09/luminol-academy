@@ -185,6 +185,47 @@
   font-weight: 700;
 }
 
+.auditBlock {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.9rem;
+  border: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  border-radius: 0.8rem;
+  background: color-mix(in srgb, currentColor 2%, transparent);
+}
+
+.auditBlock > div {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.auditList {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.auditList li {
+  display: grid;
+  gap: 0.25rem;
+  padding-block-start: 0.6rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 9%, transparent);
+}
+
+.auditEventHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.auditEventHeading small {
+  opacity: 0.68;
+}
+
 .followUpHeading {
   display: flex;
   justify-content: space-between;
