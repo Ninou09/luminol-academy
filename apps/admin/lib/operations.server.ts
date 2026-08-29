@@ -3,6 +3,14 @@ import 'server-only';
 import { db } from '@luminol/database';
 
 import {
+  ACTIVE_ENQUIRY_WHERE,
+  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
+} from './enquiry-attention';
+import {
+  getProgrammeAttributedRecentEnquiryWhere,
+  getRecentEnquiryWhere,
+} from './enquiry-pipeline-reporting';
+import {
   calculateCompletionRate,
   type EnrollmentStatusValue,
   type EnquiryStatusValue,
@@ -58,6 +66,10 @@ export type OperationsDashboard = {
     activeEnrollments: number;
     publishedCourses: number;
     newEnquiries: number;
+    enquiriesLast30Days: number;
+    programmeAttributedLast30Days: number;
+    activeEnquiries: number;
+    unassignedActiveEnquiries: number;
     completionRate: number;
   };
   recentEnquiries: RecentEnquiry[];
@@ -70,11 +82,16 @@ export type OperationsDashboard = {
 };
 
 export async function getOperationsDashboard(): Promise<OperationsDashboard> {
+  const now = new Date();
   const [
     activeUsers,
     activeEnrollments,
     publishedCourses,
     newEnquiries,
+    enquiriesLast30Days,
+    programmeAttributedLast30Days,
+    activeEnquiries,
+    unassignedActiveEnquiries,
     completedEnrollments,
     trackedEnrollments,
     recentEnquiries,
@@ -87,6 +104,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enrollment.count({ where: { status: 'ACTIVE' } }),
     db.course.count({ where: { published: true } }),
     db.enquiry.count({ where: { status: 'NEW' } }),
+    db.enquiry.count({ where: getRecentEnquiryWhere(now) }),
+    db.enquiry.count({
+      where: getProgrammeAttributedRecentEnquiryWhere(now),
+    }),
+    db.enquiry.count({ where: ACTIVE_ENQUIRY_WHERE }),
+    db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
     db.enrollment.count({ where: { status: 'COMPLETED' } }),
     db.enrollment.count({ where: { status: { in: ['ACTIVE', 'COMPLETED'] } } }),
     db.enquiry.findMany({
@@ -164,6 +187,10 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       activeEnrollments,
       publishedCourses,
       newEnquiries,
+      enquiriesLast30Days,
+      programmeAttributedLast30Days,
+      activeEnquiries,
+      unassignedActiveEnquiries,
       completionRate: calculateCompletionRate(
         completedEnrollments,
         trackedEnrollments,

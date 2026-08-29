@@ -64,6 +64,17 @@ export type AdminCopy = {
     awaitingReview: string;
     completionRate: string;
     completionRateAria: string;
+    enquiryPipelineAria: string;
+    enquiryPipeline: string;
+    rollingThirtyDays: string;
+    enquiriesLast30Days: string;
+    receivedLast30Days: string;
+    programmeAttributedLast30Days: string;
+    verifiedProgrammeContext: string;
+    activeEnquiries: string;
+    currentlyOpen: string;
+    unassignedActiveEnquiries: string;
+    needsOwner: string;
     growth: string;
     recentEnquiries: string;
     newSuffix: string;
@@ -197,6 +208,17 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       awaitingReview: 'Awaiting review',
       completionRate: 'Completion rate',
       completionRateAria: 'Programme completion rate',
+      enquiryPipelineAria: 'Enquiry pipeline snapshot',
+      enquiryPipeline: 'Enquiry pipeline',
+      rollingThirtyDays: 'Rolling 30 days',
+      enquiriesLast30Days: 'Enquiries received',
+      receivedLast30Days: 'Created in the last 30 days',
+      programmeAttributedLast30Days: 'Programme-attributed',
+      verifiedProgrammeContext: 'Verified programme context in the last 30 days',
+      activeEnquiries: 'Active enquiries',
+      currentlyOpen: 'New, in review or contacted',
+      unassignedActiveEnquiries: 'Active & unassigned',
+      needsOwner: 'Needs an owner',
       growth: 'Growth',
       recentEnquiries: 'Recent enquiries',
       newSuffix: 'new',
@@ -354,6 +376,17 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       awaitingReview: 'En attente d’examen',
       completionRate: 'Taux d’achèvement',
       completionRateAria: 'Taux d’achèvement des programmes',
+      enquiryPipelineAria: 'Aperçu du pipeline des demandes',
+      enquiryPipeline: 'Pipeline des demandes',
+      rollingThirtyDays: '30 derniers jours',
+      enquiriesLast30Days: 'Demandes reçues',
+      receivedLast30Days: 'Créées au cours des 30 derniers jours',
+      programmeAttributedLast30Days: 'Attribuées à un programme',
+      verifiedProgrammeContext: 'Contexte de programme vérifié sur 30 jours',
+      activeEnquiries: 'Demandes actives',
+      currentlyOpen: 'Nouvelles, en examen ou contactées',
+      unassignedActiveEnquiries: 'Actives non attribuées',
+      needsOwner: 'Responsable à attribuer',
       growth: 'Développement',
       recentEnquiries: 'Demandes récentes',
       newSuffix: 'nouvelles',
@@ -511,6 +544,17 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       awaitingReview: 'بانتظار المراجعة',
       completionRate: 'نسبة الإكمال',
       completionRateAria: 'نسبة إكمال البرامج',
+      enquiryPipelineAria: 'ملخص مسار الطلبات',
+      enquiryPipeline: 'مسار الطلبات',
+      rollingThirtyDays: 'آخر 30 يومًا',
+      enquiriesLast30Days: 'الطلبات المستلمة',
+      receivedLast30Days: 'أُنشئت خلال آخر 30 يومًا',
+      programmeAttributedLast30Days: 'مرتبطة ببرنامج',
+      verifiedProgrammeContext: 'سياق برنامج موثّق خلال آخر 30 يومًا',
+      activeEnquiries: 'الطلبات النشطة',
+      currentlyOpen: 'جديدة أو قيد المراجعة أو تم التواصل معها',
+      unassignedActiveEnquiries: 'نشطة وغير مسندة',
+      needsOwner: 'تحتاج إلى مسؤول متابعة',
       growth: 'النمو',
       recentEnquiries: 'أحدث الطلبات',
       newSuffix: 'جديد',

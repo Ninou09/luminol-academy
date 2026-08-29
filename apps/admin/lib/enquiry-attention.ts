@@ -8,9 +8,13 @@ export const enquiryAttentionFilters = [
 
 export type EnquiryAttentionFilter = (typeof enquiryAttentionFilters)[number];
 
-export const ACTIVE_UNASSIGNED_ENQUIRY_WHERE = {
-  ownerUserId: null,
+export const ACTIVE_ENQUIRY_WHERE = {
   status: { notIn: ['CLOSED', 'SPAM'] },
+} satisfies Prisma.EnquiryWhereInput;
+
+export const ACTIVE_UNASSIGNED_ENQUIRY_WHERE = {
+  ...ACTIVE_ENQUIRY_WHERE,
+  ownerUserId: null,
 } satisfies Prisma.EnquiryWhereInput;
 
 export const ACTIVE_WITHOUT_FOLLOW_UP_WHERE = {

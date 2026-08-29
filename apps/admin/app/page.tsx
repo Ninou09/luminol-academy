@@ -157,6 +157,47 @@ export default async function Page() {
             </article>
           </section>
 
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{copy.dashboard.growth}</p>
+                <h2>{copy.dashboard.enquiryPipeline}</h2>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={copy.dashboard.enquiryPipelineAria}
+            >
+              <article>
+                <span>{copy.dashboard.enquiriesLast30Days}</span>
+                <strong>
+                  {number(operations.summary.enquiriesLast30Days)}
+                </strong>
+                <small>{copy.dashboard.receivedLast30Days}</small>
+              </article>
+              <article>
+                <span>{copy.dashboard.programmeAttributedLast30Days}</span>
+                <strong>
+                  {number(operations.summary.programmeAttributedLast30Days)}
+                </strong>
+                <small>{copy.dashboard.verifiedProgrammeContext}</small>
+              </article>
+              <article>
+                <span>{copy.dashboard.activeEnquiries}</span>
+                <strong>{number(operations.summary.activeEnquiries)}</strong>
+                <small>{copy.dashboard.currentlyOpen}</small>
+              </article>
+              <article>
+                <span>{copy.dashboard.unassignedActiveEnquiries}</span>
+                <strong>
+                  {number(operations.summary.unassignedActiveEnquiries)}
+                </strong>
+                <small>{copy.dashboard.needsOwner}</small>
+              </article>
+            </div>
+          </section>
+
           <div className="operations-grid">
             <section className="admin-panel enquiries-panel" id="enquiries">
               <div className="panel-heading">

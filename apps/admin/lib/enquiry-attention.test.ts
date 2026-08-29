@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  ACTIVE_ENQUIRY_WHERE,
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
   ACTIVE_WITHOUT_FOLLOW_UP_WHERE,
   CLOSED_WITHOUT_OUTCOME_WHERE,
@@ -25,6 +26,9 @@ describe('enquiry attention filters', () => {
   });
 
   it('keeps attention semantics explicit and limited to structured fields', () => {
+    expect(ACTIVE_ENQUIRY_WHERE).toEqual({
+      status: { notIn: ['CLOSED', 'SPAM'] },
+    });
     expect(getEnquiryAttentionWhere('unassigned')).toEqual(
       ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
     );
