@@ -1,0 +1,126 @@
+name: Apply enquiry age reporting integration
+
+on:
+  push:
+    branches:
+      - feat/active-enquiry-age-distribution
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/active-enquiry-age-distribution
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate reporting into dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          ops = Path('apps/admin/lib/operations.server.ts')
+          text = ops.read_text()
+          text = text.replace(
+          "import {\n  summarizeEnquiryFirstContactTurnaround,\n  type EnquiryFirstContactTurnaroundSummary,\n} from './enquiry-contact-turnaround';\n",
+          "import {\n  getActiveEnquiryAgeWhere,\n  summarizeActiveEnquiryAge,\n  type ActiveEnquiryAgeSummary,\n} from './enquiry-age-reporting';\nimport {\n  summarizeEnquiryFirstContactTurnaround,\n  type EnquiryFirstContactTurnaroundSummary,\n} from './enquiry-contact-turnaround';\n"
+          )
+          text = text.replace(
+          "  enquiryContactTurnaroundLast30Days: EnquiryFirstContactTurnaroundSummary;\n",
+          "  enquiryContactTurnaroundLast30Days: EnquiryFirstContactTurnaroundSummary;\n  activeEnquiryAge: ActiveEnquiryAgeSummary;\n"
+          )
+          text = text.replace(
+          "    unassignedActiveEnquiries,\n    recentActiveEnquiries,\n",
+          "    unassignedActiveEnquiries,\n    activeUnder24Hours,\n    activeOneToThreeDays,\n    activeFourToSevenDays,\n    activeOverSevenDays,\n    recentActiveEnquiries,\n"
+          )
+          text = text.replace(
+          "    db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),\n    db.enquiry.count({ where: getRecentActiveEnquiryWhere(now) }),\n",
+          "    db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),\n    db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'under24Hours') }),\n    db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'oneToThreeDays') }),\n    db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'fourToSevenDays') }),\n    db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'overSevenDays') }),\n    db.enquiry.count({ where: getRecentActiveEnquiryWhere(now) }),\n"
+          )
+          text = text.replace(
+          "    enquiryContactTurnaroundLast30Days: summarizeEnquiryFirstContactTurnaround(\n      recentEnquiryContactSamples,\n    ),\n    recentEnquiries: recentEnquiries as RecentEnquiry[],\n",
+          "    enquiryContactTurnaroundLast30Days: summarizeEnquiryFirstContactTurnaround(\n      recentEnquiryContactSamples,\n    ),\n    activeEnquiryAge: summarizeActiveEnquiryAge({\n      under24Hours: activeUnder24Hours,\n      oneToThreeDays: activeOneToThreeDays,\n      fourToSevenDays: activeFourToSevenDays,\n      overSevenDays: activeOverSevenDays,\n    }),\n    recentEnquiries: recentEnquiries as RecentEnquiry[],\n"
+          )
+          ops.write_text(text)
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+          text = text.replace(
+          "import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';\n",
+          "import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';\nimport { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';\n"
+          )
+          text = text.replace(
+          "  const analyticsCopy = getAcademyAnalyticsCopy(locale);\n  const campaignCopy = getEnquiryCampaignReportingCopy(locale);\n",
+          "  const analyticsCopy = getAcademyAnalyticsCopy(locale);\n  const ageCopy = getEnquiryAgeCopy(locale);\n  const campaignCopy = getEnquiryCampaignReportingCopy(locale);\n"
+          )
+          marker = "          <div className=\"operations-grid\">\n"
+          panel = '''          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{ageCopy.eyebrow}</p>
+                <h2>{ageCopy.title}</h2>
+                <p>{ageCopy.intro}</p>
+              </div>
+              <span>{number(operations.activeEnquiryAge.activeTotal)}</span>
+            </div>
+            <div className="metric-grid" aria-label={ageCopy.title}>
+              <article>
+                <span>{ageCopy.under24Hours}</span>
+                <strong>{number(operations.activeEnquiryAge.buckets.under24Hours)}</strong>
+                <small>{ageCopy.count(number(operations.activeEnquiryAge.buckets.under24Hours))}</small>
+              </article>
+              <article>
+                <span>{ageCopy.oneToThreeDays}</span>
+                <strong>{number(operations.activeEnquiryAge.buckets.oneToThreeDays)}</strong>
+                <small>{ageCopy.count(number(operations.activeEnquiryAge.buckets.oneToThreeDays))}</small>
+              </article>
+              <article>
+                <span>{ageCopy.fourToSevenDays}</span>
+                <strong>{number(operations.activeEnquiryAge.buckets.fourToSevenDays)}</strong>
+                <small>{ageCopy.count(number(operations.activeEnquiryAge.buckets.fourToSevenDays))}</small>
+              </article>
+              <article>
+                <span>{ageCopy.overSevenDays}</span>
+                <strong>{number(operations.activeEnquiryAge.buckets.overSevenDays)}</strong>
+                <small>{ageCopy.count(number(operations.activeEnquiryAge.buckets.overSevenDays))}</small>
+              </article>
+            </div>
+          </section>
+
+'''
+          text = text.replace(marker, panel + marker, 1)
+          page.write_text(text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-age-reporting.ts \
+            apps/admin/lib/enquiry-age-reporting.test.ts \
+            apps/admin/lib/enquiry-age-localization.ts \
+            apps/admin/lib/enquiry-age-localization.test.ts
+      - run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-age-reporting.ts \
+            apps/admin/lib/enquiry-age-reporting.test.ts \
+            apps/admin/lib/enquiry-age-localization.ts \
+            apps/admin/lib/enquiry-age-localization.test.ts
+          git commit -m "Integrate active enquiry age reporting"
+          git push origin HEAD:feat/active-enquiry-age-distribution
