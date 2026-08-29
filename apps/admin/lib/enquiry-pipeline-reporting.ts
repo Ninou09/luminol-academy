@@ -3,6 +3,8 @@ import type { Prisma } from '@luminol/database';
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1_000;
 const ACTIVE_ENQUIRY_STATUSES_EXCLUDED = ['CLOSED', 'SPAM'] as const;
 export const MAX_PROGRAMME_ENQUIRY_MIX_ITEMS = 6;
+export const MAX_CAMPAIGN_SOURCE_MIX_ITEMS = 6;
+export const MAX_CAMPAIGN_PAIR_MIX_ITEMS = 6;
 
 export function getThirtyDayEnquiryStart(now: Date): Date {
   return new Date(now.getTime() - THIRTY_DAYS_MS);
@@ -19,6 +21,25 @@ export function getProgrammeAttributedRecentEnquiryWhere(
     createdAt: { gte: getThirtyDayEnquiryStart(now) },
     programmeSlug: { not: null },
     programmeTitleSnapshot: { not: null },
+  };
+}
+
+export function getCampaignAttributedRecentEnquiryWhere(
+  now: Date,
+): Prisma.EnquiryWhereInput {
+  return {
+    createdAt: { gte: getThirtyDayEnquiryStart(now) },
+    utmSource: { not: null },
+  };
+}
+
+export function getCampaignNamedRecentEnquiryWhere(
+  now: Date,
+): Prisma.EnquiryWhereInput {
+  return {
+    createdAt: { gte: getThirtyDayEnquiryStart(now) },
+    utmSource: { not: null },
+    utmCampaign: { not: null },
   };
 }
 
@@ -74,6 +95,16 @@ export function calculateEnquiryCoveragePercent(
   return Math.round((boundedCovered / total) * 1_000) / 10;
 }
 
+export function calculateUntaggedEnquiryCount(
+  total: number,
+  campaignAttributed: number,
+): number {
+  if (!Number.isFinite(total) || total <= 0) return 0;
+  if (!Number.isFinite(campaignAttributed)) return Math.max(0, total);
+
+  return Math.max(0, Math.floor(total) - Math.max(0, Math.floor(campaignAttributed)));
+}
+
 export const ENQUIRY_SCHOOLS = [
   'PSYCHOLOGY',
   'LANGUAGES',
@@ -99,6 +130,17 @@ export function normalizeEnquirySchoolMix(
 export type ProgrammeEnquiryMixItem = {
   programmeSlug: string;
   programmeTitleSnapshot: string;
+  count: number;
+};
+
+export type CampaignSourceMixItem = {
+  utmSource: string;
+  count: number;
+};
+
+export type CampaignPairMixItem = {
+  utmSource: string;
+  utmCampaign: string;
   count: number;
 };
 
@@ -140,6 +182,68 @@ export function normalizeProgrammeEnquiryMix(
         b.count - a.count ||
         compareStableText(a.programmeTitleSnapshot, b.programmeTitleSnapshot) ||
         compareStableText(a.programmeSlug, b.programmeSlug),
+    )
+    .slice(0, boundedLimit);
+}
+
+export function normalizeCampaignSourceMix(
+  groups: Array<{
+    utmSource: string | null;
+    _count: { _all: number };
+  }>,
+  limit = MAX_CAMPAIGN_SOURCE_MIX_ITEMS,
+): CampaignSourceMixItem[] {
+  const boundedLimit = Math.max(0, Math.floor(limit));
+
+  return groups
+    .filter(
+      (group): group is { utmSource: string; _count: { _all: number } } =>
+        group.utmSource !== null && group._count._all > 0,
+    )
+    .map((group) => ({
+      utmSource: group.utmSource,
+      count: group._count._all,
+    }))
+    .sort(
+      (a, b) =>
+        b.count - a.count || compareStableText(a.utmSource, b.utmSource),
+    )
+    .slice(0, boundedLimit);
+}
+
+export function normalizeCampaignPairMix(
+  groups: Array<{
+    utmSource: string | null;
+    utmCampaign: string | null;
+    _count: { _all: number };
+  }>,
+  limit = MAX_CAMPAIGN_PAIR_MIX_ITEMS,
+): CampaignPairMixItem[] {
+  const boundedLimit = Math.max(0, Math.floor(limit));
+
+  return groups
+    .filter(
+      (
+        group,
+      ): group is {
+        utmSource: string;
+        utmCampaign: string;
+        _count: { _all: number };
+      } =>
+        group.utmSource !== null &&
+        group.utmCampaign !== null &&
+        group._count._all > 0,
+    )
+    .map((group) => ({
+      utmSource: group.utmSource,
+      utmCampaign: group.utmCampaign,
+      count: group._count._all,
+    }))
+    .sort(
+      (a, b) =>
+        b.count - a.count ||
+        compareStableText(a.utmSource, b.utmSource) ||
+        compareStableText(a.utmCampaign, b.utmCampaign),
     )
     .slice(0, boundedLimit);
 }
