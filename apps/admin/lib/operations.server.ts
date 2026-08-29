@@ -7,7 +7,12 @@ import {
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
 } from './enquiry-attention';
 import {
+  calculateEnquiryCoveragePercent,
   getProgrammeAttributedRecentEnquiryWhere,
+  getRecentActiveEnquiryWhere,
+  getRecentActiveFollowUpPlannedEnquiryWhere,
+  getRecentActiveOwnedEnquiryWhere,
+  getRecentActiveQualifiedEnquiryWhere,
   getRecentEnquiryWhere,
   normalizeEnquirySchoolMix,
   type EnquirySchoolValue,
@@ -78,6 +83,15 @@ export type OperationsDashboard = {
     school: EnquirySchoolValue;
     count: number;
   }>;
+  enquiryWorkflowCoverageLast30Days: {
+    activeTotal: number;
+    ownerCovered: number;
+    ownerPercent: number;
+    followUpCovered: number;
+    followUpPercent: number;
+    qualificationCovered: number;
+    qualificationPercent: number;
+  };
   recentEnquiries: RecentEnquiry[];
   recentEnrollments: RecentEnrollment[];
   coursePortfolio: CoursePortfolioItem[];
@@ -98,6 +112,10 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     programmeAttributedLast30Days,
     activeEnquiries,
     unassignedActiveEnquiries,
+    recentActiveEnquiries,
+    recentActiveOwnedEnquiries,
+    recentActiveFollowUpPlannedEnquiries,
+    recentActiveQualifiedEnquiries,
     completedEnrollments,
     trackedEnrollments,
     enquirySchoolGroupsLast30Days,
@@ -117,6 +135,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     }),
     db.enquiry.count({ where: ACTIVE_ENQUIRY_WHERE }),
     db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
+    db.enquiry.count({ where: getRecentActiveEnquiryWhere(now) }),
+    db.enquiry.count({ where: getRecentActiveOwnedEnquiryWhere(now) }),
+    db.enquiry.count({
+      where: getRecentActiveFollowUpPlannedEnquiryWhere(now),
+    }),
+    db.enquiry.count({ where: getRecentActiveQualifiedEnquiryWhere(now) }),
     db.enrollment.count({ where: { status: 'COMPLETED' } }),
     db.enrollment.count({ where: { status: { in: ['ACTIVE', 'COMPLETED'] } } }),
     db.enquiry.groupBy({
@@ -211,6 +235,24 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     enquirySchoolMixLast30Days: normalizeEnquirySchoolMix(
       enquirySchoolGroupsLast30Days,
     ),
+    enquiryWorkflowCoverageLast30Days: {
+      activeTotal: recentActiveEnquiries,
+      ownerCovered: recentActiveOwnedEnquiries,
+      ownerPercent: calculateEnquiryCoveragePercent(
+        recentActiveOwnedEnquiries,
+        recentActiveEnquiries,
+      ),
+      followUpCovered: recentActiveFollowUpPlannedEnquiries,
+      followUpPercent: calculateEnquiryCoveragePercent(
+        recentActiveFollowUpPlannedEnquiries,
+        recentActiveEnquiries,
+      ),
+      qualificationCovered: recentActiveQualifiedEnquiries,
+      qualificationPercent: calculateEnquiryCoveragePercent(
+        recentActiveQualifiedEnquiries,
+        recentActiveEnquiries,
+      ),
+    },
     recentEnquiries: recentEnquiries as RecentEnquiry[],
     recentEnrollments: recentEnrollments as RecentEnrollment[],
     coursePortfolio: coursePortfolio as CoursePortfolioItem[],
