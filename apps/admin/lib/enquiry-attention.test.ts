@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   ACTIVE_ENQUIRY_WHERE,
+  ACTIVE_INCOMPLETE_QUALIFICATION_WHERE,
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
   ACTIVE_WITHOUT_FOLLOW_UP_WHERE,
   CLOSED_WITHOUT_OUTCOME_WHERE,
@@ -14,6 +15,9 @@ describe('enquiry attention filters', () => {
     expect(parseEnquiryAttentionFilter('unassigned')).toBe('unassigned');
     expect(parseEnquiryAttentionFilter('active-without-follow-up')).toBe(
       'active-without-follow-up',
+    );
+    expect(parseEnquiryAttentionFilter('active-incomplete-qualification')).toBe(
+      'active-incomplete-qualification',
     );
     expect(parseEnquiryAttentionFilter('closed-without-outcome')).toBe(
       'closed-without-outcome',
@@ -43,6 +47,18 @@ describe('enquiry attention filters', () => {
       status: { notIn: ['CLOSED', 'SPAM'] },
       nextFollowUpAt: null,
       nextAction: null,
+    });
+    expect(getEnquiryAttentionWhere('active-incomplete-qualification')).toEqual(
+      ACTIVE_INCOMPLETE_QUALIFICATION_WHERE,
+    );
+    expect(ACTIVE_INCOMPLETE_QUALIFICATION_WHERE).toEqual({
+      status: { notIn: ['CLOSED', 'SPAM'] },
+      OR: [
+        { city: null },
+        { preferredContact: null },
+        { deliveryPreference: null },
+        { timingPreference: null },
+      ],
     });
     expect(getEnquiryAttentionWhere('closed-without-outcome')).toEqual(
       CLOSED_WITHOUT_OUTCOME_WHERE,

@@ -16,6 +16,7 @@ import {
   ENQUIRY_AUDIT_RELATION_LIMIT,
 } from '../../lib/enquiry-audit-history';
 import {
+  ACTIVE_INCOMPLETE_QUALIFICATION_WHERE,
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
   ACTIVE_WITHOUT_FOLLOW_UP_WHERE,
   CLOSED_WITHOUT_OUTCOME_WHERE,
@@ -139,6 +140,7 @@ export default async function EnquiriesAdminPage({
     enquiries,
     unassignedActiveCount,
     activeWithoutFollowUpCount,
+    activeIncompleteQualificationCount,
     dueTodayCount,
     overdueCount,
     closedWithoutOutcomeCount,
@@ -249,6 +251,7 @@ export default async function EnquiriesAdminPage({
     }),
     db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
     db.enquiry.count({ where: ACTIVE_WITHOUT_FOLLOW_UP_WHERE }),
+    db.enquiry.count({ where: ACTIVE_INCOMPLETE_QUALIFICATION_WHERE }),
     db.enquiry.count({
       where: { nextFollowUpAt: { gte: todayUtc, lt: tomorrowUtc } },
     }),
@@ -329,6 +332,28 @@ export default async function EnquiriesAdminPage({
                 >
                   <span>{copy.activeWithoutFollowUp}</span>
                   <strong>{number(activeWithoutFollowUpCount)}</strong>
+                </Link>
+                <Link
+                  className={`${styles.attentionCard} ${
+                    activeAttention === 'active-incomplete-qualification'
+                      ? styles.activeAttentionCard
+                      : ''
+                  }`}
+                  href={enquiryHref(
+                    locale,
+                    null,
+                    null,
+                    'active-incomplete-qualification',
+                    null,
+                  )}
+                  aria-current={
+                    activeAttention === 'active-incomplete-qualification'
+                      ? 'page'
+                      : undefined
+                  }
+                >
+                  <span>{copy.activeIncompleteQualification}</span>
+                  <strong>{number(activeIncompleteQualificationCount)}</strong>
                 </Link>
                 <Link
                   className={`${styles.attentionCard} ${
