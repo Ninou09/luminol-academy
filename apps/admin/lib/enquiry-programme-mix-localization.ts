@@ -15,7 +15,8 @@ const COPY: Record<Locale, EnquiryProgrammeMixCopy> = {
     intro:
       'Programme-attributed enquiries created in the rolling last 30 days, grouped only by the server-verified programme snapshot stored with each enquiry.',
     enquiryCount: (count) => `${count} enquiries`,
-    noData: 'No verified programme-attributed enquiries were received in this 30-day window.',
+    noData:
+      'No verified programme-attributed enquiries were received in this 30-day window.',
   },
   fr: {
     eyebrow: 'Contexte programme vérifié',

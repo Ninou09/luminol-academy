@@ -240,15 +240,14 @@ export default async function Page() {
               <span>{copy.dashboard.rollingThirtyDays}</span>
             </div>
             {operations.programmeEnquiryMixLast30Days.length > 0 ? (
-              <div
-                className="metric-grid"
-                aria-label={programmeMixCopy.title}
-              >
+              <div className="metric-grid" aria-label={programmeMixCopy.title}>
                 {operations.programmeEnquiryMixLast30Days.map((item) => (
                   <article key={item.programmeSlug}>
                     <span dir="auto">{item.programmeTitleSnapshot}</span>
                     <strong>{number(item.count)}</strong>
-                    <small>{programmeMixCopy.enquiryCount(number(item.count))}</small>
+                    <small>
+                      {programmeMixCopy.enquiryCount(number(item.count))}
+                    </small>
                   </article>
                 ))}
               </div>

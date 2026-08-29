@@ -119,7 +119,9 @@ export function normalizeProgrammeEnquiryMix(
 
   return groups
     .filter(
-      (group): group is {
+      (
+        group,
+      ): group is {
         programmeSlug: string;
         programmeTitleSnapshot: string;
         _count: { _all: number };

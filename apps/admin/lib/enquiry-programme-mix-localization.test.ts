@@ -25,8 +25,6 @@ describe('verified programme enquiry mix localization', () => {
     expect(getEnquiryProgrammeMixCopy('fr').enquiryCount('4')).toBe(
       '4 demandes',
     );
-    expect(getEnquiryProgrammeMixCopy('ar').enquiryCount('٤')).toBe(
-      '٤ طلبات',
-    );
+    expect(getEnquiryProgrammeMixCopy('ar').enquiryCount('٤')).toBe('٤ طلبات');
   });
 });

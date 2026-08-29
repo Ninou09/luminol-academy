@@ -116,11 +116,14 @@ describe('enquiry pipeline reporting', () => {
         programmeTitleSnapshot: 'Zero Count',
         _count: { _all: 0 },
       },
-      ...Array.from({ length: MAX_PROGRAMME_ENQUIRY_MIX_ITEMS }, (_, index) => ({
-        programmeSlug: `extra-${index}`,
-        programmeTitleSnapshot: `Extra ${index}`,
-        _count: { _all: 1 },
-      })),
+      ...Array.from(
+        { length: MAX_PROGRAMME_ENQUIRY_MIX_ITEMS },
+        (_, index) => ({
+          programmeSlug: `extra-${index}`,
+          programmeTitleSnapshot: `Extra ${index}`,
+          _count: { _all: 1 },
+        }),
+      ),
     ];
 
     const result = normalizeProgrammeEnquiryMix(groups);
