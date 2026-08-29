@@ -15,6 +15,7 @@ import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
+import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
 import { getEnquiryWorkflowCopy } from '../lib/enquiry-workflow-localization';
@@ -39,6 +40,7 @@ export default async function Page() {
   const ageCopy = getEnquiryAgeCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
   const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
+  const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
   const workflowCopy = getEnquiryWorkflowCopy(locale);
@@ -651,6 +653,98 @@ export default async function Page() {
                 <small>
                   {ageCopy.count(
                     number(operations.activeEnquiryAge.buckets.overSevenDays),
+                  )}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{followUpTimingCopy.eyebrow}</p>
+                <h2>{followUpTimingCopy.title}</h2>
+                <p>{followUpTimingCopy.intro}</p>
+              </div>
+              <span>
+                {number(operations.activeEnquiryFollowUpTiming.activeTotal)}
+              </span>
+            </div>
+            <div className="metric-grid" aria-label={followUpTimingCopy.title}>
+              <article>
+                <span>{followUpTimingCopy.missingPlan}</span>
+                <strong>
+                  {number(
+                    operations.activeEnquiryFollowUpTiming.buckets.missingPlan,
+                  )}
+                </strong>
+                <small>
+                  {followUpTimingCopy.count(
+                    number(
+                      operations.activeEnquiryFollowUpTiming.buckets
+                        .missingPlan,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{followUpTimingCopy.pastDue}</span>
+                <strong>
+                  {number(
+                    operations.activeEnquiryFollowUpTiming.buckets.pastDue,
+                  )}
+                </strong>
+                <small>
+                  {followUpTimingCopy.count(
+                    number(
+                      operations.activeEnquiryFollowUpTiming.buckets.pastDue,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{followUpTimingCopy.next24Hours}</span>
+                <strong>
+                  {number(
+                    operations.activeEnquiryFollowUpTiming.buckets.next24Hours,
+                  )}
+                </strong>
+                <small>
+                  {followUpTimingCopy.count(
+                    number(
+                      operations.activeEnquiryFollowUpTiming.buckets
+                        .next24Hours,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{followUpTimingCopy.oneToThreeDays}</span>
+                <strong>
+                  {number(
+                    operations.activeEnquiryFollowUpTiming.buckets
+                      .oneToThreeDays,
+                  )}
+                </strong>
+                <small>
+                  {followUpTimingCopy.count(
+                    number(
+                      operations.activeEnquiryFollowUpTiming.buckets
+                        .oneToThreeDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{followUpTimingCopy.later}</span>
+                <strong>
+                  {number(operations.activeEnquiryFollowUpTiming.buckets.later)}
+                </strong>
+                <small>
+                  {followUpTimingCopy.count(
+                    number(
+                      operations.activeEnquiryFollowUpTiming.buckets.later,
+                    ),
                   )}
                 </small>
               </article>
