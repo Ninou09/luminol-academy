@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import { getAdminCopy } from './admin-localization';
 import {
+  calculateEnquiryCoveragePercent,
   getProgrammeAttributedRecentEnquiryWhere,
+  getRecentActiveEnquiryWhere,
+  getRecentActiveFollowUpPlannedEnquiryWhere,
+  getRecentActiveOwnedEnquiryWhere,
+  getRecentActiveQualifiedEnquiryWhere,
   getRecentEnquiryWhere,
   getThirtyDayEnquiryStart,
   normalizeEnquirySchoolMix,
@@ -27,6 +32,40 @@ describe('enquiry pipeline reporting', () => {
       programmeSlug: { not: null },
       programmeTitleSnapshot: { not: null },
     });
+  });
+
+  it('keeps recent workflow coverage limited to active enquiries', () => {
+    const now = new Date('2026-08-29T06:00:00.000Z');
+    const base = {
+      createdAt: { gte: new Date('2026-07-30T06:00:00.000Z') },
+      status: { notIn: ['CLOSED', 'SPAM'] },
+    };
+
+    expect(getRecentActiveEnquiryWhere(now)).toEqual(base);
+    expect(getRecentActiveOwnedEnquiryWhere(now)).toEqual({
+      ...base,
+      ownerUserId: { not: null },
+    });
+    expect(getRecentActiveFollowUpPlannedEnquiryWhere(now)).toEqual({
+      ...base,
+      nextFollowUpAt: { not: null },
+      nextAction: { not: null },
+    });
+    expect(getRecentActiveQualifiedEnquiryWhere(now)).toEqual({
+      ...base,
+      city: { not: null },
+      preferredContact: { not: null },
+      deliveryPreference: { not: null },
+      timingPreference: { not: null },
+    });
+  });
+
+  it('calculates deterministic bounded workflow coverage percentages', () => {
+    expect(calculateEnquiryCoveragePercent(7, 10)).toBe(70);
+    expect(calculateEnquiryCoveragePercent(2, 3)).toBe(66.7);
+    expect(calculateEnquiryCoveragePercent(0, 0)).toBe(0);
+    expect(calculateEnquiryCoveragePercent(12, 10)).toBe(100);
+    expect(calculateEnquiryCoveragePercent(-2, 10)).toBe(0);
   });
 
   it('normalizes only known non-zero school groups in descending count order', () => {
