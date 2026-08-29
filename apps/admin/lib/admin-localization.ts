@@ -75,6 +75,9 @@ export type AdminCopy = {
     currentlyOpen: string;
     unassignedActiveEnquiries: string;
     needsOwner: string;
+    enquirySchoolMix: string;
+    enquirySchoolMixIntro: string;
+    noSchoolMix: string;
     growth: string;
     recentEnquiries: string;
     newSuffix: string;
@@ -219,6 +222,9 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       currentlyOpen: 'New, in review or contacted',
       unassignedActiveEnquiries: 'Active & unassigned',
       needsOwner: 'Needs an owner',
+      enquirySchoolMix: 'Enquiry mix by school',
+      enquirySchoolMixIntro: 'Enquiries created in the rolling last 30 days, grouped by the submitted school.',
+      noSchoolMix: 'No enquiries were received in this 30-day window.',
       growth: 'Growth',
       recentEnquiries: 'Recent enquiries',
       newSuffix: 'new',
@@ -387,6 +393,9 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       currentlyOpen: 'Nouvelles, en examen ou contactées',
       unassignedActiveEnquiries: 'Actives non attribuées',
       needsOwner: 'Responsable à attribuer',
+      enquirySchoolMix: 'Répartition des demandes par pôle',
+      enquirySchoolMixIntro: 'Demandes créées au cours des 30 derniers jours glissants, regroupées selon le pôle sélectionné.',
+      noSchoolMix: 'Aucune demande reçue pendant cette période de 30 jours.',
       growth: 'Développement',
       recentEnquiries: 'Demandes récentes',
       newSuffix: 'nouvelles',
@@ -555,6 +564,9 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       currentlyOpen: 'جديدة أو قيد المراجعة أو تم التواصل معها',
       unassignedActiveEnquiries: 'نشطة وغير مسندة',
       needsOwner: 'تحتاج إلى مسؤول متابعة',
+      enquirySchoolMix: 'توزيع الطلبات حسب المجال',
+      enquirySchoolMixIntro: 'الطلبات المنشأة خلال آخر 30 يومًا متحركًا، مجمعة حسب المجال الذي اختاره صاحب الطلب.',
+      noSchoolMix: 'لم تُستلم طلبات خلال فترة الثلاثين يومًا هذه.',
       growth: 'النمو',
       recentEnquiries: 'أحدث الطلبات',
       newSuffix: 'جديد',

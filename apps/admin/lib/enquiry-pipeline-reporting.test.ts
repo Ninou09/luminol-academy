@@ -5,6 +5,7 @@ import {
   getProgrammeAttributedRecentEnquiryWhere,
   getRecentEnquiryWhere,
   getThirtyDayEnquiryStart,
+  normalizeEnquirySchoolMix,
 } from './enquiry-pipeline-reporting';
 
 describe('enquiry pipeline reporting', () => {
@@ -26,6 +27,20 @@ describe('enquiry pipeline reporting', () => {
       programmeSlug: { not: null },
       programmeTitleSnapshot: { not: null },
     });
+  });
+
+  it('normalizes only known non-zero school groups in descending count order', () => {
+    expect(
+      normalizeEnquirySchoolMix([
+        { school: 'GENERAL', _count: { _all: 2 } },
+        { school: 'PSYCHOLOGY', _count: { _all: 7 } },
+        { school: 'UNKNOWN', _count: { _all: 99 } },
+        { school: 'LANGUAGES', _count: { _all: 0 } },
+      ]),
+    ).toEqual([
+      { school: 'PSYCHOLOGY', count: 7 },
+      { school: 'GENERAL', count: 2 },
+    ]);
   });
 
   it('keeps the protected pipeline snapshot labelled in every admin locale', () => {
