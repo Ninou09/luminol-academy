@@ -20,6 +20,10 @@ import {
   type EnquiryContactPreferenceMixSummary,
 } from './enquiry-contact-preference-reporting';
 import {
+  normalizeEnquiryDeliveryPreferenceMix,
+  type EnquiryDeliveryPreferenceMixSummary,
+} from './enquiry-delivery-preference-reporting';
+import {
   summarizeEnquiryFirstContactTurnaround,
   type EnquiryFirstContactTurnaroundSummary,
 } from './enquiry-contact-turnaround';
@@ -125,6 +129,7 @@ export type OperationsDashboard = {
     campaignMix: CampaignPairMixItem[];
   };
   enquiryContactPreferenceMixLast30Days: EnquiryContactPreferenceMixSummary;
+  enquiryDeliveryPreferenceMixLast30Days: EnquiryDeliveryPreferenceMixSummary;
   enquiryWorkflowCoverageLast30Days: {
     activeTotal: number;
     ownerCovered: number;
@@ -188,6 +193,7 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     campaignSourceGroupsLast30Days,
     campaignPairGroupsLast30Days,
     preferredContactGroupsLast30Days,
+    deliveryPreferenceGroupsLast30Days,
     activeEnquiryStatusGroups,
     recentEnquiries,
     recentEnrollments,
@@ -273,6 +279,11 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     }),
     db.enquiry.groupBy({
       by: ['preferredContact'],
+      where: getRecentEnquiryWhere(now),
+      _count: { _all: true },
+    }),
+    db.enquiry.groupBy({
+      by: ['deliveryPreference'],
       where: getRecentEnquiryWhere(now),
       _count: { _all: true },
     }),
