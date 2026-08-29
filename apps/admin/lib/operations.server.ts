@@ -15,7 +15,9 @@ import {
   getRecentActiveQualifiedEnquiryWhere,
   getRecentEnquiryWhere,
   normalizeEnquirySchoolMix,
+  normalizeProgrammeEnquiryMix,
   type EnquirySchoolValue,
+  type ProgrammeEnquiryMixItem,
 } from './enquiry-pipeline-reporting';
 import {
   calculateCompletionRate,
@@ -83,6 +85,7 @@ export type OperationsDashboard = {
     school: EnquirySchoolValue;
     count: number;
   }>;
+  programmeEnquiryMixLast30Days: ProgrammeEnquiryMixItem[];
   enquiryWorkflowCoverageLast30Days: {
     activeTotal: number;
     ownerCovered: number;
@@ -119,6 +122,7 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     completedEnrollments,
     trackedEnrollments,
     enquirySchoolGroupsLast30Days,
+    programmeEnquiryGroupsLast30Days,
     recentEnquiries,
     recentEnrollments,
     coursePortfolio,
@@ -146,6 +150,11 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enquiry.groupBy({
       by: ['school'],
       where: getRecentEnquiryWhere(now),
+      _count: { _all: true },
+    }),
+    db.enquiry.groupBy({
+      by: ['programmeSlug', 'programmeTitleSnapshot'],
+      where: getProgrammeAttributedRecentEnquiryWhere(now),
       _count: { _all: true },
     }),
     db.enquiry.findMany({
@@ -234,6 +243,9 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     },
     enquirySchoolMixLast30Days: normalizeEnquirySchoolMix(
       enquirySchoolGroupsLast30Days,
+    ),
+    programmeEnquiryMixLast30Days: normalizeProgrammeEnquiryMix(
+      programmeEnquiryGroupsLast30Days,
     ),
     enquiryWorkflowCoverageLast30Days: {
       activeTotal: recentActiveEnquiries,
