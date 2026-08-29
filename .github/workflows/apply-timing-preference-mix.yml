@@ -1,0 +1,96 @@
+name: Apply timing preference mix
+
+on:
+  push:
+    branches:
+      - feat/timing-preference-mix
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/timing-preference-mix
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate timing preference mix into dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          ops = Path('apps/admin/lib/operations.server.ts')
+          text = ops.read_text()
+          text = text.replace(
+              "import {\n  normalizeEnquiryDeliveryPreferenceMix,\n  type EnquiryDeliveryPreferenceMixSummary,\n} from './enquiry-delivery-preference-reporting';\n",
+              "import {\n  normalizeEnquiryDeliveryPreferenceMix,\n  type EnquiryDeliveryPreferenceMixSummary,\n} from './enquiry-delivery-preference-reporting';\nimport {\n  normalizeEnquiryTimingPreferenceMix,\n  type EnquiryTimingPreferenceMixSummary,\n} from './enquiry-timing-preference-reporting';\n",
+          )
+          text = text.replace(
+              "  enquiryDeliveryPreferenceMixLast30Days: EnquiryDeliveryPreferenceMixSummary;\n",
+              "  enquiryDeliveryPreferenceMixLast30Days: EnquiryDeliveryPreferenceMixSummary;\n  enquiryTimingPreferenceMixLast30Days: EnquiryTimingPreferenceMixSummary;\n",
+          )
+          text = text.replace(
+              "    deliveryPreferenceGroupsLast30Days,\n    activeEnquiryStatusGroups,\n",
+              "    deliveryPreferenceGroupsLast30Days,\n    timingPreferenceGroupsLast30Days,\n    activeEnquiryStatusGroups,\n",
+          )
+          text = text.replace(
+              "    db.enquiry.groupBy({\n      by: ['deliveryPreference'],\n      where: getRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.groupBy({\n      by: ['status'],\n",
+              "    db.enquiry.groupBy({\n      by: ['deliveryPreference'],\n      where: getRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.groupBy({\n      by: ['timingPreference'],\n      where: getRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.groupBy({\n      by: ['status'],\n",
+          )
+          marker = """    enquiryDeliveryPreferenceMixLast30Days:\n      normalizeEnquiryDeliveryPreferenceMix(\n        deliveryPreferenceGroupsLast30Days,\n        enquiriesLast30Days,\n      ),\n"""
+          addition = marker + """    enquiryTimingPreferenceMixLast30Days: normalizeEnquiryTimingPreferenceMix(\n      timingPreferenceGroupsLast30Days,\n      enquiriesLast30Days,\n    ),\n"""
+          if marker not in text:
+              raise SystemExit('delivery preference return marker not found')
+          text = text.replace(marker, addition, 1)
+          ops.write_text(text)
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+          text = text.replace(
+              "import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';\n",
+              "import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';\nimport { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';\n",
+          )
+          text = text.replace(
+              "  const deliveryPreferenceCopy = getEnquiryDeliveryPreferenceCopy(locale);\n",
+              "  const deliveryPreferenceCopy = getEnquiryDeliveryPreferenceCopy(locale);\n  const timingPreferenceCopy = getEnquiryTimingPreferenceCopy(locale);\n",
+          )
+          marker = """          <section className=\"admin-panel\">\n            <div className=\"panel-heading\">\n              <div>\n                <p className=\"eyebrow\">{outcomeCoverageCopy.eyebrow}</p>\n"""
+          panel = """          <section className=\"admin-panel\">\n            <div className=\"panel-heading\">\n              <div>\n                <p className=\"eyebrow\">{timingPreferenceCopy.eyebrow}</p>\n                <h2>{timingPreferenceCopy.title}</h2>\n                <p>{timingPreferenceCopy.intro}</p>\n              </div>\n              <span>{copy.dashboard.rollingThirtyDays}</span>\n            </div>\n            <div className=\"metric-grid\" aria-label={timingPreferenceCopy.title}>\n              <article>\n                <span>{timingPreferenceCopy.missing}</span>\n                <strong>\n                  {number(operations.enquiryTimingPreferenceMixLast30Days.missing)}\n                </strong>\n                <small>\n                  {timingPreferenceCopy.count(\n                    number(operations.enquiryTimingPreferenceMixLast30Days.missing),\n                  )}\n                </small>\n              </article>\n              {operations.enquiryTimingPreferenceMixLast30Days.items.map(\n                (item) => (\n                  <article key={item.timingPreference}>\n                    <span>\n                      {item.timingPreference === 'SOON'\n                        ? timingPreferenceCopy.soon\n                        : item.timingPreference === 'WITHIN_MONTH'\n                          ? timingPreferenceCopy.withinMonth\n                          : item.timingPreference === 'LATER'\n                            ? timingPreferenceCopy.later\n                            : timingPreferenceCopy.notSure}\n                    </span>\n                    <strong>{number(item.count)}</strong>\n                    <small>{timingPreferenceCopy.count(number(item.count))}</small>\n                  </article>\n                ),\n              )}\n            </div>\n          </section>\n\n"""
+          if marker not in text:
+              raise SystemExit('outcome panel marker not found')
+          text = text.replace(marker, panel + marker, 1)
+          page.write_text(text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-timing-preference-reporting.ts \
+            apps/admin/lib/enquiry-timing-preference-reporting.test.ts \
+            apps/admin/lib/enquiry-timing-preference-localization.ts \
+            apps/admin/lib/enquiry-timing-preference-localization.test.ts
+      - run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-timing-preference-reporting.ts \
+            apps/admin/lib/enquiry-timing-preference-reporting.test.ts \
+            apps/admin/lib/enquiry-timing-preference-localization.ts \
+            apps/admin/lib/enquiry-timing-preference-localization.test.ts
+          git commit -m "Integrate timing preference mix reporting"
+          git push origin HEAD:feat/timing-preference-mix
