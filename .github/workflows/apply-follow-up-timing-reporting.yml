@@ -1,0 +1,132 @@
+name: Apply follow-up timing reporting integration
+
+on:
+  push:
+    branches:
+      - feat/active-enquiry-follow-up-timing
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/active-enquiry-follow-up-timing
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate follow-up timing into dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          ops = Path('apps/admin/lib/operations.server.ts')
+          text = ops.read_text()
+          text = text.replace(
+              "import {\n  summarizeEnquiryFirstContactTurnaround,\n  type EnquiryFirstContactTurnaroundSummary,\n} from './enquiry-contact-turnaround';\n",
+              "import {\n  summarizeEnquiryFirstContactTurnaround,\n  type EnquiryFirstContactTurnaroundSummary,\n} from './enquiry-contact-turnaround';\nimport {\n  getActiveEnquiryFollowUpTimingWhere,\n  summarizeFollowUpTiming,\n  type FollowUpTimingSummary,\n} from './enquiry-follow-up-timing-reporting';\n",
+          )
+          text = text.replace(
+              "  activeEnquiryAge: ActiveEnquiryAgeSummary;\n",
+              "  activeEnquiryAge: ActiveEnquiryAgeSummary;\n  activeEnquiryFollowUpTiming: FollowUpTimingSummary;\n",
+          )
+          text = text.replace(
+              "    activeOverSevenDays,\n    recentActiveEnquiries,\n",
+              "    activeOverSevenDays,\n    followUpMissingPlan,\n    followUpPastDue,\n    followUpNext24Hours,\n    followUpOneToThreeDays,\n    followUpLater,\n    recentActiveEnquiries,\n",
+          )
+          text = text.replace(
+              "    db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'overSevenDays') }),\n    db.enquiry.count({ where: getRecentActiveEnquiryWhere(now) }),\n",
+              "    db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'overSevenDays') }),\n    db.enquiry.count({ where: getActiveEnquiryFollowUpTimingWhere(now, 'missingPlan') }),\n    db.enquiry.count({ where: getActiveEnquiryFollowUpTimingWhere(now, 'pastDue') }),\n    db.enquiry.count({ where: getActiveEnquiryFollowUpTimingWhere(now, 'next24Hours') }),\n    db.enquiry.count({ where: getActiveEnquiryFollowUpTimingWhere(now, 'oneToThreeDays') }),\n    db.enquiry.count({ where: getActiveEnquiryFollowUpTimingWhere(now, 'later') }),\n    db.enquiry.count({ where: getRecentActiveEnquiryWhere(now) }),\n",
+          )
+          text = text.replace(
+              "    activeEnquiryAge: summarizeActiveEnquiryAge({\n      under24Hours: activeUnder24Hours,\n      oneToThreeDays: activeOneToThreeDays,\n      fourToSevenDays: activeFourToSevenDays,\n      overSevenDays: activeOverSevenDays,\n    }),\n",
+              "    activeEnquiryAge: summarizeActiveEnquiryAge({\n      under24Hours: activeUnder24Hours,\n      oneToThreeDays: activeOneToThreeDays,\n      fourToSevenDays: activeFourToSevenDays,\n      overSevenDays: activeOverSevenDays,\n    }),\n    activeEnquiryFollowUpTiming: summarizeFollowUpTiming({\n      missingPlan: followUpMissingPlan,\n      pastDue: followUpPastDue,\n      next24Hours: followUpNext24Hours,\n      oneToThreeDays: followUpOneToThreeDays,\n      later: followUpLater,\n    }),\n",
+          )
+          ops.write_text(text)
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+          text = text.replace(
+              "import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';\n",
+              "import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';\nimport { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';\n",
+          )
+          text = text.replace(
+              "  const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);\n",
+              "  const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);\n  const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);\n",
+          )
+          marker = '          <div className="operations-grid">\n'
+          panel = "\n".join([
+              '          <section className="admin-panel">',
+              '            <div className="panel-heading">',
+              '              <div>',
+              '                <p className="eyebrow">{followUpTimingCopy.eyebrow}</p>',
+              '                <h2>{followUpTimingCopy.title}</h2>',
+              '                <p>{followUpTimingCopy.intro}</p>',
+              '              </div>',
+              '              <span>{number(operations.activeEnquiryFollowUpTiming.activeTotal)}</span>',
+              '            </div>',
+              '            <div className="metric-grid" aria-label={followUpTimingCopy.title}>',
+              '              <article>',
+              '                <span>{followUpTimingCopy.missingPlan}</span>',
+              '                <strong>{number(operations.activeEnquiryFollowUpTiming.buckets.missingPlan)}</strong>',
+              '                <small>{followUpTimingCopy.count(number(operations.activeEnquiryFollowUpTiming.buckets.missingPlan))}</small>',
+              '              </article>',
+              '              <article>',
+              '                <span>{followUpTimingCopy.pastDue}</span>',
+              '                <strong>{number(operations.activeEnquiryFollowUpTiming.buckets.pastDue)}</strong>',
+              '                <small>{followUpTimingCopy.count(number(operations.activeEnquiryFollowUpTiming.buckets.pastDue))}</small>',
+              '              </article>',
+              '              <article>',
+              '                <span>{followUpTimingCopy.next24Hours}</span>',
+              '                <strong>{number(operations.activeEnquiryFollowUpTiming.buckets.next24Hours)}</strong>',
+              '                <small>{followUpTimingCopy.count(number(operations.activeEnquiryFollowUpTiming.buckets.next24Hours))}</small>',
+              '              </article>',
+              '              <article>',
+              '                <span>{followUpTimingCopy.oneToThreeDays}</span>',
+              '                <strong>{number(operations.activeEnquiryFollowUpTiming.buckets.oneToThreeDays)}</strong>',
+              '                <small>{followUpTimingCopy.count(number(operations.activeEnquiryFollowUpTiming.buckets.oneToThreeDays))}</small>',
+              '              </article>',
+              '              <article>',
+              '                <span>{followUpTimingCopy.later}</span>',
+              '                <strong>{number(operations.activeEnquiryFollowUpTiming.buckets.later)}</strong>',
+              '                <small>{followUpTimingCopy.count(number(operations.activeEnquiryFollowUpTiming.buckets.later))}</small>',
+              '              </article>',
+              '            </div>',
+              '          </section>',
+              '',
+          ]) + "\n"
+          text = text.replace(marker, panel + marker, 1)
+          page.write_text(text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-follow-up-timing-reporting.ts \
+            apps/admin/lib/enquiry-follow-up-timing-reporting.test.ts \
+            apps/admin/lib/enquiry-follow-up-timing-localization.ts \
+            apps/admin/lib/enquiry-follow-up-timing-localization.test.ts
+      - run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-follow-up-timing-reporting.ts \
+            apps/admin/lib/enquiry-follow-up-timing-reporting.test.ts \
+            apps/admin/lib/enquiry-follow-up-timing-localization.ts \
+            apps/admin/lib/enquiry-follow-up-timing-localization.test.ts
+          git commit -m "Integrate active enquiry follow-up timing"
+          git push origin HEAD:feat/active-enquiry-follow-up-timing
