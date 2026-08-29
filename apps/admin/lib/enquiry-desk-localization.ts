@@ -1,5 +1,7 @@
 import type { Locale } from '@luminol/localization';
 
+import type { EnquiryFirstResponseStep } from './enquiry-first-response';
+
 export type EnquiryContactPreferenceValue = 'EMAIL' | 'PHONE' | 'WHATSAPP';
 export type EnquiryDeliveryPreferenceValue =
   'IN_PERSON' | 'ONLINE' | 'FLEXIBLE' | 'NOT_SURE';
@@ -48,6 +50,9 @@ export type EnquiryDeskCopy = {
   unassign: string;
   message: string;
   protectedMessage: string;
+  firstResponseGuide: string;
+  firstResponseGuideIntro: string;
+  firstResponseBoundary: string;
   followUpPlan: string;
   nextFollowUp: string;
   noFollowUp: string;
@@ -112,6 +117,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     message: 'Message',
     protectedMessage:
       'Protected enquiry message — use only for operational follow-up.',
+    firstResponseGuide: 'First-response guide',
+    firstResponseGuideIntro:
+      'Use this checklist to keep the first contact consistent with the information already provided.',
+    firstResponseBoundary:
+      'Operational guidance only — do not add diagnoses, treatment recommendations or clinical claims to the reply.',
     followUpPlan: 'Next follow-up plan',
     nextFollowUp: 'Follow-up date',
     noFollowUp: 'No follow-up scheduled',
@@ -175,6 +185,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     message: 'Message',
     protectedMessage:
       'Message de demande protégé — à utiliser uniquement pour le suivi opérationnel.',
+    firstResponseGuide: 'Guide de première réponse',
+    firstResponseGuideIntro:
+      'Utilisez cette liste pour garder un premier contact cohérent avec les informations déjà fournies.',
+    firstResponseBoundary:
+      'Guide opérationnel uniquement — n’ajoutez pas de diagnostic, recommandation thérapeutique ou affirmation clinique à la réponse.',
     followUpPlan: 'Prochain suivi',
     nextFollowUp: 'Date de suivi',
     noFollowUp: 'Aucun suivi planifié',
@@ -238,6 +253,11 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     message: 'الرسالة',
     protectedMessage:
       'رسالة طلب محمية — تُستخدم فقط لأغراض المتابعة التشغيلية.',
+    firstResponseGuide: 'دليل الرد الأول',
+    firstResponseGuideIntro:
+      'استخدم هذه القائمة للحفاظ على تواصل أول متسق مع المعلومات التي قدمها صاحب الطلب.',
+    firstResponseBoundary:
+      'إرشاد تشغيلي فقط — لا تضف تشخيصات أو توصيات علاجية أو ادعاءات سريرية إلى الرد.',
     followUpPlan: 'خطة المتابعة التالية',
     nextFollowUp: 'تاريخ المتابعة',
     noFollowUp: 'لا توجد متابعة مجدولة',
@@ -256,6 +276,93 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     moveTo: 'نقل إلى…',
     update: 'تحديث',
     noMatches: 'لا توجد طلبات تطابق هذه الفلاتر.',
+  },
+};
+
+const FIRST_RESPONSE_STEP_LABELS: Record<
+  Locale,
+  Record<EnquiryFirstResponseStep, string>
+> = {
+  en: {
+    acknowledge:
+      'Acknowledge the enquiry and confirm you understood the request.',
+    'confirm-programme-objective':
+      'Confirm that the recorded programme matches the visitor’s objective; do not assume availability or suitability.',
+    'clarify-service-objective':
+      'Clarify which service or objective the visitor is asking about.',
+    'clarify-location': 'Ask for the city or area needed for routing.',
+    'clarify-format':
+      'Confirm whether they prefer in-person or online support.',
+    'clarify-timing': 'Confirm their preferred timing for the next step.',
+    'agree-next-option':
+      'Offer only an operational next option that is actually available and agree what happens next.',
+    'use-email-preference': 'Reply by email, their stated preferred channel.',
+    'confirm-phone-permission':
+      'Before continuing by phone, confirm they agree to be contacted on the provided number.',
+    'clarify-phone-number':
+      'They prefer phone but no number is recorded; confirm how they want to be contacted.',
+    'confirm-whatsapp-permission':
+      'Before moving to WhatsApp, confirm they agree to continue there; do not assume the provided number is WhatsApp-enabled.',
+    'clarify-whatsapp-number':
+      'They prefer WhatsApp but no number is recorded; confirm the contact method and number first.',
+    'clarify-contact-preference':
+      'Confirm which contact channel they prefer before moving the conversation.',
+    'schedule-follow-up':
+      'After the response, record the next action and follow-up date in this desk.',
+  },
+  fr: {
+    acknowledge:
+      'Accusez réception de la demande et confirmez que vous avez compris le besoin.',
+    'confirm-programme-objective':
+      'Confirmez que le programme enregistré correspond à l’objectif de la personne, sans supposer sa disponibilité ni son adéquation.',
+    'clarify-service-objective':
+      'Clarifiez le service ou l’objectif recherché par la personne.',
+    'clarify-location': 'Demandez la ville ou la zone nécessaire au routage.',
+    'clarify-format':
+      'Confirmez si la personne préfère un accompagnement en présentiel ou en ligne.',
+    'clarify-timing': 'Confirmez le délai souhaité pour la prochaine étape.',
+    'agree-next-option':
+      'Proposez uniquement une prochaine option opérationnelle réellement disponible et convenez de la suite.',
+    'use-email-preference':
+      'Répondez par e-mail, le canal indiqué comme préféré.',
+    'confirm-phone-permission':
+      'Avant de poursuivre par téléphone, confirmez l’accord pour utiliser le numéro fourni.',
+    'clarify-phone-number':
+      'Le téléphone est préféré mais aucun numéro n’est enregistré ; confirmez le moyen de contact.',
+    'confirm-whatsapp-permission':
+      'Avant de passer sur WhatsApp, confirmez l’accord pour y poursuivre l’échange et ne supposez pas que le numéro fourni est compatible.',
+    'clarify-whatsapp-number':
+      'WhatsApp est préféré mais aucun numéro n’est enregistré ; confirmez d’abord le moyen de contact et le numéro.',
+    'clarify-contact-preference':
+      'Confirmez le canal de contact préféré avant de poursuivre l’échange.',
+    'schedule-follow-up':
+      'Après la réponse, enregistrez la prochaine action et la date de suivi dans ce bureau.',
+  },
+  ar: {
+    acknowledge: 'أكد استلام الطلب وأنك فهمت ما يطلبه صاحبه.',
+    'confirm-programme-objective':
+      'أكد أن البرنامج المسجل يطابق هدف صاحب الطلب دون افتراض التوفر أو الملاءمة.',
+    'clarify-service-objective':
+      'وضّح الخدمة أو الهدف الذي يسأل عنه صاحب الطلب.',
+    'clarify-location': 'اطلب المدينة أو المنطقة اللازمة لتوجيه الطلب.',
+    'clarify-format': 'أكد ما إذا كان يفضل المتابعة حضوريًا أو عن بُعد.',
+    'clarify-timing': 'أكد التوقيت المفضل للخطوة التالية.',
+    'agree-next-option':
+      'اعرض فقط خيارًا تشغيليًا متاحًا فعليًا للخطوة التالية واتفق على ما سيحدث بعدها.',
+    'use-email-preference':
+      'استخدم البريد الإلكتروني لأنه وسيلة التواصل المفضلة المذكورة.',
+    'confirm-phone-permission':
+      'قبل المتابعة هاتفيًا، أكد موافقته على التواصل عبر الرقم المقدم.',
+    'clarify-phone-number':
+      'يفضل الهاتف لكن لا يوجد رقم مسجل؛ أكد معه طريقة التواصل المناسبة.',
+    'confirm-whatsapp-permission':
+      'قبل الانتقال إلى واتساب، أكد موافقته على مواصلة التواصل هناك ولا تفترض أن الرقم المقدم مفعّل على واتساب.',
+    'clarify-whatsapp-number':
+      'يفضل واتساب لكن لا يوجد رقم مسجل؛ أكد أولًا وسيلة التواصل والرقم.',
+    'clarify-contact-preference':
+      'أكد وسيلة التواصل التي يفضلها قبل نقل المحادثة إلى قناة أخرى.',
+    'schedule-follow-up':
+      'بعد الرد، سجّل الخطوة التالية وتاريخ المتابعة في هذا المكتب.',
   },
 };
 
@@ -318,6 +425,13 @@ const TIMING_LABELS: Record<
 
 export function getEnquiryDeskCopy(locale: Locale): EnquiryDeskCopy {
   return ENQUIRY_DESK_COPY[locale];
+}
+
+export function getEnquiryFirstResponseStepLabel(
+  locale: Locale,
+  step: EnquiryFirstResponseStep,
+): string {
+  return FIRST_RESPONSE_STEP_LABELS[locale][step];
 }
 
 export function getEnquiryContactPreferenceLabel(

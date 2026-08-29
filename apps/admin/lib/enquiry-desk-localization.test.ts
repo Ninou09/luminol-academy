@@ -4,6 +4,7 @@ import {
   getEnquiryContactPreferenceLabel,
   getEnquiryDeliveryPreferenceLabel,
   getEnquiryDeskCopy,
+  getEnquiryFirstResponseStepLabel,
   getEnquiryTimingPreferenceLabel,
 } from './enquiry-desk-localization';
 
@@ -27,6 +28,7 @@ describe('enquiry desk localization', () => {
       closedWithoutOutcome: 'Closed without outcome',
       filterByOwner: 'Filter by owner',
       myEnquiries: 'Assigned to me',
+      firstResponseGuide: 'First-response guide',
     });
     expect(getEnquiryDeskCopy('fr')).toMatchObject({
       title: 'Suivi des demandes',
@@ -46,6 +48,7 @@ describe('enquiry desk localization', () => {
       closedWithoutOutcome: 'Clôturées sans résultat',
       filterByOwner: 'Filtrer par responsable',
       myEnquiries: 'Attribuées à moi',
+      firstResponseGuide: 'Guide de première réponse',
     });
     expect(getEnquiryDeskCopy('ar')).toMatchObject({
       title: 'مكتب متابعة الطلبات',
@@ -65,6 +68,7 @@ describe('enquiry desk localization', () => {
       closedWithoutOutcome: 'مغلقة دون نتيجة',
       filterByOwner: 'التصفية حسب المسؤول',
       myEnquiries: 'مسندة إليّ',
+      firstResponseGuide: 'دليل الرد الأول',
     });
   });
 
@@ -77,5 +81,17 @@ describe('enquiry desk localization', () => {
       'خلال شهر',
     );
     expect(getEnquiryContactPreferenceLabel('en', null)).toBe('Not provided');
+  });
+
+  it('localizes first-response channel guidance without generating message content', () => {
+    expect(
+      getEnquiryFirstResponseStepLabel('en', 'confirm-phone-permission'),
+    ).toContain('confirm they agree');
+    expect(
+      getEnquiryFirstResponseStepLabel('fr', 'confirm-whatsapp-permission'),
+    ).toContain('confirmez l’accord');
+    expect(
+      getEnquiryFirstResponseStepLabel('ar', 'schedule-follow-up'),
+    ).toContain('تاريخ المتابعة');
   });
 });
