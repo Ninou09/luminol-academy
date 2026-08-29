@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
+import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
 import { getEnquiryWorkflowCopy } from '../lib/enquiry-workflow-localization';
 import {
   displayPersonName,
@@ -31,6 +32,7 @@ export default async function Page() {
   const locale = await getAdminRequestLocale();
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
+  const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
   const workflowCopy = getEnquiryWorkflowCopy(locale);
   const common = getCommonDictionary(locale);
   const operations = await getOperationsDashboard();
@@ -225,6 +227,32 @@ export default async function Page() {
               </div>
             ) : (
               <p className="admin-empty">{copy.dashboard.noSchoolMix}</p>
+            )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{programmeMixCopy.eyebrow}</p>
+                <h2>{programmeMixCopy.title}</h2>
+                <p>{programmeMixCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            {operations.programmeEnquiryMixLast30Days.length > 0 ? (
+              <div className="metric-grid" aria-label={programmeMixCopy.title}>
+                {operations.programmeEnquiryMixLast30Days.map((item) => (
+                  <article key={item.programmeSlug}>
+                    <span dir="auto">{item.programmeTitleSnapshot}</span>
+                    <strong>{number(item.count)}</strong>
+                    <small>
+                      {programmeMixCopy.enquiryCount(number(item.count))}
+                    </small>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="admin-empty">{programmeMixCopy.noData}</p>
             )}
           </section>
 
