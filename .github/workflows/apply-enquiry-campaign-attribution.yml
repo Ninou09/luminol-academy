@@ -1,0 +1,60 @@
+name: Apply enquiry campaign attribution patch
+
+on:
+  push:
+    branches:
+      - feat/enquiry-campaign-attribution
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.head_commit.message == 'chore: stage campaign attribution patch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-campaign-attribution
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: node scripts/apply-enquiry-campaign-attribution.mjs
+      - name: Format generated source
+        run: |
+          pnpm --filter @luminol/database exec prisma format
+          pnpm exec prettier --write \
+            packages/validation/src/index.ts \
+            packages/validation/src/index.test.ts \
+            apps/web/lib/enquiry-attribution.ts \
+            apps/web/lib/enquiry-attribution.test.ts \
+            apps/web/components/enquiry-form.tsx \
+            apps/web/app/api/enquiries/route.ts \
+            apps/admin/lib/enquiry-attribution-localization.ts \
+            apps/admin/lib/enquiry-attribution-localization.test.ts \
+            apps/admin/app/enquiries/page.tsx
+      - run: git diff --check
+      - name: Commit generated product changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            packages/database/prisma/schema.prisma \
+            packages/database/prisma/migrations/20260829101500_enquiry_campaign_attribution/migration.sql \
+            packages/validation/src/index.ts \
+            packages/validation/src/index.test.ts \
+            apps/web/lib/enquiry-attribution.ts \
+            apps/web/lib/enquiry-attribution.test.ts \
+            apps/web/components/enquiry-form.tsx \
+            apps/web/app/api/enquiries/route.ts \
+            apps/admin/lib/enquiry-attribution-localization.ts \
+            apps/admin/lib/enquiry-attribution-localization.test.ts \
+            apps/admin/app/enquiries/page.tsx
+          git commit -m "Capture public enquiry campaign attribution"
+          git push origin HEAD:feat/enquiry-campaign-attribution
