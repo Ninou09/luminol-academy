@@ -22,7 +22,8 @@ const COPY: Record<Locale, EnquiryWorkflowCopy> = {
     ownerCoverage: 'Assigned owner',
     ownerCoverageNote: 'Active enquiries with a recorded owner',
     followUpCoverage: 'Follow-up plan',
-    followUpCoverageNote: 'Active enquiries with both next action and follow-up date',
+    followUpCoverageNote:
+      'Active enquiries with both next action and follow-up date',
     qualificationCoverage: 'Structured qualification',
     qualificationCoverageNote:
       'Active enquiries with city, contact, delivery and timing captured',
