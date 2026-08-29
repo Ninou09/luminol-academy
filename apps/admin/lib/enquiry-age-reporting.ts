@@ -5,10 +5,7 @@ const DAY_MS = 24 * HOUR_MS;
 const ACTIVE_STATUSES_EXCLUDED = ['CLOSED', 'SPAM'] as const;
 
 export type ActiveEnquiryAgeBucket =
-  | 'under24Hours'
-  | 'oneToThreeDays'
-  | 'fourToSevenDays'
-  | 'overSevenDays';
+  'under24Hours' | 'oneToThreeDays' | 'fourToSevenDays' | 'overSevenDays';
 
 export type ActiveEnquiryAgeSummary = {
   activeTotal: number;
