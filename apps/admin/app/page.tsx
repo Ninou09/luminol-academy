@@ -13,6 +13,7 @@ import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
+import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
 import { getEnquiryWorkflowCopy } from '../lib/enquiry-workflow-localization';
 import {
@@ -34,6 +35,7 @@ export default async function Page() {
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
+  const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
   const workflowCopy = getEnquiryWorkflowCopy(locale);
   const common = getCommonDictionary(locale);
@@ -408,6 +410,56 @@ export default async function Page() {
                     ),
                   )}{' '}
                   · {workflowCopy.qualificationCoverageNote}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{outcomeCoverageCopy.eyebrow}</p>
+                <h2>{outcomeCoverageCopy.title}</h2>
+                <p>{outcomeCoverageCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div className="metric-grid" aria-label={outcomeCoverageCopy.title}>
+              <article>
+                <span>{outcomeCoverageCopy.recorded}</span>
+                <strong>
+                  {number(
+                    operations.enquiryOutcomeCoverageLast30Days.recordedTotal,
+                  )}
+                </strong>
+                <small>{outcomeCoverageCopy.recordedNote}</small>
+              </article>
+              <article>
+                <span>{outcomeCoverageCopy.missing}</span>
+                <strong>
+                  {number(
+                    operations.enquiryOutcomeCoverageLast30Days.missingTotal,
+                  )}
+                </strong>
+                <small>{outcomeCoverageCopy.missingNote}</small>
+              </article>
+              <article>
+                <span>{outcomeCoverageCopy.coverage}</span>
+                <strong>
+                  {percent(
+                    operations.enquiryOutcomeCoverageLast30Days.coveragePercent,
+                  )}
+                </strong>
+                <small>
+                  {outcomeCoverageCopy.recordedOfClosed(
+                    number(
+                      operations.enquiryOutcomeCoverageLast30Days.recordedTotal,
+                    ),
+                    number(
+                      operations.enquiryOutcomeCoverageLast30Days.closedTotal,
+                    ),
+                  )}{' '}
+                  · {outcomeCoverageCopy.coverageNote}
                 </small>
               </article>
             </div>
