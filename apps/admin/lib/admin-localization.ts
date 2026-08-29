@@ -78,6 +78,10 @@ export type AdminCopy = {
     enquirySchoolMix: string;
     enquirySchoolMixIntro: string;
     noSchoolMix: string;
+    verifiedProgrammeMix: string;
+    verifiedProgrammeMixIntro: string;
+    noVerifiedProgrammeMix: string;
+    enquiryCount: string;
     growth: string;
     recentEnquiries: string;
     newSuffix: string;
@@ -225,6 +229,10 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       enquirySchoolMix: 'Enquiry mix by school',
       enquirySchoolMixIntro: 'Enquiries created in the rolling last 30 days, grouped by the submitted school.',
       noSchoolMix: 'No enquiries were received in this 30-day window.',
+      verifiedProgrammeMix: 'Verified programme interest',
+      verifiedProgrammeMixIntro: 'Programme-attributed enquiries created in the rolling last 30 days, using only the server-verified programme snapshot.',
+      noVerifiedProgrammeMix: 'No verified programme-attributed enquiries were received in this 30-day window.',
+      enquiryCount: 'Enquiries',
       growth: 'Growth',
       recentEnquiries: 'Recent enquiries',
       newSuffix: 'new',
@@ -396,6 +404,10 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       enquirySchoolMix: 'Répartition des demandes par pôle',
       enquirySchoolMixIntro: 'Demandes créées au cours des 30 derniers jours glissants, regroupées selon le pôle sélectionné.',
       noSchoolMix: 'Aucune demande reçue pendant cette période de 30 jours.',
+      verifiedProgrammeMix: 'Intérêt par programme vérifié',
+      verifiedProgrammeMixIntro: 'Demandes attribuées à un programme créées au cours des 30 derniers jours glissants, uniquement à partir de l’instantané de programme vérifié côté serveur.',
+      noVerifiedProgrammeMix: 'Aucune demande attribuée à un programme vérifié pendant cette période de 30 jours.',
+      enquiryCount: 'Demandes',
       growth: 'Développement',
       recentEnquiries: 'Demandes récentes',
       newSuffix: 'nouvelles',
@@ -567,6 +579,10 @@ const ADMIN_COPY: Record<Locale, AdminCopy> = {
       enquirySchoolMix: 'توزيع الطلبات حسب المجال',
       enquirySchoolMixIntro: 'الطلبات المنشأة خلال آخر 30 يومًا متحركًا، مجمعة حسب المجال الذي اختاره صاحب الطلب.',
       noSchoolMix: 'لم تُستلم طلبات خلال فترة الثلاثين يومًا هذه.',
+      verifiedProgrammeMix: 'الاهتمام حسب البرنامج الموثّق',
+      verifiedProgrammeMixIntro: 'الطلبات المرتبطة ببرنامج والمنشأة خلال آخر 30 يومًا متحركًا، اعتمادًا فقط على لقطة البرنامج الموثّقة من الخادم.',
+      noVerifiedProgrammeMix: 'لم تُستلم طلبات مرتبطة ببرنامج موثّق خلال فترة الثلاثين يومًا هذه.',
+      enquiryCount: 'الطلبات',
       growth: 'النمو',
       recentEnquiries: 'أحدث الطلبات',
       newSuffix: 'جديد',

@@ -5,7 +5,9 @@ import {
   getProgrammeAttributedRecentEnquiryWhere,
   getRecentEnquiryWhere,
   getThirtyDayEnquiryStart,
+  MAX_PROGRAMME_MIX_ITEMS,
   normalizeEnquirySchoolMix,
+  normalizeVerifiedProgrammeMix,
 } from './enquiry-pipeline-reporting';
 
 describe('enquiry pipeline reporting', () => {
@@ -41,6 +43,39 @@ describe('enquiry pipeline reporting', () => {
       { school: 'PSYCHOLOGY', count: 7 },
       { school: 'GENERAL', count: 2 },
     ]);
+  });
+
+  it('keeps only verified atomic programme groups, sorted and bounded', () => {
+    const groups: Array<{
+      programmeSlug: string | null;
+      programmeTitleSnapshot: string | null;
+      _count: { _all: number };
+    }> = Array.from({ length: MAX_PROGRAMME_MIX_ITEMS + 3 }, (_, index) => ({
+      programmeSlug: `programme-${index}`,
+      programmeTitleSnapshot: `Programme ${String(index).padStart(2, '0')}`,
+      _count: { _all: index + 1 },
+    }));
+    groups.push({
+      programmeSlug: null,
+      programmeTitleSnapshot: 'Invalid programme',
+      _count: { _all: 999 },
+    });
+    groups.push({
+      programmeSlug: 'missing-title',
+      programmeTitleSnapshot: null,
+      _count: { _all: 999 },
+    });
+
+    const result = normalizeVerifiedProgrammeMix(groups);
+
+    expect(result).toHaveLength(MAX_PROGRAMME_MIX_ITEMS);
+    expect(result[0]).toMatchObject({
+      programmeSlug: `programme-${MAX_PROGRAMME_MIX_ITEMS + 2}`,
+      count: MAX_PROGRAMME_MIX_ITEMS + 3,
+    });
+    expect(
+      result.every((item) => item.programmeSlug && item.programmeTitleSnapshot),
+    ).toBe(true);
   });
 
   it('keeps the protected pipeline snapshot labelled in every admin locale', () => {

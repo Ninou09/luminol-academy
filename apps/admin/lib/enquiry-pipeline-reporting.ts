@@ -41,3 +41,39 @@ export function normalizeEnquirySchoolMix(
     }))
     .sort((a, b) => b.count - a.count || a.school.localeCompare(b.school));
 }
+
+export const MAX_PROGRAMME_MIX_ITEMS = 8;
+
+export type VerifiedProgrammeMixItem = {
+  programmeSlug: string;
+  programmeTitleSnapshot: string;
+  count: number;
+};
+
+export function normalizeVerifiedProgrammeMix(
+  groups: Array<{
+    programmeSlug: string | null;
+    programmeTitleSnapshot: string | null;
+    _count: { _all: number };
+  }>,
+): VerifiedProgrammeMixItem[] {
+  return groups
+    .filter(
+      (group) =>
+        Boolean(group.programmeSlug) &&
+        Boolean(group.programmeTitleSnapshot) &&
+        group._count._all > 0,
+    )
+    .map((group) => ({
+      programmeSlug: group.programmeSlug as string,
+      programmeTitleSnapshot: group.programmeTitleSnapshot as string,
+      count: group._count._all,
+    }))
+    .sort(
+      (a, b) =>
+        b.count - a.count ||
+        a.programmeTitleSnapshot.localeCompare(b.programmeTitleSnapshot) ||
+        a.programmeSlug.localeCompare(b.programmeSlug),
+    )
+    .slice(0, MAX_PROGRAMME_MIX_ITEMS);
+}

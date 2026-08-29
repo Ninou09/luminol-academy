@@ -221,6 +221,31 @@ export default async function Page() {
             )}
           </section>
 
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{copy.dashboard.rollingThirtyDays}</p>
+                <h2>{copy.dashboard.verifiedProgrammeMix}</h2>
+                <p>{copy.dashboard.verifiedProgrammeMixIntro}</p>
+              </div>
+            </div>
+            {operations.verifiedProgrammeMixLast30Days.length > 0 ? (
+              <div className="metric-grid">
+                {operations.verifiedProgrammeMixLast30Days.map((item) => (
+                  <article key={item.programmeSlug}>
+                    <span dir="auto">{item.programmeTitleSnapshot}</span>
+                    <strong>{number(item.count)}</strong>
+                    <small>{copy.dashboard.enquiryCount}</small>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="admin-empty">
+                {copy.dashboard.noVerifiedProgrammeMix}
+              </p>
+            )}
+          </section>
+
           <div className="operations-grid">
             <section className="admin-panel enquiries-panel" id="enquiries">
               <div className="panel-heading">
