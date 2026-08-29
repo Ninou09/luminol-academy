@@ -25,8 +25,8 @@ describe('enquiry outcome coverage localization', () => {
   });
 
   it('formats recorded and closed counts without classifying the outcome text', () => {
-    expect(getEnquiryOutcomeCoverageCopy('en').recordedOfClosed('7', '10')).toBe(
-      '7 of 10 closed',
-    );
+    expect(
+      getEnquiryOutcomeCoverageCopy('en').recordedOfClosed('7', '10'),
+    ).toBe('7 of 10 closed');
   });
 });

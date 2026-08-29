@@ -20,11 +20,13 @@ const COPY: Record<Locale, EnquiryOutcomeCoverageCopy> = {
     intro:
       'Operational completeness for enquiries closed during the rolling last 30 days. This measures whether an outcome record exists, not sales conversion, revenue, treatment success, or lead quality.',
     recorded: 'Outcome recorded',
-    recordedNote: 'Recently closed enquiries with both outcome text and recorded date',
+    recordedNote:
+      'Recently closed enquiries with both outcome text and recorded date',
     missing: 'Outcome missing',
     missingNote: 'Recently closed enquiries without a complete outcome record',
     coverage: 'Outcome-recording coverage',
-    coverageNote: 'Share of recently closed enquiries with a complete outcome record',
+    coverageNote:
+      'Share of recently closed enquiries with a complete outcome record',
     recordedOfClosed: (recorded, closed) => `${recorded} of ${closed} closed`,
   },
   fr: {
@@ -41,7 +43,8 @@ const COPY: Record<Locale, EnquiryOutcomeCoverageCopy> = {
     coverage: 'Couverture de saisie des résultats',
     coverageNote:
       'Part des demandes récemment clôturées avec un résultat complètement enregistré',
-    recordedOfClosed: (recorded, closed) => `${recorded} sur ${closed} clôturées`,
+    recordedOfClosed: (recorded, closed) =>
+      `${recorded} sur ${closed} clôturées`,
   },
   ar: {
     eyebrow: 'انضباط الإغلاق',
@@ -54,7 +57,8 @@ const COPY: Record<Locale, EnquiryOutcomeCoverageCopy> = {
     missingNote: 'طلبات أُغلقت حديثًا من دون سجل نتيجة مكتمل',
     coverage: 'اكتمال تسجيل النتائج',
     coverageNote: 'نسبة الطلبات المغلقة حديثًا التي تحتوي على سجل نتيجة مكتمل',
-    recordedOfClosed: (recorded, closed) => `${recorded} من ${closed} طلبات مغلقة`,
+    recordedOfClosed: (recorded, closed) =>
+      `${recorded} من ${closed} طلبات مغلقة`,
   },
 };
 

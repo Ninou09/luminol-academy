@@ -137,7 +137,8 @@ export function calculateMissingOutcomeCount(
   recordedTotal: number,
 ): number {
   if (!Number.isFinite(closedTotal) || closedTotal <= 0) return 0;
-  if (!Number.isFinite(recordedTotal)) return Math.max(0, Math.floor(closedTotal));
+  if (!Number.isFinite(recordedTotal))
+    return Math.max(0, Math.floor(closedTotal));
 
   return Math.max(
     0,
