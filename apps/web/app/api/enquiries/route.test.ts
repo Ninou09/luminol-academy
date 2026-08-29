@@ -82,10 +82,51 @@ describe('POST /api/enquiries', () => {
         school: validEnquiry.school,
         programmeSlug: null,
         programmeTitleSnapshot: null,
+        landingPath: null,
+        utmSource: null,
+        utmMedium: null,
+        utmCampaign: null,
+        utmContent: null,
         message: validEnquiry.message,
         locale: validEnquiry.locale,
         consent: true,
       },
+    });
+  });
+
+  it('persists only submitted bounded campaign attribution fields', async () => {
+    const campaignEnquiry = {
+      ...validEnquiry,
+      landingPath: '/fr/contact',
+      utmSource: 'instagram',
+      utmMedium: 'paid_social',
+      utmCampaign: 'august-psychology',
+      utmContent: 'reel-03',
+    };
+
+    const response = await POST(
+      createRequest(campaignEnquiry, '203.0.113.23', {
+        'sec-fetch-site': 'same-origin',
+        referer:
+          'https://example.invalid/private?email=private%40example.com&utm_term=ignored',
+      }),
+    );
+
+    expect(response.status).toBe(201);
+    expect(createEnquiry).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        landingPath: '/fr/contact',
+        utmSource: 'instagram',
+        utmMedium: 'paid_social',
+        utmCampaign: 'august-psychology',
+        utmContent: 'reel-03',
+      }),
+    });
+    expect(createEnquiry).not.toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        referer: expect.anything(),
+        utmTerm: expect.anything(),
+      }),
     });
   });
 

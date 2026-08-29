@@ -32,6 +32,24 @@ export const publicProgrammeSlugSchema = z
   .max(96)
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 
+const enquiryCampaignValueSchema = z.preprocess(
+  (value) =>
+    typeof value === 'string' && value.trim().length === 0 ? undefined : value,
+  z.string().trim().min(1).max(160).optional(),
+);
+
+const enquiryLandingPathSchema = z.preprocess(
+  (value) =>
+    typeof value === 'string' && value.trim().length === 0 ? undefined : value,
+  z
+    .string()
+    .trim()
+    .min(1)
+    .max(240)
+    .regex(/^\/[^?#\s]*$/)
+    .optional(),
+);
+
 export const contactSchema = z
   .object({
     name: z.string().trim().min(2).max(100),
@@ -43,6 +61,11 @@ export const contactSchema = z
     timingPreference: enquiryTimingPreferenceSchema,
     school: enquirySchoolSchema,
     programmeSlug: publicProgrammeSlugSchema.optional(),
+    landingPath: enquiryLandingPathSchema,
+    utmSource: enquiryCampaignValueSchema,
+    utmMedium: enquiryCampaignValueSchema,
+    utmCampaign: enquiryCampaignValueSchema,
+    utmContent: enquiryCampaignValueSchema,
     message: z.string().trim().min(10).max(2_000),
     locale: localeSchema.default('en'),
     consent: z.literal(true),

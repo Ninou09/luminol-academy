@@ -76,6 +76,54 @@ describe('contactSchema', () => {
     ).toBe(false);
   });
 
+  it('accepts bounded campaign attribution and normalizes blank values away', () => {
+    const result = contactSchema.safeParse({
+      ...validEnquiry,
+      landingPath: '/en/programmes/act',
+      utmSource: ' instagram ',
+      utmMedium: 'paid_social',
+      utmCampaign: 'august-psychology',
+      utmContent: 'reel-03',
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toMatchObject({
+        landingPath: '/en/programmes/act',
+        utmSource: 'instagram',
+        utmMedium: 'paid_social',
+        utmCampaign: 'august-psychology',
+        utmContent: 'reel-03',
+      });
+    }
+
+    const blank = contactSchema.safeParse({
+      ...validEnquiry,
+      landingPath: '',
+      utmSource: '   ',
+    });
+    expect(blank.success).toBe(true);
+    if (blank.success) {
+      expect(blank.data.landingPath).toBeUndefined();
+      expect(blank.data.utmSource).toBeUndefined();
+    }
+  });
+
+  it('rejects oversized campaign values and non-path landing context', () => {
+    expect(
+      contactSchema.safeParse({
+        ...validEnquiry,
+        utmCampaign: 'x'.repeat(161),
+      }).success,
+    ).toBe(false);
+    expect(
+      contactSchema.safeParse({
+        ...validEnquiry,
+        landingPath: 'https://example.com/en/contact?utm_source=test',
+      }).success,
+    ).toBe(false);
+  });
+
   it('requires a phone number for phone and WhatsApp follow-up', () => {
     expect(
       contactSchema.safeParse({
