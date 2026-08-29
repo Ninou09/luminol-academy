@@ -32,6 +32,20 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Generate Prisma client
         run: pnpm db:generate
+      - name: Tighten temporary patch anchor
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('scripts/apply-enquiry-pipeline-snapshot-patch.py')
+          text = path.read_text()
+          old_anchor = '    "  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,\\n",\n'
+          new_anchor = '    "import {\\n  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,\\n",\n'
+          old_replacement = '    "  ACTIVE_ENQUIRY_WHERE,\\n  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,\\n",\n'
+          new_replacement = '    "import {\\n  ACTIVE_ENQUIRY_WHERE,\\n  ACTIVE_UNASSIGNED_ENQUIRY_WHERE,\\n",\n'
+          if text.count(old_anchor) != 1 or text.count(old_replacement) != 1:
+              raise SystemExit('temporary attention import patch anchors changed')
+          path.write_text(text.replace(old_anchor, new_anchor, 1).replace(old_replacement, new_replacement, 1))
+          PY
       - name: Apply pipeline snapshot patch
         run: python scripts/apply-enquiry-pipeline-snapshot-patch.py
       - name: Format changed files
