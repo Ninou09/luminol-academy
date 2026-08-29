@@ -7,6 +7,11 @@ import {
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
 } from './enquiry-attention';
 import {
+  getActiveEnquiryAgeWhere,
+  summarizeActiveEnquiryAge,
+  type ActiveEnquiryAgeSummary,
+} from './enquiry-age-reporting';
+import {
   summarizeEnquiryFirstContactTurnaround,
   type EnquiryFirstContactTurnaroundSummary,
 } from './enquiry-contact-turnaround';
@@ -122,6 +127,7 @@ export type OperationsDashboard = {
     coveragePercent: number;
   };
   enquiryContactTurnaroundLast30Days: EnquiryFirstContactTurnaroundSummary;
+  activeEnquiryAge: ActiveEnquiryAgeSummary;
   recentEnquiries: RecentEnquiry[];
   recentEnrollments: RecentEnrollment[];
   coursePortfolio: CoursePortfolioItem[];
@@ -143,6 +149,10 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     campaignAttributedLast30Days,
     activeEnquiries,
     unassignedActiveEnquiries,
+    activeUnder24Hours,
+    activeOneToThreeDays,
+    activeFourToSevenDays,
+    activeOverSevenDays,
     recentActiveEnquiries,
     recentActiveOwnedEnquiries,
     recentActiveFollowUpPlannedEnquiries,
@@ -173,6 +183,14 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enquiry.count({ where: getCampaignAttributedRecentEnquiryWhere(now) }),
     db.enquiry.count({ where: ACTIVE_ENQUIRY_WHERE }),
     db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
+    db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'under24Hours') }),
+    db.enquiry.count({
+      where: getActiveEnquiryAgeWhere(now, 'oneToThreeDays'),
+    }),
+    db.enquiry.count({
+      where: getActiveEnquiryAgeWhere(now, 'fourToSevenDays'),
+    }),
+    db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'overSevenDays') }),
     db.enquiry.count({ where: getRecentActiveEnquiryWhere(now) }),
     db.enquiry.count({ where: getRecentActiveOwnedEnquiryWhere(now) }),
     db.enquiry.count({
@@ -347,6 +365,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     enquiryContactTurnaroundLast30Days: summarizeEnquiryFirstContactTurnaround(
       recentEnquiryContactSamples,
     ),
+    activeEnquiryAge: summarizeActiveEnquiryAge({
+      under24Hours: activeUnder24Hours,
+      oneToThreeDays: activeOneToThreeDays,
+      fourToSevenDays: activeFourToSevenDays,
+      overSevenDays: activeOverSevenDays,
+    }),
     recentEnquiries: recentEnquiries as RecentEnquiry[],
     recentEnrollments: recentEnrollments as RecentEnrollment[],
     coursePortfolio: coursePortfolio as CoursePortfolioItem[],

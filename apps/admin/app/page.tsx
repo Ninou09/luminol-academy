@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
+import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
@@ -35,6 +36,7 @@ export default async function Page() {
   const locale = await getAdminRequestLocale();
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
+  const ageCopy = getEnquiryAgeCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
   const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
@@ -592,6 +594,63 @@ export default async function Page() {
                       operations.enquiryContactTurnaroundLast30Days.buckets
                         .overTwentyFourHours,
                     ),
+                  )}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{ageCopy.eyebrow}</p>
+                <h2>{ageCopy.title}</h2>
+                <p>{ageCopy.intro}</p>
+              </div>
+              <span>{number(operations.activeEnquiryAge.activeTotal)}</span>
+            </div>
+            <div className="metric-grid" aria-label={ageCopy.title}>
+              <article>
+                <span>{ageCopy.under24Hours}</span>
+                <strong>
+                  {number(operations.activeEnquiryAge.buckets.under24Hours)}
+                </strong>
+                <small>
+                  {ageCopy.count(
+                    number(operations.activeEnquiryAge.buckets.under24Hours),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{ageCopy.oneToThreeDays}</span>
+                <strong>
+                  {number(operations.activeEnquiryAge.buckets.oneToThreeDays)}
+                </strong>
+                <small>
+                  {ageCopy.count(
+                    number(operations.activeEnquiryAge.buckets.oneToThreeDays),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{ageCopy.fourToSevenDays}</span>
+                <strong>
+                  {number(operations.activeEnquiryAge.buckets.fourToSevenDays)}
+                </strong>
+                <small>
+                  {ageCopy.count(
+                    number(operations.activeEnquiryAge.buckets.fourToSevenDays),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{ageCopy.overSevenDays}</span>
+                <strong>
+                  {number(operations.activeEnquiryAge.buckets.overSevenDays)}
+                </strong>
+                <small>
+                  {ageCopy.count(
+                    number(operations.activeEnquiryAge.buckets.overSevenDays),
                   )}
                 </small>
               </article>
