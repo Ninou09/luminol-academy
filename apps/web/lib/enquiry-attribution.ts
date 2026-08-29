@@ -1,9 +1,9 @@
 export type EnquiryCampaignAttribution = {
-  landingPath?: string;
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-  utmContent?: string;
+  landingPath?: string | undefined;
+  utmSource?: string | undefined;
+  utmMedium?: string | undefined;
+  utmCampaign?: string | undefined;
+  utmContent?: string | undefined;
 };
 
 const CAMPAIGN_VALUE_LIMIT = 160;
