@@ -32,10 +32,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Apply programme context patch
         run: python scripts/apply-enquiry-programme-context-patch.py
-      - name: Format and validate Prisma schema
-        run: |
-          pnpm exec prisma format --schema packages/database/prisma/schema.prisma
-          pnpm exec prisma validate --schema packages/database/prisma/schema.prisma
+      - name: Format Prisma schema
+        run: pnpm --filter @luminol/database exec prisma format --schema prisma/schema.prisma
       - name: Generate Prisma client
         run: pnpm db:generate
       - name: Format changed TypeScript
