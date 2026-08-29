@@ -15,7 +15,9 @@ import {
   buildEnquiryAuditTimeline,
   ENQUIRY_AUDIT_RELATION_LIMIT,
 } from '../../lib/enquiry-audit-history';
+import { getIncompleteQualificationAttentionLabel } from '../../lib/enquiry-attention-localization';
 import {
+  ACTIVE_INCOMPLETE_QUALIFICATION_WHERE,
   ACTIVE_UNASSIGNED_ENQUIRY_WHERE,
   ACTIVE_WITHOUT_FOLLOW_UP_WHERE,
   CLOSED_WITHOUT_OUTCOME_WHERE,
@@ -113,6 +115,8 @@ export default async function EnquiriesAdminPage({
   const administrator = await requirePermission('academy:manage');
   const locale = await getAdminRequestLocale();
   const copy = getEnquiryDeskCopy(locale);
+  const incompleteQualificationLabel =
+    getIncompleteQualificationAttentionLabel(locale);
   const common = getCommonDictionary(locale);
   const params = searchParams ? await searchParams : undefined;
   const activeStatus = parseStatus(params?.status);
@@ -139,6 +143,7 @@ export default async function EnquiriesAdminPage({
     enquiries,
     unassignedActiveCount,
     activeWithoutFollowUpCount,
+    incompleteQualificationCount,
     dueTodayCount,
     overdueCount,
     closedWithoutOutcomeCount,
@@ -249,6 +254,7 @@ export default async function EnquiriesAdminPage({
     }),
     db.enquiry.count({ where: ACTIVE_UNASSIGNED_ENQUIRY_WHERE }),
     db.enquiry.count({ where: ACTIVE_WITHOUT_FOLLOW_UP_WHERE }),
+    db.enquiry.count({ where: ACTIVE_INCOMPLETE_QUALIFICATION_WHERE }),
     db.enquiry.count({
       where: { nextFollowUpAt: { gte: todayUtc, lt: tomorrowUtc } },
     }),
@@ -329,6 +335,28 @@ export default async function EnquiriesAdminPage({
                 >
                   <span>{copy.activeWithoutFollowUp}</span>
                   <strong>{number(activeWithoutFollowUpCount)}</strong>
+                </Link>
+                <Link
+                  className={`${styles.attentionCard} ${
+                    activeAttention === 'active-incomplete-qualification'
+                      ? styles.activeAttentionCard
+                      : ''
+                  }`}
+                  href={enquiryHref(
+                    locale,
+                    null,
+                    null,
+                    'active-incomplete-qualification',
+                    null,
+                  )}
+                  aria-current={
+                    activeAttention === 'active-incomplete-qualification'
+                      ? 'page'
+                      : undefined
+                  }
+                >
+                  <span>{incompleteQualificationLabel}</span>
+                  <strong>{number(incompleteQualificationCount)}</strong>
                 </Link>
                 <Link
                   className={`${styles.attentionCard} ${
@@ -597,6 +625,27 @@ export default async function EnquiriesAdminPage({
                     }
                   >
                     <span>{copy.activeWithoutFollowUp}</span>
+                  </Link>
+                  <Link
+                    className={`${styles.filterLink} ${
+                      activeAttention === 'active-incomplete-qualification'
+                        ? styles.activeFilter
+                        : ''
+                    }`}
+                    href={enquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      'active-incomplete-qualification',
+                      activeOwner,
+                    )}
+                    aria-current={
+                      activeAttention === 'active-incomplete-qualification'
+                        ? 'page'
+                        : undefined
+                    }
+                  >
+                    <span>{incompleteQualificationLabel}</span>
                   </Link>
                   <Link
                     className={`${styles.filterLink} ${
