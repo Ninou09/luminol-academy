@@ -2,6 +2,7 @@ import type { Prisma } from '@luminol/database';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1_000;
 const ACTIVE_ENQUIRY_STATUSES_EXCLUDED = ['CLOSED', 'SPAM'] as const;
+export const MAX_PROGRAMME_ENQUIRY_MIX_ITEMS = 6;
 
 export function getThirtyDayEnquiryStart(now: Date): Date {
   return new Date(now.getTime() - THIRTY_DAYS_MS);
@@ -93,4 +94,50 @@ export function normalizeEnquirySchoolMix(
       count: group._count._all,
     }))
     .sort((a, b) => b.count - a.count || a.school.localeCompare(b.school));
+}
+
+export type ProgrammeEnquiryMixItem = {
+  programmeSlug: string;
+  programmeTitleSnapshot: string;
+  count: number;
+};
+
+function compareStableText(a: string, b: string) {
+  if (a === b) return 0;
+  return a < b ? -1 : 1;
+}
+
+export function normalizeProgrammeEnquiryMix(
+  groups: Array<{
+    programmeSlug: string | null;
+    programmeTitleSnapshot: string | null;
+    _count: { _all: number };
+  }>,
+  limit = MAX_PROGRAMME_ENQUIRY_MIX_ITEMS,
+): ProgrammeEnquiryMixItem[] {
+  const boundedLimit = Math.max(0, Math.floor(limit));
+
+  return groups
+    .filter(
+      (group): group is {
+        programmeSlug: string;
+        programmeTitleSnapshot: string;
+        _count: { _all: number };
+      } =>
+        group.programmeSlug !== null &&
+        group.programmeTitleSnapshot !== null &&
+        group._count._all > 0,
+    )
+    .map((group) => ({
+      programmeSlug: group.programmeSlug,
+      programmeTitleSnapshot: group.programmeTitleSnapshot,
+      count: group._count._all,
+    }))
+    .sort(
+      (a, b) =>
+        b.count - a.count ||
+        compareStableText(a.programmeTitleSnapshot, b.programmeTitleSnapshot) ||
+        compareStableText(a.programmeSlug, b.programmeSlug),
+    )
+    .slice(0, boundedLimit);
 }
