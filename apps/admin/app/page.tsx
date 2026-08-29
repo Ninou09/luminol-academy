@@ -14,6 +14,7 @@ import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
+import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
@@ -43,6 +44,7 @@ export default async function Page() {
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
   const ageCopy = getEnquiryAgeCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
+  const landingPathCopy = getEnquiryLandingPathCopy(locale);
   const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);
   const deliveryPreferenceCopy = getEnquiryDeliveryPreferenceCopy(locale);
   const timingPreferenceCopy = getEnquiryTimingPreferenceCopy(locale);
@@ -362,6 +364,64 @@ export default async function Page() {
               </div>
             ) : (
               <p className="admin-empty">{campaignCopy.noCampaigns}</p>
+            )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{landingPathCopy.eyebrow}</p>
+                <h2>{landingPathCopy.title}</h2>
+                <p>{landingPathCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div className="metric-grid" aria-label={landingPathCopy.title}>
+              <article>
+                <span>{landingPathCopy.recorded}</span>
+                <strong>
+                  {number(operations.enquiryLandingPathMixLast30Days.recorded)}
+                </strong>
+                <small>
+                  {landingPathCopy.count(
+                    number(operations.enquiryLandingPathMixLast30Days.recorded),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{landingPathCopy.missing}</span>
+                <strong>
+                  {number(operations.enquiryLandingPathMixLast30Days.missing)}
+                </strong>
+                <small>
+                  {landingPathCopy.count(
+                    number(operations.enquiryLandingPathMixLast30Days.missing),
+                  )}
+                </small>
+              </article>
+            </div>
+            <div className="panel-heading">
+              <div>
+                <h3>{landingPathCopy.topPaths}</h3>
+              </div>
+            </div>
+            {operations.enquiryLandingPathMixLast30Days.items.length > 0 ? (
+              <div
+                className="metric-grid"
+                aria-label={landingPathCopy.topPaths}
+              >
+                {operations.enquiryLandingPathMixLast30Days.items.map(
+                  (item) => (
+                    <article key={item.landingPath}>
+                      <span dir="ltr">{item.landingPath}</span>
+                      <strong>{number(item.count)}</strong>
+                      <small>{landingPathCopy.count(number(item.count))}</small>
+                    </article>
+                  ),
+                )}
+              </div>
+            ) : (
+              <p className="admin-empty">{landingPathCopy.noPaths}</p>
             )}
           </section>
 
