@@ -3,6 +3,7 @@ import type { Prisma } from '@luminol/database';
 export const enquiryAttentionFilters = [
   'unassigned',
   'active-without-follow-up',
+  'active-incomplete-qualification',
   'closed-without-outcome',
 ] as const;
 
@@ -21,6 +22,16 @@ export const ACTIVE_WITHOUT_FOLLOW_UP_WHERE = {
   status: { notIn: ['CLOSED', 'SPAM'] },
   nextFollowUpAt: null,
   nextAction: null,
+} satisfies Prisma.EnquiryWhereInput;
+
+export const ACTIVE_INCOMPLETE_QUALIFICATION_WHERE = {
+  ...ACTIVE_ENQUIRY_WHERE,
+  OR: [
+    { city: null },
+    { preferredContact: null },
+    { deliveryPreference: null },
+    { timingPreference: null },
+  ],
 } satisfies Prisma.EnquiryWhereInput;
 
 export const CLOSED_WITHOUT_OUTCOME_WHERE = {
@@ -46,6 +57,8 @@ export function getEnquiryAttentionWhere(
   if (filter === 'unassigned') return ACTIVE_UNASSIGNED_ENQUIRY_WHERE;
   if (filter === 'active-without-follow-up')
     return ACTIVE_WITHOUT_FOLLOW_UP_WHERE;
+  if (filter === 'active-incomplete-qualification')
+    return ACTIVE_INCOMPLETE_QUALIFICATION_WHERE;
   if (filter === 'closed-without-outcome') return CLOSED_WITHOUT_OUTCOME_WHERE;
   return null;
 }
