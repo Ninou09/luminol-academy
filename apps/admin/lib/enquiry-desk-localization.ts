@@ -15,6 +15,9 @@ export type EnquiryDeskCopy = {
   filterByFollowUp: string;
   attentionQueue: string;
   filterByAttention: string;
+  filterByOwner: string;
+  anyOwner: string;
+  myEnquiries: string;
   allAttention: string;
   unassignedActive: string;
   closedWithoutOutcome: string;
@@ -73,6 +76,9 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     filterByFollowUp: 'Filter by follow-up',
     attentionQueue: 'Attention queue',
     filterByAttention: 'Filter by attention',
+    filterByOwner: 'Filter by owner',
+    anyOwner: 'Any owner',
+    myEnquiries: 'Assigned to me',
     allAttention: 'Any attention state',
     unassignedActive: 'Active & unassigned',
     closedWithoutOutcome: 'Closed without outcome',
@@ -131,6 +137,9 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     filterByFollowUp: 'Filtrer par suivi',
     attentionQueue: 'Points d’attention',
     filterByAttention: 'Filtrer par point d’attention',
+    filterByOwner: 'Filtrer par responsable',
+    anyOwner: 'Tous les responsables',
+    myEnquiries: 'Attribuées à moi',
     allAttention: 'Tous les points d’attention',
     unassignedActive: 'Actives non attribuées',
     closedWithoutOutcome: 'Clôturées sans résultat',
@@ -189,6 +198,9 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     filterByFollowUp: 'التصفية حسب المتابعة',
     attentionQueue: 'حالات تحتاج متابعة',
     filterByAttention: 'التصفية حسب حالة المتابعة',
+    filterByOwner: 'التصفية حسب المسؤول',
+    anyOwner: 'أي مسؤول',
+    myEnquiries: 'مسندة إليّ',
     allAttention: 'كل حالات المتابعة',
     unassignedActive: 'نشطة وغير مسندة',
     closedWithoutOutcome: 'مغلقة دون نتيجة',
