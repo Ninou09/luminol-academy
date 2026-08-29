@@ -22,6 +22,7 @@ import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnarou
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
+import { getRecentEnquiryStatusMixCopy } from '../lib/enquiry-recent-status-mix-localization';
 import { getEnquiryStatusMixCopy } from '../lib/enquiry-status-mix-localization';
 import { getEnquiryWorkflowCopy } from '../lib/enquiry-workflow-localization';
 import {
@@ -52,6 +53,7 @@ export default async function Page() {
   const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
+  const recentStatusMixCopy = getRecentEnquiryStatusMixCopy(locale);
   const statusMixCopy = getEnquiryStatusMixCopy(locale);
   const workflowCopy = getEnquiryWorkflowCopy(locale);
   const common = getCommonDictionary(locale);
@@ -422,6 +424,37 @@ export default async function Page() {
               </div>
             ) : (
               <p className="admin-empty">{landingPathCopy.noPaths}</p>
+            )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{recentStatusMixCopy.eyebrow}</p>
+                <h2>{recentStatusMixCopy.title}</h2>
+                <p>{recentStatusMixCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            {operations.enquiryRecentStatusMixLast30Days.items.length > 0 ? (
+              <div
+                className="metric-grid"
+                aria-label={recentStatusMixCopy.title}
+              >
+                {operations.enquiryRecentStatusMixLast30Days.items.map(
+                  (item) => (
+                    <article key={item.status}>
+                      <span>{getAdminEnumLabel(locale, item.status)}</span>
+                      <strong>{number(item.count)}</strong>
+                      <small>
+                        {recentStatusMixCopy.count(number(item.count))}
+                      </small>
+                    </article>
+                  ),
+                )}
+              </div>
+            ) : (
+              <p className="admin-empty">{recentStatusMixCopy.noData}</p>
             )}
           </section>
 
