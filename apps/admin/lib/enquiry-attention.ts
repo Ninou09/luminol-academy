@@ -4,6 +4,7 @@ export const enquiryAttentionFilters = [
   'unassigned',
   'active-without-follow-up',
   'active-incomplete-qualification',
+  'active-without-recorded-contact',
   'closed-without-outcome',
 ] as const;
 
@@ -34,6 +35,13 @@ export const ACTIVE_INCOMPLETE_QUALIFICATION_WHERE = {
   ],
 } satisfies Prisma.EnquiryWhereInput;
 
+export const ACTIVE_WITHOUT_RECORDED_CONTACT_WHERE = {
+  ...ACTIVE_ENQUIRY_WHERE,
+  statusEvents: {
+    none: { toStatus: 'CONTACTED' },
+  },
+} satisfies Prisma.EnquiryWhereInput;
+
 export const CLOSED_WITHOUT_OUTCOME_WHERE = {
   status: 'CLOSED',
   outcome: null,
@@ -59,6 +67,8 @@ export function getEnquiryAttentionWhere(
     return ACTIVE_WITHOUT_FOLLOW_UP_WHERE;
   if (filter === 'active-incomplete-qualification')
     return ACTIVE_INCOMPLETE_QUALIFICATION_WHERE;
+  if (filter === 'active-without-recorded-contact')
+    return ACTIVE_WITHOUT_RECORDED_CONTACT_WHERE;
   if (filter === 'closed-without-outcome') return CLOSED_WITHOUT_OUTCOME_WHERE;
   return null;
 }
