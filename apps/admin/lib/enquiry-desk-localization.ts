@@ -38,6 +38,7 @@ export type EnquiryDeskCopy = {
   timingPreference: string;
   notProvided: string;
   school: string;
+  programmeContext: string;
   language: string;
   source: string;
   owner: string;
@@ -100,6 +101,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     timingPreference: 'Preferred timing',
     notProvided: 'Not provided',
     school: 'School',
+    programmeContext: 'Programme / offer',
     language: 'Language',
     source: 'Source',
     owner: 'Owner',
@@ -162,6 +164,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     timingPreference: 'Délai souhaité',
     notProvided: 'Non renseigné',
     school: 'Pôle',
+    programmeContext: 'Programme / offre',
     language: 'Langue',
     source: 'Source',
     owner: 'Responsable',
@@ -224,6 +227,7 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     timingPreference: 'التوقيت المفضل',
     notProvided: 'غير مذكور',
     school: 'المجال',
+    programmeContext: 'البرنامج / العرض',
     language: 'اللغة',
     source: 'المصدر',
     owner: 'مسؤول المتابعة',

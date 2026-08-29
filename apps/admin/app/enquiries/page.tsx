@@ -151,6 +151,8 @@ export default async function EnquiriesAdminPage({
         deliveryPreference: true,
         timingPreference: true,
         school: true,
+        programmeSlug: true,
+        programmeTitleSnapshot: true,
         message: true,
         locale: true,
         status: true,
@@ -590,6 +592,12 @@ export default async function EnquiriesAdminPage({
                       <div className={styles.metaItem}>
                         <span>{copy.school}</span>
                         <p>{getAdminEnumLabel(locale, enquiry.school)}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.programmeContext}</span>
+                        <p dir="auto">
+                          {enquiry.programmeTitleSnapshot ?? copy.notProvided}
+                        </p>
                       </div>
                       <div className={styles.metaItem}>
                         <span>{copy.language}</span>

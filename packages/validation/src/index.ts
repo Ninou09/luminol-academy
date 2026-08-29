@@ -24,6 +24,13 @@ export const enquiryTimingPreferenceSchema = z.enum([
   'LATER',
   'NOT_SURE',
 ]);
+export const publicProgrammeSlugSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(1)
+  .max(96)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 
 export const contactSchema = z
   .object({
@@ -35,6 +42,7 @@ export const contactSchema = z
     deliveryPreference: enquiryDeliveryPreferenceSchema,
     timingPreference: enquiryTimingPreferenceSchema,
     school: enquirySchoolSchema,
+    programmeSlug: publicProgrammeSlugSchema.optional(),
     message: z.string().trim().min(10).max(2_000),
     locale: localeSchema.default('en'),
     consent: z.literal(true),

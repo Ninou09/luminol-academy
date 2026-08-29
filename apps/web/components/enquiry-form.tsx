@@ -22,6 +22,7 @@ type EnquiryFormProps = {
   copy: FormCopy;
   initialSchool?: PublicEnquirySchool | undefined;
   initialMessage?: string | undefined;
+  initialProgrammeSlug?: string | undefined;
 };
 
 export function EnquiryForm({
@@ -29,6 +30,7 @@ export function EnquiryForm({
   copy,
   initialSchool = 'GENERAL',
   initialMessage = '',
+  initialProgrammeSlug,
 }: EnquiryFormProps) {
   const qualification = getEnquiryQualificationCopy(locale);
   const [preferredContact, setPreferredContact] =
@@ -61,6 +63,7 @@ export function EnquiryForm({
           deliveryPreference: formData.get('deliveryPreference'),
           timingPreference: formData.get('timingPreference'),
           school: formData.get('school'),
+          programmeSlug: initialProgrammeSlug,
           message: formData.get('message'),
           locale,
           consent: formData.get('consent') === 'on',

@@ -58,6 +58,24 @@ describe('contactSchema', () => {
     ).toBe(false);
   });
 
+  it('accepts a bounded programme slug and rejects arbitrary offer text', () => {
+    const result = contactSchema.safeParse({
+      ...validEnquiry,
+      programmeSlug: 'Acceptance-Commitment-Therapy',
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.programmeSlug).toBe('acceptance-commitment-therapy');
+    }
+
+    expect(
+      contactSchema.safeParse({
+        ...validEnquiry,
+        programmeSlug: 'not a valid programme slug',
+      }).success,
+    ).toBe(false);
+  });
+
   it('requires a phone number for phone and WhatsApp follow-up', () => {
     expect(
       contactSchema.safeParse({
