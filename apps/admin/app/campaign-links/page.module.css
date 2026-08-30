@@ -1,0 +1,102 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.builderForm,
+.resultBlock {
+  display: grid;
+  gap: 1rem;
+}
+
+.builderForm label,
+.fieldWide {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.builderForm label > span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.builderForm label > span small,
+.builderForm label > small {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+  opacity: 0.68;
+}
+
+.builderForm input,
+.builderForm button,
+.resultInput {
+  min-height: 2.65rem;
+  font: inherit;
+}
+
+.builderForm input,
+.resultInput {
+  width: 100%;
+  padding-inline: 0.7rem;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 0.65rem;
+  background: transparent;
+  color: inherit;
+}
+
+.builderForm button {
+  justify-self: start;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.resultBlock > div {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.resultBlock p,
+.boundary,
+.error {
+  margin: 0;
+}
+
+.resultInput {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+}
+
+.boundary {
+  line-height: 1.55;
+  opacity: 0.74;
+}
+
+.error {
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .builderForm button {
+    width: 100%;
+  }
+}
