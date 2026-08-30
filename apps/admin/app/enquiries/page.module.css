@@ -319,6 +319,42 @@
   color: inherit;
 }
 
+.contactShortcutBlock {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.9rem;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  border-radius: 0.8rem;
+}
+
+.contactShortcutHeading {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.contactShortcutHeading h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.contactShortcutList {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.preferredContactLink {
+  border-width: 2px;
+}
+
+.contactShortcutBadge {
+  margin-inline-start: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  opacity: 0.72;
+}
+
 .muted {
   font-size: 0.85rem;
   opacity: 0.62;

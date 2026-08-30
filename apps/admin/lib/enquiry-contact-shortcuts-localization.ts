@@ -20,7 +20,8 @@ const COPY: Record<Locale, Copy> = {
       'These shortcuts use only the contact details already stored on this enquiry. Nothing is sent automatically.',
     boundary:
       'Opening a shortcut does not record CONTACTED and does not prove that a message, call, reply or conversation occurred. Record workflow changes separately.',
-    unavailable: 'No safe contact shortcut is available from the stored values.',
+    unavailable:
+      'No safe contact shortcut is available from the stored values.',
     preferred: 'Preferred',
     label: (kind) => {
       if (kind === 'email') return 'Email';
