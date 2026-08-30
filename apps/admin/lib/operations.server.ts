@@ -44,6 +44,10 @@ import {
   type EnquiryCampaignContentMixSummary,
 } from './enquiry-campaign-content-reporting';
 import {
+  summarizeEnquiryAttributionCoverage,
+  type EnquiryAttributionCoverageSummary,
+} from './enquiry-attribution-coverage-reporting';
+import {
   normalizeEnquiryLandingPathMix,
   type EnquiryLandingPathMixSummary,
 } from './enquiry-landing-path-reporting';
@@ -159,6 +163,7 @@ export type OperationsDashboard = {
   };
   enquiryCampaignMediumMixLast30Days: EnquiryCampaignMediumMixSummary;
   enquiryCampaignContentMixLast30Days: EnquiryCampaignContentMixSummary;
+  enquiryAttributionCoverageLast30Days: EnquiryAttributionCoverageSummary;
   enquiryContactPreferenceMixLast30Days: EnquiryContactPreferenceMixSummary;
   enquiryDeliveryPreferenceMixLast30Days: EnquiryDeliveryPreferenceMixSummary;
   enquiryTimingPreferenceMixLast30Days: EnquiryTimingPreferenceMixSummary;
@@ -236,6 +241,7 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     programmeEnquiryGroupsLast30Days,
     campaignSourceGroupsLast30Days,
     campaignPairGroupsLast30Days,
+    campaignNamedRecordedLast30Days,
     campaignMediumRecordedLast30Days,
     campaignMediumGroupsLast30Days,
     campaignContentRecordedLast30Days,
@@ -352,6 +358,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       by: ['utmSource', 'utmCampaign'],
       where: getCampaignNamedRecentEnquiryWhere(now),
       _count: { _all: true },
+    }),
+    db.enquiry.count({
+      where: {
+        ...getRecentEnquiryWhere(now),
+        utmCampaign: { not: null },
+      },
     }),
     db.enquiry.count({
       where: {
@@ -528,6 +540,16 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       campaignContentGroupsLast30Days,
       enquiriesLast30Days,
       campaignContentRecordedLast30Days,
+    ),
+    enquiryAttributionCoverageLast30Days: summarizeEnquiryAttributionCoverage(
+      enquiriesLast30Days,
+      {
+        utmSource: campaignAttributedLast30Days,
+        utmMedium: campaignMediumRecordedLast30Days,
+        utmCampaign: campaignNamedRecordedLast30Days,
+        utmContent: campaignContentRecordedLast30Days,
+        landingPath: landingPathRecordedLast30Days,
+      },
     ),
     enquiryLandingPathMixLast30Days: normalizeEnquiryLandingPathMix(
       landingPathGroupsLast30Days,

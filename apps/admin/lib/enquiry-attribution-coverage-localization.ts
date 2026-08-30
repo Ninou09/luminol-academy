@@ -35,7 +35,8 @@ const COPY: Record<Locale, EnquiryAttributionCoverageCopy> = {
     utmCampaign: 'Campagne UTM',
     utmContent: 'Contenu UTM',
     landingPath: 'Page d’arrivée',
-    recordedOfTotal: (recorded, total) => `${recorded} sur ${total} enregistrés`,
+    recordedOfTotal: (recorded, total) =>
+      `${recorded} sur ${total} enregistrés`,
   },
   ar: {
     eyebrow: 'اكتمال بيانات الإسناد',
