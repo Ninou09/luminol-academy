@@ -33,7 +33,11 @@ describe('enquiry campaign attribution filters', () => {
 
   it('allows a bounded medium-only filter', () => {
     expect(
-      parseEnquiryCampaignAttributionFilter(undefined, undefined, ' paid_social '),
+      parseEnquiryCampaignAttributionFilter(
+        undefined,
+        undefined,
+        ' paid_social ',
+      ),
     ).toEqual({
       utmSource: null,
       utmCampaign: null,

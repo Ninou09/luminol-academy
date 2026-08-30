@@ -77,6 +77,7 @@ type EnquiryPageProps = {
     owner?: string | string[] | undefined;
     utmSource?: string | string[] | undefined;
     utmCampaign?: string | string[] | undefined;
+    utmMedium?: string | string[] | undefined;
   }>;
 };
 
@@ -122,6 +123,9 @@ function buildEnquiryHref(
     if (campaignAttribution.utmCampaign) {
       query.set('utmCampaign', campaignAttribution.utmCampaign);
     }
+    if (campaignAttribution.utmMedium) {
+      query.set('utmMedium', campaignAttribution.utmMedium);
+    }
   }
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
@@ -152,6 +156,7 @@ export default async function EnquiriesAdminPage({
   const activeCampaignAttribution = parseEnquiryCampaignAttributionFilter(
     params?.utmSource,
     params?.utmCampaign,
+    params?.utmMedium,
   );
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
@@ -358,14 +363,22 @@ export default async function EnquiriesAdminPage({
                   {campaignFilterCopy.eyebrow}
                 </span>
                 <div className={styles.filters}>
-                  <span className={styles.filterLink} dir="auto">
-                    {campaignFilterCopy.source}:{' '}
-                    {activeCampaignAttribution.utmSource}
-                  </span>
+                  {activeCampaignAttribution.utmSource ? (
+                    <span className={styles.filterLink} dir="auto">
+                      {campaignFilterCopy.source}:{' '}
+                      {activeCampaignAttribution.utmSource}
+                    </span>
+                  ) : null}
                   {activeCampaignAttribution.utmCampaign ? (
                     <span className={styles.filterLink} dir="auto">
                       {campaignFilterCopy.campaign}:{' '}
                       {activeCampaignAttribution.utmCampaign}
+                    </span>
+                  ) : null}
+                  {activeCampaignAttribution.utmMedium ? (
+                    <span className={styles.filterLink} dir="auto">
+                      {campaignFilterCopy.medium}:{' '}
+                      {activeCampaignAttribution.utmMedium}
                     </span>
                   ) : null}
                   <Link
