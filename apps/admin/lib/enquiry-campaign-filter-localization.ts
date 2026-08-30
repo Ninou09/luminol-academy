@@ -7,6 +7,7 @@ export type EnquiryCampaignFilterCopy = {
   source: string;
   campaign: string;
   medium: string;
+  content: string;
   clear: string;
 };
 
@@ -19,6 +20,7 @@ const COPY: Record<Locale, EnquiryCampaignFilterCopy> = {
     source: 'UTM source',
     campaign: 'UTM campaign',
     medium: 'UTM medium',
+    content: 'UTM content',
     clear: 'Clear campaign filter',
   },
   fr: {
@@ -29,6 +31,7 @@ const COPY: Record<Locale, EnquiryCampaignFilterCopy> = {
     source: 'Source UTM',
     campaign: 'Campagne UTM',
     medium: 'Support UTM',
+    content: 'Contenu UTM',
     clear: 'Effacer le filtre de campagne',
   },
   ar: {
@@ -39,6 +42,7 @@ const COPY: Record<Locale, EnquiryCampaignFilterCopy> = {
     source: 'مصدر UTM',
     campaign: 'حملة UTM',
     medium: 'وسيط UTM',
+    content: 'محتوى UTM',
     clear: 'مسح مرشح الحملة',
   },
 };
