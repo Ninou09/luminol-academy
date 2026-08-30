@@ -3,7 +3,9 @@ import type { Prisma } from '@luminol/database';
 export const ENQUIRY_CAMPAIGN_FILTER_VALUE_LIMIT = 160;
 
 export type EnquiryCampaignAttributionFilter = {
-  utmSource: string | null;
+  // Empty string is the internal no-source sentinel for medium-only drill-downs.
+  // It is never emitted as a query value or Prisma predicate.
+  utmSource: string;
   utmCampaign: string | null;
   utmMedium: string | null;
 };
@@ -38,7 +40,7 @@ export function parseEnquiryCampaignAttributionFilter(
   if (!source.value && !medium.value) return null;
 
   return {
-    utmSource: source.value,
+    utmSource: source.value ?? '',
     utmCampaign: campaign.value,
     utmMedium: medium.value,
   };
