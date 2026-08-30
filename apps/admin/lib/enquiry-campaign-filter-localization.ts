@@ -21,9 +21,9 @@ const COPY: Record<Locale, EnquiryCampaignFilterCopy> = {
   },
   fr: {
     eyebrow: 'Contexte de campagne enregistré',
-    title: "Filtre d’attribution de campagne",
+    title: 'Filtre d’attribution de campagne',
     intro:
-      "Cette vue protégée est limitée uniquement aux valeurs UTM enregistrées. Elle ne mesure ni la conversion, ni le ROI, ni la qualité du prospect, ni l’intention, l’urgence ou l’adéquation.",
+      'Cette vue protégée est limitée uniquement aux valeurs UTM enregistrées. Elle ne mesure ni la conversion, ni le ROI, ni la qualité du prospect, ni l’intention, l’urgence ou l’adéquation.',
     source: 'Source UTM',
     campaign: 'Campagne UTM',
     clear: 'Effacer le filtre de campagne',

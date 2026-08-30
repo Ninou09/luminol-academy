@@ -33,13 +33,17 @@ describe('enquiry campaign attribution filters', () => {
     expect(
       parseEnquiryCampaignAttributionFilter(undefined, 'campaign-a'),
     ).toBeNull();
-    expect(parseEnquiryCampaignAttributionFilter('   ', 'campaign-a')).toBeNull();
+    expect(
+      parseEnquiryCampaignAttributionFilter('   ', 'campaign-a'),
+    ).toBeNull();
   });
 
   it('fails closed when either persisted attribution value exceeds the bound', () => {
     const tooLong = 'x'.repeat(ENQUIRY_CAMPAIGN_FILTER_VALUE_LIMIT + 1);
 
-    expect(parseEnquiryCampaignAttributionFilter(tooLong, undefined)).toBeNull();
+    expect(
+      parseEnquiryCampaignAttributionFilter(tooLong, undefined),
+    ).toBeNull();
     expect(
       parseEnquiryCampaignAttributionFilter('instagram', tooLong),
     ).toBeNull();
@@ -72,8 +76,6 @@ describe('enquiry campaign attribution filters', () => {
         utmSource: 'instagram paid',
         utmCampaign: 'august / launch',
       }),
-    ).toBe(
-      'utmSource=instagram+paid&utmCampaign=august+%2F+launch',
-    );
+    ).toBe('utmSource=instagram+paid&utmCampaign=august+%2F+launch');
   });
 });
