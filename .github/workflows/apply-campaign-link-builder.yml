@@ -1,0 +1,78 @@
+name: Apply campaign link builder
+
+on:
+  push:
+    branches:
+      - feat/campaign-link-builder
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/campaign-link-builder
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Link campaign builder from operations
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+
+          import_marker = "import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';\n"
+          import_addition = import_marker + "import { getCampaignLinkBuilderCopy } from '../lib/campaign-link-builder-localization';\n"
+          if import_marker not in text:
+              raise SystemExit('analytics import marker not found')
+          text = text.replace(import_marker, import_addition, 1)
+
+          copy_marker = "  const analyticsCopy = getAcademyAnalyticsCopy(locale);\n"
+          copy_addition = copy_marker + "  const campaignLinkBuilderCopy = getCampaignLinkBuilderCopy(locale);\n"
+          if copy_marker not in text:
+              raise SystemExit('analytics copy marker not found')
+          text = text.replace(copy_marker, copy_addition, 1)
+
+          nav_marker = "          <Link href={localizeHref(locale, '/analytics')}>\n            <span>07</span> {analyticsCopy.title}\n          </Link>\n"
+          nav_addition = nav_marker + "          <Link href={localizeHref(locale, '/campaign-links')}>\n            <span>08</span> {campaignLinkBuilderCopy.title}\n          </Link>\n"
+          if nav_marker not in text:
+              raise SystemExit('analytics nav marker not found')
+          page.write_text(text.replace(nav_marker, nav_addition, 1))
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/app/campaign-links/page.tsx \
+            apps/admin/app/campaign-links/page.module.css \
+            apps/admin/lib/campaign-link-builder.ts \
+            apps/admin/lib/campaign-link-builder.test.ts \
+            apps/admin/lib/campaign-link-builder-localization.ts \
+            apps/admin/lib/campaign-link-builder-localization.test.ts
+      - name: Run git diff --check
+        run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/app/campaign-links/page.tsx \
+            apps/admin/app/campaign-links/page.module.css \
+            apps/admin/lib/campaign-link-builder.ts \
+            apps/admin/lib/campaign-link-builder.test.ts \
+            apps/admin/lib/campaign-link-builder-localization.ts \
+            apps/admin/lib/campaign-link-builder-localization.test.ts
+          git commit -m "Integrate protected campaign link builder"
+          git push origin HEAD:feat/campaign-link-builder
