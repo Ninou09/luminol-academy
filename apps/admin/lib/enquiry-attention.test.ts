@@ -49,8 +49,7 @@ describe('enquiry attention filters', () => {
     );
     expect(ACTIVE_WITHOUT_FOLLOW_UP_WHERE).toEqual({
       status: { notIn: ['CLOSED', 'SPAM'] },
-      nextFollowUpAt: null,
-      nextAction: null,
+      OR: [{ nextFollowUpAt: null }, { nextAction: null }],
     });
     expect(getEnquiryAttentionWhere('active-incomplete-qualification')).toEqual(
       ACTIVE_INCOMPLETE_QUALIFICATION_WHERE,
@@ -82,5 +81,12 @@ describe('enquiry attention filters', () => {
       outcomeAt: null,
     });
     expect(getEnquiryAttentionWhere(null)).toBeNull();
+  });
+
+  it('treats either missing follow-up field as an incomplete plan', () => {
+    expect(ACTIVE_WITHOUT_FOLLOW_UP_WHERE.OR).toEqual([
+      { nextFollowUpAt: null },
+      { nextAction: null },
+    ]);
   });
 });
