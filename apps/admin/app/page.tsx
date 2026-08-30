@@ -26,6 +26,7 @@ import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnarou
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getMissingFollowUpPlanAgeCopy } from '../lib/enquiry-missing-follow-up-age-localization';
 import { getIncompleteQualificationAgeCopy } from '../lib/enquiry-incomplete-qualification-age-localization';
+import { getUnrecordedContactAgeCopy } from '../lib/enquiry-unrecorded-contact-age-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
 import { getEnquiryQualificationGapCopy } from '../lib/enquiry-qualification-gap-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
@@ -65,6 +66,7 @@ export default async function Page() {
   const missingFollowUpAgeCopy = getMissingFollowUpPlanAgeCopy(locale);
   const incompleteQualificationAgeCopy =
     getIncompleteQualificationAgeCopy(locale);
+  const unrecordedContactAgeCopy = getUnrecordedContactAgeCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
   const qualificationGapCopy = getEnquiryQualificationGapCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
@@ -1428,6 +1430,80 @@ export default async function Page() {
                     number(
                       operations.incompleteQualificationAge.buckets
                         .overSevenDays,
+                    ),
+                  )}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{unrecordedContactAgeCopy.eyebrow}</p>
+                <h2>{unrecordedContactAgeCopy.title}</h2>
+                <p>{unrecordedContactAgeCopy.intro}</p>
+              </div>
+              <span>{number(operations.unrecordedContactAge.activeTotal)}</span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={unrecordedContactAgeCopy.title}
+            >
+              <article>
+                <span>{unrecordedContactAgeCopy.under24Hours}</span>
+                <strong>
+                  {number(operations.unrecordedContactAge.buckets.under24Hours)}
+                </strong>
+                <small>
+                  {unrecordedContactAgeCopy.count(
+                    number(
+                      operations.unrecordedContactAge.buckets.under24Hours,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{unrecordedContactAgeCopy.oneToThreeDays}</span>
+                <strong>
+                  {number(
+                    operations.unrecordedContactAge.buckets.oneToThreeDays,
+                  )}
+                </strong>
+                <small>
+                  {unrecordedContactAgeCopy.count(
+                    number(
+                      operations.unrecordedContactAge.buckets.oneToThreeDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{unrecordedContactAgeCopy.fourToSevenDays}</span>
+                <strong>
+                  {number(
+                    operations.unrecordedContactAge.buckets.fourToSevenDays,
+                  )}
+                </strong>
+                <small>
+                  {unrecordedContactAgeCopy.count(
+                    number(
+                      operations.unrecordedContactAge.buckets.fourToSevenDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{unrecordedContactAgeCopy.overSevenDays}</span>
+                <strong>
+                  {number(
+                    operations.unrecordedContactAge.buckets.overSevenDays,
+                  )}
+                </strong>
+                <small>
+                  {unrecordedContactAgeCopy.count(
+                    number(
+                      operations.unrecordedContactAge.buckets.overSevenDays,
                     ),
                   )}
                 </small>

@@ -24,6 +24,10 @@ import {
   summarizeIncompleteQualificationAge,
 } from './enquiry-incomplete-qualification-age-reporting';
 import {
+  getUnrecordedContactAgeWhere,
+  summarizeUnrecordedContactAge,
+} from './enquiry-unrecorded-contact-age-reporting';
+import {
   normalizeActiveEnquiryStatusMix,
   type ActiveEnquiryStatusMixSummary,
 } from './enquiry-status-mix-reporting';
@@ -198,6 +202,7 @@ export type OperationsDashboard = {
   unassignedActiveEnquiryAge: ActiveEnquiryAgeSummary;
   missingFollowUpPlanAge: ActiveEnquiryAgeSummary;
   incompleteQualificationAge: ActiveEnquiryAgeSummary;
+  unrecordedContactAge: ActiveEnquiryAgeSummary;
   activeEnquiryStatusMix: ActiveEnquiryStatusMixSummary;
   activeEnquiryFollowUpTiming: FollowUpTimingSummary;
   recentEnquiries: RecentEnquiry[];
@@ -237,6 +242,10 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     incompleteQualificationOneToThreeDays,
     incompleteQualificationFourToSevenDays,
     incompleteQualificationOverSevenDays,
+    unrecordedContactUnder24Hours,
+    unrecordedContactOneToThreeDays,
+    unrecordedContactFourToSevenDays,
+    unrecordedContactOverSevenDays,
     followUpMissingPlan,
     followUpPastDue,
     followUpNext24Hours,
@@ -331,6 +340,18 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     }),
     db.enquiry.count({
       where: getIncompleteQualificationAgeWhere(now, 'overSevenDays'),
+    }),
+    db.enquiry.count({
+      where: getUnrecordedContactAgeWhere(now, 'under24Hours'),
+    }),
+    db.enquiry.count({
+      where: getUnrecordedContactAgeWhere(now, 'oneToThreeDays'),
+    }),
+    db.enquiry.count({
+      where: getUnrecordedContactAgeWhere(now, 'fourToSevenDays'),
+    }),
+    db.enquiry.count({
+      where: getUnrecordedContactAgeWhere(now, 'overSevenDays'),
     }),
     db.enquiry.count({
       where: getActiveEnquiryFollowUpTimingWhere(now, 'missingPlan'),
@@ -677,6 +698,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       oneToThreeDays: incompleteQualificationOneToThreeDays,
       fourToSevenDays: incompleteQualificationFourToSevenDays,
       overSevenDays: incompleteQualificationOverSevenDays,
+    }),
+    unrecordedContactAge: summarizeUnrecordedContactAge({
+      under24Hours: unrecordedContactUnder24Hours,
+      oneToThreeDays: unrecordedContactOneToThreeDays,
+      fourToSevenDays: unrecordedContactFourToSevenDays,
+      overSevenDays: unrecordedContactOverSevenDays,
     }),
     activeEnquiryStatusMix: normalizeActiveEnquiryStatusMix(
       activeEnquiryStatusGroups,
