@@ -12,6 +12,10 @@ import {
   type ActiveEnquiryAgeSummary,
 } from './enquiry-age-reporting';
 import {
+  getUnassignedActiveEnquiryAgeWhere,
+  summarizeUnassignedActiveEnquiryAge,
+} from './enquiry-unassigned-age-reporting';
+import {
   normalizeActiveEnquiryStatusMix,
   type ActiveEnquiryStatusMixSummary,
 } from './enquiry-status-mix-reporting';
@@ -168,6 +172,7 @@ export type OperationsDashboard = {
   };
   enquiryContactTurnaroundLast30Days: EnquiryFirstContactTurnaroundSummary;
   activeEnquiryAge: ActiveEnquiryAgeSummary;
+  unassignedActiveEnquiryAge: ActiveEnquiryAgeSummary;
   activeEnquiryStatusMix: ActiveEnquiryStatusMixSummary;
   activeEnquiryFollowUpTiming: FollowUpTimingSummary;
   recentEnquiries: RecentEnquiry[];
@@ -195,6 +200,10 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     activeOneToThreeDays,
     activeFourToSevenDays,
     activeOverSevenDays,
+    unassignedUnder24Hours,
+    unassignedOneToThreeDays,
+    unassignedFourToSevenDays,
+    unassignedOverSevenDays,
     followUpMissingPlan,
     followUpPastDue,
     followUpNext24Hours,
@@ -249,6 +258,18 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       where: getActiveEnquiryAgeWhere(now, 'fourToSevenDays'),
     }),
     db.enquiry.count({ where: getActiveEnquiryAgeWhere(now, 'overSevenDays') }),
+    db.enquiry.count({
+      where: getUnassignedActiveEnquiryAgeWhere(now, 'under24Hours'),
+    }),
+    db.enquiry.count({
+      where: getUnassignedActiveEnquiryAgeWhere(now, 'oneToThreeDays'),
+    }),
+    db.enquiry.count({
+      where: getUnassignedActiveEnquiryAgeWhere(now, 'fourToSevenDays'),
+    }),
+    db.enquiry.count({
+      where: getUnassignedActiveEnquiryAgeWhere(now, 'overSevenDays'),
+    }),
     db.enquiry.count({
       where: getActiveEnquiryFollowUpTimingWhere(now, 'missingPlan'),
     }),
@@ -522,6 +543,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       oneToThreeDays: activeOneToThreeDays,
       fourToSevenDays: activeFourToSevenDays,
       overSevenDays: activeOverSevenDays,
+    }),
+    unassignedActiveEnquiryAge: summarizeUnassignedActiveEnquiryAge({
+      under24Hours: unassignedUnder24Hours,
+      oneToThreeDays: unassignedOneToThreeDays,
+      fourToSevenDays: unassignedFourToSevenDays,
+      overSevenDays: unassignedOverSevenDays,
     }),
     activeEnquiryStatusMix: normalizeActiveEnquiryStatusMix(
       activeEnquiryStatusGroups,

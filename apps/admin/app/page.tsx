@@ -13,6 +13,7 @@ import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
+import { getUnassignedEnquiryAgeCopy } from '../lib/enquiry-unassigned-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
@@ -45,6 +46,7 @@ export default async function Page() {
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
   const ageCopy = getEnquiryAgeCopy(locale);
+  const unassignedAgeCopy = getUnassignedEnquiryAgeCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
   const landingPathCopy = getEnquiryLandingPathCopy(locale);
   const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);
@@ -995,6 +997,87 @@ export default async function Page() {
                 <small>
                   {ageCopy.count(
                     number(operations.activeEnquiryAge.buckets.overSevenDays),
+                  )}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{unassignedAgeCopy.eyebrow}</p>
+                <h2>{unassignedAgeCopy.title}</h2>
+                <p>{unassignedAgeCopy.intro}</p>
+              </div>
+              <span>
+                {number(operations.unassignedActiveEnquiryAge.activeTotal)}
+              </span>
+            </div>
+            <div className="metric-grid" aria-label={unassignedAgeCopy.title}>
+              <article>
+                <span>{unassignedAgeCopy.under24Hours}</span>
+                <strong>
+                  {number(
+                    operations.unassignedActiveEnquiryAge.buckets.under24Hours,
+                  )}
+                </strong>
+                <small>
+                  {unassignedAgeCopy.count(
+                    number(
+                      operations.unassignedActiveEnquiryAge.buckets
+                        .under24Hours,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{unassignedAgeCopy.oneToThreeDays}</span>
+                <strong>
+                  {number(
+                    operations.unassignedActiveEnquiryAge.buckets
+                      .oneToThreeDays,
+                  )}
+                </strong>
+                <small>
+                  {unassignedAgeCopy.count(
+                    number(
+                      operations.unassignedActiveEnquiryAge.buckets
+                        .oneToThreeDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{unassignedAgeCopy.fourToSevenDays}</span>
+                <strong>
+                  {number(
+                    operations.unassignedActiveEnquiryAge.buckets
+                      .fourToSevenDays,
+                  )}
+                </strong>
+                <small>
+                  {unassignedAgeCopy.count(
+                    number(
+                      operations.unassignedActiveEnquiryAge.buckets
+                        .fourToSevenDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{unassignedAgeCopy.overSevenDays}</span>
+                <strong>
+                  {number(
+                    operations.unassignedActiveEnquiryAge.buckets.overSevenDays,
+                  )}
+                </strong>
+                <small>
+                  {unassignedAgeCopy.count(
+                    number(
+                      operations.unassignedActiveEnquiryAge.buckets
+                        .overSevenDays,
+                    ),
                   )}
                 </small>
               </article>
