@@ -31,7 +31,7 @@ describe('enquiry campaign attribution filters', () => {
     });
   });
 
-  it('allows a bounded medium-only filter', () => {
+  it('allows a bounded medium-only filter without inventing source context', () => {
     expect(
       parseEnquiryCampaignAttributionFilter(
         undefined,
@@ -39,7 +39,7 @@ describe('enquiry campaign attribution filters', () => {
         ' paid_social ',
       ),
     ).toEqual({
-      utmSource: null,
+      utmSource: '',
       utmCampaign: null,
       utmMedium: 'paid_social',
     });
@@ -100,7 +100,7 @@ describe('enquiry campaign attribution filters', () => {
 
     expect(
       getEnquiryCampaignAttributionWhere({
-        utmSource: null,
+        utmSource: '',
         utmCampaign: null,
         utmMedium: 'paid_social',
       }),
@@ -133,10 +133,10 @@ describe('enquiry campaign attribution filters', () => {
     );
   });
 
-  it('encodes a medium-only drill-down without inventing source context', () => {
+  it('encodes a medium-only drill-down without emitting an empty source', () => {
     expect(
       buildEnquiryCampaignAttributionQuery({
-        utmSource: null,
+        utmSource: '',
         utmCampaign: null,
         utmMedium: 'paid_social',
       }),
