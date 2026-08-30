@@ -3,46 +3,52 @@ import type { Prisma } from '@luminol/database';
 export const ENQUIRY_CAMPAIGN_FILTER_VALUE_LIMIT = 160;
 
 export type EnquiryCampaignAttributionFilter = {
+  // Empty string is the internal no-source sentinel for medium-only drill-downs.
+  // It is never emitted as a query value or Prisma predicate.
   utmSource: string;
   utmCampaign: string | null;
+  utmMedium: string | null;
+};
+
+type EnquiryCampaignAttributionQuery = {
+  utmSource: string | null;
+  utmCampaign: string | null;
+  utmMedium: string | null;
 };
 
 function firstParam(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function normalizeFilterValue(
-  value: string | string[] | undefined,
-): string | null {
+function parseFilterValue(value: string | string[] | undefined): {
+  value: string | null;
+  invalid: boolean;
+} {
   const candidate = firstParam(value)?.trim();
-  if (!candidate) return null;
-  if (candidate.length > ENQUIRY_CAMPAIGN_FILTER_VALUE_LIMIT) return null;
-  return candidate;
+  if (!candidate) return { value: null, invalid: false };
+  if (candidate.length > ENQUIRY_CAMPAIGN_FILTER_VALUE_LIMIT) {
+    return { value: null, invalid: true };
+  }
+  return { value: candidate, invalid: false };
 }
 
 export function parseEnquiryCampaignAttributionFilter(
   utmSource: string | string[] | undefined,
   utmCampaign: string | string[] | undefined,
+  utmMedium: string | string[] | undefined = undefined,
 ): EnquiryCampaignAttributionFilter | null {
-  const source = normalizeFilterValue(utmSource);
-  const campaignCandidate = firstParam(utmCampaign)?.trim();
+  const source = parseFilterValue(utmSource);
+  const campaign = parseFilterValue(utmCampaign);
+  const medium = parseFilterValue(utmMedium);
 
-  if (!source) return null;
-
-  if (campaignCandidate) {
-    if (campaignCandidate.length > ENQUIRY_CAMPAIGN_FILTER_VALUE_LIMIT) {
-      return null;
-    }
-
-    return {
-      utmSource: source,
-      utmCampaign: campaignCandidate,
-    };
-  }
+  if (source.invalid || campaign.invalid || medium.invalid) return null;
+  if (campaign.value && !source.value) return null;
+  if (!source.value && !medium.value) return null;
 
   return {
-    utmSource: source,
-    utmCampaign: null,
+    utmSource: source.value ?? '',
+    utmCampaign: campaign.value,
+    utmMedium: medium.value,
   };
 }
 
@@ -52,16 +58,18 @@ export function getEnquiryCampaignAttributionWhere(
   if (!filter) return null;
 
   return {
-    utmSource: filter.utmSource,
+    ...(filter.utmSource ? { utmSource: filter.utmSource } : {}),
     ...(filter.utmCampaign ? { utmCampaign: filter.utmCampaign } : {}),
+    ...(filter.utmMedium ? { utmMedium: filter.utmMedium } : {}),
   };
 }
 
 export function buildEnquiryCampaignAttributionQuery(
-  filter: EnquiryCampaignAttributionFilter,
+  filter: EnquiryCampaignAttributionQuery,
 ): string {
   const query = new URLSearchParams();
-  query.set('utmSource', filter.utmSource);
+  if (filter.utmSource) query.set('utmSource', filter.utmSource);
   if (filter.utmCampaign) query.set('utmCampaign', filter.utmCampaign);
+  if (filter.utmMedium) query.set('utmMedium', filter.utmMedium);
   return query.toString();
 }
