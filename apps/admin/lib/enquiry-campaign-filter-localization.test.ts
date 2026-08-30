@@ -13,6 +13,7 @@ describe('enquiry campaign filter localization', () => {
       expect(copy.source.length).toBeGreaterThan(0);
       expect(copy.campaign.length).toBeGreaterThan(0);
       expect(copy.medium.length).toBeGreaterThan(0);
+      expect(copy.content.length).toBeGreaterThan(0);
       expect(copy.clear.length).toBeGreaterThan(0);
       expect(copy.intro.length).toBeGreaterThan(20);
     },

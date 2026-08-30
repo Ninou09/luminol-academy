@@ -78,6 +78,7 @@ type EnquiryPageProps = {
     utmSource?: string | string[] | undefined;
     utmCampaign?: string | string[] | undefined;
     utmMedium?: string | string[] | undefined;
+    utmContent?: string | string[] | undefined;
   }>;
 };
 
@@ -126,6 +127,9 @@ function buildEnquiryHref(
     if (campaignAttribution.utmMedium) {
       query.set('utmMedium', campaignAttribution.utmMedium);
     }
+    if (campaignAttribution.utmContent) {
+      query.set('utmContent', campaignAttribution.utmContent);
+    }
   }
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
@@ -157,6 +161,7 @@ export default async function EnquiriesAdminPage({
     params?.utmSource,
     params?.utmCampaign,
     params?.utmMedium,
+    params?.utmContent,
   );
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
@@ -379,6 +384,12 @@ export default async function EnquiriesAdminPage({
                     <span className={styles.filterLink} dir="auto">
                       {campaignFilterCopy.medium}:{' '}
                       {activeCampaignAttribution.utmMedium}
+                    </span>
+                  ) : null}
+                  {activeCampaignAttribution.utmContent ? (
+                    <span className={styles.filterLink} dir="auto">
+                      {campaignFilterCopy.content}:{' '}
+                      {activeCampaignAttribution.utmContent}
                     </span>
                   ) : null}
                   <Link
