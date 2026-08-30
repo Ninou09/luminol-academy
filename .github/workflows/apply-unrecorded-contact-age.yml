@@ -73,7 +73,7 @@ jobs:
               raise SystemExit('incomplete qualification age page import marker not found')
           text = text.replace(page_import_marker, page_import_addition, 1)
 
-          copy_marker = "  const incompleteQualificationAgeCopy = getIncompleteQualificationAgeCopy(locale);\n"
+          copy_marker = "  const incompleteQualificationAgeCopy =\n    getIncompleteQualificationAgeCopy(locale);\n"
           copy_addition = copy_marker + "  const unrecordedContactAgeCopy = getUnrecordedContactAgeCopy(locale);\n"
           if copy_marker not in text:
               raise SystemExit('incomplete qualification age copy initializer marker not found')
