@@ -1,0 +1,147 @@
+name: Apply recent qualification gaps
+
+on:
+  push:
+    branches:
+      - feat/recent-qualification-gaps
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/recent-qualification-gaps
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate qualification gaps into dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          ops = Path('apps/admin/lib/operations.server.ts')
+          text = ops.read_text()
+          import_marker = "import {\n  normalizeEnquiryLandingPathMix,\n  type EnquiryLandingPathMixSummary,\n} from './enquiry-landing-path-reporting';\n"
+          import_addition = import_marker + "import {\n  getRecentActiveQualificationGapWhere,\n  summarizeRecentActiveQualificationGaps,\n  type EnquiryQualificationGapSummary,\n} from './enquiry-qualification-gap-reporting';\n"
+          if import_marker not in text:
+              raise SystemExit('landing path import marker not found')
+          text = text.replace(import_marker, import_addition, 1)
+
+          type_marker = "  enquiryLandingPathMixLast30Days: EnquiryLandingPathMixSummary;\n"
+          type_addition = type_marker + "  enquiryQualificationGapsLast30Days: EnquiryQualificationGapSummary;\n"
+          if type_marker not in text:
+              raise SystemExit('dashboard type marker not found')
+          text = text.replace(type_marker, type_addition, 1)
+
+          destructure_marker = "    recentActiveQualifiedEnquiries,\n    recentClosedEnquiries,\n"
+          destructure_addition = "    recentActiveQualifiedEnquiries,\n    recentActiveCityMissing,\n    recentActivePreferredContactMissing,\n    recentActiveDeliveryPreferenceMissing,\n    recentActiveTimingPreferenceMissing,\n    recentClosedEnquiries,\n"
+          if destructure_marker not in text:
+              raise SystemExit('promise destructure marker not found')
+          text = text.replace(destructure_marker, destructure_addition, 1)
+
+          query_marker = "    db.enquiry.count({ where: getRecentActiveQualifiedEnquiryWhere(now) }),\n    db.enquiry.count({ where: getRecentClosedEnquiryWhere(now) }),\n"
+          query_addition = "    db.enquiry.count({ where: getRecentActiveQualifiedEnquiryWhere(now) }),\n    db.enquiry.count({\n      where: getRecentActiveQualificationGapWhere(now, 'city'),\n    }),\n    db.enquiry.count({\n      where: getRecentActiveQualificationGapWhere(now, 'preferredContact'),\n    }),\n    db.enquiry.count({\n      where: getRecentActiveQualificationGapWhere(now, 'deliveryPreference'),\n    }),\n    db.enquiry.count({\n      where: getRecentActiveQualificationGapWhere(now, 'timingPreference'),\n    }),\n    db.enquiry.count({ where: getRecentClosedEnquiryWhere(now) }),\n"
+          if query_marker not in text:
+              raise SystemExit('recent active query marker not found')
+          text = text.replace(query_marker, query_addition, 1)
+
+          return_marker = "    enquiryWorkflowCoverageLast30Days: {\n"
+          return_addition = "    enquiryQualificationGapsLast30Days: summarizeRecentActiveQualificationGaps({\n      activeTotal: recentActiveEnquiries,\n      cityMissing: recentActiveCityMissing,\n      preferredContactMissing: recentActivePreferredContactMissing,\n      deliveryPreferenceMissing: recentActiveDeliveryPreferenceMissing,\n      timingPreferenceMissing: recentActiveTimingPreferenceMissing,\n    }),\n    enquiryWorkflowCoverageLast30Days: {\n"
+          if return_marker not in text:
+              raise SystemExit('workflow coverage return marker not found')
+          text = text.replace(return_marker, return_addition, 1)
+          ops.write_text(text)
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+          page_import_marker = "import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';\n"
+          page_import_addition = page_import_marker + "import { getEnquiryQualificationGapCopy } from '../lib/enquiry-qualification-gap-localization';\n"
+          if page_import_marker not in text:
+              raise SystemExit('page import marker not found')
+          text = text.replace(page_import_marker, page_import_addition, 1)
+
+          copy_marker = "  const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);\n"
+          copy_addition = copy_marker + "  const qualificationGapCopy = getEnquiryQualificationGapCopy(locale);\n"
+          if copy_marker not in text:
+              raise SystemExit('page copy marker not found')
+          text = text.replace(copy_marker, copy_addition, 1)
+
+          panel_marker = "          <section className=\"admin-panel\">\n            <div className=\"panel-heading\">\n              <div>\n                <p className=\"eyebrow\">{workflowCopy.eyebrow}</p>\n"
+          panel = "\n".join([
+            "          <section className=\"admin-panel\">",
+            "            <div className=\"panel-heading\">",
+            "              <div>",
+            "                <p className=\"eyebrow\">{qualificationGapCopy.eyebrow}</p>",
+            "                <h2>{qualificationGapCopy.title}</h2>",
+            "                <p>{qualificationGapCopy.intro}</p>",
+            "              </div>",
+            "              <span>{copy.dashboard.rollingThirtyDays}</span>",
+            "            </div>",
+            "            <div className=\"metric-grid\" aria-label={qualificationGapCopy.title}>",
+            "              <article>",
+            "                <span>{qualificationGapCopy.activeTotal}</span>",
+            "                <strong>{number(operations.enquiryQualificationGapsLast30Days.activeTotal)}</strong>",
+            "                <small>{copy.dashboard.rollingThirtyDays}</small>",
+            "              </article>",
+            "              <article>",
+            "                <span>{qualificationGapCopy.city}</span>",
+            "                <strong>{number(operations.enquiryQualificationGapsLast30Days.cityMissing)}</strong>",
+            "                <small>{qualificationGapCopy.count(number(operations.enquiryQualificationGapsLast30Days.cityMissing))}</small>",
+            "              </article>",
+            "              <article>",
+            "                <span>{qualificationGapCopy.preferredContact}</span>",
+            "                <strong>{number(operations.enquiryQualificationGapsLast30Days.preferredContactMissing)}</strong>",
+            "                <small>{qualificationGapCopy.count(number(operations.enquiryQualificationGapsLast30Days.preferredContactMissing))}</small>",
+            "              </article>",
+            "              <article>",
+            "                <span>{qualificationGapCopy.deliveryPreference}</span>",
+            "                <strong>{number(operations.enquiryQualificationGapsLast30Days.deliveryPreferenceMissing)}</strong>",
+            "                <small>{qualificationGapCopy.count(number(operations.enquiryQualificationGapsLast30Days.deliveryPreferenceMissing))}</small>",
+            "              </article>",
+            "              <article>",
+            "                <span>{qualificationGapCopy.timingPreference}</span>",
+            "                <strong>{number(operations.enquiryQualificationGapsLast30Days.timingPreferenceMissing)}</strong>",
+            "                <small>{qualificationGapCopy.count(number(operations.enquiryQualificationGapsLast30Days.timingPreferenceMissing))}</small>",
+            "              </article>",
+            "            </div>",
+            "          </section>",
+            "",
+          ]) + "\n"
+          if panel_marker not in text:
+              raise SystemExit('workflow panel marker not found')
+          text = text.replace(panel_marker, panel + panel_marker, 1)
+          page.write_text(text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-qualification-gap-reporting.ts \
+            apps/admin/lib/enquiry-qualification-gap-reporting.test.ts \
+            apps/admin/lib/enquiry-qualification-gap-localization.ts \
+            apps/admin/lib/enquiry-qualification-gap-localization.test.ts
+      - run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-qualification-gap-reporting.ts \
+            apps/admin/lib/enquiry-qualification-gap-reporting.test.ts \
+            apps/admin/lib/enquiry-qualification-gap-localization.ts \
+            apps/admin/lib/enquiry-qualification-gap-localization.test.ts
+          git commit -m "Integrate recent qualification gap reporting"
+          git push origin HEAD:feat/recent-qualification-gaps
