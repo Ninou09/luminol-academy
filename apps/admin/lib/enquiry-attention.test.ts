@@ -77,8 +77,7 @@ describe('enquiry attention filters', () => {
     );
     expect(CLOSED_WITHOUT_OUTCOME_WHERE).toEqual({
       status: 'CLOSED',
-      outcome: null,
-      outcomeAt: null,
+      OR: [{ outcome: null }, { outcomeAt: null }],
     });
     expect(getEnquiryAttentionWhere(null)).toBeNull();
   });
@@ -87,6 +86,13 @@ describe('enquiry attention filters', () => {
     expect(ACTIVE_WITHOUT_FOLLOW_UP_WHERE.OR).toEqual([
       { nextFollowUpAt: null },
       { nextAction: null },
+    ]);
+  });
+
+  it('treats either missing outcome field as an incomplete outcome record', () => {
+    expect(CLOSED_WITHOUT_OUTCOME_WHERE.OR).toEqual([
+      { outcome: null },
+      { outcomeAt: null },
     ]);
   });
 });
