@@ -12,6 +12,12 @@ import Link from 'next/link';
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAdminEnumLabel } from '../../lib/admin-localization';
 import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';
+import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-localization';
+import {
+  getEnquiryCampaignAttributionWhere,
+  parseEnquiryCampaignAttributionFilter,
+  type EnquiryCampaignAttributionFilter,
+} from '../../lib/enquiry-campaign-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -69,6 +75,8 @@ type EnquiryPageProps = {
     followUp?: string | string[] | undefined;
     attention?: string | string[] | undefined;
     owner?: string | string[] | undefined;
+    utmSource?: string | string[] | undefined;
+    utmCampaign?: string | string[] | undefined;
   }>;
 };
 
@@ -96,18 +104,25 @@ function parseFollowUp(
     : null;
 }
 
-function enquiryHref(
+function buildEnquiryHref(
   locale: Locale,
   status: EnquiryStatusValue | null,
   followUp: FollowUpFilter | null,
   attention: EnquiryAttentionFilter | null,
   owner: EnquiryOwnerFilter | null,
+  campaignAttribution: EnquiryCampaignAttributionFilter | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
   if (followUp) query.set('followUp', followUp);
   if (attention) query.set('attention', attention);
   if (owner) query.set('owner', owner);
+  if (campaignAttribution) {
+    query.set('utmSource', campaignAttribution.utmSource);
+    if (campaignAttribution.utmCampaign) {
+      query.set('utmCampaign', campaignAttribution.utmCampaign);
+    }
+  }
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -123,6 +138,7 @@ export default async function EnquiriesAdminPage({
   const locale = await getAdminRequestLocale();
   const copy = getEnquiryDeskCopy(locale);
   const attributionCopy = getEnquiryAttributionCopy(locale);
+  const campaignFilterCopy = getEnquiryCampaignFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -133,6 +149,10 @@ export default async function EnquiriesAdminPage({
   const activeFollowUp = parseFollowUp(params?.followUp);
   const activeAttention = parseEnquiryAttentionFilter(params?.attention);
   const activeOwner = parseEnquiryOwnerFilter(params?.owner);
+  const activeCampaignAttribution = parseEnquiryCampaignAttributionFilter(
+    params?.utmSource,
+    params?.utmCampaign,
+  );
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
   const tomorrowUtc = new Date(todayUtc.getTime() + 86_400_000);
@@ -147,7 +167,25 @@ export default async function EnquiriesAdminPage({
   if (attentionWhere) filters.push(attentionWhere);
   const ownerWhere = getEnquiryOwnerWhere(activeOwner, administrator.id);
   if (ownerWhere) filters.push(ownerWhere);
+  const campaignAttributionWhere = getEnquiryCampaignAttributionWhere(
+    activeCampaignAttribution,
+  );
+  if (campaignAttributionWhere) filters.push(campaignAttributionWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
+  const hrefFor = (
+    status: EnquiryStatusValue | null,
+    followUp: FollowUpFilter | null,
+    attention: EnquiryAttentionFilter | null,
+    owner: EnquiryOwnerFilter | null,
+  ) =>
+    buildEnquiryHref(
+      locale,
+      status,
+      followUp,
+      attention,
+      owner,
+      activeCampaignAttribution,
+    );
 
   const [
     enquiries,
@@ -314,6 +352,40 @@ export default async function EnquiriesAdminPage({
               </div>
             </div>
 
+            {activeCampaignAttribution ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {campaignFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink} dir="auto">
+                    {campaignFilterCopy.source}:{' '}
+                    {activeCampaignAttribution.utmSource}
+                  </span>
+                  {activeCampaignAttribution.utmCampaign ? (
+                    <span className={styles.filterLink} dir="auto">
+                      {campaignFilterCopy.campaign}:{' '}
+                      {activeCampaignAttribution.utmCampaign}
+                    </span>
+                  ) : null}
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      null,
+                    )}
+                  >
+                    <span>{campaignFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>{campaignFilterCopy.intro}</p>
+              </div>
+            ) : null}
+
             <div className={styles.attentionSection}>
               <span className={styles.filterLabel}>{copy.attentionQueue}</span>
               <div className={styles.attentionGrid}>
@@ -323,7 +395,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(locale, null, null, 'unassigned', null)}
+                  href={hrefFor(null, null, 'unassigned', null)}
                   aria-current={
                     activeAttention === 'unassigned' ? 'page' : undefined
                   }
@@ -337,13 +409,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(
-                    locale,
-                    null,
-                    null,
-                    'active-without-follow-up',
-                    null,
-                  )}
+                  href={hrefFor(null, null, 'active-without-follow-up', null)}
                   aria-current={
                     activeAttention === 'active-without-follow-up'
                       ? 'page'
@@ -359,8 +425,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(
-                    locale,
+                  href={hrefFor(
                     null,
                     null,
                     'active-incomplete-qualification',
@@ -381,8 +446,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(
-                    locale,
+                  href={hrefFor(
                     null,
                     null,
                     'active-without-recorded-contact',
@@ -403,7 +467,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(locale, null, 'due-today', null, null)}
+                  href={hrefFor(null, 'due-today', null, null)}
                   aria-current={
                     activeFollowUp === 'due-today' ? 'page' : undefined
                   }
@@ -417,7 +481,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(locale, null, 'overdue', null, null)}
+                  href={hrefFor(null, 'overdue', null, null)}
                   aria-current={
                     activeFollowUp === 'overdue' ? 'page' : undefined
                   }
@@ -431,13 +495,7 @@ export default async function EnquiriesAdminPage({
                       ? styles.activeAttentionCard
                       : ''
                   }`}
-                  href={enquiryHref(
-                    locale,
-                    null,
-                    null,
-                    'closed-without-outcome',
-                    null,
-                  )}
+                  href={hrefFor(null, null, 'closed-without-outcome', null)}
                   aria-current={
                     activeAttention === 'closed-without-outcome'
                       ? 'page'
@@ -451,7 +509,7 @@ export default async function EnquiriesAdminPage({
                   className={`${styles.attentionCard} ${
                     activeOwner === 'mine' ? styles.activeAttentionCard : ''
                   }`}
-                  href={enquiryHref(locale, null, null, null, 'mine')}
+                  href={hrefFor(null, null, null, 'mine')}
                   aria-current={activeOwner === 'mine' ? 'page' : undefined}
                 >
                   <span>{copy.myEnquiries}</span>
@@ -474,8 +532,7 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeStatus === null ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       null,
                       activeFollowUp,
                       activeAttention,
@@ -491,8 +548,7 @@ export default async function EnquiriesAdminPage({
                       className={`${styles.filterLink} ${
                         activeStatus === status ? styles.activeFilter : ''
                       }`}
-                      href={enquiryHref(
-                        locale,
+                      href={hrefFor(
                         status,
                         activeFollowUp,
                         activeAttention,
@@ -520,8 +576,7 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeFollowUp === null ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       null,
                       activeAttention,
@@ -535,8 +590,7 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeFollowUp === 'due-today' ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       'due-today',
                       activeAttention,
@@ -552,8 +606,7 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeFollowUp === 'overdue' ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       'overdue',
                       activeAttention,
@@ -575,8 +628,7 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeOwner === null ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       activeFollowUp,
                       activeAttention,
@@ -590,8 +642,7 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeOwner === 'mine' ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       activeFollowUp,
                       activeAttention,
@@ -615,8 +666,7 @@ export default async function EnquiriesAdminPage({
                     className={`${styles.filterLink} ${
                       activeAttention === null ? styles.activeFilter : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       activeFollowUp,
                       null,
@@ -632,8 +682,7 @@ export default async function EnquiriesAdminPage({
                         ? styles.activeFilter
                         : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       activeFollowUp,
                       'unassigned',
@@ -651,8 +700,7 @@ export default async function EnquiriesAdminPage({
                         ? styles.activeFilter
                         : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       activeFollowUp,
                       'active-without-follow-up',
@@ -672,8 +720,7 @@ export default async function EnquiriesAdminPage({
                         ? styles.activeFilter
                         : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       activeFollowUp,
                       'active-incomplete-qualification',
@@ -693,8 +740,7 @@ export default async function EnquiriesAdminPage({
                         ? styles.activeFilter
                         : ''
                     }`}
-                    href={enquiryHref(
-                      locale,
+                    href={hrefFor(
                       activeStatus,
                       activeFollowUp,
                       'closed-without-outcome',

@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getCampaignLinkBuilderCopy } from '../lib/campaign-link-builder-localization';
+import { buildEnquiryCampaignAttributionQuery } from '../lib/enquiry-campaign-filter';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getUnassignedEnquiryAgeCopy } from '../lib/enquiry-unassigned-age-localization';
@@ -355,7 +356,17 @@ export default async function Page() {
                 {operations.campaignEnquiryMixLast30Days.sourceMix.map(
                   (item) => (
                     <article key={item.utmSource}>
-                      <span dir="auto">{item.utmSource}</span>
+                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/enquiries?${buildEnquiryCampaignAttributionQuery({
+                            utmSource: item.utmSource,
+                            utmCampaign: null,
+                          })}`,
+                        )}
+                      >
+                        <span dir="auto">{item.utmSource}</span>
+                      </Link>
                       <strong>{number(item.count)}</strong>
                       <small>
                         {campaignCopy.enquiryCount(number(item.count))}
@@ -380,12 +391,22 @@ export default async function Page() {
                 {operations.campaignEnquiryMixLast30Days.campaignMix.map(
                   (item) => (
                     <article key={`${item.utmSource}:${item.utmCampaign}`}>
-                      <span dir="auto">
-                        {campaignCopy.campaignPair(
-                          item.utmSource,
-                          item.utmCampaign,
+                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/enquiries?${buildEnquiryCampaignAttributionQuery({
+                            utmSource: item.utmSource,
+                            utmCampaign: item.utmCampaign,
+                          })}`,
                         )}
-                      </span>
+                      >
+                        <span dir="auto">
+                          {campaignCopy.campaignPair(
+                            item.utmSource,
+                            item.utmCampaign,
+                          )}
+                        </span>
+                      </Link>
                       <strong>{number(item.count)}</strong>
                       <small>
                         {campaignCopy.enquiryCount(number(item.count))}
