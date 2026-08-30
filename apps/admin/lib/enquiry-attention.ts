@@ -20,9 +20,8 @@ export const ACTIVE_UNASSIGNED_ENQUIRY_WHERE = {
 } satisfies Prisma.EnquiryWhereInput;
 
 export const ACTIVE_WITHOUT_FOLLOW_UP_WHERE = {
-  status: { notIn: ['CLOSED', 'SPAM'] },
-  nextFollowUpAt: null,
-  nextAction: null,
+  ...ACTIVE_ENQUIRY_WHERE,
+  OR: [{ nextFollowUpAt: null }, { nextAction: null }],
 } satisfies Prisma.EnquiryWhereInput;
 
 export const ACTIVE_INCOMPLETE_QUALIFICATION_WHERE = {
