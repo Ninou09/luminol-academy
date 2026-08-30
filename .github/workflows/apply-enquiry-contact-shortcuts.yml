@@ -1,0 +1,174 @@
+name: Apply enquiry contact shortcuts
+
+on:
+  push:
+    branches:
+      - feat/enquiry-contact-shortcuts
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-contact-shortcuts
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate enquiry contact shortcuts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('apps/admin/app/enquiries/page.tsx')
+          text = page.read_text()
+
+          import_marker = "import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';\n"
+          import_addition = import_marker + "import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';\nimport { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';\n"
+          if import_marker not in text:
+              raise SystemExit('attribution import marker not found')
+          text = text.replace(import_marker, import_addition, 1)
+
+          copy_marker = "  const attributionCopy = getEnquiryAttributionCopy(locale);\n"
+          copy_addition = copy_marker + "  const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);\n"
+          if copy_marker not in text:
+              raise SystemExit('attribution copy marker not found')
+          text = text.replace(copy_marker, copy_addition, 1)
+
+          response_marker = "                const firstResponseSteps = buildEnquiryFirstResponseSteps({\n"
+          shortcut_builder = "\n".join([
+              "                const contactShortcuts = buildEnquiryContactShortcuts({",
+              "                  email: enquiry.email,",
+              "                  phone: enquiry.phone,",
+              "                  preferredContact: enquiry.preferredContact,",
+              "                });",
+              "",
+          ])
+          if response_marker not in text:
+              raise SystemExit('first response marker not found')
+          text = text.replace(response_marker, shortcut_builder + response_marker, 1)
+
+          message_marker = "                    <div className={styles.messageBlock}>\n"
+          panel = "\n".join([
+              "                    <section className={styles.contactShortcutBlock}>",
+              "                      <div className={styles.contactShortcutHeading}>",
+              "                        <span className={styles.messageLabel}>",
+              "                          {contactShortcutsCopy.eyebrow}",
+              "                        </span>",
+              "                        <h3>{contactShortcutsCopy.title}</h3>",
+              "                        <p className={styles.privacyNote}>",
+              "                          {contactShortcutsCopy.intro}",
+              "                        </p>",
+              "                      </div>",
+              "                      {contactShortcuts.length > 0 ? (",
+              "                        <div className={styles.contactShortcutList}>",
+              "                          {contactShortcuts.map((shortcut) => (",
+              "                            <a",
+              "                              key={shortcut.kind}",
+              "                              className={`${styles.contactLink} ${",
+              "                                shortcut.preferred",
+              "                                  ? styles.preferredContactLink",
+              "                                  : ''",
+              "                              }`}",
+              "                              href={shortcut.href}",
+              "                              target={",
+              "                                shortcut.kind === 'whatsapp'",
+              "                                  ? '_blank'",
+              "                                  : undefined",
+              "                              }",
+              "                              rel={",
+              "                                shortcut.kind === 'whatsapp'",
+              "                                  ? 'noopener noreferrer'",
+              "                                  : undefined",
+              "                              }",
+              "                            >",
+              "                              <span>",
+              "                                {contactShortcutsCopy.label(shortcut.kind)}",
+              "                              </span>",
+              "                              {shortcut.preferred ? (",
+              "                                <small className={styles.contactShortcutBadge}>",
+              "                                  {contactShortcutsCopy.preferred}",
+              "                                </small>",
+              "                              ) : null}",
+              "                            </a>",
+              "                          ))}",
+              "                        </div>",
+              "                      ) : (",
+              "                        <p className={styles.privacyNote}>",
+              "                          {contactShortcutsCopy.unavailable}",
+              "                        </p>",
+              "                      )}",
+              "                      <p className={styles.privacyNote}>",
+              "                        {contactShortcutsCopy.boundary}",
+              "                      </p>",
+              "                    </section>",
+              "",
+          ]) + "\n"
+          if message_marker not in text:
+              raise SystemExit('message block marker not found')
+          text = text.replace(message_marker, panel + message_marker, 1)
+
+          old_actions = "\n".join([
+              "                        <a",
+              "                          className={styles.contactLink}",
+              "                          href={`mailto:${enquiry.email}`}",
+              "                        >",
+              "                          {copy.email}",
+              "                        </a>",
+              "                        {enquiry.phone ? (",
+              "                          <a",
+              "                            className={styles.contactLink}",
+              "                            href={`tel:${enquiry.phone}`}",
+              "                          >",
+              "                            {copy.call}",
+              "                          </a>",
+              "                        ) : (",
+              "                          <span className={styles.muted}>{copy.noPhone}</span>",
+              "                        )}",
+          ]) + "\n"
+          if old_actions not in text:
+              raise SystemExit('legacy contact actions marker not found')
+          text = text.replace(old_actions, '', 1)
+          page.write_text(text)
+
+          css = Path('apps/admin/app/enquiries/page.module.css')
+          css_text = css.read_text()
+          css_marker = ".ownershipButton {\n  cursor: pointer;\n  background: transparent;\n  color: inherit;\n}\n"
+          css_addition = css_marker + "\n.contactShortcutBlock {\n  display: grid;\n  gap: 0.65rem;\n  padding: 0.9rem;\n  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);\n  border-radius: 0.8rem;\n}\n\n.contactShortcutHeading {\n  display: grid;\n  gap: 0.3rem;\n}\n\n.contactShortcutHeading h3 {\n  margin: 0;\n  font-size: 0.98rem;\n}\n\n.contactShortcutList {\n  display: flex;\n  align-items: center;\n  gap: 0.55rem;\n  flex-wrap: wrap;\n}\n\n.preferredContactLink {\n  border-width: 2px;\n}\n\n.contactShortcutBadge {\n  margin-inline-start: 0.35rem;\n  font-size: 0.68rem;\n  font-weight: 700;\n  opacity: 0.72;\n}\n"
+          if css_marker not in css_text:
+              raise SystemExit('ownership CSS marker not found')
+          css.write_text(css_text.replace(css_marker, css_addition, 1))
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/enquiries/page.module.css \
+            apps/admin/lib/enquiry-contact-shortcuts.ts \
+            apps/admin/lib/enquiry-contact-shortcuts.test.ts \
+            apps/admin/lib/enquiry-contact-shortcuts-localization.ts \
+            apps/admin/lib/enquiry-contact-shortcuts-localization.test.ts
+      - name: Run git diff --check
+        run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/enquiries/page.module.css \
+            apps/admin/lib/enquiry-contact-shortcuts.ts \
+            apps/admin/lib/enquiry-contact-shortcuts.test.ts \
+            apps/admin/lib/enquiry-contact-shortcuts-localization.ts \
+            apps/admin/lib/enquiry-contact-shortcuts-localization.test.ts
+          git commit -m "Integrate safe enquiry contact shortcuts"
+          git push origin HEAD:feat/enquiry-contact-shortcuts
