@@ -1,0 +1,152 @@
+name: Apply attribution field coverage
+
+on:
+  push:
+    branches:
+      - feat/attribution-field-coverage
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/attribution-field-coverage
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate attribution coverage into dashboard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          ops = Path('apps/admin/lib/operations.server.ts')
+          text = ops.read_text()
+
+          import_marker = "import {\n  normalizeEnquiryCampaignContentMix,\n  type EnquiryCampaignContentMixSummary,\n} from './enquiry-campaign-content-reporting';\n"
+          import_addition = import_marker + "import {\n  summarizeEnquiryAttributionCoverage,\n  type EnquiryAttributionCoverageSummary,\n} from './enquiry-attribution-coverage-reporting';\n"
+          if import_marker not in text:
+              raise SystemExit('campaign content import marker not found')
+          text = text.replace(import_marker, import_addition, 1)
+
+          type_marker = "  enquiryCampaignContentMixLast30Days: EnquiryCampaignContentMixSummary;\n"
+          type_addition = type_marker + "  enquiryAttributionCoverageLast30Days: EnquiryAttributionCoverageSummary;\n"
+          if type_marker not in text:
+              raise SystemExit('campaign content dashboard type marker not found')
+          text = text.replace(type_marker, type_addition, 1)
+
+          destructure_marker = "    campaignPairGroupsLast30Days,\n    campaignMediumRecordedLast30Days,\n"
+          destructure_addition = "    campaignPairGroupsLast30Days,\n    campaignNamedRecordedLast30Days,\n    campaignMediumRecordedLast30Days,\n"
+          if destructure_marker not in text:
+              raise SystemExit('campaign pair promise destructure marker not found')
+          text = text.replace(destructure_marker, destructure_addition, 1)
+
+          query_marker = "    db.enquiry.groupBy({\n      by: ['utmSource', 'utmCampaign'],\n      where: getCampaignNamedRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.count({\n      where: {\n        ...getRecentEnquiryWhere(now),\n        utmMedium: { not: null },\n      },\n    }),\n"
+          query_addition = "    db.enquiry.groupBy({\n      by: ['utmSource', 'utmCampaign'],\n      where: getCampaignNamedRecentEnquiryWhere(now),\n      _count: { _all: true },\n    }),\n    db.enquiry.count({\n      where: {\n        ...getRecentEnquiryWhere(now),\n        utmCampaign: { not: null },\n      },\n    }),\n    db.enquiry.count({\n      where: {\n        ...getRecentEnquiryWhere(now),\n        utmMedium: { not: null },\n      },\n    }),\n"
+          if query_marker not in text:
+              raise SystemExit('campaign pair query marker not found')
+          text = text.replace(query_marker, query_addition, 1)
+
+          return_marker = "    enquiryCampaignContentMixLast30Days: normalizeEnquiryCampaignContentMix(\n      campaignContentGroupsLast30Days,\n      enquiriesLast30Days,\n      campaignContentRecordedLast30Days,\n    ),\n"
+          return_addition = return_marker + "    enquiryAttributionCoverageLast30Days: summarizeEnquiryAttributionCoverage(\n      enquiriesLast30Days,\n      {\n        utmSource: campaignAttributedLast30Days,\n        utmMedium: campaignMediumRecordedLast30Days,\n        utmCampaign: campaignNamedRecordedLast30Days,\n        utmContent: campaignContentRecordedLast30Days,\n        landingPath: landingPathRecordedLast30Days,\n      },\n    ),\n"
+          if return_marker not in text:
+              raise SystemExit('campaign content return marker not found')
+          text = text.replace(return_marker, return_addition, 1)
+          ops.write_text(text)
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+
+          page_import_marker = "import { getEnquiryCampaignContentCopy } from '../lib/enquiry-campaign-content-localization';\n"
+          page_import_addition = page_import_marker + "import { getEnquiryAttributionCoverageCopy } from '../lib/enquiry-attribution-coverage-localization';\n"
+          if page_import_marker not in text:
+              raise SystemExit('campaign content page import marker not found')
+          text = text.replace(page_import_marker, page_import_addition, 1)
+
+          copy_marker = "  const campaignContentCopy = getEnquiryCampaignContentCopy(locale);\n"
+          copy_addition = copy_marker + "  const attributionCoverageCopy = getEnquiryAttributionCoverageCopy(locale);\n"
+          if copy_marker not in text:
+              raise SystemExit('campaign content copy initializer marker not found')
+          text = text.replace(copy_marker, copy_addition, 1)
+
+          helper_marker = "  const contactTurnaround = (minutes: number | null) => {\n"
+          helper = "\n".join([
+            "  const attributionCoverageLabel = (field: string) => {",
+            "    if (field === 'utmSource') return attributionCoverageCopy.utmSource;",
+            "    if (field === 'utmMedium') return attributionCoverageCopy.utmMedium;",
+            "    if (field === 'utmCampaign') return attributionCoverageCopy.utmCampaign;",
+            "    if (field === 'utmContent') return attributionCoverageCopy.utmContent;",
+            "    return attributionCoverageCopy.landingPath;",
+            "  };",
+            "",
+          ]) + "\n"
+          if helper_marker not in text:
+              raise SystemExit('contact turnaround helper marker not found')
+          text = text.replace(helper_marker, helper + helper_marker, 1)
+
+          panel_marker = "          <section className=\"admin-panel\">\n            <div className=\"panel-heading\">\n              <div>\n                <p className=\"eyebrow\">{landingPathCopy.eyebrow}</p>\n"
+          panel = "\n".join([
+            "          <section className=\"admin-panel\">",
+            "            <div className=\"panel-heading\">",
+            "              <div>",
+            "                <p className=\"eyebrow\">{attributionCoverageCopy.eyebrow}</p>",
+            "                <h2>{attributionCoverageCopy.title}</h2>",
+            "                <p>{attributionCoverageCopy.intro}</p>",
+            "              </div>",
+            "              <span>{copy.dashboard.rollingThirtyDays}</span>",
+            "            </div>",
+            "            <div className=\"metric-grid\" aria-label={attributionCoverageCopy.title}>",
+            "              {operations.enquiryAttributionCoverageLast30Days.items.map((item) => (",
+            "                <article key={item.field}>",
+            "                  <span>{attributionCoverageLabel(item.field)}</span>",
+            "                  <strong>{percent(item.percent)}</strong>",
+            "                  <small>",
+            "                    {attributionCoverageCopy.recordedOfTotal(",
+            "                      number(item.recorded),",
+            "                      number(operations.enquiryAttributionCoverageLast30Days.total),",
+            "                    )}",
+            "                  </small>",
+            "                </article>",
+            "              ))}",
+            "            </div>",
+            "          </section>",
+            "",
+          ]) + "\n"
+          if panel_marker not in text:
+              raise SystemExit('landing path panel marker not found')
+          text = text.replace(panel_marker, panel + panel_marker, 1)
+          page.write_text(text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-attribution-coverage-reporting.ts \
+            apps/admin/lib/enquiry-attribution-coverage-reporting.test.ts \
+            apps/admin/lib/enquiry-attribution-coverage-localization.ts \
+            apps/admin/lib/enquiry-attribution-coverage-localization.test.ts
+      - name: Run git diff --check
+        run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/lib/operations.server.ts \
+            apps/admin/lib/enquiry-attribution-coverage-reporting.ts \
+            apps/admin/lib/enquiry-attribution-coverage-reporting.test.ts \
+            apps/admin/lib/enquiry-attribution-coverage-localization.ts \
+            apps/admin/lib/enquiry-attribution-coverage-localization.test.ts
+          git commit -m "Integrate attribution field coverage reporting"
+          git push origin HEAD:feat/attribution-field-coverage
