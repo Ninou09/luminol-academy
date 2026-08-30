@@ -16,6 +16,7 @@ import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getUnassignedEnquiryAgeCopy } from '../lib/enquiry-unassigned-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryCampaignMediumCopy } from '../lib/enquiry-campaign-medium-localization';
+import { getEnquiryCampaignContentCopy } from '../lib/enquiry-campaign-content-localization';
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
@@ -50,6 +51,7 @@ export default async function Page() {
   const unassignedAgeCopy = getUnassignedEnquiryAgeCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
   const campaignMediumCopy = getEnquiryCampaignMediumCopy(locale);
+  const campaignContentCopy = getEnquiryCampaignContentCopy(locale);
   const landingPathCopy = getEnquiryLandingPathCopy(locale);
   const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);
   const deliveryPreferenceCopy = getEnquiryDeliveryPreferenceCopy(locale);
@@ -440,6 +442,74 @@ export default async function Page() {
               </div>
             ) : (
               <p className="admin-empty">{campaignMediumCopy.noMedia}</p>
+            )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{campaignContentCopy.eyebrow}</p>
+                <h2>{campaignContentCopy.title}</h2>
+                <p>{campaignContentCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div className="metric-grid" aria-label={campaignContentCopy.title}>
+              <article>
+                <span>{campaignContentCopy.recorded}</span>
+                <strong>
+                  {number(
+                    operations.enquiryCampaignContentMixLast30Days.recorded,
+                  )}
+                </strong>
+                <small>
+                  {campaignContentCopy.count(
+                    number(
+                      operations.enquiryCampaignContentMixLast30Days.recorded,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{campaignContentCopy.missing}</span>
+                <strong>
+                  {number(
+                    operations.enquiryCampaignContentMixLast30Days.missing,
+                  )}
+                </strong>
+                <small>
+                  {campaignContentCopy.count(
+                    number(
+                      operations.enquiryCampaignContentMixLast30Days.missing,
+                    ),
+                  )}
+                </small>
+              </article>
+            </div>
+            <div className="panel-heading">
+              <div>
+                <h3>{campaignContentCopy.topContent}</h3>
+              </div>
+            </div>
+            {operations.enquiryCampaignContentMixLast30Days.items.length > 0 ? (
+              <div
+                className="metric-grid"
+                aria-label={campaignContentCopy.topContent}
+              >
+                {operations.enquiryCampaignContentMixLast30Days.items.map(
+                  (item) => (
+                    <article key={item.utmContent}>
+                      <span dir="auto">{item.utmContent}</span>
+                      <strong>{number(item.count)}</strong>
+                      <small>
+                        {campaignContentCopy.count(number(item.count))}
+                      </small>
+                    </article>
+                  ),
+                )}
+              </div>
+            ) : (
+              <p className="admin-empty">{campaignContentCopy.noContent}</p>
             )}
           </section>
 
