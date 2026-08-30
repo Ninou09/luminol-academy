@@ -25,6 +25,7 @@ import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getMissingFollowUpPlanAgeCopy } from '../lib/enquiry-missing-follow-up-age-localization';
+import { getIncompleteQualificationAgeCopy } from '../lib/enquiry-incomplete-qualification-age-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
 import { getEnquiryQualificationGapCopy } from '../lib/enquiry-qualification-gap-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
@@ -62,6 +63,8 @@ export default async function Page() {
   const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
   const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
   const missingFollowUpAgeCopy = getMissingFollowUpPlanAgeCopy(locale);
+  const incompleteQualificationAgeCopy =
+    getIncompleteQualificationAgeCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
   const qualificationGapCopy = getEnquiryQualificationGapCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
@@ -1339,6 +1342,92 @@ export default async function Page() {
                   {missingFollowUpAgeCopy.count(
                     number(
                       operations.missingFollowUpPlanAge.buckets.overSevenDays,
+                    ),
+                  )}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">
+                  {incompleteQualificationAgeCopy.eyebrow}
+                </p>
+                <h2>{incompleteQualificationAgeCopy.title}</h2>
+                <p>{incompleteQualificationAgeCopy.intro}</p>
+              </div>
+              <span>
+                {number(operations.incompleteQualificationAge.activeTotal)}
+              </span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={incompleteQualificationAgeCopy.title}
+            >
+              <article>
+                <span>{incompleteQualificationAgeCopy.under24Hours}</span>
+                <strong>
+                  {number(
+                    operations.incompleteQualificationAge.buckets.under24Hours,
+                  )}
+                </strong>
+                <small>
+                  {incompleteQualificationAgeCopy.count(
+                    number(
+                      operations.incompleteQualificationAge.buckets
+                        .under24Hours,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{incompleteQualificationAgeCopy.oneToThreeDays}</span>
+                <strong>
+                  {number(
+                    operations.incompleteQualificationAge.buckets
+                      .oneToThreeDays,
+                  )}
+                </strong>
+                <small>
+                  {incompleteQualificationAgeCopy.count(
+                    number(
+                      operations.incompleteQualificationAge.buckets
+                        .oneToThreeDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{incompleteQualificationAgeCopy.fourToSevenDays}</span>
+                <strong>
+                  {number(
+                    operations.incompleteQualificationAge.buckets
+                      .fourToSevenDays,
+                  )}
+                </strong>
+                <small>
+                  {incompleteQualificationAgeCopy.count(
+                    number(
+                      operations.incompleteQualificationAge.buckets
+                        .fourToSevenDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{incompleteQualificationAgeCopy.overSevenDays}</span>
+                <strong>
+                  {number(
+                    operations.incompleteQualificationAge.buckets.overSevenDays,
+                  )}
+                </strong>
+                <small>
+                  {incompleteQualificationAgeCopy.count(
+                    number(
+                      operations.incompleteQualificationAge.buckets
+                        .overSevenDays,
                     ),
                   )}
                 </small>

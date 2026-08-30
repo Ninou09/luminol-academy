@@ -20,6 +20,10 @@ import {
   summarizeMissingFollowUpPlanAge,
 } from './enquiry-missing-follow-up-age-reporting';
 import {
+  getIncompleteQualificationAgeWhere,
+  summarizeIncompleteQualificationAge,
+} from './enquiry-incomplete-qualification-age-reporting';
+import {
   normalizeActiveEnquiryStatusMix,
   type ActiveEnquiryStatusMixSummary,
 } from './enquiry-status-mix-reporting';
@@ -193,6 +197,7 @@ export type OperationsDashboard = {
   activeEnquiryAge: ActiveEnquiryAgeSummary;
   unassignedActiveEnquiryAge: ActiveEnquiryAgeSummary;
   missingFollowUpPlanAge: ActiveEnquiryAgeSummary;
+  incompleteQualificationAge: ActiveEnquiryAgeSummary;
   activeEnquiryStatusMix: ActiveEnquiryStatusMixSummary;
   activeEnquiryFollowUpTiming: FollowUpTimingSummary;
   recentEnquiries: RecentEnquiry[];
@@ -228,6 +233,10 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     missingPlanOneToThreeDays,
     missingPlanFourToSevenDays,
     missingPlanOverSevenDays,
+    incompleteQualificationUnder24Hours,
+    incompleteQualificationOneToThreeDays,
+    incompleteQualificationFourToSevenDays,
+    incompleteQualificationOverSevenDays,
     followUpMissingPlan,
     followUpPastDue,
     followUpNext24Hours,
@@ -310,6 +319,18 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     }),
     db.enquiry.count({
       where: getMissingFollowUpPlanAgeWhere(now, 'overSevenDays'),
+    }),
+    db.enquiry.count({
+      where: getIncompleteQualificationAgeWhere(now, 'under24Hours'),
+    }),
+    db.enquiry.count({
+      where: getIncompleteQualificationAgeWhere(now, 'oneToThreeDays'),
+    }),
+    db.enquiry.count({
+      where: getIncompleteQualificationAgeWhere(now, 'fourToSevenDays'),
+    }),
+    db.enquiry.count({
+      where: getIncompleteQualificationAgeWhere(now, 'overSevenDays'),
     }),
     db.enquiry.count({
       where: getActiveEnquiryFollowUpTimingWhere(now, 'missingPlan'),
@@ -650,6 +671,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       oneToThreeDays: missingPlanOneToThreeDays,
       fourToSevenDays: missingPlanFourToSevenDays,
       overSevenDays: missingPlanOverSevenDays,
+    }),
+    incompleteQualificationAge: summarizeIncompleteQualificationAge({
+      under24Hours: incompleteQualificationUnder24Hours,
+      oneToThreeDays: incompleteQualificationOneToThreeDays,
+      fourToSevenDays: incompleteQualificationFourToSevenDays,
+      overSevenDays: incompleteQualificationOverSevenDays,
     }),
     activeEnquiryStatusMix: normalizeActiveEnquiryStatusMix(
       activeEnquiryStatusGroups,
