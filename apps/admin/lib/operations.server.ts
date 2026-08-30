@@ -36,6 +36,10 @@ import {
   type EnquiryTimingPreferenceMixSummary,
 } from './enquiry-timing-preference-reporting';
 import {
+  normalizeEnquiryCampaignMediumMix,
+  type EnquiryCampaignMediumMixSummary,
+} from './enquiry-campaign-medium-reporting';
+import {
   normalizeEnquiryLandingPathMix,
   type EnquiryLandingPathMixSummary,
 } from './enquiry-landing-path-reporting';
@@ -149,6 +153,7 @@ export type OperationsDashboard = {
     sourceMix: CampaignSourceMixItem[];
     campaignMix: CampaignPairMixItem[];
   };
+  enquiryCampaignMediumMixLast30Days: EnquiryCampaignMediumMixSummary;
   enquiryContactPreferenceMixLast30Days: EnquiryContactPreferenceMixSummary;
   enquiryDeliveryPreferenceMixLast30Days: EnquiryDeliveryPreferenceMixSummary;
   enquiryTimingPreferenceMixLast30Days: EnquiryTimingPreferenceMixSummary;
@@ -226,6 +231,8 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     programmeEnquiryGroupsLast30Days,
     campaignSourceGroupsLast30Days,
     campaignPairGroupsLast30Days,
+    campaignMediumRecordedLast30Days,
+    campaignMediumGroupsLast30Days,
     landingPathRecordedLast30Days,
     landingPathGroupsLast30Days,
     preferredContactGroupsLast30Days,
@@ -337,6 +344,20 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     db.enquiry.groupBy({
       by: ['utmSource', 'utmCampaign'],
       where: getCampaignNamedRecentEnquiryWhere(now),
+      _count: { _all: true },
+    }),
+    db.enquiry.count({
+      where: {
+        ...getRecentEnquiryWhere(now),
+        utmMedium: { not: null },
+      },
+    }),
+    db.enquiry.groupBy({
+      by: ['utmMedium'],
+      where: {
+        ...getRecentEnquiryWhere(now),
+        utmMedium: { not: null },
+      },
       _count: { _all: true },
     }),
     db.enquiry.count({
@@ -477,6 +498,11 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       sourceMix: normalizeCampaignSourceMix(campaignSourceGroupsLast30Days),
       campaignMix: normalizeCampaignPairMix(campaignPairGroupsLast30Days),
     },
+    enquiryCampaignMediumMixLast30Days: normalizeEnquiryCampaignMediumMix(
+      campaignMediumGroupsLast30Days,
+      enquiriesLast30Days,
+      campaignMediumRecordedLast30Days,
+    ),
     enquiryLandingPathMixLast30Days: normalizeEnquiryLandingPathMix(
       landingPathGroupsLast30Days,
       enquiriesLast30Days,
