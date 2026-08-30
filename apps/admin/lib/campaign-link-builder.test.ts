@@ -121,8 +121,7 @@ describe('campaign link builder', () => {
 
     expect(result).toEqual({
       ok: true,
-      value:
-        '/programmes?utm_source=instagram&utm_medium=paid-social',
+      value: '/programmes?utm_source=instagram&utm_medium=paid-social',
     });
     if (result.ok) {
       expect(result.value).not.toContain('referrer');

@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
+import { getCampaignLinkBuilderCopy } from '../lib/campaign-link-builder-localization';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { getUnassignedEnquiryAgeCopy } from '../lib/enquiry-unassigned-age-localization';
@@ -51,6 +52,7 @@ export default async function Page() {
   const locale = await getAdminRequestLocale();
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
+  const campaignLinkBuilderCopy = getCampaignLinkBuilderCopy(locale);
   const ageCopy = getEnquiryAgeCopy(locale);
   const unassignedAgeCopy = getUnassignedEnquiryAgeCopy(locale);
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
@@ -138,6 +140,9 @@ export default async function Page() {
           </Link>
           <Link href={localizeHref(locale, '/analytics')}>
             <span>07</span> {analyticsCopy.title}
+          </Link>
+          <Link href={localizeHref(locale, '/campaign-links')}>
+            <span>08</span> {campaignLinkBuilderCopy.title}
           </Link>
         </nav>
         <div className="admin-sidebar-note">

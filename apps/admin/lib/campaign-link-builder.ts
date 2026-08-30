@@ -20,8 +20,7 @@ export type CampaignLinkError =
   | 'content-too-long';
 
 export type CampaignLinkResult =
-  | { ok: true; value: string }
-  | { ok: false; error: CampaignLinkError };
+  { ok: true; value: string } | { ok: false; error: CampaignLinkError };
 
 function clean(value: string): string {
   return value.trim();

@@ -29,7 +29,8 @@ const COPY: Record<Locale, Copy> = {
       'Build a consistent public relative path with the same UTM fields captured by enquiry attribution. Source is required; the other campaign fields are optional.',
     back: 'Back to operations',
     pathname: 'Public pathname',
-    pathnameHint: 'Example: /programmes. Enter a pathname only, without a query string or hash.',
+    pathnameHint:
+      'Example: /programmes. Enter a pathname only, without a query string or hash.',
     source: 'UTM source',
     medium: 'UTM medium',
     campaign: 'UTM campaign',
@@ -37,18 +38,23 @@ const COPY: Record<Locale, Copy> = {
     optional: 'Optional',
     build: 'Build tagged path',
     result: 'Generated tagged path',
-    resultHint: 'Select and copy this path into the public Luminol Academy URL you control.',
+    resultHint:
+      'Select and copy this path into the public Luminol Academy URL you control.',
     boundary:
       'This utility only constructs supported UTM parameters. It does not track clicks, set cookies, deliver ads, prove conversions, measure ROI or infer lead quality.',
     error: (error) => {
       if (error === 'path-required') return 'Enter a public pathname.';
-      if (error === 'path-too-long') return 'The pathname exceeds 240 characters.';
+      if (error === 'path-too-long')
+        return 'The pathname exceeds 240 characters.';
       if (error === 'path-unsafe')
         return 'Use a relative public pathname beginning with one slash and no query, hash, backslash, colon or whitespace.';
       if (error === 'source-required') return 'UTM source is required.';
-      if (error === 'source-too-long') return 'UTM source exceeds 160 characters.';
-      if (error === 'medium-too-long') return 'UTM medium exceeds 160 characters.';
-      if (error === 'campaign-too-long') return 'UTM campaign exceeds 160 characters.';
+      if (error === 'source-too-long')
+        return 'UTM source exceeds 160 characters.';
+      if (error === 'medium-too-long')
+        return 'UTM medium exceeds 160 characters.';
+      if (error === 'campaign-too-long')
+        return 'UTM campaign exceeds 160 characters.';
       return 'UTM content exceeds 160 characters.';
     },
   },
@@ -78,9 +84,12 @@ const COPY: Record<Locale, Copy> = {
       if (error === 'path-unsafe')
         return 'Utilisez un chemin public relatif commençant par une seule barre oblique, sans requête, ancre, barre oblique inverse, deux-points ni espace.';
       if (error === 'source-required') return 'La source UTM est obligatoire.';
-      if (error === 'source-too-long') return 'La source UTM dépasse 160 caractères.';
-      if (error === 'medium-too-long') return 'Le support UTM dépasse 160 caractères.';
-      if (error === 'campaign-too-long') return 'La campagne UTM dépasse 160 caractères.';
+      if (error === 'source-too-long')
+        return 'La source UTM dépasse 160 caractères.';
+      if (error === 'medium-too-long')
+        return 'Le support UTM dépasse 160 caractères.';
+      if (error === 'campaign-too-long')
+        return 'La campagne UTM dépasse 160 caractères.';
       return 'Le contenu UTM dépasse 160 caractères.';
     },
   },
@@ -112,7 +121,8 @@ const COPY: Record<Locale, Copy> = {
       if (error === 'source-required') return 'مصدر UTM مطلوب.';
       if (error === 'source-too-long') return 'يتجاوز مصدر UTM عدد 160 حرفًا.';
       if (error === 'medium-too-long') return 'يتجاوز وسيط UTM عدد 160 حرفًا.';
-      if (error === 'campaign-too-long') return 'تتجاوز حملة UTM عدد 160 حرفًا.';
+      if (error === 'campaign-too-long')
+        return 'تتجاوز حملة UTM عدد 160 حرفًا.';
       return 'يتجاوز محتوى UTM عدد 160 حرفًا.';
     },
   },
