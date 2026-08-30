@@ -363,6 +363,7 @@ export default async function Page() {
                             utmSource: item.utmSource,
                             utmCampaign: null,
                             utmMedium: null,
+                            utmContent: null,
                           })}`,
                         )}
                       >
@@ -399,6 +400,7 @@ export default async function Page() {
                             utmSource: item.utmSource,
                             utmCampaign: item.utmCampaign,
                             utmMedium: null,
+                            utmContent: null,
                           })}`,
                         )}
                       >
@@ -483,6 +485,7 @@ export default async function Page() {
                             utmSource: null,
                             utmCampaign: null,
                             utmMedium: item.utmMedium,
+                            utmContent: null,
                           })}`,
                         )}
                       >
@@ -555,7 +558,19 @@ export default async function Page() {
                 {operations.enquiryCampaignContentMixLast30Days.items.map(
                   (item) => (
                     <article key={item.utmContent}>
-                      <span dir="auto">{item.utmContent}</span>
+                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/enquiries?${buildEnquiryCampaignAttributionQuery({
+                            utmSource: null,
+                            utmCampaign: null,
+                            utmMedium: null,
+                            utmContent: item.utmContent,
+                          })}`,
+                        )}
+                      >
+                        <span dir="auto">{item.utmContent}</span>
+                      </Link>
                       <strong>{number(item.count)}</strong>
                       <small>
                         {campaignContentCopy.count(number(item.count))}
