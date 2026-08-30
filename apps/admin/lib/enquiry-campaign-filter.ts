@@ -10,6 +10,12 @@ export type EnquiryCampaignAttributionFilter = {
   utmMedium: string | null;
 };
 
+type EnquiryCampaignAttributionQuery = {
+  utmSource: string | null;
+  utmCampaign: string | null;
+  utmMedium: string | null;
+};
+
 function firstParam(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
@@ -59,7 +65,7 @@ export function getEnquiryCampaignAttributionWhere(
 }
 
 export function buildEnquiryCampaignAttributionQuery(
-  filter: EnquiryCampaignAttributionFilter,
+  filter: EnquiryCampaignAttributionQuery,
 ): string {
   const query = new URLSearchParams();
   if (filter.utmSource) query.set('utmSource', filter.utmSource);
