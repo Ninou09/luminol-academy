@@ -16,10 +16,7 @@ export function getMissingFollowUpPlanAgeWhere(
   bucket: ActiveEnquiryAgeBucket,
 ): Prisma.EnquiryWhereInput {
   return {
-    AND: [
-      getActiveEnquiryAgeWhere(now, bucket),
-      MISSING_FOLLOW_UP_PLAN_WHERE,
-    ],
+    AND: [getActiveEnquiryAgeWhere(now, bucket), MISSING_FOLLOW_UP_PLAN_WHERE],
   };
 }
 
