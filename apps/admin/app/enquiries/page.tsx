@@ -12,6 +12,8 @@ import Link from 'next/link';
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAdminEnumLabel } from '../../lib/admin-localization';
 import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';
+import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
+import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
   buildEnquiryAuditTimeline,
   ENQUIRY_AUDIT_RELATION_LIMIT,
@@ -121,6 +123,7 @@ export default async function EnquiriesAdminPage({
   const locale = await getAdminRequestLocale();
   const copy = getEnquiryDeskCopy(locale);
   const attributionCopy = getEnquiryAttributionCopy(locale);
+  const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
   const noRecordedContactCopy = getNoRecordedContactAttentionCopy(locale);
@@ -744,6 +747,11 @@ export default async function EnquiriesAdminPage({
                 ]
                   .filter(Boolean)
                   .join(' · ');
+                const contactShortcuts = buildEnquiryContactShortcuts({
+                  email: enquiry.email,
+                  phone: enquiry.phone,
+                  preferredContact: enquiry.preferredContact,
+                });
                 const firstResponseSteps = buildEnquiryFirstResponseSteps({
                   programmeTitleSnapshot: enquiry.programmeTitleSnapshot,
                   city: enquiry.city,
@@ -862,6 +870,59 @@ export default async function EnquiriesAdminPage({
                         </p>
                       </div>
                     </div>
+
+                    <section className={styles.contactShortcutBlock}>
+                      <div className={styles.contactShortcutHeading}>
+                        <span className={styles.messageLabel}>
+                          {contactShortcutsCopy.eyebrow}
+                        </span>
+                        <h3>{contactShortcutsCopy.title}</h3>
+                        <p className={styles.privacyNote}>
+                          {contactShortcutsCopy.intro}
+                        </p>
+                      </div>
+                      {contactShortcuts.length > 0 ? (
+                        <div className={styles.contactShortcutList}>
+                          {contactShortcuts.map((shortcut) => (
+                            <a
+                              key={shortcut.kind}
+                              className={`${styles.contactLink} ${
+                                shortcut.preferred
+                                  ? styles.preferredContactLink
+                                  : ''
+                              }`}
+                              href={shortcut.href}
+                              target={
+                                shortcut.kind === 'whatsapp'
+                                  ? '_blank'
+                                  : undefined
+                              }
+                              rel={
+                                shortcut.kind === 'whatsapp'
+                                  ? 'noopener noreferrer'
+                                  : undefined
+                              }
+                            >
+                              <span>
+                                {contactShortcutsCopy.label(shortcut.kind)}
+                              </span>
+                              {shortcut.preferred ? (
+                                <small className={styles.contactShortcutBadge}>
+                                  {contactShortcutsCopy.preferred}
+                                </small>
+                              ) : null}
+                            </a>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className={styles.privacyNote}>
+                          {contactShortcutsCopy.unavailable}
+                        </p>
+                      )}
+                      <p className={styles.privacyNote}>
+                        {contactShortcutsCopy.boundary}
+                      </p>
+                    </section>
 
                     <div className={styles.messageBlock}>
                       <span className={styles.messageLabel}>
@@ -1075,22 +1136,6 @@ export default async function EnquiriesAdminPage({
 
                     <div className={styles.statusRow}>
                       <div className={styles.actions}>
-                        <a
-                          className={styles.contactLink}
-                          href={`mailto:${enquiry.email}`}
-                        >
-                          {copy.email}
-                        </a>
-                        {enquiry.phone ? (
-                          <a
-                            className={styles.contactLink}
-                            href={`tel:${enquiry.phone}`}
-                          >
-                            {copy.call}
-                          </a>
-                        ) : (
-                          <span className={styles.muted}>{copy.noPhone}</span>
-                        )}
                         {!ownedByAdministrator ? (
                           <form action={updateEnquiryOwnership}>
                             <input
