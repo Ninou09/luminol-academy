@@ -21,6 +21,7 @@ import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
+import { getEnquiryQualificationGapCopy } from '../lib/enquiry-qualification-gap-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
 import { getRecentEnquiryStatusMixCopy } from '../lib/enquiry-recent-status-mix-localization';
 import { getEnquiryStatusMixCopy } from '../lib/enquiry-status-mix-localization';
@@ -52,6 +53,7 @@ export default async function Page() {
   const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
   const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
+  const qualificationGapCopy = getEnquiryQualificationGapCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
   const recentStatusMixCopy = getRecentEnquiryStatusMixCopy(locale);
   const statusMixCopy = getEnquiryStatusMixCopy(locale);
@@ -456,6 +458,97 @@ export default async function Page() {
             ) : (
               <p className="admin-empty">{recentStatusMixCopy.noData}</p>
             )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{qualificationGapCopy.eyebrow}</p>
+                <h2>{qualificationGapCopy.title}</h2>
+                <p>{qualificationGapCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={qualificationGapCopy.title}
+            >
+              <article>
+                <span>{qualificationGapCopy.activeTotal}</span>
+                <strong>
+                  {number(
+                    operations.enquiryQualificationGapsLast30Days.activeTotal,
+                  )}
+                </strong>
+                <small>{copy.dashboard.rollingThirtyDays}</small>
+              </article>
+              <article>
+                <span>{qualificationGapCopy.city}</span>
+                <strong>
+                  {number(
+                    operations.enquiryQualificationGapsLast30Days.cityMissing,
+                  )}
+                </strong>
+                <small>
+                  {qualificationGapCopy.count(
+                    number(
+                      operations.enquiryQualificationGapsLast30Days.cityMissing,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{qualificationGapCopy.preferredContact}</span>
+                <strong>
+                  {number(
+                    operations.enquiryQualificationGapsLast30Days
+                      .preferredContactMissing,
+                  )}
+                </strong>
+                <small>
+                  {qualificationGapCopy.count(
+                    number(
+                      operations.enquiryQualificationGapsLast30Days
+                        .preferredContactMissing,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{qualificationGapCopy.deliveryPreference}</span>
+                <strong>
+                  {number(
+                    operations.enquiryQualificationGapsLast30Days
+                      .deliveryPreferenceMissing,
+                  )}
+                </strong>
+                <small>
+                  {qualificationGapCopy.count(
+                    number(
+                      operations.enquiryQualificationGapsLast30Days
+                        .deliveryPreferenceMissing,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{qualificationGapCopy.timingPreference}</span>
+                <strong>
+                  {number(
+                    operations.enquiryQualificationGapsLast30Days
+                      .timingPreferenceMissing,
+                  )}
+                </strong>
+                <small>
+                  {qualificationGapCopy.count(
+                    number(
+                      operations.enquiryQualificationGapsLast30Days
+                        .timingPreferenceMissing,
+                    ),
+                  )}
+                </small>
+              </article>
+            </div>
           </section>
 
           <section className="admin-panel">

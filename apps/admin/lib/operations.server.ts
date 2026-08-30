@@ -36,6 +36,11 @@ import {
   type EnquiryLandingPathMixSummary,
 } from './enquiry-landing-path-reporting';
 import {
+  getRecentActiveQualificationGapWhere,
+  summarizeRecentActiveQualificationGaps,
+  type EnquiryQualificationGapSummary,
+} from './enquiry-qualification-gap-reporting';
+import {
   summarizeEnquiryFirstContactTurnaround,
   type EnquiryFirstContactTurnaroundSummary,
 } from './enquiry-contact-turnaround';
@@ -144,6 +149,7 @@ export type OperationsDashboard = {
   enquiryDeliveryPreferenceMixLast30Days: EnquiryDeliveryPreferenceMixSummary;
   enquiryTimingPreferenceMixLast30Days: EnquiryTimingPreferenceMixSummary;
   enquiryLandingPathMixLast30Days: EnquiryLandingPathMixSummary;
+  enquiryQualificationGapsLast30Days: EnquiryQualificationGapSummary;
   enquiryRecentStatusMixLast30Days: RecentEnquiryStatusMixSummary;
   enquiryWorkflowCoverageLast30Days: {
     activeTotal: number;
@@ -198,6 +204,10 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     recentActiveOwnedEnquiries,
     recentActiveFollowUpPlannedEnquiries,
     recentActiveQualifiedEnquiries,
+    recentActiveCityMissing,
+    recentActivePreferredContactMissing,
+    recentActiveDeliveryPreferenceMissing,
+    recentActiveTimingPreferenceMissing,
     recentClosedEnquiries,
     recentClosedWithOutcomeEnquiries,
     recentEnquiryContactSamples,
@@ -260,6 +270,18 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       where: getRecentActiveFollowUpPlannedEnquiryWhere(now),
     }),
     db.enquiry.count({ where: getRecentActiveQualifiedEnquiryWhere(now) }),
+    db.enquiry.count({
+      where: getRecentActiveQualificationGapWhere(now, 'city'),
+    }),
+    db.enquiry.count({
+      where: getRecentActiveQualificationGapWhere(now, 'preferredContact'),
+    }),
+    db.enquiry.count({
+      where: getRecentActiveQualificationGapWhere(now, 'deliveryPreference'),
+    }),
+    db.enquiry.count({
+      where: getRecentActiveQualificationGapWhere(now, 'timingPreference'),
+    }),
     db.enquiry.count({ where: getRecentClosedEnquiryWhere(now) }),
     db.enquiry.count({ where: getRecentClosedEnquiryWithOutcomeWhere(now) }),
     db.enquiry.findMany({
@@ -455,6 +477,13 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     enquiryRecentStatusMixLast30Days: normalizeRecentEnquiryStatusMix(
       recentEnquiryStatusGroupsLast30Days,
     ),
+    enquiryQualificationGapsLast30Days: summarizeRecentActiveQualificationGaps({
+      activeTotal: recentActiveEnquiries,
+      cityMissing: recentActiveCityMissing,
+      preferredContactMissing: recentActivePreferredContactMissing,
+      deliveryPreferenceMissing: recentActiveDeliveryPreferenceMissing,
+      timingPreferenceMissing: recentActiveTimingPreferenceMissing,
+    }),
     enquiryWorkflowCoverageLast30Days: {
       activeTotal: recentActiveEnquiries,
       ownerCovered: recentActiveOwnedEnquiries,
