@@ -1,0 +1,228 @@
+name: Apply enquiry campaign filter
+
+on:
+  push:
+    branches:
+      - feat/enquiry-campaign-attribution-filter
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-campaign-attribution-filter
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Integrate campaign attribution filtering
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          page = Path('apps/admin/app/enquiries/page.tsx')
+          text = page.read_text()
+
+          import_marker = "import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';\n"
+          import_addition = import_marker + "import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-localization';\nimport {\n  getEnquiryCampaignAttributionWhere,\n  parseEnquiryCampaignAttributionFilter,\n  type EnquiryCampaignAttributionFilter,\n} from '../../lib/enquiry-campaign-filter';\n"
+          if import_marker not in text:
+              raise SystemExit('enquiry attribution import marker not found')
+          text = text.replace(import_marker, import_addition, 1)
+
+          text = text.replace('function enquiryHref(\n', 'function buildEnquiryHref(\n', 1)
+          owner_signature = "  owner: EnquiryOwnerFilter | null,\n) {\n"
+          owner_replacement = "  owner: EnquiryOwnerFilter | null,\n  campaignAttribution: EnquiryCampaignAttributionFilter | null = null,\n) {\n"
+          if owner_signature not in text:
+              raise SystemExit('enquiry href signature marker not found')
+          text = text.replace(owner_signature, owner_replacement, 1)
+
+          query_marker = "  if (owner) query.set('owner', owner);\n"
+          query_addition = query_marker + "  if (campaignAttribution) {\n    query.set('utmSource', campaignAttribution.utmSource);\n    if (campaignAttribution.utmCampaign) {\n      query.set('utmCampaign', campaignAttribution.utmCampaign);\n    }\n  }\n"
+          if query_marker not in text:
+              raise SystemExit('owner query marker not found')
+          text = text.replace(query_marker, query_addition, 1)
+
+          search_params_marker = "    owner?: string | string[] | undefined;\n"
+          search_params_addition = search_params_marker + "    utmSource?: string | string[] | undefined;\n    utmCampaign?: string | string[] | undefined;\n"
+          if search_params_marker not in text:
+              raise SystemExit('search params marker not found')
+          text = text.replace(search_params_marker, search_params_addition, 1)
+
+          copy_marker = "  const attributionCopy = getEnquiryAttributionCopy(locale);\n"
+          copy_addition = copy_marker + "  const campaignFilterCopy = getEnquiryCampaignFilterCopy(locale);\n"
+          if copy_marker not in text:
+              raise SystemExit('attribution copy marker not found')
+          text = text.replace(copy_marker, copy_addition, 1)
+
+          owner_parse_marker = "  const activeOwner = parseEnquiryOwnerFilter(params?.owner);\n"
+          owner_parse_addition = owner_parse_marker + "  const activeCampaignAttribution = parseEnquiryCampaignAttributionFilter(\n    params?.utmSource,\n    params?.utmCampaign,\n  );\n"
+          if owner_parse_marker not in text:
+              raise SystemExit('owner parse marker not found')
+          text = text.replace(owner_parse_marker, owner_parse_addition, 1)
+
+          owner_where_marker = "  const ownerWhere = getEnquiryOwnerWhere(activeOwner, administrator.id);\n  if (ownerWhere) filters.push(ownerWhere);\n"
+          owner_where_addition = owner_where_marker + "  const campaignAttributionWhere = getEnquiryCampaignAttributionWhere(\n    activeCampaignAttribution,\n  );\n  if (campaignAttributionWhere) filters.push(campaignAttributionWhere);\n"
+          if owner_where_marker not in text:
+              raise SystemExit('owner where marker not found')
+          text = text.replace(owner_where_marker, owner_where_addition, 1)
+
+          text = re.sub(r'enquiryHref\(\s*locale,\s*', 'hrefFor(', text)
+
+          enquiry_where_marker = "  const enquiryWhere = filters.length > 0 ? { AND: filters } : null;\n"
+          href_lines = [
+              enquiry_where_marker.rstrip('\n'),
+              "  const hrefFor = (",
+              "    status: EnquiryStatusValue | null,",
+              "    followUp: FollowUpFilter | null,",
+              "    attention: EnquiryAttentionFilter | null,",
+              "    owner: EnquiryOwnerFilter | null,",
+              "  ) =>",
+              "    buildEnquiryHref(",
+              "      locale,",
+              "      status,",
+              "      followUp,",
+              "      attention,",
+              "      owner,",
+              "      activeCampaignAttribution,",
+              "    );",
+              "",
+          ]
+          if enquiry_where_marker not in text:
+              raise SystemExit('enquiry where marker not found')
+          text = text.replace(enquiry_where_marker, '\n'.join(href_lines), 1)
+
+          attention_marker = "            <div className={styles.attentionSection}>\n"
+          panel = "\n".join([
+              "            {activeCampaignAttribution ? (",
+              "              <div className={styles.attentionSection}>",
+              "                <span className={styles.filterLabel}>",
+              "                  {campaignFilterCopy.eyebrow}",
+              "                </span>",
+              "                <div className={styles.filters}>",
+              "                  <span className={styles.filterLink} dir=\"auto\">",
+              "                    {campaignFilterCopy.source}: {activeCampaignAttribution.utmSource}",
+              "                  </span>",
+              "                  {activeCampaignAttribution.utmCampaign ? (",
+              "                    <span className={styles.filterLink} dir=\"auto\">",
+              "                      {campaignFilterCopy.campaign}:{' '}",
+              "                      {activeCampaignAttribution.utmCampaign}",
+              "                    </span>",
+              "                  ) : null}",
+              "                  <Link",
+              "                    className={styles.filterLink}",
+              "                    href={buildEnquiryHref(",
+              "                      locale,",
+              "                      activeStatus,",
+              "                      activeFollowUp,",
+              "                      activeAttention,",
+              "                      activeOwner,",
+              "                      null,",
+              "                    )}",
+              "                  >",
+              "                    <span>{campaignFilterCopy.clear}</span>",
+              "                  </Link>",
+              "                </div>",
+              "                <p className={styles.filterLabel}>{campaignFilterCopy.intro}</p>",
+              "              </div>",
+              "            ) : null}",
+              "",
+          ]) + "\n"
+          if attention_marker not in text:
+              raise SystemExit('attention section marker not found')
+          text = text.replace(attention_marker, panel + attention_marker, 1)
+          page.write_text(text)
+
+          dashboard = Path('apps/admin/app/page.tsx')
+          dashboard_text = dashboard.read_text()
+          dashboard_import_marker = "import { getCampaignLinkBuilderCopy } from '../lib/campaign-link-builder-localization';\n"
+          dashboard_import_addition = dashboard_import_marker + "import { buildEnquiryCampaignAttributionQuery } from '../lib/enquiry-campaign-filter';\n"
+          if dashboard_import_marker not in dashboard_text:
+              raise SystemExit('campaign link builder import marker not found')
+          dashboard_text = dashboard_text.replace(dashboard_import_marker, dashboard_import_addition, 1)
+
+          source_span = "                      <span dir=\"auto\">{item.utmSource}</span>\n"
+          source_link = "\n".join([
+              "                      <Link",
+              "                        href={localizeHref(",
+              "                          locale,",
+              "                          `/enquiries?${buildEnquiryCampaignAttributionQuery({",
+              "                            utmSource: item.utmSource,",
+              "                            utmCampaign: null,",
+              "                          })}`,",
+              "                        )}",
+              "                      >",
+              "                        <span dir=\"auto\">{item.utmSource}</span>",
+              "                      </Link>",
+              "",
+          ])
+          if source_span not in dashboard_text:
+              raise SystemExit('campaign source span marker not found')
+          dashboard_text = dashboard_text.replace(source_span, source_link, 1)
+
+          pair_span = "\n".join([
+              "                      <span dir=\"auto\">",
+              "                        {campaignCopy.campaignPair(",
+              "                          item.utmSource,",
+              "                          item.utmCampaign,",
+              "                        )}",
+              "                      </span>",
+              "",
+          ])
+          pair_link = "\n".join([
+              "                      <Link",
+              "                        href={localizeHref(",
+              "                          locale,",
+              "                          `/enquiries?${buildEnquiryCampaignAttributionQuery({",
+              "                            utmSource: item.utmSource,",
+              "                            utmCampaign: item.utmCampaign,",
+              "                          })}`,",
+              "                        )}",
+              "                      >",
+              "                        <span dir=\"auto\">",
+              "                          {campaignCopy.campaignPair(",
+              "                            item.utmSource,",
+              "                            item.utmCampaign,",
+              "                          )}",
+              "                        </span>",
+              "                      </Link>",
+              "",
+          ])
+          if pair_span not in dashboard_text:
+              raise SystemExit('campaign pair span marker not found')
+          dashboard_text = dashboard_text.replace(pair_span, pair_link, 1)
+          dashboard.write_text(dashboard_text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-campaign-filter.ts \
+            apps/admin/lib/enquiry-campaign-filter.test.ts \
+            apps/admin/lib/enquiry-campaign-filter-localization.ts \
+            apps/admin/lib/enquiry-campaign-filter-localization.test.ts
+      - name: Run git diff --check
+        run: git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-campaign-filter.ts \
+            apps/admin/lib/enquiry-campaign-filter.test.ts \
+            apps/admin/lib/enquiry-campaign-filter-localization.ts \
+            apps/admin/lib/enquiry-campaign-filter-localization.test.ts
+          git commit -m "Integrate campaign attribution enquiry drill-downs"
+          git push origin HEAD:feat/enquiry-campaign-attribution-filter
