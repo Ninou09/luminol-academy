@@ -14,6 +14,7 @@ describe('enquiry campaign attribution filters', () => {
     ).toEqual({
       utmSource: 'instagram',
       utmCampaign: null,
+      utmMedium: null,
     });
   });
 
@@ -26,26 +27,61 @@ describe('enquiry campaign attribution filters', () => {
     ).toEqual({
       utmSource: 'instagram',
       utmCampaign: 'self-hypnosis-august',
+      utmMedium: null,
     });
   });
 
-  it('fails closed without a source even when a campaign is present', () => {
+  it('allows a bounded medium-only filter', () => {
     expect(
-      parseEnquiryCampaignAttributionFilter(undefined, 'campaign-a'),
+      parseEnquiryCampaignAttributionFilter(undefined, undefined, ' paid_social '),
+    ).toEqual({
+      utmSource: null,
+      utmCampaign: null,
+      utmMedium: 'paid_social',
+    });
+  });
+
+  it('combines medium with source-scoped campaign context', () => {
+    expect(
+      parseEnquiryCampaignAttributionFilter(
+        'instagram',
+        'self-hypnosis-august',
+        'paid_social',
+      ),
+    ).toEqual({
+      utmSource: 'instagram',
+      utmCampaign: 'self-hypnosis-august',
+      utmMedium: 'paid_social',
+    });
+  });
+
+  it('fails closed when campaign exists without a source', () => {
+    expect(
+      parseEnquiryCampaignAttributionFilter(undefined, 'campaign-a', undefined),
     ).toBeNull();
     expect(
-      parseEnquiryCampaignAttributionFilter('   ', 'campaign-a'),
+      parseEnquiryCampaignAttributionFilter('   ', 'campaign-a', 'paid_social'),
     ).toBeNull();
   });
 
-  it('fails closed when either persisted attribution value exceeds the bound', () => {
+  it('fails closed when all attribution filter values are blank or missing', () => {
+    expect(
+      parseEnquiryCampaignAttributionFilter(undefined, undefined, undefined),
+    ).toBeNull();
+    expect(parseEnquiryCampaignAttributionFilter(' ', ' ', ' ')).toBeNull();
+  });
+
+  it('fails closed when any attribution filter value exceeds the bound', () => {
     const tooLong = 'x'.repeat(ENQUIRY_CAMPAIGN_FILTER_VALUE_LIMIT + 1);
 
     expect(
-      parseEnquiryCampaignAttributionFilter(tooLong, undefined),
+      parseEnquiryCampaignAttributionFilter(tooLong, undefined, undefined),
     ).toBeNull();
     expect(
-      parseEnquiryCampaignAttributionFilter('instagram', tooLong),
+      parseEnquiryCampaignAttributionFilter('instagram', tooLong, undefined),
+    ).toBeNull();
+    expect(
+      parseEnquiryCampaignAttributionFilter(undefined, undefined, tooLong),
     ).toBeNull();
   });
 
@@ -54,28 +90,52 @@ describe('enquiry campaign attribution filters', () => {
       getEnquiryCampaignAttributionWhere({
         utmSource: 'instagram',
         utmCampaign: null,
+        utmMedium: null,
       }),
     ).toEqual({ utmSource: 'instagram' });
 
     expect(
       getEnquiryCampaignAttributionWhere({
+        utmSource: null,
+        utmCampaign: null,
+        utmMedium: 'paid_social',
+      }),
+    ).toEqual({ utmMedium: 'paid_social' });
+
+    expect(
+      getEnquiryCampaignAttributionWhere({
         utmSource: 'instagram',
         utmCampaign: 'self-hypnosis-august',
+        utmMedium: 'paid_social',
       }),
     ).toEqual({
       utmSource: 'instagram',
       utmCampaign: 'self-hypnosis-august',
+      utmMedium: 'paid_social',
     });
 
     expect(getEnquiryCampaignAttributionWhere(null)).toBeNull();
   });
 
-  it('encodes only the supported drill-down query keys deterministically', () => {
+  it('encodes supported drill-down query keys deterministically', () => {
     expect(
       buildEnquiryCampaignAttributionQuery({
         utmSource: 'instagram paid',
         utmCampaign: 'august / launch',
+        utmMedium: 'paid social',
       }),
-    ).toBe('utmSource=instagram+paid&utmCampaign=august+%2F+launch');
+    ).toBe(
+      'utmSource=instagram+paid&utmCampaign=august+%2F+launch&utmMedium=paid+social',
+    );
+  });
+
+  it('encodes a medium-only drill-down without inventing source context', () => {
+    expect(
+      buildEnquiryCampaignAttributionQuery({
+        utmSource: null,
+        utmCampaign: null,
+        utmMedium: 'paid_social',
+      }),
+    ).toBe('utmMedium=paid_social');
   });
 });
