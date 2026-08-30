@@ -24,6 +24,7 @@ import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-prefer
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
+import { getMissingFollowUpPlanAgeCopy } from '../lib/enquiry-missing-follow-up-age-localization';
 import { getEnquiryOutcomeCoverageCopy } from '../lib/enquiry-outcome-coverage-localization';
 import { getEnquiryQualificationGapCopy } from '../lib/enquiry-qualification-gap-localization';
 import { getEnquiryProgrammeMixCopy } from '../lib/enquiry-programme-mix-localization';
@@ -60,6 +61,7 @@ export default async function Page() {
   const timingPreferenceCopy = getEnquiryTimingPreferenceCopy(locale);
   const contactTurnaroundCopy = getEnquiryContactTurnaroundCopy(locale);
   const followUpTimingCopy = getEnquiryFollowUpTimingCopy(locale);
+  const missingFollowUpAgeCopy = getMissingFollowUpPlanAgeCopy(locale);
   const outcomeCoverageCopy = getEnquiryOutcomeCoverageCopy(locale);
   const qualificationGapCopy = getEnquiryQualificationGapCopy(locale);
   const programmeMixCopy = getEnquiryProgrammeMixCopy(locale);
@@ -1259,6 +1261,84 @@ export default async function Page() {
                     number(
                       operations.unassignedActiveEnquiryAge.buckets
                         .overSevenDays,
+                    ),
+                  )}
+                </small>
+              </article>
+            </div>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{missingFollowUpAgeCopy.eyebrow}</p>
+                <h2>{missingFollowUpAgeCopy.title}</h2>
+                <p>{missingFollowUpAgeCopy.intro}</p>
+              </div>
+              <span>
+                {number(operations.missingFollowUpPlanAge.activeTotal)}
+              </span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={missingFollowUpAgeCopy.title}
+            >
+              <article>
+                <span>{missingFollowUpAgeCopy.under24Hours}</span>
+                <strong>
+                  {number(
+                    operations.missingFollowUpPlanAge.buckets.under24Hours,
+                  )}
+                </strong>
+                <small>
+                  {missingFollowUpAgeCopy.count(
+                    number(
+                      operations.missingFollowUpPlanAge.buckets.under24Hours,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{missingFollowUpAgeCopy.oneToThreeDays}</span>
+                <strong>
+                  {number(
+                    operations.missingFollowUpPlanAge.buckets.oneToThreeDays,
+                  )}
+                </strong>
+                <small>
+                  {missingFollowUpAgeCopy.count(
+                    number(
+                      operations.missingFollowUpPlanAge.buckets.oneToThreeDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{missingFollowUpAgeCopy.fourToSevenDays}</span>
+                <strong>
+                  {number(
+                    operations.missingFollowUpPlanAge.buckets.fourToSevenDays,
+                  )}
+                </strong>
+                <small>
+                  {missingFollowUpAgeCopy.count(
+                    number(
+                      operations.missingFollowUpPlanAge.buckets.fourToSevenDays,
+                    ),
+                  )}
+                </small>
+              </article>
+              <article>
+                <span>{missingFollowUpAgeCopy.overSevenDays}</span>
+                <strong>
+                  {number(
+                    operations.missingFollowUpPlanAge.buckets.overSevenDays,
+                  )}
+                </strong>
+                <small>
+                  {missingFollowUpAgeCopy.count(
+                    number(
+                      operations.missingFollowUpPlanAge.buckets.overSevenDays,
                     ),
                   )}
                 </small>

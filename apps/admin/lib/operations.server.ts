@@ -16,6 +16,10 @@ import {
   summarizeUnassignedActiveEnquiryAge,
 } from './enquiry-unassigned-age-reporting';
 import {
+  getMissingFollowUpPlanAgeWhere,
+  summarizeMissingFollowUpPlanAge,
+} from './enquiry-missing-follow-up-age-reporting';
+import {
   normalizeActiveEnquiryStatusMix,
   type ActiveEnquiryStatusMixSummary,
 } from './enquiry-status-mix-reporting';
@@ -188,6 +192,7 @@ export type OperationsDashboard = {
   enquiryContactTurnaroundLast30Days: EnquiryFirstContactTurnaroundSummary;
   activeEnquiryAge: ActiveEnquiryAgeSummary;
   unassignedActiveEnquiryAge: ActiveEnquiryAgeSummary;
+  missingFollowUpPlanAge: ActiveEnquiryAgeSummary;
   activeEnquiryStatusMix: ActiveEnquiryStatusMixSummary;
   activeEnquiryFollowUpTiming: FollowUpTimingSummary;
   recentEnquiries: RecentEnquiry[];
@@ -219,6 +224,10 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     unassignedOneToThreeDays,
     unassignedFourToSevenDays,
     unassignedOverSevenDays,
+    missingPlanUnder24Hours,
+    missingPlanOneToThreeDays,
+    missingPlanFourToSevenDays,
+    missingPlanOverSevenDays,
     followUpMissingPlan,
     followUpPastDue,
     followUpNext24Hours,
@@ -289,6 +298,18 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     }),
     db.enquiry.count({
       where: getUnassignedActiveEnquiryAgeWhere(now, 'overSevenDays'),
+    }),
+    db.enquiry.count({
+      where: getMissingFollowUpPlanAgeWhere(now, 'under24Hours'),
+    }),
+    db.enquiry.count({
+      where: getMissingFollowUpPlanAgeWhere(now, 'oneToThreeDays'),
+    }),
+    db.enquiry.count({
+      where: getMissingFollowUpPlanAgeWhere(now, 'fourToSevenDays'),
+    }),
+    db.enquiry.count({
+      where: getMissingFollowUpPlanAgeWhere(now, 'overSevenDays'),
     }),
     db.enquiry.count({
       where: getActiveEnquiryFollowUpTimingWhere(now, 'missingPlan'),
@@ -623,6 +644,12 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       oneToThreeDays: unassignedOneToThreeDays,
       fourToSevenDays: unassignedFourToSevenDays,
       overSevenDays: unassignedOverSevenDays,
+    }),
+    missingFollowUpPlanAge: summarizeMissingFollowUpPlanAge({
+      under24Hours: missingPlanUnder24Hours,
+      oneToThreeDays: missingPlanOneToThreeDays,
+      fourToSevenDays: missingPlanFourToSevenDays,
+      overSevenDays: missingPlanOverSevenDays,
     }),
     activeEnquiryStatusMix: normalizeActiveEnquiryStatusMix(
       activeEnquiryStatusGroups,
