@@ -43,8 +43,7 @@ export const ACTIVE_WITHOUT_RECORDED_CONTACT_WHERE = {
 
 export const CLOSED_WITHOUT_OUTCOME_WHERE = {
   status: 'CLOSED',
-  outcome: null,
-  outcomeAt: null,
+  OR: [{ outcome: null }, { outcomeAt: null }],
 } satisfies Prisma.EnquiryWhereInput;
 
 export function parseEnquiryAttentionFilter(
