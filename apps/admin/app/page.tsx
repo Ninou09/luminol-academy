@@ -17,6 +17,7 @@ import { getUnassignedEnquiryAgeCopy } from '../lib/enquiry-unassigned-age-local
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryCampaignMediumCopy } from '../lib/enquiry-campaign-medium-localization';
 import { getEnquiryCampaignContentCopy } from '../lib/enquiry-campaign-content-localization';
+import { getEnquiryAttributionCoverageCopy } from '../lib/enquiry-attribution-coverage-localization';
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
@@ -52,6 +53,7 @@ export default async function Page() {
   const campaignCopy = getEnquiryCampaignReportingCopy(locale);
   const campaignMediumCopy = getEnquiryCampaignMediumCopy(locale);
   const campaignContentCopy = getEnquiryCampaignContentCopy(locale);
+  const attributionCoverageCopy = getEnquiryAttributionCoverageCopy(locale);
   const landingPathCopy = getEnquiryLandingPathCopy(locale);
   const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);
   const deliveryPreferenceCopy = getEnquiryDeliveryPreferenceCopy(locale);
@@ -77,6 +79,14 @@ export default async function Page() {
       style: 'percent',
       maximumFractionDigits: 1,
     });
+  const attributionCoverageLabel = (field: string) => {
+    if (field === 'utmSource') return attributionCoverageCopy.utmSource;
+    if (field === 'utmMedium') return attributionCoverageCopy.utmMedium;
+    if (field === 'utmCampaign') return attributionCoverageCopy.utmCampaign;
+    if (field === 'utmContent') return attributionCoverageCopy.utmContent;
+    return attributionCoverageCopy.landingPath;
+  };
+
   const contactTurnaround = (minutes: number | null) => {
     if (minutes === null) return contactTurnaroundCopy.noMedian;
     if (minutes < 60) return contactTurnaroundCopy.minutes(number(minutes));
@@ -511,6 +521,38 @@ export default async function Page() {
             ) : (
               <p className="admin-empty">{campaignContentCopy.noContent}</p>
             )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{attributionCoverageCopy.eyebrow}</p>
+                <h2>{attributionCoverageCopy.title}</h2>
+                <p>{attributionCoverageCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div
+              className="metric-grid"
+              aria-label={attributionCoverageCopy.title}
+            >
+              {operations.enquiryAttributionCoverageLast30Days.items.map(
+                (item) => (
+                  <article key={item.field}>
+                    <span>{attributionCoverageLabel(item.field)}</span>
+                    <strong>{percent(item.percent)}</strong>
+                    <small>
+                      {attributionCoverageCopy.recordedOfTotal(
+                        number(item.recorded),
+                        number(
+                          operations.enquiryAttributionCoverageLast30Days.total,
+                        ),
+                      )}
+                    </small>
+                  </article>
+                ),
+              )}
+            </div>
           </section>
 
           <section className="admin-panel">
