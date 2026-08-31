@@ -18,7 +18,8 @@ const COPY: Record<Locale, EnquiryQualificationGapFilterCopy> = {
     label: (gap) => {
       if (gap === 'city') return 'City not recorded';
       if (gap === 'preferredContact') return 'Preferred contact not recorded';
-      if (gap === 'deliveryPreference') return 'Delivery preference not recorded';
+      if (gap === 'deliveryPreference')
+        return 'Delivery preference not recorded';
       return 'Requested timing not recorded';
     },
   },

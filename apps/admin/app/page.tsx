@@ -23,6 +23,7 @@ import { getEnquiryAttributionCoverageCopy } from '../lib/enquiry-attribution-co
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';
 import { buildEnquiryCityQuery } from '../lib/enquiry-city-filter';
+import { buildEnquiryQualificationGapQuery } from '../lib/enquiry-qualification-gap-filter';
 import { getEnquiryCityReportingCopy } from '../lib/enquiry-city-reporting-localization';
 import { buildEnquirySchoolQuery } from '../lib/enquiry-school-filter';
 import { buildEnquiryContactPreferenceQuery } from '../lib/enquiry-contact-preference-filter';
@@ -812,7 +813,14 @@ export default async function Page() {
                 <small>{copy.dashboard.rollingThirtyDays}</small>
               </article>
               <article>
-                <span>{qualificationGapCopy.city}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryQualificationGapQuery('city')}`,
+                  )}
+                >
+                  <span>{qualificationGapCopy.city}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.enquiryQualificationGapsLast30Days.cityMissing,
@@ -827,7 +835,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{qualificationGapCopy.preferredContact}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryQualificationGapQuery('preferredContact')}`,
+                  )}
+                >
+                  <span>{qualificationGapCopy.preferredContact}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.enquiryQualificationGapsLast30Days
@@ -844,7 +859,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{qualificationGapCopy.deliveryPreference}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryQualificationGapQuery('deliveryPreference')}`,
+                  )}
+                >
+                  <span>{qualificationGapCopy.deliveryPreference}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.enquiryQualificationGapsLast30Days
@@ -861,7 +883,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{qualificationGapCopy.timingPreference}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryQualificationGapQuery('timingPreference')}`,
+                  )}
+                >
+                  <span>{qualificationGapCopy.timingPreference}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.enquiryQualificationGapsLast30Days

@@ -24,7 +24,8 @@ export function getEnquiryQualificationGapWhere(
   qualificationGap: EnquiryQualificationGap | null,
 ): Prisma.EnquiryWhereInput | null {
   if (qualificationGap === 'city') return { city: null };
-  if (qualificationGap === 'preferredContact') return { preferredContact: null };
+  if (qualificationGap === 'preferredContact')
+    return { preferredContact: null };
   if (qualificationGap === 'deliveryPreference') {
     return { deliveryPreference: null };
   }

@@ -20,6 +20,7 @@ import { getEnquiryDeliveryPreferenceFilterCopy } from '../../lib/enquiry-delive
 import { getEnquiryTimingPreferenceFilterCopy } from '../../lib/enquiry-timing-preference-filter-localization';
 import { getEnquiryProgrammeFilterCopy } from '../../lib/enquiry-programme-filter-localization';
 import { getEnquiryCityFilterCopy } from '../../lib/enquiry-city-filter-localization';
+import { getEnquiryQualificationGapFilterCopy } from '../../lib/enquiry-qualification-gap-filter-localization';
 import {
   getEnquiryCampaignAttributionWhere,
   parseEnquiryCampaignAttributionFilter,
@@ -58,6 +59,11 @@ import {
   getEnquiryCityWhere,
   parseEnquiryCityFilter,
 } from '../../lib/enquiry-city-filter';
+import {
+  getEnquiryQualificationGapWhere,
+  parseEnquiryQualificationGapFilter,
+  type EnquiryQualificationGap,
+} from '../../lib/enquiry-qualification-gap-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -127,6 +133,7 @@ type EnquiryPageProps = {
     programmeSlug?: string | string[] | undefined;
     programmeTitle?: string | string[] | undefined;
     city?: string | string[] | undefined;
+    qualificationGap?: string | string[] | undefined;
   }>;
 };
 
@@ -168,6 +175,7 @@ function buildEnquiryHref(
   timingPreference: EnquiryTimingPreference | null = null,
   programme: EnquiryProgrammeFilter | null = null,
   city: string | null = null,
+  qualificationGap: EnquiryQualificationGap | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -196,6 +204,7 @@ function buildEnquiryHref(
     query.set('programmeTitle', programme.programmeTitleSnapshot);
   }
   if (city) query.set('city', city);
+  if (qualificationGap) query.set('qualificationGap', qualificationGap);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -222,6 +231,8 @@ export default async function EnquiriesAdminPage({
     getEnquiryTimingPreferenceFilterCopy(locale);
   const programmeFilterCopy = getEnquiryProgrammeFilterCopy(locale);
   const cityFilterCopy = getEnquiryCityFilterCopy(locale);
+  const qualificationGapFilterCopy =
+    getEnquiryQualificationGapFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -254,6 +265,9 @@ export default async function EnquiriesAdminPage({
     params?.programmeTitle,
   );
   const activeCity = parseEnquiryCityFilter(params?.city);
+  const activeQualificationGap = parseEnquiryQualificationGapFilter(
+    params?.qualificationGap,
+  );
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
   const tomorrowUtc = new Date(todayUtc.getTime() + 86_400_000);
@@ -292,6 +306,10 @@ export default async function EnquiriesAdminPage({
   if (programmeWhere) filters.push(programmeWhere);
   const cityWhere = getEnquiryCityWhere(activeCity);
   if (cityWhere) filters.push(cityWhere);
+  const qualificationGapWhere = getEnquiryQualificationGapWhere(
+    activeQualificationGap,
+  );
+  if (qualificationGapWhere) filters.push(qualificationGapWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -313,6 +331,7 @@ export default async function EnquiriesAdminPage({
       activeTimingPreference,
       activeProgramme,
       activeCity,
+      activeQualificationGap,
     );
 
   const [
@@ -526,6 +545,7 @@ export default async function EnquiriesAdminPage({
                       activeTimingPreference,
                       activeProgramme,
                       activeCity,
+                      activeQualificationGap,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
@@ -560,6 +580,7 @@ export default async function EnquiriesAdminPage({
                       activeTimingPreference,
                       activeProgramme,
                       activeCity,
+                      activeQualificationGap,
                     )}
                   >
                     <span>{landingPathFilterCopy.clear}</span>
@@ -597,6 +618,7 @@ export default async function EnquiriesAdminPage({
                       activeTimingPreference,
                       activeProgramme,
                       activeCity,
+                      activeQualificationGap,
                     )}
                   >
                     <span>{schoolFilterCopy.clear}</span>
@@ -635,6 +657,7 @@ export default async function EnquiriesAdminPage({
                       activeTimingPreference,
                       activeProgramme,
                       activeCity,
+                      activeQualificationGap,
                     )}
                   >
                     <span>{contactPreferenceFilterCopy.clear}</span>
@@ -675,6 +698,7 @@ export default async function EnquiriesAdminPage({
                       activeTimingPreference,
                       activeProgramme,
                       activeCity,
+                      activeQualificationGap,
                     )}
                   >
                     <span>{deliveryPreferenceFilterCopy.clear}</span>
@@ -715,6 +739,7 @@ export default async function EnquiriesAdminPage({
                       null,
                       activeProgramme,
                       activeCity,
+                      activeQualificationGap,
                     )}
                   >
                     <span>{timingPreferenceFilterCopy.clear}</span>
@@ -756,6 +781,7 @@ export default async function EnquiriesAdminPage({
                       activeTimingPreference,
                       null,
                       activeCity,
+                      activeQualificationGap,
                     )}
                   >
                     <span>{programmeFilterCopy.clear}</span>
@@ -792,12 +818,50 @@ export default async function EnquiriesAdminPage({
                       activeTimingPreference,
                       activeProgramme,
                       null,
+                      activeQualificationGap,
                     )}
                   >
                     <span>{cityFilterCopy.clear}</span>
                   </Link>
                 </div>
                 <p className={styles.filterLabel}>{cityFilterCopy.intro}</p>
+              </div>
+            ) : null}
+
+            {activeQualificationGap ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {qualificationGapFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {qualificationGapFilterCopy.label(activeQualificationGap)}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      activeContactPreference,
+                      activeDeliveryPreference,
+                      activeTimingPreference,
+                      activeProgramme,
+                      activeCity,
+                      null,
+                    )}
+                  >
+                    <span>{qualificationGapFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {qualificationGapFilterCopy.intro}
+                </p>
               </div>
             ) : null}
 
