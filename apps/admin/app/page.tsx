@@ -16,6 +16,7 @@ import { buildEnquiryCampaignAttributionQuery } from '../lib/enquiry-campaign-fi
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { buildEnquiryActiveAgeQuery } from '../lib/enquiry-active-age-filter';
+import { buildEnquiryStatusQuery } from '../lib/enquiry-status-filter';
 import { buildEnquiryOperationalAgeQuery } from '../lib/enquiry-operational-age-drilldown';
 import { getUnassignedEnquiryAgeCopy } from '../lib/enquiry-unassigned-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
@@ -779,7 +780,14 @@ export default async function Page() {
                 {operations.enquiryRecentStatusMixLast30Days.items.map(
                   (item) => (
                     <article key={item.status}>
-                      <span>{getAdminEnumLabel(locale, item.status)}</span>
+                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/enquiries?${buildEnquiryStatusQuery(item.status)}`,
+                        )}
+                      >
+                        <span>{getAdminEnumLabel(locale, item.status)}</span>
+                      </Link>
                       <strong>{number(item.count)}</strong>
                       <small>
                         {recentStatusMixCopy.count(number(item.count))}
@@ -1990,7 +1998,14 @@ export default async function Page() {
               <div className="metric-grid" aria-label={statusMixCopy.title}>
                 {operations.activeEnquiryStatusMix.items.map((item) => (
                   <article key={item.status}>
-                    <span>{getAdminEnumLabel(locale, item.status)}</span>
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquiryStatusQuery(item.status)}`,
+                      )}
+                    >
+                      <span>{getAdminEnumLabel(locale, item.status)}</span>
+                    </Link>
                     <strong>{number(item.count)}</strong>
                     <small>{statusMixCopy.count(number(item.count))}</small>
                   </article>
