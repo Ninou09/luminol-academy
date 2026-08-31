@@ -243,7 +243,9 @@ for marker, replacement in gap_links.items():
         )
     dashboard_text = dashboard_text.replace(marker, replacement, 1)
 
-if dashboard_text.count('buildEnquiryQualificationGapQuery(') != 5:
+if dashboard_text.count('buildEnquiryQualificationGapQuery(') != 4:
     raise SystemExit('qualification gap dashboard link count mismatch')
+if "import { buildEnquiryQualificationGapQuery }" not in dashboard_text:
+    raise SystemExit('qualification gap dashboard import missing')
 
 dashboard.write_text(dashboard_text)
