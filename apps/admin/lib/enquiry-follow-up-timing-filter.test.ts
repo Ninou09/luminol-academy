@@ -36,17 +36,16 @@ describe('enquiry follow-up timing filter', () => {
 
   it('returns no predicate without an active bucket', () => {
     expect(
-      getEnquiryFollowUpTimingWhere(
-        new Date('2026-09-01T00:00:00.000Z'),
-        null,
-      ),
+      getEnquiryFollowUpTimingWhere(new Date('2026-09-01T00:00:00.000Z'), null),
     ).toBeNull();
   });
 
   it.each(ENQUIRY_FOLLOW_UP_TIMING_BUCKETS)(
     'builds a canonical %s query',
     (bucket) => {
-      const params = new URLSearchParams(buildEnquiryFollowUpTimingQuery(bucket));
+      const params = new URLSearchParams(
+        buildEnquiryFollowUpTimingQuery(bucket),
+      );
       expect([...params.keys()]).toEqual(['followUpTiming']);
       expect(params.get('followUpTiming')).toBe(bucket);
       expect(params.size).toBe(1);

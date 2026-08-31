@@ -22,6 +22,7 @@ import { getEnquiryProgrammeFilterCopy } from '../../lib/enquiry-programme-filte
 import { getEnquiryCityFilterCopy } from '../../lib/enquiry-city-filter-localization';
 import { getEnquiryQualificationGapFilterCopy } from '../../lib/enquiry-qualification-gap-filter-localization';
 import { getEnquiryActiveAgeFilterCopy } from '../../lib/enquiry-active-age-filter-localization';
+import { getEnquiryFollowUpTimingFilterCopy } from '../../lib/enquiry-follow-up-timing-filter-localization';
 import {
   getEnquiryCampaignAttributionWhere,
   parseEnquiryCampaignAttributionFilter,
@@ -70,6 +71,11 @@ import {
   parseEnquiryActiveAgeFilter,
   type EnquiryActiveAgeBucket,
 } from '../../lib/enquiry-active-age-filter';
+import {
+  getEnquiryFollowUpTimingWhere,
+  parseEnquiryFollowUpTimingFilter,
+  type EnquiryFollowUpTimingBucket,
+} from '../../lib/enquiry-follow-up-timing-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -141,6 +147,7 @@ type EnquiryPageProps = {
     city?: string | string[] | undefined;
     qualificationGap?: string | string[] | undefined;
     activeAge?: string | string[] | undefined;
+    followUpTiming?: string | string[] | undefined;
   }>;
 };
 
@@ -184,6 +191,7 @@ function buildEnquiryHref(
   city: string | null = null,
   qualificationGap: EnquiryQualificationGap | null = null,
   activeAge: EnquiryActiveAgeBucket | null = null,
+  followUpTiming: EnquiryFollowUpTimingBucket | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -214,6 +222,7 @@ function buildEnquiryHref(
   if (city) query.set('city', city);
   if (qualificationGap) query.set('qualificationGap', qualificationGap);
   if (activeAge) query.set('activeAge', activeAge);
+  if (followUpTiming) query.set('followUpTiming', followUpTiming);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -243,6 +252,7 @@ export default async function EnquiriesAdminPage({
   const qualificationGapFilterCopy =
     getEnquiryQualificationGapFilterCopy(locale);
   const activeAgeFilterCopy = getEnquiryActiveAgeFilterCopy(locale);
+  const followUpTimingFilterCopy = getEnquiryFollowUpTimingFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -279,6 +289,9 @@ export default async function EnquiriesAdminPage({
     params?.qualificationGap,
   );
   const activeAge = parseEnquiryActiveAgeFilter(params?.activeAge);
+  const activeFollowUpTiming = parseEnquiryFollowUpTimingFilter(
+    params?.followUpTiming,
+  );
   const now = new Date();
   const todayUtc = new Date(now);
   todayUtc.setUTCHours(0, 0, 0, 0);
@@ -324,6 +337,11 @@ export default async function EnquiriesAdminPage({
   if (qualificationGapWhere) filters.push(qualificationGapWhere);
   const activeAgeWhere = getEnquiryActiveAgeWhere(now, activeAge);
   if (activeAgeWhere) filters.push(activeAgeWhere);
+  const followUpTimingWhere = getEnquiryFollowUpTimingWhere(
+    now,
+    activeFollowUpTiming,
+  );
+  if (followUpTimingWhere) filters.push(followUpTimingWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -347,6 +365,7 @@ export default async function EnquiriesAdminPage({
       activeCity,
       activeQualificationGap,
       activeAge,
+      activeFollowUpTiming,
     );
 
   const [
@@ -562,6 +581,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       activeQualificationGap,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
@@ -598,6 +618,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       activeQualificationGap,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{landingPathFilterCopy.clear}</span>
@@ -637,6 +658,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       activeQualificationGap,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{schoolFilterCopy.clear}</span>
@@ -677,6 +699,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       activeQualificationGap,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{contactPreferenceFilterCopy.clear}</span>
@@ -719,6 +742,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       activeQualificationGap,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{deliveryPreferenceFilterCopy.clear}</span>
@@ -761,6 +785,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       activeQualificationGap,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{timingPreferenceFilterCopy.clear}</span>
@@ -804,6 +829,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       activeQualificationGap,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{programmeFilterCopy.clear}</span>
@@ -842,6 +868,7 @@ export default async function EnquiriesAdminPage({
                       null,
                       activeQualificationGap,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{cityFilterCopy.clear}</span>
@@ -878,6 +905,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       null,
                       activeAge,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{qualificationGapFilterCopy.clear}</span>
@@ -916,6 +944,7 @@ export default async function EnquiriesAdminPage({
                       activeCity,
                       activeQualificationGap,
                       null,
+                      activeFollowUpTiming,
                     )}
                   >
                     <span>{activeAgeFilterCopy.clear}</span>
@@ -923,6 +952,45 @@ export default async function EnquiriesAdminPage({
                 </div>
                 <p className={styles.filterLabel}>
                   {activeAgeFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+
+            {activeFollowUpTiming ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {followUpTimingFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {followUpTimingFilterCopy.label(activeFollowUpTiming)}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      activeContactPreference,
+                      activeDeliveryPreference,
+                      activeTimingPreference,
+                      activeProgramme,
+                      activeCity,
+                      activeQualificationGap,
+                      activeAge,
+                      null,
+                    )}
+                  >
+                    <span>{followUpTimingFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {followUpTimingFilterCopy.intro}
                 </p>
               </div>
             ) : null}
