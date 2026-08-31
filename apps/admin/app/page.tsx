@@ -23,6 +23,7 @@ import { getEnquiryAttributionCoverageCopy } from '../lib/enquiry-attribution-co
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';
 import { buildEnquirySchoolQuery } from '../lib/enquiry-school-filter';
+import { buildEnquiryContactPreferenceQuery } from '../lib/enquiry-contact-preference-filter';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
@@ -917,13 +918,22 @@ export default async function Page() {
               {operations.enquiryContactPreferenceMixLast30Days.items.map(
                 (item) => (
                   <article key={item.preferredContact}>
-                    <span>
-                      {item.preferredContact === 'EMAIL'
-                        ? contactPreferenceCopy.email
-                        : item.preferredContact === 'PHONE'
-                          ? contactPreferenceCopy.phone
-                          : contactPreferenceCopy.whatsapp}
-                    </span>
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquiryContactPreferenceQuery(
+                          item.preferredContact,
+                        )}`,
+                      )}
+                    >
+                      <span>
+                        {item.preferredContact === 'EMAIL'
+                          ? contactPreferenceCopy.email
+                          : item.preferredContact === 'PHONE'
+                            ? contactPreferenceCopy.phone
+                            : contactPreferenceCopy.whatsapp}
+                      </span>
+                    </Link>
                     <strong>{number(item.count)}</strong>
                     <small>
                       {contactPreferenceCopy.count(number(item.count))}
