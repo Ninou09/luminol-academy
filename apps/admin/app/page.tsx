@@ -15,6 +15,7 @@ import { getCampaignLinkBuilderCopy } from '../lib/campaign-link-builder-localiz
 import { buildEnquiryCampaignAttributionQuery } from '../lib/enquiry-campaign-filter';
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
+import { buildEnquiryActiveAgeQuery } from '../lib/enquiry-active-age-filter';
 import { getUnassignedEnquiryAgeCopy } from '../lib/enquiry-unassigned-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryCampaignMediumCopy } from '../lib/enquiry-campaign-medium-localization';
@@ -1340,7 +1341,14 @@ export default async function Page() {
             </div>
             <div className="metric-grid" aria-label={ageCopy.title}>
               <article>
-                <span>{ageCopy.under24Hours}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryActiveAgeQuery('under24Hours')}`,
+                  )}
+                >
+                  <span>{ageCopy.under24Hours}</span>
+                </Link>
                 <strong>
                   {number(operations.activeEnquiryAge.buckets.under24Hours)}
                 </strong>
@@ -1351,7 +1359,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{ageCopy.oneToThreeDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryActiveAgeQuery('oneToThreeDays')}`,
+                  )}
+                >
+                  <span>{ageCopy.oneToThreeDays}</span>
+                </Link>
                 <strong>
                   {number(operations.activeEnquiryAge.buckets.oneToThreeDays)}
                 </strong>
@@ -1362,7 +1377,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{ageCopy.fourToSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryActiveAgeQuery('fourToSevenDays')}`,
+                  )}
+                >
+                  <span>{ageCopy.fourToSevenDays}</span>
+                </Link>
                 <strong>
                   {number(operations.activeEnquiryAge.buckets.fourToSevenDays)}
                 </strong>
@@ -1373,7 +1395,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{ageCopy.overSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryActiveAgeQuery('overSevenDays')}`,
+                  )}
+                >
+                  <span>{ageCopy.overSevenDays}</span>
+                </Link>
                 <strong>
                   {number(operations.activeEnquiryAge.buckets.overSevenDays)}
                 </strong>
