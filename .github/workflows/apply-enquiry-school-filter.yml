@@ -1,0 +1,196 @@
+name: Apply enquiry school filter
+
+on:
+  push:
+    branches:
+      - feat/enquiry-school-filter
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-school-filter
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - name: Integrate school filtering
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('apps/admin/app/enquiries/page.tsx')
+          text = page.read_text()
+
+          localization_marker = "import { getEnquiryLandingPathFilterCopy } from '../../lib/enquiry-landing-path-filter-localization';\n"
+          localization_addition = localization_marker + "import { getEnquirySchoolFilterCopy } from '../../lib/enquiry-school-filter-localization';\n"
+          if localization_marker not in text:
+              raise SystemExit('landing localization marker not found')
+          text = text.replace(localization_marker, localization_addition, 1)
+
+          landing_import = "import {\n  getEnquiryLandingPathWhere,\n  parseEnquiryLandingPathFilter,\n} from '../../lib/enquiry-landing-path-filter';\n"
+          school_import = landing_import + "import {\n  getEnquirySchoolWhere,\n  parseEnquirySchoolFilter,\n  type EnquirySchoolValue,\n} from '../../lib/enquiry-school-filter';\n"
+          if landing_import not in text:
+              raise SystemExit('landing helper import marker not found')
+          text = text.replace(landing_import, school_import, 1)
+
+          param_marker = "    landingPath?: string | string[] | undefined;\n"
+          if param_marker not in text:
+              raise SystemExit('landingPath search param marker not found')
+          text = text.replace(param_marker, param_marker + "    school?: string | string[] | undefined;\n", 1)
+
+          signature_marker = "  landingPath: string | null = null,\n) {\n"
+          if signature_marker not in text:
+              raise SystemExit('buildEnquiryHref landing signature marker not found')
+          text = text.replace(signature_marker, "  landingPath: string | null = null,\n  school: EnquirySchoolValue | null = null,\n) {\n", 1)
+
+          query_marker = "  if (landingPath) query.set('landingPath', landingPath);\n"
+          if query_marker not in text:
+              raise SystemExit('landing query marker not found')
+          text = text.replace(query_marker, query_marker + "  if (school) query.set('school', school);\n", 1)
+
+          copy_marker = "  const landingPathFilterCopy = getEnquiryLandingPathFilterCopy(locale);\n"
+          if copy_marker not in text:
+              raise SystemExit('landing copy marker not found')
+          text = text.replace(copy_marker, copy_marker + "  const schoolFilterCopy = getEnquirySchoolFilterCopy(locale);\n", 1)
+
+          parse_marker = "  const activeLandingPath = parseEnquiryLandingPathFilter(params?.landingPath);\n"
+          if parse_marker not in text:
+              raise SystemExit('landing parse marker not found')
+          text = text.replace(parse_marker, parse_marker + "  const activeSchool = parseEnquirySchoolFilter(params?.school);\n", 1)
+
+          where_marker = "  const landingPathWhere = getEnquiryLandingPathWhere(activeLandingPath);\n  if (landingPathWhere) filters.push(landingPathWhere);\n"
+          if where_marker not in text:
+              raise SystemExit('landing where marker not found')
+          text = text.replace(where_marker, where_marker + "  const schoolWhere = getEnquirySchoolWhere(activeSchool);\n  if (schoolWhere) filters.push(schoolWhere);\n", 1)
+
+          href_marker = "      activeCampaignAttribution,\n      activeLandingPath,\n    );\n"
+          if href_marker not in text:
+              raise SystemExit('hrefFor preservation marker not found')
+          text = text.replace(href_marker, "      activeCampaignAttribution,\n      activeLandingPath,\n      activeSchool,\n    );\n", 1)
+
+          campaign_clear = "                      null,\n                      activeLandingPath,\n                    )}\n"
+          if campaign_clear not in text:
+              raise SystemExit('campaign clear marker not found')
+          text = text.replace(campaign_clear, "                      null,\n                      activeLandingPath,\n                      activeSchool,\n                    )}\n", 1)
+
+          landing_clear = "                      activeCampaignAttribution,\n                      null,\n                    )}\n"
+          if landing_clear not in text:
+              raise SystemExit('landing clear marker not found')
+          text = text.replace(landing_clear, "                      activeCampaignAttribution,\n                      null,\n                      activeSchool,\n                    )}\n", 1)
+
+          attention_marker = "            <div className={styles.attentionSection}>\n              <span className={styles.filterLabel}>{copy.attentionQueue}</span>\n"
+          school_panel = "\n".join([
+              "            {activeSchool ? (",
+              "              <div className={styles.attentionSection}>",
+              "                <span className={styles.filterLabel}>",
+              "                  {schoolFilterCopy.eyebrow}",
+              "                </span>",
+              "                <div className={styles.filters}>",
+              "                  <span className={styles.filterLink}>",
+              "                    {schoolFilterCopy.school}:{' '}",
+              "                    {getAdminEnumLabel(locale, activeSchool)}",
+              "                  </span>",
+              "                  <Link",
+              "                    className={styles.filterLink}",
+              "                    href={buildEnquiryHref(",
+              "                      locale,",
+              "                      activeStatus,",
+              "                      activeFollowUp,",
+              "                      activeAttention,",
+              "                      activeOwner,",
+              "                      activeCampaignAttribution,",
+              "                      activeLandingPath,",
+              "                      null,",
+              "                    )}",
+              "                  >",
+              "                    <span>{schoolFilterCopy.clear}</span>",
+              "                  </Link>",
+              "                </div>",
+              "                <p className={styles.filterLabel}>{schoolFilterCopy.intro}</p>",
+              "              </div>",
+              "            ) : null}",
+              "",
+              attention_marker.rstrip('\n'),
+              "",
+          ])
+          if attention_marker not in text:
+              raise SystemExit('attention section marker not found')
+          text = text.replace(attention_marker, school_panel, 1)
+
+          required = [
+              'school?: string | string[] | undefined;',
+              'parseEnquirySchoolFilter(params?.school)',
+              'getEnquirySchoolWhere(activeSchool)',
+              'schoolFilterCopy.clear',
+              'activeLandingPath,\n      activeSchool,',
+          ]
+          for marker in required:
+              if marker not in text:
+                  raise SystemExit(f'missing expected enquiry page integration: {marker}')
+          page.write_text(text)
+
+          dashboard = Path('apps/admin/app/page.tsx')
+          dashboard_text = dashboard.read_text()
+          import_marker = "import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';\n"
+          if import_marker not in dashboard_text:
+              raise SystemExit('dashboard landing import marker not found')
+          dashboard_text = dashboard_text.replace(import_marker, import_marker + "import { buildEnquirySchoolQuery } from '../lib/enquiry-school-filter';\n", 1)
+
+          school_span = "                    <span>{getAdminEnumLabel(locale, item.school)}</span>\n"
+          school_link = "\n".join([
+              "                    <Link",
+              "                      href={localizeHref(",
+              "                        locale,",
+              "                        `/enquiries?${buildEnquirySchoolQuery(item.school)}` ,",
+              "                      )}",
+              "                    >",
+              "                      <span>{getAdminEnumLabel(locale, item.school)}</span>",
+              "                    </Link>",
+              "",
+          ])
+          if school_span not in dashboard_text:
+              raise SystemExit('dashboard school span marker not found')
+          dashboard_text = dashboard_text.replace(school_span, school_link, 1)
+          if 'buildEnquirySchoolQuery(item.school)' not in dashboard_text:
+              raise SystemExit('dashboard school link missing')
+          dashboard.write_text(dashboard_text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-school-filter.ts \
+            apps/admin/lib/enquiry-school-filter.test.ts \
+            apps/admin/lib/enquiry-school-filter-localization.ts \
+            apps/admin/lib/enquiry-school-filter-localization.test.ts
+      - name: Run focused checks
+        run: |
+          pnpm --filter @luminol/admin typecheck
+          pnpm --filter @luminol/admin test -- enquiry-school-filter
+          git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-school-filter.ts \
+            apps/admin/lib/enquiry-school-filter.test.ts \
+            apps/admin/lib/enquiry-school-filter-localization.ts \
+            apps/admin/lib/enquiry-school-filter-localization.test.ts
+          git commit -m "Integrate school enquiry drill-down"
+          git push origin HEAD:feat/enquiry-school-filter
