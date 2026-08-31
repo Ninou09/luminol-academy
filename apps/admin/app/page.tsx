@@ -26,6 +26,7 @@ import { buildEnquirySchoolQuery } from '../lib/enquiry-school-filter';
 import { buildEnquiryContactPreferenceQuery } from '../lib/enquiry-contact-preference-filter';
 import { buildEnquiryDeliveryPreferenceQuery } from '../lib/enquiry-delivery-preference-filter';
 import { buildEnquiryTimingPreferenceQuery } from '../lib/enquiry-timing-preference-filter';
+import { buildEnquiryProgrammeQuery } from '../lib/enquiry-programme-filter';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
@@ -317,8 +318,20 @@ export default async function Page() {
             {operations.programmeEnquiryMixLast30Days.length > 0 ? (
               <div className="metric-grid" aria-label={programmeMixCopy.title}>
                 {operations.programmeEnquiryMixLast30Days.map((item) => (
-                  <article key={item.programmeSlug}>
-                    <span dir="auto">{item.programmeTitleSnapshot}</span>
+                  <article
+                    key={`${item.programmeSlug}:${item.programmeTitleSnapshot}`}
+                  >
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquiryProgrammeQuery({
+                          programmeSlug: item.programmeSlug,
+                          programmeTitleSnapshot: item.programmeTitleSnapshot,
+                        })}`,
+                      )}
+                    >
+                      <span dir="auto">{item.programmeTitleSnapshot}</span>
+                    </Link>
                     <strong>{number(item.count)}</strong>
                     <small>
                       {programmeMixCopy.enquiryCount(number(item.count))}
