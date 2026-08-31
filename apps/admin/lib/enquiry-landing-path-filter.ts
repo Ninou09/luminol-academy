@@ -6,6 +6,13 @@ function firstParam(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
+function containsControlCharacter(value: string): boolean {
+  return Array.from(value).some((character) => {
+    const codePoint = character.codePointAt(0) ?? 0;
+    return codePoint <= 31 || codePoint === 127;
+  });
+}
+
 export function parseEnquiryLandingPathFilter(
   value: string | string[] | undefined,
 ): string | null {
@@ -14,7 +21,7 @@ export function parseEnquiryLandingPathFilter(
   if (candidate.length > ENQUIRY_LANDING_PATH_FILTER_LIMIT) return null;
   if (!candidate.startsWith('/') || candidate.startsWith('//')) return null;
   if (/[?#\\\s]/u.test(candidate)) return null;
-  if (/[\u0000-\u001f\u007f]/u.test(candidate)) return null;
+  if (containsControlCharacter(candidate)) return null;
 
   return candidate;
 }
