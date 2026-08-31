@@ -27,7 +27,17 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:generate
       - name: Integrate programme filtering
-        run: python .github/scripts/apply-enquiry-programme-filter-v2.py
+        run: |
+          if ! python .github/scripts/apply-enquiry-programme-filter-v2.py > /tmp/programme-filter.log 2>&1; then
+            cp /tmp/programme-filter.log .github/programme-filter-integration-error.txt
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/programme-filter-integration-error.txt
+            git commit -m "chore: capture programme filter integration error"
+            git push origin HEAD:feat/enquiry-programme-filter
+            cat /tmp/programme-filter.log
+            exit 1
+          fi
       - name: Format intended files
         run: |
           pnpm exec prettier --write \
