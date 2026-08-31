@@ -15,6 +15,7 @@ import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localiz
 import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-localization';
 import { getEnquiryLandingPathFilterCopy } from '../../lib/enquiry-landing-path-filter-localization';
 import { getEnquirySchoolFilterCopy } from '../../lib/enquiry-school-filter-localization';
+import { getEnquiryContactPreferenceFilterCopy } from '../../lib/enquiry-contact-preference-filter-localization';
 import {
   getEnquiryCampaignAttributionWhere,
   parseEnquiryCampaignAttributionFilter,
@@ -29,6 +30,11 @@ import {
   parseEnquirySchoolFilter,
   type EnquirySchoolValue,
 } from '../../lib/enquiry-school-filter';
+import {
+  getEnquiryContactPreferenceWhere,
+  parseEnquiryContactPreferenceFilter,
+  type EnquiryContactPreference,
+} from '../../lib/enquiry-contact-preference-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -92,6 +98,7 @@ type EnquiryPageProps = {
     utmContent?: string | string[] | undefined;
     landingPath?: string | string[] | undefined;
     school?: string | string[] | undefined;
+    preferredContact?: string | string[] | undefined;
   }>;
 };
 
@@ -128,6 +135,7 @@ function buildEnquiryHref(
   campaignAttribution: EnquiryCampaignAttributionFilter | null = null,
   landingPath: string | null = null,
   school: EnquirySchoolValue | null = null,
+  preferredContact: EnquiryContactPreference | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -148,6 +156,7 @@ function buildEnquiryHref(
   }
   if (landingPath) query.set('landingPath', landingPath);
   if (school) query.set('school', school);
+  if (preferredContact) query.set('preferredContact', preferredContact);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -166,6 +175,8 @@ export default async function EnquiriesAdminPage({
   const campaignFilterCopy = getEnquiryCampaignFilterCopy(locale);
   const landingPathFilterCopy = getEnquiryLandingPathFilterCopy(locale);
   const schoolFilterCopy = getEnquirySchoolFilterCopy(locale);
+  const contactPreferenceFilterCopy =
+    getEnquiryContactPreferenceFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -184,6 +195,9 @@ export default async function EnquiriesAdminPage({
   );
   const activeLandingPath = parseEnquiryLandingPathFilter(params?.landingPath);
   const activeSchool = parseEnquirySchoolFilter(params?.school);
+  const activeContactPreference = parseEnquiryContactPreferenceFilter(
+    params?.preferredContact,
+  );
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
   const tomorrowUtc = new Date(todayUtc.getTime() + 86_400_000);
@@ -206,6 +220,10 @@ export default async function EnquiriesAdminPage({
   if (landingPathWhere) filters.push(landingPathWhere);
   const schoolWhere = getEnquirySchoolWhere(activeSchool);
   if (schoolWhere) filters.push(schoolWhere);
+  const contactPreferenceWhere = getEnquiryContactPreferenceWhere(
+    activeContactPreference,
+  );
+  if (contactPreferenceWhere) filters.push(contactPreferenceWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -222,6 +240,7 @@ export default async function EnquiriesAdminPage({
       activeCampaignAttribution,
       activeLandingPath,
       activeSchool,
+      activeContactPreference,
     );
 
   const [
@@ -430,6 +449,7 @@ export default async function EnquiriesAdminPage({
                       null,
                       activeLandingPath,
                       activeSchool,
+                      activeContactPreference,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
@@ -459,6 +479,7 @@ export default async function EnquiriesAdminPage({
                       activeCampaignAttribution,
                       null,
                       activeSchool,
+                      activeContactPreference,
                     )}
                   >
                     <span>{landingPathFilterCopy.clear}</span>
@@ -491,12 +512,49 @@ export default async function EnquiriesAdminPage({
                       activeCampaignAttribution,
                       activeLandingPath,
                       null,
+                      activeContactPreference,
                     )}
                   >
                     <span>{schoolFilterCopy.clear}</span>
                   </Link>
                 </div>
                 <p className={styles.filterLabel}>{schoolFilterCopy.intro}</p>
+              </div>
+            ) : null}
+
+            {activeContactPreference ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {contactPreferenceFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {contactPreferenceFilterCopy.preference}:{' '}
+                    {getEnquiryContactPreferenceLabel(
+                      locale,
+                      activeContactPreference,
+                    )}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      null,
+                    )}
+                  >
+                    <span>{contactPreferenceFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {contactPreferenceFilterCopy.intro}
+                </p>
               </div>
             ) : null}
 
