@@ -1,0 +1,273 @@
+name: Apply enquiry follow-up timing filter
+
+on:
+  push:
+    branches:
+      - feat/enquiry-follow-up-timing-filter
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-follow-up-timing-filter
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - name: Integrate follow-up timing filter
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('apps/admin/app/enquiries/page.tsx')
+          text = page.read_text()
+
+          loc_marker = "import { getEnquiryActiveAgeFilterCopy } from '../../lib/enquiry-active-age-filter-localization';\n"
+          loc_line = "import { getEnquiryFollowUpTimingFilterCopy } from '../../lib/enquiry-follow-up-timing-filter-localization';\n"
+          if loc_marker not in text:
+              raise SystemExit('active-age localization import marker not found')
+          text = text.replace(loc_marker, loc_marker + loc_line, 1)
+
+          filter_marker = "import {\n  getEnquiryActiveAgeWhere,\n  parseEnquiryActiveAgeFilter,\n  type EnquiryActiveAgeBucket,\n} from '../../lib/enquiry-active-age-filter';\n"
+          filter_addition = filter_marker + "import {\n  getEnquiryFollowUpTimingWhere,\n  parseEnquiryFollowUpTimingFilter,\n  type EnquiryFollowUpTimingBucket,\n} from '../../lib/enquiry-follow-up-timing-filter';\n"
+          if filter_marker not in text:
+              raise SystemExit('active-age filter import marker not found')
+          text = text.replace(filter_marker, filter_addition, 1)
+
+          param_marker = "    activeAge?: string | string[] | undefined;\n"
+          if param_marker not in text:
+              raise SystemExit('activeAge search param marker not found')
+          text = text.replace(
+              param_marker,
+              param_marker + "    followUpTiming?: string | string[] | undefined;\n",
+              1,
+          )
+
+          signature_marker = "  activeAge: EnquiryActiveAgeBucket | null = null,\n) {\n"
+          if signature_marker not in text:
+              raise SystemExit('buildEnquiryHref signature marker not found')
+          text = text.replace(
+              signature_marker,
+              "  activeAge: EnquiryActiveAgeBucket | null = null,\n  followUpTiming: EnquiryFollowUpTimingBucket | null = null,\n) {\n",
+              1,
+          )
+
+          query_marker = "  if (activeAge) query.set('activeAge', activeAge);\n"
+          if query_marker not in text:
+              raise SystemExit('activeAge query marker not found')
+          text = text.replace(
+              query_marker,
+              query_marker + "  if (followUpTiming) query.set('followUpTiming', followUpTiming);\n",
+              1,
+          )
+
+          copy_marker = "  const activeAgeFilterCopy = getEnquiryActiveAgeFilterCopy(locale);\n"
+          if copy_marker not in text:
+              raise SystemExit('activeAge copy marker not found')
+          text = text.replace(
+              copy_marker,
+              copy_marker + "  const followUpTimingFilterCopy = getEnquiryFollowUpTimingFilterCopy(locale);\n",
+              1,
+          )
+
+          parse_marker = "  const activeAge = parseEnquiryActiveAgeFilter(params?.activeAge);\n"
+          if parse_marker not in text:
+              raise SystemExit('activeAge parse marker not found')
+          text = text.replace(
+              parse_marker,
+              parse_marker + "  const activeFollowUpTiming = parseEnquiryFollowUpTimingFilter(\n    params?.followUpTiming,\n  );\n",
+              1,
+          )
+
+          where_marker = "  const activeAgeWhere = getEnquiryActiveAgeWhere(now, activeAge);\n  if (activeAgeWhere) filters.push(activeAgeWhere);\n"
+          if where_marker not in text:
+              raise SystemExit('activeAge where marker not found')
+          text = text.replace(
+              where_marker,
+              where_marker + "  const followUpTimingWhere = getEnquiryFollowUpTimingWhere(\n    now,\n    activeFollowUpTiming,\n  );\n  if (followUpTimingWhere) filters.push(followUpTimingWhere);\n",
+              1,
+          )
+
+          href_scope_marker = "      activeQualificationGap,\n      activeAge,\n    );\n"
+          if href_scope_marker not in text:
+              raise SystemExit('hrefFor scope marker not found')
+          text = text.replace(
+              href_scope_marker,
+              "      activeQualificationGap,\n      activeAge,\n      activeFollowUpTiming,\n    );\n",
+              1,
+          )
+
+          direct_marker = "                      activeAge,\n                    )}"
+          direct_count = text.count(direct_marker)
+          if direct_count != 9:
+              raise SystemExit(f'expected 9 direct activeAge clear scopes, found {direct_count}')
+          text = text.replace(
+              direct_marker,
+              "                      activeAge,\n                      activeFollowUpTiming,\n                    )}",
+          )
+
+          age_clear_marker = "                      activeQualificationGap,\n                      null,\n                    )}"
+          if text.count(age_clear_marker) != 1:
+              raise SystemExit('active-age clear marker not found exactly once')
+          text = text.replace(
+              age_clear_marker,
+              "                      activeQualificationGap,\n                      null,\n                      activeFollowUpTiming,\n                    )}",
+              1,
+          )
+
+          panel_marker = """                <p className={styles.filterLabel}>
+                  {activeAgeFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+
+            <div className={styles.attentionSection}>
+"""
+          if text.count(panel_marker) != 1:
+              raise SystemExit('active-age panel tail marker not found exactly once')
+          follow_up_panel = """                <p className={styles.filterLabel}>
+                  {activeAgeFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+
+            {activeFollowUpTiming ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {followUpTimingFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {followUpTimingFilterCopy.label(activeFollowUpTiming)}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      activeContactPreference,
+                      activeDeliveryPreference,
+                      activeTimingPreference,
+                      activeProgramme,
+                      activeCity,
+                      activeQualificationGap,
+                      activeAge,
+                      null,
+                    )}
+                  >
+                    <span>{followUpTimingFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {followUpTimingFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+
+            <div className={styles.attentionSection}>
+"""
+          text = text.replace(panel_marker, follow_up_panel, 1)
+
+          required = [
+              'followUpTiming?: string | string[] | undefined;',
+              "query.set('followUpTiming', followUpTiming)",
+              'activeFollowUpTiming = parseEnquiryFollowUpTimingFilter',
+              'getEnquiryFollowUpTimingWhere(',
+              'followUpTimingFilterCopy.label(activeFollowUpTiming)',
+          ]
+          for needle in required:
+              if needle not in text:
+                  raise SystemExit(f'missing expected page integration: {needle}')
+
+          page.write_text(text)
+
+          dashboard = Path('apps/admin/app/page.tsx')
+          dashboard_text = dashboard.read_text()
+
+          dashboard_import_marker = "import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';\n"
+          dashboard_import_line = "import { buildEnquiryFollowUpTimingQuery } from '../lib/enquiry-follow-up-timing-filter';\n"
+          if dashboard_import_marker not in dashboard_text:
+              raise SystemExit('dashboard follow-up timing import marker not found')
+          dashboard_text = dashboard_text.replace(
+              dashboard_import_marker,
+              dashboard_import_line + dashboard_import_marker,
+              1,
+          )
+
+          dashboard_buckets = [
+              ('missingPlan', 'missingPlan'),
+              ('pastDue', 'pastDue'),
+              ('next24Hours', 'next24Hours'),
+              ('oneToThreeDays', 'oneToThreeDays'),
+              ('later', 'later'),
+          ]
+          for label, bucket in dashboard_buckets:
+              old = f'<span>{{followUpTimingCopy.{label}}}</span>'
+              count = dashboard_text.count(old)
+              if count != 1:
+                  raise SystemExit(
+                      f'expected one follow-up timing dashboard label {label}, found {count}'
+                  )
+              link = (
+                  "<Link\n"
+                  "  href={localizeHref(\n"
+                  "    locale,\n"
+                  + "    `/enquiries?${buildEnquiryFollowUpTimingQuery('"
+                  + bucket
+                  + "')}`,\n"
+                  "  )}\n"
+                  ">\n"
+                  "  " + old + "\n"
+                  "</Link>"
+              )
+              dashboard_text = dashboard_text.replace(old, link, 1)
+
+          if dashboard_text.count('buildEnquiryFollowUpTimingQuery(') != 5:
+              raise SystemExit('expected five follow-up timing dashboard drill-downs')
+
+          dashboard.write_text(dashboard_text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-follow-up-timing-filter.ts \
+            apps/admin/lib/enquiry-follow-up-timing-filter.test.ts \
+            apps/admin/lib/enquiry-follow-up-timing-filter-localization.ts \
+            apps/admin/lib/enquiry-follow-up-timing-filter-localization.test.ts
+      - name: Run focused checks
+        run: |
+          pnpm --filter @luminol/admin typecheck
+          pnpm --filter @luminol/admin test -- enquiry-follow-up-timing-filter
+          git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-follow-up-timing-filter.ts \
+            apps/admin/lib/enquiry-follow-up-timing-filter.test.ts \
+            apps/admin/lib/enquiry-follow-up-timing-filter-localization.ts \
+            apps/admin/lib/enquiry-follow-up-timing-filter-localization.test.ts
+          git commit -m "Integrate follow-up timing enquiry drill-downs"
+          git push origin HEAD:feat/enquiry-follow-up-timing-filter
