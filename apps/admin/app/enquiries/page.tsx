@@ -13,11 +13,16 @@ import { AdminLanguageSwitcher } from '../../components/admin-language-switcher'
 import { getAdminEnumLabel } from '../../lib/admin-localization';
 import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';
 import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-localization';
+import { getEnquiryLandingPathFilterCopy } from '../../lib/enquiry-landing-path-filter-localization';
 import {
   getEnquiryCampaignAttributionWhere,
   parseEnquiryCampaignAttributionFilter,
   type EnquiryCampaignAttributionFilter,
 } from '../../lib/enquiry-campaign-filter';
+import {
+  getEnquiryLandingPathWhere,
+  parseEnquiryLandingPathFilter,
+} from '../../lib/enquiry-landing-path-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -79,6 +84,7 @@ type EnquiryPageProps = {
     utmCampaign?: string | string[] | undefined;
     utmMedium?: string | string[] | undefined;
     utmContent?: string | string[] | undefined;
+    landingPath?: string | string[] | undefined;
   }>;
 };
 
@@ -113,6 +119,7 @@ function buildEnquiryHref(
   attention: EnquiryAttentionFilter | null,
   owner: EnquiryOwnerFilter | null,
   campaignAttribution: EnquiryCampaignAttributionFilter | null = null,
+  landingPath: string | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -131,6 +138,7 @@ function buildEnquiryHref(
       query.set('utmContent', campaignAttribution.utmContent);
     }
   }
+  if (landingPath) query.set('landingPath', landingPath);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -147,6 +155,7 @@ export default async function EnquiriesAdminPage({
   const copy = getEnquiryDeskCopy(locale);
   const attributionCopy = getEnquiryAttributionCopy(locale);
   const campaignFilterCopy = getEnquiryCampaignFilterCopy(locale);
+  const landingPathFilterCopy = getEnquiryLandingPathFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -163,6 +172,7 @@ export default async function EnquiriesAdminPage({
     params?.utmMedium,
     params?.utmContent,
   );
+  const activeLandingPath = parseEnquiryLandingPathFilter(params?.landingPath);
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
   const tomorrowUtc = new Date(todayUtc.getTime() + 86_400_000);
@@ -181,6 +191,8 @@ export default async function EnquiriesAdminPage({
     activeCampaignAttribution,
   );
   if (campaignAttributionWhere) filters.push(campaignAttributionWhere);
+  const landingPathWhere = getEnquiryLandingPathWhere(activeLandingPath);
+  if (landingPathWhere) filters.push(landingPathWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -195,6 +207,7 @@ export default async function EnquiriesAdminPage({
       attention,
       owner,
       activeCampaignAttribution,
+      activeLandingPath,
     );
 
   const [
@@ -401,12 +414,43 @@ export default async function EnquiriesAdminPage({
                       activeAttention,
                       activeOwner,
                       null,
+                      activeLandingPath,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
                   </Link>
                 </div>
                 <p className={styles.filterLabel}>{campaignFilterCopy.intro}</p>
+              </div>
+            ) : null}
+
+            {activeLandingPath ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {landingPathFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink} dir="ltr">
+                    {landingPathFilterCopy.path}: {activeLandingPath}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      null,
+                    )}
+                  >
+                    <span>{landingPathFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {landingPathFilterCopy.intro}
+                </p>
               </div>
             ) : null}
 
