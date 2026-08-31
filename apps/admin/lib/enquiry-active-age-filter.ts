@@ -1,5 +1,6 @@
 import type { Prisma } from '@luminol/database';
 
+import type { EnquiryAttentionFilter } from './enquiry-attention';
 import {
   getActiveEnquiryAgeWhere,
   type ActiveEnquiryAgeBucket,
@@ -36,6 +37,16 @@ export function buildEnquiryActiveAgeQuery(
   activeAge: EnquiryActiveAgeBucket,
 ): string {
   const query = new URLSearchParams();
+  query.set('activeAge', activeAge);
+  return query.toString();
+}
+
+export function buildEnquiryAttentionActiveAgeQuery(
+  attention: EnquiryAttentionFilter,
+  activeAge: EnquiryActiveAgeBucket,
+): string {
+  const query = new URLSearchParams();
+  query.set('attention', attention);
   query.set('activeAge', activeAge);
   return query.toString();
 }
