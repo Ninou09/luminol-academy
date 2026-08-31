@@ -16,6 +16,7 @@ import { buildEnquiryCampaignAttributionQuery } from '../lib/enquiry-campaign-fi
 import { getAdminCopy, getAdminEnumLabel } from '../lib/admin-localization';
 import { getEnquiryAgeCopy } from '../lib/enquiry-age-localization';
 import { buildEnquiryActiveAgeQuery } from '../lib/enquiry-active-age-filter';
+import { buildEnquiryOperationalAgeQuery } from '../lib/enquiry-operational-age-drilldown';
 import { getUnassignedEnquiryAgeCopy } from '../lib/enquiry-unassigned-age-localization';
 import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporting-localization';
 import { getEnquiryCampaignMediumCopy } from '../lib/enquiry-campaign-medium-localization';
@@ -1428,7 +1429,14 @@ export default async function Page() {
             </div>
             <div className="metric-grid" aria-label={unassignedAgeCopy.title}>
               <article>
-                <span>{unassignedAgeCopy.under24Hours}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('unassigned', 'under24Hours')}`,
+                  )}
+                >
+                  <span>{unassignedAgeCopy.under24Hours}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.unassignedActiveEnquiryAge.buckets.under24Hours,
@@ -1444,7 +1452,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{unassignedAgeCopy.oneToThreeDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('unassigned', 'oneToThreeDays')}`,
+                  )}
+                >
+                  <span>{unassignedAgeCopy.oneToThreeDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.unassignedActiveEnquiryAge.buckets
@@ -1461,7 +1476,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{unassignedAgeCopy.fourToSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('unassigned', 'fourToSevenDays')}`,
+                  )}
+                >
+                  <span>{unassignedAgeCopy.fourToSevenDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.unassignedActiveEnquiryAge.buckets
@@ -1478,7 +1500,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{unassignedAgeCopy.overSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('unassigned', 'overSevenDays')}`,
+                  )}
+                >
+                  <span>{unassignedAgeCopy.overSevenDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.unassignedActiveEnquiryAge.buckets.overSevenDays,
@@ -1512,7 +1541,14 @@ export default async function Page() {
               aria-label={missingFollowUpAgeCopy.title}
             >
               <article>
-                <span>{missingFollowUpAgeCopy.under24Hours}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-without-follow-up', 'under24Hours')}`,
+                  )}
+                >
+                  <span>{missingFollowUpAgeCopy.under24Hours}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.missingFollowUpPlanAge.buckets.under24Hours,
@@ -1527,7 +1563,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{missingFollowUpAgeCopy.oneToThreeDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-without-follow-up', 'oneToThreeDays')}`,
+                  )}
+                >
+                  <span>{missingFollowUpAgeCopy.oneToThreeDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.missingFollowUpPlanAge.buckets.oneToThreeDays,
@@ -1542,7 +1585,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{missingFollowUpAgeCopy.fourToSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-without-follow-up', 'fourToSevenDays')}`,
+                  )}
+                >
+                  <span>{missingFollowUpAgeCopy.fourToSevenDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.missingFollowUpPlanAge.buckets.fourToSevenDays,
@@ -1557,7 +1607,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{missingFollowUpAgeCopy.overSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-without-follow-up', 'overSevenDays')}`,
+                  )}
+                >
+                  <span>{missingFollowUpAgeCopy.overSevenDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.missingFollowUpPlanAge.buckets.overSevenDays,
@@ -1592,7 +1649,14 @@ export default async function Page() {
               aria-label={incompleteQualificationAgeCopy.title}
             >
               <article>
-                <span>{incompleteQualificationAgeCopy.under24Hours}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-incomplete-qualification', 'under24Hours')}`,
+                  )}
+                >
+                  <span>{incompleteQualificationAgeCopy.under24Hours}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.incompleteQualificationAge.buckets.under24Hours,
@@ -1608,7 +1672,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{incompleteQualificationAgeCopy.oneToThreeDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-incomplete-qualification', 'oneToThreeDays')}`,
+                  )}
+                >
+                  <span>{incompleteQualificationAgeCopy.oneToThreeDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.incompleteQualificationAge.buckets
@@ -1625,7 +1696,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{incompleteQualificationAgeCopy.fourToSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-incomplete-qualification', 'fourToSevenDays')}`,
+                  )}
+                >
+                  <span>{incompleteQualificationAgeCopy.fourToSevenDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.incompleteQualificationAge.buckets
@@ -1642,7 +1720,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{incompleteQualificationAgeCopy.overSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-incomplete-qualification', 'overSevenDays')}`,
+                  )}
+                >
+                  <span>{incompleteQualificationAgeCopy.overSevenDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.incompleteQualificationAge.buckets.overSevenDays,
@@ -1674,7 +1759,14 @@ export default async function Page() {
               aria-label={unrecordedContactAgeCopy.title}
             >
               <article>
-                <span>{unrecordedContactAgeCopy.under24Hours}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-without-recorded-contact', 'under24Hours')}`,
+                  )}
+                >
+                  <span>{unrecordedContactAgeCopy.under24Hours}</span>
+                </Link>
                 <strong>
                   {number(operations.unrecordedContactAge.buckets.under24Hours)}
                 </strong>
@@ -1687,7 +1779,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{unrecordedContactAgeCopy.oneToThreeDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-without-recorded-contact', 'oneToThreeDays')}`,
+                  )}
+                >
+                  <span>{unrecordedContactAgeCopy.oneToThreeDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.unrecordedContactAge.buckets.oneToThreeDays,
@@ -1702,7 +1801,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{unrecordedContactAgeCopy.fourToSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-without-recorded-contact', 'fourToSevenDays')}`,
+                  )}
+                >
+                  <span>{unrecordedContactAgeCopy.fourToSevenDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.unrecordedContactAge.buckets.fourToSevenDays,
@@ -1717,7 +1823,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{unrecordedContactAgeCopy.overSevenDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryOperationalAgeQuery('active-without-recorded-contact', 'overSevenDays')}`,
+                  )}
+                >
+                  <span>{unrecordedContactAgeCopy.overSevenDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.unrecordedContactAge.buckets.overSevenDays,
