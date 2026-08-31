@@ -1,0 +1,85 @@
+name: Apply enquiry status drill-downs
+
+on:
+  push:
+    branches:
+      - feat/enquiry-status-drilldowns
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-status-drilldowns
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - name: Link status mix cards
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('apps/admin/app/page.tsx')
+          text = page.read_text()
+
+          import_marker = "import { buildEnquiryActiveAgeQuery } from '../lib/enquiry-active-age-filter';\n"
+          import_line = "import { buildEnquiryStatusQuery } from '../lib/enquiry-status-filter';\n"
+          if import_marker not in text:
+              raise SystemExit('status import marker not found')
+          if import_line not in text:
+              text = text.replace(import_marker, import_marker + import_line, 1)
+
+          old = '<span>{getAdminEnumLabel(locale, item.status)}</span>'
+          count = text.count(old)
+          if count != 2:
+              raise SystemExit(f'expected exactly two status mix labels, found {count}')
+
+          link = "\n".join([
+              "<Link",
+              "  href={localizeHref(",
+              "    locale,",
+              "    `/enquiries?${buildEnquiryStatusQuery(item.status)}` ,",
+              "  )}",
+              ">",
+              "  " + old,
+              "</Link>",
+          ])
+          text = text.replace(old, link)
+
+          if text.count('buildEnquiryStatusQuery(item.status)') != 2:
+              raise SystemExit('expected exactly two status drill-down links')
+
+          page.write_text(text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-status-filter.ts \
+            apps/admin/lib/enquiry-status-filter.test.ts
+      - name: Run focused checks
+        run: |
+          pnpm --filter @luminol/admin typecheck
+          pnpm --filter @luminol/admin test -- enquiry-status-filter
+          git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-status-filter.ts \
+            apps/admin/lib/enquiry-status-filter.test.ts
+          git commit -m "Link enquiry status mixes to protected views"
+          git push origin HEAD:feat/enquiry-status-drilldowns
