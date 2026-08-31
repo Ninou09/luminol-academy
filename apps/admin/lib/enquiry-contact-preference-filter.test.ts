@@ -7,9 +7,8 @@ import {
 } from './enquiry-contact-preference-filter';
 
 describe('enquiry contact-preference filter', () => {
-  it.each(['EMAIL', 'PHONE', 'WHATSAPP'] as const)(
-    'accepts %s',
-    (value) => expect(parseEnquiryContactPreferenceFilter(value)).toBe(value),
+  it.each(['EMAIL', 'PHONE', 'WHATSAPP'] as const)('accepts %s', (value) =>
+    expect(parseEnquiryContactPreferenceFilter(value)).toBe(value),
   );
 
   it('fails closed for repeated values', () => {
