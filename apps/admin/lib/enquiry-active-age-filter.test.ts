@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   buildEnquiryActiveAgeQuery,
+  buildEnquiryAttentionActiveAgeQuery,
   ENQUIRY_ACTIVE_AGE_BUCKETS,
   getEnquiryActiveAgeWhere,
   parseEnquiryActiveAgeFilter,
@@ -57,5 +58,14 @@ describe('enquiry active age filter', () => {
     expect(buildEnquiryActiveAgeQuery('fourToSevenDays')).toBe(
       'activeAge=fourToSevenDays',
     );
+  });
+
+  it('composes an attention queue and age bucket without changing either token', () => {
+    expect(
+      buildEnquiryAttentionActiveAgeQuery(
+        'active-without-follow-up',
+        'oneToThreeDays',
+      ),
+    ).toBe('attention=active-without-follow-up&activeAge=oneToThreeDays');
   });
 });
