@@ -1,0 +1,197 @@
+name: Apply enquiry landing path filter
+
+on:
+  push:
+    branches:
+      - feat/enquiry-landing-path-filter
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-landing-path-filter
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - name: Integrate landing path filtering
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('apps/admin/app/enquiries/page.tsx')
+          text = page.read_text()
+
+          localization_import = "import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-localization';\n"
+          localization_addition = localization_import + "import { getEnquiryLandingPathFilterCopy } from '../../lib/enquiry-landing-path-filter-localization';\n"
+          if localization_import not in text:
+              raise SystemExit('campaign filter localization import marker not found')
+          text = text.replace(localization_import, localization_addition, 1)
+
+          campaign_import = "} from '../../lib/enquiry-campaign-filter';\n"
+          landing_import = campaign_import + "import {\n  getEnquiryLandingPathWhere,\n  parseEnquiryLandingPathFilter,\n} from '../../lib/enquiry-landing-path-filter';\n"
+          if campaign_import not in text:
+              raise SystemExit('campaign filter import marker not found')
+          text = text.replace(campaign_import, landing_import, 1)
+
+          param_marker = "    utmContent?: string | string[] | undefined;\n"
+          param_addition = param_marker + "    landingPath?: string | string[] | undefined;\n"
+          if param_marker not in text:
+              raise SystemExit('utmContent search param marker not found')
+          text = text.replace(param_marker, param_addition, 1)
+
+          signature_marker = "  campaignAttribution: EnquiryCampaignAttributionFilter | null = null,\n) {\n"
+          signature_replacement = "  campaignAttribution: EnquiryCampaignAttributionFilter | null = null,\n  landingPath: string | null = null,\n) {\n"
+          if signature_marker not in text:
+              raise SystemExit('buildEnquiryHref signature marker not found')
+          text = text.replace(signature_marker, signature_replacement, 1)
+
+          query_marker = "  if (campaignAttribution) {\n    query.set('utmSource', campaignAttribution.utmSource);\n    if (campaignAttribution.utmCampaign) {\n      query.set('utmCampaign', campaignAttribution.utmCampaign);\n    }\n    if (campaignAttribution.utmMedium) {\n      query.set('utmMedium', campaignAttribution.utmMedium);\n    }\n    if (campaignAttribution.utmContent) {\n      query.set('utmContent', campaignAttribution.utmContent);\n    }\n  }\n"
+          query_replacement = query_marker + "  if (landingPath) query.set('landingPath', landingPath);\n"
+          if query_marker not in text:
+              raise SystemExit('campaign query marker not found')
+          text = text.replace(query_marker, query_replacement, 1)
+
+          copy_marker = "  const campaignFilterCopy = getEnquiryCampaignFilterCopy(locale);\n"
+          copy_replacement = copy_marker + "  const landingPathFilterCopy = getEnquiryLandingPathFilterCopy(locale);\n"
+          if copy_marker not in text:
+              raise SystemExit('campaign copy marker not found')
+          text = text.replace(copy_marker, copy_replacement, 1)
+
+          parse_marker = "  const activeCampaignAttribution = parseEnquiryCampaignAttributionFilter(\n    params?.utmSource,\n    params?.utmCampaign,\n    params?.utmMedium,\n    params?.utmContent,\n  );\n"
+          parse_replacement = parse_marker + "  const activeLandingPath = parseEnquiryLandingPathFilter(params?.landingPath);\n"
+          if parse_marker not in text:
+              raise SystemExit('campaign parse marker not found')
+          text = text.replace(parse_marker, parse_replacement, 1)
+
+          where_marker = "  if (campaignAttributionWhere) filters.push(campaignAttributionWhere);\n"
+          where_replacement = where_marker + "  const landingPathWhere = getEnquiryLandingPathWhere(activeLandingPath);\n  if (landingPathWhere) filters.push(landingPathWhere);\n"
+          if where_marker not in text:
+              raise SystemExit('campaign where marker not found')
+          text = text.replace(where_marker, where_replacement, 1)
+
+          href_marker = "      owner,\n      activeCampaignAttribution,\n    );\n"
+          href_replacement = "      owner,\n      activeCampaignAttribution,\n      activeLandingPath,\n    );\n"
+          if href_marker not in text:
+              raise SystemExit('hrefFor preservation marker not found')
+          text = text.replace(href_marker, href_replacement, 1)
+
+          clear_campaign_marker = "                      activeOwner,\n                      null,\n                    )}\n"
+          clear_campaign_replacement = "                      activeOwner,\n                      null,\n                      activeLandingPath,\n                    )}\n"
+          if clear_campaign_marker not in text:
+              raise SystemExit('campaign clear marker not found')
+          text = text.replace(clear_campaign_marker, clear_campaign_replacement, 1)
+
+          campaign_panel_end = "            ) : null}\n\n            <div className={styles.attentionSection}>\n              <span className={styles.filterLabel}>{copy.attentionQueue}</span>\n"
+          landing_panel = """            ) : null}
+
+            {activeLandingPath ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {landingPathFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink} dir=\"ltr\">
+                    {landingPathFilterCopy.path}: {activeLandingPath}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      null,
+                    )}
+                  >
+                    <span>{landingPathFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>{landingPathFilterCopy.intro}</p>
+              </div>
+            ) : null}
+
+            <div className={styles.attentionSection}>
+              <span className={styles.filterLabel}>{copy.attentionQueue}</span>
+"""
+          if campaign_panel_end not in text:
+              raise SystemExit('campaign panel end marker not found')
+          text = text.replace(campaign_panel_end, landing_panel, 1)
+
+          required_page = [
+              'landingPath?: string | string[] | undefined;',
+              'parseEnquiryLandingPathFilter(params?.landingPath)',
+              'getEnquiryLandingPathWhere(activeLandingPath)',
+              'landingPathFilterCopy.clear',
+              'activeCampaignAttribution,\n      activeLandingPath,',
+          ]
+          for marker in required_page:
+              if marker not in text:
+                  raise SystemExit(f'missing expected page integration: {marker}')
+          page.write_text(text)
+
+          dashboard = Path('apps/admin/app/page.tsx')
+          dashboard_text = dashboard.read_text()
+          dashboard_import = "import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';\n"
+          dashboard_import_replacement = dashboard_import + "import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';\n"
+          if dashboard_import not in dashboard_text:
+              raise SystemExit('landing path dashboard import marker not found')
+          dashboard_text = dashboard_text.replace(dashboard_import, dashboard_import_replacement, 1)
+
+          path_span = '                      <span dir="ltr">{item.landingPath}</span>\n'
+          path_link = """                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/enquiries?${buildEnquiryLandingPathQuery(item.landingPath)}`,
+                        )}
+                      >
+                        <span dir=\"ltr\">{item.landingPath}</span>
+                      </Link>
+"""
+          if path_span not in dashboard_text:
+              raise SystemExit('landing path item marker not found')
+          dashboard_text = dashboard_text.replace(path_span, path_link, 1)
+          if 'buildEnquiryLandingPathQuery(item.landingPath)' not in dashboard_text:
+              raise SystemExit('landing path dashboard link missing')
+          dashboard.write_text(dashboard_text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-landing-path-filter.ts \
+            apps/admin/lib/enquiry-landing-path-filter.test.ts \
+            apps/admin/lib/enquiry-landing-path-filter-localization.ts \
+            apps/admin/lib/enquiry-landing-path-filter-localization.test.ts
+      - name: Run focused checks
+        run: |
+          pnpm --filter @luminol/admin typecheck
+          pnpm --filter @luminol/admin test -- enquiry-landing-path-filter
+          git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-landing-path-filter.ts \
+            apps/admin/lib/enquiry-landing-path-filter.test.ts \
+            apps/admin/lib/enquiry-landing-path-filter-localization.ts \
+            apps/admin/lib/enquiry-landing-path-filter-localization.test.ts
+          git commit -m "Integrate landing path enquiry drill-down"
+          git push origin HEAD:feat/enquiry-landing-path-filter
