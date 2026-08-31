@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import {
   buildEnquiryContactPreferenceQuery,
   getEnquiryContactPreferenceWhere,
@@ -24,11 +25,15 @@ describe('enquiry contact-preference filter', () => {
   });
 
   it('builds an exact Prisma predicate', () => {
-    expect(getEnquiryContactPreferenceWhere('EMAIL')).toEqual({ preferredContact: 'EMAIL' });
+    expect(getEnquiryContactPreferenceWhere('EMAIL')).toEqual({
+      preferredContact: 'EMAIL',
+    });
     expect(getEnquiryContactPreferenceWhere(null)).toBeNull();
   });
 
   it('builds the deterministic query', () => {
-    expect(buildEnquiryContactPreferenceQuery('PHONE')).toBe('preferredContact=PHONE');
+    expect(buildEnquiryContactPreferenceQuery('PHONE')).toBe(
+      'preferredContact=PHONE',
+    );
   });
 });
