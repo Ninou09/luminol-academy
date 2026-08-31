@@ -81,7 +81,7 @@ jobs:
                   text = text.replace(old, href, 1)
 
           expected_links = 16
-          actual_links = text.count('buildEnquiryOperationalAgeQuery(') - 1
+          actual_links = text.count('buildEnquiryOperationalAgeQuery(')
           if actual_links != expected_links:
               raise SystemExit(
                   f'expected {expected_links} operational age links, found {actual_links}'
