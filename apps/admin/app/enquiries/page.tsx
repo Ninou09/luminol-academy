@@ -19,6 +19,7 @@ import { getEnquiryContactPreferenceFilterCopy } from '../../lib/enquiry-contact
 import { getEnquiryDeliveryPreferenceFilterCopy } from '../../lib/enquiry-delivery-preference-filter-localization';
 import { getEnquiryTimingPreferenceFilterCopy } from '../../lib/enquiry-timing-preference-filter-localization';
 import { getEnquiryProgrammeFilterCopy } from '../../lib/enquiry-programme-filter-localization';
+import { getEnquiryCityFilterCopy } from '../../lib/enquiry-city-filter-localization';
 import {
   getEnquiryCampaignAttributionWhere,
   parseEnquiryCampaignAttributionFilter,
@@ -53,6 +54,10 @@ import {
   parseEnquiryProgrammeFilter,
   type EnquiryProgrammeFilter,
 } from '../../lib/enquiry-programme-filter';
+import {
+  getEnquiryCityWhere,
+  parseEnquiryCityFilter,
+} from '../../lib/enquiry-city-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -121,6 +126,7 @@ type EnquiryPageProps = {
     timingPreference?: string | string[] | undefined;
     programmeSlug?: string | string[] | undefined;
     programmeTitle?: string | string[] | undefined;
+    city?: string | string[] | undefined;
   }>;
 };
 
@@ -161,6 +167,7 @@ function buildEnquiryHref(
   deliveryPreference: EnquiryDeliveryPreference | null = null,
   timingPreference: EnquiryTimingPreference | null = null,
   programme: EnquiryProgrammeFilter | null = null,
+  city: string | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -188,6 +195,7 @@ function buildEnquiryHref(
     query.set('programmeSlug', programme.programmeSlug);
     query.set('programmeTitle', programme.programmeTitleSnapshot);
   }
+  if (city) query.set('city', city);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -213,6 +221,7 @@ export default async function EnquiriesAdminPage({
   const timingPreferenceFilterCopy =
     getEnquiryTimingPreferenceFilterCopy(locale);
   const programmeFilterCopy = getEnquiryProgrammeFilterCopy(locale);
+  const cityFilterCopy = getEnquiryCityFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -244,6 +253,7 @@ export default async function EnquiriesAdminPage({
     params?.programmeSlug,
     params?.programmeTitle,
   );
+  const activeCity = parseEnquiryCityFilter(params?.city);
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
   const tomorrowUtc = new Date(todayUtc.getTime() + 86_400_000);
@@ -280,6 +290,8 @@ export default async function EnquiriesAdminPage({
   if (timingPreferenceWhere) filters.push(timingPreferenceWhere);
   const programmeWhere = getEnquiryProgrammeWhere(activeProgramme);
   if (programmeWhere) filters.push(programmeWhere);
+  const cityWhere = getEnquiryCityWhere(activeCity);
+  if (cityWhere) filters.push(cityWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -300,6 +312,7 @@ export default async function EnquiriesAdminPage({
       activeDeliveryPreference,
       activeTimingPreference,
       activeProgramme,
+      activeCity,
     );
 
   const [
@@ -512,6 +525,7 @@ export default async function EnquiriesAdminPage({
                       activeDeliveryPreference,
                       activeTimingPreference,
                       activeProgramme,
+                      activeCity,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
@@ -545,6 +559,7 @@ export default async function EnquiriesAdminPage({
                       activeDeliveryPreference,
                       activeTimingPreference,
                       activeProgramme,
+                      activeCity,
                     )}
                   >
                     <span>{landingPathFilterCopy.clear}</span>
@@ -581,6 +596,7 @@ export default async function EnquiriesAdminPage({
                       activeDeliveryPreference,
                       activeTimingPreference,
                       activeProgramme,
+                      activeCity,
                     )}
                   >
                     <span>{schoolFilterCopy.clear}</span>
@@ -618,6 +634,7 @@ export default async function EnquiriesAdminPage({
                       activeDeliveryPreference,
                       activeTimingPreference,
                       activeProgramme,
+                      activeCity,
                     )}
                   >
                     <span>{contactPreferenceFilterCopy.clear}</span>
@@ -657,6 +674,7 @@ export default async function EnquiriesAdminPage({
                       null,
                       activeTimingPreference,
                       activeProgramme,
+                      activeCity,
                     )}
                   >
                     <span>{deliveryPreferenceFilterCopy.clear}</span>
@@ -696,6 +714,7 @@ export default async function EnquiriesAdminPage({
                       activeDeliveryPreference,
                       null,
                       activeProgramme,
+                      activeCity,
                     )}
                   >
                     <span>{timingPreferenceFilterCopy.clear}</span>
@@ -736,6 +755,7 @@ export default async function EnquiriesAdminPage({
                       activeDeliveryPreference,
                       activeTimingPreference,
                       null,
+                      activeCity,
                     )}
                   >
                     <span>{programmeFilterCopy.clear}</span>
@@ -744,6 +764,40 @@ export default async function EnquiriesAdminPage({
                 <p className={styles.filterLabel}>
                   {programmeFilterCopy.intro}
                 </p>
+              </div>
+            ) : null}
+
+            {activeCity ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {cityFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink} dir="auto">
+                    {cityFilterCopy.city}: {activeCity}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      activeContactPreference,
+                      activeDeliveryPreference,
+                      activeTimingPreference,
+                      activeProgramme,
+                      null,
+                    )}
+                  >
+                    <span>{cityFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>{cityFilterCopy.intro}</p>
               </div>
             ) : null}
 

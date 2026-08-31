@@ -45,10 +45,13 @@ describe('enquiry city reporting', () => {
   });
 
   it('bounds the visible list and clamps invalid counts', () => {
-    const groups = Array.from({ length: MAX_ENQUIRY_CITY_ITEMS + 3 }, (_, index) => ({
-      city: `City ${index}`,
-      _count: { _all: MAX_ENQUIRY_CITY_ITEMS + 3 - index },
-    }));
+    const groups = Array.from(
+      { length: MAX_ENQUIRY_CITY_ITEMS + 3 },
+      (_, index) => ({
+        city: `City ${index}`,
+        _count: { _all: MAX_ENQUIRY_CITY_ITEMS + 3 - index },
+      }),
+    );
 
     const summary = normalizeEnquiryCityMix(groups, Number.NaN, 99);
     expect(summary.total).toBe(0);

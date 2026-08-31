@@ -24,7 +24,9 @@ describe('enquiry city filter', () => {
   });
 
   it('fails closed above the existing persisted city bound', () => {
-    expect(parseEnquiryCityFilter('a'.repeat(ENQUIRY_CITY_FILTER_LIMIT + 1))).toBeNull();
+    expect(
+      parseEnquiryCityFilter('a'.repeat(ENQUIRY_CITY_FILTER_LIMIT + 1)),
+    ).toBeNull();
   });
 
   it('builds an exact Prisma predicate only for a valid active value', () => {

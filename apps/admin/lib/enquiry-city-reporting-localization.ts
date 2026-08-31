@@ -29,7 +29,8 @@ const COPY: Record<Locale, EnquiryCityReportingCopy> = {
     recorded: 'Ville enregistrée',
     missing: 'Ville manquante',
     enquiryCount: (count) => `${count} demandes`,
-    noData: 'Aucun contexte de ville enregistré n’est disponible sur cette période.',
+    noData:
+      'Aucun contexte de ville enregistré n’est disponible sur cette période.',
   },
   ar: {
     eyebrow: 'السياق الجغرافي',

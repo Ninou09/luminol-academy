@@ -22,6 +22,8 @@ import { getEnquiryCampaignContentCopy } from '../lib/enquiry-campaign-content-l
 import { getEnquiryAttributionCoverageCopy } from '../lib/enquiry-attribution-coverage-localization';
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';
+import { buildEnquiryCityQuery } from '../lib/enquiry-city-filter';
+import { getEnquiryCityReportingCopy } from '../lib/enquiry-city-reporting-localization';
 import { buildEnquirySchoolQuery } from '../lib/enquiry-school-filter';
 import { buildEnquiryContactPreferenceQuery } from '../lib/enquiry-contact-preference-filter';
 import { buildEnquiryDeliveryPreferenceQuery } from '../lib/enquiry-delivery-preference-filter';
@@ -67,6 +69,7 @@ export default async function Page() {
   const campaignContentCopy = getEnquiryCampaignContentCopy(locale);
   const attributionCoverageCopy = getEnquiryAttributionCoverageCopy(locale);
   const landingPathCopy = getEnquiryLandingPathCopy(locale);
+  const cityReportingCopy = getEnquiryCityReportingCopy(locale);
   const contactPreferenceCopy = getEnquiryContactPreferenceCopy(locale);
   const deliveryPreferenceCopy = getEnquiryDeliveryPreferenceCopy(locale);
   const timingPreferenceCopy = getEnquiryTimingPreferenceCopy(locale);
@@ -303,6 +306,55 @@ export default async function Page() {
               </div>
             ) : (
               <p className="admin-empty">{copy.dashboard.noSchoolMix}</p>
+            )}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">{cityReportingCopy.eyebrow}</p>
+                <h2>{cityReportingCopy.title}</h2>
+                <p>{cityReportingCopy.intro}</p>
+              </div>
+              <span>{copy.dashboard.rollingThirtyDays}</span>
+            </div>
+            <div className="metric-grid" aria-label={cityReportingCopy.title}>
+              <article>
+                <span>{cityReportingCopy.recorded}</span>
+                <strong>
+                  {number(operations.enquiryCityMixLast30Days.recorded)}
+                </strong>
+                <small>{copy.dashboard.rollingThirtyDays}</small>
+              </article>
+              <article>
+                <span>{cityReportingCopy.missing}</span>
+                <strong>
+                  {number(operations.enquiryCityMixLast30Days.missing)}
+                </strong>
+                <small>{copy.dashboard.rollingThirtyDays}</small>
+              </article>
+            </div>
+            {operations.enquiryCityMixLast30Days.items.length > 0 ? (
+              <div className="metric-grid" aria-label={cityReportingCopy.title}>
+                {operations.enquiryCityMixLast30Days.items.map((item) => (
+                  <article key={item.city}>
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquiryCityQuery(item.city)}`,
+                      )}
+                    >
+                      <span dir="auto">{item.city}</span>
+                    </Link>
+                    <strong>{number(item.count)}</strong>
+                    <small>
+                      {cityReportingCopy.enquiryCount(number(item.count))}
+                    </small>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="admin-empty">{cityReportingCopy.noData}</p>
             )}
           </section>
 

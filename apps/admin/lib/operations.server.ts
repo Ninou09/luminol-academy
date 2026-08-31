@@ -64,6 +64,10 @@ import {
   type EnquiryLandingPathMixSummary,
 } from './enquiry-landing-path-reporting';
 import {
+  normalizeEnquiryCityMix,
+  type EnquiryCityMixSummary,
+} from './enquiry-city-reporting';
+import {
   getRecentActiveQualificationGapWhere,
   summarizeRecentActiveQualificationGaps,
   type EnquiryQualificationGapSummary,
@@ -180,6 +184,7 @@ export type OperationsDashboard = {
   enquiryDeliveryPreferenceMixLast30Days: EnquiryDeliveryPreferenceMixSummary;
   enquiryTimingPreferenceMixLast30Days: EnquiryTimingPreferenceMixSummary;
   enquiryLandingPathMixLast30Days: EnquiryLandingPathMixSummary;
+  enquiryCityMixLast30Days: EnquiryCityMixSummary;
   enquiryQualificationGapsLast30Days: EnquiryQualificationGapSummary;
   enquiryRecentStatusMixLast30Days: RecentEnquiryStatusMixSummary;
   enquiryWorkflowCoverageLast30Days: {
@@ -275,6 +280,8 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
     campaignContentGroupsLast30Days,
     landingPathRecordedLast30Days,
     landingPathGroupsLast30Days,
+    cityRecordedLast30Days,
+    cityGroupsLast30Days,
     preferredContactGroupsLast30Days,
     deliveryPreferenceGroupsLast30Days,
     timingPreferenceGroupsLast30Days,
@@ -470,6 +477,20 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       },
       _count: { _all: true },
     }),
+    db.enquiry.count({
+      where: {
+        ...getRecentEnquiryWhere(now),
+        city: { not: null },
+      },
+    }),
+    db.enquiry.groupBy({
+      by: ['city'],
+      where: {
+        ...getRecentEnquiryWhere(now),
+        city: { not: null },
+      },
+      _count: { _all: true },
+    }),
     db.enquiry.groupBy({
       by: ['preferredContact'],
       where: getRecentEnquiryWhere(now),
@@ -618,6 +639,11 @@ export async function getOperationsDashboard(): Promise<OperationsDashboard> {
       landingPathGroupsLast30Days,
       enquiriesLast30Days,
       landingPathRecordedLast30Days,
+    ),
+    enquiryCityMixLast30Days: normalizeEnquiryCityMix(
+      cityGroupsLast30Days,
+      enquiriesLast30Days,
+      cityRecordedLast30Days,
     ),
     enquiryContactPreferenceMixLast30Days: normalizeEnquiryContactPreferenceMix(
       preferredContactGroupsLast30Days,
