@@ -21,6 +21,7 @@ import { getEnquiryCampaignMediumCopy } from '../lib/enquiry-campaign-medium-loc
 import { getEnquiryCampaignContentCopy } from '../lib/enquiry-campaign-content-localization';
 import { getEnquiryAttributionCoverageCopy } from '../lib/enquiry-attribution-coverage-localization';
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
+import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
@@ -662,7 +663,14 @@ export default async function Page() {
                 {operations.enquiryLandingPathMixLast30Days.items.map(
                   (item) => (
                     <article key={item.landingPath}>
-                      <span dir="ltr">{item.landingPath}</span>
+                      <Link
+                        href={localizeHref(
+                          locale,
+                          `/enquiries?${buildEnquiryLandingPathQuery(item.landingPath)}`,
+                        )}
+                      >
+                        <span dir="ltr">{item.landingPath}</span>
+                      </Link>
                       <strong>{number(item.count)}</strong>
                       <small>{landingPathCopy.count(number(item.count))}</small>
                     </article>
