@@ -14,10 +14,9 @@ describe('enquiry school filter', () => {
     },
   );
 
-  it('uses only the first query value', () => {
-    expect(parseEnquirySchoolFilter(['LANGUAGES', 'TRAINING'])).toBe(
-      'LANGUAGES',
-    );
+  it('fails closed for repeated query values', () => {
+    expect(parseEnquirySchoolFilter(['LANGUAGES', 'TRAINING'])).toBeNull();
+    expect(parseEnquirySchoolFilter(['GENERAL'])).toBeNull();
   });
 
   it('fails closed for missing, blank, normalized-looking or unsupported values', () => {
