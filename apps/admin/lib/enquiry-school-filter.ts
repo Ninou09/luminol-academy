@@ -7,18 +7,13 @@ import {
 
 export type { EnquirySchoolValue };
 
-function firstParam(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
-}
-
 export function parseEnquirySchoolFilter(
   value: string | string[] | undefined,
 ): EnquirySchoolValue | null {
-  const candidate = firstParam(value);
-  if (!candidate) return null;
+  if (typeof value !== 'string' || value.length === 0) return null;
 
-  return (ENQUIRY_SCHOOLS as readonly string[]).includes(candidate)
-    ? (candidate as EnquirySchoolValue)
+  return (ENQUIRY_SCHOOLS as readonly string[]).includes(value)
+    ? (value as EnquirySchoolValue)
     : null;
 }
 
