@@ -36,6 +36,7 @@ import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preferen
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
 import { getEnquiryContactTurnaroundCopy } from '../lib/enquiry-contact-turnaround-localization';
+import { buildEnquiryFollowUpTimingQuery } from '../lib/enquiry-follow-up-timing-filter';
 import { getEnquiryFollowUpTimingCopy } from '../lib/enquiry-follow-up-timing-localization';
 import { getMissingFollowUpPlanAgeCopy } from '../lib/enquiry-missing-follow-up-age-localization';
 import { getIncompleteQualificationAgeCopy } from '../lib/enquiry-incomplete-qualification-age-localization';
@@ -1860,7 +1861,14 @@ export default async function Page() {
             </div>
             <div className="metric-grid" aria-label={followUpTimingCopy.title}>
               <article>
-                <span>{followUpTimingCopy.missingPlan}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryFollowUpTimingQuery('missingPlan')}`,
+                  )}
+                >
+                  <span>{followUpTimingCopy.missingPlan}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.activeEnquiryFollowUpTiming.buckets.missingPlan,
@@ -1876,7 +1884,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{followUpTimingCopy.pastDue}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryFollowUpTimingQuery('pastDue')}`,
+                  )}
+                >
+                  <span>{followUpTimingCopy.pastDue}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.activeEnquiryFollowUpTiming.buckets.pastDue,
@@ -1891,7 +1906,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{followUpTimingCopy.next24Hours}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryFollowUpTimingQuery('next24Hours')}`,
+                  )}
+                >
+                  <span>{followUpTimingCopy.next24Hours}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.activeEnquiryFollowUpTiming.buckets.next24Hours,
@@ -1907,7 +1929,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{followUpTimingCopy.oneToThreeDays}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryFollowUpTimingQuery('oneToThreeDays')}`,
+                  )}
+                >
+                  <span>{followUpTimingCopy.oneToThreeDays}</span>
+                </Link>
                 <strong>
                   {number(
                     operations.activeEnquiryFollowUpTiming.buckets
@@ -1924,7 +1953,14 @@ export default async function Page() {
                 </small>
               </article>
               <article>
-                <span>{followUpTimingCopy.later}</span>
+                <Link
+                  href={localizeHref(
+                    locale,
+                    `/enquiries?${buildEnquiryFollowUpTimingQuery('later')}`,
+                  )}
+                >
+                  <span>{followUpTimingCopy.later}</span>
+                </Link>
                 <strong>
                   {number(operations.activeEnquiryFollowUpTiming.buckets.later)}
                 </strong>
