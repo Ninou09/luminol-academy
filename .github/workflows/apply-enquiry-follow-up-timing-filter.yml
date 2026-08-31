@@ -182,7 +182,7 @@ jobs:
                   "<Link",
                   "  href={localizeHref(",
                   "    locale,",
-                  f"    `/enquiries?${{buildEnquiryFollowUpTimingQuery('{label}')}}`,",
+                  "    `/enquiries?$" + "{buildEnquiryFollowUpTimingQuery('" + label + "')}` ,",
                   "  )}",
                   ">",
                   "  " + old,
