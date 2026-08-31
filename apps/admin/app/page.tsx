@@ -22,6 +22,7 @@ import { getEnquiryCampaignContentCopy } from '../lib/enquiry-campaign-content-l
 import { getEnquiryAttributionCoverageCopy } from '../lib/enquiry-attribution-coverage-localization';
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';
+import { buildEnquirySchoolQuery } from '../lib/enquiry-school-filter';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
@@ -283,7 +284,14 @@ export default async function Page() {
               <div className="metric-grid">
                 {operations.enquirySchoolMixLast30Days.map((item) => (
                   <article key={item.school}>
-                    <span>{getAdminEnumLabel(locale, item.school)}</span>
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquirySchoolQuery(item.school)}`,
+                      )}
+                    >
+                      <span>{getAdminEnumLabel(locale, item.school)}</span>
+                    </Link>
                     <strong>{number(item.count)}</strong>
                     <small>{copy.dashboard.rollingThirtyDays}</small>
                   </article>
