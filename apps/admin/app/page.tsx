@@ -25,6 +25,7 @@ import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter
 import { buildEnquirySchoolQuery } from '../lib/enquiry-school-filter';
 import { buildEnquiryContactPreferenceQuery } from '../lib/enquiry-contact-preference-filter';
 import { buildEnquiryDeliveryPreferenceQuery } from '../lib/enquiry-delivery-preference-filter';
+import { buildEnquiryTimingPreferenceQuery } from '../lib/enquiry-timing-preference-filter';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
@@ -1035,15 +1036,24 @@ export default async function Page() {
               {operations.enquiryTimingPreferenceMixLast30Days.items.map(
                 (item) => (
                   <article key={item.timingPreference}>
-                    <span>
-                      {item.timingPreference === 'SOON'
-                        ? timingPreferenceCopy.soon
-                        : item.timingPreference === 'WITHIN_MONTH'
-                          ? timingPreferenceCopy.withinMonth
-                          : item.timingPreference === 'LATER'
-                            ? timingPreferenceCopy.later
-                            : timingPreferenceCopy.notSure}
-                    </span>
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquiryTimingPreferenceQuery(
+                          item.timingPreference,
+                        )}`,
+                      )}
+                    >
+                      <span>
+                        {item.timingPreference === 'SOON'
+                          ? timingPreferenceCopy.soon
+                          : item.timingPreference === 'WITHIN_MONTH'
+                            ? timingPreferenceCopy.withinMonth
+                            : item.timingPreference === 'LATER'
+                              ? timingPreferenceCopy.later
+                              : timingPreferenceCopy.notSure}
+                      </span>
+                    </Link>
                     <strong>{number(item.count)}</strong>
                     <small>
                       {timingPreferenceCopy.count(number(item.count))}
