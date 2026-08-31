@@ -14,6 +14,7 @@ import { getAdminEnumLabel } from '../../lib/admin-localization';
 import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';
 import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-localization';
 import { getEnquiryLandingPathFilterCopy } from '../../lib/enquiry-landing-path-filter-localization';
+import { getEnquirySchoolFilterCopy } from '../../lib/enquiry-school-filter-localization';
 import {
   getEnquiryCampaignAttributionWhere,
   parseEnquiryCampaignAttributionFilter,
@@ -23,6 +24,11 @@ import {
   getEnquiryLandingPathWhere,
   parseEnquiryLandingPathFilter,
 } from '../../lib/enquiry-landing-path-filter';
+import {
+  getEnquirySchoolWhere,
+  parseEnquirySchoolFilter,
+  type EnquirySchoolValue,
+} from '../../lib/enquiry-school-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -85,6 +91,7 @@ type EnquiryPageProps = {
     utmMedium?: string | string[] | undefined;
     utmContent?: string | string[] | undefined;
     landingPath?: string | string[] | undefined;
+    school?: string | string[] | undefined;
   }>;
 };
 
@@ -120,6 +127,7 @@ function buildEnquiryHref(
   owner: EnquiryOwnerFilter | null,
   campaignAttribution: EnquiryCampaignAttributionFilter | null = null,
   landingPath: string | null = null,
+  school: EnquirySchoolValue | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -139,6 +147,7 @@ function buildEnquiryHref(
     }
   }
   if (landingPath) query.set('landingPath', landingPath);
+  if (school) query.set('school', school);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -156,6 +165,7 @@ export default async function EnquiriesAdminPage({
   const attributionCopy = getEnquiryAttributionCopy(locale);
   const campaignFilterCopy = getEnquiryCampaignFilterCopy(locale);
   const landingPathFilterCopy = getEnquiryLandingPathFilterCopy(locale);
+  const schoolFilterCopy = getEnquirySchoolFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -173,6 +183,7 @@ export default async function EnquiriesAdminPage({
     params?.utmContent,
   );
   const activeLandingPath = parseEnquiryLandingPathFilter(params?.landingPath);
+  const activeSchool = parseEnquirySchoolFilter(params?.school);
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
   const tomorrowUtc = new Date(todayUtc.getTime() + 86_400_000);
@@ -193,6 +204,8 @@ export default async function EnquiriesAdminPage({
   if (campaignAttributionWhere) filters.push(campaignAttributionWhere);
   const landingPathWhere = getEnquiryLandingPathWhere(activeLandingPath);
   if (landingPathWhere) filters.push(landingPathWhere);
+  const schoolWhere = getEnquirySchoolWhere(activeSchool);
+  if (schoolWhere) filters.push(schoolWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -208,6 +221,7 @@ export default async function EnquiriesAdminPage({
       owner,
       activeCampaignAttribution,
       activeLandingPath,
+      activeSchool,
     );
 
   const [
@@ -415,6 +429,7 @@ export default async function EnquiriesAdminPage({
                       activeOwner,
                       null,
                       activeLandingPath,
+                      activeSchool,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
@@ -443,6 +458,7 @@ export default async function EnquiriesAdminPage({
                       activeOwner,
                       activeCampaignAttribution,
                       null,
+                      activeSchool,
                     )}
                   >
                     <span>{landingPathFilterCopy.clear}</span>
@@ -451,6 +467,36 @@ export default async function EnquiriesAdminPage({
                 <p className={styles.filterLabel}>
                   {landingPathFilterCopy.intro}
                 </p>
+              </div>
+            ) : null}
+
+            {activeSchool ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {schoolFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {schoolFilterCopy.school}:{' '}
+                    {getAdminEnumLabel(locale, activeSchool)}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      null,
+                    )}
+                  >
+                    <span>{schoolFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>{schoolFilterCopy.intro}</p>
               </div>
             ) : null}
 
