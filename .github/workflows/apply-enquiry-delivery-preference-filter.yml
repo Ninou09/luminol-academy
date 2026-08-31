@@ -1,0 +1,323 @@
+name: Apply enquiry delivery preference filter
+
+on:
+  push:
+    branches:
+      - feat/enquiry-delivery-preference-filter
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/enquiry-delivery-preference-filter
+          fetch-depth: 0
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:generate
+      - name: Integrate delivery preference filtering
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(text: str, old: str, new: str, label: str) -> str:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected exactly one marker, found {count}')
+              return text.replace(old, new, 1)
+
+          page = Path('apps/admin/app/enquiries/page.tsx')
+          text = page.read_text()
+
+          marker = "import { getEnquiryContactPreferenceFilterCopy } from '../../lib/enquiry-contact-preference-filter-localization';\n"
+          text = replace_once(
+              text,
+              marker,
+              marker + "import { getEnquiryDeliveryPreferenceFilterCopy } from '../../lib/enquiry-delivery-preference-filter-localization';\n",
+              'delivery localization import',
+          )
+
+          marker = "import {\n  getEnquiryContactPreferenceWhere,\n  parseEnquiryContactPreferenceFilter,\n  type EnquiryContactPreference,\n} from '../../lib/enquiry-contact-preference-filter';\n"
+          text = replace_once(
+              text,
+              marker,
+              marker + "import {\n  getEnquiryDeliveryPreferenceWhere,\n  parseEnquiryDeliveryPreferenceFilter,\n  type EnquiryDeliveryPreference,\n} from '../../lib/enquiry-delivery-preference-filter';\n",
+              'delivery filter import',
+          )
+
+          marker = "    preferredContact?: string | string[] | undefined;\n"
+          text = replace_once(
+              text,
+              marker,
+              marker + "    deliveryPreference?: string | string[] | undefined;\n",
+              'delivery search param',
+          )
+
+          marker = "  preferredContact: EnquiryContactPreference | null = null,\n) {\n"
+          text = replace_once(
+              text,
+              marker,
+              "  preferredContact: EnquiryContactPreference | null = null,\n  deliveryPreference: EnquiryDeliveryPreference | null = null,\n) {\n",
+              'delivery href argument',
+          )
+
+          marker = "  if (preferredContact) query.set('preferredContact', preferredContact);\n"
+          text = replace_once(
+              text,
+              marker,
+              marker + "  if (deliveryPreference) query.set('deliveryPreference', deliveryPreference);\n",
+              'delivery href query',
+          )
+
+          marker = "  const contactPreferenceFilterCopy =\n    getEnquiryContactPreferenceFilterCopy(locale);\n"
+          text = replace_once(
+              text,
+              marker,
+              marker + "  const deliveryPreferenceFilterCopy =\n    getEnquiryDeliveryPreferenceFilterCopy(locale);\n",
+              'delivery copy',
+          )
+
+          marker = "  const activeContactPreference = parseEnquiryContactPreferenceFilter(\n    params?.preferredContact,\n  );\n"
+          text = replace_once(
+              text,
+              marker,
+              marker + "  const activeDeliveryPreference = parseEnquiryDeliveryPreferenceFilter(\n    params?.deliveryPreference,\n  );\n",
+              'delivery parse',
+          )
+
+          marker = "  if (contactPreferenceWhere) filters.push(contactPreferenceWhere);\n"
+          text = replace_once(
+              text,
+              marker,
+              marker + "  const deliveryPreferenceWhere = getEnquiryDeliveryPreferenceWhere(\n    activeDeliveryPreference,\n  );\n  if (deliveryPreferenceWhere) filters.push(deliveryPreferenceWhere);\n",
+              'delivery where',
+          )
+
+          marker = "      activeSchool,\n      activeContactPreference,\n    );\n"
+          text = replace_once(
+              text,
+              marker,
+              "      activeSchool,\n      activeContactPreference,\n      activeDeliveryPreference,\n    );\n",
+              'delivery hrefFor scope',
+          )
+
+          # Preserve delivery scope when clearing campaign attribution.
+          marker = "                      activeLandingPath,\n                      activeSchool,\n                      activeContactPreference,\n                    )}\n"
+          replacement = "                      activeLandingPath,\n                      activeSchool,\n                      activeContactPreference,\n                      activeDeliveryPreference,\n                    )}\n"
+          if text.count(marker) < 1:
+              raise SystemExit('campaign clear scope marker not found')
+          text = text.replace(marker, replacement, 1)
+
+          # Preserve delivery scope when clearing landing path.
+          marker = "                      null,\n                      activeSchool,\n                      activeContactPreference,\n                    )}\n"
+          text = replace_once(
+              text,
+              marker,
+              "                      null,\n                      activeSchool,\n                      activeContactPreference,\n                      activeDeliveryPreference,\n                    )}\n",
+              'landing clear delivery scope',
+          )
+
+          # Preserve delivery scope when clearing school.
+          marker = "                      activeLandingPath,\n                      null,\n                      activeContactPreference,\n                    )}\n"
+          text = replace_once(
+              text,
+              marker,
+              "                      activeLandingPath,\n                      null,\n                      activeContactPreference,\n                      activeDeliveryPreference,\n                    )}\n",
+              'school clear delivery scope',
+          )
+
+          # Preserve delivery scope when clearing contact preference.
+          marker = "                      activeLandingPath,\n                      activeSchool,\n                      null,\n                    )}\n"
+          text = replace_once(
+              text,
+              marker,
+              "                      activeLandingPath,\n                      activeSchool,\n                      null,\n                      activeDeliveryPreference,\n                    )}\n",
+              'contact clear delivery scope',
+          )
+
+          contact_panel_end = """            {activeContactPreference ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {contactPreferenceFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {contactPreferenceFilterCopy.preference}:{' '}
+                    {getEnquiryContactPreferenceLabel(
+                      locale,
+                      activeContactPreference,
+                    )}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      null,
+                      activeDeliveryPreference,
+                    )}
+                  >
+                    <span>{contactPreferenceFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {contactPreferenceFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+"""
+          delivery_panel = contact_panel_end + """
+            {activeDeliveryPreference ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {deliveryPreferenceFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {deliveryPreferenceFilterCopy.preference}:{' '}
+                    {getEnquiryDeliveryPreferenceLabel(
+                      locale,
+                      activeDeliveryPreference,
+                    )}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      activeContactPreference,
+                      null,
+                    )}
+                  >
+                    <span>{deliveryPreferenceFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {deliveryPreferenceFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+"""
+          text = replace_once(
+              text,
+              contact_panel_end,
+              delivery_panel,
+              'delivery active panel',
+          )
+
+          required_page_strings = [
+              'deliveryPreference?: string | string[] | undefined;',
+              'activeDeliveryPreference',
+              'getEnquiryDeliveryPreferenceWhere',
+              'deliveryPreferenceFilterCopy',
+              "query.set('deliveryPreference', deliveryPreference)",
+          ]
+          for value in required_page_strings:
+              if value not in text:
+                  raise SystemExit(f'missing expected page integration: {value}')
+          page.write_text(text)
+
+          dashboard = Path('apps/admin/app/page.tsx')
+          dashboard_text = dashboard.read_text()
+
+          marker = "import { buildEnquiryContactPreferenceQuery } from '../lib/enquiry-contact-preference-filter';\n"
+          dashboard_text = replace_once(
+              dashboard_text,
+              marker,
+              marker + "import { buildEnquiryDeliveryPreferenceQuery } from '../lib/enquiry-delivery-preference-filter';\n",
+              'delivery dashboard import',
+          )
+
+          marker = """                  <article key={item.deliveryPreference}>
+                    <span>
+                      {item.deliveryPreference === 'IN_PERSON'
+                        ? deliveryPreferenceCopy.inPerson
+                        : item.deliveryPreference === 'ONLINE'
+                          ? deliveryPreferenceCopy.online
+                          : item.deliveryPreference === 'FLEXIBLE'
+                            ? deliveryPreferenceCopy.flexible
+                            : deliveryPreferenceCopy.notSure}
+                    </span>
+                    <strong>{number(item.count)}</strong>
+"""
+          replacement = """                  <article key={item.deliveryPreference}>
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquiryDeliveryPreferenceQuery(
+                          item.deliveryPreference,
+                        )}`,
+                      )}
+                    >
+                      <span>
+                        {item.deliveryPreference === 'IN_PERSON'
+                          ? deliveryPreferenceCopy.inPerson
+                          : item.deliveryPreference === 'ONLINE'
+                            ? deliveryPreferenceCopy.online
+                            : item.deliveryPreference === 'FLEXIBLE'
+                              ? deliveryPreferenceCopy.flexible
+                              : deliveryPreferenceCopy.notSure}
+                      </span>
+                    </Link>
+                    <strong>{number(item.count)}</strong>
+"""
+          dashboard_text = replace_once(
+              dashboard_text,
+              marker,
+              replacement,
+              'delivery dashboard drill-down',
+          )
+
+          if 'buildEnquiryDeliveryPreferenceQuery' not in dashboard_text:
+              raise SystemExit('missing delivery dashboard query builder')
+          dashboard.write_text(dashboard_text)
+          PY
+      - name: Format intended files
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-delivery-preference-filter.ts \
+            apps/admin/lib/enquiry-delivery-preference-filter.test.ts \
+            apps/admin/lib/enquiry-delivery-preference-filter-localization.ts \
+            apps/admin/lib/enquiry-delivery-preference-filter-localization.test.ts
+      - name: Run focused checks
+        run: |
+          pnpm --filter @luminol/admin typecheck
+          pnpm --filter @luminol/admin test -- enquiry-delivery-preference-filter
+          git diff --check
+      - name: Commit integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/app/enquiries/page.tsx \
+            apps/admin/app/page.tsx \
+            apps/admin/lib/enquiry-delivery-preference-filter.ts \
+            apps/admin/lib/enquiry-delivery-preference-filter.test.ts \
+            apps/admin/lib/enquiry-delivery-preference-filter-localization.ts \
+            apps/admin/lib/enquiry-delivery-preference-filter-localization.test.ts
+          git commit -m "Integrate delivery-preference enquiry drill-down"
+          git push origin HEAD:feat/enquiry-delivery-preference-filter
