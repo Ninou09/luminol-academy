@@ -24,6 +24,7 @@ import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localizat
 import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';
 import { buildEnquirySchoolQuery } from '../lib/enquiry-school-filter';
 import { buildEnquiryContactPreferenceQuery } from '../lib/enquiry-contact-preference-filter';
+import { buildEnquiryDeliveryPreferenceQuery } from '../lib/enquiry-delivery-preference-filter';
 import { getEnquiryContactPreferenceCopy } from '../lib/enquiry-contact-preference-localization';
 import { getEnquiryDeliveryPreferenceCopy } from '../lib/enquiry-delivery-preference-localization';
 import { getEnquiryTimingPreferenceCopy } from '../lib/enquiry-timing-preference-localization';
@@ -975,15 +976,24 @@ export default async function Page() {
               {operations.enquiryDeliveryPreferenceMixLast30Days.items.map(
                 (item) => (
                   <article key={item.deliveryPreference}>
-                    <span>
-                      {item.deliveryPreference === 'IN_PERSON'
-                        ? deliveryPreferenceCopy.inPerson
-                        : item.deliveryPreference === 'ONLINE'
-                          ? deliveryPreferenceCopy.online
-                          : item.deliveryPreference === 'FLEXIBLE'
-                            ? deliveryPreferenceCopy.flexible
-                            : deliveryPreferenceCopy.notSure}
-                    </span>
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquiryDeliveryPreferenceQuery(
+                          item.deliveryPreference,
+                        )}`,
+                      )}
+                    >
+                      <span>
+                        {item.deliveryPreference === 'IN_PERSON'
+                          ? deliveryPreferenceCopy.inPerson
+                          : item.deliveryPreference === 'ONLINE'
+                            ? deliveryPreferenceCopy.online
+                            : item.deliveryPreference === 'FLEXIBLE'
+                              ? deliveryPreferenceCopy.flexible
+                              : deliveryPreferenceCopy.notSure}
+                      </span>
+                    </Link>
                     <strong>{number(item.count)}</strong>
                     <small>
                       {deliveryPreferenceCopy.count(number(item.count))}
