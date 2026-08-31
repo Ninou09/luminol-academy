@@ -18,6 +18,7 @@ import { getEnquirySchoolFilterCopy } from '../../lib/enquiry-school-filter-loca
 import { getEnquiryContactPreferenceFilterCopy } from '../../lib/enquiry-contact-preference-filter-localization';
 import { getEnquiryDeliveryPreferenceFilterCopy } from '../../lib/enquiry-delivery-preference-filter-localization';
 import { getEnquiryTimingPreferenceFilterCopy } from '../../lib/enquiry-timing-preference-filter-localization';
+import { getEnquiryProgrammeFilterCopy } from '../../lib/enquiry-programme-filter-localization';
 import {
   getEnquiryCampaignAttributionWhere,
   parseEnquiryCampaignAttributionFilter,
@@ -47,6 +48,11 @@ import {
   parseEnquiryTimingPreferenceFilter,
   type EnquiryTimingPreference,
 } from '../../lib/enquiry-timing-preference-filter';
+import {
+  getEnquiryProgrammeWhere,
+  parseEnquiryProgrammeFilter,
+  type EnquiryProgrammeFilter,
+} from '../../lib/enquiry-programme-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -113,6 +119,8 @@ type EnquiryPageProps = {
     preferredContact?: string | string[] | undefined;
     deliveryPreference?: string | string[] | undefined;
     timingPreference?: string | string[] | undefined;
+    programmeSlug?: string | string[] | undefined;
+    programmeTitle?: string | string[] | undefined;
   }>;
 };
 
@@ -152,6 +160,7 @@ function buildEnquiryHref(
   preferredContact: EnquiryContactPreference | null = null,
   deliveryPreference: EnquiryDeliveryPreference | null = null,
   timingPreference: EnquiryTimingPreference | null = null,
+  programme: EnquiryProgrammeFilter | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -175,6 +184,10 @@ function buildEnquiryHref(
   if (preferredContact) query.set('preferredContact', preferredContact);
   if (deliveryPreference) query.set('deliveryPreference', deliveryPreference);
   if (timingPreference) query.set('timingPreference', timingPreference);
+  if (programme) {
+    query.set('programmeSlug', programme.programmeSlug);
+    query.set('programmeTitle', programme.programmeTitleSnapshot);
+  }
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -199,6 +212,7 @@ export default async function EnquiriesAdminPage({
     getEnquiryDeliveryPreferenceFilterCopy(locale);
   const timingPreferenceFilterCopy =
     getEnquiryTimingPreferenceFilterCopy(locale);
+  const programmeFilterCopy = getEnquiryProgrammeFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -225,6 +239,10 @@ export default async function EnquiriesAdminPage({
   );
   const activeTimingPreference = parseEnquiryTimingPreferenceFilter(
     params?.timingPreference,
+  );
+  const activeProgramme = parseEnquiryProgrammeFilter(
+    params?.programmeSlug,
+    params?.programmeTitle,
   );
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
@@ -260,6 +278,8 @@ export default async function EnquiriesAdminPage({
     activeTimingPreference,
   );
   if (timingPreferenceWhere) filters.push(timingPreferenceWhere);
+  const programmeWhere = getEnquiryProgrammeWhere(activeProgramme);
+  if (programmeWhere) filters.push(programmeWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -279,6 +299,7 @@ export default async function EnquiriesAdminPage({
       activeContactPreference,
       activeDeliveryPreference,
       activeTimingPreference,
+      activeProgramme,
     );
 
   const [
@@ -490,6 +511,7 @@ export default async function EnquiriesAdminPage({
                       activeContactPreference,
                       activeDeliveryPreference,
                       activeTimingPreference,
+                      activeProgramme,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
@@ -522,6 +544,7 @@ export default async function EnquiriesAdminPage({
                       activeContactPreference,
                       activeDeliveryPreference,
                       activeTimingPreference,
+                      activeProgramme,
                     )}
                   >
                     <span>{landingPathFilterCopy.clear}</span>
@@ -557,6 +580,7 @@ export default async function EnquiriesAdminPage({
                       activeContactPreference,
                       activeDeliveryPreference,
                       activeTimingPreference,
+                      activeProgramme,
                     )}
                   >
                     <span>{schoolFilterCopy.clear}</span>
@@ -593,6 +617,7 @@ export default async function EnquiriesAdminPage({
                       null,
                       activeDeliveryPreference,
                       activeTimingPreference,
+                      activeProgramme,
                     )}
                   >
                     <span>{contactPreferenceFilterCopy.clear}</span>
@@ -631,6 +656,7 @@ export default async function EnquiriesAdminPage({
                       activeContactPreference,
                       null,
                       activeTimingPreference,
+                      activeProgramme,
                     )}
                   >
                     <span>{deliveryPreferenceFilterCopy.clear}</span>
@@ -669,6 +695,7 @@ export default async function EnquiriesAdminPage({
                       activeContactPreference,
                       activeDeliveryPreference,
                       null,
+                      activeProgramme,
                     )}
                   >
                     <span>{timingPreferenceFilterCopy.clear}</span>
@@ -676,6 +703,46 @@ export default async function EnquiriesAdminPage({
                 </div>
                 <p className={styles.filterLabel}>
                   {timingPreferenceFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+
+            {activeProgramme ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {programmeFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink} dir="auto">
+                    {programmeFilterCopy.programme}:{' '}
+                    {activeProgramme.programmeTitleSnapshot}
+                  </span>
+                  <span className={styles.filterLink} dir="ltr">
+                    {programmeFilterCopy.storedSlug}:{' '}
+                    {activeProgramme.programmeSlug}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      activeContactPreference,
+                      activeDeliveryPreference,
+                      activeTimingPreference,
+                      null,
+                    )}
+                  >
+                    <span>{programmeFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {programmeFilterCopy.intro}
                 </p>
               </div>
             ) : null}
