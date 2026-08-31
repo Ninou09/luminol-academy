@@ -16,6 +16,7 @@ import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-
 import { getEnquiryLandingPathFilterCopy } from '../../lib/enquiry-landing-path-filter-localization';
 import { getEnquirySchoolFilterCopy } from '../../lib/enquiry-school-filter-localization';
 import { getEnquiryContactPreferenceFilterCopy } from '../../lib/enquiry-contact-preference-filter-localization';
+import { getEnquiryDeliveryPreferenceFilterCopy } from '../../lib/enquiry-delivery-preference-filter-localization';
 import {
   getEnquiryCampaignAttributionWhere,
   parseEnquiryCampaignAttributionFilter,
@@ -35,6 +36,11 @@ import {
   parseEnquiryContactPreferenceFilter,
   type EnquiryContactPreference,
 } from '../../lib/enquiry-contact-preference-filter';
+import {
+  getEnquiryDeliveryPreferenceWhere,
+  parseEnquiryDeliveryPreferenceFilter,
+  type EnquiryDeliveryPreference,
+} from '../../lib/enquiry-delivery-preference-filter';
 import { getEnquiryContactShortcutsCopy } from '../../lib/enquiry-contact-shortcuts-localization';
 import { buildEnquiryContactShortcuts } from '../../lib/enquiry-contact-shortcuts';
 import {
@@ -99,6 +105,7 @@ type EnquiryPageProps = {
     landingPath?: string | string[] | undefined;
     school?: string | string[] | undefined;
     preferredContact?: string | string[] | undefined;
+    deliveryPreference?: string | string[] | undefined;
   }>;
 };
 
@@ -136,6 +143,7 @@ function buildEnquiryHref(
   landingPath: string | null = null,
   school: EnquirySchoolValue | null = null,
   preferredContact: EnquiryContactPreference | null = null,
+  deliveryPreference: EnquiryDeliveryPreference | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -157,6 +165,7 @@ function buildEnquiryHref(
   if (landingPath) query.set('landingPath', landingPath);
   if (school) query.set('school', school);
   if (preferredContact) query.set('preferredContact', preferredContact);
+  if (deliveryPreference) query.set('deliveryPreference', deliveryPreference);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -177,6 +186,8 @@ export default async function EnquiriesAdminPage({
   const schoolFilterCopy = getEnquirySchoolFilterCopy(locale);
   const contactPreferenceFilterCopy =
     getEnquiryContactPreferenceFilterCopy(locale);
+  const deliveryPreferenceFilterCopy =
+    getEnquiryDeliveryPreferenceFilterCopy(locale);
   const contactShortcutsCopy = getEnquiryContactShortcutsCopy(locale);
   const incompleteQualificationLabel =
     getIncompleteQualificationAttentionLabel(locale);
@@ -197,6 +208,9 @@ export default async function EnquiriesAdminPage({
   const activeSchool = parseEnquirySchoolFilter(params?.school);
   const activeContactPreference = parseEnquiryContactPreferenceFilter(
     params?.preferredContact,
+  );
+  const activeDeliveryPreference = parseEnquiryDeliveryPreferenceFilter(
+    params?.deliveryPreference,
   );
   const todayUtc = new Date();
   todayUtc.setUTCHours(0, 0, 0, 0);
@@ -224,6 +238,10 @@ export default async function EnquiriesAdminPage({
     activeContactPreference,
   );
   if (contactPreferenceWhere) filters.push(contactPreferenceWhere);
+  const deliveryPreferenceWhere = getEnquiryDeliveryPreferenceWhere(
+    activeDeliveryPreference,
+  );
+  if (deliveryPreferenceWhere) filters.push(deliveryPreferenceWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -241,6 +259,7 @@ export default async function EnquiriesAdminPage({
       activeLandingPath,
       activeSchool,
       activeContactPreference,
+      activeDeliveryPreference,
     );
 
   const [
@@ -450,6 +469,7 @@ export default async function EnquiriesAdminPage({
                       activeLandingPath,
                       activeSchool,
                       activeContactPreference,
+                      activeDeliveryPreference,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
@@ -480,6 +500,7 @@ export default async function EnquiriesAdminPage({
                       null,
                       activeSchool,
                       activeContactPreference,
+                      activeDeliveryPreference,
                     )}
                   >
                     <span>{landingPathFilterCopy.clear}</span>
@@ -513,6 +534,7 @@ export default async function EnquiriesAdminPage({
                       activeLandingPath,
                       null,
                       activeContactPreference,
+                      activeDeliveryPreference,
                     )}
                   >
                     <span>{schoolFilterCopy.clear}</span>
@@ -547,6 +569,7 @@ export default async function EnquiriesAdminPage({
                       activeLandingPath,
                       activeSchool,
                       null,
+                      activeDeliveryPreference,
                     )}
                   >
                     <span>{contactPreferenceFilterCopy.clear}</span>
@@ -554,6 +577,43 @@ export default async function EnquiriesAdminPage({
                 </div>
                 <p className={styles.filterLabel}>
                   {contactPreferenceFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+
+            {activeDeliveryPreference ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {deliveryPreferenceFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {deliveryPreferenceFilterCopy.preference}:{' '}
+                    {getEnquiryDeliveryPreferenceLabel(
+                      locale,
+                      activeDeliveryPreference,
+                    )}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      activeContactPreference,
+                      null,
+                    )}
+                  >
+                    <span>{deliveryPreferenceFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {deliveryPreferenceFilterCopy.intro}
                 </p>
               </div>
             ) : null}
