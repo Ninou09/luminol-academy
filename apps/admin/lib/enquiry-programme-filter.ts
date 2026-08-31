@@ -3,7 +3,6 @@ import type { Prisma } from '@luminol/database';
 const PROGRAMME_SLUG_LIMIT = 96;
 const PROGRAMME_TITLE_SNAPSHOT_LIMIT = 240;
 const PROGRAMME_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const CONTROL_CHARACTER_PATTERN = /[\u0000-\u001f\u007f]/;
 
 export type EnquiryProgrammeFilter = {
   programmeSlug: string;
@@ -12,6 +11,15 @@ export type EnquiryProgrammeFilter = {
 
 function scalar(value: string | string[] | undefined): string | null {
   return typeof value === 'string' ? value : null;
+}
+
+function hasControlCharacter(value: string): boolean {
+  for (let index = 0; index < value.length; index += 1) {
+    const code = value.charCodeAt(index);
+    if (code <= 0x1f || code === 0x7f) return true;
+  }
+
+  return false;
 }
 
 export function parseEnquiryProgrammeFilter(
@@ -33,7 +41,7 @@ export function parseEnquiryProgrammeFilter(
     !programmeTitleSnapshot ||
     programmeTitleSnapshot.length > PROGRAMME_TITLE_SNAPSHOT_LIMIT ||
     programmeTitleSnapshot !== programmeTitleSnapshot.trim() ||
-    CONTROL_CHARACTER_PATTERN.test(programmeTitleSnapshot)
+    hasControlCharacter(programmeTitleSnapshot)
   ) {
     return null;
   }
