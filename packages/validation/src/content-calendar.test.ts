@@ -35,7 +35,9 @@ describe('content calendar validation', () => {
       'asset:123',
     );
     expect(() => contentCalendarTitleSchema.parse('')).toThrow();
-    expect(() => contentCalendarCaptionSchema.parse('x'.repeat(5_001))).toThrow();
+    expect(() =>
+      contentCalendarCaptionSchema.parse('x'.repeat(5_001)),
+    ).toThrow();
   });
 
   it('requires a valid IANA timezone and bounded local datetime syntax', () => {

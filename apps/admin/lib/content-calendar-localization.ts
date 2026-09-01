@@ -58,7 +58,8 @@ const english: ContentCalendarCopy = {
   createIntro:
     'New items start as drafts. Move them to Ready only after the content is reviewed.',
   recentTitle: 'Content plan',
-  recentIntro: 'The latest first-party calendar records and their approval state.',
+  recentIntro:
+    'The latest first-party calendar records and their approval state.',
   noItems: 'No content calendar items yet.',
   titleLabel: 'Title / topic',
   captionLabel: 'Caption / copy',
@@ -119,7 +120,8 @@ const french: ContentCalendarCopy = {
   createIntro:
     'Les nouveaux contenus commencent en brouillon. Passez-les à Prêt uniquement après validation du contenu.',
   recentTitle: 'Plan de contenu',
-  recentIntro: 'Les derniers contenus du calendrier et leur état d’approbation.',
+  recentIntro:
+    'Les derniers contenus du calendrier et leur état d’approbation.',
   noItems: 'Aucun contenu planifié pour le moment.',
   titleLabel: 'Titre / sujet',
   captionLabel: 'Légende / texte',

@@ -18,17 +18,17 @@ import {
 } from '../generated/prisma/client';
 import { queueAiOperatorProposal } from './ai-operator-proposals';
 
-const statusTransitions: Record<ContentCalendarStatus, ContentCalendarStatus[]> = {
+const statusTransitions: Record<
+  ContentCalendarStatus,
+  ContentCalendarStatus[]
+> = {
   DRAFT: [ContentCalendarStatus.READY, ContentCalendarStatus.ARCHIVED],
   READY: [
     ContentCalendarStatus.DRAFT,
     ContentCalendarStatus.SCHEDULED,
     ContentCalendarStatus.ARCHIVED,
   ],
-  SCHEDULED: [
-    ContentCalendarStatus.READY,
-    ContentCalendarStatus.ARCHIVED,
-  ],
+  SCHEDULED: [ContentCalendarStatus.READY, ContentCalendarStatus.ARCHIVED],
   ARCHIVED: [],
 };
 
@@ -175,7 +175,10 @@ export async function createContentCalendarItem(
     input.actorUserId,
     'Content calendar actor user ID',
   );
-  const now = validDate(input.now ?? new Date(), 'Content calendar change time');
+  const now = validDate(
+    input.now ?? new Date(),
+    'Content calendar change time',
+  );
   const fields = normalizeContentFields(input, now);
 
   return client.$transaction(async (transaction) => {
@@ -227,7 +230,10 @@ export async function updateContentCalendarItem(
     input.actorUserId,
     'Content calendar actor user ID',
   );
-  const now = validDate(input.now ?? new Date(), 'Content calendar change time');
+  const now = validDate(
+    input.now ?? new Date(),
+    'Content calendar change time',
+  );
   const fields = normalizeContentFields(input, now);
 
   return client.$transaction(async (transaction) => {
@@ -293,7 +299,10 @@ export async function transitionContentCalendarItemStatus(
     'Content calendar actor user ID',
   );
   const toStatus = contentCalendarStatusSchema.parse(input.toStatus);
-  const now = validDate(input.now ?? new Date(), 'Content calendar change time');
+  const now = validDate(
+    input.now ?? new Date(),
+    'Content calendar change time',
+  );
 
   return client.$transaction(async (transaction) => {
     const current = await transaction.contentCalendarItem.findUnique({
@@ -301,7 +310,9 @@ export async function transitionContentCalendarItemStatus(
     });
     if (!current) throw new Error('Content calendar item not found');
     if (current.revision !== expectedRevision) {
-      throw new Error('Content calendar status was updated by another operator');
+      throw new Error(
+        'Content calendar status was updated by another operator',
+      );
     }
     if (!statusTransitions[current.status].includes(toStatus)) {
       throw new Error('Invalid content calendar status transition');

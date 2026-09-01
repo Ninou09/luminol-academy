@@ -1,9 +1,6 @@
 import { z } from 'zod';
 
-export const contentCalendarPlatformSchema = z.enum([
-  'INSTAGRAM',
-  'FACEBOOK',
-]);
+export const contentCalendarPlatformSchema = z.enum(['INSTAGRAM', 'FACEBOOK']);
 
 export const contentCalendarFormatSchema = z.enum([
   'REEL',

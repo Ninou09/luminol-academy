@@ -92,7 +92,9 @@ export async function updateContentCalendarItemAction(formData: FormData) {
   revalidateCalendar();
 }
 
-export async function transitionContentCalendarStatusAction(formData: FormData) {
+export async function transitionContentCalendarStatusAction(
+  formData: FormData,
+) {
   const administrator = await requirePermission('academy:manage');
 
   await transitionContentCalendarItemStatus(db, {

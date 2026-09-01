@@ -1,10 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
-import {
-  AiOperatorProposalStatus,
-  ContentCalendarStatus,
-  db,
-} from './index';
+import { AiOperatorProposalStatus, ContentCalendarStatus, db } from './index';
 import {
   buildContentCalendarPublishAction,
   contentCalendarPublishActionId,

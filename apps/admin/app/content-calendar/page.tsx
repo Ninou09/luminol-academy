@@ -26,10 +26,7 @@ const transitions: Record<ContentCalendarStatus, ContentCalendarStatus[]> = {
     ContentCalendarStatus.SCHEDULED,
     ContentCalendarStatus.ARCHIVED,
   ],
-  SCHEDULED: [
-    ContentCalendarStatus.READY,
-    ContentCalendarStatus.ARCHIVED,
-  ],
+  SCHEDULED: [ContentCalendarStatus.READY, ContentCalendarStatus.ARCHIVED],
   ARCHIVED: [],
 };
 
@@ -43,44 +40,50 @@ export default async function ContentCalendarPage() {
   const copy = getContentCalendarCopy(locale);
   const common = getCommonDictionary(locale);
 
-  const [items, proposals, draftCount, readyCount, scheduledCount, archivedCount] =
-    await Promise.all([
-      db.contentCalendarItem.findMany({
-        orderBy: { updatedAt: 'desc' },
-        take: 50,
-        include: {
-          createdBy: { select: { email: true } },
-          updatedBy: { select: { email: true } },
-          events: {
-            orderBy: { occurredAt: 'asc' },
-            include: { actor: { select: { email: true } } },
-          },
+  const [
+    items,
+    proposals,
+    draftCount,
+    readyCount,
+    scheduledCount,
+    archivedCount,
+  ] = await Promise.all([
+    db.contentCalendarItem.findMany({
+      orderBy: { updatedAt: 'desc' },
+      take: 50,
+      include: {
+        createdBy: { select: { email: true } },
+        updatedBy: { select: { email: true } },
+        events: {
+          orderBy: { occurredAt: 'asc' },
+          include: { actor: { select: { email: true } } },
         },
-      }),
-      db.aiOperatorProposal.findMany({
-        where: { sourceSurface: 'content_calendar' },
-        orderBy: { createdAt: 'desc' },
-        take: 200,
-        select: {
-          id: true,
-          status: true,
-          sourceReference: true,
-          createdAt: true,
-        },
-      }),
-      db.contentCalendarItem.count({
-        where: { status: ContentCalendarStatus.DRAFT },
-      }),
-      db.contentCalendarItem.count({
-        where: { status: ContentCalendarStatus.READY },
-      }),
-      db.contentCalendarItem.count({
-        where: { status: ContentCalendarStatus.SCHEDULED },
-      }),
-      db.contentCalendarItem.count({
-        where: { status: ContentCalendarStatus.ARCHIVED },
-      }),
-    ]);
+      },
+    }),
+    db.aiOperatorProposal.findMany({
+      where: { sourceSurface: 'content_calendar' },
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+      select: {
+        id: true,
+        status: true,
+        sourceReference: true,
+        createdAt: true,
+      },
+    }),
+    db.contentCalendarItem.count({
+      where: { status: ContentCalendarStatus.DRAFT },
+    }),
+    db.contentCalendarItem.count({
+      where: { status: ContentCalendarStatus.READY },
+    }),
+    db.contentCalendarItem.count({
+      where: { status: ContentCalendarStatus.SCHEDULED },
+    }),
+    db.contentCalendarItem.count({
+      where: { status: ContentCalendarStatus.ARCHIVED },
+    }),
+  ]);
 
   const proposalBySource = new Map(
     proposals.map((proposal) => [proposal.sourceReference, proposal]),
@@ -145,7 +148,10 @@ export default async function ContentCalendarPage() {
                 <p>{copy.createIntro}</p>
               </div>
             </div>
-            <form action={createContentCalendarItemAction} className={styles.form}>
+            <form
+              action={createContentCalendarItemAction}
+              className={styles.form}
+            >
               <div className={styles.grid}>
                 <label className={`${styles.field} ${styles.wide}`}>
                   <span>{copy.titleLabel}</span>
@@ -158,13 +164,22 @@ export default async function ContentCalendarPage() {
                 <label className={styles.field}>
                   <span>{copy.platformLabel}</span>
                   <select name="platform" defaultValue="INSTAGRAM">
-                    <option value="INSTAGRAM">{copy.platformName.INSTAGRAM}</option>
-                    <option value="FACEBOOK">{copy.platformName.FACEBOOK}</option>
+                    <option value="INSTAGRAM">
+                      {copy.platformName.INSTAGRAM}
+                    </option>
+                    <option value="FACEBOOK">
+                      {copy.platformName.FACEBOOK}
+                    </option>
                   </select>
                 </label>
                 <label className={styles.field}>
                   <span>{copy.accountRefLabel}</span>
-                  <input type="text" name="accountRef" maxLength={255} required />
+                  <input
+                    type="text"
+                    name="accountRef"
+                    maxLength={255}
+                    required
+                  />
                 </label>
                 <label className={styles.field}>
                   <span>{copy.formatFieldLabel}</span>
@@ -272,14 +287,20 @@ export default async function ContentCalendarPage() {
                               action={updateContentCalendarItemAction}
                               className={styles.form}
                             >
-                              <input type="hidden" name="itemId" value={item.id} />
+                              <input
+                                type="hidden"
+                                name="itemId"
+                                value={item.id}
+                              />
                               <input
                                 type="hidden"
                                 name="revision"
                                 value={item.revision}
                               />
                               <div className={styles.grid}>
-                                <label className={`${styles.field} ${styles.wide}`}>
+                                <label
+                                  className={`${styles.field} ${styles.wide}`}
+                                >
                                   <span>{copy.titleLabel}</span>
                                   <input
                                     type="text"
@@ -289,7 +310,9 @@ export default async function ContentCalendarPage() {
                                     required
                                   />
                                 </label>
-                                <label className={`${styles.field} ${styles.wide}`}>
+                                <label
+                                  className={`${styles.field} ${styles.wide}`}
+                                >
                                   <span>{copy.captionLabel}</span>
                                   <textarea
                                     name="caption"
@@ -301,7 +324,10 @@ export default async function ContentCalendarPage() {
                                 </label>
                                 <label className={styles.field}>
                                   <span>{copy.platformLabel}</span>
-                                  <select name="platform" defaultValue={item.platform}>
+                                  <select
+                                    name="platform"
+                                    defaultValue={item.platform}
+                                  >
                                     <option value="INSTAGRAM">
                                       {copy.platformName.INSTAGRAM}
                                     </option>
@@ -322,7 +348,10 @@ export default async function ContentCalendarPage() {
                                 </label>
                                 <label className={styles.field}>
                                   <span>{copy.formatFieldLabel}</span>
-                                  <select name="format" defaultValue={item.format}>
+                                  <select
+                                    name="format"
+                                    defaultValue={item.format}
+                                  >
                                     {Object.entries(copy.formatName).map(
                                       ([value, label]) => (
                                         <option value={value} key={value}>
@@ -348,7 +377,9 @@ export default async function ContentCalendarPage() {
                                     name="scheduledUtc"
                                     defaultValue={
                                       item.scheduledFor
-                                        ? item.scheduledFor.toISOString().slice(0, 16)
+                                        ? item.scheduledFor
+                                            .toISOString()
+                                            .slice(0, 16)
                                         : ''
                                     }
                                   />
@@ -413,7 +444,9 @@ export default async function ContentCalendarPage() {
                               · {proposal.status}
                             </p>
                           ) : canPropose ? (
-                            <form action={queueContentCalendarPublishProposalAction}>
+                            <form
+                              action={queueContentCalendarPublishProposalAction}
+                            >
                               <input
                                 type="hidden"
                                 name="itemId"
@@ -424,7 +457,9 @@ export default async function ContentCalendarPage() {
                                 name="revision"
                                 value={item.revision}
                               />
-                              <button type="submit">{copy.proposePublish}</button>
+                              <button type="submit">
+                                {copy.proposePublish}
+                              </button>
                             </form>
                           ) : null}
                         </section>
@@ -435,8 +470,9 @@ export default async function ContentCalendarPage() {
                             {item.events.map((event) => (
                               <div className={styles.auditItem} key={event.id}>
                                 <span>
-                                  {event.eventType} · {event.fromStatus ?? '—'} →{' '}
-                                  {event.toStatus} · r{event.fromRevision ?? '—'} → r
+                                  {event.eventType} · {event.fromStatus ?? '—'}{' '}
+                                  → {event.toStatus} · r
+                                  {event.fromRevision ?? '—'} → r
                                   {event.toRevision}
                                 </span>
                                 <span dir="auto">
