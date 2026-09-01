@@ -1,5 +1,9 @@
 import { requirePermission } from '@luminol/auth';
-import { AiOperatorProposalStatus, db } from '@luminol/database';
+import {
+  AiOperatorProposalStatus,
+  db,
+  evaluateAiOperatorExecutionReadiness,
+} from '@luminol/database';
 import {
   formatLocalizedDate,
   formatLocalizedNumber,
@@ -150,6 +154,14 @@ export default async function AiOperatorApprovalQueuePage() {
                   );
                   const action = parsed.success ? parsed.data : null;
                   const summary = action ? actionSummary(action) : null;
+                  const readiness =
+                    evaluateAiOperatorExecutionReadiness(proposal);
+                  const readinessChecks = [
+                    ['envelopeValid', readiness.checks.envelopeValid],
+                    ['metadataMatches', readiness.checks.metadataMatches],
+                    ['approvalState', readiness.checks.approvalState],
+                    ['policyRegistered', readiness.checks.policyRegistered],
+                  ] as const;
                   const isPending =
                     proposal.status ===
                     AiOperatorProposalStatus.PENDING_APPROVAL;
@@ -193,6 +205,31 @@ export default async function AiOperatorApprovalQueuePage() {
                             {copy.decided}: {date(proposal.decidedAt)}
                           </p>
                         ) : null}
+
+                        <section
+                          aria-label={copy.readinessTitle}
+                          style={{ marginTop: '1rem' }}
+                        >
+                          <h4>{copy.readinessTitle}</h4>
+                          <p>{copy.readinessIntro}</p>
+                          <p>
+                            <strong>
+                              {copy.readinessStatus[readiness.status]}
+                            </strong>
+                          </p>
+                          <div className="compact-list">
+                            {readinessChecks.map(([key, passed]) => (
+                              <article key={key}>
+                                <span>{copy.readinessCheck[key]}</span>
+                                <strong>
+                                  {passed
+                                    ? copy.readinessPassed
+                                    : copy.readinessFailed}
+                                </strong>
+                              </article>
+                            ))}
+                          </div>
+                        </section>
 
                         <details>
                           <summary>{copy.exactEnvelope}</summary>
