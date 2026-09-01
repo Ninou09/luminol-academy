@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./content-calendar": "./src/content-calendar.ts"
+    "./content-calendar": "./src/content-calendar.ts",
+    "./social-publishing-delivery": "./src/social-publishing-delivery.ts"
   },
   "scripts": {
     "generate": "prisma generate",
