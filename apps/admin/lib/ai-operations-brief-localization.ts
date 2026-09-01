@@ -11,11 +11,18 @@ export type AiOperationsBriefCopy = {
   allClearTitle: string;
   allClearBody: string;
   qualificationLabels: Record<
-    'city' | 'preferredContact' | 'deliveryPreference' | 'timingPreference',
+    | 'city'
+    | 'preferredContact'
+    | 'deliveryPreference'
+    | 'timingPreference',
     string
   >;
   attributionLabels: Record<
-    'utmSource' | 'utmMedium' | 'utmCampaign' | 'utmContent' | 'landingPath',
+    | 'utmSource'
+    | 'utmMedium'
+    | 'utmCampaign'
+    | 'utmContent'
+    | 'landingPath',
     string
   >;
   items: {
