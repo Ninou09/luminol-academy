@@ -7,6 +7,7 @@ export type AiOperationsBriefCopy = {
   title: string;
   intro: string;
   mode: string;
+  executionPolicy: string;
   action: string;
   allClearTitle: string;
   allClearBody: string;
@@ -40,7 +41,8 @@ const COPY: Record<Locale, AiOperationsBriefCopy> = {
     title: 'Operations Brief',
     intro:
       'A read-only operational brief generated from the same protected CRM and dashboard data shown in this Operating System. It highlights recorded workflow gaps and opens the existing protected queues; it does not infer intent, lead quality, suitability, clinical need, campaign performance or ROI.',
-    mode: 'Deterministic · read only',
+    mode: 'Deterministic',
+    executionPolicy: 'Execution policy: read_only · navigation only',
     action: 'Open protected queue',
     allClearTitle: 'No supported workflow gaps detected',
     allClearBody:
@@ -95,7 +97,8 @@ const COPY: Record<Locale, AiOperationsBriefCopy> = {
     title: 'Brief opérationnel',
     intro:
       'Brief opérationnel en lecture seule généré à partir des mêmes données CRM et tableau de bord protégées que ce système d’exploitation. Il signale des écarts de workflow enregistrés et ouvre les files protégées existantes ; il n’infère ni intention, ni qualité du prospect, ni adéquation, ni besoin clinique, ni performance de campagne, ni ROI.',
-    mode: 'Déterministe · lecture seule',
+    mode: 'Déterministe',
+    executionPolicy: 'Politique d’exécution : read_only · navigation uniquement',
     action: 'Ouvrir la file protégée',
     allClearTitle: 'Aucun écart de workflow pris en charge détecté',
     allClearBody:
@@ -151,7 +154,8 @@ const COPY: Record<Locale, AiOperationsBriefCopy> = {
     title: 'الموجز التشغيلي',
     intro:
       'موجز تشغيلي للقراءة فقط يُنشأ من نفس بيانات CRM ولوحة التحكم المحمية داخل نظام التشغيل. يعرض فجوات سير العمل المسجلة ويفتح قوائم العمل المحمية الحالية، ولا يستنتج النية أو جودة الطلب أو الملاءمة أو الحاجة السريرية أو أداء الحملات أو العائد على الاستثمار.',
-    mode: 'حتمي · للقراءة فقط',
+    mode: 'حتمي',
+    executionPolicy: 'سياسة التنفيذ: read_only · تنقل فقط دون تغييرات',
     action: 'فتح قائمة العمل المحمية',
     allClearTitle: 'لا توجد فجوات مدعومة في سير العمل',
     allClearBody:
