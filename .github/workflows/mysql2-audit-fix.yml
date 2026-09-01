@@ -1,0 +1,43 @@
+name: Temporary MySQL2 Audit Fix
+on:
+  push:
+    branches: [feat/ai-operator-social-publish-attempts]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[mysql2-audit-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-social-publish-attempts
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Pin patched mysql2 and synchronize lockfile
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = 'package.json';
+          const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+          pkg.pnpm ??= {};
+          pkg.pnpm.overrides ??= {};
+          pkg.pnpm.overrides.mysql2 = '3.22.0';
+          fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
+          NODE
+          pnpm install --lockfile-only
+          pnpm audit --prod --audit-level high
+          pnpm exec prettier --write package.json
+          git diff --check
+      - name: Commit dependency audit fix
+        run: |
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml
+          git commit -m "Pin patched mysql2 dependency [mysql2-audit-fix]"
+          git push origin HEAD:feat/ai-operator-social-publish-attempts
