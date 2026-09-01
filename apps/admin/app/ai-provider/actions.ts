@@ -16,12 +16,10 @@ export type AiProviderRunState =
   | { status: 'succeeded'; text: string; model: string }
   | { status: 'blocked' | 'failed'; errorCode: string };
 
-async function runBoundedAiProviderTask(
+async function executeBoundedAiProviderTask(
   taskClass: AiProviderTaskClass,
   metrics: Record<string, number>,
 ): Promise<AiProviderRunState> {
-  await requirePermission('academy:manage');
-
   try {
     const result = await runAiProviderTask(db, { taskClass, metrics });
     revalidatePath('/ai-provider');
@@ -49,8 +47,9 @@ export async function runAiProviderSummaryAction(
 ): Promise<AiProviderRunState> {
   void _previousState;
   void _formData;
+  await requirePermission('academy:manage');
   const operations = await getOperationsDashboard();
-  return runBoundedAiProviderTask(
+  return executeBoundedAiProviderTask(
     'SUMMARIZE_OPERATIONAL_STATE',
     buildAiProviderOperationalMetrics(operations),
   );
@@ -62,8 +61,9 @@ export async function runAiProviderRecommendationsAction(
 ): Promise<AiProviderRunState> {
   void _previousState;
   void _formData;
+  await requirePermission('academy:manage');
   const operations = await getOperationsDashboard();
-  return runBoundedAiProviderTask(
+  return executeBoundedAiProviderTask(
     'DRAFT_OPERATOR_RECOMMENDATIONS',
     buildAiProviderOperationalMetrics(operations),
   );
@@ -75,8 +75,9 @@ export async function runAiProviderCampaignAnalysisAction(
 ): Promise<AiProviderRunState> {
   void _previousState;
   void _formData;
+  await requirePermission('academy:manage');
   const operations = await getOperationsDashboard();
-  return runBoundedAiProviderTask(
+  return executeBoundedAiProviderTask(
     'ANALYZE_CAMPAIGN_METRICS',
     buildAiProviderCampaignMetrics(operations),
   );
