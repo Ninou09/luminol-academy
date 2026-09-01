@@ -254,7 +254,9 @@ export async function decideAiOperatorProposal(
       throw new Error('AI Operator proposal is no longer pending approval');
     }
     if (decidedAt.getTime() < proposal.createdAt.getTime()) {
-      throw new Error('AI Operator proposal decision cannot predate the proposal');
+      throw new Error(
+        'AI Operator proposal decision cannot predate the proposal',
+      );
     }
 
     const updated = await transaction.aiOperatorProposal.updateMany({

@@ -129,7 +129,9 @@ suite('AI Operator proposal persistence', () => {
       include: { events: true },
     });
     expect(stored.status).toBe(AiOperatorProposalStatus.PENDING_APPROVAL);
-    expect(stored.events.map(({ eventType }) => eventType)).toEqual(['PROPOSED']);
+    expect(stored.events.map(({ eventType }) => eventType)).toEqual([
+      'PROPOSED',
+    ]);
   });
 
   test('coalesces concurrent duplicate proposal requests onto one action ID', async () => {
