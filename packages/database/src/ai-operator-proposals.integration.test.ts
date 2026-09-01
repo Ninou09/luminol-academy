@@ -81,7 +81,7 @@ suite('AI Operator proposal persistence', () => {
       actorUserId: userId,
       decision: 'REJECTED',
       note: '  Needs revised timing  ',
-      now: new Date('2026-09-01T12:00:00.000Z'),
+      now: new Date(first.createdAt.getTime() + 1000),
     });
 
     expect(decided.status).toBe(AiOperatorProposalStatus.REJECTED);
@@ -98,6 +98,38 @@ suite('AI Operator proposal persistence', () => {
         decision: 'APPROVED',
       }),
     ).rejects.toThrow('no longer pending approval');
+  });
+
+  test('rejects a decision timestamp that predates the proposal', async () => {
+    const chronologicalAction = {
+      ...action,
+      actionId: `${actionId}:chronology`,
+      source: {
+        ...action.source,
+        reference: `proposal-test:${suffix}:chronology`,
+      },
+    };
+    const proposal = await queueAiOperatorProposal(
+      db,
+      chronologicalAction,
+      userId,
+    );
+
+    await expect(
+      decideAiOperatorProposal(db, {
+        proposalId: proposal.id,
+        actorUserId: userId,
+        decision: 'APPROVED',
+        now: new Date(proposal.createdAt.getTime() - 1),
+      }),
+    ).rejects.toThrow('decision cannot predate the proposal');
+
+    const stored = await db.aiOperatorProposal.findUniqueOrThrow({
+      where: { id: proposal.id },
+      include: { events: true },
+    });
+    expect(stored.status).toBe(AiOperatorProposalStatus.PENDING_APPROVAL);
+    expect(stored.events.map(({ eventType }) => eventType)).toEqual(['PROPOSED']);
   });
 
   test('coalesces concurrent duplicate proposal requests onto one action ID', async () => {
