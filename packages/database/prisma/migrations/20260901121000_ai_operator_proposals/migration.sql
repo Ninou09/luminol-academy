@@ -70,7 +70,7 @@ ALTER TABLE "AiOperatorProposal" ADD CONSTRAINT "AiOperatorProposal_decidedByUse
 ALTER TABLE "AiOperatorProposalEvent" ADD CONSTRAINT "AiOperatorProposalEvent_proposalId_fkey" FOREIGN KEY ("proposalId") REFERENCES "AiOperatorProposal"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AiOperatorProposalEvent" ADD CONSTRAINT "AiOperatorProposalEvent_actorUserId_fkey" FOREIGN KEY ("actorUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "AiOperatorProposalEvent" ADD CONSTRAINT "AiOperatorProposalEvent_actorUserId_fkey" FOREIGN KEY ("actorUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- Proposal decision history is append-only.
 CREATE FUNCTION "prevent_ai_operator_proposal_event_mutation"() RETURNS trigger AS $$
