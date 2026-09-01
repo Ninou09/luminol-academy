@@ -31,6 +31,23 @@ export type AiOperatorProposalQueueCopy = {
   noActor: string;
   pendingOnly: string;
   noExecution: string;
+  readinessTitle: string;
+  readinessIntro: string;
+  readinessPassed: string;
+  readinessFailed: string;
+  readinessCheck: {
+    envelopeValid: string;
+    metadataMatches: string;
+    approvalState: string;
+    policyRegistered: string;
+  };
+  readinessStatus: Record<
+    | 'READY_FOR_EXECUTOR'
+    | 'NOT_APPROVED'
+    | 'INVALID_ENVELOPE'
+    | 'METADATA_MISMATCH',
+    string
+  >;
   statusLabel: Record<
     'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'CANCELLED',
     string
@@ -78,6 +95,23 @@ const COPY: Record<Locale, AiOperatorProposalQueueCopy> = {
     pendingOnly: 'Only pending proposals can be decided.',
     noExecution:
       'No side effect is executed from this queue in the current release.',
+    readinessTitle: 'Execution readiness review',
+    readinessIntro:
+      'Derived review only. A ready result means the approved proposal is structurally eligible for a future executor; nothing is executed here.',
+    readinessPassed: 'Passed',
+    readinessFailed: 'Not passed',
+    readinessCheck: {
+      envelopeValid: 'Stored envelope validates',
+      metadataMatches: 'Persisted metadata matches the envelope',
+      approvalState: 'Proposal is approved',
+      policyRegistered: 'Action remains approval-required in the registry',
+    },
+    readinessStatus: {
+      READY_FOR_EXECUTOR: 'Ready for a future executor',
+      NOT_APPROVED: 'Not approved for executor readiness',
+      INVALID_ENVELOPE: 'Invalid stored envelope',
+      METADATA_MISMATCH: 'Envelope or registry metadata mismatch',
+    },
     statusLabel: {
       PENDING_APPROVAL: 'Pending approval',
       APPROVED: 'Approved',
@@ -124,6 +158,23 @@ const COPY: Record<Locale, AiOperatorProposalQueueCopy> = {
     pendingOnly: 'Seules les propositions en attente peuvent être décidées.',
     noExecution:
       'Aucun effet externe n’est exécuté depuis cette file dans la version actuelle.',
+    readinessTitle: 'Revue de préparation à l’exécution',
+    readinessIntro:
+      'Revue dérivée uniquement. Un résultat prêt signifie que la proposition approuvée est structurellement admissible à un futur exécuteur ; rien n’est exécuté ici.',
+    readinessPassed: 'Validé',
+    readinessFailed: 'Non validé',
+    readinessCheck: {
+      envelopeValid: 'L’enveloppe enregistrée est valide',
+      metadataMatches: 'Les métadonnées enregistrées correspondent à l’enveloppe',
+      approvalState: 'La proposition est approuvée',
+      policyRegistered: 'L’action reste soumise à approbation dans le registre',
+    },
+    readinessStatus: {
+      READY_FOR_EXECUTOR: 'Prête pour un futur exécuteur',
+      NOT_APPROVED: 'Non approuvée pour la préparation à l’exécution',
+      INVALID_ENVELOPE: 'Enveloppe enregistrée invalide',
+      METADATA_MISMATCH: 'Incohérence entre enveloppe, métadonnées ou registre',
+    },
     statusLabel: {
       PENDING_APPROVAL: 'En attente d’approbation',
       APPROVED: 'Approuvée',
@@ -170,6 +221,23 @@ const COPY: Record<Locale, AiOperatorProposalQueueCopy> = {
     pendingOnly: 'يمكن اتخاذ القرار فقط للمقترحات المعلّقة.',
     noExecution:
       'لا يتم تنفيذ أي تأثير جانبي من هذه القائمة في الإصدار الحالي.',
+    readinessTitle: 'مراجعة الجاهزية للتنفيذ',
+    readinessIntro:
+      'هذه مراجعة مشتقة فقط. تعني حالة الجاهزية أن المقترح الموافق عليه مؤهل بنيوياً لمنفّذ مستقبلي، ولا يتم تنفيذ أي إجراء هنا.',
+    readinessPassed: 'تم التحقق',
+    readinessFailed: 'لم يتم التحقق',
+    readinessCheck: {
+      envelopeValid: 'غلاف الإجراء المخزّن صالح',
+      metadataMatches: 'البيانات الوصفية المخزّنة تطابق الغلاف',
+      approvalState: 'تمت الموافقة على المقترح',
+      policyRegistered: 'ما يزال الإجراء يتطلب موافقة في السجل',
+    },
+    readinessStatus: {
+      READY_FOR_EXECUTOR: 'جاهز لمنفّذ مستقبلي',
+      NOT_APPROVED: 'غير موافق عليه للجاهزية للتنفيذ',
+      INVALID_ENVELOPE: 'غلاف الإجراء المخزّن غير صالح',
+      METADATA_MISMATCH: 'عدم تطابق بين الغلاف أو البيانات الوصفية أو السجل',
+    },
     statusLabel: {
       PENDING_APPROVAL: 'بانتظار الموافقة',
       APPROVED: 'تمت الموافقة',
