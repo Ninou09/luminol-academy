@@ -11,18 +11,11 @@ export type AiOperationsBriefCopy = {
   allClearTitle: string;
   allClearBody: string;
   qualificationLabels: Record<
-    | 'city'
-    | 'preferredContact'
-    | 'deliveryPreference'
-    | 'timingPreference',
+    'city' | 'preferredContact' | 'deliveryPreference' | 'timingPreference',
     string
   >;
   attributionLabels: Record<
-    | 'utmSource'
-    | 'utmMedium'
-    | 'utmCampaign'
-    | 'utmContent'
-    | 'landingPath',
+    'utmSource' | 'utmMedium' | 'utmCampaign' | 'utmContent' | 'landingPath',
     string
   >;
   items: {
@@ -188,8 +181,7 @@ const COPY: Record<Locale, AiOperationsBriefCopy> = {
       },
       missingFollowUpPlan: {
         title: 'استكمال خطط المتابعة',
-        body: (count) =>
-          `${count} طلبات نشطة تفتقد خطة متابعة كاملة ومسجلة.`,
+        body: (count) => `${count} طلبات نشطة تفتقد خطة متابعة كاملة ومسجلة.`,
       },
       qualificationGap: {
         title: (field) => `استكمال حقل ${field}`,
@@ -198,8 +190,7 @@ const COPY: Record<Locale, AiOperationsBriefCopy> = {
       },
       missingOutcome: {
         title: 'استكمال نتائج الطلبات المغلقة',
-        body: (count) =>
-          `${count} طلبات مغلقة حديثة تفتقد نتيجة كاملة ومسجلة.`,
+        body: (count) => `${count} طلبات مغلقة حديثة تفتقد نتيجة كاملة ومسجلة.`,
       },
       attributionGap: {
         title: (field) => `تحسين تغطية ${field} المسجلة`,
