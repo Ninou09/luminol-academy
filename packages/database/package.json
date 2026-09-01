@@ -25,7 +25,8 @@
     "@luminol/validation": "workspace:*",
     "@prisma/adapter-pg": "7.9.1",
     "@prisma/client": "7.9.1",
-    "pg": "^8.22.0"
+    "pg": "^8.22.0",
+    "zod": "^4.0.10"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",
