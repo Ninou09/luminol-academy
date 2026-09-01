@@ -5,6 +5,7 @@ import {
   aiOperatorExecutionPolicyByKind,
   aiOperatorOpenEnquiryQueueActionSchema,
   aiOperatorPublishSocialContentActionSchema,
+  aiOperatorSetFollowUpExecutionActionSchema,
 } from './ai-operator';
 
 describe('AI Operator action contract', () => {
@@ -117,6 +118,64 @@ describe('AI Operator action contract', () => {
       aiOperatorPublishSocialContentActionSchema.parse({
         ...action,
         executionPolicy: 'autonomous_allowed',
+      }),
+    ).toThrow();
+  });
+
+  it('accepts only the bounded SET_FOLLOW_UP execution payload', () => {
+    const action = {
+      version: '1',
+      actionId: 'operator:v1:follow-up:enquiry-123',
+      kind: 'UPDATE_ENQUIRY_WORKFLOW',
+      executionPolicy: 'approval_required',
+      source: { surface: 'ai_operator', reference: 'follow-up:test' },
+      target: { surface: 'crm_enquiry', enquiryId: 'enquiry-123' },
+      payload: {
+        operation: 'SET_FOLLOW_UP',
+        parameters: {
+          nextFollowUpOn: '2026-09-04',
+          nextAction: 'Confirm course availability',
+        },
+      },
+    } as const;
+
+    expect(aiOperatorSetFollowUpExecutionActionSchema.parse(action)).toEqual(
+      action,
+    );
+
+    expect(() =>
+      aiOperatorSetFollowUpExecutionActionSchema.parse({
+        ...action,
+        payload: {
+          ...action.payload,
+          parameters: {
+            ...action.payload.parameters,
+            nextFollowUpOn: '2026-02-30',
+          },
+        },
+      }),
+    ).toThrow();
+
+    expect(() =>
+      aiOperatorSetFollowUpExecutionActionSchema.parse({
+        ...action,
+        payload: {
+          ...action.payload,
+          parameters: {
+            ...action.payload.parameters,
+            unexpected: 'not executable',
+          },
+        },
+      }),
+    ).toThrow();
+
+    expect(() =>
+      aiOperatorSetFollowUpExecutionActionSchema.parse({
+        ...action,
+        payload: {
+          operation: 'ASSIGN_OWNER',
+          parameters: action.payload.parameters,
+        },
       }),
     ).toThrow();
   });
