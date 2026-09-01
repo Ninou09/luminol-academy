@@ -8,7 +8,7 @@ import {
   AiOperatorProposalEventType,
   AiOperatorProposalStatus,
   type AiOperatorProposal,
-  Prisma,
+  type Prisma,
   type PrismaClient,
 } from '../generated/prisma/client';
 
@@ -31,8 +31,10 @@ const decisionEventByType = {
   CANCELLED: AiOperatorProposalEventType.CANCELLED,
 } as const;
 
-function assertJsonCompatible(value: unknown, path = 'action'):
-  asserts value is Prisma.InputJsonValue {
+function assertJsonCompatible(
+  value: unknown,
+  path = 'action',
+): asserts value is Prisma.InputJsonValue {
   if (
     value === null ||
     typeof value === 'string' ||
@@ -45,7 +47,9 @@ function assertJsonCompatible(value: unknown, path = 'action'):
     return;
   }
   if (Array.isArray(value)) {
-    value.forEach((item, index) => assertJsonCompatible(item, `${path}[${index}]`));
+    value.forEach((item, index) =>
+      assertJsonCompatible(item, `${path}[${index}]`),
+    );
     return;
   }
   if (typeof value === 'object') {
@@ -62,6 +66,11 @@ function assertJsonCompatible(value: unknown, path = 'action'):
   throw new Error(`${path} must be JSON-safe`);
 }
 
+function toPrismaJson(value: unknown): Prisma.InputJsonValue {
+  assertJsonCompatible(value);
+  return value;
+}
+
 function canonicalJson(value: unknown): string {
   if (Array.isArray(value)) {
     return `[${value.map((item) => canonicalJson(item)).join(',')}]`;
@@ -72,7 +81,7 @@ function canonicalJson(value: unknown): string {
       .map(([key, item]) => `${JSON.stringify(key)}:${canonicalJson(item)}`)
       .join(',')}}`;
   }
-  return JSON.stringify(value);
+  return JSON.stringify(value) ?? 'null';
 }
 
 function normalizeOptionalNote(note?: string | null) {
@@ -107,7 +116,7 @@ export function parseApprovalRequiredAiOperatorAction(
     throw new Error('AI Operator action is not eligible for the approval queue');
   }
 
-  assertJsonCompatible(action);
+  toPrismaJson(action);
   return action;
 }
 
@@ -144,6 +153,7 @@ export async function queueAiOperatorProposal(
   proposedByUserId?: string | null,
 ) {
   const action = parseApprovalRequiredAiOperatorAction(input);
+  const actionEnvelope = toPrismaJson(action);
   const proposerId = proposedByUserId
     ? requireIdentifier(proposedByUserId, 'AI Operator proposer user ID')
     : null;
@@ -165,7 +175,7 @@ export async function queueAiOperatorProposal(
         executionPolicy: action.executionPolicy,
         sourceSurface: action.source.surface,
         sourceReference: action.source.reference,
-        actionEnvelope: action,
+        actionEnvelope,
         proposedByUserId: proposerId,
       },
     });
