@@ -234,6 +234,20 @@ enum CohortAttendanceStatus {
   EXCUSED
 }
 
+enum AiOperatorProposalStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum AiOperatorProposalEventType {
+  PROPOSED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
 model User {
   id                          String                       @id @default(cuid())
   clerkId                     String                       @unique
@@ -271,10 +285,56 @@ model User {
   cohortDeliveryAuditEvents   CohortDeliveryAuditEvent[]   @relation("CohortDeliveryAuditActor")
   cohortAttendanceRecords     CohortSessionAttendance[]    @relation("CohortAttendanceRecorder")
 
+  aiOperatorProposalsProposed AiOperatorProposal[]      @relation("AiOperatorProposalProposer")
+  aiOperatorProposalsDecided  AiOperatorProposal[]      @relation("AiOperatorProposalDecider")
+  aiOperatorProposalEvents    AiOperatorProposalEvent[] @relation("AiOperatorProposalEventActor")
+
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
   @@index([email])
   @@index([deletedAt])
+}
+
+model AiOperatorProposal {
+  id               String                    @id @default(cuid())
+  actionId         String                    @unique
+  actionVersion    String
+  actionKind       String
+  executionPolicy  String
+  sourceSurface    String
+  sourceReference  String
+  actionEnvelope   Json
+  status           AiOperatorProposalStatus  @default(PENDING_APPROVAL)
+  proposedByUserId String?
+  decidedByUserId  String?
+  decidedAt        DateTime?
+  decisionNote     String?
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  proposedBy       User?                     @relation("AiOperatorProposalProposer", fields: [proposedByUserId], references: [id], onDelete: SetNull)
+  decidedBy        User?                     @relation("AiOperatorProposalDecider", fields: [decidedByUserId], references: [id], onDelete: SetNull)
+  events           AiOperatorProposalEvent[]
+
+  @@index([status, createdAt])
+  @@index([actionKind, status, createdAt])
+  @@index([proposedByUserId, createdAt])
+  @@index([decidedByUserId, decidedAt])
+}
+
+model AiOperatorProposalEvent {
+  id          String                      @id @default(cuid())
+  proposalId  String
+  eventType   AiOperatorProposalEventType
+  actorUserId String?
+  fromStatus  AiOperatorProposalStatus?
+  toStatus    AiOperatorProposalStatus
+  note        String?
+  occurredAt  DateTime                    @default(now())
+  proposal    AiOperatorProposal          @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  actor       User?                       @relation("AiOperatorProposalEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([proposalId, occurredAt])
+  @@index([actorUserId, occurredAt])
 }
 
 model Invoice {
