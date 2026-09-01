@@ -192,6 +192,12 @@ suite('social publishing attempt ledger', () => {
       }),
     ).rejects.toThrow('terminal state is immutable');
     await expect(
+      db.socialPublishingAttempt.update({
+        where: { id: stored.id },
+        data: { providerReference: 'rewritten-terminal-reference' },
+      }),
+    ).rejects.toThrow('terminal state is immutable');
+    await expect(
       db.socialPublishingAttemptEvent.update({
         where: { id: stored.events[1]!.id },
         data: { errorCode: 'MUTATED' },

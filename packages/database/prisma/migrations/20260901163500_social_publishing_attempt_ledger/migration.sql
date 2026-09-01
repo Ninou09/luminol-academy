@@ -74,7 +74,7 @@ FOR EACH ROW EXECUTE FUNCTION prevent_social_publishing_attempt_event_mutation()
 CREATE OR REPLACE FUNCTION enforce_social_publishing_attempt_terminal_state()
 RETURNS trigger AS $$
 BEGIN
-  IF OLD."status" IN ('SUCCEEDED', 'DEAD_LETTER') AND NEW."status" <> OLD."status" THEN
+  IF OLD."status" IN ('SUCCEEDED', 'DEAD_LETTER') AND NEW IS DISTINCT FROM OLD THEN
     RAISE EXCEPTION 'SocialPublishingAttempt terminal state is immutable';
   END IF;
   RETURN NEW;
