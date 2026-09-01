@@ -23,6 +23,7 @@ import { getEnquiryCampaignReportingCopy } from '../lib/enquiry-campaign-reporti
 import { getEnquiryCampaignMediumCopy } from '../lib/enquiry-campaign-medium-localization';
 import { getEnquiryCampaignContentCopy } from '../lib/enquiry-campaign-content-localization';
 import { getEnquiryAttributionCoverageCopy } from '../lib/enquiry-attribution-coverage-localization';
+import { buildEnquiryAttributionGapQuery } from '../lib/enquiry-attribution-gap-filter';
 import { getEnquiryLandingPathCopy } from '../lib/enquiry-landing-path-localization';
 import { buildEnquiryLandingPathQuery } from '../lib/enquiry-landing-path-filter';
 import { buildEnquiryCityQuery } from '../lib/enquiry-city-filter';
@@ -682,7 +683,14 @@ export default async function Page() {
               {operations.enquiryAttributionCoverageLast30Days.items.map(
                 (item) => (
                   <article key={item.field}>
-                    <span>{attributionCoverageLabel(item.field)}</span>
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/enquiries?${buildEnquiryAttributionGapQuery(item.field)}`,
+                      )}
+                    >
+                      <span>{attributionCoverageLabel(item.field)}</span>
+                    </Link>
                     <strong>{percent(item.percent)}</strong>
                     <small>
                       {attributionCoverageCopy.recordedOfTotal(

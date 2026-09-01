@@ -27,9 +27,12 @@ describe('enquiry attribution gap filter', () => {
     ['utmCampaign', { utmCampaign: null }],
     ['utmContent', { utmContent: null }],
     ['landingPath', { landingPath: null }],
-  ] as const)('maps %s to its exact persisted-null predicate', (field, where) => {
-    expect(getEnquiryAttributionGapWhere(field)).toEqual(where);
-  });
+  ] as const)(
+    'maps %s to its exact persisted-null predicate',
+    (field, where) => {
+      expect(getEnquiryAttributionGapWhere(field)).toEqual(where);
+    },
+  );
 
   it('returns no predicate without a valid gap', () => {
     expect(getEnquiryAttributionGapWhere(null)).toBeNull();

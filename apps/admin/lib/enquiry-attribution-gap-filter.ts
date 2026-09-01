@@ -8,8 +8,7 @@ export const ENQUIRY_ATTRIBUTION_GAPS = [
   'landingPath',
 ] as const;
 
-export type EnquiryAttributionGap =
-  (typeof ENQUIRY_ATTRIBUTION_GAPS)[number];
+export type EnquiryAttributionGap = (typeof ENQUIRY_ATTRIBUTION_GAPS)[number];
 
 export function parseEnquiryAttributionGapFilter(
   value: string | string[] | undefined,

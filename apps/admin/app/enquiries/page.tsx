@@ -13,6 +13,7 @@ import { AdminLanguageSwitcher } from '../../components/admin-language-switcher'
 import { getAdminEnumLabel } from '../../lib/admin-localization';
 import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';
 import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-localization';
+import { getEnquiryAttributionGapFilterCopy } from '../../lib/enquiry-attribution-gap-filter-localization';
 import { getEnquiryLandingPathFilterCopy } from '../../lib/enquiry-landing-path-filter-localization';
 import { getEnquirySchoolFilterCopy } from '../../lib/enquiry-school-filter-localization';
 import { getEnquiryContactPreferenceFilterCopy } from '../../lib/enquiry-contact-preference-filter-localization';
@@ -28,6 +29,11 @@ import {
   parseEnquiryCampaignAttributionFilter,
   type EnquiryCampaignAttributionFilter,
 } from '../../lib/enquiry-campaign-filter';
+import {
+  getEnquiryAttributionGapWhere,
+  parseEnquiryAttributionGapFilter,
+  type EnquiryAttributionGap,
+} from '../../lib/enquiry-attribution-gap-filter';
 import {
   getEnquiryLandingPathWhere,
   parseEnquiryLandingPathFilter,
@@ -148,6 +154,7 @@ type EnquiryPageProps = {
     qualificationGap?: string | string[] | undefined;
     activeAge?: string | string[] | undefined;
     followUpTiming?: string | string[] | undefined;
+    attributionGap?: string | string[] | undefined;
   }>;
 };
 
@@ -192,6 +199,7 @@ function buildEnquiryHref(
   qualificationGap: EnquiryQualificationGap | null = null,
   activeAge: EnquiryActiveAgeBucket | null = null,
   followUpTiming: EnquiryFollowUpTimingBucket | null = null,
+  attributionGap: EnquiryAttributionGap | null = null,
 ) {
   const query = new URLSearchParams();
   if (status) query.set('status', status);
@@ -223,6 +231,7 @@ function buildEnquiryHref(
   if (qualificationGap) query.set('qualificationGap', qualificationGap);
   if (activeAge) query.set('activeAge', activeAge);
   if (followUpTiming) query.set('followUpTiming', followUpTiming);
+  if (attributionGap) query.set('attributionGap', attributionGap);
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   return localizeHref(locale, `/enquiries${suffix}`);
 }
@@ -239,6 +248,7 @@ export default async function EnquiriesAdminPage({
   const copy = getEnquiryDeskCopy(locale);
   const attributionCopy = getEnquiryAttributionCopy(locale);
   const campaignFilterCopy = getEnquiryCampaignFilterCopy(locale);
+  const attributionGapFilterCopy = getEnquiryAttributionGapFilterCopy(locale);
   const landingPathFilterCopy = getEnquiryLandingPathFilterCopy(locale);
   const schoolFilterCopy = getEnquirySchoolFilterCopy(locale);
   const contactPreferenceFilterCopy =
@@ -292,6 +302,9 @@ export default async function EnquiriesAdminPage({
   const activeFollowUpTiming = parseEnquiryFollowUpTimingFilter(
     params?.followUpTiming,
   );
+  const activeAttributionGap = parseEnquiryAttributionGapFilter(
+    params?.attributionGap,
+  );
   const now = new Date();
   const todayUtc = new Date(now);
   todayUtc.setUTCHours(0, 0, 0, 0);
@@ -342,6 +355,9 @@ export default async function EnquiriesAdminPage({
     activeFollowUpTiming,
   );
   if (followUpTimingWhere) filters.push(followUpTimingWhere);
+  const attributionGapWhere =
+    getEnquiryAttributionGapWhere(activeAttributionGap);
+  if (attributionGapWhere) filters.push(attributionGapWhere);
   const enquiryWhere = filters.length > 0 ? { AND: filters } : null;
   const hrefFor = (
     status: EnquiryStatusValue | null,
@@ -366,6 +382,7 @@ export default async function EnquiriesAdminPage({
       activeQualificationGap,
       activeAge,
       activeFollowUpTiming,
+      activeAttributionGap,
     );
 
   const [
@@ -582,6 +599,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{campaignFilterCopy.clear}</span>
@@ -619,6 +637,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{landingPathFilterCopy.clear}</span>
@@ -659,6 +678,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{schoolFilterCopy.clear}</span>
@@ -700,6 +720,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{contactPreferenceFilterCopy.clear}</span>
@@ -743,6 +764,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{deliveryPreferenceFilterCopy.clear}</span>
@@ -786,6 +808,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{timingPreferenceFilterCopy.clear}</span>
@@ -830,6 +853,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{programmeFilterCopy.clear}</span>
@@ -869,6 +893,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{cityFilterCopy.clear}</span>
@@ -906,6 +931,7 @@ export default async function EnquiriesAdminPage({
                       null,
                       activeAge,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{qualificationGapFilterCopy.clear}</span>
@@ -945,6 +971,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       null,
                       activeFollowUpTiming,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{activeAgeFilterCopy.clear}</span>
@@ -984,6 +1011,7 @@ export default async function EnquiriesAdminPage({
                       activeQualificationGap,
                       activeAge,
                       null,
+                      activeAttributionGap,
                     )}
                   >
                     <span>{followUpTimingFilterCopy.clear}</span>
@@ -991,6 +1019,46 @@ export default async function EnquiriesAdminPage({
                 </div>
                 <p className={styles.filterLabel}>
                   {followUpTimingFilterCopy.intro}
+                </p>
+              </div>
+            ) : null}
+
+            {activeAttributionGap ? (
+              <div className={styles.attentionSection}>
+                <span className={styles.filterLabel}>
+                  {attributionGapFilterCopy.eyebrow}
+                </span>
+                <div className={styles.filters}>
+                  <span className={styles.filterLink}>
+                    {attributionGapFilterCopy.label(activeAttributionGap)}
+                  </span>
+                  <Link
+                    className={styles.filterLink}
+                    href={buildEnquiryHref(
+                      locale,
+                      activeStatus,
+                      activeFollowUp,
+                      activeAttention,
+                      activeOwner,
+                      activeCampaignAttribution,
+                      activeLandingPath,
+                      activeSchool,
+                      activeContactPreference,
+                      activeDeliveryPreference,
+                      activeTimingPreference,
+                      activeProgramme,
+                      activeCity,
+                      activeQualificationGap,
+                      activeAge,
+                      activeFollowUpTiming,
+                      null,
+                    )}
+                  >
+                    <span>{attributionGapFilterCopy.clear}</span>
+                  </Link>
+                </div>
+                <p className={styles.filterLabel}>
+                  {attributionGapFilterCopy.intro}
                 </p>
               </div>
             ) : null}
