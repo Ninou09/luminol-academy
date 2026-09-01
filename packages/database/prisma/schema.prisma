@@ -239,6 +239,7 @@ enum AiOperatorProposalStatus {
   APPROVED
   REJECTED
   CANCELLED
+  EXECUTED
 }
 
 enum AiOperatorProposalEventType {
@@ -246,6 +247,7 @@ enum AiOperatorProposalEventType {
   APPROVED
   REJECTED
   CANCELLED
+  EXECUTED
 }
 
 model User {
@@ -287,6 +289,7 @@ model User {
 
   aiOperatorProposalsProposed AiOperatorProposal[]      @relation("AiOperatorProposalProposer")
   aiOperatorProposalsDecided  AiOperatorProposal[]      @relation("AiOperatorProposalDecider")
+  aiOperatorProposalsExecuted AiOperatorProposal[]      @relation("AiOperatorProposalExecutor")
   aiOperatorProposalEvents    AiOperatorProposalEvent[] @relation("AiOperatorProposalEventActor")
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
@@ -309,16 +312,20 @@ model AiOperatorProposal {
   decidedByUserId  String?
   decidedAt        DateTime?
   decisionNote     String?
+  executedByUserId String?
+  executedAt       DateTime?
   createdAt        DateTime                  @default(now())
   updatedAt        DateTime                  @updatedAt
   proposedBy       User?                     @relation("AiOperatorProposalProposer", fields: [proposedByUserId], references: [id], onDelete: SetNull)
   decidedBy        User?                     @relation("AiOperatorProposalDecider", fields: [decidedByUserId], references: [id], onDelete: SetNull)
+  executedBy       User?                     @relation("AiOperatorProposalExecutor", fields: [executedByUserId], references: [id], onDelete: SetNull)
   events           AiOperatorProposalEvent[]
 
   @@index([status, createdAt])
   @@index([actionKind, status, createdAt])
   @@index([proposedByUserId, createdAt])
   @@index([decidedByUserId, decidedAt])
+  @@index([executedByUserId, executedAt])
 }
 
 model AiOperatorProposalEvent {
