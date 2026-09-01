@@ -15,6 +15,7 @@ import {
 } from '../../lib/social-publishing-localization';
 import {
   createSocialPublishingAccountAction,
+  planSocialPublishingAttemptAction,
   setSocialPublishingAccountActiveAction,
 } from './actions';
 
@@ -86,16 +87,30 @@ export default async function SocialPublishingPage({
   const params = await searchParams;
   const proposalId = firstSearchParam(params.proposalId)?.trim() ?? '';
 
-  const accounts = await db.socialPublishingAccount.findMany({
-    orderBy: [{ active: 'desc' }, { updatedAt: 'desc' }],
-    include: {
-      events: {
-        orderBy: { occurredAt: 'desc' },
-        take: 5,
-        include: { actor: { select: { email: true } } },
+  const [accounts, attempts] = await Promise.all([
+    db.socialPublishingAccount.findMany({
+      orderBy: [{ active: 'desc' }, { updatedAt: 'desc' }],
+      include: {
+        events: {
+          orderBy: { occurredAt: 'desc' },
+          take: 5,
+          include: { actor: { select: { email: true } } },
+        },
       },
-    },
-  });
+    }),
+    db.socialPublishingAttempt.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 30,
+      include: {
+        content: { select: { title: true } },
+        events: {
+          orderBy: { occurredAt: 'desc' },
+          take: 8,
+          include: { actor: { select: { email: true } } },
+        },
+      },
+    }),
+  ]);
 
   let deliveryPlan: Awaited<
     ReturnType<typeof materializeSocialPublishingDeliveryPlan>
@@ -294,9 +309,77 @@ export default async function SocialPublishingPage({
                       : copy.notScheduled}
                   </dd>
                 </dl>
+                <form action={planSocialPublishingAttemptAction}>
+                  <input
+                    type="hidden"
+                    name="proposalId"
+                    value={deliveryPlan.proposalId}
+                  />
+                  <button type="submit">{copy.planAttempt}</button>
+                </form>
+                <p>{copy.planAttemptHelp}</p>
                 <p>{copy.noCredentials}</p>
               </article>
             ) : null}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <h2>{copy.attemptLedger}</h2>
+                <p>{copy.attemptLedgerIntro}</p>
+              </div>
+            </div>
+            {attempts.length === 0 ? (
+              <p>{copy.noAttempts}</p>
+            ) : (
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                {attempts.map((attempt) => (
+                  <article key={attempt.id} className="admin-panel">
+                    <div className="panel-heading">
+                      <div>
+                        <h3>{attempt.actionId}</h3>
+                        <p>
+                          {copy.platformName[attempt.platform]} ·{' '}
+                          {attempt.accountRef} · {attempt.content.title}
+                        </p>
+                      </div>
+                      <strong>{copy.attemptStatus[attempt.status]}</strong>
+                    </div>
+                    <dl>
+                      <dt>{copy.proposalId}</dt>
+                      <dd>{attempt.proposalId}</dd>
+                      <dt>{copy.externalAccountId}</dt>
+                      <dd>{attempt.externalAccountId}</dd>
+                      <dt>{copy.contentRevision}</dt>
+                      <dd>
+                        {attempt.contentCalendarItemId} · r
+                        {attempt.contentRevision}
+                      </dd>
+                      <dt>{copy.attemptCount}</dt>
+                      <dd>{attempt.attemptCount}</dd>
+                      <dt>{copy.nextAttempt}</dt>
+                      <dd>{date(attempt.nextAttemptAt)}</dd>
+                      <dt>{copy.providerReference}</dt>
+                      <dd>{attempt.providerReference ?? copy.none}</dd>
+                      <dt>{copy.errorCode}</dt>
+                      <dd>{attempt.lastErrorCode ?? copy.none}</dd>
+                    </dl>
+                    <small>
+                      {attempt.events.map((event) => (
+                        <span key={event.id} style={{ display: 'block' }}>
+                          {copy.attemptEventType[event.eventType]} ·{' '}
+                          {date(event.occurredAt)} ·{' '}
+                          {event.actor?.email ?? copy.systemActor}
+                          {event.errorCode ? ` · ${event.errorCode}` : ''}
+                        </span>
+                      ))}
+                    </small>
+                  </article>
+                ))}
+              </div>
+            )}
+            <p>{copy.noCredentials}</p>
           </section>
         </div>
       </section>
