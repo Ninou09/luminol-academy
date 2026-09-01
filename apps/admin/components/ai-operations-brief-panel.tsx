@@ -28,8 +28,7 @@ export function AiOperationsBriefPanel({
   const copy = getAiOperationsBriefCopy(locale);
   const brief = buildAiOperationsBrief(operations);
   const briefActions = buildAiOperationsBriefActions(brief);
-  const executionPolicy =
-    aiOperatorExecutionPolicyByKind.OPEN_ENQUIRY_QUEUE;
+  const executionPolicy = aiOperatorExecutionPolicyByKind.OPEN_ENQUIRY_QUEUE;
   const number = (value: number) => formatLocalizedNumber(value, locale);
 
   return (
