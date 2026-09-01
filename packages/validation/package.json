@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./ai-operator": "./src/ai-operator.ts",
     "./env": "./src/env.ts"
   },
   "scripts": {
