@@ -194,7 +194,11 @@ suite('social publishing attempt ledger', () => {
       executedByUserId: userId,
       executedAt: executionNow,
     });
-    expect(executedProposal.events.at(-1)).toMatchObject({
+    const executedEvents = executedProposal.events.filter(
+      (event) => event.eventType === 'EXECUTED',
+    );
+    expect(executedEvents).toHaveLength(1);
+    expect(executedEvents[0]).toMatchObject({
       eventType: 'EXECUTED',
       actorUserId: userId,
       fromStatus: AiOperatorProposalStatus.APPROVED,
