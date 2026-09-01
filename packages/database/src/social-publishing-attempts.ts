@@ -213,7 +213,10 @@ export async function executeSocialPublishingAttempt(
   ) {
     return { attempt: initial, providerInvoked: false };
   }
-  if (initial.status === SocialPublishingAttemptStatus.IN_PROGRESS) {
+  if (
+    initial.status === SocialPublishingAttemptStatus.IN_PROGRESS &&
+    (!initial.lockedUntil || initial.lockedUntil.getTime() > now.getTime())
+  ) {
     return { attempt: initial, providerInvoked: false };
   }
   if (initial.nextAttemptAt.getTime() > now.getTime()) {
@@ -245,14 +248,22 @@ export async function executeSocialPublishingAttempt(
       const update = await transaction.socialPublishingAttempt.updateMany({
         where: {
           id: initial.id,
-          status: {
-            in: [
-              SocialPublishingAttemptStatus.PLANNED,
-              SocialPublishingAttemptStatus.RETRY_SCHEDULED,
-            ],
-          },
-          nextAttemptAt: { lte: now },
-          lockToken: null,
+          OR: [
+            {
+              status: {
+                in: [
+                  SocialPublishingAttemptStatus.PLANNED,
+                  SocialPublishingAttemptStatus.RETRY_SCHEDULED,
+                ],
+              },
+              nextAttemptAt: { lte: now },
+              lockToken: null,
+            },
+            {
+              status: SocialPublishingAttemptStatus.IN_PROGRESS,
+              lockedUntil: { lte: now },
+            },
+          ],
         },
         data: {
           status: SocialPublishingAttemptStatus.IN_PROGRESS,

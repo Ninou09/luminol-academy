@@ -204,6 +204,66 @@ suite('social publishing attempt ledger', () => {
     ).rejects.toThrow('append-only');
   });
 
+  test('reclaims an expired execution lock using the same delivery idempotency key', async () => {
+    const { proposal } = await createApprovedPublishProposal({
+      label: 'expired-lock',
+    });
+    const attempt = await planSocialPublishingAttempt(db, {
+      proposalId: proposal.id,
+      actorUserId: userId,
+      now: baseNow,
+    });
+    const executionNow = new Date(proposal.createdAt.getTime() + 10_000);
+    const expiredLockAt = new Date(executionNow.getTime() - 1);
+
+    await db.$transaction(async (transaction) => {
+      await transaction.socialPublishingAttempt.update({
+        where: { id: attempt.id },
+        data: {
+          status: SocialPublishingAttemptStatus.IN_PROGRESS,
+          attemptCount: 1,
+          lockToken: 'expired-lock-token',
+          lockedUntil: expiredLockAt,
+          startedAt: new Date(executionNow.getTime() - 5_000),
+        },
+      });
+      await transaction.socialPublishingAttemptEvent.create({
+        data: {
+          attemptId: attempt.id,
+          eventType: 'STARTED',
+          actorUserId: userId,
+          fromStatus: SocialPublishingAttemptStatus.PLANNED,
+          toStatus: SocialPublishingAttemptStatus.IN_PROGRESS,
+          attemptNumber: 1,
+          occurredAt: new Date(executionNow.getTime() - 5_000),
+        },
+      });
+    });
+
+    const publish = vi.fn(
+      async ({ idempotencyKey }: { idempotencyKey: string }) => {
+        expect(idempotencyKey).toBe(attempt.idempotencyKey);
+        return { providerReference: 'provider-recovered-123' };
+      },
+    );
+    const result = await executeSocialPublishingAttempt(db, {
+      attemptId: attempt.id,
+      actorUserId: userId,
+      provider: { publish },
+      now: executionNow,
+    });
+
+    expect(publish).toHaveBeenCalledTimes(1);
+    expect(result.providerInvoked).toBe(true);
+    expect(result.attempt).toMatchObject({
+      status: SocialPublishingAttemptStatus.SUCCEEDED,
+      attemptCount: 2,
+      providerReference: 'provider-recovered-123',
+      lockToken: null,
+      lockedUntil: null,
+    });
+  });
+
   test('uses bounded retry state without persisting provider exception details', async () => {
     const { proposal } = await createApprovedPublishProposal({
       label: 'retry',
