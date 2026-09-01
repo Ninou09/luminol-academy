@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 import { buildAiOperationsBriefActions } from '../lib/ai-operator-actions';
 import { getAiOperatorProposalQueueCopy } from '../lib/ai-operator-proposal-localization';
+import { getAiProviderCopy } from '../lib/ai-provider-localization';
 import {
   getAiOperationsBriefCopy,
   getAiOperationsBriefItemText,
@@ -30,6 +31,7 @@ export function AiOperationsBriefPanel({
 }: AiOperationsBriefPanelProps) {
   const copy = getAiOperationsBriefCopy(locale);
   const proposalCopy = getAiOperatorProposalQueueCopy(locale);
+  const aiProviderCopy = getAiProviderCopy(locale);
   const contentCalendarCopy = getContentCalendarCopy(locale);
   const socialPublishingCopy = getSocialPublishingCopy(locale);
   const brief = buildAiOperationsBrief(operations);
@@ -102,6 +104,9 @@ export function AiOperationsBriefPanel({
       >
         <Link href={localizeHref(locale, '/ai-operator')}>
           {proposalCopy.navLabel}
+        </Link>
+        <Link href={localizeHref(locale, '/ai-provider')}>
+          {aiProviderCopy.title}
         </Link>
         <Link href={localizeHref(locale, '/content-calendar')}>
           {contentCalendarCopy.title}
