@@ -151,6 +151,35 @@ export const aiOperatorUpdateEnquiryWorkflowActionSchema = z
   })
   .strict();
 
+const dateOnlySchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .refine((value) => {
+    const date = new Date(`${value}T00:00:00.000Z`);
+    return (
+      !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
+    );
+  }, 'Invalid date-only value');
+
+export const aiOperatorSetFollowUpParametersSchema = z
+  .object({
+    nextFollowUpOn: dateOnlySchema,
+    nextAction: z.string().trim().min(1).max(240),
+  })
+  .strict();
+
+export const aiOperatorSetFollowUpExecutionActionSchema =
+  aiOperatorUpdateEnquiryWorkflowActionSchema
+    .extend({
+      payload: z
+        .object({
+          operation: z.literal('SET_FOLLOW_UP'),
+          parameters: aiOperatorSetFollowUpParametersSchema,
+        })
+        .strict(),
+    })
+    .strict();
+
 export const aiOperatorSendOutboundMessageActionSchema = z
   .object({
     version: aiOperatorActionVersionSchema,
@@ -210,4 +239,7 @@ export const aiOperatorActionSchema = z.discriminatedUnion('kind', [
 export type AiOperatorAction = z.infer<typeof aiOperatorActionSchema>;
 export type AiOperatorOpenEnquiryQueueAction = z.infer<
   typeof aiOperatorOpenEnquiryQueueActionSchema
+>;
+export type AiOperatorSetFollowUpExecutionAction = z.infer<
+  typeof aiOperatorSetFollowUpExecutionActionSchema
 >;
