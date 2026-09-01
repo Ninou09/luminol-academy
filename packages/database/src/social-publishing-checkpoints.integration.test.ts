@@ -91,7 +91,9 @@ suite('social publishing provider checkpoints', () => {
       now: baseNow,
     });
 
-    const begin = vi.fn(async () => ({ sessionReference: 'session-opaque-123' }));
+    const begin = vi.fn(async () => ({
+      sessionReference: 'session-opaque-123',
+    }));
     const complete = vi
       .fn<ResumableSocialPublishingProvider['complete']>()
       .mockRejectedValueOnce(new Error('temporary provider failure'))

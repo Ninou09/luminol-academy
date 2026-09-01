@@ -42,13 +42,10 @@ export type ResumableSocialPublishingProvider = {
 };
 
 export type SocialPublishingProvider =
-  | SingleStepSocialPublishingProvider
-  | ResumableSocialPublishingProvider;
+  SingleStepSocialPublishingProvider | ResumableSocialPublishingProvider;
 
 export type SocialPublishingProviderPhase =
-  | 'NOT_STARTED'
-  | 'SESSION_READY'
-  | 'PUBLISHED';
+  'NOT_STARTED' | 'SESSION_READY' | 'PUBLISHED';
 
 export type ExecuteSocialPublishingAttemptResult = {
   attempt: SocialPublishingAttempt;
