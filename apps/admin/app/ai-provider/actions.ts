@@ -15,6 +15,8 @@ export async function runAiProviderSummaryAction(
   _previousState: AiProviderRunState,
   _formData: FormData,
 ): Promise<AiProviderRunState> {
+  void _previousState;
+  void _formData;
   await requirePermission('academy:manage');
 
   try {
