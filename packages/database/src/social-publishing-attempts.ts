@@ -21,17 +21,55 @@ const providerReferenceSchema = z.string().trim().min(1).max(255);
 export const SOCIAL_PUBLISHING_LOCK_MS = 5 * 60_000;
 const SOCIAL_PUBLISHING_RETRY_DELAYS_MS = [60_000, 5 * 60_000] as const;
 
-export type SocialPublishingProvider = {
-  publish(input: {
-    plan: SocialPublishingDeliveryPlan;
-    idempotencyKey: string;
-  }): Promise<{ providerReference: string }>;
+type SocialPublishingProviderInput = {
+  plan: SocialPublishingDeliveryPlan;
+  idempotencyKey: string;
 };
+
+export type SingleStepSocialPublishingProvider = {
+  publish(
+    input: SocialPublishingProviderInput,
+  ): Promise<{ providerReference: string }>;
+};
+
+export type ResumableSocialPublishingProvider = {
+  begin(
+    input: SocialPublishingProviderInput,
+  ): Promise<{ sessionReference: string }>;
+  complete(
+    input: SocialPublishingProviderInput & { sessionReference: string },
+  ): Promise<{ providerReference: string }>;
+};
+
+export type SocialPublishingProvider =
+  | SingleStepSocialPublishingProvider
+  | ResumableSocialPublishingProvider;
+
+export type SocialPublishingProviderPhase =
+  | 'NOT_STARTED'
+  | 'SESSION_READY'
+  | 'PUBLISHED';
 
 export type ExecuteSocialPublishingAttemptResult = {
   attempt: SocialPublishingAttempt;
   providerInvoked: boolean;
 };
+
+function isResumableSocialPublishingProvider(
+  provider: SocialPublishingProvider,
+): provider is ResumableSocialPublishingProvider {
+  return 'begin' in provider && 'complete' in provider;
+}
+
+export function getSocialPublishingProviderPhase(
+  attempt: Pick<SocialPublishingAttempt, 'status' | 'providerReference'>,
+): SocialPublishingProviderPhase {
+  if (attempt.status === SocialPublishingAttemptStatus.SUCCEEDED) {
+    return 'PUBLISHED';
+  }
+  if (attempt.providerReference) return 'SESSION_READY';
+  return 'NOT_STARTED';
+}
 
 export function socialPublishingRetryDelayMs(attemptNumber: number) {
   if (!Number.isInteger(attemptNumber) || attemptNumber < 1) return null;
@@ -196,6 +234,50 @@ async function invalidateAttempt(
   });
 }
 
+async function recordProviderSessionCheckpoint(
+  client: PrismaClient,
+  input: {
+    attemptId: string;
+    lockToken: string;
+    actorUserId: string | null;
+    attemptNumber: number;
+    sessionReference: string;
+    now: Date;
+  },
+) {
+  return client.$transaction(async (transaction: Prisma.TransactionClient) => {
+    const updated = await transaction.socialPublishingAttempt.updateMany({
+      where: {
+        id: input.attemptId,
+        status: SocialPublishingAttemptStatus.IN_PROGRESS,
+        lockToken: input.lockToken,
+        providerReference: null,
+      },
+      data: { providerReference: input.sessionReference },
+    });
+    if (updated.count !== 1) {
+      throw new Error('Social publishing provider checkpoint claim was lost');
+    }
+
+    await transaction.socialPublishingAttemptEvent.create({
+      data: {
+        attemptId: input.attemptId,
+        eventType: SocialPublishingAttemptEventType.STARTED,
+        actorUserId: input.actorUserId,
+        fromStatus: SocialPublishingAttemptStatus.IN_PROGRESS,
+        toStatus: SocialPublishingAttemptStatus.IN_PROGRESS,
+        attemptNumber: input.attemptNumber,
+        providerReference: input.sessionReference,
+        occurredAt: input.now,
+      },
+    });
+
+    return transaction.socialPublishingAttempt.findUniqueOrThrow({
+      where: { id: input.attemptId },
+    });
+  });
+}
+
 export async function executeSocialPublishingAttempt(
   client: PrismaClient,
   input: {
@@ -254,7 +336,7 @@ export async function executeSocialPublishingAttempt(
 
   const lockToken = randomUUID();
   const attemptNumber = initial.attemptCount + 1;
-  const claimed = await client.$transaction(
+  let claimed = await client.$transaction(
     async (transaction: Prisma.TransactionClient) => {
       const update = await transaction.socialPublishingAttempt.updateMany({
         where: {
@@ -332,13 +414,55 @@ export async function executeSocialPublishingAttempt(
   }
 
   try {
-    const result = await input.provider.publish({
-      plan,
-      idempotencyKey: claimed.idempotencyKey,
-    });
-    const providerReference = providerReferenceSchema.parse(
-      result.providerReference,
-    );
+    let providerReference: string;
+
+    if (isResumableSocialPublishingProvider(input.provider)) {
+      let sessionReference = claimed.providerReference;
+      if (!sessionReference) {
+        const session = await input.provider.begin({
+          plan,
+          idempotencyKey: claimed.idempotencyKey,
+        });
+        sessionReference = providerReferenceSchema.parse(
+          session.sessionReference,
+        );
+        claimed = await recordProviderSessionCheckpoint(client, {
+          attemptId: claimed.id,
+          lockToken,
+          actorUserId,
+          attemptNumber,
+          sessionReference,
+          now,
+        });
+      }
+
+      plan = await materializeSocialPublishingDeliveryPlan(
+        client,
+        claimed.proposalId,
+      );
+      assertAttemptMatchesPlan(
+        claimed,
+        plan,
+        buildSocialPublishingIdempotencyKey(plan),
+      );
+
+      const result = await input.provider.complete({
+        plan,
+        idempotencyKey: claimed.idempotencyKey,
+        sessionReference,
+      });
+      providerReference = providerReferenceSchema.parse(
+        result.providerReference,
+      );
+    } else {
+      const result = await input.provider.publish({
+        plan,
+        idempotencyKey: claimed.idempotencyKey,
+      });
+      providerReference = providerReferenceSchema.parse(
+        result.providerReference,
+      );
+    }
 
     const succeeded = await client.$transaction(
       async (transaction: Prisma.TransactionClient) => {
