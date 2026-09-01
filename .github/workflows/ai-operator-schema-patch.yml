@@ -1,0 +1,146 @@
+name: Temporary AI Operator Schema Patch
+on:
+  push:
+    branches: [feat/ai-operator-approval-queue]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[schema-patched]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-approval-queue
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Patch Prisma schema
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('packages/database/prisma/schema.prisma')
+          text = path.read_text()
+
+          enum_anchor = '''enum CohortAttendanceStatus {
+            PRESENT
+            ABSENT
+            LATE
+            EXCUSED
+          }
+          '''
+          enums = '''enum CohortAttendanceStatus {
+            PRESENT
+            ABSENT
+            LATE
+            EXCUSED
+          }
+
+          enum AiOperatorProposalStatus {
+            PENDING_APPROVAL
+            APPROVED
+            REJECTED
+            CANCELLED
+          }
+
+          enum AiOperatorProposalEventType {
+            PROPOSED
+            APPROVED
+            REJECTED
+            CANCELLED
+          }
+          '''
+          if 'enum AiOperatorProposalStatus' not in text:
+              if enum_anchor not in text:
+                  raise SystemExit('enum anchor not found')
+              text = text.replace(enum_anchor, enums, 1)
+
+          user_anchor = '''  cohortAttendanceRecords     CohortSessionAttendance[]    @relation("CohortAttendanceRecorder")
+
+          organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
+          '''
+          user_replacement = '''  cohortAttendanceRecords     CohortSessionAttendance[]    @relation("CohortAttendanceRecorder")
+          aiOperatorProposalsProposed AiOperatorProposal[]  @relation("AiOperatorProposalProposer")
+          aiOperatorProposalsDecided  AiOperatorProposal[]  @relation("AiOperatorProposalDecider")
+          aiOperatorProposalEvents    AiOperatorProposalEvent[] @relation("AiOperatorProposalEventActor")
+
+          organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
+          '''
+          if 'aiOperatorProposalsProposed' not in text:
+              if user_anchor not in text:
+                  raise SystemExit('user relation anchor not found')
+              text = text.replace(user_anchor, user_replacement, 1)
+
+          model_anchor = '''model Invoice {
+          '''
+          models = '''model AiOperatorProposal {
+            id               String                   @id @default(cuid())
+            actionId         String                   @unique
+            actionVersion    String
+            actionKind       String
+            executionPolicy  String
+            sourceSurface    String
+            sourceReference  String
+            actionEnvelope   Json
+            status           AiOperatorProposalStatus @default(PENDING_APPROVAL)
+            proposedByUserId String?
+            decidedByUserId  String?
+            decidedAt        DateTime?
+            decisionNote     String?
+            createdAt        DateTime                 @default(now())
+            updatedAt        DateTime                 @updatedAt
+            proposedBy       User?                    @relation("AiOperatorProposalProposer", fields: [proposedByUserId], references: [id], onDelete: SetNull)
+            decidedBy        User?                    @relation("AiOperatorProposalDecider", fields: [decidedByUserId], references: [id], onDelete: SetNull)
+            events           AiOperatorProposalEvent[]
+
+            @@index([status, createdAt])
+            @@index([actionKind, status, createdAt])
+            @@index([proposedByUserId, createdAt])
+            @@index([decidedByUserId, decidedAt])
+          }
+
+          model AiOperatorProposalEvent {
+            id          String                      @id @default(cuid())
+            proposalId  String
+            eventType   AiOperatorProposalEventType
+            actorUserId String?
+            fromStatus  AiOperatorProposalStatus?
+            toStatus    AiOperatorProposalStatus
+            note        String?
+            occurredAt  DateTime                    @default(now())
+            proposal    AiOperatorProposal          @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+            actor       User?                       @relation("AiOperatorProposalEventActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+            @@index([proposalId, occurredAt])
+            @@index([actorUserId, occurredAt])
+          }
+
+          model Invoice {
+          '''
+          if 'model AiOperatorProposal {' not in text:
+              if model_anchor not in text:
+                  raise SystemExit('model anchor not found')
+              text = text.replace(model_anchor, models, 1)
+
+          path.write_text(text)
+          PY
+          pnpm --filter @luminol/database exec prisma format
+          git diff --check
+      - name: Commit patched schema
+        shell: bash
+        run: |
+          if git diff --quiet -- packages/database/prisma/schema.prisma; then
+            exit 0
+          fi
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add packages/database/prisma/schema.prisma
+          git commit -m "Add AI Operator proposal persistence schema [schema-patched]"
+          git push origin HEAD:feat/ai-operator-approval-queue
