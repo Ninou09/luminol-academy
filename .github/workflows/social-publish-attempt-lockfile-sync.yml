@@ -1,0 +1,31 @@
+name: Temporary Social Publish Attempt Lockfile Sync
+on:
+  push:
+    branches: [feat/ai-operator-social-publish-attempts]
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: ${{ !contains(github.event.head_commit.message, '[social-attempt-lockfile]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-social-publish-attempts
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --lockfile-only
+      - name: Commit lockfile
+        run: |
+          git diff --check
+          if git diff --quiet -- pnpm-lock.yaml; then exit 0; fi
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "Sync database Zod dependency lockfile [social-attempt-lockfile]"
+          git push origin HEAD:feat/ai-operator-social-publish-attempts
