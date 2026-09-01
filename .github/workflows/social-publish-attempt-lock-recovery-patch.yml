@@ -1,0 +1,58 @@
+name: Temporary Social Publish Attempt Lock Recovery Patch
+on:
+  push:
+    branches: [feat/ai-operator-social-publish-attempts]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[social-attempt-lock-recovery]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-social-publish-attempts
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Patch lock recovery and coverage
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          source = Path('packages/database/src/social-publishing-attempts.ts')
+          text = source.read_text()
+          old = '''  if (initial.status === SocialPublishingAttemptStatus.IN_PROGRESS) {\n    return { attempt: initial, providerInvoked: false };\n  }\n'''
+          new = '''  if (\n    initial.status === SocialPublishingAttemptStatus.IN_PROGRESS &&\n    (!initial.lockedUntil || initial.lockedUntil.getTime() > now.getTime())\n  ) {\n    return { attempt: initial, providerInvoked: false };\n  }\n'''
+          if text.count(old) != 1:
+              raise SystemExit('Expected one IN_PROGRESS guard')
+          text = text.replace(old, new)
+
+          old = '''        where: {\n          id: initial.id,\n          status: {\n            in: [\n              SocialPublishingAttemptStatus.PLANNED,\n              SocialPublishingAttemptStatus.RETRY_SCHEDULED,\n            ],\n          },\n          nextAttemptAt: { lte: now },\n          lockToken: null,\n        },\n'''
+          new = '''        where: {\n          id: initial.id,\n          OR: [\n            {\n              status: {\n                in: [\n                  SocialPublishingAttemptStatus.PLANNED,\n                  SocialPublishingAttemptStatus.RETRY_SCHEDULED,\n                ],\n              },\n              nextAttemptAt: { lte: now },\n              lockToken: null,\n            },\n            {\n              status: SocialPublishingAttemptStatus.IN_PROGRESS,\n              lockedUntil: { lte: now },\n            },\n          ],\n        },\n'''
+          if text.count(old) != 1:
+              raise SystemExit('Expected one execution claim predicate')
+          source.write_text(text.replace(old, new))
+
+          test_path = Path('packages/database/src/social-publishing-attempts.integration.test.ts')
+          tests = test_path.read_text()
+          marker = '''  test('uses bounded retry state without persisting provider exception details', async () => {\n'''
+          addition = '''  test('reclaims an expired execution lock using the same delivery idempotency key', async () => {\n    const { proposal } = await createApprovedPublishProposal({\n      label: 'expired-lock',\n    });\n    const attempt = await planSocialPublishingAttempt(db, {\n      proposalId: proposal.id,\n      actorUserId: userId,\n      now: baseNow,\n    });\n    const executionNow = new Date(proposal.createdAt.getTime() + 10_000);\n    const expiredLockAt = new Date(executionNow.getTime() - 1);\n\n    await db.$transaction(async (transaction) => {\n      await transaction.socialPublishingAttempt.update({\n        where: { id: attempt.id },\n        data: {\n          status: SocialPublishingAttemptStatus.IN_PROGRESS,\n          attemptCount: 1,\n          lockToken: 'expired-lock-token',\n          lockedUntil: expiredLockAt,\n          startedAt: new Date(executionNow.getTime() - 5_000),\n        },\n      });\n      await transaction.socialPublishingAttemptEvent.create({\n        data: {\n          attemptId: attempt.id,\n          eventType: 'STARTED',\n          actorUserId: userId,\n          fromStatus: SocialPublishingAttemptStatus.PLANNED,\n          toStatus: SocialPublishingAttemptStatus.IN_PROGRESS,\n          attemptNumber: 1,\n          occurredAt: new Date(executionNow.getTime() - 5_000),\n        },\n      });\n    });\n\n    const publish = vi.fn(async ({ idempotencyKey }: { idempotencyKey: string }) => {\n      expect(idempotencyKey).toBe(attempt.idempotencyKey);\n      return { providerReference: 'provider-recovered-123' };\n    });\n    const result = await executeSocialPublishingAttempt(db, {\n      attemptId: attempt.id,\n      actorUserId: userId,\n      provider: { publish },\n      now: executionNow,\n    });\n\n    expect(publish).toHaveBeenCalledTimes(1);\n    expect(result.providerInvoked).toBe(true);\n    expect(result.attempt).toMatchObject({\n      status: SocialPublishingAttemptStatus.SUCCEEDED,\n      attemptCount: 2,\n      providerReference: 'provider-recovered-123',\n      lockToken: null,\n      lockedUntil: null,\n    });\n  });\n\n'''
+          if tests.count(marker) != 1:
+              raise SystemExit('Expected one retry test marker')
+          test_path.write_text(tests.replace(marker, addition + marker))
+          PY
+          pnpm exec prettier --write packages/database/src/social-publishing-attempts.ts packages/database/src/social-publishing-attempts.integration.test.ts
+          git diff --check
+      - name: Commit patch
+        run: |
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add packages/database/src/social-publishing-attempts.ts packages/database/src/social-publishing-attempts.integration.test.ts
+          git commit -m "Recover expired social publish execution locks [social-attempt-lock-recovery]"
+          git push origin HEAD:feat/ai-operator-social-publish-attempts
