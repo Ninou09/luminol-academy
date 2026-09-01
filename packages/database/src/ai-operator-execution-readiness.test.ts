@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'vitest';
 
-import { AiOperatorProposalStatus } from '../generated/prisma/client';
+import {
+  AiOperatorProposalStatus,
+  type Prisma,
+} from '../generated/prisma/client';
 import { evaluateAiOperatorExecutionReadiness } from './ai-operator-execution-readiness';
 
 const action = {
@@ -32,7 +35,7 @@ function proposal(
     executionPolicy: string;
     sourceSurface: string;
     sourceReference: string;
-    actionEnvelope: unknown;
+    actionEnvelope: Prisma.JsonValue;
     status: AiOperatorProposalStatus;
   }> = {},
 ) {
