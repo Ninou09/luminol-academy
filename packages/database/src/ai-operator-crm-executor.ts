@@ -106,6 +106,11 @@ export async function executeApprovedAiOperatorProposal(
         nextAction: action.payload.parameters.nextAction,
       },
     });
+    if (!followUp.changed) {
+      throw new Error(
+        'AI Operator CRM target already matches the proposed follow-up plan',
+      );
+    }
 
     await transaction.aiOperatorProposalEvent.create({
       data: {
@@ -118,12 +123,11 @@ export async function executeApprovedAiOperatorProposal(
       },
     });
 
-    const executedProposal = await transaction.aiOperatorProposal.findUniqueOrThrow(
-      {
+    const executedProposal =
+      await transaction.aiOperatorProposal.findUniqueOrThrow({
         where: { id: proposal.id },
         include: { events: { orderBy: { occurredAt: 'asc' } } },
-      },
-    );
+      });
 
     return { proposal: executedProposal, followUp };
   });
