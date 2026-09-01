@@ -27,11 +27,25 @@ export type SocialPublishingCopy = {
   asset: string;
   schedule: string;
   notScheduled: string;
-  deliveryUnavailable: string;
   noCredentials: string;
   noAccounts: string;
   platformName: Record<'INSTAGRAM' | 'FACEBOOK', string>;
   eventType: Record<'CREATED' | 'UPDATED' | 'ACTIVATION_CHANGED', string>;
+  deliveryError: {
+    unavailable: string;
+    notReady: string;
+    notApproved: string;
+    actionMismatch: string;
+    contentNotPublishable: string;
+    revisionMismatch: string;
+    contentTargetMismatch: string;
+    accountInactive: string;
+    accountTargetMismatch: string;
+    assetRequired: string;
+    contentNotFound: string;
+    accountNotFound: string;
+    proposalNotFound: string;
+  };
 };
 
 const english: SocialPublishingCopy = {
@@ -64,7 +78,6 @@ const english: SocialPublishingCopy = {
   asset: 'Asset',
   schedule: 'Schedule',
   notScheduled: 'Not scheduled',
-  deliveryUnavailable: 'Delivery plan is unavailable.',
   noCredentials:
     'No Meta credentials are stored or displayed. External publishing remains disabled.',
   noAccounts: 'No publishing accounts registered yet.',
@@ -73,6 +86,21 @@ const english: SocialPublishingCopy = {
     CREATED: 'Created',
     UPDATED: 'Updated',
     ACTIVATION_CHANGED: 'Activation changed',
+  },
+  deliveryError: {
+    unavailable: 'Delivery plan is unavailable.',
+    notReady: 'This proposal is not ready for delivery.',
+    notApproved: 'This proposal has not been approved.',
+    actionMismatch: 'The stored proposal no longer matches its action.',
+    contentNotPublishable: 'The content is no longer in a publishable state.',
+    revisionMismatch: 'The content revision no longer matches the approval.',
+    contentTargetMismatch: 'The content destination no longer matches the approval.',
+    accountInactive: 'The publishing account is inactive.',
+    accountTargetMismatch: 'The publishing account does not match the approved destination.',
+    assetRequired: 'The approved content is missing its required asset.',
+    contentNotFound: 'The approved content item could not be found.',
+    accountNotFound: 'The approved publishing account could not be found.',
+    proposalNotFound: 'The AI Operator proposal could not be found.',
   },
 };
 
@@ -107,7 +135,6 @@ const french: SocialPublishingCopy = {
   asset: 'Ressource',
   schedule: 'Planification',
   notScheduled: 'Non planifié',
-  deliveryUnavailable: 'Le plan de livraison est indisponible.',
   noCredentials:
     'Aucun identifiant Meta n’est stocké ni affiché. La publication externe reste désactivée.',
   noAccounts: 'Aucun compte de publication enregistré.',
@@ -115,6 +142,21 @@ const french: SocialPublishingCopy = {
     CREATED: 'Créé',
     UPDATED: 'Mis à jour',
     ACTIVATION_CHANGED: 'Activation modifiée',
+  },
+  deliveryError: {
+    unavailable: 'Le plan de livraison est indisponible.',
+    notReady: 'Cette proposition n’est pas prête pour la livraison.',
+    notApproved: 'Cette proposition n’a pas été approuvée.',
+    actionMismatch: 'La proposition enregistrée ne correspond plus à son action.',
+    contentNotPublishable: 'Le contenu n’est plus dans un état publiable.',
+    revisionMismatch: 'La révision du contenu ne correspond plus à l’approbation.',
+    contentTargetMismatch: 'La destination du contenu ne correspond plus à l’approbation.',
+    accountInactive: 'Le compte de publication est inactif.',
+    accountTargetMismatch: 'Le compte de publication ne correspond pas à la destination approuvée.',
+    assetRequired: 'Le contenu approuvé ne contient plus la ressource requise.',
+    contentNotFound: 'Le contenu approuvé est introuvable.',
+    accountNotFound: 'Le compte de publication approuvé est introuvable.',
+    proposalNotFound: 'La proposition de l’Opérateur IA est introuvable.',
   },
 };
 
@@ -149,7 +191,6 @@ const arabic: SocialPublishingCopy = {
   asset: 'الملف',
   schedule: 'الجدولة',
   notScheduled: 'غير مجدول',
-  deliveryUnavailable: 'خطة التسليم غير متاحة.',
   noCredentials:
     'لا يتم تخزين أو عرض بيانات اعتماد Meta. النشر الخارجي ما زال معطلاً.',
   noAccounts: 'لا توجد حسابات نشر مسجلة بعد.',
@@ -157,6 +198,21 @@ const arabic: SocialPublishingCopy = {
     CREATED: 'تم الإنشاء',
     UPDATED: 'تم التحديث',
     ACTIVATION_CHANGED: 'تم تغيير حالة التفعيل',
+  },
+  deliveryError: {
+    unavailable: 'خطة التسليم غير متاحة.',
+    notReady: 'هذا الاقتراح غير جاهز للتسليم.',
+    notApproved: 'لم تتم الموافقة على هذا الاقتراح.',
+    actionMismatch: 'الاقتراح المحفوظ لم يعد مطابقاً للإجراء المرتبط به.',
+    contentNotPublishable: 'المحتوى لم يعد في حالة تسمح بالنشر.',
+    revisionMismatch: 'نسخة المحتوى لم تعد مطابقة للموافقة.',
+    contentTargetMismatch: 'وجهة المحتوى لم تعد مطابقة للموافقة.',
+    accountInactive: 'حساب النشر غير نشط.',
+    accountTargetMismatch: 'حساب النشر لا يطابق الوجهة المعتمدة.',
+    assetRequired: 'المحتوى المعتمد يفتقد الملف المطلوب.',
+    contentNotFound: 'تعذر العثور على عنصر المحتوى المعتمد.',
+    accountNotFound: 'تعذر العثور على حساب النشر المعتمد.',
+    proposalNotFound: 'تعذر العثور على اقتراح مشغّل الذكاء الاصطناعي.',
   },
 };
 
