@@ -1,0 +1,42 @@
+name: Temporary Prettier Diff
+on:
+  push:
+    branches: [feat/ai-provider-gateway]
+permissions:
+  contents: read
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-provider-gateway
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Show canonical Prettier diff
+        run: |
+          pnpm exec prettier --write \
+            apps/admin/app/ai-provider/page.tsx \
+            apps/admin/components/ai-provider-run-panel.tsx \
+            apps/admin/lib/ai-provider-localization.test.ts \
+            apps/admin/lib/ai-provider-localization.ts \
+            packages/database/src/ai-provider-gateway.test.ts \
+            packages/database/src/ai-provider-gateway.ts \
+            packages/validation/src/ai-provider.test.ts \
+            packages/validation/src/ai-provider.ts
+          git diff -- \
+            apps/admin/app/ai-provider/page.tsx \
+            apps/admin/components/ai-provider-run-panel.tsx \
+            apps/admin/lib/ai-provider-localization.test.ts \
+            apps/admin/lib/ai-provider-localization.ts \
+            packages/database/src/ai-provider-gateway.test.ts \
+            packages/database/src/ai-provider-gateway.ts \
+            packages/validation/src/ai-provider.test.ts \
+            packages/validation/src/ai-provider.ts
