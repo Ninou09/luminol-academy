@@ -1,13 +1,13 @@
 'use server';
 
 import { requirePermission } from '@luminol/auth';
+import { db } from '@luminol/database';
 import {
   createContentCalendarItem,
-  db,
   queueContentCalendarPublishProposal,
   transitionContentCalendarItemStatus,
   updateContentCalendarItem,
-} from '@luminol/database';
+} from '@luminol/database/content-calendar';
 import { contentCalendarLocalDateTimeSchema } from '@luminol/validation/content-calendar';
 import { revalidatePath } from 'next/cache';
 
