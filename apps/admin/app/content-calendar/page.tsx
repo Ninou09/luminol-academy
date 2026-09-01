@@ -167,9 +167,9 @@ export default async function ContentCalendarPage() {
                   <input type="text" name="accountRef" maxLength={255} required />
                 </label>
                 <label className={styles.field}>
-                  <span>{copy.formatLabel}</span>
+                  <span>{copy.formatFieldLabel}</span>
                   <select name="format" defaultValue="REEL">
-                    {Object.entries(copy.formatLabel).map(([value, label]) => (
+                    {Object.entries(copy.formatName).map(([value, label]) => (
                       <option value={value} key={value}>
                         {label}
                       </option>
@@ -236,7 +236,7 @@ export default async function ContentCalendarPage() {
                                 {copy.revision}: {number(item.revision)}
                               </span>
                               <span>{copy.platformName[item.platform]}</span>
-                              <span>{copy.formatLabel[item.format]}</span>
+                              <span>{copy.formatName[item.format]}</span>
                             </div>
                           </div>
                         </div>
@@ -321,9 +321,9 @@ export default async function ContentCalendarPage() {
                                   />
                                 </label>
                                 <label className={styles.field}>
-                                  <span>{copy.formatLabel}</span>
+                                  <span>{copy.formatFieldLabel}</span>
                                   <select name="format" defaultValue={item.format}>
-                                    {Object.entries(copy.formatLabel).map(
+                                    {Object.entries(copy.formatName).map(
                                       ([value, label]) => (
                                         <option value={value} key={value}>
                                           {label}
