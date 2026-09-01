@@ -1,0 +1,66 @@
+name: Temporary Social Publish Attempt Schema Patch
+on:
+  push:
+    branches: [feat/ai-operator-social-publish-attempts]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[social-attempt-schema]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-social-publish-attempts
+      - name: Patch Prisma schema and migration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('packages/database/prisma/schema.prisma')
+          text = path.read_text()
+          replacements = [
+              (
+                  '''enum SocialPublishingAccountEventType {\n  CREATED\n  UPDATED\n  ACTIVATION_CHANGED\n}\n''',
+                  '''enum SocialPublishingAccountEventType {\n  CREATED\n  UPDATED\n  ACTIVATION_CHANGED\n}\n\nenum SocialPublishingAttemptStatus {\n  PLANNED\n  IN_PROGRESS\n  RETRY_SCHEDULED\n  SUCCEEDED\n  DEAD_LETTER\n}\n\nenum SocialPublishingAttemptEventType {\n  PLANNED\n  STARTED\n  SUCCEEDED\n  PROVIDER_FAILED\n  INVALIDATED\n}\n''',
+              ),
+              (
+                  '''  socialPublishingAccountsCreated SocialPublishingAccount[]      @relation("SocialPublishingAccountCreator")\n  socialPublishingAccountsUpdated SocialPublishingAccount[]      @relation("SocialPublishingAccountUpdater")\n  socialPublishingAccountEvents   SocialPublishingAccountEvent[] @relation("SocialPublishingAccountEventActor")\n''',
+                  '''  socialPublishingAccountsCreated SocialPublishingAccount[]      @relation("SocialPublishingAccountCreator")\n  socialPublishingAccountsUpdated SocialPublishingAccount[]      @relation("SocialPublishingAccountUpdater")\n  socialPublishingAccountEvents   SocialPublishingAccountEvent[] @relation("SocialPublishingAccountEventActor")\n  socialPublishingAttemptEvents   SocialPublishingAttemptEvent[] @relation("SocialPublishingAttemptEventActor")\n''',
+              ),
+              (
+                  '''  events           AiOperatorProposalEvent[]\n\n  @@index([status, createdAt])\n''',
+                  '''  events                    AiOperatorProposalEvent[]\n  socialPublishingAttempt SocialPublishingAttempt?\n\n  @@index([status, createdAt])\n''',
+              ),
+              (
+                  '''  events            SocialPublishingAccountEvent[]\n\n  @@unique([platform, externalAccountId])\n''',
+                  '''  events             SocialPublishingAccountEvent[]\n  publishingAttempts SocialPublishingAttempt[]\n\n  @@unique([platform, externalAccountId])\n''',
+              ),
+              (
+                  '''model ContentCalendarItem {\n''',
+                  '''model SocialPublishingAttempt {\n  id                    String                          @id @default(cuid())\n  idempotencyKey        String                          @unique\n  proposalId            String                          @unique\n  actionId              String\n  contentCalendarItemId String\n  contentRevision       Int\n  platform              ContentCalendarPlatform\n  accountRef            String\n  externalAccountId     String\n  status                SocialPublishingAttemptStatus   @default(PLANNED)\n  attemptCount          Int                             @default(0)\n  nextAttemptAt         DateTime                        @default(now())\n  providerReference     String?\n  lastErrorCode         String?\n  lockToken             String?\n  lockedUntil           DateTime?\n  startedAt             DateTime?\n  completedAt           DateTime?\n  createdAt             DateTime                        @default(now())\n  updatedAt             DateTime                        @updatedAt\n  proposal              AiOperatorProposal              @relation(fields: [proposalId], references: [id], onDelete: Restrict)\n  content               ContentCalendarItem             @relation(fields: [contentCalendarItemId], references: [id], onDelete: Restrict)\n  account               SocialPublishingAccount         @relation(fields: [accountRef], references: [accountRef], onDelete: Restrict)\n  events                SocialPublishingAttemptEvent[]\n\n  @@index([status, nextAttemptAt])\n  @@index([platform, status, nextAttemptAt])\n  @@index([contentCalendarItemId, contentRevision])\n  @@index([accountRef, status, createdAt])\n}\n\nmodel SocialPublishingAttemptEvent {\n  id                String                           @id @default(cuid())\n  attemptId         String\n  eventType         SocialPublishingAttemptEventType\n  actorUserId       String?\n  fromStatus        SocialPublishingAttemptStatus?\n  toStatus          SocialPublishingAttemptStatus\n  attemptNumber     Int                              @default(0)\n  providerReference String?\n  errorCode         String?\n  occurredAt        DateTime                         @default(now())\n  attempt           SocialPublishingAttempt          @relation(fields: [attemptId], references: [id], onDelete: Cascade)\n  actor             User?                            @relation("SocialPublishingAttemptEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)\n\n  @@index([attemptId, occurredAt])\n  @@index([actorUserId, occurredAt])\n}\n\nmodel ContentCalendarItem {\n''',
+              ),
+              (
+                  '''  events          ContentCalendarItemEvent[]\n\n  @@index([status, scheduledFor])\n''',
+                  '''  events                    ContentCalendarItemEvent[]\n  socialPublishingAttempts SocialPublishingAttempt[]\n\n  @@index([status, scheduledFor])\n''',
+              ),
+          ]
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'Expected exactly one schema match, found {count}: {old[:120]!r}')
+              text = text.replace(old, new)
+          path.write_text(text)
+
+          migration = Path('packages/database/prisma/migrations/20260901163500_social_publishing_attempt_ledger/migration.sql')
+          migration.parent.mkdir(parents=True, exist_ok=False)
+          migration.write_text('''CREATE TYPE "SocialPublishingAttemptStatus" AS ENUM ('PLANNED', 'IN_PROGRESS', 'RETRY_SCHEDULED', 'SUCCEEDED', 'DEAD_LETTER');\nCREATE TYPE "SocialPublishingAttemptEventType" AS ENUM ('PLANNED', 'STARTED', 'SUCCEEDED', 'PROVIDER_FAILED', 'INVALIDATED');\n\nCREATE TABLE "SocialPublishingAttempt" (\n  "id" TEXT NOT NULL,\n  "idempotencyKey" TEXT NOT NULL,\n  "proposalId" TEXT NOT NULL,\n  "actionId" TEXT NOT NULL,\n  "contentCalendarItemId" TEXT NOT NULL,\n  "contentRevision" INTEGER NOT NULL,\n  "platform" "ContentCalendarPlatform" NOT NULL,\n  "accountRef" TEXT NOT NULL,\n  "externalAccountId" TEXT NOT NULL,\n  "status" "SocialPublishingAttemptStatus" NOT NULL DEFAULT 'PLANNED',\n  "attemptCount" INTEGER NOT NULL DEFAULT 0,\n  "nextAttemptAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  "providerReference" TEXT,\n  "lastErrorCode" TEXT,\n  "lockToken" TEXT,\n  "lockedUntil" TIMESTAMP(3),\n  "startedAt" TIMESTAMP(3),\n  "completedAt" TIMESTAMP(3),\n  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  "updatedAt" TIMESTAMP(3) NOT NULL,\n  CONSTRAINT "SocialPublishingAttempt_pkey" PRIMARY KEY ("id")\n);\n\nCREATE TABLE "SocialPublishingAttemptEvent" (\n  "id" TEXT NOT NULL,\n  "attemptId" TEXT NOT NULL,\n  "eventType" "SocialPublishingAttemptEventType" NOT NULL,\n  "actorUserId" TEXT,\n  "fromStatus" "SocialPublishingAttemptStatus",\n  "toStatus" "SocialPublishingAttemptStatus" NOT NULL,\n  "attemptNumber" INTEGER NOT NULL DEFAULT 0,\n  "providerReference" TEXT,\n  "errorCode" TEXT,\n  "occurredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT "SocialPublishingAttemptEvent_pkey" PRIMARY KEY ("id")\n);\n\nCREATE UNIQUE INDEX "SocialPublishingAttempt_idempotencyKey_key" ON "SocialPublishingAttempt"("idempotencyKey");\nCREATE UNIQUE INDEX "SocialPublishingAttempt_proposalId_key" ON "SocialPublishingAttempt"("proposalId");\nCREATE INDEX "SocialPublishingAttempt_status_nextAttemptAt_idx" ON "SocialPublishingAttempt"("status", "nextAttemptAt");\nCREATE INDEX "SocialPublishingAttempt_platform_status_nextAttemptAt_idx" ON "SocialPublishingAttempt"("platform", "status", "nextAttemptAt");\nCREATE INDEX "SocialPublishingAttempt_contentCalendarItemId_contentRevision_idx" ON "SocialPublishingAttempt"("contentCalendarItemId", "contentRevision");\nCREATE INDEX "SocialPublishingAttempt_accountRef_status_createdAt_idx" ON "SocialPublishingAttempt"("accountRef", "status", "createdAt");\nCREATE INDEX "SocialPublishingAttemptEvent_attemptId_occurredAt_idx" ON "SocialPublishingAttemptEvent"("attemptId", "occurredAt");\nCREATE INDEX "SocialPublishingAttemptEvent_actorUserId_occurredAt_idx" ON "SocialPublishingAttemptEvent"("actorUserId", "occurredAt");\n\nALTER TABLE "SocialPublishingAttempt" ADD CONSTRAINT "SocialPublishingAttempt_proposalId_fkey" FOREIGN KEY ("proposalId") REFERENCES "AiOperatorProposal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;\nALTER TABLE "SocialPublishingAttempt" ADD CONSTRAINT "SocialPublishingAttempt_contentCalendarItemId_fkey" FOREIGN KEY ("contentCalendarItemId") REFERENCES "ContentCalendarItem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;\nALTER TABLE "SocialPublishingAttempt" ADD CONSTRAINT "SocialPublishingAttempt_accountRef_fkey" FOREIGN KEY ("accountRef") REFERENCES "SocialPublishingAccount"("accountRef") ON DELETE RESTRICT ON UPDATE CASCADE;\nALTER TABLE "SocialPublishingAttemptEvent" ADD CONSTRAINT "SocialPublishingAttemptEvent_attemptId_fkey" FOREIGN KEY ("attemptId") REFERENCES "SocialPublishingAttempt"("id") ON DELETE CASCADE ON UPDATE CASCADE;\nALTER TABLE "SocialPublishingAttemptEvent" ADD CONSTRAINT "SocialPublishingAttemptEvent_actorUserId_fkey" FOREIGN KEY ("actorUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;\n\nALTER TABLE "SocialPublishingAttempt" ADD CONSTRAINT "SocialPublishingAttempt_attempt_count_nonnegative" CHECK ("attemptCount" >= 0);\nALTER TABLE "SocialPublishingAttemptEvent" ADD CONSTRAINT "SocialPublishingAttemptEvent_attempt_number_nonnegative" CHECK ("attemptNumber" >= 0);\n\nCREATE OR REPLACE FUNCTION prevent_social_publishing_attempt_event_mutation()\nRETURNS trigger AS $$\nBEGIN\n  RAISE EXCEPTION 'SocialPublishingAttemptEvent is append-only';\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER social_publishing_attempt_event_no_update\nBEFORE UPDATE ON "SocialPublishingAttemptEvent"\nFOR EACH ROW EXECUTE FUNCTION prevent_social_publishing_attempt_event_mutation();\nCREATE TRIGGER social_publishing_attempt_event_no_delete\nBEFORE DELETE ON "SocialPublishingAttemptEvent"\nFOR EACH ROW EXECUTE FUNCTION prevent_social_publishing_attempt_event_mutation();\n\nCREATE OR REPLACE FUNCTION enforce_social_publishing_attempt_terminal_state()\nRETURNS trigger AS $$\nBEGIN\n  IF OLD."status" IN ('SUCCEEDED', 'DEAD_LETTER') AND NEW."status" <> OLD."status" THEN\n    RAISE EXCEPTION 'SocialPublishingAttempt terminal state is immutable';\n  END IF;\n  RETURN NEW;\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER social_publishing_attempt_terminal_state_guard\nBEFORE UPDATE ON "SocialPublishingAttempt"\nFOR EACH ROW EXECUTE FUNCTION enforce_social_publishing_attempt_terminal_state();\n''')
+          PY
+          git diff --check
+      - name: Commit schema patch
+        run: |
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add packages/database/prisma/schema.prisma packages/database/prisma/migrations/20260901163500_social_publishing_attempt_ledger/migration.sql
+          git commit -m "Add social publishing attempt ledger schema [social-attempt-schema]"
+          git push origin HEAD:feat/ai-operator-social-publish-attempts
