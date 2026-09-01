@@ -52,7 +52,9 @@ describe('buildAiOperationsBriefActions', () => {
 
   it('produces stable action IDs from the observation kind and structured discriminator', () => {
     expect(
-      buildAiOperationsBriefActions(brief()).map(({ action }) => action.actionId),
+      buildAiOperationsBriefActions(brief()).map(
+        ({ action }) => action.actionId,
+      ),
     ).toEqual([
       'ops-brief:v1:unassigned:queue',
       'ops-brief:v1:qualificationGap:preferredContact',
