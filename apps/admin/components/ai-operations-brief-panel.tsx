@@ -7,6 +7,7 @@ import { aiOperatorExecutionPolicyByKind } from '@luminol/validation/ai-operator
 import Link from 'next/link';
 
 import { buildAiOperationsBriefActions } from '../lib/ai-operator-actions';
+import { getAiOperatorProposalQueueCopy } from '../lib/ai-operator-proposal-localization';
 import {
   getAiOperationsBriefCopy,
   getAiOperationsBriefItemText,
@@ -26,6 +27,7 @@ export function AiOperationsBriefPanel({
   operations,
 }: AiOperationsBriefPanelProps) {
   const copy = getAiOperationsBriefCopy(locale);
+  const proposalCopy = getAiOperatorProposalQueueCopy(locale);
   const brief = buildAiOperationsBrief(operations);
   const briefActions = buildAiOperationsBriefActions(brief);
   const executionPolicy = aiOperatorExecutionPolicyByKind.OPEN_ENQUIRY_QUEUE;
@@ -85,6 +87,12 @@ export function AiOperationsBriefPanel({
           })}
         </div>
       )}
+
+      <p style={{ marginTop: '1rem' }}>
+        <Link href={localizeHref(locale, '/ai-operator')}>
+          {proposalCopy.navLabel}
+        </Link>
+      </p>
     </section>
   );
 }
