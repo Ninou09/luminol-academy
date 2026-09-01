@@ -15,6 +15,7 @@ describe('getAiOperationsBriefCopy', () => {
       expect(copy.title.length).toBeGreaterThan(0);
       expect(copy.intro.length).toBeGreaterThan(80);
       expect(copy.mode.length).toBeGreaterThan(0);
+      expect(copy.executionPolicy('read_only')).toContain('read_only');
       expect(copy.action.length).toBeGreaterThan(0);
       expect(copy.allClearTitle.length).toBeGreaterThan(0);
       expect(copy.allClearBody.length).toBeGreaterThan(30);
@@ -56,5 +57,6 @@ describe('getAiOperationsBriefCopy', () => {
     expect(copy.intro).toContain('clinical need');
     expect(copy.intro).toContain('campaign performance');
     expect(copy.intro).toContain('ROI');
+    expect(copy.executionPolicy('read_only')).toContain('navigation only');
   });
 });
