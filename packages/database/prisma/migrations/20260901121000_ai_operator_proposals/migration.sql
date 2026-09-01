@@ -71,3 +71,14 @@ ALTER TABLE "AiOperatorProposalEvent" ADD CONSTRAINT "AiOperatorProposalEvent_pr
 
 -- AddForeignKey
 ALTER TABLE "AiOperatorProposalEvent" ADD CONSTRAINT "AiOperatorProposalEvent_actorUserId_fkey" FOREIGN KEY ("actorUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- Proposal decision history is append-only.
+CREATE FUNCTION "prevent_ai_operator_proposal_event_mutation"() RETURNS trigger AS $$
+BEGIN
+  RAISE EXCEPTION 'AI Operator proposal events are append-only';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER "AiOperatorProposalEvent_append_only"
+BEFORE UPDATE OR DELETE ON "AiOperatorProposalEvent"
+FOR EACH ROW EXECUTE FUNCTION "prevent_ai_operator_proposal_event_mutation"();
