@@ -15,7 +15,7 @@ export type ContentCalendarCopy = {
   captionLabel: string;
   platformLabel: string;
   accountRefLabel: string;
-  formatLabel: string;
+  formatFieldLabel: string;
   assetReferenceLabel: string;
   scheduledUtcLabel: string;
   timezoneLabel: string;
@@ -40,7 +40,7 @@ export type ContentCalendarCopy = {
   lifecycle: string;
   moveTo: string;
   statusLabel: Record<'DRAFT' | 'READY' | 'SCHEDULED' | 'ARCHIVED', string>;
-  formatLabel: Record<
+  formatName: Record<
     'REEL' | 'CAROUSEL' | 'STATIC_POST' | 'STORY' | 'OTHER',
     string
   >;
@@ -64,7 +64,7 @@ const english: ContentCalendarCopy = {
   captionLabel: 'Caption / copy',
   platformLabel: 'Platform',
   accountRefLabel: 'Account reference',
-  formatLabel: 'Format',
+  formatFieldLabel: 'Format',
   assetReferenceLabel: 'Asset reference (optional)',
   scheduledUtcLabel: 'Scheduled UTC time (optional)',
   timezoneLabel: 'Display timezone (IANA, optional)',
@@ -97,7 +97,7 @@ const english: ContentCalendarCopy = {
     SCHEDULED: 'Scheduled',
     ARCHIVED: 'Archived',
   },
-  formatLabel: {
+  formatName: {
     REEL: 'Reel',
     CAROUSEL: 'Carousel',
     STATIC_POST: 'Static post',
@@ -125,7 +125,7 @@ const french: ContentCalendarCopy = {
   captionLabel: 'Légende / texte',
   platformLabel: 'Plateforme',
   accountRefLabel: 'Référence du compte',
-  formatLabel: 'Format',
+  formatFieldLabel: 'Format',
   assetReferenceLabel: 'Référence du média (facultatif)',
   scheduledUtcLabel: 'Heure UTC planifiée (facultatif)',
   timezoneLabel: 'Fuseau d’affichage IANA (facultatif)',
@@ -158,7 +158,7 @@ const french: ContentCalendarCopy = {
     SCHEDULED: 'Planifié',
     ARCHIVED: 'Archivé',
   },
-  formatLabel: {
+  formatName: {
     REEL: 'Reel',
     CAROUSEL: 'Carrousel',
     STATIC_POST: 'Publication statique',
@@ -185,7 +185,7 @@ const arabic: ContentCalendarCopy = {
   captionLabel: 'النص / الوصف',
   platformLabel: 'المنصة',
   accountRefLabel: 'مرجع الحساب',
-  formatLabel: 'الصيغة',
+  formatFieldLabel: 'الصيغة',
   assetReferenceLabel: 'مرجع الملف (اختياري)',
   scheduledUtcLabel: 'وقت UTC المجدول (اختياري)',
   timezoneLabel: 'المنطقة الزمنية للعرض IANA (اختياري)',
@@ -218,7 +218,7 @@ const arabic: ContentCalendarCopy = {
     SCHEDULED: 'مجدول',
     ARCHIVED: 'مؤرشف',
   },
-  formatLabel: {
+  formatName: {
     REEL: 'ريل',
     CAROUSEL: 'كاروسيل',
     STATIC_POST: 'منشور ثابت',
