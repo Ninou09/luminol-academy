@@ -78,7 +78,9 @@ function safeCount(value: number): number {
   return Math.floor(value);
 }
 
-function buildAttentionQuery(attention: 'unassigned' | 'closed-without-outcome') {
+function buildAttentionQuery(
+  attention: 'unassigned' | 'closed-without-outcome',
+) {
   const query = new URLSearchParams();
   query.set('attention', attention);
   return query.toString();
@@ -121,7 +123,8 @@ function getLargestAttributionGap(
   for (const field of ATTRIBUTION_GAP_ORDER) {
     const missing = total - (recordedByField.get(field) ?? 0);
     if (missing === 0) continue;
-    if (!selected || missing > selected.count) selected = { field, count: missing };
+    if (!selected || missing > selected.count)
+      selected = { field, count: missing };
   }
 
   return selected;
