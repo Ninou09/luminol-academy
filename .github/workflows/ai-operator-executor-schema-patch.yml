@@ -1,0 +1,68 @@
+name: Temporary AI Operator Executor Schema Patch
+on:
+  push:
+    branches: [feat/ai-operator-controlled-crm-executor]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[executor-schema]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-controlled-crm-executor
+      - name: Patch Prisma schema and migration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('packages/database/prisma/schema.prisma')
+          text = path.read_text()
+          replacements = [
+              (
+                  '''enum AiOperatorProposalStatus {\n  PENDING_APPROVAL\n  APPROVED\n  REJECTED\n  CANCELLED\n}\n''',
+                  '''enum AiOperatorProposalStatus {\n  PENDING_APPROVAL\n  APPROVED\n  REJECTED\n  CANCELLED\n  EXECUTED\n}\n''',
+              ),
+              (
+                  '''enum AiOperatorProposalEventType {\n  PROPOSED\n  APPROVED\n  REJECTED\n  CANCELLED\n}\n''',
+                  '''enum AiOperatorProposalEventType {\n  PROPOSED\n  APPROVED\n  REJECTED\n  CANCELLED\n  EXECUTED\n}\n''',
+              ),
+              (
+                  '''  aiOperatorProposalsProposed AiOperatorProposal[]      @relation("AiOperatorProposalProposer")\n  aiOperatorProposalsDecided  AiOperatorProposal[]      @relation("AiOperatorProposalDecider")\n  aiOperatorProposalEvents    AiOperatorProposalEvent[] @relation("AiOperatorProposalEventActor")\n''',
+                  '''  aiOperatorProposalsProposed AiOperatorProposal[]      @relation("AiOperatorProposalProposer")\n  aiOperatorProposalsDecided  AiOperatorProposal[]      @relation("AiOperatorProposalDecider")\n  aiOperatorProposalsExecuted AiOperatorProposal[]      @relation("AiOperatorProposalExecutor")\n  aiOperatorProposalEvents    AiOperatorProposalEvent[] @relation("AiOperatorProposalEventActor")\n''',
+              ),
+              (
+                  '''  proposedByUserId String?\n  decidedByUserId  String?\n  decidedAt        DateTime?\n  decisionNote     String?\n''',
+                  '''  proposedByUserId String?\n  decidedByUserId  String?\n  decidedAt        DateTime?\n  decisionNote     String?\n  executedByUserId String?\n  executedAt       DateTime?\n''',
+              ),
+              (
+                  '''  proposedBy       User?                     @relation("AiOperatorProposalProposer", fields: [proposedByUserId], references: [id], onDelete: SetNull)\n  decidedBy        User?                     @relation("AiOperatorProposalDecider", fields: [decidedByUserId], references: [id], onDelete: SetNull)\n  events           AiOperatorProposalEvent[]\n''',
+                  '''  proposedBy       User?                     @relation("AiOperatorProposalProposer", fields: [proposedByUserId], references: [id], onDelete: SetNull)\n  decidedBy        User?                     @relation("AiOperatorProposalDecider", fields: [decidedByUserId], references: [id], onDelete: SetNull)\n  executedBy       User?                     @relation("AiOperatorProposalExecutor", fields: [executedByUserId], references: [id], onDelete: SetNull)\n  events           AiOperatorProposalEvent[]\n''',
+              ),
+              (
+                  '''  @@index([proposedByUserId, createdAt])\n  @@index([decidedByUserId, decidedAt])\n}\n''',
+                  '''  @@index([proposedByUserId, createdAt])\n  @@index([decidedByUserId, decidedAt])\n  @@index([executedByUserId, executedAt])\n}\n''',
+              ),
+          ]
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'Expected exactly one schema match, found {count}: {old[:80]!r}')
+              text = text.replace(old, new)
+          path.write_text(text)
+
+          migration = Path('packages/database/prisma/migrations/20260901132000_ai_operator_controlled_executor/migration.sql')
+          migration.parent.mkdir(parents=True, exist_ok=False)
+          migration.write_text('''-- Extend proposal decision state into controlled execution.\nALTER TYPE "AiOperatorProposalStatus" ADD VALUE 'EXECUTED';\nALTER TYPE "AiOperatorProposalEventType" ADD VALUE 'EXECUTED';\n\nALTER TABLE "AiOperatorProposal"\n  ADD COLUMN "executedByUserId" TEXT,\n  ADD COLUMN "executedAt" TIMESTAMP(3);\n\nCREATE INDEX "AiOperatorProposal_executedByUserId_executedAt_idx"\n  ON "AiOperatorProposal"("executedByUserId", "executedAt");\n\nALTER TABLE "AiOperatorProposal"\n  ADD CONSTRAINT "AiOperatorProposal_executedByUserId_fkey"\n  FOREIGN KEY ("executedByUserId") REFERENCES "User"("id")\n  ON DELETE SET NULL ON UPDATE CASCADE;\n''')
+          PY
+          git diff --check
+      - name: Commit schema patch
+        run: |
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            packages/database/prisma/schema.prisma \
+            packages/database/prisma/migrations/20260901132000_ai_operator_controlled_executor/migration.sql
+          git commit -m "Add AI Operator controlled execution state [executor-schema]"
+          git push origin HEAD:feat/ai-operator-controlled-crm-executor
