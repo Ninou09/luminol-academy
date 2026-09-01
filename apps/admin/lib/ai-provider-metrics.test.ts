@@ -24,9 +24,9 @@ describe('AI provider metric envelopes', () => {
         buckets: {
           missingPlan: 1,
           pastDue: 2,
-          dueToday: 1,
-          dueNext7Days: 2,
-          scheduledLater: 2,
+          next24Hours: 1,
+          oneToThreeDays: 2,
+          later: 2,
         },
       },
       enquiryOutcomeCoverageLast30Days: {
