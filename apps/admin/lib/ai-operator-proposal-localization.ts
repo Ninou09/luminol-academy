@@ -165,7 +165,8 @@ const COPY: Record<Locale, AiOperatorProposalQueueCopy> = {
     readinessFailed: 'Non validé',
     readinessCheck: {
       envelopeValid: 'L’enveloppe enregistrée est valide',
-      metadataMatches: 'Les métadonnées enregistrées correspondent à l’enveloppe',
+      metadataMatches:
+        'Les métadonnées enregistrées correspondent à l’enveloppe',
       approvalState: 'La proposition est approuvée',
       policyRegistered: 'L’action reste soumise à approbation dans le registre',
     },

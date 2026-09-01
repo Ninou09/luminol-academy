@@ -67,7 +67,9 @@ describe('AI Operator execution readiness', () => {
     AiOperatorProposalStatus.REJECTED,
     AiOperatorProposalStatus.CANCELLED,
   ])('keeps %s proposals out of executor readiness', (status) => {
-    const readiness = evaluateAiOperatorExecutionReadiness(proposal({ status }));
+    const readiness = evaluateAiOperatorExecutionReadiness(
+      proposal({ status }),
+    );
 
     expect(readiness.status).toBe('NOT_APPROVED');
     expect(readiness.checks.approvalState).toBe(false);
