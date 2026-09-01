@@ -30,7 +30,9 @@ function parseDateOnly(value: string) {
 export function parseSupportedAiOperatorCrmExecution(input: unknown) {
   const parsed = aiOperatorSetFollowUpExecutionActionSchema.safeParse(input);
   if (!parsed.success) {
-    throw new Error('AI Operator proposal action is not supported by this executor');
+    throw new Error(
+      'AI Operator proposal action is not supported by this executor',
+    );
   }
   return parsed.data;
 }
@@ -100,9 +102,7 @@ export async function executeApprovedAiOperatorProposal(
       enquiryId: action.target.enquiryId,
       actorUserId,
       plan: {
-        nextFollowUpAt: parseDateOnly(
-          action.payload.parameters.nextFollowUpOn,
-        ),
+        nextFollowUpAt: parseDateOnly(action.payload.parameters.nextFollowUpOn),
         nextAction: action.payload.parameters.nextAction,
       },
     });

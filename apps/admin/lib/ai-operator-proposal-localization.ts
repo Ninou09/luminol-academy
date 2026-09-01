@@ -56,11 +56,7 @@ export type AiOperatorProposalQueueCopy = {
     string
   >;
   statusLabel: Record<
-    | 'PENDING_APPROVAL'
-    | 'APPROVED'
-    | 'REJECTED'
-    | 'CANCELLED'
-    | 'EXECUTED',
+    'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'EXECUTED',
     string
   >;
   kindLabel: Record<
@@ -260,8 +256,7 @@ const COPY: Record<Locale, AiOperatorProposalQueueCopy> = {
     executionTitle: 'التنفيذ المضبوط',
     executionIntro:
       'يعيد التنفيذ التحقق من غلاف الإجراء المخزّن والجاهزية الحالية، ثم يطبّق خطة متابعة CRM وسجل التدقيق ضمن معاملة ذرية واحدة. ويتطلب إجراءً صريحاً من المشغّل.',
-    executionUnavailable:
-      'هذا المقترح غير مؤهل لمنفّذ متابعة CRM المضبوط.',
+    executionUnavailable: 'هذا المقترح غير مؤهل لمنفّذ متابعة CRM المضبوط.',
     readinessTitle: 'مراجعة الجاهزية للتنفيذ',
     readinessIntro:
       'تعني حالة الجاهزية أن المقترح الموافق عليه مؤهل بنيوياً للمنفّذ المضبوط. الجاهزية وحدها لا تنفذ أي إجراء.',

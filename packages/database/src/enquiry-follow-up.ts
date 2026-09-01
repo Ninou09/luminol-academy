@@ -1,11 +1,9 @@
 import type { Prisma } from '../generated/prisma/client';
 
-export type EnquiryFollowUpPlan =
-  | {
-      nextFollowUpAt: Date;
-      nextAction: string;
-    }
-  | null;
+export type EnquiryFollowUpPlan = {
+  nextFollowUpAt: Date;
+  nextAction: string;
+} | null;
 
 export type UpdateEnquiryFollowUpPlanInput = {
   enquiryId: string;
@@ -38,7 +36,10 @@ export async function updateEnquiryFollowUpPlanWithAudit(
   input: UpdateEnquiryFollowUpPlanInput,
 ) {
   const enquiryId = requireIdentifier(input.enquiryId, 'Enquiry ID');
-  const actorUserId = requireIdentifier(input.actorUserId, 'Enquiry follow-up actor');
+  const actorUserId = requireIdentifier(
+    input.actorUserId,
+    'Enquiry follow-up actor',
+  );
   const plan = normalizePlan(input.plan);
   const toNextFollowUpAt = plan?.nextFollowUpAt ?? null;
   const toNextAction = plan?.nextAction ?? null;

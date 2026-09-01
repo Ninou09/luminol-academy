@@ -46,7 +46,9 @@ describe('AI Operator proposal queue localization', () => {
 
     expect(copy.intro).toContain('Approval changes proposal state only');
     expect(copy.intro).toContain('controlled executor');
-    expect(copy.intro).toContain('messaging and social publishing remain disabled');
+    expect(copy.intro).toContain(
+      'messaging and social publishing remain disabled',
+    );
     expect(copy.noExecution).toContain('CRM follow-up proposals');
     expect(copy.noExecution).toContain('not executable here');
     expect(copy.readinessIntro).toContain('controlled executor');

@@ -163,9 +163,9 @@ suite('AI Operator controlled CRM executor', () => {
       }),
     ]);
 
-    expect(attempts.filter(({ status }) => status === 'fulfilled')).toHaveLength(
-      1,
-    );
+    expect(
+      attempts.filter(({ status }) => status === 'fulfilled'),
+    ).toHaveLength(1);
     expect(attempts.filter(({ status }) => status === 'rejected')).toHaveLength(
       1,
     );
@@ -185,7 +185,9 @@ suite('AI Operator controlled CRM executor', () => {
       nextAction: 'Confirm programme interest for stale',
     };
     const enquiry = await createEnquiry('stale', existingPlan);
-    const approved = await approveAction(setFollowUpAction('stale', enquiry.id));
+    const approved = await approveAction(
+      setFollowUpAction('stale', enquiry.id),
+    );
 
     await expect(
       executeApprovedAiOperatorProposal(db, {
