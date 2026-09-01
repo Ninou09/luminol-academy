@@ -58,7 +58,8 @@ function assertJsonCompatible(
       throw new Error(`${path} must contain only plain JSON objects`);
     }
     for (const [key, item] of Object.entries(value)) {
-      if (item === undefined) throw new Error(`${path}.${key} must be JSON-safe`);
+      if (item === undefined)
+        throw new Error(`${path}.${key} must be JSON-safe`);
       assertJsonCompatible(item, `${path}.${key}`);
     }
     return;
@@ -113,7 +114,9 @@ export function parseApprovalRequiredAiOperatorAction(
     action.executionPolicy !== 'approval_required' ||
     action.kind === 'OPEN_ENQUIRY_QUEUE'
   ) {
-    throw new Error('AI Operator action is not eligible for the approval queue');
+    throw new Error(
+      'AI Operator action is not eligible for the approval queue',
+    );
   }
 
   toPrismaJson(action);
@@ -143,7 +146,9 @@ export function assertAiOperatorProposalMatchesAction(
     canonicalJson(proposal.actionEnvelope) === canonicalJson(action);
 
   if (!matches) {
-    throw new Error('AI Operator action ID already belongs to another proposal');
+    throw new Error(
+      'AI Operator action ID already belongs to another proposal',
+    );
   }
 }
 
@@ -204,7 +209,10 @@ export async function decideAiOperatorProposal(
     now?: Date;
   },
 ) {
-  const proposalId = requireIdentifier(input.proposalId, 'AI Operator proposal ID');
+  const proposalId = requireIdentifier(
+    input.proposalId,
+    'AI Operator proposal ID',
+  );
   const actorUserId = requireIdentifier(
     input.actorUserId,
     'AI Operator decision actor user ID',

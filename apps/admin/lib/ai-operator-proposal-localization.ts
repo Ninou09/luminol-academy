@@ -31,9 +31,14 @@ export type AiOperatorProposalQueueCopy = {
   noActor: string;
   pendingOnly: string;
   noExecution: string;
-  statusLabel: Record<'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'CANCELLED', string>;
+  statusLabel: Record<
+    'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'CANCELLED',
+    string
+  >;
   kindLabel: Record<
-    'UPDATE_ENQUIRY_WORKFLOW' | 'SEND_OUTBOUND_MESSAGE' | 'PUBLISH_SOCIAL_CONTENT',
+    | 'UPDATE_ENQUIRY_WORKFLOW'
+    | 'SEND_OUTBOUND_MESSAGE'
+    | 'PUBLISH_SOCIAL_CONTENT',
     string
   >;
 };
@@ -67,10 +72,12 @@ const COPY: Record<Locale, AiOperatorProposalQueueCopy> = {
     rejectionNote: 'Optional rejection note',
     rejectionPlaceholder: 'Bounded operational reason (optional)',
     noProposals: 'No AI Operator proposals have been recorded yet.',
-    invalidEnvelope: 'Stored action envelope failed validation. Decision controls are disabled.',
+    invalidEnvelope:
+      'Stored action envelope failed validation. Decision controls are disabled.',
     noActor: 'System / unavailable actor',
     pendingOnly: 'Only pending proposals can be decided.',
-    noExecution: 'No side effect is executed from this queue in the current release.',
+    noExecution:
+      'No side effect is executed from this queue in the current release.',
     statusLabel: {
       PENDING_APPROVAL: 'Pending approval',
       APPROVED: 'Approved',
@@ -115,7 +122,8 @@ const COPY: Record<Locale, AiOperatorProposalQueueCopy> = {
       'L’enveloppe d’action enregistrée a échoué à la validation. Les contrôles de décision sont désactivés.',
     noActor: 'Système / acteur indisponible',
     pendingOnly: 'Seules les propositions en attente peuvent être décidées.',
-    noExecution: 'Aucun effet externe n’est exécuté depuis cette file dans la version actuelle.',
+    noExecution:
+      'Aucun effet externe n’est exécuté depuis cette file dans la version actuelle.',
     statusLabel: {
       PENDING_APPROVAL: 'En attente d’approbation',
       APPROVED: 'Approuvée',
@@ -156,10 +164,12 @@ const COPY: Record<Locale, AiOperatorProposalQueueCopy> = {
     rejectionNote: 'ملاحظة رفض اختيارية',
     rejectionPlaceholder: 'سبب تشغيلي مختصر (اختياري)',
     noProposals: 'لم يتم تسجيل أي مقترحات للمشغّل الذكي بعد.',
-    invalidEnvelope: 'فشل التحقق من غلاف الإجراء المخزّن. تم تعطيل أزرار القرار.',
+    invalidEnvelope:
+      'فشل التحقق من غلاف الإجراء المخزّن. تم تعطيل أزرار القرار.',
     noActor: 'النظام / منفّذ غير متاح',
     pendingOnly: 'يمكن اتخاذ القرار فقط للمقترحات المعلّقة.',
-    noExecution: 'لا يتم تنفيذ أي تأثير جانبي من هذه القائمة في الإصدار الحالي.',
+    noExecution:
+      'لا يتم تنفيذ أي تأثير جانبي من هذه القائمة في الإصدار الحالي.',
     statusLabel: {
       PENDING_APPROVAL: 'بانتظار الموافقة',
       APPROVED: 'تمت الموافقة',

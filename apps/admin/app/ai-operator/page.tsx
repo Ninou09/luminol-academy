@@ -14,14 +14,13 @@ import { getAiOperatorProposalQueueCopy } from '../../lib/ai-operator-proposal-l
 import { getAdminRequestLocale } from '../../lib/request-locale';
 import { decideAiOperatorProposalAction } from './actions';
 
-function actorLabel(
-  actor: { email: string } | null,
-  fallback: string,
-) {
+function actorLabel(actor: { email: string } | null, fallback: string) {
   return actor?.email ?? fallback;
 }
 
-function actionSummary(action: ReturnType<typeof aiOperatorActionSchema.parse>) {
+function actionSummary(
+  action: ReturnType<typeof aiOperatorActionSchema.parse>,
+) {
   if (action.kind === 'UPDATE_ENQUIRY_WORKFLOW') {
     return {
       target: `${action.target.surface} · ${action.target.enquiryId}`,
@@ -52,32 +51,34 @@ export default async function AiOperatorApprovalQueuePage() {
   const copy = getAiOperatorProposalQueueCopy(locale);
   const common = getCommonDictionary(locale);
 
-  const [proposals, pending, approved, rejected, cancelled] = await Promise.all([
-    db.aiOperatorProposal.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-      include: {
-        proposedBy: { select: { email: true } },
-        decidedBy: { select: { email: true } },
-        events: {
-          orderBy: { occurredAt: 'asc' },
-          include: { actor: { select: { email: true } } },
+  const [proposals, pending, approved, rejected, cancelled] = await Promise.all(
+    [
+      db.aiOperatorProposal.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+        include: {
+          proposedBy: { select: { email: true } },
+          decidedBy: { select: { email: true } },
+          events: {
+            orderBy: { occurredAt: 'asc' },
+            include: { actor: { select: { email: true } } },
+          },
         },
-      },
-    }),
-    db.aiOperatorProposal.count({
-      where: { status: AiOperatorProposalStatus.PENDING_APPROVAL },
-    }),
-    db.aiOperatorProposal.count({
-      where: { status: AiOperatorProposalStatus.APPROVED },
-    }),
-    db.aiOperatorProposal.count({
-      where: { status: AiOperatorProposalStatus.REJECTED },
-    }),
-    db.aiOperatorProposal.count({
-      where: { status: AiOperatorProposalStatus.CANCELLED },
-    }),
-  ]);
+      }),
+      db.aiOperatorProposal.count({
+        where: { status: AiOperatorProposalStatus.PENDING_APPROVAL },
+      }),
+      db.aiOperatorProposal.count({
+        where: { status: AiOperatorProposalStatus.APPROVED },
+      }),
+      db.aiOperatorProposal.count({
+        where: { status: AiOperatorProposalStatus.REJECTED },
+      }),
+      db.aiOperatorProposal.count({
+        where: { status: AiOperatorProposalStatus.CANCELLED },
+      }),
+    ],
+  );
 
   const number = (value: number) => formatLocalizedNumber(value, locale);
   const date = (value: Date) => formatLocalizedDate(value, locale);
@@ -229,7 +230,9 @@ export default async function AiOperatorApprovalQueuePage() {
                           </div>
                         </details>
 
-                        {isPending && action && action.kind !== 'OPEN_ENQUIRY_QUEUE' ? (
+                        {isPending &&
+                        action &&
+                        action.kind !== 'OPEN_ENQUIRY_QUEUE' ? (
                           <form
                             action={decideAiOperatorProposalAction}
                             style={{

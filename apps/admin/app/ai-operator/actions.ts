@@ -8,7 +8,8 @@ function requireFormString(formData: FormData, name: string) {
   const value = formData.get(name);
   if (typeof value !== 'string') throw new Error(`Missing ${name}`);
   const normalized = value.trim();
-  if (!normalized || normalized.length > 255) throw new Error(`Invalid ${name}`);
+  if (!normalized || normalized.length > 255)
+    throw new Error(`Invalid ${name}`);
   return normalized;
 }
 
