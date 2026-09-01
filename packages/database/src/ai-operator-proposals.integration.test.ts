@@ -47,17 +47,7 @@ suite('AI Operator proposal persistence', () => {
   });
 
   afterAll(async () => {
-    const proposals = await db.aiOperatorProposal.findMany({
-      where: { actionId: { startsWith: `operator:update-enquiry:${suffix}` } },
-      select: { id: true },
-    });
-    await db.aiOperatorProposalEvent.deleteMany({
-      where: { proposalId: { in: proposals.map(({ id }) => id) } },
-    });
-    await db.aiOperatorProposal.deleteMany({
-      where: { id: { in: proposals.map(({ id }) => id) } },
-    });
-    await db.user.deleteMany({ where: { id: userId } });
+    await db.$disconnect();
   });
 
   test('queues once, preserves the reviewed envelope, and fails closed after a decision', async () => {
@@ -108,5 +98,51 @@ suite('AI Operator proposal persistence', () => {
         decision: 'APPROVED',
       }),
     ).rejects.toThrow('no longer pending approval');
+  });
+
+  test('coalesces concurrent duplicate proposal requests onto one action ID', async () => {
+    const concurrentAction = {
+      ...action,
+      actionId: `${actionId}:concurrent`,
+      source: {
+        ...action.source,
+        reference: `proposal-test:${suffix}:concurrent`,
+      },
+    };
+
+    const proposals = await Promise.all([
+      queueAiOperatorProposal(db, concurrentAction, userId),
+      queueAiOperatorProposal(db, concurrentAction, userId),
+    ]);
+
+    expect(new Set(proposals.map(({ id }) => id))).toHaveLength(1);
+    await expect(
+      db.aiOperatorProposal.count({
+        where: { actionId: concurrentAction.actionId },
+      }),
+    ).resolves.toBe(1);
+    await expect(
+      db.aiOperatorProposalEvent.count({
+        where: { proposalId: proposals[0]!.id },
+      }),
+    ).resolves.toBe(1);
+  });
+
+  test('keeps proposal decision history append-only at the database boundary', async () => {
+    const event = await db.aiOperatorProposalEvent.findFirstOrThrow({
+      where: { proposal: { actionId } },
+      orderBy: { occurredAt: 'asc' },
+    });
+
+    await expect(
+      db.aiOperatorProposalEvent.update({
+        where: { id: event.id },
+        data: { note: 'tampered' },
+      }),
+    ).rejects.toThrow('append-only');
+
+    await expect(
+      db.aiOperatorProposalEvent.delete({ where: { id: event.id } }),
+    ).rejects.toThrow('append-only');
   });
 });
