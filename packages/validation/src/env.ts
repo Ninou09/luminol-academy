@@ -1,13 +1,17 @@
 import { z } from 'zod';
 
+import { aiProviderEnvSchema } from './ai-provider';
+
 export const databaseUrlSchema = z.url().startsWith('postgresql://');
 
-const serverEnvSchema = z.object({
-  DATABASE_URL: databaseUrlSchema,
-  CLERK_SECRET_KEY: z.string().min(1).optional(),
-  SANITY_API_TOKEN: z.string().min(1).optional(),
-  RESEND_API_KEY: z.string().startsWith('re_').optional(),
-});
+const serverEnvSchema = z
+  .object({
+    DATABASE_URL: databaseUrlSchema,
+    CLERK_SECRET_KEY: z.string().min(1).optional(),
+    SANITY_API_TOKEN: z.string().min(1).optional(),
+    RESEND_API_KEY: z.string().startsWith('re_').optional(),
+  })
+  .extend(aiProviderEnvSchema.shape);
 
 export function validateServerEnv(env: Record<string, string | undefined>) {
   return serverEnvSchema.parse(env);
