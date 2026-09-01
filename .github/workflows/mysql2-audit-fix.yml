@@ -32,7 +32,6 @@ jobs:
           NODE
           pnpm install --lockfile-only
           pnpm audit --prod --audit-level high
-          pnpm exec prettier --write package.json
           git diff --check
       - name: Commit dependency audit fix
         run: |
