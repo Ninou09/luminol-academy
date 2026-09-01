@@ -170,6 +170,6 @@ suite('social publishing delivery persistence', () => {
 
     await expect(
       materializeSocialPublishingDeliveryPlan(db, proposal.id),
-    ).rejects.toThrow('revision no longer matches approval');
+    ).rejects.toThrow('Social publishing content is no longer publishable');
   });
 });
