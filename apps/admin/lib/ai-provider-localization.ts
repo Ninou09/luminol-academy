@@ -21,8 +21,15 @@ export type AiProviderCopy = {
   budgetStatus: string;
   warning: Record<'BELOW_50' | 'AT_50' | 'AT_80' | 'EXHAUSTED', string>;
   runTitle: string;
-  runIntro: string;
-  runAction: string;
+  summaryTitle: string;
+  summaryIntro: string;
+  summaryAction: string;
+  recommendationsTitle: string;
+  recommendationsIntro: string;
+  recommendationsAction: string;
+  campaignAnalysisTitle: string;
+  campaignAnalysisIntro: string;
+  campaignAnalysisAction: string;
   running: string;
   advisoryLabel: string;
   noSideEffects: string;
@@ -70,14 +77,23 @@ const COPY: Record<Locale, AiProviderCopy> = {
       AT_80: 'At least 80% of the monthly ceiling used',
       EXHAUSTED: 'Monthly allowance exhausted or disabled',
     },
-    runTitle: 'Bounded operational summary',
-    runIntro:
-      'Runs one advisory summary using aggregate operational counts only. No enquiry messages, therapy-client text, credentials or personal records are sent.',
-    runAction: 'Run operational summary',
+    runTitle: 'Bounded AI advisory workspace',
+    summaryTitle: 'Operational summary',
+    summaryIntro:
+      'Summarizes aggregate workflow and coverage counts only. No enquiry messages, therapy-client text, credentials or personal records are sent.',
+    summaryAction: 'Run operational summary',
+    recommendationsTitle: 'Operator recommendations',
+    recommendationsIntro:
+      'Drafts bounded operational recommendations from aggregate queue, follow-up, outcome and workflow coverage metrics. Recommendations remain advisory.',
+    recommendationsAction: 'Draft recommendations',
+    campaignAnalysisTitle: 'Campaign metric analysis',
+    campaignAnalysisIntro:
+      'Analyzes aggregate 30-day campaign and attribution counts only. Campaign labels, personal records and free text are not sent.',
+    campaignAnalysisAction: 'Analyze campaign metrics',
     running: 'Running…',
     advisoryLabel: 'Advisory AI output',
     noSideEffects:
-      'This output cannot mutate CRM data, send messages, approve actions or publish social content.',
+      'These outputs cannot mutate CRM data, send messages, approve actions or publish social content.',
     blockedResult: 'The reasoning request was blocked by the gateway policy.',
     failedResult: 'The provider request failed closed.',
     recentFailures: 'Recent blocked or failed attempts',
@@ -124,14 +140,23 @@ const COPY: Record<Locale, AiProviderCopy> = {
       AT_80: 'Au moins 80 % du plafond mensuel utilisé',
       EXHAUSTED: 'Budget mensuel épuisé ou désactivé',
     },
-    runTitle: 'Résumé opérationnel borné',
-    runIntro:
-      'Exécute un résumé consultatif à partir de compteurs opérationnels agrégés uniquement. Aucun message de demande, texte de client, identifiant ou dossier personnel n’est envoyé.',
-    runAction: 'Lancer le résumé opérationnel',
+    runTitle: 'Espace consultatif IA borné',
+    summaryTitle: 'Résumé opérationnel',
+    summaryIntro:
+      'Résume uniquement des compteurs agrégés de workflow et de couverture. Aucun message de demande, texte client, identifiant ou dossier personnel n’est envoyé.',
+    summaryAction: 'Lancer le résumé opérationnel',
+    recommendationsTitle: 'Recommandations Operator',
+    recommendationsIntro:
+      'Propose des recommandations opérationnelles bornées à partir de métriques agrégées de file, suivi, résultats et couverture. Elles restent consultatives.',
+    recommendationsAction: 'Proposer des recommandations',
+    campaignAnalysisTitle: 'Analyse des métriques de campagne',
+    campaignAnalysisIntro:
+      'Analyse uniquement des compteurs agrégés de campagne et d’attribution sur 30 jours. Les libellés de campagne, dossiers personnels et textes libres ne sont pas envoyés.',
+    campaignAnalysisAction: 'Analyser les métriques de campagne',
     running: 'Exécution…',
     advisoryLabel: 'Sortie IA consultative',
     noSideEffects:
-      'Cette sortie ne peut ni modifier le CRM, ni envoyer de message, ni approuver une action, ni publier sur les réseaux sociaux.',
+      'Ces sorties ne peuvent ni modifier le CRM, ni envoyer de message, ni approuver une action, ni publier sur les réseaux sociaux.',
     blockedResult:
       'La demande de raisonnement a été bloquée par la politique de la passerelle.',
     failedResult: 'La demande fournisseur a échoué en mode fermé.',
@@ -179,10 +204,19 @@ const COPY: Record<Locale, AiProviderCopy> = {
       AT_80: 'تم استخدام 80٪ على الأقل من السقف الشهري',
       EXHAUSTED: 'تم استنفاد الرصيد الشهري أو تعطيله',
     },
-    runTitle: 'ملخص تشغيلي محدود',
-    runIntro:
-      'ينفذ ملخصاً استشارياً واحداً باستخدام أرقام تشغيلية مجمعة فقط. لا يتم إرسال رسائل الاستفسارات أو نصوص العملاء أو بيانات الاعتماد أو السجلات الشخصية.',
-    runAction: 'تشغيل الملخص التشغيلي',
+    runTitle: 'مساحة استشارية محدودة للذكاء الاصطناعي',
+    summaryTitle: 'الملخص التشغيلي',
+    summaryIntro:
+      'يلخص فقط أرقام سير العمل والتغطية المجمعة. لا يتم إرسال رسائل الاستفسارات أو نصوص العملاء أو بيانات الاعتماد أو السجلات الشخصية.',
+    summaryAction: 'تشغيل الملخص التشغيلي',
+    recommendationsTitle: 'توصيات Operator',
+    recommendationsIntro:
+      'يصيغ توصيات تشغيلية محدودة من مؤشرات مجمعة لقائمة العمل والمتابعة والنتائج والتغطية. تبقى التوصيات استشارية فقط.',
+    recommendationsAction: 'صياغة التوصيات',
+    campaignAnalysisTitle: 'تحليل مؤشرات الحملات',
+    campaignAnalysisIntro:
+      'يحلل فقط أرقام الحملات والإسناد المجمعة لآخر 30 يوماً. لا يتم إرسال أسماء الحملات أو السجلات الشخصية أو النصوص الحرة.',
+    campaignAnalysisAction: 'تحليل مؤشرات الحملات',
     running: 'جارٍ التشغيل…',
     advisoryLabel: 'مخرجات ذكاء اصطناعي استشارية',
     noSideEffects:

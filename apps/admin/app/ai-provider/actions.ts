@@ -2,8 +2,13 @@
 
 import { requirePermission } from '@luminol/auth';
 import { db, runAiProviderTask } from '@luminol/database';
+import type { AiProviderTaskClass } from '@luminol/validation/ai-provider';
 import { revalidatePath } from 'next/cache';
 
+import {
+  buildAiProviderCampaignMetrics,
+  buildAiProviderOperationalMetrics,
+} from '../../lib/ai-provider-metrics';
 import { getOperationsDashboard } from '../../lib/operations.server';
 
 export type AiProviderRunState =
@@ -11,38 +16,12 @@ export type AiProviderRunState =
   | { status: 'succeeded'; text: string; model: string }
   | { status: 'blocked' | 'failed'; errorCode: string };
 
-export async function runAiProviderSummaryAction(
-  _previousState: AiProviderRunState,
-  _formData: FormData,
+async function executeBoundedAiProviderTask(
+  taskClass: AiProviderTaskClass,
+  metrics: Record<string, number>,
 ): Promise<AiProviderRunState> {
-  void _previousState;
-  void _formData;
-  await requirePermission('academy:manage');
-
   try {
-    const operations = await getOperationsDashboard();
-    const result = await runAiProviderTask(db, {
-      taskClass: 'SUMMARIZE_OPERATIONAL_STATE',
-      metrics: {
-        activeEnquiries: operations.summary.activeEnquiries,
-        unassignedActiveEnquiries: operations.summary.unassignedActiveEnquiries,
-        enquiriesLast30Days: operations.summary.enquiriesLast30Days,
-        newEnquiries: operations.summary.newEnquiries,
-        pastDueFollowUps:
-          operations.activeEnquiryFollowUpTiming.buckets.pastDue,
-        missingFollowUpPlans:
-          operations.activeEnquiryFollowUpTiming.buckets.missingPlan,
-        missingClosedOutcomesLast30Days:
-          operations.enquiryOutcomeCoverageLast30Days.missingTotal,
-        ownerCoveragePercent:
-          operations.enquiryWorkflowCoverageLast30Days.ownerPercent,
-        followUpCoveragePercent:
-          operations.enquiryWorkflowCoverageLast30Days.followUpPercent,
-        qualificationCoveragePercent:
-          operations.enquiryWorkflowCoverageLast30Days.qualificationPercent,
-      },
-    });
-
+    const result = await runAiProviderTask(db, { taskClass, metrics });
     revalidatePath('/ai-provider');
 
     if (result.status === 'SUCCEEDED') {
@@ -60,4 +39,46 @@ export async function runAiProviderSummaryAction(
   } catch {
     return { status: 'failed', errorCode: 'AI_GATEWAY_CONFIGURATION_INVALID' };
   }
+}
+
+export async function runAiProviderSummaryAction(
+  _previousState: AiProviderRunState,
+  _formData: FormData,
+): Promise<AiProviderRunState> {
+  void _previousState;
+  void _formData;
+  await requirePermission('academy:manage');
+  const operations = await getOperationsDashboard();
+  return executeBoundedAiProviderTask(
+    'SUMMARIZE_OPERATIONAL_STATE',
+    buildAiProviderOperationalMetrics(operations),
+  );
+}
+
+export async function runAiProviderRecommendationsAction(
+  _previousState: AiProviderRunState,
+  _formData: FormData,
+): Promise<AiProviderRunState> {
+  void _previousState;
+  void _formData;
+  await requirePermission('academy:manage');
+  const operations = await getOperationsDashboard();
+  return executeBoundedAiProviderTask(
+    'DRAFT_OPERATOR_RECOMMENDATIONS',
+    buildAiProviderOperationalMetrics(operations),
+  );
+}
+
+export async function runAiProviderCampaignAnalysisAction(
+  _previousState: AiProviderRunState,
+  _formData: FormData,
+): Promise<AiProviderRunState> {
+  void _previousState;
+  void _formData;
+  await requirePermission('academy:manage');
+  const operations = await getOperationsDashboard();
+  return executeBoundedAiProviderTask(
+    'ANALYZE_CAMPAIGN_METRICS',
+    buildAiProviderCampaignMetrics(operations),
+  );
 }

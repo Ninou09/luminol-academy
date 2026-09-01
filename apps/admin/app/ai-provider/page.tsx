@@ -126,8 +126,21 @@ export default async function AiProviderGatewayPage() {
 
           <AiProviderRunPanel
             title={copy.runTitle}
-            intro={copy.runIntro}
-            action={copy.runAction}
+            summary={{
+              title: copy.summaryTitle,
+              intro: copy.summaryIntro,
+              action: copy.summaryAction,
+            }}
+            recommendations={{
+              title: copy.recommendationsTitle,
+              intro: copy.recommendationsIntro,
+              action: copy.recommendationsAction,
+            }}
+            campaignAnalysis={{
+              title: copy.campaignAnalysisTitle,
+              intro: copy.campaignAnalysisIntro,
+              action: copy.campaignAnalysisAction,
+            }}
             running={copy.running}
             advisoryLabel={copy.advisoryLabel}
             noSideEffects={copy.noSideEffects}
