@@ -9,7 +9,10 @@ import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAdminRequestLocale } from '../../lib/request-locale';
-import { getSocialPublishingCopy } from '../../lib/social-publishing-localization';
+import {
+  getSocialPublishingCopy,
+  type SocialPublishingCopy,
+} from '../../lib/social-publishing-localization';
 import {
   createSocialPublishingAccountAction,
   setSocialPublishingAccountActiveAction,
@@ -25,25 +28,58 @@ function firstSearchParam(value: SearchValue) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function boundedDeliveryError(error: unknown) {
-  if (!(error instanceof Error)) return 'Delivery plan is unavailable.';
-  const allowedPrefixes = [
-    'Social publishing proposal is not ready:',
-    'Social publishing proposal is not approved',
-    'Social publishing proposal action ID mismatch',
-    'Social publishing content is no longer publishable',
-    'Social publishing content revision no longer matches approval',
-    'Social publishing content target no longer matches approval',
-    'Social publishing account is inactive',
-    'Social publishing account target mismatch',
-    'Social publishing content requires an asset reference',
-    'Social publishing content not found',
-    'Social publishing account not found',
-    'AI Operator proposal not found',
+function boundedDeliveryError(error: unknown, copy: SocialPublishingCopy) {
+  if (!(error instanceof Error)) return copy.deliveryError.unavailable;
+
+  const mappings: Array<[string, string]> = [
+    ['Social publishing proposal is not ready:', copy.deliveryError.notReady],
+    [
+      'Social publishing proposal is not approved',
+      copy.deliveryError.notApproved,
+    ],
+    [
+      'Social publishing proposal action ID mismatch',
+      copy.deliveryError.actionMismatch,
+    ],
+    [
+      'Social publishing content is no longer publishable',
+      copy.deliveryError.contentNotPublishable,
+    ],
+    [
+      'Social publishing content revision no longer matches approval',
+      copy.deliveryError.revisionMismatch,
+    ],
+    [
+      'Social publishing content target no longer matches approval',
+      copy.deliveryError.contentTargetMismatch,
+    ],
+    [
+      'Social publishing account is inactive',
+      copy.deliveryError.accountInactive,
+    ],
+    [
+      'Social publishing account target mismatch',
+      copy.deliveryError.accountTargetMismatch,
+    ],
+    [
+      'Social publishing content requires an asset reference',
+      copy.deliveryError.assetRequired,
+    ],
+    [
+      'Social publishing content not found',
+      copy.deliveryError.contentNotFound,
+    ],
+    [
+      'Social publishing account not found',
+      copy.deliveryError.accountNotFound,
+    ],
+    ['AI Operator proposal not found', copy.deliveryError.proposalNotFound],
   ];
-  return allowedPrefixes.some((prefix) => error.message.startsWith(prefix))
-    ? error.message
-    : 'Delivery plan is unavailable.';
+
+  return (
+    mappings.find(([prefix]) => error.message.startsWith(prefix))?.[1] ??
+    copy.deliveryError.unavailable
+  );
 }
 
 export default async function SocialPublishingPage({
@@ -59,8 +95,6 @@ export default async function SocialPublishingPage({
   const accounts = await db.socialPublishingAccount.findMany({
     orderBy: [{ active: 'desc' }, { updatedAt: 'desc' }],
     include: {
-      createdBy: { select: { email: true } },
-      updatedBy: { select: { email: true } },
       events: {
         orderBy: { occurredAt: 'desc' },
         take: 5,
@@ -80,7 +114,7 @@ export default async function SocialPublishingPage({
         proposalId,
       );
     } catch (error) {
-      deliveryError = boundedDeliveryError(error);
+      deliveryError = boundedDeliveryError(error, copy);
     }
   }
 
@@ -205,8 +239,8 @@ export default async function SocialPublishingPage({
                     <small>
                       {account.events.map((event) => (
                         <span key={event.id} style={{ display: 'block' }}>
-                          {event.eventType} · {date(event.occurredAt)} ·{' '}
-                          {event.actor.email}
+                          {copy.eventType[event.eventType]} ·{' '}
+                          {date(event.occurredAt)} · {event.actor.email}
                         </span>
                       ))}
                     </small>
@@ -248,22 +282,22 @@ export default async function SocialPublishingPage({
                   <dd>{deliveryPlan.accountRef}</dd>
                   <dt>{copy.externalAccountId}</dt>
                   <dd>{deliveryPlan.externalAccountId}</dd>
-                  <dt>Content revision</dt>
+                  <dt>{copy.contentRevision}</dt>
                   <dd>
                     {deliveryPlan.contentCalendarItemId} · r
                     {deliveryPlan.contentRevision}
                   </dd>
-                  <dt>Format</dt>
+                  <dt>{copy.format}</dt>
                   <dd>{deliveryPlan.format}</dd>
-                  <dt>Caption</dt>
+                  <dt>{copy.caption}</dt>
                   <dd>{deliveryPlan.caption}</dd>
-                  <dt>Asset</dt>
+                  <dt>{copy.asset}</dt>
                   <dd>{deliveryPlan.assetReference}</dd>
-                  <dt>Schedule</dt>
+                  <dt>{copy.schedule}</dt>
                   <dd>
                     {deliveryPlan.scheduledFor
                       ? `${deliveryPlan.scheduledFor.toISOString()} · ${deliveryPlan.timezone ?? 'UTC'}`
-                      : 'Not scheduled'}
+                      : copy.notScheduled}
                   </dd>
                 </dl>
                 <p>{copy.noCredentials}</p>
