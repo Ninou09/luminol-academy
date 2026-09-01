@@ -12,6 +12,13 @@ describe('AI Operator proposal queue localization', () => {
     expect(copy.title.length).toBeGreaterThan(0);
     expect(copy.navLabel.length).toBeGreaterThan(0);
     expect(copy.noExecution.length).toBeGreaterThan(0);
+    expect(copy.executed.length).toBeGreaterThan(0);
+    expect(copy.executedBy.length).toBeGreaterThan(0);
+    expect(copy.executionTime.length).toBeGreaterThan(0);
+    expect(copy.execute.length).toBeGreaterThan(0);
+    expect(copy.executionTitle.length).toBeGreaterThan(0);
+    expect(copy.executionIntro.length).toBeGreaterThan(0);
+    expect(copy.executionUnavailable.length).toBeGreaterThan(0);
     expect(copy.readinessTitle.length).toBeGreaterThan(0);
     expect(copy.readinessIntro.length).toBeGreaterThan(0);
     expect(copy.readinessPassed.length).toBeGreaterThan(0);
@@ -28,19 +35,23 @@ describe('AI Operator proposal queue localization', () => {
     expect(copy.statusLabel.APPROVED.length).toBeGreaterThan(0);
     expect(copy.statusLabel.REJECTED.length).toBeGreaterThan(0);
     expect(copy.statusLabel.CANCELLED.length).toBeGreaterThan(0);
+    expect(copy.statusLabel.EXECUTED.length).toBeGreaterThan(0);
     expect(copy.kindLabel.UPDATE_ENQUIRY_WORKFLOW.length).toBeGreaterThan(0);
     expect(copy.kindLabel.SEND_OUTBOUND_MESSAGE.length).toBeGreaterThan(0);
     expect(copy.kindLabel.PUBLISH_SOCIAL_CONTENT.length).toBeGreaterThan(0);
   });
 
-  test('English copy states that approval and readiness do not execute side effects', () => {
+  test('English copy distinguishes approval, readiness, controlled CRM execution, and disabled channels', () => {
     const copy = getAiOperatorProposalQueueCopy('en');
 
-    expect(copy.intro).toContain('does not update CRM records');
-    expect(copy.intro).toContain('send messages');
-    expect(copy.intro).toContain('publish social content');
-    expect(copy.noExecution).toContain('No side effect');
-    expect(copy.readinessIntro).toContain('future executor');
-    expect(copy.readinessIntro).toContain('nothing is executed here');
+    expect(copy.intro).toContain('Approval changes proposal state only');
+    expect(copy.intro).toContain('controlled executor');
+    expect(copy.intro).toContain('messaging and social publishing remain disabled');
+    expect(copy.noExecution).toContain('CRM follow-up proposals');
+    expect(copy.noExecution).toContain('not executable here');
+    expect(copy.readinessIntro).toContain('controlled executor');
+    expect(copy.readinessIntro).toContain('never performs the action');
+    expect(copy.executionIntro).toContain('exact stored envelope');
+    expect(copy.executionIntro).toContain('explicit operator action');
   });
 });
