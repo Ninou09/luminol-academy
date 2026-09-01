@@ -40,6 +40,13 @@ function requireIdentifier(value: string, label: string) {
   return normalized;
 }
 
+function requireRevision(value: number) {
+  if (!Number.isSafeInteger(value) || value < 1) {
+    throw new Error('Content calendar revision is invalid');
+  }
+  return value;
+}
+
 function validDate(value: Date, label: string) {
   if (!Number.isFinite(value.getTime())) throw new Error(`${label} is invalid`);
   return value;
@@ -201,6 +208,7 @@ export async function updateContentCalendarItem(
   client: PrismaClient,
   input: {
     itemId: string;
+    expectedRevision: number;
     actorUserId: string;
     title: string;
     caption: string;
@@ -214,6 +222,7 @@ export async function updateContentCalendarItem(
   },
 ) {
   const itemId = requireIdentifier(input.itemId, 'Content calendar item ID');
+  const expectedRevision = requireRevision(input.expectedRevision);
   const actorUserId = requireIdentifier(
     input.actorUserId,
     'Content calendar actor user ID',
@@ -226,6 +235,9 @@ export async function updateContentCalendarItem(
       where: { id: itemId },
     });
     if (!current) throw new Error('Content calendar item not found');
+    if (current.revision !== expectedRevision) {
+      throw new Error('Content calendar item was updated by another operator');
+    }
     if (current.status === ContentCalendarStatus.ARCHIVED) {
       throw new Error('Archived content calendar items cannot be edited');
     }
@@ -233,7 +245,7 @@ export async function updateContentCalendarItem(
     const nextRevision = current.revision + 1;
     const nextStatus = ContentCalendarStatus.DRAFT;
     const updated = await transaction.contentCalendarItem.updateMany({
-      where: { id: current.id, revision: current.revision },
+      where: { id: current.id, revision: expectedRevision },
       data: {
         ...fields,
         status: nextStatus,
@@ -268,12 +280,14 @@ export async function transitionContentCalendarItemStatus(
   client: PrismaClient,
   input: {
     itemId: string;
+    expectedRevision: number;
     actorUserId: string;
     toStatus: string;
     now?: Date;
   },
 ) {
   const itemId = requireIdentifier(input.itemId, 'Content calendar item ID');
+  const expectedRevision = requireRevision(input.expectedRevision);
   const actorUserId = requireIdentifier(
     input.actorUserId,
     'Content calendar actor user ID',
@@ -286,6 +300,9 @@ export async function transitionContentCalendarItemStatus(
       where: { id: itemId },
     });
     if (!current) throw new Error('Content calendar item not found');
+    if (current.revision !== expectedRevision) {
+      throw new Error('Content calendar status was updated by another operator');
+    }
     if (!statusTransitions[current.status].includes(toStatus)) {
       throw new Error('Invalid content calendar status transition');
     }
@@ -298,7 +315,7 @@ export async function transitionContentCalendarItemStatus(
     const updated = await transaction.contentCalendarItem.updateMany({
       where: {
         id: current.id,
-        revision: current.revision,
+        revision: expectedRevision,
         status: current.status,
       },
       data: {
@@ -334,9 +351,14 @@ export async function transitionContentCalendarItemStatus(
 
 export async function queueContentCalendarPublishProposal(
   client: PrismaClient,
-  input: { itemId: string; actorUserId: string },
+  input: {
+    itemId: string;
+    expectedRevision: number;
+    actorUserId: string;
+  },
 ) {
   const itemId = requireIdentifier(input.itemId, 'Content calendar item ID');
+  const expectedRevision = requireRevision(input.expectedRevision);
   const actorUserId = requireIdentifier(
     input.actorUserId,
     'Content calendar actor user ID',
@@ -345,6 +367,9 @@ export async function queueContentCalendarPublishProposal(
     where: { id: itemId },
   });
   if (!item) throw new Error('Content calendar item not found');
+  if (item.revision !== expectedRevision) {
+    throw new Error('Content calendar item was updated by another operator');
+  }
 
   const action = buildContentCalendarPublishAction(item);
   return queueAiOperatorProposal(client, action, actorUserId);
