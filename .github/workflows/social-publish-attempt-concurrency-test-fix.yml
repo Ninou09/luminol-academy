@@ -1,0 +1,75 @@
+name: Temporary Social Publish Attempt Concurrency Test Fix
+on:
+  push:
+    branches: [feat/ai-operator-social-publish-attempts]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[social-attempt-concurrency-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-social-publish-attempts
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Patch concurrency-safe planning and deterministic test clocks
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          source = Path('packages/database/src/social-publishing-attempts.ts')
+          text = source.read_text()
+          old = '''  const attempt = await client.socialPublishingAttempt.upsert({\n    where: { proposalId: plan.proposalId },\n    update: {},\n    create: {\n      idempotencyKey,\n      proposalId: plan.proposalId,\n      actionId: plan.actionId,\n      contentCalendarItemId: plan.contentCalendarItemId,\n      contentRevision: plan.contentRevision,\n      platform: plan.platform,\n      accountRef: plan.accountRef,\n      externalAccountId: plan.externalAccountId,\n      status: SocialPublishingAttemptStatus.PLANNED,\n      nextAttemptAt: now,\n      events: {\n        create: {\n          eventType: SocialPublishingAttemptEventType.PLANNED,\n          actorUserId,\n          fromStatus: null,\n          toStatus: SocialPublishingAttemptStatus.PLANNED,\n          attemptNumber: 0,\n          occurredAt: now,\n        },\n      },\n    },\n  });\n\n  assertAttemptMatchesPlan(attempt, plan, idempotencyKey);\n  return attempt;\n'''
+          new = '''  let attempt: SocialPublishingAttempt;\n  try {\n    attempt = await client.socialPublishingAttempt.create({\n      data: {\n        idempotencyKey,\n        proposalId: plan.proposalId,\n        actionId: plan.actionId,\n        contentCalendarItemId: plan.contentCalendarItemId,\n        contentRevision: plan.contentRevision,\n        platform: plan.platform,\n        accountRef: plan.accountRef,\n        externalAccountId: plan.externalAccountId,\n        status: SocialPublishingAttemptStatus.PLANNED,\n        nextAttemptAt: now,\n        events: {\n          create: {\n            eventType: SocialPublishingAttemptEventType.PLANNED,\n            actorUserId,\n            fromStatus: null,\n            toStatus: SocialPublishingAttemptStatus.PLANNED,\n            attemptNumber: 0,\n            occurredAt: now,\n          },\n        },\n      },\n    });\n  } catch (error) {\n    const existing = await client.socialPublishingAttempt.findFirst({\n      where: {\n        OR: [{ proposalId: plan.proposalId }, { idempotencyKey }],\n      },\n    });\n    if (!existing) throw error;\n    attempt = existing;\n  }\n\n  assertAttemptMatchesPlan(attempt, plan, idempotencyKey);\n  return attempt;\n'''
+          if text.count(old) != 1:
+              raise SystemExit('Expected one social publish planning upsert block')
+          source.write_text(text.replace(old, new))
+
+          test_path = Path('packages/database/src/social-publishing-attempts.integration.test.ts')
+          tests = test_path.read_text()
+          replacements = [
+            (
+              'const executionNow = new Date(proposal.createdAt.getTime() + 5_000);',
+              'const executionNow = new Date(attempt.nextAttemptAt.getTime() + 5_000);',
+            ),
+            (
+              'const executionNow = new Date(proposal.createdAt.getTime() + 10_000);',
+              'const executionNow = new Date(attempt.nextAttemptAt.getTime() + 10_000);',
+            ),
+            (
+              'const firstNow = new Date(proposal.createdAt.getTime() + 10_000);',
+              'const firstNow = new Date(attempt.nextAttemptAt.getTime() + 10_000);',
+            ),
+            (
+              'now: new Date(proposal.createdAt.getTime() + 2_000),',
+              'now: new Date(attempt.nextAttemptAt.getTime() + 2_000),',
+            ),
+            (
+              'now: new Date(proposal.createdAt.getTime() + 5_000),',
+              'now: new Date(attempt.nextAttemptAt.getTime() + 5_000),',
+            ),
+          ]
+          for old_value, new_value in replacements:
+              count = tests.count(old_value)
+              if count != 1:
+                  raise SystemExit(f'Expected one test clock match for {old_value!r}, found {count}')
+              tests = tests.replace(old_value, new_value)
+          test_path.write_text(tests)
+          PY
+          pnpm exec prettier --write packages/database/src/social-publishing-attempts.ts packages/database/src/social-publishing-attempts.integration.test.ts
+          git diff --check
+      - name: Commit patch
+        run: |
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add packages/database/src/social-publishing-attempts.ts packages/database/src/social-publishing-attempts.integration.test.ts
+          git commit -m "Make social publish planning concurrency-safe [social-attempt-concurrency-fix]"
+          git push origin HEAD:feat/ai-operator-social-publish-attempts
