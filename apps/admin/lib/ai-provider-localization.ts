@@ -89,7 +89,8 @@ const COPY: Record<Locale, AiProviderCopy> = {
       'Usage records contain provider mode, model, task class, bounded outcome/error codes, token counts, estimated cost and latency only. Prompts, outputs and API keys are not stored in the usage ledger.',
     modeDescription: {
       OFF: 'OFF — zero external AI requests are allowed.',
-      OPENAI: 'OPENAI — external reasoning is enabled only through server environment configuration.',
+      OPENAI:
+        'OPENAI — external reasoning is enabled only through server environment configuration.',
     },
     taskLabel: {
       SUMMARIZE_OPERATIONAL_STATE: 'Summarize operational state',
@@ -131,7 +132,8 @@ const COPY: Record<Locale, AiProviderCopy> = {
     advisoryLabel: 'Sortie IA consultative',
     noSideEffects:
       'Cette sortie ne peut ni modifier le CRM, ni envoyer de message, ni approuver une action, ni publier sur les réseaux sociaux.',
-    blockedResult: 'La demande de raisonnement a été bloquée par la politique de la passerelle.',
+    blockedResult:
+      'La demande de raisonnement a été bloquée par la politique de la passerelle.',
     failedResult: 'La demande fournisseur a échoué en mode fermé.',
     recentFailures: 'Tentatives bloquées ou échouées récentes',
     noFailures: 'Aucune tentative bloquée ou échouée récente ce mois-ci.',
@@ -142,7 +144,8 @@ const COPY: Record<Locale, AiProviderCopy> = {
       'Le registre conserve uniquement le mode, le modèle, la classe de tâche, des résultats/codes bornés, les tokens, le coût estimé et la latence. Les prompts, sorties et clés API ne sont pas stockés.',
     modeDescription: {
       OFF: 'OFF — aucun appel IA externe n’est autorisé.',
-      OPENAI: 'OPENAI — le raisonnement externe est activé uniquement par configuration serveur.',
+      OPENAI:
+        'OPENAI — le raisonnement externe est activé uniquement par configuration serveur.',
     },
     taskLabel: {
       SUMMARIZE_OPERATIONAL_STATE: 'Résumer l’état opérationnel',

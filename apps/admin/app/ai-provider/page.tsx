@@ -97,7 +97,9 @@ export default async function AiProviderGatewayPage() {
                 <h2>{copy.budgetStatus}</h2>
                 <p>{copy.modeDescription[summary.mode]}</p>
               </div>
-              <span className="data-status">{copy.warning[summary.warning]}</span>
+              <span className="data-status">
+                {copy.warning[summary.warning]}
+              </span>
             </div>
             <div className="compact-list">
               <article>
@@ -158,7 +160,9 @@ export default async function AiProviderGatewayPage() {
                       </small>
                     </div>
                     <div>
-                      <span className="data-status">{failure.providerMode}</span>
+                      <span className="data-status">
+                        {failure.providerMode}
+                      </span>
                       <small>
                         {copy.occurredAt}: {date(failure.occurredAt)}
                       </small>

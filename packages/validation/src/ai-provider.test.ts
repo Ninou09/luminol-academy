@@ -1,9 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import {
-  aiProviderRequestSchema,
-  parseAiProviderEnv,
-} from './ai-provider';
+import { aiProviderRequestSchema, parseAiProviderEnv } from './ai-provider';
 
 describe('AI provider validation', () => {
   test('defaults to zero-call OFF mode with a conservative monthly budget', () => {

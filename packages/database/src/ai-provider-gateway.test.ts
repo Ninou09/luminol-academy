@@ -35,16 +35,28 @@ describe('AI provider gateway policy', () => {
     ).toBe(800);
 
     expect(
-      aiProviderBudgetWarning({ spentUsdMicros: 2_000_000, budgetUsdMicros: 5_000_000 }),
+      aiProviderBudgetWarning({
+        spentUsdMicros: 2_000_000,
+        budgetUsdMicros: 5_000_000,
+      }),
     ).toBe('BELOW_50');
     expect(
-      aiProviderBudgetWarning({ spentUsdMicros: 2_500_000, budgetUsdMicros: 5_000_000 }),
+      aiProviderBudgetWarning({
+        spentUsdMicros: 2_500_000,
+        budgetUsdMicros: 5_000_000,
+      }),
     ).toBe('AT_50');
     expect(
-      aiProviderBudgetWarning({ spentUsdMicros: 4_000_000, budgetUsdMicros: 5_000_000 }),
+      aiProviderBudgetWarning({
+        spentUsdMicros: 4_000_000,
+        budgetUsdMicros: 5_000_000,
+      }),
     ).toBe('AT_80');
     expect(
-      aiProviderBudgetWarning({ spentUsdMicros: 5_000_000, budgetUsdMicros: 5_000_000 }),
+      aiProviderBudgetWarning({
+        spentUsdMicros: 5_000_000,
+        budgetUsdMicros: 5_000_000,
+      }),
     ).toBe('EXHAUSTED');
   });
 });
@@ -118,7 +130,9 @@ describe('OpenAI Responses provider', () => {
       apiKey: 'sk-server-only-test',
       fetchImplementation: vi
         .fn<typeof fetch>()
-        .mockResolvedValue(new Response('provider details must stay opaque', { status })),
+        .mockResolvedValue(
+          new Response('provider details must stay opaque', { status }),
+        ),
     });
 
     await expect(

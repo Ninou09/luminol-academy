@@ -34,8 +34,7 @@ const AI_PROVIDER_TASK_INSTRUCTIONS = {
 } as const satisfies Record<AiProviderTaskClassValue, string>;
 
 const AI_PROVIDER_TASK_TO_DATABASE = {
-  SUMMARIZE_OPERATIONAL_STATE:
-    AiProviderTaskClass.SUMMARIZE_OPERATIONAL_STATE,
+  SUMMARIZE_OPERATIONAL_STATE: AiProviderTaskClass.SUMMARIZE_OPERATIONAL_STATE,
   DRAFT_OPERATOR_RECOMMENDATIONS:
     AiProviderTaskClass.DRAFT_OPERATOR_RECOMMENDATIONS,
   ANALYZE_CAMPAIGN_METRICS: AiProviderTaskClass.ANALYZE_CAMPAIGN_METRICS,
@@ -125,7 +124,9 @@ const openAiResponseSchema = z
   })
   .passthrough();
 
-function openAiOutputText(output: z.infer<typeof openAiResponseSchema>['output']) {
+function openAiOutputText(
+  output: z.infer<typeof openAiResponseSchema>['output'],
+) {
   const text = output
     .flatMap((item) => item.content ?? [])
     .filter((item) => item.type === 'output_text')
@@ -172,33 +173,36 @@ export function createOpenAiResponsesProvider(input: {
     async run(request) {
       let response: Response;
       try {
-        response = await fetchImplementation('https://api.openai.com/v1/responses', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: request.model,
-            instructions: [
-              'You are the bounded reasoning layer for Luminol AI Operator.',
-              'Use only the aggregate numeric metrics supplied in this request.',
-              'Do not request, infer, reconstruct, or invent personal data or free-text records.',
-              'Do not perform diagnosis, treatment advice, clinical urgency scoring, lead-quality scoring, conversion-probability scoring, suitability inference, autonomous CRM mutation, outbound messaging, or social publishing.',
-              'Your output is advisory only and cannot bypass Luminol action validation, approval, readiness, or executor controls.',
-              AI_PROVIDER_TASK_INSTRUCTIONS[request.taskClass],
-            ].join(' '),
-            input: JSON.stringify({
-              taskClass: request.taskClass,
-              metrics: request.metrics,
+        response = await fetchImplementation(
+          'https://api.openai.com/v1/responses',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: request.model,
+              instructions: [
+                'You are the bounded reasoning layer for Luminol AI Operator.',
+                'Use only the aggregate numeric metrics supplied in this request.',
+                'Do not request, infer, reconstruct, or invent personal data or free-text records.',
+                'Do not perform diagnosis, treatment advice, clinical urgency scoring, lead-quality scoring, conversion-probability scoring, suitability inference, autonomous CRM mutation, outbound messaging, or social publishing.',
+                'Your output is advisory only and cannot bypass Luminol action validation, approval, readiness, or executor controls.',
+                AI_PROVIDER_TASK_INSTRUCTIONS[request.taskClass],
+              ].join(' '),
+              input: JSON.stringify({
+                taskClass: request.taskClass,
+                metrics: request.metrics,
+              }),
+              max_output_tokens: request.maxOutputTokens,
+              reasoning: { effort: 'low' },
+              text: { verbosity: 'low' },
+              store: false,
             }),
-            max_output_tokens: request.maxOutputTokens,
-            reasoning: { effort: 'low' },
-            text: { verbosity: 'low' },
-            store: false,
-          }),
-          signal: AbortSignal.timeout(request.timeoutMs),
-        });
+            signal: AbortSignal.timeout(request.timeoutMs),
+          },
+        );
       } catch (error) {
         if (isTimeoutError(error)) {
           throw new AiProviderSafeError('OPENAI_TIMEOUT');
@@ -234,7 +238,8 @@ export function createOpenAiResponsesProvider(input: {
 }
 
 function monthBounds(now: Date) {
-  if (!Number.isFinite(now.getTime())) throw new Error('Invalid AI provider time');
+  if (!Number.isFinite(now.getTime()))
+    throw new Error('Invalid AI provider time');
   const start = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0),
   );
@@ -445,10 +450,7 @@ export async function runAiProviderTask(
   }
 
   const budgetUsdMicros = usdToMicros(config.LUMINOL_AI_MONTHLY_BUDGET_USD);
-  const reservationUsdMicros = reservedCostUsdMicros(
-    request.taskClass,
-    config,
-  );
+  const reservationUsdMicros = reservedCostUsdMicros(request.taskClass, config);
   const reservation = await reserveMonthlyBudget(client, {
     request,
     model: config.LUMINOL_AI_MODEL,
@@ -545,13 +547,17 @@ export async function runAiProviderTask(
   }
 }
 
-export type AiProviderBudgetWarning = 'BELOW_50' | 'AT_50' | 'AT_80' | 'EXHAUSTED';
+export type AiProviderBudgetWarning =
+  'BELOW_50' | 'AT_50' | 'AT_80' | 'EXHAUSTED';
 
 export function aiProviderBudgetWarning(input: {
   spentUsdMicros: number;
   budgetUsdMicros: number;
 }): AiProviderBudgetWarning {
-  if (input.budgetUsdMicros <= 0 || input.spentUsdMicros >= input.budgetUsdMicros) {
+  if (
+    input.budgetUsdMicros <= 0 ||
+    input.spentUsdMicros >= input.budgetUsdMicros
+  ) {
     return 'EXHAUSTED';
   }
   const ratio = input.spentUsdMicros / input.budgetUsdMicros;

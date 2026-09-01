@@ -18,9 +18,9 @@ describe('AI provider localization', () => {
       expect(copy.taskLabel.SUMMARIZE_OPERATIONAL_STATE.length).toBeGreaterThan(
         0,
       );
-      expect(copy.taskLabel.DRAFT_OPERATOR_RECOMMENDATIONS.length).toBeGreaterThan(
-        0,
-      );
+      expect(
+        copy.taskLabel.DRAFT_OPERATOR_RECOMMENDATIONS.length,
+      ).toBeGreaterThan(0);
       expect(copy.taskLabel.ANALYZE_CAMPAIGN_METRICS.length).toBeGreaterThan(0);
       expect(copy.privacy.length).toBeGreaterThan(0);
     },

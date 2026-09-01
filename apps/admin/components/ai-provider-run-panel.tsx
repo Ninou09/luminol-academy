@@ -66,9 +66,7 @@ export function AiProviderRunPanel({
 
       {state.status === 'blocked' || state.status === 'failed' ? (
         <article className="admin-panel" aria-live="polite">
-          <p>
-            {state.status === 'blocked' ? blockedResult : failedResult}
-          </p>
+          <p>{state.status === 'blocked' ? blockedResult : failedResult}</p>
           <small dir="ltr">
             {errorCodeLabel}: {state.errorCode}
           </small>
