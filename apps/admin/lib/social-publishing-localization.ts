@@ -21,9 +21,17 @@ export type SocialPublishingCopy = {
   deliveryReviewIntro: string;
   proposalId: string;
   materialize: string;
+  contentRevision: string;
+  format: string;
+  caption: string;
+  asset: string;
+  schedule: string;
+  notScheduled: string;
+  deliveryUnavailable: string;
   noCredentials: string;
   noAccounts: string;
   platformName: Record<'INSTAGRAM' | 'FACEBOOK', string>;
+  eventType: Record<'CREATED' | 'UPDATED' | 'ACTIVATION_CHANGED', string>;
 };
 
 const english: SocialPublishingCopy = {
@@ -50,10 +58,22 @@ const english: SocialPublishingCopy = {
     'Enter an approved AI Operator proposal ID to materialize the exact reviewed revision without sending anything externally.',
   proposalId: 'AI Operator proposal ID',
   materialize: 'Review delivery plan',
+  contentRevision: 'Content revision',
+  format: 'Format',
+  caption: 'Caption',
+  asset: 'Asset',
+  schedule: 'Schedule',
+  notScheduled: 'Not scheduled',
+  deliveryUnavailable: 'Delivery plan is unavailable.',
   noCredentials:
     'No Meta credentials are stored or displayed. External publishing remains disabled.',
   noAccounts: 'No publishing accounts registered yet.',
   platformName: { INSTAGRAM: 'Instagram', FACEBOOK: 'Facebook' },
+  eventType: {
+    CREATED: 'Created',
+    UPDATED: 'Updated',
+    ACTIVATION_CHANGED: 'Activation changed',
+  },
 };
 
 const french: SocialPublishingCopy = {
@@ -81,9 +101,21 @@ const french: SocialPublishingCopy = {
     'Saisissez l’ID d’une proposition approuvée de l’Opérateur IA pour matérialiser la révision exacte sans rien envoyer à l’extérieur.',
   proposalId: 'ID de proposition de l’Opérateur IA',
   materialize: 'Examiner le plan de livraison',
+  contentRevision: 'Révision du contenu',
+  format: 'Format',
+  caption: 'Légende',
+  asset: 'Ressource',
+  schedule: 'Planification',
+  notScheduled: 'Non planifié',
+  deliveryUnavailable: 'Le plan de livraison est indisponible.',
   noCredentials:
     'Aucun identifiant Meta n’est stocké ni affiché. La publication externe reste désactivée.',
   noAccounts: 'Aucun compte de publication enregistré.',
+  eventType: {
+    CREATED: 'Créé',
+    UPDATED: 'Mis à jour',
+    ACTIVATION_CHANGED: 'Activation modifiée',
+  },
 };
 
 const arabic: SocialPublishingCopy = {
@@ -111,9 +143,21 @@ const arabic: SocialPublishingCopy = {
     'أدخل معرّف اقتراح معتمد من مشغّل الذكاء الاصطناعي لمراجعة النسخة الدقيقة دون إرسال أي شيء خارجياً.',
   proposalId: 'معرّف اقتراح مشغّل الذكاء الاصطناعي',
   materialize: 'مراجعة خطة التسليم',
+  contentRevision: 'نسخة المحتوى',
+  format: 'التنسيق',
+  caption: 'النص',
+  asset: 'الملف',
+  schedule: 'الجدولة',
+  notScheduled: 'غير مجدول',
+  deliveryUnavailable: 'خطة التسليم غير متاحة.',
   noCredentials:
     'لا يتم تخزين أو عرض بيانات اعتماد Meta. النشر الخارجي ما زال معطلاً.',
   noAccounts: 'لا توجد حسابات نشر مسجلة بعد.',
+  eventType: {
+    CREATED: 'تم الإنشاء',
+    UPDATED: 'تم التحديث',
+    ACTIVATION_CHANGED: 'تم تغيير حالة التفعيل',
+  },
 };
 
 export function getSocialPublishingCopy(locale: Locale) {
