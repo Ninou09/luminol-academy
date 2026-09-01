@@ -20,7 +20,7 @@ describe('AI provider metric envelopes', () => {
         completionRate: 0,
       },
       activeEnquiryFollowUpTiming: {
-        total: 8,
+        activeTotal: 8,
         buckets: {
           missingPlan: 1,
           pastDue: 2,
