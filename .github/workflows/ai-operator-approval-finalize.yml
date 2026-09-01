@@ -1,0 +1,57 @@
+name: Temporary AI Operator Approval Finalize
+on:
+  push:
+    branches: [feat/ai-operator-approval-queue]
+permissions:
+  contents: write
+jobs:
+  finalize:
+    if: ${{ !contains(github.event.head_commit.message, '[approval-finalized]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-approval-queue
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Align proposal audit relation and format
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('packages/database/prisma/schema.prisma')
+          text = path.read_text()
+          old = '@relation("AiOperatorProposalEventActor", fields: [actorUserId], references: [id], onDelete: SetNull)'
+          new = '@relation("AiOperatorProposalEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)'
+          if old not in text and new not in text:
+              raise SystemExit('AI Operator proposal event actor relation not found')
+          if old in text:
+              text = text.replace(old, new, 1)
+              path.write_text(text)
+          PY
+          pnpm --filter @luminol/database exec prisma format
+          pnpm exec prettier --write \
+            packages/database/src/ai-operator-proposals.ts \
+            packages/database/src/ai-operator-proposals.integration.test.ts
+          git diff --check
+      - name: Commit finalized files
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            packages/database/prisma/schema.prisma \
+            packages/database/src/ai-operator-proposals.ts \
+            packages/database/src/ai-operator-proposals.integration.test.ts
+          git commit -m "Finalize AI Operator approval queue persistence [approval-finalized]"
+          git push origin HEAD:feat/ai-operator-approval-queue
