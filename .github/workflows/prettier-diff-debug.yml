@@ -3,9 +3,10 @@ on:
   push:
     branches: [feat/ai-provider-gateway]
 permissions:
-  contents: read
+  contents: write
 jobs:
   diff:
+    if: ${{ !contains(github.event.head_commit.message, '[prettier-sync]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -20,7 +21,7 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Show canonical Prettier diff
+      - name: Apply canonical Prettier formatting
         run: |
           pnpm exec prettier --write \
             apps/admin/app/ai-provider/page.tsx \
@@ -31,7 +32,12 @@ jobs:
             packages/database/src/ai-provider-gateway.ts \
             packages/validation/src/ai-provider.test.ts \
             packages/validation/src/ai-provider.ts
-          git diff -- \
+          git diff --check
+      - name: Commit canonical formatting
+        run: |
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
             apps/admin/app/ai-provider/page.tsx \
             apps/admin/components/ai-provider-run-panel.tsx \
             apps/admin/lib/ai-provider-localization.test.ts \
@@ -40,3 +46,5 @@ jobs:
             packages/database/src/ai-provider-gateway.ts \
             packages/validation/src/ai-provider.test.ts \
             packages/validation/src/ai-provider.ts
+          git diff --cached --quiet || git commit -m "Apply canonical AI provider formatting [prettier-sync]"
+          git push origin HEAD:feat/ai-provider-gateway
