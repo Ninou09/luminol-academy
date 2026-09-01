@@ -3,6 +3,7 @@ import {
   localizeHref,
   type Locale,
 } from '@luminol/localization';
+import { aiOperatorExecutionPolicyByKind } from '@luminol/validation/ai-operator';
 import Link from 'next/link';
 
 import { buildAiOperationsBriefActions } from '../lib/ai-operator-actions';
@@ -27,6 +28,8 @@ export function AiOperationsBriefPanel({
   const copy = getAiOperationsBriefCopy(locale);
   const brief = buildAiOperationsBrief(operations);
   const briefActions = buildAiOperationsBriefActions(brief);
+  const executionPolicy =
+    aiOperatorExecutionPolicyByKind.OPEN_ENQUIRY_QUEUE;
   const number = (value: number) => formatLocalizedNumber(value, locale);
 
   return (
@@ -38,7 +41,7 @@ export function AiOperationsBriefPanel({
           <p>{copy.intro}</p>
         </div>
         <span>
-          {copy.mode} · {copy.executionPolicy}
+          {copy.mode} · {copy.executionPolicy(executionPolicy)}
         </span>
       </div>
 
