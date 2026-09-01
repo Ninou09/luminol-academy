@@ -331,7 +331,7 @@ model AiOperatorProposalEvent {
   note        String?
   occurredAt  DateTime                    @default(now())
   proposal    AiOperatorProposal          @relation(fields: [proposalId], references: [id], onDelete: Cascade)
-  actor       User?                       @relation("AiOperatorProposalEventActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  actor       User?                       @relation("AiOperatorProposalEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([proposalId, occurredAt])
   @@index([actorUserId, occurredAt])
