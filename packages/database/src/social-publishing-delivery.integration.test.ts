@@ -139,7 +139,7 @@ suite('social publishing delivery persistence', () => {
       proposalId: proposal.id,
       actorUserId: userId,
       decision: 'APPROVED',
-      now: new Date(baseNow.getTime() + 2_000),
+      now: new Date(proposal.createdAt.getTime() + 1_000),
     });
     expect(approved.status).toBe(AiOperatorProposalStatus.APPROVED);
 
@@ -165,7 +165,7 @@ suite('social publishing delivery persistence', () => {
       accountRef: ready.accountRef,
       format: ready.format,
       assetReference: ready.assetReference,
-      now: new Date(baseNow.getTime() + 3_000),
+      now: new Date(proposal.createdAt.getTime() + 2_000),
     });
 
     await expect(
