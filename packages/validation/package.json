@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./ai-operator": "./src/ai-operator.ts",
+    "./content-calendar": "./src/content-calendar.ts",
     "./env": "./src/env.ts"
   },
   "scripts": {

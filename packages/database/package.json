@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./content-calendar": "./src/content-calendar.ts"
   },
   "scripts": {
     "generate": "prisma generate",

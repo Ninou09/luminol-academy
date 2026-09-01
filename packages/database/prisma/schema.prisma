@@ -250,6 +250,32 @@ enum AiOperatorProposalEventType {
   EXECUTED
 }
 
+enum ContentCalendarPlatform {
+  INSTAGRAM
+  FACEBOOK
+}
+
+enum ContentCalendarFormat {
+  REEL
+  CAROUSEL
+  STATIC_POST
+  STORY
+  OTHER
+}
+
+enum ContentCalendarStatus {
+  DRAFT
+  READY
+  SCHEDULED
+  ARCHIVED
+}
+
+enum ContentCalendarEventType {
+  CREATED
+  UPDATED
+  STATUS_CHANGED
+}
+
 model User {
   id                          String                       @id @default(cuid())
   clerkId                     String                       @unique
@@ -291,6 +317,10 @@ model User {
   aiOperatorProposalsDecided  AiOperatorProposal[]      @relation("AiOperatorProposalDecider")
   aiOperatorProposalsExecuted AiOperatorProposal[]      @relation("AiOperatorProposalExecutor")
   aiOperatorProposalEvents    AiOperatorProposalEvent[] @relation("AiOperatorProposalEventActor")
+
+  contentCalendarItemsCreated ContentCalendarItem[]      @relation("ContentCalendarItemCreator")
+  contentCalendarItemsUpdated ContentCalendarItem[]      @relation("ContentCalendarItemUpdater")
+  contentCalendarEvents       ContentCalendarItemEvent[] @relation("ContentCalendarEventActor")
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
@@ -341,6 +371,49 @@ model AiOperatorProposalEvent {
   actor       User?                       @relation("AiOperatorProposalEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([proposalId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
+model ContentCalendarItem {
+  id              String                  @id @default(cuid())
+  title           String
+  caption         String
+  platform        ContentCalendarPlatform
+  accountRef      String
+  format          ContentCalendarFormat
+  status          ContentCalendarStatus    @default(DRAFT)
+  assetReference  String?
+  scheduledFor    DateTime?
+  timezone        String?
+  revision        Int                      @default(1)
+  createdByUserId String
+  updatedByUserId String
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  createdBy       User                     @relation("ContentCalendarItemCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  updatedBy       User                     @relation("ContentCalendarItemUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)
+  events          ContentCalendarItemEvent[]
+
+  @@index([status, scheduledFor])
+  @@index([platform, status, scheduledFor])
+  @@index([createdByUserId, createdAt])
+  @@index([updatedByUserId, updatedAt])
+}
+
+model ContentCalendarItemEvent {
+  id           String                   @id @default(cuid())
+  itemId       String
+  eventType    ContentCalendarEventType
+  actorUserId  String
+  fromStatus   ContentCalendarStatus?
+  toStatus     ContentCalendarStatus
+  fromRevision Int?
+  toRevision   Int
+  occurredAt   DateTime                 @default(now())
+  item         ContentCalendarItem      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  actor        User                     @relation("ContentCalendarEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([itemId, occurredAt])
   @@index([actorUserId, occurredAt])
 }
 

@@ -93,18 +93,18 @@ describe('AI Operator action contract', () => {
     ).toThrow();
   });
 
-  it('requires approval for the reserved social-publish action class', () => {
+  it('requires approval and an exact positive content revision for social publish', () => {
     const action = {
       version: '1',
-      actionId: 'content-calendar:v1:publish:item-123',
+      actionId: 'content-calendar:v1:publish:item-123:r2',
       kind: 'PUBLISH_SOCIAL_CONTENT',
-      source: { surface: 'content_calendar', reference: 'item-123' },
+      source: { surface: 'content_calendar', reference: 'item-123:r2' },
       target: {
         surface: 'social_account',
         platform: 'INSTAGRAM',
         accountRef: 'luminol-academy-instagram',
       },
-      payload: { contentCalendarItemId: 'item-123' },
+      payload: { contentCalendarItemId: 'item-123', contentRevision: 2 },
     } as const;
 
     expect(
@@ -118,6 +118,14 @@ describe('AI Operator action contract', () => {
       aiOperatorPublishSocialContentActionSchema.parse({
         ...action,
         executionPolicy: 'autonomous_allowed',
+      }),
+    ).toThrow();
+
+    expect(() =>
+      aiOperatorPublishSocialContentActionSchema.parse({
+        ...action,
+        executionPolicy: 'approval_required',
+        payload: { contentCalendarItemId: 'item-123', contentRevision: 0 },
       }),
     ).toThrow();
   });

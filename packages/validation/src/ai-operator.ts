@@ -224,6 +224,7 @@ export const aiOperatorPublishSocialContentActionSchema = z
     payload: z
       .object({
         contentCalendarItemId: resourceIdSchema,
+        contentRevision: z.number().int().positive(),
       })
       .strict(),
   })

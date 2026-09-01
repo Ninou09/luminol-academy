@@ -16,6 +16,7 @@ import {
   buildAiOperationsBrief,
   type AiOperationsBriefInput,
 } from '../lib/ai-operations-brief';
+import { getContentCalendarCopy } from '../lib/content-calendar-localization';
 
 type AiOperationsBriefPanelProps = {
   locale: Locale;
@@ -28,6 +29,7 @@ export function AiOperationsBriefPanel({
 }: AiOperationsBriefPanelProps) {
   const copy = getAiOperationsBriefCopy(locale);
   const proposalCopy = getAiOperatorProposalQueueCopy(locale);
+  const contentCalendarCopy = getContentCalendarCopy(locale);
   const brief = buildAiOperationsBrief(operations);
   const briefActions = buildAiOperationsBriefActions(brief);
   const executionPolicy = aiOperatorExecutionPolicyByKind.OPEN_ENQUIRY_QUEUE;
@@ -88,9 +90,19 @@ export function AiOperationsBriefPanel({
         </div>
       )}
 
-      <p style={{ marginTop: '1rem' }}>
+      <p
+        style={{
+          marginTop: '1rem',
+          display: 'flex',
+          gap: '1rem',
+          flexWrap: 'wrap',
+        }}
+      >
         <Link href={localizeHref(locale, '/ai-operator')}>
           {proposalCopy.navLabel}
+        </Link>
+        <Link href={localizeHref(locale, '/content-calendar')}>
+          {contentCalendarCopy.title}
         </Link>
       </p>
     </section>
