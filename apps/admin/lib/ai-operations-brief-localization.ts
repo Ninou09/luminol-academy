@@ -116,7 +116,8 @@ const COPY: Record<Locale, AiOperationsBriefCopy> = {
     items: {
       unassigned: {
         title: 'Attribuer les demandes actives',
-        body: (count) => `${count} demandes actives n’ont aucun responsable enregistré.`,
+        body: (count) =>
+          `${count} demandes actives n’ont aucun responsable enregistré.`,
       },
       pastDueFollowUp: {
         title: 'Revoir les suivis échus',
@@ -202,7 +203,9 @@ const COPY: Record<Locale, AiOperationsBriefCopy> = {
   },
 };
 
-export function getAiOperationsBriefCopy(locale: Locale): AiOperationsBriefCopy {
+export function getAiOperationsBriefCopy(
+  locale: Locale,
+): AiOperationsBriefCopy {
   return COPY[locale];
 }
 
