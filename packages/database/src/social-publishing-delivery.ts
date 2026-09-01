@@ -100,7 +100,10 @@ export async function setSocialPublishingAccountActive(
     now?: Date;
   },
 ) {
-  const accountId = requireIdentifier(input.accountId, 'Social publishing account ID');
+  const accountId = requireIdentifier(
+    input.accountId,
+    'Social publishing account ID',
+  );
   const actorUserId = requireIdentifier(
     input.actorUserId,
     'Social publishing actor user ID',
@@ -116,7 +119,9 @@ export async function setSocialPublishingAccountActive(
     });
     if (!current) throw new Error('Social publishing account not found');
     if (current.active !== input.expectedActive) {
-      throw new Error('Social publishing account was updated by another operator');
+      throw new Error(
+        'Social publishing account was updated by another operator',
+      );
     }
     if (current.active === input.active) return current;
 
@@ -128,7 +133,9 @@ export async function setSocialPublishingAccountActive(
       },
     });
     if (updated.count !== 1) {
-      throw new Error('Social publishing account was updated by another operator');
+      throw new Error(
+        'Social publishing account was updated by another operator',
+      );
     }
 
     await transaction.socialPublishingAccountEvent.create({
@@ -202,7 +209,9 @@ export function buildSocialPublishingDeliveryPlan(input: {
 }): SocialPublishingDeliveryPlan {
   const readiness = evaluateAiOperatorExecutionReadiness(input.proposal);
   if (readiness.status !== 'READY_FOR_EXECUTOR') {
-    throw new Error(`Social publishing proposal is not ready: ${readiness.status}`);
+    throw new Error(
+      `Social publishing proposal is not ready: ${readiness.status}`,
+    );
   }
   if (input.proposal.status !== AiOperatorProposalStatus.APPROVED) {
     throw new Error('Social publishing proposal is not approved');
@@ -224,13 +233,17 @@ export function buildSocialPublishingDeliveryPlan(input: {
     input.content.id !== action.payload.contentCalendarItemId ||
     input.content.revision !== action.payload.contentRevision
   ) {
-    throw new Error('Social publishing content revision no longer matches approval');
+    throw new Error(
+      'Social publishing content revision no longer matches approval',
+    );
   }
   if (
     input.content.platform !== action.target.platform ||
     input.content.accountRef !== action.target.accountRef
   ) {
-    throw new Error('Social publishing content target no longer matches approval');
+    throw new Error(
+      'Social publishing content target no longer matches approval',
+    );
   }
   if (!input.account.active) {
     throw new Error('Social publishing account is inactive');

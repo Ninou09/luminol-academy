@@ -168,7 +168,9 @@ describe('social publishing delivery materialization', () => {
   test('keeps pending proposals out of delivery planning', () => {
     expect(() =>
       buildSocialPublishingDeliveryPlan({
-        proposal: proposal({ status: AiOperatorProposalStatus.PENDING_APPROVAL }),
+        proposal: proposal({
+          status: AiOperatorProposalStatus.PENDING_APPROVAL,
+        }),
         content: content(),
         account: account(),
       }),

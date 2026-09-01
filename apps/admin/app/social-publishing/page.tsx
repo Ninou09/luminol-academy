@@ -1,8 +1,5 @@
 import { requirePermission } from '@luminol/auth';
-import {
-  db,
-  materializeSocialPublishingDeliveryPlan,
-} from '@luminol/database';
+import { db, materializeSocialPublishingDeliveryPlan } from '@luminol/database';
 import {
   formatLocalizedDate,
   getCommonDictionary,
@@ -78,7 +75,10 @@ export default async function SocialPublishingPage({
   let deliveryError: string | null = null;
   if (proposalId) {
     try {
-      deliveryPlan = await materializeSocialPublishingDeliveryPlan(db, proposalId);
+      deliveryPlan = await materializeSocialPublishingDeliveryPlan(
+        db,
+        proposalId,
+      );
     } catch (error) {
       deliveryError = boundedDeliveryError(error);
     }
@@ -137,7 +137,12 @@ export default async function SocialPublishingPage({
               </label>
               <label>
                 <span>{copy.displayName}</span>
-                <input type="text" name="displayName" maxLength={160} required />
+                <input
+                  type="text"
+                  name="displayName"
+                  maxLength={160}
+                  required
+                />
               </label>
               <label>
                 <span>{copy.externalAccountId}</span>
@@ -178,7 +183,11 @@ export default async function SocialPublishingPage({
                       </strong>
                     </div>
                     <form action={setSocialPublishingAccountActiveAction}>
-                      <input type="hidden" name="accountId" value={account.id} />
+                      <input
+                        type="hidden"
+                        name="accountId"
+                        value={account.id}
+                      />
                       <input
                         type="hidden"
                         name="expectedActive"
