@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./content-calendar": "./src/content-calendar.ts",
+    "./social-publishing-attempts": "./src/social-publishing-attempts.ts",
     "./social-publishing-delivery": "./src/social-publishing-delivery.ts"
   },
   "scripts": {
