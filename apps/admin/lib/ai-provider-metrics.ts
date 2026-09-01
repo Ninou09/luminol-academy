@@ -15,11 +15,7 @@ function largestCount(items: Array<{ count: number }>) {
 function attributionRecorded(
   operations: Pick<OperationsDashboard, 'enquiryAttributionCoverageLast30Days'>,
   field:
-    | 'utmSource'
-    | 'utmMedium'
-    | 'utmCampaign'
-    | 'utmContent'
-    | 'landingPath',
+    'utmSource' | 'utmMedium' | 'utmCampaign' | 'utmContent' | 'landingPath',
 ) {
   return safeMetric(
     operations.enquiryAttributionCoverageLast30Days.items.find(

@@ -58,9 +58,9 @@ describe('AI provider metric envelopes', () => {
       followUpCoveragePercent: 87.5,
       qualificationCoveragePercent: 62.5,
     });
-    expect(Object.values(metrics).every((value) => typeof value === 'number')).toBe(
-      true,
-    );
+    expect(
+      Object.values(metrics).every((value) => typeof value === 'number'),
+    ).toBe(true);
   });
 
   test('builds campaign analysis metrics without campaign labels or free text', () => {
