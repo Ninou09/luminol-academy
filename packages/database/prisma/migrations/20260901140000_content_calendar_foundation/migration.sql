@@ -46,3 +46,20 @@ ALTER TABLE "ContentCalendarItem" ADD CONSTRAINT "ContentCalendarItem_createdByU
 ALTER TABLE "ContentCalendarItem" ADD CONSTRAINT "ContentCalendarItem_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 ALTER TABLE "ContentCalendarItemEvent" ADD CONSTRAINT "ContentCalendarItemEvent_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "ContentCalendarItem"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE "ContentCalendarItemEvent" ADD CONSTRAINT "ContentCalendarItemEvent_actorUserId_fkey" FOREIGN KEY ("actorUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+CREATE OR REPLACE FUNCTION "prevent_content_calendar_event_mutation"()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RAISE EXCEPTION 'Content calendar event history is append-only';
+END;
+$$;
+
+CREATE TRIGGER "ContentCalendarItemEvent_append_only_update"
+BEFORE UPDATE ON "ContentCalendarItemEvent"
+FOR EACH ROW EXECUTE FUNCTION "prevent_content_calendar_event_mutation"();
+
+CREATE TRIGGER "ContentCalendarItemEvent_append_only_delete"
+BEFORE DELETE ON "ContentCalendarItemEvent"
+FOR EACH ROW EXECUTE FUNCTION "prevent_content_calendar_event_mutation"();
