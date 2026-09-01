@@ -115,7 +115,7 @@ suite('AI Operator proposal persistence', () => {
       queueAiOperatorProposal(db, concurrentAction, userId),
     ]);
 
-    expect(new Set(proposals.map(({ id }) => id))).toHaveLength(1);
+    expect(new Set(proposals.map(({ id }) => id)).size).toBe(1);
     await expect(
       db.aiOperatorProposal.count({
         where: { actionId: concurrentAction.actionId },
