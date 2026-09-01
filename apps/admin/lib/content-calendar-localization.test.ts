@@ -18,7 +18,7 @@ describe('content calendar localization', () => {
           ARCHIVED: expect.any(String),
         }),
       );
-      expect(copy.formatLabel.REEL).toBeTruthy();
+      expect(copy.formatName.REEL).toBeTruthy();
       expect(copy.platformName.INSTAGRAM).toBeTruthy();
       expect(copy.platformName.FACEBOOK).toBeTruthy();
     },
