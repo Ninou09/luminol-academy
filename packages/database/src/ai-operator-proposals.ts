@@ -103,6 +103,15 @@ function requireIdentifier(value: string, label: string) {
   return normalized;
 }
 
+function isUniqueConstraintError(error: unknown) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    error.code === 'P2002'
+  );
+}
+
 export function parseApprovalRequiredAiOperatorAction(
   input: unknown,
 ): ApprovalRequiredAiOperatorAction {
@@ -111,8 +120,7 @@ export function parseApprovalRequiredAiOperatorAction(
 
   if (
     registeredPolicy !== 'approval_required' ||
-    action.executionPolicy !== 'approval_required' ||
-    action.kind === 'OPEN_ENQUIRY_QUEUE'
+    action.executionPolicy !== 'approval_required'
   ) {
     throw new Error(
       'AI Operator action is not eligible for the approval queue',
@@ -163,40 +171,51 @@ export async function queueAiOperatorProposal(
     ? requireIdentifier(proposedByUserId, 'AI Operator proposer user ID')
     : null;
 
-  return client.$transaction(async (transaction) => {
-    const existing = await transaction.aiOperatorProposal.findUnique({
+  try {
+    return await client.$transaction(async (transaction) => {
+      const existing = await transaction.aiOperatorProposal.findUnique({
+        where: { actionId: action.actionId },
+      });
+      if (existing) {
+        assertAiOperatorProposalMatchesAction(existing, action);
+        return existing;
+      }
+
+      const proposal = await transaction.aiOperatorProposal.create({
+        data: {
+          actionId: action.actionId,
+          actionVersion: action.version,
+          actionKind: action.kind,
+          executionPolicy: action.executionPolicy,
+          sourceSurface: action.source.surface,
+          sourceReference: action.source.reference,
+          actionEnvelope,
+          proposedByUserId: proposerId,
+        },
+      });
+
+      await transaction.aiOperatorProposalEvent.create({
+        data: {
+          proposalId: proposal.id,
+          eventType: AiOperatorProposalEventType.PROPOSED,
+          actorUserId: proposerId,
+          fromStatus: null,
+          toStatus: AiOperatorProposalStatus.PENDING_APPROVAL,
+        },
+      });
+
+      return proposal;
+    });
+  } catch (error) {
+    if (!isUniqueConstraintError(error)) throw error;
+
+    const existing = await client.aiOperatorProposal.findUnique({
       where: { actionId: action.actionId },
     });
-    if (existing) {
-      assertAiOperatorProposalMatchesAction(existing, action);
-      return existing;
-    }
-
-    const proposal = await transaction.aiOperatorProposal.create({
-      data: {
-        actionId: action.actionId,
-        actionVersion: action.version,
-        actionKind: action.kind,
-        executionPolicy: action.executionPolicy,
-        sourceSurface: action.source.surface,
-        sourceReference: action.source.reference,
-        actionEnvelope,
-        proposedByUserId: proposerId,
-      },
-    });
-
-    await transaction.aiOperatorProposalEvent.create({
-      data: {
-        proposalId: proposal.id,
-        eventType: AiOperatorProposalEventType.PROPOSED,
-        actorUserId: proposerId,
-        fromStatus: null,
-        toStatus: AiOperatorProposalStatus.PENDING_APPROVAL,
-      },
-    });
-
-    return proposal;
-  });
+    if (!existing) throw error;
+    assertAiOperatorProposalMatchesAction(existing, action);
+    return existing;
+  }
 }
 
 export async function decideAiOperatorProposal(
