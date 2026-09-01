@@ -75,7 +75,9 @@ function assertAttemptMatchesPlan(
     attempt.accountRef !== plan.accountRef ||
     attempt.externalAccountId !== plan.externalAccountId
   ) {
-    throw new Error('Social publishing attempt no longer matches delivery plan');
+    throw new Error(
+      'Social publishing attempt no longer matches delivery plan',
+    );
   }
 }
 
@@ -94,7 +96,10 @@ export async function planSocialPublishingAttempt(
     throw new Error('Social publishing attempt plan time is invalid');
   }
 
-  const plan = await materializeSocialPublishingDeliveryPlan(client, proposalId);
+  const plan = await materializeSocialPublishingDeliveryPlan(
+    client,
+    proposalId,
+  );
   const idempotencyKey = buildSocialPublishingIdempotencyKey(plan);
 
   const attempt = await client.socialPublishingAttempt.upsert({

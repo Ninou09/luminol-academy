@@ -109,9 +109,9 @@ suite('social publishing attempt ledger', () => {
     );
 
     expect(new Set(attempts.map((attempt) => attempt.id))).toHaveLength(1);
-    expect(new Set(attempts.map((attempt) => attempt.idempotencyKey))).toHaveLength(
-      1,
-    );
+    expect(
+      new Set(attempts.map((attempt) => attempt.idempotencyKey)),
+    ).toHaveLength(1);
 
     const stored = await db.socialPublishingAttempt.findMany({
       where: { proposalId: proposal.id },
@@ -143,7 +143,9 @@ suite('social publishing attempt ledger', () => {
       now: baseNow,
     });
 
-    const publish = vi.fn(async () => ({ providerReference: 'provider-post-123' }));
+    const publish = vi.fn(async () => ({
+      providerReference: 'provider-post-123',
+    }));
     const provider: SocialPublishingProvider = { publish };
     const executionNow = new Date(proposal.createdAt.getTime() + 5_000);
 
@@ -203,7 +205,9 @@ suite('social publishing attempt ledger', () => {
   });
 
   test('uses bounded retry state without persisting provider exception details', async () => {
-    const { proposal } = await createApprovedPublishProposal({ label: 'retry' });
+    const { proposal } = await createApprovedPublishProposal({
+      label: 'retry',
+    });
     const attempt = await planSocialPublishingAttempt(db, {
       proposalId: proposal.id,
       actorUserId: userId,
@@ -260,9 +264,9 @@ suite('social publishing attempt ledger', () => {
       where: { attemptId: attempt.id },
       orderBy: { occurredAt: 'asc' },
     });
-    expect(events.filter((event) => event.eventType === 'PROVIDER_FAILED')).toHaveLength(
-      3,
-    );
+    expect(
+      events.filter((event) => event.eventType === 'PROVIDER_FAILED'),
+    ).toHaveLength(3);
     expect(JSON.stringify({ attempt: third.attempt, events })).not.toContain(
       sensitiveProviderMessage,
     );
@@ -294,7 +298,9 @@ suite('social publishing attempt ledger', () => {
       now: new Date(proposal.createdAt.getTime() + 2_000),
     });
 
-    const publish = vi.fn(async () => ({ providerReference: 'should-not-run' }));
+    const publish = vi.fn(async () => ({
+      providerReference: 'should-not-run',
+    }));
     const result = await executeSocialPublishingAttempt(db, {
       attemptId: attempt.id,
       actorUserId: userId,
