@@ -306,6 +306,23 @@ export async function executeSocialPublishingAttempt(
   }
 
   try {
+    plan = await materializeSocialPublishingDeliveryPlan(
+      client,
+      claimed.proposalId,
+    );
+    assertAttemptMatchesPlan(
+      claimed,
+      plan,
+      buildSocialPublishingIdempotencyKey(plan),
+    );
+  } catch {
+    return {
+      attempt: await invalidateAttempt(client, claimed, actorUserId, now),
+      providerInvoked: false,
+    };
+  }
+
+  try {
     const result = await input.provider.publish({
       plan,
       idempotencyKey: claimed.idempotencyKey,
