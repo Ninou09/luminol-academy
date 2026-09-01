@@ -166,6 +166,7 @@ export async function recordSearchTelemetry({
   }
 }
 
+export * from './ai-operator-crm-executor';
 export * from './ai-operator-execution-readiness';
 export * from './ai-operator-proposals';
 export * from './enquiry-follow-up';
