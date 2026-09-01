@@ -2,6 +2,7 @@
 
 import { requirePermission } from '@luminol/auth';
 import { db } from '@luminol/database';
+import { planSocialPublishingAttempt } from '@luminol/database/social-publishing-attempts';
 import {
   createSocialPublishingAccount,
   setSocialPublishingAccountActive,
@@ -52,6 +53,17 @@ export async function setSocialPublishingAccountActiveAction(
     accountId: requireFormString(formData, 'accountId'),
     expectedActive: requireBoolean(formData, 'expectedActive'),
     active: requireBoolean(formData, 'active'),
+    actorUserId: administrator.id,
+  });
+
+  revalidateSocialPublishing();
+}
+
+export async function planSocialPublishingAttemptAction(formData: FormData) {
+  const administrator = await requirePermission('academy:manage');
+
+  await planSocialPublishingAttempt(db, {
+    proposalId: requireFormString(formData, 'proposalId'),
     actorUserId: administrator.id,
   });
 

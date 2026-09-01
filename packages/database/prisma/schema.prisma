@@ -282,6 +282,22 @@ enum SocialPublishingAccountEventType {
   ACTIVATION_CHANGED
 }
 
+enum SocialPublishingAttemptStatus {
+  PLANNED
+  IN_PROGRESS
+  RETRY_SCHEDULED
+  SUCCEEDED
+  DEAD_LETTER
+}
+
+enum SocialPublishingAttemptEventType {
+  PLANNED
+  STARTED
+  SUCCEEDED
+  PROVIDER_FAILED
+  INVALIDATED
+}
+
 model User {
   id                          String                       @id @default(cuid())
   clerkId                     String                       @unique
@@ -331,6 +347,7 @@ model User {
   socialPublishingAccountsCreated SocialPublishingAccount[]      @relation("SocialPublishingAccountCreator")
   socialPublishingAccountsUpdated SocialPublishingAccount[]      @relation("SocialPublishingAccountUpdater")
   socialPublishingAccountEvents   SocialPublishingAccountEvent[] @relation("SocialPublishingAccountEventActor")
+  socialPublishingAttemptEvents   SocialPublishingAttemptEvent[] @relation("SocialPublishingAttemptEventActor")
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
@@ -359,7 +376,8 @@ model AiOperatorProposal {
   proposedBy       User?                     @relation("AiOperatorProposalProposer", fields: [proposedByUserId], references: [id], onDelete: SetNull)
   decidedBy        User?                     @relation("AiOperatorProposalDecider", fields: [decidedByUserId], references: [id], onDelete: SetNull)
   executedBy       User?                     @relation("AiOperatorProposalExecutor", fields: [executedByUserId], references: [id], onDelete: SetNull)
-  events           AiOperatorProposalEvent[]
+  events                    AiOperatorProposalEvent[]
+  socialPublishingAttempt SocialPublishingAttempt?
 
   @@index([status, createdAt])
   @@index([actionKind, status, createdAt])
@@ -397,7 +415,8 @@ model SocialPublishingAccount {
   updatedAt         DateTime                @updatedAt
   createdBy         User                    @relation("SocialPublishingAccountCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
   updatedBy         User                    @relation("SocialPublishingAccountUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)
-  events            SocialPublishingAccountEvent[]
+  events             SocialPublishingAccountEvent[]
+  publishingAttempts SocialPublishingAttempt[]
 
   @@unique([platform, externalAccountId])
   @@index([platform, active, accountRef])
@@ -420,6 +439,56 @@ model SocialPublishingAccountEvent {
   @@index([actorUserId, occurredAt])
 }
 
+model SocialPublishingAttempt {
+  id                    String                          @id @default(cuid())
+  idempotencyKey        String                          @unique
+  proposalId            String                          @unique
+  actionId              String
+  contentCalendarItemId String
+  contentRevision       Int
+  platform              ContentCalendarPlatform
+  accountRef            String
+  externalAccountId     String
+  status                SocialPublishingAttemptStatus   @default(PLANNED)
+  attemptCount          Int                             @default(0)
+  nextAttemptAt         DateTime                        @default(now())
+  providerReference     String?
+  lastErrorCode         String?
+  lockToken             String?
+  lockedUntil           DateTime?
+  startedAt             DateTime?
+  completedAt           DateTime?
+  createdAt             DateTime                        @default(now())
+  updatedAt             DateTime                        @updatedAt
+  proposal              AiOperatorProposal              @relation(fields: [proposalId], references: [id], onDelete: Restrict)
+  content               ContentCalendarItem             @relation(fields: [contentCalendarItemId], references: [id], onDelete: Restrict)
+  account               SocialPublishingAccount         @relation(fields: [accountRef], references: [accountRef], onDelete: Restrict)
+  events                SocialPublishingAttemptEvent[]
+
+  @@index([status, nextAttemptAt])
+  @@index([platform, status, nextAttemptAt])
+  @@index([contentCalendarItemId, contentRevision])
+  @@index([accountRef, status, createdAt])
+}
+
+model SocialPublishingAttemptEvent {
+  id                String                           @id @default(cuid())
+  attemptId         String
+  eventType         SocialPublishingAttemptEventType
+  actorUserId       String?
+  fromStatus        SocialPublishingAttemptStatus?
+  toStatus          SocialPublishingAttemptStatus
+  attemptNumber     Int                              @default(0)
+  providerReference String?
+  errorCode         String?
+  occurredAt        DateTime                         @default(now())
+  attempt           SocialPublishingAttempt          @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  actor             User?                            @relation("SocialPublishingAttemptEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([attemptId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
 model ContentCalendarItem {
   id              String                  @id @default(cuid())
   title           String
@@ -438,7 +507,8 @@ model ContentCalendarItem {
   updatedAt       DateTime                 @updatedAt
   createdBy       User                     @relation("ContentCalendarItemCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
   updatedBy       User                     @relation("ContentCalendarItemUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)
-  events          ContentCalendarItemEvent[]
+  events                    ContentCalendarItemEvent[]
+  socialPublishingAttempts SocialPublishingAttempt[]
 
   @@index([status, scheduledFor])
   @@index([platform, status, scheduledFor])

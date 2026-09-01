@@ -6,6 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./content-calendar": "./src/content-calendar.ts",
+    "./social-publishing-attempts": "./src/social-publishing-attempts.ts",
     "./social-publishing-delivery": "./src/social-publishing-delivery.ts"
   },
   "scripts": {
@@ -24,7 +25,8 @@
     "@luminol/validation": "workspace:*",
     "@prisma/adapter-pg": "7.9.1",
     "@prisma/client": "7.9.1",
-    "pg": "^8.22.0"
+    "pg": "^8.22.0",
+    "zod": "^4.0.10"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",
