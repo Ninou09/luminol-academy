@@ -1,7 +1,11 @@
 'use server';
 
 import { requirePermission } from '@luminol/auth';
-import { db, decideAiOperatorProposal } from '@luminol/database';
+import {
+  db,
+  decideAiOperatorProposal,
+  executeApprovedAiOperatorProposal,
+} from '@luminol/database';
 import { revalidatePath } from 'next/cache';
 
 function requireFormString(formData: FormData, name: string) {
@@ -39,4 +43,18 @@ export async function decideAiOperatorProposalAction(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/ai-operator');
+}
+
+export async function executeAiOperatorProposalAction(formData: FormData) {
+  const administrator = await requirePermission('academy:manage');
+  const proposalId = requireFormString(formData, 'proposalId');
+
+  await executeApprovedAiOperatorProposal(db, {
+    proposalId,
+    actorUserId: administrator.id,
+  });
+
+  revalidatePath('/');
+  revalidatePath('/ai-operator');
+  revalidatePath('/enquiries');
 }
