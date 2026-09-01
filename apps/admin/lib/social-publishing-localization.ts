@@ -29,8 +29,27 @@ export type SocialPublishingCopy = {
   notScheduled: string;
   noCredentials: string;
   noAccounts: string;
+  attemptLedger: string;
+  attemptLedgerIntro: string;
+  planAttempt: string;
+  planAttemptHelp: string;
+  noAttempts: string;
+  attemptCount: string;
+  nextAttempt: string;
+  providerReference: string;
+  errorCode: string;
+  none: string;
+  systemActor: string;
   platformName: Record<'INSTAGRAM' | 'FACEBOOK', string>;
   eventType: Record<'CREATED' | 'UPDATED' | 'ACTIVATION_CHANGED', string>;
+  attemptStatus: Record<
+    'PLANNED' | 'IN_PROGRESS' | 'RETRY_SCHEDULED' | 'SUCCEEDED' | 'DEAD_LETTER',
+    string
+  >;
+  attemptEventType: Record<
+    'PLANNED' | 'STARTED' | 'SUCCEEDED' | 'PROVIDER_FAILED' | 'INVALIDATED',
+    string
+  >;
   deliveryError: {
     unavailable: string;
     notReady: string;
@@ -81,11 +100,38 @@ const english: SocialPublishingCopy = {
   noCredentials:
     'No Meta credentials are stored or displayed. External publishing remains disabled.',
   noAccounts: 'No publishing accounts registered yet.',
+  attemptLedger: 'Publish attempt ledger',
+  attemptLedgerIntro:
+    'Durable, idempotent execution records for approved revisions. This ledger records only bounded operational metadata and never stores captions, assets, credentials, or raw provider responses.',
+  planAttempt: 'Plan publish attempt',
+  planAttemptHelp:
+    'Planning creates the durable execution record only. It does not publish or contact Meta.',
+  noAttempts: 'No publish attempts have been planned yet.',
+  attemptCount: 'Provider attempts',
+  nextAttempt: 'Next eligible attempt',
+  providerReference: 'Provider reference',
+  errorCode: 'Last error code',
+  none: 'None',
+  systemActor: 'System',
   platformName: { INSTAGRAM: 'Instagram', FACEBOOK: 'Facebook' },
   eventType: {
     CREATED: 'Created',
     UPDATED: 'Updated',
     ACTIVATION_CHANGED: 'Activation changed',
+  },
+  attemptStatus: {
+    PLANNED: 'Planned',
+    IN_PROGRESS: 'In progress',
+    RETRY_SCHEDULED: 'Retry scheduled',
+    SUCCEEDED: 'Succeeded',
+    DEAD_LETTER: 'Stopped',
+  },
+  attemptEventType: {
+    PLANNED: 'Planned',
+    STARTED: 'Started',
+    SUCCEEDED: 'Succeeded',
+    PROVIDER_FAILED: 'Provider failed',
+    INVALIDATED: 'Invalidated',
   },
   deliveryError: {
     unavailable: 'Delivery plan is unavailable.',
@@ -140,10 +186,37 @@ const french: SocialPublishingCopy = {
   noCredentials:
     'Aucun identifiant Meta n’est stocké ni affiché. La publication externe reste désactivée.',
   noAccounts: 'Aucun compte de publication enregistré.',
+  attemptLedger: 'Registre des tentatives de publication',
+  attemptLedgerIntro:
+    'Registre durable et idempotent des révisions approuvées. Il conserve uniquement des métadonnées opérationnelles bornées, sans légendes, ressources, identifiants ni réponses brutes du fournisseur.',
+  planAttempt: 'Planifier la tentative',
+  planAttemptHelp:
+    'La planification crée uniquement l’enregistrement durable. Elle ne publie rien et ne contacte pas Meta.',
+  noAttempts: 'Aucune tentative de publication n’a encore été planifiée.',
+  attemptCount: 'Tentatives fournisseur',
+  nextAttempt: 'Prochaine tentative possible',
+  providerReference: 'Référence fournisseur',
+  errorCode: 'Dernier code d’erreur',
+  none: 'Aucun',
+  systemActor: 'Système',
   eventType: {
     CREATED: 'Créé',
     UPDATED: 'Mis à jour',
     ACTIVATION_CHANGED: 'Activation modifiée',
+  },
+  attemptStatus: {
+    PLANNED: 'Planifiée',
+    IN_PROGRESS: 'En cours',
+    RETRY_SCHEDULED: 'Nouvel essai planifié',
+    SUCCEEDED: 'Réussie',
+    DEAD_LETTER: 'Arrêtée',
+  },
+  attemptEventType: {
+    PLANNED: 'Planifiée',
+    STARTED: 'Démarrée',
+    SUCCEEDED: 'Réussie',
+    PROVIDER_FAILED: 'Échec du fournisseur',
+    INVALIDATED: 'Invalidée',
   },
   deliveryError: {
     unavailable: 'Le plan de livraison est indisponible.',
@@ -200,10 +273,37 @@ const arabic: SocialPublishingCopy = {
   noCredentials:
     'لا يتم تخزين أو عرض بيانات اعتماد Meta. النشر الخارجي ما زال معطلاً.',
   noAccounts: 'لا توجد حسابات نشر مسجلة بعد.',
+  attemptLedger: 'سجل محاولات النشر',
+  attemptLedgerIntro:
+    'سجل دائم وغير مكرر للنسخ المعتمدة. يحتفظ فقط ببيانات تشغيلية محدودة ولا يخزن النصوص أو الملفات أو بيانات الاعتماد أو ردود المزوّد الخام.',
+  planAttempt: 'تخطيط محاولة النشر',
+  planAttemptHelp:
+    'التخطيط ينشئ سجل التنفيذ الدائم فقط. لا ينشر المحتوى ولا يتصل بـ Meta.',
+  noAttempts: 'لم يتم تخطيط أي محاولة نشر بعد.',
+  attemptCount: 'محاولات المزوّد',
+  nextAttempt: 'المحاولة التالية المتاحة',
+  providerReference: 'مرجع المزوّد',
+  errorCode: 'آخر رمز خطأ',
+  none: 'لا يوجد',
+  systemActor: 'النظام',
   eventType: {
     CREATED: 'تم الإنشاء',
     UPDATED: 'تم التحديث',
     ACTIVATION_CHANGED: 'تم تغيير حالة التفعيل',
+  },
+  attemptStatus: {
+    PLANNED: 'مخططة',
+    IN_PROGRESS: 'قيد التنفيذ',
+    RETRY_SCHEDULED: 'إعادة المحاولة مجدولة',
+    SUCCEEDED: 'نجحت',
+    DEAD_LETTER: 'متوقفة',
+  },
+  attemptEventType: {
+    PLANNED: 'تم التخطيط',
+    STARTED: 'بدأت',
+    SUCCEEDED: 'نجحت',
+    PROVIDER_FAILED: 'فشل المزوّد',
+    INVALIDATED: 'أُبطلت',
   },
   deliveryError: {
     unavailable: 'خطة التسليم غير متاحة.',
