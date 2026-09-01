@@ -319,7 +319,12 @@ async function reserveMonthlyBudget(
   const { start, end } = monthBounds(input.now);
 
   return client.$transaction(async (transaction) => {
-    await transaction.$queryRaw`SELECT pg_advisory_xact_lock(${AI_PROVIDER_BUDGET_LOCK_KEY})`;
+    await transaction.$queryRaw`
+  SELECT COUNT(*)::integer AS "locked"
+  FROM (
+    SELECT pg_advisory_xact_lock(${AI_PROVIDER_BUDGET_LOCK_KEY})
+  ) AS "budgetLock"
+`;
     const aggregate = await transaction.aiProviderUsage.aggregate({
       where: { occurredAt: { gte: start, lt: end } },
       _sum: { estimatedCostUsdMicros: true },
