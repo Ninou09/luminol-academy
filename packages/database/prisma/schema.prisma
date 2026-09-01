@@ -298,6 +298,23 @@ enum SocialPublishingAttemptEventType {
   INVALIDATED
 }
 
+enum AiProviderMode {
+  OFF
+  OPENAI
+}
+
+enum AiProviderTaskClass {
+  SUMMARIZE_OPERATIONAL_STATE
+  DRAFT_OPERATOR_RECOMMENDATIONS
+  ANALYZE_CAMPAIGN_METRICS
+}
+
+enum AiProviderUsageOutcome {
+  SUCCEEDED
+  FAILED
+  BLOCKED
+}
+
 model User {
   id                          String                       @id @default(cuid())
   clerkId                     String                       @unique
@@ -487,6 +504,24 @@ model SocialPublishingAttemptEvent {
 
   @@index([attemptId, occurredAt])
   @@index([actorUserId, occurredAt])
+}
+
+model AiProviderUsage {
+  id                     String                 @id @default(cuid())
+  providerMode           AiProviderMode
+  taskClass              AiProviderTaskClass
+  outcome                AiProviderUsageOutcome
+  model                  String?
+  inputTokens            Int?
+  outputTokens           Int?
+  estimatedCostUsdMicros Int                    @default(0)
+  latencyMs              Int?
+  errorCode              String?
+  occurredAt             DateTime               @default(now())
+
+  @@index([occurredAt])
+  @@index([providerMode, taskClass, occurredAt])
+  @@index([outcome, occurredAt])
 }
 
 model ContentCalendarItem {
