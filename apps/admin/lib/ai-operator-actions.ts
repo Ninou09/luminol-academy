@@ -31,8 +31,7 @@ export function buildAiOperationsBriefActions(
       version: '1',
       actionId: buildActionId(item),
       kind: 'OPEN_ENQUIRY_QUEUE',
-      executionPolicy:
-        aiOperatorExecutionPolicyByKind.OPEN_ENQUIRY_QUEUE,
+      executionPolicy: aiOperatorExecutionPolicyByKind.OPEN_ENQUIRY_QUEUE,
       source: {
         surface: 'operations_dashboard',
         observationKind: item.kind,
