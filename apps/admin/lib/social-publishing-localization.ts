@@ -94,9 +94,11 @@ const english: SocialPublishingCopy = {
     actionMismatch: 'The stored proposal no longer matches its action.',
     contentNotPublishable: 'The content is no longer in a publishable state.',
     revisionMismatch: 'The content revision no longer matches the approval.',
-    contentTargetMismatch: 'The content destination no longer matches the approval.',
+    contentTargetMismatch:
+      'The content destination no longer matches the approval.',
     accountInactive: 'The publishing account is inactive.',
-    accountTargetMismatch: 'The publishing account does not match the approved destination.',
+    accountTargetMismatch:
+      'The publishing account does not match the approved destination.',
     assetRequired: 'The approved content is missing its required asset.',
     contentNotFound: 'The approved content item could not be found.',
     accountNotFound: 'The approved publishing account could not be found.',
@@ -147,12 +149,16 @@ const french: SocialPublishingCopy = {
     unavailable: 'Le plan de livraison est indisponible.',
     notReady: 'Cette proposition n’est pas prête pour la livraison.',
     notApproved: 'Cette proposition n’a pas été approuvée.',
-    actionMismatch: 'La proposition enregistrée ne correspond plus à son action.',
+    actionMismatch:
+      'La proposition enregistrée ne correspond plus à son action.',
     contentNotPublishable: 'Le contenu n’est plus dans un état publiable.',
-    revisionMismatch: 'La révision du contenu ne correspond plus à l’approbation.',
-    contentTargetMismatch: 'La destination du contenu ne correspond plus à l’approbation.',
+    revisionMismatch:
+      'La révision du contenu ne correspond plus à l’approbation.',
+    contentTargetMismatch:
+      'La destination du contenu ne correspond plus à l’approbation.',
     accountInactive: 'Le compte de publication est inactif.',
-    accountTargetMismatch: 'Le compte de publication ne correspond pas à la destination approuvée.',
+    accountTargetMismatch:
+      'Le compte de publication ne correspond pas à la destination approuvée.',
     assetRequired: 'Le contenu approuvé ne contient plus la ressource requise.',
     contentNotFound: 'Le contenu approuvé est introuvable.',
     accountNotFound: 'Le compte de publication approuvé est introuvable.',

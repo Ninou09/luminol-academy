@@ -65,14 +65,8 @@ function boundedDeliveryError(error: unknown, copy: SocialPublishingCopy) {
       'Social publishing content requires an asset reference',
       copy.deliveryError.assetRequired,
     ],
-    [
-      'Social publishing content not found',
-      copy.deliveryError.contentNotFound,
-    ],
-    [
-      'Social publishing account not found',
-      copy.deliveryError.accountNotFound,
-    ],
+    ['Social publishing content not found', copy.deliveryError.contentNotFound],
+    ['Social publishing account not found', copy.deliveryError.accountNotFound],
     ['AI Operator proposal not found', copy.deliveryError.proposalNotFound],
   ];
 

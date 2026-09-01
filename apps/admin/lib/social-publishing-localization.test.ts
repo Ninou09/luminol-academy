@@ -35,8 +35,12 @@ describe('social publishing localization', () => {
     const french = getSocialPublishingCopy('fr');
     const arabic = getSocialPublishingCopy('ar');
 
-    expect(french.deliveryError.notReady).not.toBe(english.deliveryError.notReady);
-    expect(arabic.deliveryError.notReady).not.toBe(english.deliveryError.notReady);
+    expect(french.deliveryError.notReady).not.toBe(
+      english.deliveryError.notReady,
+    );
+    expect(arabic.deliveryError.notReady).not.toBe(
+      english.deliveryError.notReady,
+    );
     expect(french.notScheduled).not.toBe(english.notScheduled);
     expect(arabic.notScheduled).not.toBe(english.notScheduled);
   });
