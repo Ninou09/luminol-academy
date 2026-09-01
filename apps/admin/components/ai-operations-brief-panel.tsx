@@ -5,6 +5,7 @@ import {
 } from '@luminol/localization';
 import Link from 'next/link';
 
+import { buildAiOperationsBriefActions } from '../lib/ai-operator-actions';
 import {
   getAiOperationsBriefCopy,
   getAiOperationsBriefItemText,
@@ -25,6 +26,7 @@ export function AiOperationsBriefPanel({
 }: AiOperationsBriefPanelProps) {
   const copy = getAiOperationsBriefCopy(locale);
   const brief = buildAiOperationsBrief(operations);
+  const briefActions = buildAiOperationsBriefActions(brief);
   const number = (value: number) => formatLocalizedNumber(value, locale);
 
   return (
@@ -35,7 +37,9 @@ export function AiOperationsBriefPanel({
           <h2>{copy.title}</h2>
           <p>{copy.intro}</p>
         </div>
-        <span>{copy.mode}</span>
+        <span>
+          {copy.mode} · {copy.executionPolicy}
+        </span>
       </div>
 
       {brief.status === 'clear' ? (
@@ -52,12 +56,12 @@ export function AiOperationsBriefPanel({
         </div>
       ) : (
         <div className="compact-list">
-          {brief.items.map((item) => {
+          {briefActions.map(({ item, action }) => {
             const itemCount = number(item.count);
             const text = getAiOperationsBriefItemText(copy, item, itemCount);
 
             return (
-              <article key={`${item.kind}:${item.query}`}>
+              <article key={action.actionId}>
                 <div>
                   <h3>{text.title}</h3>
                   <p>{text.body}</p>
@@ -66,7 +70,10 @@ export function AiOperationsBriefPanel({
                   <span className="data-status">{itemCount}</span>
                   <Link
                     className="data-status"
-                    href={localizeHref(locale, `/enquiries?${item.query}`)}
+                    href={localizeHref(
+                      locale,
+                      `/enquiries?${action.payload.query}`,
+                    )}
                   >
                     {copy.action}
                   </Link>
