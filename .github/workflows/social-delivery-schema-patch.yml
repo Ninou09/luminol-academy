@@ -1,0 +1,54 @@
+name: Temporary Social Delivery Schema Patch
+on:
+  push:
+    branches: [feat/ai-operator-social-delivery-foundation]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[social-delivery-schema]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/ai-operator-social-delivery-foundation
+      - name: Patch Prisma schema and migration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('packages/database/prisma/schema.prisma')
+          text = path.read_text()
+          replacements = [
+              (
+                  '''enum ContentCalendarEventType {\n  CREATED\n  UPDATED\n  STATUS_CHANGED\n}\n''',
+                  '''enum ContentCalendarEventType {\n  CREATED\n  UPDATED\n  STATUS_CHANGED\n}\n\nenum SocialPublishingAccountEventType {\n  CREATED\n  UPDATED\n  ACTIVATION_CHANGED\n}\n''',
+              ),
+              (
+                  '''  contentCalendarItemsCreated ContentCalendarItem[]      @relation("ContentCalendarItemCreator")\n  contentCalendarItemsUpdated ContentCalendarItem[]      @relation("ContentCalendarItemUpdater")\n  contentCalendarEvents       ContentCalendarItemEvent[] @relation("ContentCalendarEventActor")\n''',
+                  '''  contentCalendarItemsCreated ContentCalendarItem[]      @relation("ContentCalendarItemCreator")\n  contentCalendarItemsUpdated ContentCalendarItem[]      @relation("ContentCalendarItemUpdater")\n  contentCalendarEvents       ContentCalendarItemEvent[] @relation("ContentCalendarEventActor")\n\n  socialPublishingAccountsCreated SocialPublishingAccount[]      @relation("SocialPublishingAccountCreator")\n  socialPublishingAccountsUpdated SocialPublishingAccount[]      @relation("SocialPublishingAccountUpdater")\n  socialPublishingAccountEvents   SocialPublishingAccountEvent[] @relation("SocialPublishingAccountEventActor")\n''',
+              ),
+              (
+                  '''model ContentCalendarItem {\n''',
+                  '''model SocialPublishingAccount {\n  id                String                  @id @default(cuid())\n  accountRef        String                  @unique\n  platform          ContentCalendarPlatform\n  displayName       String\n  externalAccountId String\n  active            Boolean                 @default(true)\n  createdByUserId   String\n  updatedByUserId   String\n  createdAt         DateTime                @default(now())\n  updatedAt         DateTime                @updatedAt\n  createdBy         User                    @relation("SocialPublishingAccountCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)\n  updatedBy         User                    @relation("SocialPublishingAccountUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)\n  events            SocialPublishingAccountEvent[]\n\n  @@unique([platform, externalAccountId])\n  @@index([platform, active, accountRef])\n  @@index([createdByUserId, createdAt])\n  @@index([updatedByUserId, updatedAt])\n}\n\nmodel SocialPublishingAccountEvent {\n  id          String                           @id @default(cuid())\n  accountId   String\n  eventType   SocialPublishingAccountEventType\n  actorUserId String\n  fromActive  Boolean?\n  toActive    Boolean\n  occurredAt  DateTime                         @default(now())\n  account     SocialPublishingAccount          @relation(fields: [accountId], references: [id], onDelete: Cascade)\n  actor       User                             @relation("SocialPublishingAccountEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)\n\n  @@index([accountId, occurredAt])\n  @@index([actorUserId, occurredAt])\n}\n\nmodel ContentCalendarItem {\n''',
+              ),
+          ]
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'Expected exactly one schema match, found {count}: {old[:100]!r}')
+              text = text.replace(old, new)
+          path.write_text(text)
+
+          migration = Path('packages/database/prisma/migrations/20260901155000_social_publishing_account_registry/migration.sql')
+          migration.parent.mkdir(parents=True, exist_ok=False)
+          migration.write_text('''CREATE TYPE "SocialPublishingAccountEventType" AS ENUM ('CREATED', 'UPDATED', 'ACTIVATION_CHANGED');\n\nCREATE TABLE "SocialPublishingAccount" (\n  "id" TEXT NOT NULL,\n  "accountRef" TEXT NOT NULL,\n  "platform" "ContentCalendarPlatform" NOT NULL,\n  "displayName" TEXT NOT NULL,\n  "externalAccountId" TEXT NOT NULL,\n  "active" BOOLEAN NOT NULL DEFAULT true,\n  "createdByUserId" TEXT NOT NULL,\n  "updatedByUserId" TEXT NOT NULL,\n  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  "updatedAt" TIMESTAMP(3) NOT NULL,\n  CONSTRAINT "SocialPublishingAccount_pkey" PRIMARY KEY ("id")\n);\n\nCREATE TABLE "SocialPublishingAccountEvent" (\n  "id" TEXT NOT NULL,\n  "accountId" TEXT NOT NULL,\n  "eventType" "SocialPublishingAccountEventType" NOT NULL,\n  "actorUserId" TEXT NOT NULL,\n  "fromActive" BOOLEAN,\n  "toActive" BOOLEAN NOT NULL,\n  "occurredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  CONSTRAINT "SocialPublishingAccountEvent_pkey" PRIMARY KEY ("id")\n);\n\nCREATE UNIQUE INDEX "SocialPublishingAccount_accountRef_key" ON "SocialPublishingAccount"("accountRef");\nCREATE UNIQUE INDEX "SocialPublishingAccount_platform_externalAccountId_key" ON "SocialPublishingAccount"("platform", "externalAccountId");\nCREATE INDEX "SocialPublishingAccount_platform_active_accountRef_idx" ON "SocialPublishingAccount"("platform", "active", "accountRef");\nCREATE INDEX "SocialPublishingAccount_createdByUserId_createdAt_idx" ON "SocialPublishingAccount"("createdByUserId", "createdAt");\nCREATE INDEX "SocialPublishingAccount_updatedByUserId_updatedAt_idx" ON "SocialPublishingAccount"("updatedByUserId", "updatedAt");\nCREATE INDEX "SocialPublishingAccountEvent_accountId_occurredAt_idx" ON "SocialPublishingAccountEvent"("accountId", "occurredAt");\nCREATE INDEX "SocialPublishingAccountEvent_actorUserId_occurredAt_idx" ON "SocialPublishingAccountEvent"("actorUserId", "occurredAt");\n\nALTER TABLE "SocialPublishingAccount" ADD CONSTRAINT "SocialPublishingAccount_createdByUserId_fkey" FOREIGN KEY ("createdByUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;\nALTER TABLE "SocialPublishingAccount" ADD CONSTRAINT "SocialPublishingAccount_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;\nALTER TABLE "SocialPublishingAccountEvent" ADD CONSTRAINT "SocialPublishingAccountEvent_accountId_fkey" FOREIGN KEY ("accountId") REFERENCES "SocialPublishingAccount"("id") ON DELETE CASCADE ON UPDATE CASCADE;\nALTER TABLE "SocialPublishingAccountEvent" ADD CONSTRAINT "SocialPublishingAccountEvent_actorUserId_fkey" FOREIGN KEY ("actorUserId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;\n\nCREATE OR REPLACE FUNCTION prevent_social_publishing_account_event_mutation()\nRETURNS trigger AS $$\nBEGIN\n  RAISE EXCEPTION 'SocialPublishingAccountEvent is append-only';\nEND;\n$$ LANGUAGE plpgsql;\n\nCREATE TRIGGER social_publishing_account_event_no_update\nBEFORE UPDATE ON "SocialPublishingAccountEvent"\nFOR EACH ROW EXECUTE FUNCTION prevent_social_publishing_account_event_mutation();\n\nCREATE TRIGGER social_publishing_account_event_no_delete\nBEFORE DELETE ON "SocialPublishingAccountEvent"\nFOR EACH ROW EXECUTE FUNCTION prevent_social_publishing_account_event_mutation();\n''')
+          PY
+          git diff --check
+      - name: Commit schema patch
+        run: |
+          git config user.name "Luminol CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add packages/database/prisma/schema.prisma packages/database/prisma/migrations/20260901155000_social_publishing_account_registry/migration.sql
+          git commit -m "Add social publishing account registry [social-delivery-schema]"
+          git push origin HEAD:feat/ai-operator-social-delivery-foundation
