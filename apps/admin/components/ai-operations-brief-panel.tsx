@@ -17,6 +17,7 @@ import {
   type AiOperationsBriefInput,
 } from '../lib/ai-operations-brief';
 import { getContentCalendarCopy } from '../lib/content-calendar-localization';
+import { getSocialPublishingCopy } from '../lib/social-publishing-localization';
 
 type AiOperationsBriefPanelProps = {
   locale: Locale;
@@ -30,6 +31,7 @@ export function AiOperationsBriefPanel({
   const copy = getAiOperationsBriefCopy(locale);
   const proposalCopy = getAiOperatorProposalQueueCopy(locale);
   const contentCalendarCopy = getContentCalendarCopy(locale);
+  const socialPublishingCopy = getSocialPublishingCopy(locale);
   const brief = buildAiOperationsBrief(operations);
   const briefActions = buildAiOperationsBriefActions(brief);
   const executionPolicy = aiOperatorExecutionPolicyByKind.OPEN_ENQUIRY_QUEUE;
@@ -103,6 +105,9 @@ export function AiOperationsBriefPanel({
         </Link>
         <Link href={localizeHref(locale, '/content-calendar')}>
           {contentCalendarCopy.title}
+        </Link>
+        <Link href={localizeHref(locale, '/social-publishing')}>
+          {socialPublishingCopy.title}
         </Link>
       </p>
     </section>

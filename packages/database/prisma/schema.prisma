@@ -276,6 +276,12 @@ enum ContentCalendarEventType {
   STATUS_CHANGED
 }
 
+enum SocialPublishingAccountEventType {
+  CREATED
+  UPDATED
+  ACTIVATION_CHANGED
+}
+
 model User {
   id                          String                       @id @default(cuid())
   clerkId                     String                       @unique
@@ -321,6 +327,10 @@ model User {
   contentCalendarItemsCreated ContentCalendarItem[]      @relation("ContentCalendarItemCreator")
   contentCalendarItemsUpdated ContentCalendarItem[]      @relation("ContentCalendarItemUpdater")
   contentCalendarEvents       ContentCalendarItemEvent[] @relation("ContentCalendarEventActor")
+
+  socialPublishingAccountsCreated SocialPublishingAccount[]      @relation("SocialPublishingAccountCreator")
+  socialPublishingAccountsUpdated SocialPublishingAccount[]      @relation("SocialPublishingAccountUpdater")
+  socialPublishingAccountEvents   SocialPublishingAccountEvent[] @relation("SocialPublishingAccountEventActor")
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
@@ -371,6 +381,42 @@ model AiOperatorProposalEvent {
   actor       User?                       @relation("AiOperatorProposalEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([proposalId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
+model SocialPublishingAccount {
+  id                String                  @id @default(cuid())
+  accountRef        String                  @unique
+  platform          ContentCalendarPlatform
+  displayName       String
+  externalAccountId String
+  active            Boolean                 @default(true)
+  createdByUserId   String
+  updatedByUserId   String
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  createdBy         User                    @relation("SocialPublishingAccountCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  updatedBy         User                    @relation("SocialPublishingAccountUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)
+  events            SocialPublishingAccountEvent[]
+
+  @@unique([platform, externalAccountId])
+  @@index([platform, active, accountRef])
+  @@index([createdByUserId, createdAt])
+  @@index([updatedByUserId, updatedAt])
+}
+
+model SocialPublishingAccountEvent {
+  id          String                           @id @default(cuid())
+  accountId   String
+  eventType   SocialPublishingAccountEventType
+  actorUserId String
+  fromActive  Boolean?
+  toActive    Boolean
+  occurredAt  DateTime                         @default(now())
+  account     SocialPublishingAccount          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  actor       User                             @relation("SocialPublishingAccountEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([accountId, occurredAt])
   @@index([actorUserId, occurredAt])
 }
 
