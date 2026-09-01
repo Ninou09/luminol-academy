@@ -104,32 +104,41 @@ export async function planSocialPublishingAttempt(
   );
   const idempotencyKey = buildSocialPublishingIdempotencyKey(plan);
 
-  const attempt = await client.socialPublishingAttempt.upsert({
-    where: { proposalId: plan.proposalId },
-    update: {},
-    create: {
-      idempotencyKey,
-      proposalId: plan.proposalId,
-      actionId: plan.actionId,
-      contentCalendarItemId: plan.contentCalendarItemId,
-      contentRevision: plan.contentRevision,
-      platform: plan.platform,
-      accountRef: plan.accountRef,
-      externalAccountId: plan.externalAccountId,
-      status: SocialPublishingAttemptStatus.PLANNED,
-      nextAttemptAt: now,
-      events: {
-        create: {
-          eventType: SocialPublishingAttemptEventType.PLANNED,
-          actorUserId,
-          fromStatus: null,
-          toStatus: SocialPublishingAttemptStatus.PLANNED,
-          attemptNumber: 0,
-          occurredAt: now,
+  let attempt: SocialPublishingAttempt;
+  try {
+    attempt = await client.socialPublishingAttempt.create({
+      data: {
+        idempotencyKey,
+        proposalId: plan.proposalId,
+        actionId: plan.actionId,
+        contentCalendarItemId: plan.contentCalendarItemId,
+        contentRevision: plan.contentRevision,
+        platform: plan.platform,
+        accountRef: plan.accountRef,
+        externalAccountId: plan.externalAccountId,
+        status: SocialPublishingAttemptStatus.PLANNED,
+        nextAttemptAt: now,
+        events: {
+          create: {
+            eventType: SocialPublishingAttemptEventType.PLANNED,
+            actorUserId,
+            fromStatus: null,
+            toStatus: SocialPublishingAttemptStatus.PLANNED,
+            attemptNumber: 0,
+            occurredAt: now,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    const existing = await client.socialPublishingAttempt.findFirst({
+      where: {
+        OR: [{ proposalId: plan.proposalId }, { idempotencyKey }],
+      },
+    });
+    if (!existing) throw error;
+    attempt = existing;
+  }
 
   assertAttemptMatchesPlan(attempt, plan, idempotencyKey);
   return attempt;

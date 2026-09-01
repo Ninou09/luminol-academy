@@ -147,7 +147,7 @@ suite('social publishing attempt ledger', () => {
       providerReference: 'provider-post-123',
     }));
     const provider: SocialPublishingProvider = { publish };
-    const executionNow = new Date(proposal.createdAt.getTime() + 5_000);
+    const executionNow = new Date(attempt.nextAttemptAt.getTime() + 5_000);
 
     const results = await Promise.all([
       executeSocialPublishingAttempt(db, {
@@ -235,7 +235,7 @@ suite('social publishing attempt ledger', () => {
       actorUserId: userId,
       now: baseNow,
     });
-    const executionNow = new Date(proposal.createdAt.getTime() + 10_000);
+    const executionNow = new Date(attempt.nextAttemptAt.getTime() + 10_000);
     const expiredLockAt = new Date(executionNow.getTime() - 1);
 
     await db.$transaction(async (transaction) => {
@@ -303,7 +303,7 @@ suite('social publishing attempt ledger', () => {
       }),
     };
 
-    const firstNow = new Date(proposal.createdAt.getTime() + 10_000);
+    const firstNow = new Date(attempt.nextAttemptAt.getTime() + 10_000);
     const first = await executeSocialPublishingAttempt(db, {
       attemptId: attempt.id,
       actorUserId: userId,
@@ -377,7 +377,7 @@ suite('social publishing attempt ledger', () => {
       accountRef: ready.accountRef,
       format: ready.format,
       assetReference: ready.assetReference,
-      now: new Date(proposal.createdAt.getTime() + 2_000),
+      now: new Date(attempt.nextAttemptAt.getTime() + 2_000),
     });
 
     const publish = vi.fn(async () => ({
@@ -387,7 +387,7 @@ suite('social publishing attempt ledger', () => {
       attemptId: attempt.id,
       actorUserId: userId,
       provider: { publish },
-      now: new Date(proposal.createdAt.getTime() + 5_000),
+      now: new Date(attempt.nextAttemptAt.getTime() + 5_000),
     });
 
     expect(publish).not.toHaveBeenCalled();
