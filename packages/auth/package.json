@@ -18,7 +18,7 @@
     "@luminol/types": "workspace:*",
     "server-only": "^0.0.1",
     "svix": "^1.69.0",
-    "zod": "^4.0.10"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",

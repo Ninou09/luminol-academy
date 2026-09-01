@@ -23,17 +23,17 @@
   },
   "dependencies": {
     "@luminol/validation": "workspace:*",
-    "@prisma/adapter-pg": "7.9.1",
-    "@prisma/client": "7.9.1",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
     "pg": "^8.22.0",
-    "zod": "^4.0.10"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",
     "@types/node": "^20.19.43",
     "@types/pg": "^8.23.1",
     "eslint": "^10.9.1",
-    "prisma": "7.9.1",
+    "prisma": "7.10.0",
     "typescript": "^5.8.3",
     "vitest": "^4.1.11"
   }
