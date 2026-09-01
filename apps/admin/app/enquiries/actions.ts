@@ -1,7 +1,11 @@
 'use server';
 
 import { requirePermission } from '@luminol/auth';
-import { db, type Prisma } from '@luminol/database';
+import {
+  db,
+  updateEnquiryFollowUpPlanWithAudit,
+  type Prisma,
+} from '@luminol/database';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -155,49 +159,19 @@ export async function updateEnquiryFollowUpPlan(formData: FormData) {
         }
       : {}),
   });
-  const toNextFollowUpAt =
-    input.operation === 'save' ? parseDateOnly(input.nextFollowUpOn) : null;
-  const toNextAction = input.operation === 'save' ? input.nextAction : null;
+  const plan =
+    input.operation === 'save'
+      ? {
+          nextFollowUpAt: parseDateOnly(input.nextFollowUpOn),
+          nextAction: input.nextAction,
+        }
+      : null;
 
   await db.$transaction(async (transaction: Prisma.TransactionClient) => {
-    const enquiry = await transaction.enquiry.findUnique({
-      where: { id: input.enquiryId },
-      select: { id: true, nextFollowUpAt: true, nextAction: true },
-    });
-
-    if (!enquiry) throw new Error('Enquiry not found');
-
-    const currentDate = enquiry.nextFollowUpAt?.getTime() ?? null;
-    const nextDate = toNextFollowUpAt?.getTime() ?? null;
-    if (currentDate === nextDate && enquiry.nextAction === toNextAction) return;
-
-    const updated = await transaction.enquiry.updateMany({
-      where: {
-        id: enquiry.id,
-        nextFollowUpAt: enquiry.nextFollowUpAt,
-        nextAction: enquiry.nextAction,
-      },
-      data: {
-        nextFollowUpAt: toNextFollowUpAt,
-        nextAction: toNextAction,
-      },
-    });
-
-    if (updated.count !== 1) {
-      throw new Error(
-        'Enquiry follow-up plan was updated by another administrator',
-      );
-    }
-
-    await transaction.enquiryFollowUpEvent.create({
-      data: {
-        enquiryId: enquiry.id,
-        actorUserId: administrator.id,
-        fromNextFollowUpAt: enquiry.nextFollowUpAt,
-        toNextFollowUpAt,
-        fromNextAction: enquiry.nextAction,
-        toNextAction,
-      },
+    await updateEnquiryFollowUpPlanWithAudit(transaction, {
+      enquiryId: input.enquiryId,
+      actorUserId: administrator.id,
+      plan,
     });
   });
 
