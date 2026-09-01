@@ -18,6 +18,7 @@ type TaskCopy = {
 };
 
 type AiProviderRunPanelProps = {
+  title: string;
   summary: TaskCopy;
   recommendations: TaskCopy;
   campaignAnalysis: TaskCopy;
@@ -44,24 +45,24 @@ function TaskResult({
 }) {
   if (state.status === 'succeeded') {
     return (
-      <article className="admin-panel" aria-live="polite">
+      <div aria-live="polite">
         <h3>{advisoryLabel}</h3>
         <p style={{ whiteSpace: 'pre-wrap' }} dir="auto">
           {state.text}
         </p>
         <small dir="auto">{state.model}</small>
-      </article>
+      </div>
     );
   }
 
   if (state.status === 'blocked' || state.status === 'failed') {
     return (
-      <article className="admin-panel" aria-live="polite">
+      <div aria-live="polite">
         <p>{state.status === 'blocked' ? blockedResult : failedResult}</p>
         <small dir="ltr">
           {errorCodeLabel}: {state.errorCode}
         </small>
-      </article>
+      </div>
     );
   }
 
@@ -69,6 +70,7 @@ function TaskResult({
 }
 
 export function AiProviderRunPanel({
+  title,
   summary,
   recommendations,
   campaignAnalysis,
@@ -115,10 +117,10 @@ export function AiProviderRunPanel({
   ] as const;
 
   return (
-    <section className="admin-panel" aria-label={summary.title}>
+    <section className="admin-panel" aria-label={title}>
       <div className="panel-heading">
         <div>
-          <h2>{summary.title}</h2>
+          <h2>{title}</h2>
           <p>{noSideEffects}</p>
         </div>
       </div>
