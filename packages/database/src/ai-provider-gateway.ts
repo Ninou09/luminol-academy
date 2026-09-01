@@ -436,7 +436,9 @@ export async function runAiProviderTask(
     options.provider ??
     createOpenAiResponsesProvider({
       apiKey: config.OPENAI_API_KEY ?? '',
-      fetchImplementation: options.fetchImplementation,
+      ...(options.fetchImplementation
+        ? { fetchImplementation: options.fetchImplementation }
+        : {}),
     });
   if (provider.mode !== 'OPENAI') {
     await recordBlockedUsage(client, {
