@@ -240,15 +240,21 @@ export async function decideAiOperatorProposal(
   const toStatus = decisionStatusByType[input.decision];
   const eventType = decisionEventByType[input.decision];
   const decidedAt = input.now ?? new Date();
+  if (!Number.isFinite(decidedAt.getTime())) {
+    throw new Error('AI Operator proposal decision time is invalid');
+  }
 
   return client.$transaction(async (transaction) => {
     const proposal = await transaction.aiOperatorProposal.findUnique({
       where: { id: proposalId },
-      select: { id: true, status: true },
+      select: { id: true, status: true, createdAt: true },
     });
     if (!proposal) throw new Error('AI Operator proposal not found');
     if (proposal.status !== AiOperatorProposalStatus.PENDING_APPROVAL) {
       throw new Error('AI Operator proposal is no longer pending approval');
+    }
+    if (decidedAt.getTime() < proposal.createdAt.getTime()) {
+      throw new Error('AI Operator proposal decision cannot predate the proposal');
     }
 
     const updated = await transaction.aiOperatorProposal.updateMany({
