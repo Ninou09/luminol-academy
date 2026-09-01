@@ -169,9 +169,11 @@ export async function recordSearchTelemetry({
 export * from './ai-operator-crm-executor';
 export * from './ai-operator-execution-readiness';
 export * from './ai-operator-proposals';
+export * from './content-calendar';
 export * from './enquiry-follow-up';
 export * from './instructor-cohorts';
 export * from './learning-analytics';
 export * from './professional-analytics';
 export * from './professional-submissions';
+export * from './social-publishing-delivery';
 export * from '../generated/prisma/client';
