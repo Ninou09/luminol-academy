@@ -10,13 +10,19 @@ import {
   getCommonDictionary,
   localizeHref,
 } from '@luminol/localization';
-import { aiOperatorActionSchema } from '@luminol/validation/ai-operator';
+import {
+  aiOperatorActionSchema,
+  aiOperatorSetFollowUpExecutionActionSchema,
+} from '@luminol/validation/ai-operator';
 import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { getAiOperatorProposalQueueCopy } from '../../lib/ai-operator-proposal-localization';
 import { getAdminRequestLocale } from '../../lib/request-locale';
-import { decideAiOperatorProposalAction } from './actions';
+import {
+  decideAiOperatorProposalAction,
+  executeAiOperatorProposalAction,
+} from './actions';
 
 function actorLabel(actor: { email: string } | null, fallback: string) {
   return actor?.email ?? fallback;
@@ -55,14 +61,15 @@ export default async function AiOperatorApprovalQueuePage() {
   const copy = getAiOperatorProposalQueueCopy(locale);
   const common = getCommonDictionary(locale);
 
-  const [proposals, pending, approved, rejected, cancelled] = await Promise.all(
-    [
+  const [proposals, pending, approved, rejected, cancelled, executed] =
+    await Promise.all([
       db.aiOperatorProposal.findMany({
         orderBy: { createdAt: 'desc' },
         take: 50,
         include: {
           proposedBy: { select: { email: true } },
           decidedBy: { select: { email: true } },
+          executedBy: { select: { email: true } },
           events: {
             orderBy: { occurredAt: 'asc' },
             include: { actor: { select: { email: true } } },
@@ -81,8 +88,10 @@ export default async function AiOperatorApprovalQueuePage() {
       db.aiOperatorProposal.count({
         where: { status: AiOperatorProposalStatus.CANCELLED },
       }),
-    ],
-  );
+      db.aiOperatorProposal.count({
+        where: { status: AiOperatorProposalStatus.EXECUTED },
+      }),
+    ]);
 
   const number = (value: number) => formatLocalizedNumber(value, locale);
   const date = (value: Date) => formatLocalizedDate(value, locale);
@@ -133,6 +142,10 @@ export default async function AiOperatorApprovalQueuePage() {
               <span>{copy.cancelled}</span>
               <strong>{number(cancelled)}</strong>
             </article>
+            <article>
+              <span>{copy.executed}</span>
+              <strong>{number(executed)}</strong>
+            </article>
           </section>
 
           <section className="admin-panel">
@@ -165,6 +178,13 @@ export default async function AiOperatorApprovalQueuePage() {
                   const isPending =
                     proposal.status ===
                     AiOperatorProposalStatus.PENDING_APPROVAL;
+                  const executionSupported =
+                    aiOperatorSetFollowUpExecutionActionSchema.safeParse(
+                      proposal.actionEnvelope,
+                    ).success;
+                  const canExecute =
+                    readiness.status === 'READY_FOR_EXECUTOR' &&
+                    executionSupported;
 
                   return (
                     <article key={proposal.id} style={{ alignItems: 'start' }}>
@@ -205,6 +225,13 @@ export default async function AiOperatorApprovalQueuePage() {
                             {copy.decided}: {date(proposal.decidedAt)}
                           </p>
                         ) : null}
+                        {proposal.executedAt ? (
+                          <p dir="auto">
+                            {copy.executedBy}:{' '}
+                            {actorLabel(proposal.executedBy, copy.noActor)} ·{' '}
+                            {copy.executionTime}: {date(proposal.executedAt)}
+                          </p>
+                        ) : null}
 
                         <section
                           aria-label={copy.readinessTitle}
@@ -230,6 +257,29 @@ export default async function AiOperatorApprovalQueuePage() {
                             ))}
                           </div>
                         </section>
+
+                        {proposal.status ===
+                        AiOperatorProposalStatus.APPROVED ? (
+                          <section
+                            aria-label={copy.executionTitle}
+                            style={{ marginTop: '1rem' }}
+                          >
+                            <h4>{copy.executionTitle}</h4>
+                            <p>{copy.executionIntro}</p>
+                            {canExecute ? (
+                              <form action={executeAiOperatorProposalAction}>
+                                <input
+                                  type="hidden"
+                                  name="proposalId"
+                                  value={proposal.id}
+                                />
+                                <button type="submit">{copy.execute}</button>
+                              </form>
+                            ) : (
+                              <p>{copy.executionUnavailable}</p>
+                            )}
+                          </section>
+                        ) : null}
 
                         <details>
                           <summary>{copy.exactEnvelope}</summary>
