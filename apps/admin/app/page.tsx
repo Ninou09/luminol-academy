@@ -10,6 +10,7 @@ import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
+import { AiOperationsBriefPanel } from '../components/ai-operations-brief-panel';
 import { getAcademyAnalyticsCopy } from '../lib/academy-analytics-localization';
 import { getCampaignLinkBuilderCopy } from '../lib/campaign-link-builder-localization';
 import { buildEnquiryCampaignAttributionQuery } from '../lib/enquiry-campaign-filter';
@@ -243,6 +244,8 @@ export default async function Page() {
               </div>
             </article>
           </section>
+
+          <AiOperationsBriefPanel locale={locale} operations={operations} />
 
           <section className="admin-panel">
             <div className="panel-heading">
