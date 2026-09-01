@@ -113,7 +113,11 @@ export const aiOperatorOpenEnquiryQueueActionSchema = z
 
 const sideEffectSourceSchema = z
   .object({
-    surface: z.enum(['ai_operator', 'operations_dashboard', 'content_calendar']),
+    surface: z.enum([
+      'ai_operator',
+      'operations_dashboard',
+      'content_calendar',
+    ]),
     reference: sourceReferenceSchema,
   })
   .strict();
