@@ -2,6 +2,8 @@ import { createHash, randomUUID } from 'node:crypto';
 import { z } from 'zod';
 
 import {
+  AiOperatorProposalEventType,
+  AiOperatorProposalStatus,
   SocialPublishingAttemptEventType,
   SocialPublishingAttemptStatus,
   type Prisma,
@@ -344,6 +346,36 @@ export async function executeSocialPublishingAttempt(
             toStatus: SocialPublishingAttemptStatus.SUCCEEDED,
             attemptNumber,
             providerReference,
+            occurredAt: now,
+          },
+        });
+
+        const completedProposal =
+          await transaction.aiOperatorProposal.updateMany({
+            where: {
+              id: claimed.proposalId,
+              status: AiOperatorProposalStatus.APPROVED,
+              executedAt: null,
+            },
+            data: {
+              status: AiOperatorProposalStatus.EXECUTED,
+              executedByUserId: actorUserId,
+              executedAt: now,
+            },
+          });
+        if (completedProposal.count !== 1) {
+          throw new Error(
+            'AI Operator social publish proposal completion failed',
+          );
+        }
+
+        await transaction.aiOperatorProposalEvent.create({
+          data: {
+            proposalId: claimed.proposalId,
+            eventType: AiOperatorProposalEventType.EXECUTED,
+            actorUserId,
+            fromStatus: AiOperatorProposalStatus.APPROVED,
+            toStatus: AiOperatorProposalStatus.EXECUTED,
             occurredAt: now,
           },
         });

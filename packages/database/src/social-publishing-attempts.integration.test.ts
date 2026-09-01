@@ -185,6 +185,22 @@ suite('social publishing attempt ledger', () => {
       'SUCCEEDED',
     ]);
 
+    const executedProposal = await db.aiOperatorProposal.findUniqueOrThrow({
+      where: { id: proposal.id },
+      include: { events: { orderBy: { occurredAt: 'asc' } } },
+    });
+    expect(executedProposal).toMatchObject({
+      status: AiOperatorProposalStatus.EXECUTED,
+      executedByUserId: userId,
+      executedAt: executionNow,
+    });
+    expect(executedProposal.events.at(-1)).toMatchObject({
+      eventType: 'EXECUTED',
+      actorUserId: userId,
+      fromStatus: AiOperatorProposalStatus.APPROVED,
+      toStatus: AiOperatorProposalStatus.EXECUTED,
+    });
+
     await expect(
       db.socialPublishingAttempt.update({
         where: { id: stored.id },
