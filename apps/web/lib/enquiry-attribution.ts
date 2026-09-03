@@ -15,7 +15,7 @@ function boundedValue(value: string | null, limit: number) {
 }
 
 function isGenericContactPath(pathname: string) {
-  return /^\/(?:ar|fr|en\/)?contact\/?$/i.test(pathname);
+  return /^\/(?:(?:ar|fr|en)\/)?contact\/?$/i.test(pathname);
 }
 
 export function getSameOriginReferrerPath(
