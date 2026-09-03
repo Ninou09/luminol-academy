@@ -145,14 +145,19 @@
 
 .enquiryContext p {
   max-width: 34rem;
-  color: color-mix(in srgb, var(--color-brand-surface) 74%, transparent);
+  color: color-mix(
+    in srgb,
+    var(--color-brand-surface) 74%,
+    transparent
+  );
   line-height: 1.75;
 }
 
 .safetyNote {
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid color-mix(in srgb, var(--color-brand-surface) 20%, transparent);
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 20%, transparent);
   font-size: 0.9rem;
 }
 
