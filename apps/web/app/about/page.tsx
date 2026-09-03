@@ -34,8 +34,7 @@ const founderAuthorityByLocale = {
   en: {
     eyebrow: 'Founder-led authority',
     title: 'Experience behind the institution.',
-    body:
-      'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 30 years of field experience, and supported by a broader expert team across content and programme delivery.',
+    body: 'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 30 years of field experience, and supported by a broader expert team across content and programme delivery.',
     facts: [
       {
         number: '30+',
@@ -55,8 +54,7 @@ const founderAuthorityByLocale = {
   fr: {
     eyebrow: 'Une autorité portée par la fondatrice',
     title: 'Une expérience réelle derrière l’institution.',
-    body:
-      'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 30 ans d’expérience de terrain, ainsi que sur une équipe élargie d’experts pour les contenus et les programmes.',
+    body: 'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 30 ans d’expérience de terrain, ainsi que sur une équipe élargie d’experts pour les contenus et les programmes.',
     facts: [
       {
         number: '30+',
@@ -76,8 +74,7 @@ const founderAuthorityByLocale = {
   ar: {
     eyebrow: 'خبرة تقودها المؤسسة',
     title: 'خبرة ميدانية حقيقية وراء المؤسسة.',
-    body:
-      'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 30 سنة من الخبرة الميدانية، إلى جانب فريق أوسع من الخبراء في المحتوى وتقديم البرامج.',
+    body: 'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 30 سنة من الخبرة الميدانية، إلى جانب فريق أوسع من الخبراء في المحتوى وتقديم البرامج.',
     facts: [
       {
         number: '+30',
@@ -277,10 +274,7 @@ export default async function AboutPage() {
             ))}
           </div>
           <div style={{ marginTop: '2rem' }} data-reveal>
-            <ButtonLink
-              href={localizeHref(locale, '/consultations')}
-              size="lg"
-            >
+            <ButtonLink href={localizeHref(locale, '/consultations')} size="lg">
               {founderAuthority.action} <span aria-hidden="true">→</span>
             </ButtonLink>
           </div>
