@@ -24,6 +24,12 @@ const footerNavigationLabel = {
   en: 'Footer navigation',
 } as const satisfies Record<Locale, string>;
 
+const consultationsLabel = {
+  ar: 'الاستشارات النفسية',
+  fr: 'Consultations',
+  en: 'Consultations',
+} as const satisfies Record<Locale, string>;
+
 export async function SiteHeader() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
@@ -58,6 +64,12 @@ export async function SiteHeader() {
               matchDescendants
             >
               {copy.site.nav.programmes}
+            </CurrentPageLink>
+            <CurrentPageLink
+              href={localizeHref(locale, '/consultations')}
+              activePathname="/consultations"
+            >
+              {consultationsLabel[locale]}
             </CurrentPageLink>
             <Link href={localizeHref(locale, '/#approach')}>
               {copy.site.nav.approach}
@@ -128,6 +140,12 @@ export async function SiteFooter() {
               matchDescendants
             >
               {copy.site.nav.programmes}
+            </CurrentPageLink>
+            <CurrentPageLink
+              href={localizeHref(locale, '/consultations')}
+              activePathname="/consultations"
+            >
+              {consultationsLabel[locale]}
             </CurrentPageLink>
             <CurrentPageLink
               href={localizeHref(locale, '/about')}
