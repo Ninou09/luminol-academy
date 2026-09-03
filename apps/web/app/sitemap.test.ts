@@ -29,13 +29,22 @@ describe('public sitemap localization', () => {
     const frenchAbout = entries.find(
       (entry) => entry.url === 'https://academy.example.com/fr/about',
     );
+    const arabicConsultations = entries.find(
+      (entry) => entry.url === 'https://academy.example.com/ar/consultations',
+    );
 
-    expect(entries).toHaveLength(21);
+    expect(entries).toHaveLength(24);
     expect(frenchAbout?.alternates?.languages).toEqual({
       ar: 'https://academy.example.com/ar/about',
       fr: 'https://academy.example.com/fr/about',
       en: 'https://academy.example.com/en/about',
       'x-default': 'https://academy.example.com/en/about',
+    });
+    expect(arabicConsultations?.alternates?.languages).toEqual({
+      ar: 'https://academy.example.com/ar/consultations',
+      fr: 'https://academy.example.com/fr/consultations',
+      en: 'https://academy.example.com/en/consultations',
+      'x-default': 'https://academy.example.com/en/consultations',
     });
   });
 
