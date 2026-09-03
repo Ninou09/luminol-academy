@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { buildProgrammeContactHref } from '../../../lib/programme-contact';
 import {
   getPublicProgrammeBySlug,
   type PublicProgrammeDetail,
@@ -213,6 +214,7 @@ export default async function ProgrammeDetailPage({
     : localizeProgrammeDelivery(locale, programme.delivery);
   const programmePathname = `/programmes/${programme.slug.current}`;
   const localizedProgrammeHref = localizeHref(locale, programmePathname);
+  const contactHref = buildProgrammeContactHref(locale, programme.slug.current);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     {
       name: copy.catalogue,
@@ -296,9 +298,7 @@ export default async function ProgrammeDetailPage({
               </ul>
 
               <div className={styles.actions}>
-                <ButtonLink href={localizeHref(locale, '/contact')}>
-                  {primaryActionLabel}
-                </ButtonLink>
+                <ButtonLink href={contactHref}>{primaryActionLabel}</ButtonLink>
                 <ButtonLink
                   href={localizeHref(
                     locale,
@@ -440,9 +440,7 @@ export default async function ProgrammeDetailPage({
           </h2>
           <p>{isWaitlist ? copy.waitlistNextBody : copy.nextBody}</p>
           <div className={styles.footerActions}>
-            <ButtonLink href={localizeHref(locale, '/contact')}>
-              {primaryActionLabel}
-            </ButtonLink>
+            <ButtonLink href={contactHref}>{primaryActionLabel}</ButtonLink>
             <ButtonLink
               href={localizeHref(locale, '/programmes')}
               variant="secondary"
