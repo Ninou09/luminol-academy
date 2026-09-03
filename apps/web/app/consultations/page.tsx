@@ -62,7 +62,8 @@ const CONSULTATION_COPY = {
     description:
       'Commencez une demande en psychologie auprès de Luminol Academy afin que l’équipe comprenne votre objectif avant de vous orienter vers la prochaine étape la plus adaptée.',
     eyebrow: 'Psychologie · consultations',
-    heroTitle: 'Une première étape plus claire lorsque vous cherchez un soutien psychologique.',
+    heroTitle:
+      'Une première étape plus claire lorsque vous cherchez un soutien psychologique.',
     heroBody:
       'Expliquez-nous d’abord ce que vous recherchez avant de passer à un appel ou à WhatsApp. L’équipe peut comprendre votre demande, le format souhaité et votre disponibilité, puis vous orienter vers un parcours adapté.',
     aside:
@@ -70,7 +71,8 @@ const CONSULTATION_COPY = {
     primaryAction: 'Commencer la demande',
     secondaryAction: 'Découvrir la psychologie',
     routingEyebrow: 'Une demande · le bon parcours',
-    routingTitle: 'Toutes les demandes en psychologie n’appellent pas la même prochaine étape.',
+    routingTitle:
+      'Toutes les demandes en psychologie n’appellent pas la même prochaine étape.',
     routingBody:
       'L’objectif est de comprendre votre besoin avant de recommander un service ou un programme.',
     paths: [
@@ -96,7 +98,8 @@ const CONSULTATION_COPY = {
       'Partagez uniquement les informations nécessaires pour comprendre votre demande. Un membre de l’équipe pourra ensuite vous proposer la prochaine étape la plus adaptée.',
     safety:
       'Ce formulaire ne remplace pas les soins d’urgence. En cas de risque immédiat ou de situation psychiatrique ou médicale urgente, contactez les services d’urgence locaux ou des professionnels de santé qualifiés.',
-    initialMessage: 'Je souhaite obtenir des informations sur une consultation en psychologie.',
+    initialMessage:
+      'Je souhaite obtenir des informations sur une consultation en psychologie.',
   },
   ar: {
     title: 'الاستشارات النفسية',
@@ -186,7 +189,10 @@ export default async function ConsultationsPage() {
     <>
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className={styles.page}>
-        <section className={styles.hero} aria-labelledby="consultation-title">
+        <section
+          className={styles.hero}
+          aria-labelledby="consultation-title"
+        >
           <div>
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
             <h1 id="consultation-title">{copy.heroTitle as string}</h1>
@@ -208,10 +214,15 @@ export default async function ConsultationsPage() {
           </aside>
         </section>
 
-        <section className={styles.routing} aria-labelledby="routing-title">
+        <section
+          className={styles.routing}
+          aria-labelledby="routing-title"
+        >
           <div className={styles.routingHeader}>
             <div>
-              <p className={styles.eyebrow}>{copy.routingEyebrow as string}</p>
+              <p className={styles.eyebrow}>
+                {copy.routingEyebrow as string}
+              </p>
               <h2 id="routing-title">{copy.routingTitle as string}</h2>
             </div>
             <p>{copy.routingBody as string}</p>
@@ -234,7 +245,9 @@ export default async function ConsultationsPage() {
         >
           <div className={styles.enquiryContext}>
             <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
-            <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
+            <h2 id="consultation-enquiry-title">
+              {copy.formTitle as string}
+            </h2>
             <p>{copy.formBody as string}</p>
             <p className={styles.safetyNote}>{copy.safety as string}</p>
           </div>
