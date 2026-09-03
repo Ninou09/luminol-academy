@@ -10,6 +10,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import { buildProgrammeContactHref } from '../../lib/programme-contact';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
@@ -235,6 +236,10 @@ export default async function ProgrammesPage({
                     locale,
                     `/programmes/${programme.slug.current}`,
                   );
+                  const contactHref = buildProgrammeContactHref(
+                    locale,
+                    programme.slug.current,
+                  );
                   const schoolName = schools[programme.school].name;
                   const programmeActionLabel = `${viewProgrammeLabel}: ${programme.title}`;
                   const schoolActionLabel = `${copy.viewSchool}: ${schoolName}`;
@@ -306,7 +311,7 @@ export default async function ProgrammesPage({
                             {copy.viewSchool}
                           </Link>
                           <Link
-                            href={localizeHref(locale, '/contact')}
+                            href={contactHref}
                             aria-label={contactActionLabel}
                           >
                             {contactLabel}
