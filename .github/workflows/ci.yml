@@ -48,6 +48,12 @@ jobs:
       - run: pnpm security:check
       - name: Audit production dependencies
         run: pnpm audit --prod --audit-level high
+        env:
+          # The npm audit endpoint can legitimately take longer than pnpm's
+          # default 60s HTTP timeout for this monorepo. Keep the audit blocking,
+          # but avoid false failures caused only by that transport timeout.
+          pnpm_config_fetch_timeout: '180000'
+          pnpm_config_fetch_retries: '1'
       - run: pnpm db:generate
       - name: Validate, deploy, backfill, and verify migrations on ephemeral PostgreSQL
         run: |
