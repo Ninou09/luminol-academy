@@ -277,7 +277,10 @@ export default async function AboutPage() {
             ))}
           </div>
           <div style={{ marginTop: '2rem' }} data-reveal>
-            <ButtonLink href={localizeHref(locale, '/consultations')} size="lg">
+            <ButtonLink
+              href={localizeHref(locale, '/consultations')}
+              size="lg"
+            >
               {founderAuthority.action} <span aria-hidden="true">→</span>
             </ButtonLink>
           </div>
