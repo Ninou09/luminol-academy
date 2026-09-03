@@ -12,6 +12,7 @@ import { resolvePublicSiteOrigin } from '../lib/site-url';
 const routes = [
   '',
   '/programmes',
+  '/consultations',
   '/about',
   '/contact',
   '/schools/psychology',
@@ -43,7 +44,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
         changeFrequency:
           route === '' ? ('weekly' as const) : ('monthly' as const),
-        priority: route === '' ? 1 : route.startsWith('/schools/') ? 0.8 : 0.7,
+        priority:
+          route === ''
+            ? 1
+            : route === '/consultations' || route.startsWith('/schools/')
+              ? 0.8
+              : 0.7,
       };
     }),
   );
