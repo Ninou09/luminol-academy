@@ -115,8 +115,7 @@ const CONSULTATION_COPY = {
     secondaryAction: 'استكشف قسم علم النفس',
     routingEyebrow: 'طلب واحد · المسار المناسب',
     routingTitle: 'ليست كل طلبات علم النفس بحاجة إلى الخطوة نفسها.',
-    routingBody:
-      'هدفنا أولاً هو فهم حاجتك قبل اقتراح خدمة أو برنامج محدد.',
+    routingBody: 'هدفنا أولاً هو فهم حاجتك قبل اقتراح خدمة أو برنامج محدد.',
     paths: [
       {
         number: '01',
@@ -189,10 +188,7 @@ export default async function ConsultationsPage() {
     <>
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className={styles.page}>
-        <section
-          className={styles.hero}
-          aria-labelledby="consultation-title"
-        >
+        <section className={styles.hero} aria-labelledby="consultation-title">
           <div>
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
             <h1 id="consultation-title">{copy.heroTitle as string}</h1>
@@ -214,15 +210,10 @@ export default async function ConsultationsPage() {
           </aside>
         </section>
 
-        <section
-          className={styles.routing}
-          aria-labelledby="routing-title"
-        >
+        <section className={styles.routing} aria-labelledby="routing-title">
           <div className={styles.routingHeader}>
             <div>
-              <p className={styles.eyebrow}>
-                {copy.routingEyebrow as string}
-              </p>
+              <p className={styles.eyebrow}>{copy.routingEyebrow as string}</p>
               <h2 id="routing-title">{copy.routingTitle as string}</h2>
             </div>
             <p>{copy.routingBody as string}</p>
@@ -245,9 +236,7 @@ export default async function ConsultationsPage() {
         >
           <div className={styles.enquiryContext}>
             <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
-            <h2 id="consultation-enquiry-title">
-              {copy.formTitle as string}
-            </h2>
+            <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
             <p>{copy.formBody as string}</p>
             <p className={styles.safetyNote}>{copy.safety as string}</p>
           </div>
