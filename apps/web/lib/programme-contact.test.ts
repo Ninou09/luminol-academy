@@ -5,7 +5,7 @@ import { buildProgrammeContactHref } from './programme-contact';
 describe('programme contact hrefs', () => {
   it('preserves the programme slug across localized contact routes', () => {
     expect(buildProgrammeContactHref('en', 'example-programme')).toBe(
-      '/contact?programme=example-programme',
+      '/en/contact?programme=example-programme',
     );
     expect(buildProgrammeContactHref('fr', 'example-programme')).toBe(
       '/fr/contact?programme=example-programme',
@@ -17,7 +17,7 @@ describe('programme contact hrefs', () => {
 
   it('encodes unexpected slug characters rather than leaking raw query syntax', () => {
     expect(buildProgrammeContactHref('en', 'programme & cohort')).toBe(
-      '/contact?programme=programme+%26+cohort',
+      '/en/contact?programme=programme+%26+cohort',
     );
   });
 });
