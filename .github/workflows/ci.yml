@@ -57,22 +57,7 @@ jobs:
           DATABASE_URL: postgresql://luminol:luminol@localhost:5432/luminol
       - run: pnpm lint
       - name: Check repository formatting
-        shell: bash
-        run: |
-          set +e
-          pnpm format:check
-          status=$?
-          if [ "$status" -ne 0 ]; then
-            pnpm exec prettier --write \
-              apps/web/app/about/page.tsx \
-              apps/web/app/consultations/page.module.css \
-              apps/web/app/consultations/page.tsx
-            git --no-pager diff -- \
-              apps/web/app/about/page.tsx \
-              apps/web/app/consultations/page.module.css \
-              apps/web/app/consultations/page.tsx
-            exit "$status"
-          fi
+        run: pnpm format:check
       - name: Run typecheck
         shell: bash
         run: |
