@@ -66,7 +66,9 @@ describe('scheduled Instagram Reels dispatch selection', () => {
 
     await listDueInstagramReelsPublishingAttemptIds(client, { now });
 
-    expect(findMany).toHaveBeenCalledWith(expect.objectContaining({ take: 10 }));
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ take: 10 }),
+    );
   });
 
   it('rejects invalid dispatch limits and timestamps before querying', async () => {
