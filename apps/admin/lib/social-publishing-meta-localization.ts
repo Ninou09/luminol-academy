@@ -5,6 +5,7 @@ export type SocialPublishingMetaCopy = {
   providerReady: string;
   providerOff: string;
   providerMisconfigured: string;
+  credentialsBoundary: string;
   execute: string;
   executeHelp: string;
   instagramOnly: string;
@@ -18,6 +19,8 @@ const english: SocialPublishingMetaCopy = {
     'External Meta publishing is off. Planning and review remain available without provider calls.',
   providerMisconfigured:
     'Meta publishing was enabled but the server configuration is incomplete or invalid.',
+  credentialsBoundary:
+    'Meta credentials stay server-side and are never stored in publishing records or displayed in this workspace.',
   execute: 'Execute Instagram Reel manually',
   executeHelp:
     'This is an explicit external side effect. The executor revalidates the approved proposal, exact content revision and destination before each provider phase.',
@@ -33,6 +36,8 @@ const french: SocialPublishingMetaCopy = {
     'La publication externe Meta est désactivée. La planification et la revue restent disponibles sans appel fournisseur.',
   providerMisconfigured:
     'La publication Meta a été activée mais la configuration serveur est incomplète ou invalide.',
+  credentialsBoundary:
+    'Les identifiants Meta restent côté serveur et ne sont jamais stockés dans les enregistrements de publication ni affichés dans cet espace.',
   execute: 'Exécuter manuellement le Reel Instagram',
   executeHelp:
     'Cette action produit un effet externe explicite. L’exécuteur revalide la proposition approuvée, la révision exacte du contenu et la destination avant chaque phase fournisseur.',
@@ -48,6 +53,8 @@ const arabic: SocialPublishingMetaCopy = {
     'النشر الخارجي عبر Meta معطّل. تبقى المراجعة والتخطيط متاحين من دون أي اتصال بالمزوّد.',
   providerMisconfigured:
     'تم تفعيل نشر Meta لكن إعدادات الخادم غير مكتملة أو غير صالحة.',
+  credentialsBoundary:
+    'تبقى بيانات اعتماد Meta على الخادم فقط ولا تُخزَّن في سجلات النشر ولا تُعرض في مساحة العمل هذه.',
   execute: 'تنفيذ نشر Reel على إنستغرام يدوياً',
   executeHelp:
     'هذا الإجراء يسبب أثراً خارجياً صريحاً. يعيد المنفّذ التحقق من الاقتراح المعتمد ونسخة المحتوى الدقيقة والوجهة قبل كل مرحلة لدى المزوّد.',
