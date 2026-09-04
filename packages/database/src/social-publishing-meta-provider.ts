@@ -43,7 +43,9 @@ export type MetaSocialPublishingErrorCode =
   | 'META_MEDIA_PROCESSING_PENDING'
   | 'META_MEDIA_PROCESSING_FAILED';
 
-export class MetaSocialPublishingSafeError extends SocialPublishingProviderSafeError {
+export class MetaSocialPublishingSafeError
+  extends SocialPublishingProviderSafeError
+{
   override readonly code: MetaSocialPublishingErrorCode;
 
   constructor(code: MetaSocialPublishingErrorCode) {
