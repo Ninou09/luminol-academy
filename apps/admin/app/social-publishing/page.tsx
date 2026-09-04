@@ -1,5 +1,6 @@
 import { requirePermission } from '@luminol/auth';
 import { db, materializeSocialPublishingDeliveryPlan } from '@luminol/database';
+import { getSocialPublishingProviderPhase } from '@luminol/database/social-publishing-attempts';
 import {
   formatLocalizedDate,
   getCommonDictionary,
@@ -13,6 +14,7 @@ import {
   getSocialPublishingCopy,
   type SocialPublishingCopy,
 } from '../../lib/social-publishing-localization';
+import { getSocialPublishingProviderPhaseCopy } from '../../lib/social-publishing-provider-phase-localization';
 import {
   createSocialPublishingAccountAction,
   planSocialPublishingAttemptAction,
@@ -83,6 +85,7 @@ export default async function SocialPublishingPage({
   await requirePermission('academy:manage');
   const locale = await getAdminRequestLocale();
   const copy = getSocialPublishingCopy(locale);
+  const providerPhaseCopy = getSocialPublishingProviderPhaseCopy(locale);
   const common = getCommonDictionary(locale);
   const params = await searchParams;
   const proposalId = firstSearchParam(params.proposalId)?.trim() ?? '';
@@ -334,49 +337,67 @@ export default async function SocialPublishingPage({
               <p>{copy.noAttempts}</p>
             ) : (
               <div style={{ display: 'grid', gap: '1rem' }}>
-                {attempts.map((attempt) => (
-                  <article key={attempt.id} className="admin-panel">
-                    <div className="panel-heading">
-                      <div>
-                        <h3>{attempt.actionId}</h3>
-                        <p>
-                          {copy.platformName[attempt.platform]} ·{' '}
-                          {attempt.accountRef} · {attempt.content.title}
-                        </p>
+                {attempts.map((attempt) => {
+                  const providerPhase =
+                    getSocialPublishingProviderPhase(attempt);
+                  return (
+                    <article key={attempt.id} className="admin-panel">
+                      <div className="panel-heading">
+                        <div>
+                          <h3>{attempt.actionId}</h3>
+                          <p>
+                            {copy.platformName[attempt.platform]} ·{' '}
+                            {attempt.accountRef} · {attempt.content.title}
+                          </p>
+                        </div>
+                        <strong>{copy.attemptStatus[attempt.status]}</strong>
                       </div>
-                      <strong>{copy.attemptStatus[attempt.status]}</strong>
-                    </div>
-                    <dl>
-                      <dt>{copy.proposalId}</dt>
-                      <dd>{attempt.proposalId}</dd>
-                      <dt>{copy.externalAccountId}</dt>
-                      <dd>{attempt.externalAccountId}</dd>
-                      <dt>{copy.contentRevision}</dt>
-                      <dd>
-                        {attempt.contentCalendarItemId} · r
-                        {attempt.contentRevision}
-                      </dd>
-                      <dt>{copy.attemptCount}</dt>
-                      <dd>{attempt.attemptCount}</dd>
-                      <dt>{copy.nextAttempt}</dt>
-                      <dd>{date(attempt.nextAttemptAt)}</dd>
-                      <dt>{copy.providerReference}</dt>
-                      <dd>{attempt.providerReference ?? copy.none}</dd>
-                      <dt>{copy.errorCode}</dt>
-                      <dd>{attempt.lastErrorCode ?? copy.none}</dd>
-                    </dl>
-                    <small>
-                      {attempt.events.map((event) => (
-                        <span key={event.id} style={{ display: 'block' }}>
-                          {copy.attemptEventType[event.eventType]} ·{' '}
-                          {date(event.occurredAt)} ·{' '}
-                          {event.actor?.email ?? copy.systemActor}
-                          {event.errorCode ? ` · ${event.errorCode}` : ''}
-                        </span>
-                      ))}
-                    </small>
-                  </article>
-                ))}
+                      <dl>
+                        <dt>{copy.proposalId}</dt>
+                        <dd>{attempt.proposalId}</dd>
+                        <dt>{copy.externalAccountId}</dt>
+                        <dd>{attempt.externalAccountId}</dd>
+                        <dt>{copy.contentRevision}</dt>
+                        <dd>
+                          {attempt.contentCalendarItemId} · r
+                          {attempt.contentRevision}
+                        </dd>
+                        <dt>{copy.attemptCount}</dt>
+                        <dd>{attempt.attemptCount}</dd>
+                        <dt>{copy.nextAttempt}</dt>
+                        <dd>{date(attempt.nextAttemptAt)}</dd>
+                        <dt>{providerPhaseCopy.providerPhase}</dt>
+                        <dd>{providerPhaseCopy.phaseName[providerPhase]}</dd>
+                        <dt>{copy.providerReference}</dt>
+                        <dd>{attempt.providerReference ?? copy.none}</dd>
+                        <dt>{copy.errorCode}</dt>
+                        <dd>{attempt.lastErrorCode ?? copy.none}</dd>
+                      </dl>
+                      <small>
+                        {attempt.events.map((event) => {
+                          const checkpoint =
+                            event.eventType === 'STARTED' &&
+                            event.fromStatus === 'IN_PROGRESS' &&
+                            event.toStatus === 'IN_PROGRESS' &&
+                            Boolean(event.providerReference);
+                          return (
+                            <span key={event.id} style={{ display: 'block' }}>
+                              {checkpoint
+                                ? providerPhaseCopy.providerCheckpoint
+                                : copy.attemptEventType[event.eventType]}{' '}
+                              · {date(event.occurredAt)} ·{' '}
+                              {event.actor?.email ?? copy.systemActor}
+                              {event.providerReference
+                                ? ` · ${event.providerReference}`
+                                : ''}
+                              {event.errorCode ? ` · ${event.errorCode}` : ''}
+                            </span>
+                          );
+                        })}
+                      </small>
+                    </article>
+                  );
+                })}
               </div>
             )}
             <p>{copy.noCredentials}</p>
