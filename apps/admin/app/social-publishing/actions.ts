@@ -1,8 +1,14 @@
 'use server';
 
 import { requirePermission } from '@luminol/auth';
-import { db } from '@luminol/database';
-import { planSocialPublishingAttempt } from '@luminol/database/social-publishing-attempts';
+import {
+  createMetaInstagramReelsProviderFromEnv,
+  db,
+} from '@luminol/database';
+import {
+  executeSocialPublishingAttempt,
+  planSocialPublishingAttempt,
+} from '@luminol/database/social-publishing-attempts';
 import {
   createSocialPublishingAccount,
   setSocialPublishingAccountActive,
@@ -65,6 +71,21 @@ export async function planSocialPublishingAttemptAction(formData: FormData) {
   await planSocialPublishingAttempt(db, {
     proposalId: requireFormString(formData, 'proposalId'),
     actorUserId: administrator.id,
+  });
+
+  revalidateSocialPublishing();
+}
+
+export async function executeMetaSocialPublishingAttemptAction(
+  formData: FormData,
+) {
+  const administrator = await requirePermission('academy:manage');
+  const provider = createMetaInstagramReelsProviderFromEnv();
+
+  await executeSocialPublishingAttempt(db, {
+    attemptId: requireFormString(formData, 'attemptId'),
+    actorUserId: administrator.id,
+    provider,
   });
 
   revalidateSocialPublishing();
