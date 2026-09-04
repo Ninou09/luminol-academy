@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-import type { ResumableSocialPublishingProvider } from './social-publishing-attempts';
+import {
+  SocialPublishingProviderSafeError,
+  type ResumableSocialPublishingProvider,
+} from './social-publishing-attempts';
 import type { SocialPublishingDeliveryPlan } from './social-publishing-delivery';
 
 const graphVersionSchema = z.string().trim().regex(/^v\d+\.\d+$/).max(20);
@@ -40,10 +43,13 @@ export type MetaSocialPublishingErrorCode =
   | 'META_MEDIA_PROCESSING_PENDING'
   | 'META_MEDIA_PROCESSING_FAILED';
 
-export class MetaSocialPublishingSafeError extends Error {
-  constructor(readonly code: MetaSocialPublishingErrorCode) {
+export class MetaSocialPublishingSafeError extends SocialPublishingProviderSafeError {
+  override readonly code: MetaSocialPublishingErrorCode;
+
+  constructor(code: MetaSocialPublishingErrorCode) {
     super(code);
     this.name = 'MetaSocialPublishingSafeError';
+    this.code = code;
   }
 }
 
