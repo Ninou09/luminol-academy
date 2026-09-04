@@ -215,7 +215,7 @@ export default async function SocialPublishingPage({
               </label>
               <button type="submit">{copy.createAccount}</button>
             </form>
-            <p>{copy.noCredentials}</p>
+            <p>{metaCopy.credentialsBoundary}</p>
           </section>
 
           <section className="admin-panel">
@@ -335,7 +335,7 @@ export default async function SocialPublishingPage({
                   <button type="submit">{copy.planAttempt}</button>
                 </form>
                 <p>{copy.planAttemptHelp}</p>
-                <p>{copy.noCredentials}</p>
+                <p>{metaCopy.credentialsBoundary}</p>
               </article>
             ) : null}
           </section>
@@ -347,6 +347,7 @@ export default async function SocialPublishingPage({
                 <p>{providerStatusText}</p>
               </div>
             </div>
+            <p>{metaCopy.credentialsBoundary}</p>
             <p>{metaCopy.instagramOnly}</p>
           </section>
 
@@ -443,7 +444,7 @@ export default async function SocialPublishingPage({
                 })}
               </div>
             )}
-            <p>{copy.noCredentials}</p>
+            <p>{metaCopy.credentialsBoundary}</p>
           </section>
         </div>
       </section>
