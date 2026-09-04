@@ -163,6 +163,27 @@ describe('Meta Instagram Reels provider', () => {
     ).rejects.toMatchObject({ code: 'META_MEDIA_PROCESSING_PENDING' });
   });
 
+  it('maps failed Meta processing to a bounded safe code without publishing', async () => {
+    const fetchImplementation = vi.fn(async () =>
+      jsonResponse({ status_code: 'ERROR' }),
+    );
+    const provider = createMetaInstagramReelsProvider({
+      graphVersion: 'v25.0',
+      accessToken: 'secret-token',
+      fetchImplementation,
+    });
+
+    await expect(
+      provider.complete({
+        plan,
+        idempotencyKey: 'social-publish:v1:processing-error',
+        sessionReference: 'container-failed',
+      }),
+    ).rejects.toMatchObject({ code: 'META_MEDIA_PROCESSING_FAILED' });
+
+    expect(fetchImplementation).toHaveBeenCalledTimes(1);
+  });
+
   it('rejects Facebook, unsupported formats and non-HTTPS assets before network access', async () => {
     const fetchImplementation = vi.fn(async () =>
       jsonResponse({ id: 'should-not-run' }),
