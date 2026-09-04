@@ -114,7 +114,7 @@ export default async function SocialPublishingPage({
       orderBy: { createdAt: 'desc' },
       take: 30,
       include: {
-        content: { select: { title: true } },
+        content: { select: { title: true, format: true } },
         events: {
           orderBy: { occurredAt: 'desc' },
           take: 8,
@@ -365,12 +365,19 @@ export default async function SocialPublishingPage({
                 {attempts.map((attempt) => {
                   const providerPhase =
                     getSocialPublishingProviderPhase(attempt);
-                  const canExecuteMeta =
-                    metaProviderStatus.ready &&
-                    attempt.platform === 'INSTAGRAM' &&
+                  const retryEligible =
                     (attempt.status === 'PLANNED' ||
                       attempt.status === 'RETRY_SCHEDULED') &&
                     attempt.nextAttemptAt.getTime() <= renderTime.getTime();
+                  const expiredLockRecoverable =
+                    attempt.status === 'IN_PROGRESS' &&
+                    Boolean(attempt.lockedUntil) &&
+                    attempt.lockedUntil!.getTime() <= renderTime.getTime();
+                  const canExecuteMeta =
+                    metaProviderStatus.ready &&
+                    attempt.platform === 'INSTAGRAM' &&
+                    attempt.content.format === 'REEL' &&
+                    (retryEligible || expiredLockRecoverable);
                   return (
                     <article key={attempt.id} className="admin-panel">
                       <div className="panel-heading">
