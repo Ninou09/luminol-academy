@@ -59,7 +59,7 @@ describe('Meta Instagram Reels provider', () => {
   });
 
   it('creates an Instagram Reel container without putting the token in URL or body', async () => {
-    const fetchImplementation = vi.fn(async () =>
+    const fetchImplementation = vi.fn<typeof fetch>(async () =>
       jsonResponse({ id: 'container-123' }),
     );
     const provider = createMetaInstagramReelsProvider({
