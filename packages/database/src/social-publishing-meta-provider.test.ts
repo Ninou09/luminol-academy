@@ -119,6 +119,29 @@ describe('Meta Instagram Reels provider', () => {
     );
   });
 
+  it('treats a published container as completed without publishing it again', async () => {
+    const fetchImplementation = vi.fn(async () =>
+      jsonResponse({ status_code: 'PUBLISHED' }),
+    );
+    const provider = createMetaInstagramReelsProvider({
+      graphVersion: 'v25.0',
+      accessToken: 'secret-token',
+      fetchImplementation,
+    });
+
+    await expect(
+      provider.complete({
+        plan,
+        idempotencyKey: 'social-publish:v1:ambiguous-response',
+        sessionReference: 'container-already-published',
+      }),
+    ).resolves.toEqual({
+      providerReference: 'container-already-published',
+    });
+
+    expect(fetchImplementation).toHaveBeenCalledTimes(1);
+  });
+
   it('returns a bounded retryable code while Meta is still processing', async () => {
     const fetchImplementation = vi.fn(async () =>
       jsonResponse({ status_code: 'IN_PROGRESS' }),
