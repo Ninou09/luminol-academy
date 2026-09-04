@@ -6,6 +6,8 @@
   "scripts": {
     "start": "tsc --outDir dist --noEmit false && node dist/main.js",
     "run:once": "tsc --outDir dist --noEmit false && node dist/main.js --once",
+    "start:social": "tsc --outDir dist --noEmit false && node dist/social-main.js",
+    "run:social:once": "tsc --outDir dist --noEmit false && node dist/social-main.js --once",
     "build": "tsc --noEmit",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
