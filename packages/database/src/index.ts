@@ -178,5 +178,6 @@ export * from './professional-analytics';
 export * from './professional-submissions';
 export * from './social-publishing-attempts';
 export * from './social-publishing-delivery';
+export * from './social-publishing-dispatch';
 export * from './social-publishing-meta-provider';
 export * from '../generated/prisma/client';
