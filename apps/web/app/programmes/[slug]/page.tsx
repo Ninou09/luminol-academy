@@ -20,7 +20,6 @@ import {
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
-  localizeProgrammeEnquiryAction,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
 } from '../../../lib/programme-presentation';
@@ -54,6 +53,7 @@ const DETAIL_COPY = {
     unspecified: 'Ask Luminol',
     back: 'Back to programmes',
     exploreSchool: 'Explore this school',
+    ask: 'Ask Luminol',
     waitlistNextEyebrow: 'Next cohort',
     waitlistNextTitle: 'Interested in the next ACT cohort?',
     waitlistNextBody:
@@ -79,6 +79,7 @@ const DETAIL_COPY = {
     unspecified: 'Contacter Luminol',
     back: 'Retour aux programmes',
     exploreSchool: 'Découvrir cette école',
+    ask: 'Contacter Luminol',
     waitlistNextEyebrow: 'Prochaine cohorte',
     waitlistNextTitle: 'Intéressé par la prochaine cohorte ACT ?',
     waitlistNextBody:
@@ -105,6 +106,7 @@ const DETAIL_COPY = {
     unspecified: 'اسأل لومينول',
     back: 'العودة إلى البرامج',
     exploreSchool: 'استكشف هذه المدرسة',
+    ask: 'اسأل لومينول',
     waitlistNextEyebrow: 'الفوج القادم',
     waitlistNextTitle: 'هل أنت مهتم بالفوج القادم لدورة ACT؟',
     waitlistNextBody:
@@ -202,7 +204,7 @@ export default async function ProgrammeDetailPage({
     : null;
   const primaryActionLabel = isWaitlist
     ? localizeProgrammeWaitlistAction(locale)
-    : localizeProgrammeEnquiryAction(locale);
+    : copy.ask;
   const bodyParagraphs = isWaitlist ? [] : getBodyParagraphs(programme);
   const languageNames = isWaitlist
     ? []
@@ -296,12 +298,7 @@ export default async function ProgrammeDetailPage({
               </ul>
 
               <div className={styles.actions}>
-                <ButtonLink
-                  href={contactHref}
-                  data-programme-detail-primary-action
-                >
-                  {primaryActionLabel}
-                </ButtonLink>
+                <ButtonLink href={contactHref}>{primaryActionLabel}</ButtonLink>
                 <ButtonLink
                   href={localizeHref(
                     locale,
@@ -443,12 +440,7 @@ export default async function ProgrammeDetailPage({
           </h2>
           <p>{isWaitlist ? copy.waitlistNextBody : copy.nextBody}</p>
           <div className={styles.footerActions}>
-            <ButtonLink
-              href={contactHref}
-              data-programme-detail-primary-action
-            >
-              {primaryActionLabel}
-            </ButtonLink>
+            <ButtonLink href={contactHref}>{primaryActionLabel}</ButtonLink>
             <ButtonLink
               href={localizeHref(locale, '/programmes')}
               variant="secondary"
