@@ -17,6 +17,10 @@ import {
 
 const identifierSchema = z.string().trim().min(1).max(255);
 const providerReferenceSchema = z.string().trim().min(1).max(255);
+const providerErrorCodeSchema = z
+  .string()
+  .trim()
+  .regex(/^[A-Z][A-Z0-9_]{1,63}$/);
 
 export const SOCIAL_PUBLISHING_LOCK_MS = 5 * 60_000;
 const SOCIAL_PUBLISHING_RETRY_DELAYS_MS = [60_000, 5 * 60_000] as const;
@@ -51,6 +55,17 @@ export type ExecuteSocialPublishingAttemptResult = {
   attempt: SocialPublishingAttempt;
   providerInvoked: boolean;
 };
+
+export class SocialPublishingProviderSafeError extends Error {
+  readonly code: string;
+
+  constructor(code: string) {
+    const parsedCode = providerErrorCodeSchema.parse(code);
+    super(parsedCode);
+    this.name = 'SocialPublishingProviderSafeError';
+    this.code = parsedCode;
+  }
+}
 
 function isResumableSocialPublishingProvider(
   provider: SocialPublishingProvider,
@@ -536,7 +551,11 @@ export async function executeSocialPublishingAttempt(
     );
 
     return { attempt: succeeded, providerInvoked: true };
-  } catch {
+  } catch (error) {
+    const providerErrorCode =
+      error instanceof SocialPublishingProviderSafeError
+        ? error.code
+        : 'PROVIDER_ERROR';
     const retryDelay = socialPublishingRetryDelayMs(attemptNumber);
     const nextStatus =
       retryDelay == null
@@ -556,7 +575,7 @@ export async function executeSocialPublishingAttempt(
               retryDelay == null
                 ? claimed.nextAttemptAt
                 : new Date(now.getTime() + retryDelay),
-            lastErrorCode: 'PROVIDER_ERROR',
+            lastErrorCode: providerErrorCode,
             completedAt: retryDelay == null ? now : null,
             lockToken: null,
             lockedUntil: null,
@@ -576,7 +595,7 @@ export async function executeSocialPublishingAttempt(
             fromStatus: SocialPublishingAttemptStatus.IN_PROGRESS,
             toStatus: nextStatus,
             attemptNumber,
-            errorCode: 'PROVIDER_ERROR',
+            errorCode: providerErrorCode,
             occurredAt: now,
           },
         });
