@@ -14,6 +14,7 @@ import { buildProgrammeContactHref } from '../../lib/programme-contact';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
+  localizeProgrammeEnquiryAction,
   localizeProgrammeViewAction,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
@@ -84,6 +85,7 @@ export default async function ProgrammesPage({
   const copy = getPublicCopy(locale).programmes;
   const schools = getSchools(locale);
   const viewProgrammeLabel = localizeProgrammeViewAction(locale);
+  const enquiryProgrammeLabel = localizeProgrammeEnquiryAction(locale);
   const filters = parseProgrammeDiscoveryParams(await searchParams);
   const sourceProgrammes = await getPublicProgrammes();
   const programmes = sourceProgrammes
@@ -228,7 +230,7 @@ export default async function ProgrammesPage({
                     : null;
                   const contactLabel = isWaitlist
                     ? localizeProgrammeWaitlistAction(locale)
-                    : copy.askLuminol;
+                    : enquiryProgrammeLabel;
                   const deliveryLabel = isWaitlist
                     ? null
                     : localizeProgrammeDelivery(locale, programme.delivery);
@@ -294,14 +296,28 @@ export default async function ProgrammesPage({
                             {deliveryLabel ? <li>{deliveryLabel}</li> : null}
                           </ul>
                         ) : null}
-                        <div className={styles.cardActions}>
+                        <div
+                          className={styles.cardActions}
+                          data-programme-actions
+                        >
                           <Link
+                            className={styles.primaryAction}
                             href={programmeHref}
                             aria-label={programmeActionLabel}
+                            data-programme-primary-action
                           >
                             {viewProgrammeLabel}
                           </Link>
                           <Link
+                            className={styles.secondaryAction}
+                            href={contactHref}
+                            aria-label={contactActionLabel}
+                            data-programme-enquiry-action
+                          >
+                            {contactLabel}
+                          </Link>
+                          <Link
+                            className={styles.tertiaryAction}
                             href={localizeHref(
                               locale,
                               `/schools/${programme.school}#programs`,
@@ -309,12 +325,6 @@ export default async function ProgrammesPage({
                             aria-label={schoolActionLabel}
                           >
                             {copy.viewSchool}
-                          </Link>
-                          <Link
-                            href={contactHref}
-                            aria-label={contactActionLabel}
-                          >
-                            {contactLabel}
                           </Link>
                         </div>
                       </div>

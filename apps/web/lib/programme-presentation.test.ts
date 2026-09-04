@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
+  localizeProgrammeEnquiryAction,
   localizeProgrammeViewAction,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
@@ -38,7 +39,7 @@ describe('localizeProgrammeDelivery', () => {
   });
 });
 
-describe('localizeProgrammeViewAction', () => {
+describe('programme conversion actions', () => {
   it.each([
     ['en', 'View programme'],
     ['fr', 'Voir le programme'],
@@ -47,6 +48,17 @@ describe('localizeProgrammeViewAction', () => {
     'localizes the %s programme detail action',
     (locale, expected) => {
       expect(localizeProgrammeViewAction(locale)).toBe(expected);
+    },
+  );
+
+  it.each([
+    ['en', 'Ask about this programme'],
+    ['fr', 'Demander des informations sur ce programme'],
+    ['ar', 'استفسر عن هذا البرنامج'],
+  ] as const)(
+    'localizes the %s programme enquiry action',
+    (locale, expected) => {
+      expect(localizeProgrammeEnquiryAction(locale)).toBe(expected);
     },
   );
 });

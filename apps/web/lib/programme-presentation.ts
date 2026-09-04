@@ -27,6 +27,12 @@ const PROGRAMME_VIEW_ACTION_LABELS = {
   ar: 'عرض البرنامج',
 } as const satisfies Record<Locale, string>;
 
+const PROGRAMME_ENQUIRY_ACTION_LABELS = {
+  en: 'Ask about this programme',
+  fr: 'Demander des informations sur ce programme',
+  ar: 'استفسر عن هذا البرنامج',
+} as const satisfies Record<Locale, string>;
+
 const PROGRAMME_WAITLIST_LABELS = {
   en: 'Next cohort · Waitlist',
   fr: 'Prochaine cohorte · Liste d’attente',
@@ -57,6 +63,10 @@ export function localizeProgrammeDelivery(
 
 export function localizeProgrammeViewAction(locale: Locale): string {
   return PROGRAMME_VIEW_ACTION_LABELS[locale];
+}
+
+export function localizeProgrammeEnquiryAction(locale: Locale): string {
+  return PROGRAMME_ENQUIRY_ACTION_LABELS[locale];
 }
 
 export function isProgrammeWaitlist(slug: string): boolean {
