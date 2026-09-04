@@ -81,18 +81,21 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
       number: '01',
       school: schools.psychology,
       description: psychologyPathDescription,
+      href: localizeHref(locale, '/consultations'),
       tone: styles.psychology ?? '',
     },
     {
       number: '02',
       school: schools.languages,
       description: copy.pathDescriptions.languages,
+      href: localizeHref(locale, `/schools/${schools.languages.slug}`),
       tone: styles.languages ?? '',
     },
     {
       number: '03',
       school: schools.training,
       description: copy.pathDescriptions.training,
+      href: localizeHref(locale, `/schools/${schools.training.slug}`),
       tone: styles.training ?? '',
     },
   ] as const;
@@ -128,7 +131,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             {contactPaths.map((path) => (
               <Link
                 className={`${styles.pathCard} ${path.tone}`}
-                href={localizeHref(locale, `/schools/${path.school.slug}`)}
+                href={path.href}
                 key={path.school.slug}
                 aria-labelledby={`contact-path-${path.school.slug}-title`}
                 data-contact-path={path.school.slug}
