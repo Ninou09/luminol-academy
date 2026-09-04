@@ -18,6 +18,7 @@ const disconnectFailureMessage =
 
 function dependencies(ids: string[] = []): SocialPublishingWorkerDependencies {
   return {
+    initialize: vi.fn().mockResolvedValue(undefined),
     listDueAttemptIds: vi.fn().mockResolvedValue(ids),
     executeAttempt: vi.fn().mockResolvedValue(undefined),
     disconnect: vi.fn().mockResolvedValue(undefined),
@@ -31,16 +32,54 @@ afterEach(() => {
 });
 
 describe('scheduled social publishing worker', () => {
-  it('is OFF by default and performs no dispatch query or provider execution', async () => {
+  it('is OFF by default and performs no provider preflight, dispatch query or execution', async () => {
     const worker = dependencies(['attempt-should-not-run']);
 
     await expect(runSocialPublishingWorker('once', {}, worker)).resolves.toBe(
       0,
     );
 
+    expect(worker.initialize).not.toHaveBeenCalled();
     expect(worker.listDueAttemptIds).not.toHaveBeenCalled();
     expect(worker.executeAttempt).not.toHaveBeenCalled();
     expect(worker.disconnect).toHaveBeenCalledOnce();
+  });
+
+  it('preflights configuration before querying due attempts', async () => {
+    const worker = dependencies(['attempt-a']);
+
+    await expect(
+      runSocialPublishingWorker('once', enabledEnvironment, worker),
+    ).resolves.toBe(0);
+
+    expect(worker.initialize).toHaveBeenCalledOnce();
+    expect(
+      vi.mocked(worker.initialize).mock.invocationCallOrder[0],
+    ).toBeLessThan(
+      vi.mocked(worker.listDueAttemptIds).mock.invocationCallOrder[0]!,
+    );
+  });
+
+  it('fails closed when provider preflight fails and never queries due work', async () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const worker = dependencies(['attempt-should-not-run']);
+    vi.mocked(worker.initialize!).mockRejectedValue(
+      new Error('provider disabled'),
+    );
+
+    await expect(
+      runSocialPublishingWorker('once', enabledEnvironment, worker),
+    ).resolves.toBe(1);
+
+    expect(worker.listDueAttemptIds).not.toHaveBeenCalled();
+    expect(worker.executeAttempt).not.toHaveBeenCalled();
+    expect(worker.disconnect).toHaveBeenCalledOnce();
+    expect(consoleError).toHaveBeenCalledWith(
+      workerFailureMessage,
+      expect.any(Error),
+    );
   });
 
   it('processes exactly one bounded due batch when explicitly enabled', async () => {
