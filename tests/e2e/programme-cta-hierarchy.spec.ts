@@ -51,7 +51,9 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
       );
 
       await page.goto(programmeHref!);
-      await expect(page.locator(`a[href="${enquiryHref}"]`).first()).toBeVisible();
+      await expect(
+        page.locator(`a[href="${enquiryHref}"]`).first(),
+      ).toBeVisible();
     },
   );
 }
