@@ -136,6 +136,23 @@ test('premium Contact page preserves the enquiry form contract', async ({
   );
 });
 
+test('Contact exploration keeps clinical consultation routing distinct in every locale', async ({
+  page,
+}) => {
+  for (const locale of ['en', 'fr', 'ar'] as const) {
+    await page.goto(`/${locale}/contact`);
+    await expect(
+      page.locator('[data-contact-path="psychology"]'),
+    ).toHaveAttribute('href', `/${locale}/consultations`);
+    await expect(
+      page.locator('[data-contact-path="languages"]'),
+    ).toHaveAttribute('href', `/${locale}/schools/languages`);
+    await expect(
+      page.locator('[data-contact-path="training"]'),
+    ).toHaveAttribute('href', `/${locale}/schools/training`);
+  }
+});
+
 test('Arabic About and Contact storytelling stay RTL and mobile-safe', async ({
   page,
 }) => {
