@@ -54,7 +54,7 @@ describe('scheduled social publishing worker', () => {
 
     expect(worker.initialize).toHaveBeenCalledOnce();
     expect(
-      vi.mocked(worker.initialize).mock.invocationCallOrder[0],
+      vi.mocked(worker.initialize).mock.invocationCallOrder[0]!,
     ).toBeLessThan(
       vi.mocked(worker.listDueAttemptIds).mock.invocationCallOrder[0]!,
     );
