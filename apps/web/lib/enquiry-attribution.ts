@@ -14,13 +14,40 @@ function boundedValue(value: string | null, limit: number) {
   return normalized ? normalized.slice(0, limit) : undefined;
 }
 
+function isGenericContactPath(pathname: string) {
+  return /^\/(?:(?:ar|fr|en)\/)?contact\/?$/i.test(pathname);
+}
+
+export function getSameOriginReferrerPath(
+  referrer: string,
+  origin: string,
+): string | undefined {
+  if (!referrer.trim() || !origin.trim()) return undefined;
+
+  try {
+    const url = new URL(referrer);
+    if (url.origin !== new URL(origin).origin) return undefined;
+    return url.pathname.startsWith('/')
+      ? url.pathname.slice(0, LANDING_PATH_LIMIT)
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export function getCurrentEnquiryAttribution(location: {
   pathname: string;
   search: string;
+  referrerPathname?: string | undefined;
 }): EnquiryCampaignAttribution {
   const search = new URLSearchParams(location.search);
-  const landingPath = location.pathname.startsWith('/')
-    ? location.pathname.slice(0, LANDING_PATH_LIMIT)
+  const preferredLandingPath =
+    isGenericContactPath(location.pathname) &&
+    location.referrerPathname?.startsWith('/')
+      ? location.referrerPathname
+      : location.pathname;
+  const landingPath = preferredLandingPath.startsWith('/')
+    ? preferredLandingPath.slice(0, LANDING_PATH_LIMIT)
     : undefined;
 
   return {

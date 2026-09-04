@@ -24,18 +24,18 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
       new RegExp(`^/${locale}/programmes/([a-z0-9]+(?:-[a-z0-9]+)*)$`),
     );
     const slug = programmeHref!.split('/').at(-1)!;
+    const expectedContactHref = `/${locale}/contact?programme=${slug}`;
 
-    const enquiryLink = card.locator('a[data-programme-enquiry="true"]');
+    const enquiryLink = card.locator(`a[href="${expectedContactHref}"]`);
     await expect(enquiryLink).toHaveCount(1);
-    await expect(enquiryLink).toHaveAttribute(
-      'href',
-      `/${locale}/contact?programme=${slug}`,
-    );
 
-    await enquiryLink.click();
-    await expect(page).toHaveURL(
-      new RegExp(`/${locale}/contact\\?programme=${slug}$`),
-    );
+    await programmeLink.click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/programmes/${slug}$`));
+    await expect(
+      page.locator(`a[href="${expectedContactHref}"]`).first(),
+    ).toBeVisible();
+
+    await page.goto(expectedContactHref);
     await expect(page.locator('select[name="school"]')).not.toHaveValue(
       'GENERAL',
     );

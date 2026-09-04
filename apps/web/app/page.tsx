@@ -73,6 +73,13 @@ export default async function Page() {
                 {copy.exploreSchools} <span aria-hidden="true">↘</span>
               </ButtonLink>
               <ButtonLink
+                href={localizeHref(locale, '/consultations')}
+                size="lg"
+                variant="secondary"
+              >
+                {copy.pathwayPsychology} <span aria-hidden="true">→</span>
+              </ButtonLink>
+              <ButtonLink
                 href={localizeHref(locale, '/about')}
                 size="lg"
                 variant="secondary"
@@ -239,7 +246,7 @@ export default async function Page() {
             aria-labelledby="pathway-title"
             data-reveal
           >
-            <Link href={localizeHref(locale, '/schools/psychology')}>
+            <Link href={localizeHref(locale, '/consultations')}>
               <span>01</span>
               {copy.pathwayPsychology}
               <b aria-hidden="true">↗</b>

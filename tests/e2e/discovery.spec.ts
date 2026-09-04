@@ -4,6 +4,7 @@ const routePaths = [
   '',
   '/programmes',
   '/about',
+  '/consultations',
   '/contact',
   '/schools/psychology',
   '/schools/languages',
@@ -77,6 +78,10 @@ test('robots and sitemap preserve governed public discovery', async ({
     {
       routePath: '/schools/psychology',
       defaultPath: '/en/schools/psychology',
+    },
+    {
+      routePath: '/consultations',
+      defaultPath: '/en/consultations',
     },
   ]) {
     for (const entryLocale of locales) {

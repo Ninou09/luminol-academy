@@ -46,8 +46,6 @@ jobs:
             nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
       - run: pnpm install --frozen-lockfile
       - run: pnpm security:check
-      - name: Audit production dependencies
-        run: pnpm audit --prod --audit-level high
       - run: pnpm db:generate
       - name: Validate, deploy, backfill, and verify migrations on ephemeral PostgreSQL
         run: |
@@ -135,3 +133,23 @@ jobs:
           PORTAL_STATE: ${{ secrets.PLAYWRIGHT_PORTAL_STORAGE_STATE }}
           PLAYWRIGHT_ADMIN_BASE_URL: ${{ vars.PLAYWRIGHT_ADMIN_BASE_URL }}
           PLAYWRIGHT_PORTAL_BASE_URL: ${{ vars.PLAYWRIGHT_PORTAL_BASE_URL }}
+      - name: Audit production dependencies
+        timeout-minutes: 8
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "Production dependency audit attempt ${attempt}/3"
+            if timeout --signal=TERM 90s pnpm audit --prod --audit-level high; then
+              exit 0
+            fi
+            status=$?
+            if [ "$status" -eq 124 ]; then
+              echo "Production dependency audit attempt ${attempt} timed out after 90 seconds."
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              sleep $((attempt * 20))
+            fi
+          done
+          echo "Production dependency audit failed after three blocking attempts."
+          exit 1

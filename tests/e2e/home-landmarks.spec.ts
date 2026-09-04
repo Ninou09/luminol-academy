@@ -34,10 +34,16 @@ test('homepage sections, pathway navigation and school articles have accessible 
   const pathwayLinks = pathwayNavigation.getByRole('link');
   await expect(pathwayLinks).toHaveCount(3);
 
+  const expectedPathways = [
+    '/en/consultations',
+    '/en/schools/languages',
+    '/en/schools/training',
+  ] as const;
+
   for (let index = 0; index < (await pathwayLinks.count()); index += 1) {
     const link = pathwayLinks.nth(index);
     const href = await link.getAttribute('href');
-    expect(href).toMatch(/^\/en\/schools\/(psychology|languages|training)$/);
+    expect(href).toBe(expectedPathways[index]);
 
     const accessibleName = (
       (await link.getAttribute('aria-label')) ?? ''

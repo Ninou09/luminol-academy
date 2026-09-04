@@ -1,0 +1,181 @@
+.page {
+  overflow: clip;
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+}
+
+.hero,
+.routing,
+.enquiry {
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
+  margin-inline: auto;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+  gap: clamp(2rem, 7vw, 7rem);
+  align-items: end;
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: var(--color-brand-gold-strong);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.hero h1,
+.enquiryContext h2,
+.routing h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+
+.hero h1 {
+  max-width: 52rem;
+  font-size: clamp(3.2rem, 7vw, 7rem);
+  line-height: 0.94;
+}
+
+.lede {
+  max-width: 43rem;
+  margin: 1.6rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: clamp(1rem, 1.5vw, 1.22rem);
+  line-height: 1.8;
+}
+
+.heroAside {
+  padding: clamp(1.5rem, 3vw, 2.3rem);
+  border: 1px solid var(--color-brand-line);
+  border-radius: 1.5rem;
+  background: var(--color-brand-surface);
+  box-shadow: var(--shadow-editorial);
+}
+
+.heroAside p {
+  margin: 0;
+  color: var(--color-brand-ink-soft);
+  line-height: 1.7;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.routing {
+  padding-block: clamp(3.5rem, 7vw, 6rem);
+  border-top: 1px solid var(--color-brand-line);
+}
+
+.routingHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 2rem;
+}
+
+.routing h2,
+.enquiryContext h2 {
+  font-size: clamp(2.3rem, 4.6vw, 4.4rem);
+  line-height: 1;
+}
+
+.routingHeader > p {
+  margin: 0;
+  color: var(--color-brand-ink-soft);
+  line-height: 1.75;
+}
+
+.pathGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.pathCard {
+  min-height: 15rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: 1.25rem;
+  background: var(--color-brand-surface);
+}
+
+.pathCard span {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.pathCard h3 {
+  margin: 3rem 0 0.8rem;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.pathCard p {
+  margin: 0;
+  color: var(--color-brand-ink-soft);
+  line-height: 1.65;
+}
+
+.enquiry {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(22rem, 1.2fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+  margin-bottom: clamp(4rem, 8vw, 8rem);
+  padding: clamp(2rem, 5vw, 4rem);
+  border-radius: 1.8rem;
+  background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
+}
+
+.enquiryContext p {
+  max-width: 34rem;
+  color: color-mix(in srgb, var(--color-brand-surface) 74%, transparent);
+  line-height: 1.75;
+}
+
+.safetyNote {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 20%, transparent);
+  font-size: 0.9rem;
+}
+
+.formSurface {
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border-radius: 1.35rem;
+  background: var(--color-brand-surface);
+  color: var(--color-brand-ink);
+}
+
+@media (max-width: 860px) {
+  .hero,
+  .routingHeader,
+  .enquiry {
+    grid-template-columns: 1fr;
+  }
+
+  .pathGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroAside {
+    max-width: 38rem;
+  }
+}

@@ -3,6 +3,7 @@ import {
   getOpenGraphLocale,
   localizeHref,
   localizePathname,
+  type Locale,
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
@@ -28,6 +29,82 @@ const founderMediaByLocale = {
     alt: 'خداوي فطومة، مؤسسة أكاديمية لومينول',
   },
 } as const;
+
+const founderAuthorityByLocale = {
+  en: {
+    eyebrow: 'Founder-led authority',
+    title: 'Experience behind the institution.',
+    body: 'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 30 years of field experience, and supported by a broader expert team across content and programme delivery.',
+    facts: [
+      {
+        number: '30+',
+        title: 'Years of field experience',
+        description:
+          'Long-term practical experience anchors the psychology division in real human work, not trend-led content alone.',
+      },
+      {
+        number: '01',
+        title: 'A recognizable founder voice',
+        description:
+          'The founder remains a visible trust anchor while Luminol develops institutional authority through its wider expert team.',
+      },
+    ],
+    action: 'Start a psychology enquiry',
+  },
+  fr: {
+    eyebrow: 'Une autorité portée par la fondatrice',
+    title: 'Une expérience réelle derrière l’institution.',
+    body: 'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 30 ans d’expérience de terrain, ainsi que sur une équipe élargie d’experts pour les contenus et les programmes.',
+    facts: [
+      {
+        number: '30+',
+        title: 'Années d’expérience de terrain',
+        description:
+          'Une longue expérience pratique ancre le pôle psychologie dans le travail humain réel, au-delà des tendances de contenu.',
+      },
+      {
+        number: '01',
+        title: 'Une voix fondatrice identifiable',
+        description:
+          'La fondatrice reste un repère de confiance visible tandis que Luminol développe aussi l’autorité de son équipe d’experts.',
+      },
+    ],
+    action: 'Commencer une demande en psychologie',
+  },
+  ar: {
+    eyebrow: 'خبرة تقودها المؤسسة',
+    title: 'خبرة ميدانية حقيقية وراء المؤسسة.',
+    body: 'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 30 سنة من الخبرة الميدانية، إلى جانب فريق أوسع من الخبراء في المحتوى وتقديم البرامج.',
+    facts: [
+      {
+        number: '+30',
+        title: 'سنة من الخبرة الميدانية',
+        description:
+          'تمنح الخبرة العملية الطويلة قسم علم النفس أساساً مرتبطاً بالعمل الإنساني الحقيقي، وليس بالمحتوى الرائج فقط.',
+      },
+      {
+        number: '01',
+        title: 'صوت مؤسس واضح ومعروف',
+        description:
+          'تبقى المؤسسة ركناً أساسياً للثقة، مع بناء سلطة مؤسساتية أوسع من خلال بقية فريق الخبراء في لومينول.',
+      },
+    ],
+    action: 'ابدأ طلباً في علم النفس',
+  },
+} as const satisfies Record<
+  Locale,
+  {
+    eyebrow: string;
+    title: string;
+    body: string;
+    facts: readonly {
+      number: string;
+      title: string;
+      description: string;
+    }[];
+    action: string;
+  }
+>;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -64,6 +141,7 @@ export default async function AboutPage() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale).about;
   const founderMedia = founderMediaByLocale[locale];
+  const founderAuthority = founderAuthorityByLocale[locale];
   const schoolCards = [
     {
       slug: 'psychology',
@@ -167,6 +245,38 @@ export default async function AboutPage() {
             <p className={styles.originLede}>{copy.originLede}</p>
             <p>{copy.originBodyOne}</p>
             <p>{copy.originBodyTwo}</p>
+          </div>
+        </section>
+
+        <section
+          className={styles.section}
+          aria-labelledby="founder-authority-title"
+          data-founder-authority
+        >
+          <div className={styles.sectionHeading} data-reveal>
+            <div>
+              <p className={styles.eyebrow}>{founderAuthority.eyebrow}</p>
+              <h2 id="founder-authority-title">{founderAuthority.title}</h2>
+            </div>
+            <p>{founderAuthority.body}</p>
+          </div>
+          <div className={styles.valueGrid}>
+            {founderAuthority.facts.map((fact) => (
+              <article
+                className={styles.valueCard}
+                key={`${fact.number}-${fact.title}`}
+                data-reveal
+              >
+                <span>{fact.number}</span>
+                <h3>{fact.title}</h3>
+                <p>{fact.description}</p>
+              </article>
+            ))}
+          </div>
+          <div style={{ marginTop: '2rem' }} data-reveal>
+            <ButtonLink href={localizeHref(locale, '/consultations')} size="lg">
+              {founderAuthority.action} <span aria-hidden="true">→</span>
+            </ButtonLink>
           </div>
         </section>
 

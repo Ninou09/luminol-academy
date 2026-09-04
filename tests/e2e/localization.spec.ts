@@ -13,11 +13,12 @@ test('mobile header keeps primary navigation, contact access and locale URL stat
   await expect(primaryNav).toHaveCSS('overflow-x', 'auto');
 
   const primaryLinks = primaryNav.getByRole('link');
-  await expect(primaryLinks).toHaveCount(4);
-  for (let index = 0; index < 4; index += 1) {
+  await expect(primaryLinks).toHaveCount(5);
+  for (let index = 0; index < (await primaryLinks.count()); index += 1) {
     await primaryLinks.nth(index).focus();
     await expect(primaryLinks.nth(index)).toBeFocused();
   }
+  await expect(primaryNav.locator('a[href="/fr/consultations"]')).toBeVisible();
 
   await expect(
     page.getByRole('navigation', { name: 'Navigation du pied de page' }),
@@ -48,7 +49,8 @@ test('Arabic mobile primary navigation remains RTL and page-safe', async ({
   const primaryNav = page.getByRole('navigation', { name: 'التنقل الرئيسي' });
   await expect(primaryNav).toBeVisible();
   await expect(primaryNav).toHaveCSS('direction', 'rtl');
-  await expect(primaryNav.getByRole('link')).toHaveCount(4);
+  await expect(primaryNav.getByRole('link')).toHaveCount(5);
+  await expect(primaryNav.locator('a[href="/ar/consultations"]')).toBeVisible();
   await expect(
     page.getByRole('navigation', { name: 'التنقل في تذييل الصفحة' }),
   ).toBeVisible();

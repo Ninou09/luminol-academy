@@ -4,9 +4,15 @@ import type { Locale } from '@luminol/localization';
 import { Button } from '@luminol/ui';
 import { useState, type FormEvent } from 'react';
 
-import { getCurrentEnquiryAttribution } from '../lib/enquiry-attribution';
+import {
+  getCurrentEnquiryAttribution,
+  getSameOriginReferrerPath,
+} from '../lib/enquiry-attribution';
 import { getEnquiryQualificationCopy } from '../lib/enquiry-qualification-localization';
-import type { PublicEnquirySchool } from '../lib/programme-enquiry';
+import {
+  getProgrammeSlugFromPathname,
+  type PublicEnquirySchool,
+} from '../lib/programme-enquiry';
 import type { getPublicCopy } from '../lib/public-localization';
 
 type FormCopy = ReturnType<typeof getPublicCopy>['form'];
@@ -48,10 +54,20 @@ export function EnquiryForm({
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const referrerPathname = getSameOriginReferrerPath(
+      document.referrer,
+      window.location.origin,
+    );
     const attribution = getCurrentEnquiryAttribution({
       pathname: window.location.pathname,
       search: window.location.search,
+      referrerPathname,
     });
+    const referredProgrammeSlug = referrerPathname
+      ? getProgrammeSlugFromPathname(referrerPathname)
+      : null;
+    const programmeSlug =
+      initialProgrammeSlug ?? referredProgrammeSlug ?? undefined;
 
     setSubmission({ status: 'submitting', message: copy.sending });
 
@@ -68,7 +84,7 @@ export function EnquiryForm({
           deliveryPreference: formData.get('deliveryPreference'),
           timingPreference: formData.get('timingPreference'),
           school: formData.get('school'),
-          programmeSlug: initialProgrammeSlug,
+          programmeSlug,
           ...attribution,
           message: formData.get('message'),
           locale,
