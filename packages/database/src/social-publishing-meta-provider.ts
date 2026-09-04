@@ -14,7 +14,13 @@ const metaIdResponseSchema = z
 
 const metaContainerStatusSchema = z
   .object({
-    status_code: z.enum(['IN_PROGRESS', 'FINISHED', 'ERROR', 'EXPIRED']),
+    status_code: z.enum([
+      'IN_PROGRESS',
+      'FINISHED',
+      'PUBLISHED',
+      'ERROR',
+      'EXPIRED',
+    ]),
   })
   .passthrough();
 
@@ -228,6 +234,9 @@ export function createMetaInstagramReelsProvider(input: {
         throw new MetaSocialPublishingSafeError(
           'META_MEDIA_PROCESSING_FAILED',
         );
+      }
+      if (status.status_code === 'PUBLISHED') {
+        return { providerReference: containerId };
       }
 
       const body = new URLSearchParams({ creation_id: containerId });
