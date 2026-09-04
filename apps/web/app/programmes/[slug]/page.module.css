@@ -290,4 +290,10 @@
   .footerActions {
     align-items: stretch;
   }
+
+  .actions > a,
+  .footerActions > a {
+    width: 100%;
+    justify-content: center;
+  }
 }
