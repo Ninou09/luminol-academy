@@ -274,6 +274,8 @@ export function createMetaInstagramReelsProviderFromEnv(
     graphVersion: env.LUMINOL_META_GRAPH_VERSION!,
     accessToken: env.LUMINOL_META_ACCESS_TOKEN!,
     timeoutMs: Number(env.LUMINOL_META_REQUEST_TIMEOUT_MS ?? '10000'),
-    fetchImplementation: options?.fetchImplementation,
+    ...(options?.fetchImplementation
+      ? { fetchImplementation: options.fetchImplementation }
+      : {}),
   });
 }
