@@ -1,5 +1,9 @@
 import { requirePermission } from '@luminol/auth';
-import { db, materializeSocialPublishingDeliveryPlan } from '@luminol/database';
+import {
+  db,
+  getMetaInstagramReelsProviderStatus,
+  materializeSocialPublishingDeliveryPlan,
+} from '@luminol/database';
 import { getSocialPublishingProviderPhase } from '@luminol/database/social-publishing-attempts';
 import {
   formatLocalizedDate,
@@ -14,9 +18,11 @@ import {
   getSocialPublishingCopy,
   type SocialPublishingCopy,
 } from '../../lib/social-publishing-localization';
+import { getSocialPublishingMetaCopy } from '../../lib/social-publishing-meta-localization';
 import { getSocialPublishingProviderPhaseCopy } from '../../lib/social-publishing-provider-phase-localization';
 import {
   createSocialPublishingAccountAction,
+  executeMetaSocialPublishingAttemptAction,
   planSocialPublishingAttemptAction,
   setSocialPublishingAccountActiveAction,
 } from './actions';
@@ -85,10 +91,13 @@ export default async function SocialPublishingPage({
   await requirePermission('academy:manage');
   const locale = await getAdminRequestLocale();
   const copy = getSocialPublishingCopy(locale);
+  const metaCopy = getSocialPublishingMetaCopy(locale);
   const providerPhaseCopy = getSocialPublishingProviderPhaseCopy(locale);
   const common = getCommonDictionary(locale);
+  const metaProviderStatus = getMetaInstagramReelsProviderStatus();
   const params = await searchParams;
   const proposalId = firstSearchParam(params.proposalId)?.trim() ?? '';
+  const renderTime = new Date();
 
   const [accounts, attempts] = await Promise.all([
     db.socialPublishingAccount.findMany({
@@ -131,6 +140,11 @@ export default async function SocialPublishingPage({
   }
 
   const date = (value: Date) => formatLocalizedDate(value, locale);
+  const providerStatusText = metaProviderStatus.ready
+    ? metaCopy.providerReady
+    : metaProviderStatus.mode === 'OFF'
+      ? metaCopy.providerOff
+      : metaCopy.providerMisconfigured;
 
   return (
     <main
@@ -329,6 +343,16 @@ export default async function SocialPublishingPage({
           <section className="admin-panel">
             <div className="panel-heading">
               <div>
+                <h2>{metaCopy.providerHeading}</h2>
+                <p>{providerStatusText}</p>
+              </div>
+            </div>
+            <p>{metaCopy.instagramOnly}</p>
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
                 <h2>{copy.attemptLedger}</h2>
                 <p>{copy.attemptLedgerIntro}</p>
               </div>
@@ -340,6 +364,12 @@ export default async function SocialPublishingPage({
                 {attempts.map((attempt) => {
                   const providerPhase =
                     getSocialPublishingProviderPhase(attempt);
+                  const canExecuteMeta =
+                    metaProviderStatus.ready &&
+                    attempt.platform === 'INSTAGRAM' &&
+                    (attempt.status === 'PLANNED' ||
+                      attempt.status === 'RETRY_SCHEDULED') &&
+                    attempt.nextAttemptAt.getTime() <= renderTime.getTime();
                   return (
                     <article key={attempt.id} className="admin-panel">
                       <div className="panel-heading">
@@ -373,6 +403,19 @@ export default async function SocialPublishingPage({
                         <dt>{copy.errorCode}</dt>
                         <dd>{attempt.lastErrorCode ?? copy.none}</dd>
                       </dl>
+                      {canExecuteMeta ? (
+                        <>
+                          <form action={executeMetaSocialPublishingAttemptAction}>
+                            <input
+                              type="hidden"
+                              name="attemptId"
+                              value={attempt.id}
+                            />
+                            <button type="submit">{metaCopy.execute}</button>
+                          </form>
+                          <p>{metaCopy.executeHelp}</p>
+                        </>
+                      ) : null}
                       <small>
                         {attempt.events.map((event) => {
                           const checkpoint =
