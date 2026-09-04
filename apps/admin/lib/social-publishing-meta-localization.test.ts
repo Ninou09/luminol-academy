@@ -10,6 +10,7 @@ describe('social publishing Meta localization', () => {
       expect(copy.providerReady.trim()).not.toBe('');
       expect(copy.providerOff.trim()).not.toBe('');
       expect(copy.providerMisconfigured.trim()).not.toBe('');
+      expect(copy.credentialsBoundary.trim()).not.toBe('');
       expect(copy.execute.trim()).not.toBe('');
       expect(copy.executeHelp.trim()).not.toBe('');
       expect(copy.instagramOnly.trim()).not.toBe('');
