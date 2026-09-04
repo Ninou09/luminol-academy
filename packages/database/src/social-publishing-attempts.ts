@@ -333,7 +333,7 @@ export async function executeSocialPublishingAttempt(
 
   const lockToken = randomUUID();
   const attemptNumber = initial.attemptCount + 1;
-  let claimed = await client.$transaction(
+  const claimedResult = await client.$transaction(
     async (transaction: Prisma.TransactionClient) => {
       const update = await transaction.socialPublishingAttempt.updateMany({
         where: {
@@ -384,7 +384,7 @@ export async function executeSocialPublishingAttempt(
     },
   );
 
-  if (!claimed) {
+  if (!claimedResult) {
     return {
       attempt: await client.socialPublishingAttempt.findUniqueOrThrow({
         where: { id: initial.id },
@@ -392,6 +392,8 @@ export async function executeSocialPublishingAttempt(
       providerInvoked: false,
     };
   }
+
+  let claimed = claimedResult;
 
   try {
     plan = await materializeSocialPublishingDeliveryPlan(
