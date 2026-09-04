@@ -1,10 +1,7 @@
 'use server';
 
 import { requirePermission } from '@luminol/auth';
-import {
-  createMetaInstagramReelsProviderFromEnv,
-  db,
-} from '@luminol/database';
+import { createMetaInstagramReelsProviderFromEnv, db } from '@luminol/database';
 import {
   executeSocialPublishingAttempt,
   planSocialPublishingAttempt,
