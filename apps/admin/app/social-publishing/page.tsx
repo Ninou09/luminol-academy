@@ -1,5 +1,9 @@
 import { requirePermission } from '@luminol/auth';
-import { db, materializeSocialPublishingDeliveryPlan } from '@luminol/database';
+import {
+  db,
+  getMetaInstagramReelsProviderStatus,
+  materializeSocialPublishingDeliveryPlan,
+} from '@luminol/database';
 import { getSocialPublishingProviderPhase } from '@luminol/database/social-publishing-attempts';
 import {
   formatLocalizedDate,
@@ -14,9 +18,11 @@ import {
   getSocialPublishingCopy,
   type SocialPublishingCopy,
 } from '../../lib/social-publishing-localization';
+import { getSocialPublishingMetaCopy } from '../../lib/social-publishing-meta-localization';
 import { getSocialPublishingProviderPhaseCopy } from '../../lib/social-publishing-provider-phase-localization';
 import {
   createSocialPublishingAccountAction,
+  executeMetaSocialPublishingAttemptAction,
   planSocialPublishingAttemptAction,
   setSocialPublishingAccountActiveAction,
 } from './actions';
@@ -85,10 +91,13 @@ export default async function SocialPublishingPage({
   await requirePermission('academy:manage');
   const locale = await getAdminRequestLocale();
   const copy = getSocialPublishingCopy(locale);
+  const metaCopy = getSocialPublishingMetaCopy(locale);
   const providerPhaseCopy = getSocialPublishingProviderPhaseCopy(locale);
   const common = getCommonDictionary(locale);
+  const metaProviderStatus = getMetaInstagramReelsProviderStatus();
   const params = await searchParams;
   const proposalId = firstSearchParam(params.proposalId)?.trim() ?? '';
+  const renderTime = new Date();
 
   const [accounts, attempts] = await Promise.all([
     db.socialPublishingAccount.findMany({
@@ -105,7 +114,7 @@ export default async function SocialPublishingPage({
       orderBy: { createdAt: 'desc' },
       take: 30,
       include: {
-        content: { select: { title: true } },
+        content: { select: { title: true, format: true } },
         events: {
           orderBy: { occurredAt: 'desc' },
           take: 8,
@@ -131,6 +140,11 @@ export default async function SocialPublishingPage({
   }
 
   const date = (value: Date) => formatLocalizedDate(value, locale);
+  const providerStatusText = metaProviderStatus.ready
+    ? metaCopy.providerReady
+    : metaProviderStatus.mode === 'OFF'
+      ? metaCopy.providerOff
+      : metaCopy.providerMisconfigured;
 
   return (
     <main
@@ -201,7 +215,7 @@ export default async function SocialPublishingPage({
               </label>
               <button type="submit">{copy.createAccount}</button>
             </form>
-            <p>{copy.noCredentials}</p>
+            <p>{metaCopy.credentialsBoundary}</p>
           </section>
 
           <section className="admin-panel">
@@ -321,9 +335,20 @@ export default async function SocialPublishingPage({
                   <button type="submit">{copy.planAttempt}</button>
                 </form>
                 <p>{copy.planAttemptHelp}</p>
-                <p>{copy.noCredentials}</p>
+                <p>{metaCopy.credentialsBoundary}</p>
               </article>
             ) : null}
+          </section>
+
+          <section className="admin-panel">
+            <div className="panel-heading">
+              <div>
+                <h2>{metaCopy.providerHeading}</h2>
+                <p>{providerStatusText}</p>
+              </div>
+            </div>
+            <p>{metaCopy.credentialsBoundary}</p>
+            <p>{metaCopy.instagramOnly}</p>
           </section>
 
           <section className="admin-panel">
@@ -340,6 +365,19 @@ export default async function SocialPublishingPage({
                 {attempts.map((attempt) => {
                   const providerPhase =
                     getSocialPublishingProviderPhase(attempt);
+                  const retryEligible =
+                    (attempt.status === 'PLANNED' ||
+                      attempt.status === 'RETRY_SCHEDULED') &&
+                    attempt.nextAttemptAt.getTime() <= renderTime.getTime();
+                  const expiredLockRecoverable =
+                    attempt.status === 'IN_PROGRESS' &&
+                    attempt.lockedUntil !== null &&
+                    attempt.lockedUntil.getTime() <= renderTime.getTime();
+                  const canExecuteMeta =
+                    metaProviderStatus.ready &&
+                    attempt.platform === 'INSTAGRAM' &&
+                    attempt.content.format === 'REEL' &&
+                    (retryEligible || expiredLockRecoverable);
                   return (
                     <article key={attempt.id} className="admin-panel">
                       <div className="panel-heading">
@@ -373,6 +411,21 @@ export default async function SocialPublishingPage({
                         <dt>{copy.errorCode}</dt>
                         <dd>{attempt.lastErrorCode ?? copy.none}</dd>
                       </dl>
+                      {canExecuteMeta ? (
+                        <>
+                          <form
+                            action={executeMetaSocialPublishingAttemptAction}
+                          >
+                            <input
+                              type="hidden"
+                              name="attemptId"
+                              value={attempt.id}
+                            />
+                            <button type="submit">{metaCopy.execute}</button>
+                          </form>
+                          <p>{metaCopy.executeHelp}</p>
+                        </>
+                      ) : null}
                       <small>
                         {attempt.events.map((event) => {
                           const checkpoint =
@@ -400,7 +453,7 @@ export default async function SocialPublishingPage({
                 })}
               </div>
             )}
-            <p>{copy.noCredentials}</p>
+            <p>{metaCopy.credentialsBoundary}</p>
           </section>
         </div>
       </section>
