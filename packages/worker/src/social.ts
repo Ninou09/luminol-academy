@@ -40,9 +40,7 @@ export async function processOneSocialPublishingBatch(
   const results = await Promise.allSettled(
     ids.map((id) => dependencies.executeAttempt(id, now)),
   );
-  const fatalFailures = results.filter(
-    (result) => result.status === 'rejected',
-  );
+  const fatalFailures = results.filter((result) => result.status === 'rejected');
   if (fatalFailures.length > 0) {
     throw new AggregateError(
       fatalFailures.map(({ reason }) => reason),
