@@ -19,6 +19,7 @@ export const socialPublishingWorkerEnvironmentSchema = z.object({
 });
 
 export type SocialPublishingWorkerDependencies = {
+  initialize?(): Promise<void>;
   listDueAttemptIds(batchSize: number, now: Date): Promise<string[]>;
   executeAttempt(attemptId: string, now: Date): Promise<unknown>;
   disconnect(): Promise<void>;
@@ -63,6 +64,8 @@ export async function runSocialPublishingWorker(
       environmentInput,
     );
     if (environment.LUMINOL_SOCIAL_PUBLISHING_WORKER_MODE === 'OFF') return 0;
+
+    await dependencies.initialize?.();
 
     do {
       const processed = await processOneSocialPublishingBatch(
