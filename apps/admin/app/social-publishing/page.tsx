@@ -371,8 +371,8 @@ export default async function SocialPublishingPage({
                     attempt.nextAttemptAt.getTime() <= renderTime.getTime();
                   const expiredLockRecoverable =
                     attempt.status === 'IN_PROGRESS' &&
-                    Boolean(attempt.lockedUntil) &&
-                    attempt.lockedUntil!.getTime() <= renderTime.getTime();
+                    attempt.lockedUntil !== null &&
+                    attempt.lockedUntil.getTime() <= renderTime.getTime();
                   const canExecuteMeta =
                     metaProviderStatus.ready &&
                     attempt.platform === 'INSTAGRAM' &&
@@ -413,7 +413,9 @@ export default async function SocialPublishingPage({
                       </dl>
                       {canExecuteMeta ? (
                         <>
-                          <form action={executeMetaSocialPublishingAttemptAction}>
+                          <form
+                            action={executeMetaSocialPublishingAttemptAction}
+                          >
                             <input
                               type="hidden"
                               name="attemptId"
