@@ -60,9 +60,8 @@ export async function runSocialPublishingWorker(
   shouldStop: () => boolean = () => false,
 ) {
   try {
-    const environment = socialPublishingWorkerEnvironmentSchema.parse(
-      environmentInput,
-    );
+    const environment =
+      socialPublishingWorkerEnvironmentSchema.parse(environmentInput);
     if (environment.LUMINOL_SOCIAL_PUBLISHING_WORKER_MODE === 'OFF') return 0;
 
     await dependencies.initialize?.();
