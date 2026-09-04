@@ -6,7 +6,11 @@ import {
 } from './social-publishing-attempts';
 import type { SocialPublishingDeliveryPlan } from './social-publishing-delivery';
 
-const graphVersionSchema = z.string().trim().regex(/^v\d+\.\d+$/).max(20);
+const graphVersionSchema = z
+  .string()
+  .trim()
+  .regex(/^v\d+\.\d+$/)
+  .max(20);
 const accessTokenSchema = z.string().trim().min(1).max(4_096);
 const providerReferenceSchema = z.string().trim().min(1).max(255);
 const timeoutSchema = z.coerce.number().int().min(1_000).max(30_000);
@@ -43,9 +47,7 @@ export type MetaSocialPublishingErrorCode =
   | 'META_MEDIA_PROCESSING_PENDING'
   | 'META_MEDIA_PROCESSING_FAILED';
 
-export class MetaSocialPublishingSafeError
-  extends SocialPublishingProviderSafeError
-{
+export class MetaSocialPublishingSafeError extends SocialPublishingProviderSafeError {
   override readonly code: MetaSocialPublishingErrorCode;
 
   constructor(code: MetaSocialPublishingErrorCode) {
@@ -169,11 +171,7 @@ export function createMetaInstagramReelsProvider(input: {
   const fetchImplementation = input.fetchImplementation ?? fetch;
   const baseUrl = `https://graph.facebook.com/${graphVersion}`;
 
-  async function request(
-    url: string,
-    init: RequestInit,
-    schema: z.ZodType,
-  ) {
+  async function request(url: string, init: RequestInit, schema: z.ZodType) {
     let response: Response;
     try {
       response = await fetchImplementation(url, {
@@ -235,13 +233,8 @@ export function createMetaInstagramReelsProvider(input: {
           'META_MEDIA_PROCESSING_PENDING',
         );
       }
-      if (
-        status.status_code === 'ERROR' ||
-        status.status_code === 'EXPIRED'
-      ) {
-        throw new MetaSocialPublishingSafeError(
-          'META_MEDIA_PROCESSING_FAILED',
-        );
+      if (status.status_code === 'ERROR' || status.status_code === 'EXPIRED') {
+        throw new MetaSocialPublishingSafeError('META_MEDIA_PROCESSING_FAILED');
       }
       if (status.status_code === 'PUBLISHED') {
         return { providerReference: containerId };
