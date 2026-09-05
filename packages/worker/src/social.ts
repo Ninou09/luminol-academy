@@ -20,8 +20,7 @@ export const socialPublishingWorkerEnvironmentSchema = z.object({
 
 export type SocialPublishingWorkerDependencies = {
   initialize?(): Promise<void>;
-  listDueAttemptIds(batchSize: number, now: Date): Promise<string[]>;
-  executeAttempt(attemptId: string, now: Date): Promise<unknown>;
+  dispatchDueBatch(batchSize: number, now: Date): Promise<number>;
   disconnect(): Promise<void>;
   sleep(milliseconds: number): Promise<void>;
   now(): Date;
@@ -36,21 +35,7 @@ export async function processOneSocialPublishingBatch(
     throw new Error('Social publishing worker clock is invalid');
   }
 
-  const ids = await dependencies.listDueAttemptIds(batchSize, now);
-  const results = await Promise.allSettled(
-    ids.map((id) => dependencies.executeAttempt(id, now)),
-  );
-  const fatalFailures = results.filter(
-    (result) => result.status === 'rejected',
-  );
-  if (fatalFailures.length > 0) {
-    throw new AggregateError(
-      fatalFailures.map(({ reason }) => reason),
-      'One or more social publishing attempts failed outside the provider retry flow',
-    );
-  }
-
-  return ids.length;
+  return dependencies.dispatchDueBatch(batchSize, now);
 }
 
 export async function runSocialPublishingWorker(
