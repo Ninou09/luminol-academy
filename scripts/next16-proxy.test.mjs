@@ -8,6 +8,7 @@ const cases = [
     publicRoutes: [
       "pathname === '/sign-in'",
       "pathname === '/api/webhooks/clerk'",
+      "pathname === '/api/internal/social-publishing/dispatch'",
     ],
   },
   {
