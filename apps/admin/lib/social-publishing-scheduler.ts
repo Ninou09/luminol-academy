@@ -35,8 +35,7 @@ type SchedulerErrorCode =
 function response(
   status: number,
   body:
-    | { ok: true; processed: number }
-    | { ok: false; code: SchedulerErrorCode },
+    { ok: true; processed: number } | { ok: false; code: SchedulerErrorCode },
 ) {
   return Response.json(body, {
     status,

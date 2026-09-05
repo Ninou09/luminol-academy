@@ -30,9 +30,12 @@ function dependencies(): SocialPublishingSchedulerDependencies {
 }
 
 function request(authorization = `Bearer ${secret}`) {
-  return new Request('https://admin.example.test/api/internal/social-publishing/dispatch', {
-    headers: { authorization },
-  });
+  return new Request(
+    'https://admin.example.test/api/internal/social-publishing/dispatch',
+    {
+      headers: { authorization },
+    },
+  );
 }
 
 async function json(response: Response) {

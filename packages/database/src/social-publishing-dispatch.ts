@@ -94,8 +94,7 @@ export async function dispatchDueInstagramReelsPublishingAttempts(
   }
 
   const listDueAttemptIds =
-    dependencies.listDueAttemptIds ??
-    listDueInstagramReelsPublishingAttemptIds;
+    dependencies.listDueAttemptIds ?? listDueInstagramReelsPublishingAttemptIds;
   const executeAttempt =
     dependencies.executeAttempt ?? executeSocialPublishingAttempt;
   const ids = await listDueAttemptIds(client, {
