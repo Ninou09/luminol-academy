@@ -1,7 +1,4 @@
-import {
-  buildFounderJsonLd,
-  serializeJsonLd,
-} from '../lib/structured-data';
+import { buildFounderJsonLd, serializeJsonLd } from '../lib/structured-data';
 
 type FounderJsonLdProps = {
   name: string;
