@@ -17,7 +17,8 @@ function isPublicPathname(pathname: string) {
   return (
     pathname === '/sign-in' ||
     pathname.startsWith('/sign-in/') ||
-    pathname === '/api/webhooks/clerk'
+    pathname === '/api/webhooks/clerk' ||
+    pathname === '/api/internal/social-publishing/dispatch'
   );
 }
 
