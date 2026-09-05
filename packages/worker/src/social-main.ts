@@ -1,8 +1,7 @@
 import {
   createMetaInstagramReelsProviderFromEnv,
   db,
-  executeSocialPublishingAttempt,
-  listDueInstagramReelsPublishingAttemptIds,
+  dispatchDueInstagramReelsPublishingAttempts,
   type ResumableSocialPublishingProvider,
 } from '@luminol/database';
 
@@ -32,21 +31,16 @@ const exitCode = await runSocialPublishingWorker(
       if (!environment.success) throw environment.error;
       provider = createMetaInstagramReelsProviderFromEnv(process.env);
     },
-    listDueAttemptIds(batchSize, now) {
-      return listDueInstagramReelsPublishingAttemptIds(db, {
-        limit: batchSize,
-        now,
-      });
-    },
-    async executeAttempt(attemptId, now) {
+    async dispatchDueBatch(batchSize, now) {
       if (!provider) {
         throw new Error('Social publishing provider failed to initialize');
       }
-      return executeSocialPublishingAttempt(db, {
-        attemptId,
-        provider,
+      const result = await dispatchDueInstagramReelsPublishingAttempts(db, {
+        limit: batchSize,
         now,
+        provider,
       });
+      return result.processed;
     },
     disconnect: () => db.$disconnect(),
     sleep: (milliseconds) =>
