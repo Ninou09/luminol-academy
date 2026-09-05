@@ -6,11 +6,7 @@ type FounderJsonLdProps = {
   href: string;
 };
 
-export function FounderJsonLd({
-  name,
-  description,
-  href,
-}: FounderJsonLdProps) {
+export function FounderJsonLd({ name, description, href }: FounderJsonLdProps) {
   const jsonLd = buildFounderJsonLd({ name, description, href });
 
   return (
