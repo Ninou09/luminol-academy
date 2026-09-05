@@ -7,12 +7,27 @@ import {
   SocialPublishingAttemptStatus,
   type PrismaClient,
 } from '../generated/prisma/client';
+import {
+  executeSocialPublishingAttempt,
+  type SocialPublishingProvider,
+} from './social-publishing-attempts';
 
 const dispatchBatchSizeSchema = z.number().int().min(1).max(100);
 
 export type DueInstagramReelsDispatchInput = {
   limit?: number;
   now?: Date;
+};
+
+export type DispatchDueInstagramReelsPublishingInput =
+  DueInstagramReelsDispatchInput & {
+    provider: SocialPublishingProvider;
+    actorUserId?: string | null;
+  };
+
+type SocialPublishingDispatchDependencies = {
+  listDueAttemptIds?: typeof listDueInstagramReelsPublishingAttemptIds;
+  executeAttempt?: typeof executeSocialPublishingAttempt;
 };
 
 /**
@@ -61,4 +76,54 @@ export async function listDueInstagramReelsPublishingAttemptIds(
   });
 
   return attempts.map(({ id }) => id);
+}
+
+/**
+ * Runs one bounded due batch through the existing authoritative executor.
+ * Provider-managed failures remain represented by the executor's retry/dead-letter
+ * state machine; only failures that escape that flow reject the whole batch.
+ */
+export async function dispatchDueInstagramReelsPublishingAttempts(
+  client: PrismaClient,
+  input: DispatchDueInstagramReelsPublishingInput,
+  dependencies: SocialPublishingDispatchDependencies = {},
+) {
+  const now = input.now ?? new Date();
+  if (!Number.isFinite(now.getTime())) {
+    throw new Error('Social publishing dispatch time is invalid');
+  }
+
+  const listDueAttemptIds =
+    dependencies.listDueAttemptIds ??
+    listDueInstagramReelsPublishingAttemptIds;
+  const executeAttempt =
+    dependencies.executeAttempt ?? executeSocialPublishingAttempt;
+  const ids = await listDueAttemptIds(client, {
+    ...(input.limit === undefined ? {} : { limit: input.limit }),
+    now,
+  });
+  const results = await Promise.allSettled(
+    ids.map((attemptId) =>
+      executeAttempt(client, {
+        attemptId,
+        provider: input.provider,
+        now,
+        ...(input.actorUserId === undefined
+          ? {}
+          : { actorUserId: input.actorUserId }),
+      }),
+    ),
+  );
+  const fatalFailures = results.filter(
+    (result) => result.status === 'rejected',
+  );
+
+  if (fatalFailures.length > 0) {
+    throw new AggregateError(
+      fatalFailures.map(({ reason }) => reason),
+      'One or more social publishing attempts failed outside the provider retry flow',
+    );
+  }
+
+  return { processed: ids.length };
 }
