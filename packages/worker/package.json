@@ -16,7 +16,7 @@
   "dependencies": {
     "@luminol/database": "workspace:*",
     "@luminol/notifications": "workspace:*",
-    "zod": "^4.0.10"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*"
