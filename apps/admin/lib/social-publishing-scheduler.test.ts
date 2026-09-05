@@ -8,11 +8,12 @@ import {
 } from './social-publishing-scheduler';
 
 const secret = 's'.repeat(48);
-const enabledEnvironment = {
+const enabledEnvironment: NodeJS.ProcessEnv = {
+  NODE_ENV: 'test',
   CRON_SECRET: secret,
   LUMINOL_SOCIAL_PUBLISHING_WORKER_MODE: 'INSTAGRAM_REELS_DUE',
   LUMINOL_SOCIAL_PUBLISHING_WORKER_BATCH_SIZE: '8',
-} as NodeJS.ProcessEnv;
+};
 
 function provider(): SocialPublishingProvider {
   return {
@@ -63,10 +64,10 @@ describe('social publishing scheduler request boundary', () => {
 
   it('fails closed when scheduler authentication is not configured strongly enough', async () => {
     const runtime = dependencies();
-    const environment = {
+    const environment: NodeJS.ProcessEnv = {
       ...enabledEnvironment,
       CRON_SECRET: 'too-short',
-    } as NodeJS.ProcessEnv;
+    };
 
     const response = await handleSocialPublishingSchedulerRequest(
       request('Bearer too-short'),
@@ -81,7 +82,10 @@ describe('social publishing scheduler request boundary', () => {
 
   it('keeps the scheduler OFF by default after successful authentication', async () => {
     const runtime = dependencies();
-    const environment = { CRON_SECRET: secret } as NodeJS.ProcessEnv;
+    const environment: NodeJS.ProcessEnv = {
+      NODE_ENV: 'test',
+      CRON_SECRET: secret,
+    };
 
     const response = await handleSocialPublishingSchedulerRequest(
       request(),
@@ -100,10 +104,10 @@ describe('social publishing scheduler request boundary', () => {
 
   it('rejects invalid bounded batch configuration before provider initialization', async () => {
     const runtime = dependencies();
-    const environment = {
+    const environment: NodeJS.ProcessEnv = {
       ...enabledEnvironment,
       LUMINOL_SOCIAL_PUBLISHING_WORKER_BATCH_SIZE: '101',
-    } as NodeJS.ProcessEnv;
+    };
 
     const response = await handleSocialPublishingSchedulerRequest(
       request(),
