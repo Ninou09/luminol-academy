@@ -13,7 +13,9 @@ export function OrganizationJsonLd({ description }: { description: string }) {
       <script
         type="application/ld+json"
         data-organization-jsonld
-        dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationJsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(organizationJsonLd),
+        }}
       />
       <script
         type="application/ld+json"
