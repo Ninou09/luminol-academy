@@ -1,4 +1,5 @@
 export * from './learning-outcomes';
+export * from './conversion-events';
 
 export type AnalyticsEvent = {
   name: string;
