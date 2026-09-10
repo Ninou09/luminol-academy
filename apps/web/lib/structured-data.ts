@@ -18,6 +18,12 @@ type ProgrammeListItem = {
   href: string;
 };
 
+type FounderJsonLdInput = {
+  name: string;
+  description: string;
+  href: string;
+};
+
 export function buildOrganizationJsonLd(description: string) {
   const origin = resolvePublicSiteOrigin();
 
@@ -28,6 +34,46 @@ export function buildOrganizationJsonLd(description: string) {
     name: 'Luminol Academy',
     url: origin,
     description,
+  } as const;
+}
+
+export function buildWebsiteJsonLd(description: string) {
+  const origin = resolvePublicSiteOrigin();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${origin}/#website`,
+    name: 'Luminol Academy',
+    url: origin,
+    description,
+    inLanguage: ['ar-DZ', 'fr-DZ', 'en-DZ'],
+    publisher: {
+      '@id': `${origin}/#organization`,
+    },
+  } as const;
+}
+
+export function buildFounderJsonLd({
+  name,
+  description,
+  href,
+}: FounderJsonLdInput) {
+  const origin = resolvePublicSiteOrigin();
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${origin}/#founder-kheddaoui-fettouma`,
+    name,
+    description,
+    url: new URL(href, `${origin}/`).toString(),
+    worksFor: {
+      '@type': 'EducationalOrganization',
+      '@id': `${origin}/#organization`,
+      name: 'Luminol Academy',
+      url: origin,
+    },
   } as const;
 }
 
@@ -92,5 +138,10 @@ export function buildProgrammeListJsonLd(items: readonly ProgrammeListItem[]) {
 }
 
 export function serializeJsonLd(value: unknown) {
-  return JSON.stringify(value).replace(/</g, '\\u003c');
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 }

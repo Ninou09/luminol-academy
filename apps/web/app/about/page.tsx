@@ -9,6 +9,7 @@ import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { FounderJsonLd } from '../../components/founder-json-ld';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
@@ -169,6 +170,11 @@ export default async function AboutPage() {
   return (
     <>
       <SiteHeader />
+      <FounderJsonLd
+        name={founderMedia.name}
+        description={founderAuthority.body}
+        href={localizePathname(locale, '/about')}
+      />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section
           className={styles.hero}

@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   buildBreadcrumbJsonLd,
   buildCourseJsonLd,
+  buildFounderJsonLd,
   buildOrganizationJsonLd,
+  buildWebsiteJsonLd,
   serializeJsonLd,
 } from './structured-data';
 
@@ -30,6 +32,65 @@ describe('Organization structured data', () => {
     expect(buildOrganizationJsonLd('Public description').url).toBe(
       'https://luminol-academy-web.vercel.app',
     );
+  });
+});
+
+describe('Website structured data', () => {
+  it('links the public website to the existing governed organization identity', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://academy.example.com/base/');
+
+    expect(buildWebsiteJsonLd('Public description')).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': 'https://academy.example.com/#website',
+      name: 'Luminol Academy',
+      url: 'https://academy.example.com',
+      description: 'Public description',
+      inLanguage: ['ar-DZ', 'fr-DZ', 'en-DZ'],
+      publisher: {
+        '@id': 'https://academy.example.com/#organization',
+      },
+    });
+  });
+});
+
+describe('Founder structured data', () => {
+  it('publishes only existing founder facts and the localized About URL', () => {
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://academy.example.com/base/');
+
+    expect(
+      buildFounderJsonLd({
+        name: 'Kheddaoui Fettouma',
+        description: 'Verified founder description.',
+        href: '/en/about',
+      }),
+    ).toEqual({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      '@id': 'https://academy.example.com/#founder-kheddaoui-fettouma',
+      name: 'Kheddaoui Fettouma',
+      description: 'Verified founder description.',
+      url: 'https://academy.example.com/en/about',
+      worksFor: {
+        '@type': 'EducationalOrganization',
+        '@id': 'https://academy.example.com/#organization',
+        name: 'Luminol Academy',
+        url: 'https://academy.example.com',
+      },
+    });
+  });
+
+  it('does not invent legal, address, rating or accreditation fields', () => {
+    const jsonLd = buildFounderJsonLd({
+      name: 'خداوي فطومة',
+      description: 'وصف مؤكد.',
+      href: '/ar/about',
+    });
+
+    expect(jsonLd).not.toHaveProperty('address');
+    expect(jsonLd).not.toHaveProperty('award');
+    expect(jsonLd).not.toHaveProperty('aggregateRating');
+    expect(jsonLd).not.toHaveProperty('hasCredential');
   });
 });
 
@@ -138,12 +199,15 @@ describe('Course structured data', () => {
 });
 
 describe('JSON-LD serialization', () => {
-  it('escapes raw angle-bracket openings during JSON-LD serialization', () => {
+  it('escapes script-breaking HTML characters during JSON-LD serialization', () => {
     const serialized = serializeJsonLd({
-      description: '<script>alert(1)</script>',
+      description: '<script>alert(1)</script> & more',
     });
 
     expect(serialized).not.toContain('<');
-    expect(serialized).toContain('\\u003cscript>');
+    expect(serialized).not.toContain('>');
+    expect(serialized).not.toContain('&');
+    expect(serialized).toContain('\\u003cscript\\u003e');
+    expect(serialized).toContain('\\u0026');
   });
 });
