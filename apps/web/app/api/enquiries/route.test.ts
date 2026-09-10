@@ -94,6 +94,26 @@ describe('POST /api/enquiries', () => {
     });
   });
 
+  it('persists phone-first enquiries without forcing an email address', async () => {
+    const enquiry = {
+      ...validEnquiry,
+      email: '',
+      preferredContact: 'WHATSAPP',
+      phone: '+213 555 12 34 56',
+    };
+
+    const response = await POST(createRequest(enquiry, '203.0.113.24'));
+
+    expect(response.status).toBe(201);
+    expect(createEnquiry).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        email: '',
+        phone: enquiry.phone,
+        preferredContact: 'WHATSAPP',
+      }),
+    });
+  });
+
   it('persists only submitted bounded campaign attribution fields', async () => {
     const campaignEnquiry = {
       ...validEnquiry,
