@@ -17,5 +17,9 @@ export function createConversionEvent(
   name: ConversionEventName,
   properties?: ConversionEvent['properties'],
 ): ConversionEvent {
-  return { name, properties };
+  if (properties) {
+    return { name, properties };
+  }
+
+  return { name };
 }
