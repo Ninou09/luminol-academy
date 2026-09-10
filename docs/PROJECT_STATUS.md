@@ -1,6 +1,6 @@
 # Luminol Academy Project Status
 
-_Last updated: 2026-08-19_
+_Last updated: 2026-09-11_
 
 ## Current state
 
@@ -106,18 +106,23 @@ The implementation keeps learner-authored project content, reviewer feedback and
 
 ## Public experience and no-cost polish
 
-The premium public-site hardening stream remains active through #235 where work is free and not blocked by external approvals/settings. Existing work includes premium localized layouts, governed programme/founder media, skip navigation and focus states, reduced-motion behavior, mobile navigation, metadata/canonical/`hreflang` improvements, robots/sitemap hardening, structured data, safer enquiry transport, public regression coverage, bounded social-preview caching and production dependency-audit safeguards.
+The original no-cost public hardening audit tracked by #235 is closed as completed. Subsequent focused launch-readiness work has continued through small protected PRs without redesigning the site or weakening privacy and authorization boundaries.
 
-The canonical roadmap/status documents are kept synchronized with completed milestone evidence so repository completion, production deployment evidence, and still-blocked authenticated/browser requirements are not conflated.
+Current public hardening includes premium localized layouts, governed programme/founder media, skip navigation and focus states, reduced-motion behavior, mobile navigation, metadata/canonical/`hreflang` improvements, robots/sitemap hardening, verified organization/founder structured data, safer enquiry transport, phone/WhatsApp-first enquiry handling, campaign attribution safeguards, public regression coverage, bounded social-preview caching, production dependency-audit safeguards, a provider-independent privacy-safe conversion event vocabulary, and 320px regression coverage for critical Arabic consultation and programme enquiry paths.
+
+Public production discoverability issue #241 was resolved and revalidated on 2026-08-28. The public web project no longer requires Vercel login; anonymous `/en`, `/ar`, `/fr`, `/robots.txt`, and `/sitemap.xml` checks succeeded without protection-generated `noindex`. Preview aliases remain non-indexable and learner/admin protection remains enabled.
+
+The canonical roadmap/status documents distinguish repository completion, deployment evidence, and still-blocked authenticated/browser requirements rather than treating them as the same gate.
 
 ## Active external or operational dependencies
 
-- **Public production discoverability — #241:** the public Vercel production project remains behind Vercel Authentication/SSO. This is a project-level deployment-protection setting, not a reason to weaken Clerk or application authorization.
 - **Protected browser verification — #40:** a restricted administration smoke account and authenticated Playwright storage-state/base-URL configuration are still required before protected administration and learner journeys can be verified in CI/production.
 - **Outbound learner email — #40:** a verified Luminol sender domain and a controlled monitored delivery/retry/dead-letter check are still required before real learner email is enabled.
 - **Backup operations — #40:** a backup operator is still required before broader promotion or planned primary-operator absence.
 - **Reviewed public legal notices — #150:** privacy, terms and cookie copy must come from reviewed approved legal/operator information rather than technical inference.
 - **TypeScript 7 — #115:** migration remains deliberately deferred until the repository's lint/tooling ecosystem officially supports the chosen architecture.
+
+Resolved public-discoverability work under #241 must remain resolved without weakening Clerk or private-route protection.
 
 ## Repository governance baseline
 
