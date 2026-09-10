@@ -157,20 +157,21 @@ Review decisions remain human-entered. There is no AI grading, automatic reviewe
 
 ## Post-milestone public experience hardening
 
-Status: Ongoing as no-cost repository polish where it does not depend on external approvals or account settings; tracked primarily through #235 and specific blocker issues.
+Status: The original no-cost hardening audit tracked by #235 is complete. Further focused stabilization and regression coverage may continue where it does not depend on external approvals or account settings.
 
-Delivered hardening includes premium localized public layouts, reduced-motion behavior, mobile navigation, keyboard skip navigation/focus states, governed CMS media publication, localized metadata and structured data, robots/sitemap hardening, public browser regression coverage, safer enquiry transport, production dependency auditing, learner-portal indexing exclusion, bounded social-preview caching, approved founder media within its documented governance boundary, and progressively more forgiving multilingual programme discovery without storing raw search text.
+Delivered hardening includes premium localized public layouts, reduced-motion behavior, mobile navigation, keyboard skip navigation/focus states, governed CMS media publication, localized metadata and structured data, robots/sitemap hardening, public browser regression coverage, safer enquiry transport, production dependency auditing, learner-portal indexing exclusion, bounded social-preview caching, approved founder media within its documented governance boundary, progressively more forgiving multilingual programme discovery without storing raw search text, phone/WhatsApp-first enquiry handling, campaign attribution safeguards, a provider-independent privacy-safe conversion event vocabulary, and 320px regression coverage for critical Arabic consultation and programme enquiry paths.
 
-Current public-site discoverability remains separately blocked by the production Vercel Deployment Protection setting tracked in #241. Application code must not weaken Clerk protection on learner or administration surfaces to work around that project-level setting.
+Public production discoverability blocker #241 was resolved and revalidated on 2026-08-28: the public web project no longer requires Vercel login, anonymous `/en`, `/ar`, `/fr`, `/robots.txt`, and `/sitemap.xml` checks succeeded without protection-generated `noindex`, while preview protection and learner/admin protection remain intact.
 
 ## Parallel operational phase — Post-launch stabilization
 
 Repository work and production-live evidence remain separate. The active operational dependencies are:
 
 - #40 — restricted administration smoke access, authenticated browser state/configuration, sender-domain activation and monitored email delivery, and backup-operator readiness
-- #241 — remove Vercel Authentication/SSO from the public production website while retaining appropriate protection elsewhere
 - #150 — publish privacy, terms, and cookie notices only after reviewed approved legal copy and verified operator details are supplied
 - #115 — keep TypeScript 7 migration deferred until the repository toolchain has official compatible support
+
+Resolved dependency #241 must remain resolved without weakening Clerk protection on learner or administration surfaces.
 
 The `Protect main` ruleset and exact-head GitHub Actions `quality` gate remain mandatory. Authenticated preview smoke may be skipped only when the protected credentials/configuration are genuinely unavailable; that skip is an operational evidence gap, not permission to claim the protected journeys have been verified.
 
