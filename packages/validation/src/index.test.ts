@@ -124,6 +124,23 @@ describe('contactSchema', () => {
     ).toBe(false);
   });
 
+  it('requires an email address only when email follow-up is selected', () => {
+    expect(
+      contactSchema.safeParse({ ...validEnquiry, email: '   ' }).success,
+    ).toBe(false);
+
+    const phoneFirst = contactSchema.safeParse({
+      ...validEnquiry,
+      email: '   ',
+      preferredContact: 'WHATSAPP',
+      phone: '0555 12 34 56',
+    });
+    expect(phoneFirst.success).toBe(true);
+    if (phoneFirst.success) {
+      expect(phoneFirst.data.email).toBe('');
+    }
+  });
+
   it('requires a phone number for phone and WhatsApp follow-up', () => {
     expect(
       contactSchema.safeParse({
