@@ -6,6 +6,7 @@
 
 .hero,
 .routing,
+.authority,
 .enquiry {
   width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
   margin-inline: auto;
@@ -30,7 +31,8 @@
 
 .hero h1,
 .enquiryContext h2,
-.routing h2 {
+.routing h2,
+.authority h2 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 500;
@@ -86,7 +88,8 @@
 }
 
 .routing h2,
-.enquiryContext h2 {
+.enquiryContext h2,
+.authority h2 {
   font-size: clamp(2.3rem, 4.6vw, 4.4rem);
   line-height: 1;
 }
@@ -131,6 +134,67 @@
   line-height: 1.65;
 }
 
+.authority {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.85fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
+  margin-bottom: clamp(3.5rem, 7vw, 6rem);
+  padding: clamp(2rem, 5vw, 4rem);
+  border: 1px solid var(--color-brand-line);
+  border-radius: 1.8rem;
+  background: var(--color-brand-surface);
+  box-shadow: var(--shadow-editorial);
+}
+
+.authorityLead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(1.2rem, 3vw, 2rem);
+  align-items: start;
+}
+
+.authorityYears {
+  color: var(--color-brand-gold-strong);
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 7vw, 6rem);
+  font-weight: 500;
+  line-height: 0.9;
+}
+
+.authorityCopy {
+  display: grid;
+  gap: 0.8rem;
+  align-items: start;
+}
+
+.authorityCopy > p {
+  margin: 0;
+  color: var(--color-brand-ink-soft);
+  line-height: 1.75;
+}
+
+.authorityCopy .authorityName {
+  color: var(--color-brand-ink);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.authorityCopy .authorityRole {
+  margin-top: -0.5rem;
+  color: var(--color-brand-gold-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.authorityCopy a {
+  width: fit-content;
+  margin-top: 0.6rem;
+}
+
 .enquiry {
   display: grid;
   grid-template-columns: minmax(0, 0.8fr) minmax(22rem, 1.2fr);
@@ -167,6 +231,7 @@
 @media (max-width: 860px) {
   .hero,
   .routingHeader,
+  .authority,
   .enquiry {
     grid-template-columns: 1fr;
   }
@@ -177,5 +242,9 @@
 
   .heroAside {
     max-width: 38rem;
+  }
+
+  .authorityLead {
+    grid-template-columns: 1fr;
   }
 }
