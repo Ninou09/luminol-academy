@@ -7,9 +7,7 @@ test('Arabic consultation conversion stays usable at 320px', async ({
   await page.goto('/ar/consultations');
 
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-  await expect(
-    page.locator('a[href="#consultation-enquiry"]'),
-  ).toBeVisible();
+  await expect(page.locator('a[href="#consultation-enquiry"]')).toBeVisible();
   await expect(page.locator('#consultation-enquiry form')).toBeVisible();
 
   const horizontalOverflow = await page.evaluate(
