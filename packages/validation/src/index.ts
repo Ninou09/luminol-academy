@@ -50,10 +50,15 @@ const enquiryLandingPathSchema = z.preprocess(
     .optional(),
 );
 
+const enquiryEmailSchema = z.preprocess(
+  (value) => (typeof value === 'string' ? value.trim() : value),
+  z.union([z.literal(''), z.email().max(254)]),
+);
+
 export const contactSchema = z
   .object({
     name: z.string().trim().min(2).max(100),
-    email: z.email().max(254),
+    email: enquiryEmailSchema,
     phone: z.string().trim().max(30).optional(),
     city: z.string().trim().min(2).max(120),
     preferredContact: enquiryContactPreferenceSchema,
@@ -72,6 +77,15 @@ export const contactSchema = z
     website: z.string().max(0).optional(),
   })
   .superRefine((data, context) => {
+    if (data.preferredContact === 'EMAIL' && !data.email) {
+      context.addIssue({
+        code: 'custom',
+        message:
+          'An email address is required for the selected contact method.',
+        path: ['email'],
+      });
+    }
+
     if (
       (data.preferredContact === 'PHONE' ||
         data.preferredContact === 'WHATSAPP') &&

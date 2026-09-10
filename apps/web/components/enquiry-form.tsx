@@ -47,6 +47,7 @@ export function EnquiryForm({
     message: '',
   });
   const isSubmitting = submission.status === 'submitting';
+  const requiresEmail = preferredContact === 'EMAIL';
   const requiresPhone =
     preferredContact === 'PHONE' || preferredContact === 'WHATSAPP';
 
@@ -130,12 +131,15 @@ export function EnquiryForm({
           />
         </label>
         <label>
-          <span>{copy.email}</span>
+          <span>
+            {copy.email}{' '}
+            {!requiresEmail ? <small>{copy.optional}</small> : null}
+          </span>
           <input
             autoComplete="email"
             maxLength={254}
             name="email"
-            required
+            required={requiresEmail}
             type="email"
           />
         </label>
