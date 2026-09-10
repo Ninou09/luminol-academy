@@ -50,7 +50,8 @@ const CONSULTATION_COPY = {
       },
     ],
     authorityEyebrow: 'Founder-led psychology',
-    authorityTitle: 'More than 30 years of field experience behind the first step.',
+    authorityTitle:
+      'More than 30 years of field experience behind the first step.',
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Founder · expert therapist',
     authorityBody:
@@ -149,7 +150,8 @@ const CONSULTATION_COPY = {
       },
     ],
     authorityEyebrow: 'قسم علم النفس بخبرة المؤسسة',
-    authorityTitle: 'أكثر من 30 سنة من الخبرة الميدانية وراء هذه الخطوة الأولى.',
+    authorityTitle:
+      'أكثر من 30 سنة من الخبرة الميدانية وراء هذه الخطوة الأولى.',
     authorityName: 'خداوي فطومة',
     authorityRole: 'المؤسسة · معالجة خبيرة',
     authorityBody:
@@ -261,15 +263,21 @@ export default async function ConsultationsPage() {
               30+
             </span>
             <div>
-              <p className={styles.eyebrow}>{copy.authorityEyebrow as string}</p>
+              <p className={styles.eyebrow}>
+                {copy.authorityEyebrow as string}
+              </p>
               <h2 id="consultation-authority-title">
                 {copy.authorityTitle as string}
               </h2>
             </div>
           </div>
           <div className={styles.authorityCopy}>
-            <p className={styles.authorityName}>{copy.authorityName as string}</p>
-            <p className={styles.authorityRole}>{copy.authorityRole as string}</p>
+            <p className={styles.authorityName}>
+              {copy.authorityName as string}
+            </p>
+            <p className={styles.authorityRole}>
+              {copy.authorityRole as string}
+            </p>
             <p>{copy.authorityBody as string}</p>
             <ButtonLink
               href={localizeHref(locale, '/about')}
