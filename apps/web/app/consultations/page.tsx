@@ -49,6 +49,14 @@ const CONSULTATION_COPY = {
         body: 'For psychology education, workshops, coaching or professional-learning enquiries.',
       },
     ],
+    authorityEyebrow: 'Founder-led psychology',
+    authorityTitle:
+      'More than 30 years of field experience behind the first step.',
+    authorityName: 'Kheddaoui Fettouma',
+    authorityRole: 'Founder · expert therapist',
+    authorityBody:
+      'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 30 years of field experience. Her experience is a visible trust anchor for the psychology division while the wider team supports each enquiry and next step.',
+    authorityAction: 'Meet the founder',
     formEyebrow: 'Tell us what you need',
     formTitle: 'Start with a short, structured enquiry.',
     formBody:
@@ -92,6 +100,14 @@ const CONSULTATION_COPY = {
         body: 'Pour la psychoéducation, les ateliers, le coaching ou la formation professionnelle.',
       },
     ],
+    authorityEyebrow: 'Psychologie portée par la fondatrice',
+    authorityTitle:
+      'Plus de 30 ans d’expérience de terrain derrière cette première étape.',
+    authorityName: 'Kheddaoui Fettouma',
+    authorityRole: 'Fondatrice · thérapeute experte',
+    authorityBody:
+      'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 30 ans d’expérience de terrain. Son expérience constitue un repère de confiance visible pour le pôle psychologie, tandis que l’équipe accompagne chaque demande et sa prochaine étape.',
+    authorityAction: 'Découvrir la fondatrice',
     formEyebrow: 'Expliquez-nous votre besoin',
     formTitle: 'Commencez par une demande courte et structurée.',
     formBody:
@@ -133,6 +149,14 @@ const CONSULTATION_COPY = {
         body: 'للتثقيف النفسي والورشات والكوتشينغ أو التكوين المهني.',
       },
     ],
+    authorityEyebrow: 'قسم علم النفس بخبرة المؤسسة',
+    authorityTitle:
+      'أكثر من 30 سنة من الخبرة الميدانية وراء هذه الخطوة الأولى.',
+    authorityName: 'خداوي فطومة',
+    authorityRole: 'المؤسسة · معالجة خبيرة',
+    authorityBody:
+      'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 30 سنة من الخبرة الميدانية. تمثل خبرتها مرجعاً واضحاً للثقة في قسم علم النفس، بينما يرافق الفريق كل طلب نحو الخطوة التالية المناسبة.',
+    authorityAction: 'تعرّف على المؤسسة',
     formEyebrow: 'أخبرنا بما تحتاجه',
     formTitle: 'ابدأ بطلب قصير ومنظم.',
     formBody:
@@ -226,6 +250,41 @@ export default async function ConsultationsPage() {
                 <p>{path.body}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section
+          className={styles.authority}
+          aria-labelledby="consultation-authority-title"
+          data-consultation-founder-authority
+        >
+          <div className={styles.authorityLead}>
+            <span className={styles.authorityYears} aria-hidden="true">
+              30+
+            </span>
+            <div>
+              <p className={styles.eyebrow}>
+                {copy.authorityEyebrow as string}
+              </p>
+              <h2 id="consultation-authority-title">
+                {copy.authorityTitle as string}
+              </h2>
+            </div>
+          </div>
+          <div className={styles.authorityCopy}>
+            <p className={styles.authorityName}>
+              {copy.authorityName as string}
+            </p>
+            <p className={styles.authorityRole}>
+              {copy.authorityRole as string}
+            </p>
+            <p>{copy.authorityBody as string}</p>
+            <ButtonLink
+              href={localizeHref(locale, '/about')}
+              variant="secondary"
+            >
+              {copy.authorityAction as string}
+            </ButtonLink>
           </div>
         </section>
 

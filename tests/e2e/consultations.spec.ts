@@ -13,6 +13,18 @@ test('psychology consultations are localized and expose the enquiry flow', async
       name: 'خطوة أولى أوضح عندما تحتاج إلى دعم نفسي.',
     }),
   ).toBeVisible();
+
+  const founderAuthority = page.locator(
+    '[data-consultation-founder-authority]',
+  );
+  await expect(founderAuthority).toBeVisible();
+  await expect(founderAuthority).toContainText('خداوي فطومة');
+  await expect(founderAuthority).toContainText('30');
+  await expect(founderAuthority.locator('a')).toHaveAttribute(
+    'href',
+    '/ar/about',
+  );
+
   await expect(page.locator('#consultation-enquiry form')).toBeVisible();
   await expect(page.locator('select[name="school"]')).toHaveValue('PSYCHOLOGY');
 });
