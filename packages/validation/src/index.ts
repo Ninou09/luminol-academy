@@ -80,7 +80,8 @@ export const contactSchema = z
     if (data.preferredContact === 'EMAIL' && !data.email) {
       context.addIssue({
         code: 'custom',
-        message: 'An email address is required for the selected contact method.',
+        message:
+          'An email address is required for the selected contact method.',
         path: ['email'],
       });
     }
