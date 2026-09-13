@@ -55,7 +55,7 @@
   max-width: 60rem;
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(4rem, 8.2vw, 8.2rem);
+  font-size: clamp(3rem, 6vw, 5.5rem);
   font-weight: 500;
   letter-spacing: -0.055em;
   line-height: 0.88;
@@ -238,7 +238,7 @@
 .formSurface :global(.form-heading h2) {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 4.2vw, 4.3rem);
+  font-size: clamp(2rem, 3vw, 3rem);
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 0.98;
@@ -283,7 +283,7 @@
 }
 
 .formSurface :global(.form-grid textarea) {
-  min-height: 11rem;
+  min-height: 6rem;
   padding: 0.9rem;
   resize: vertical;
 }
@@ -330,6 +330,10 @@
     position: static;
   }
 
+  .formSurface {
+    order: -1;
+  }
+
   .pathGrid {
     grid-template-columns: 1fr;
   }
@@ -347,11 +351,11 @@
 
   .hero {
     min-height: auto;
-    padding-block: 3.5rem 5rem;
+    padding-block: 2.5rem 3rem;
   }
 
   .hero h1 {
-    font-size: clamp(3.5rem, 17vw, 5.7rem);
+    font-size: clamp(2.8rem, 12vw, 3.75rem);
   }
 
   .enquirySection {

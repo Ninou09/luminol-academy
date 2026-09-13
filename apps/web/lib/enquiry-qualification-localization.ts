@@ -1,6 +1,8 @@
 import type { Locale } from '@luminol/localization';
 
 export type EnquiryQualificationCopy = {
+  optionalDetails: string;
+  optionalDetailsHint: string;
   city: string;
   preferredContact: string;
   chooseContact: string;
@@ -23,6 +25,9 @@ export type EnquiryQualificationCopy = {
 
 const COPY: Record<Locale, EnquiryQualificationCopy> = {
   en: {
+    optionalDetails: 'Add details (optional)',
+    optionalDetailsHint:
+      'You can discuss these with the team later. Please do not include medical records or sensitive personal details.',
     city: 'City / area',
     preferredContact: 'Preferred contact',
     chooseContact: 'Choose a contact method',
@@ -43,6 +48,9 @@ const COPY: Record<Locale, EnquiryQualificationCopy> = {
     later: 'Later',
   },
   fr: {
+    optionalDetails: 'Ajouter des précisions (facultatif)',
+    optionalDetailsHint:
+      'Vous pourrez en discuter avec l’équipe plus tard. Ne joignez pas de dossier médical ni de détails personnels sensibles.',
     city: 'Ville / région',
     preferredContact: 'Moyen de contact préféré',
     chooseContact: 'Choisissez un moyen de contact',
@@ -64,6 +72,9 @@ const COPY: Record<Locale, EnquiryQualificationCopy> = {
     later: 'Plus tard',
   },
   ar: {
+    optionalDetails: 'أضف تفاصيل (اختياري)',
+    optionalDetailsHint:
+      'يمكنك مناقشة هذه التفاصيل مع الفريق لاحقًا. يرجى عدم إدراج تقارير طبية أو معلومات شخصية حساسة.',
     city: 'المدينة / المنطقة',
     preferredContact: 'وسيلة التواصل المفضلة',
     chooseContact: 'اختر وسيلة التواصل',

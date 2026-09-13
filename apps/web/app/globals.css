@@ -1543,6 +1543,28 @@ footer p:last-child {
   margin-top: 2.5rem;
 }
 
+.enquiry-details {
+  margin-top: 1.25rem;
+  border-block: 1px solid var(--color-brand-line);
+  padding-block: 1rem;
+}
+
+.enquiry-details summary {
+  cursor: pointer;
+  padding-block: 0.5rem;
+  font-weight: 700;
+}
+
+.enquiry-details > p,
+.enquiry-context {
+  color: var(--color-brand-ink-soft);
+  line-height: 1.7;
+}
+
+.enquiry-details .form-grid {
+  margin-top: 1rem;
+}
+
 .form-grid label,
 .consent-field {
   display: grid;

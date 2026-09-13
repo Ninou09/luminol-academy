@@ -158,10 +158,30 @@ describe('contactSchema', () => {
     ).toBe(true);
   });
 
-  it('rejects missing city and oversized messages', () => {
-    expect(contactSchema.safeParse({ ...validEnquiry, city: '' }).success).toBe(
-      false,
-    );
+  it('accepts a minimal phone enquiry without inventing qualification answers', () => {
+    const result = contactSchema.parse({
+      name: 'Luminol Learner',
+      phone: '0555 12 34 56',
+      preferredContact: 'WHATSAPP',
+      school: 'PSYCHOLOGY',
+      locale: 'ar',
+      consent: true,
+    });
+    expect(result.email).toBe('');
+    expect(result.message).toBe('');
+    expect(result.city).toBeUndefined();
+    expect(result.deliveryPreference).toBeUndefined();
+    expect(result.timingPreference).toBeUndefined();
+  });
+
+  it('still rejects missing contact details and oversized optional fields', () => {
+    expect(
+      contactSchema.safeParse({ ...validEnquiry, email: undefined }).success,
+    ).toBe(false);
+    expect(
+      contactSchema.safeParse({ ...validEnquiry, city: 'x'.repeat(121) })
+        .success,
+    ).toBe(false);
     expect(
       contactSchema.safeParse({
         ...validEnquiry,

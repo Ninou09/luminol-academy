@@ -75,6 +75,7 @@ export default async function CertificatePage({
             <dt>{copy.status}</dt>
             <dd>{getPortalStatusLabel(locale, certificate.status)}</dd>
           </dl>
+          <p>{copy.scopeNotice}</p>
           <p>{copy.printHint}</p>
         </section>
       </div>

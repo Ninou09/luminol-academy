@@ -123,22 +123,22 @@ test('premium Contact page preserves the enquiry form contract', async ({
   const phone = form.locator('input[name="phone"]');
   const preferredContact = form.locator('select[name="preferredContact"]');
   await expect(preferredContact).toHaveAttribute('required', '');
-  await expect(email).not.toHaveAttribute('required', '');
-  await expect(phone).not.toHaveAttribute('required', '');
+  await expect(email).toHaveCount(0);
+  await expect(phone).toHaveAttribute('required', '');
 
   await preferredContact.selectOption('EMAIL');
   await expect(email).toHaveAttribute('required', '');
-  await expect(phone).not.toHaveAttribute('required', '');
+  await expect(phone).toHaveCount(0);
 
   await preferredContact.selectOption('WHATSAPP');
-  await expect(email).not.toHaveAttribute('required', '');
+  await expect(email).toHaveCount(0);
   await expect(phone).toHaveAttribute('required', '');
 
   await expect(form.locator('select[name="school"]')).toHaveAttribute(
     'required',
     '',
   );
-  await expect(form.locator('textarea[name="message"]')).toHaveAttribute(
+  await expect(form.locator('textarea[name="message"]')).not.toHaveAttribute(
     'required',
     '',
   );

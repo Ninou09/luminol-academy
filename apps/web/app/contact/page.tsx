@@ -119,36 +119,6 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         </section>
 
         <section
-          className={styles.section}
-          aria-labelledby="contact-paths-title"
-        >
-          <div className={styles.pathsHeading} data-reveal>
-            <h2 className={styles.eyebrow} id="contact-paths-title">
-              {copy.exploreEyebrow}
-            </h2>
-          </div>
-          <div className={styles.pathGrid}>
-            {contactPaths.map((path) => (
-              <Link
-                className={`${styles.pathCard} ${path.tone}`}
-                href={path.href}
-                key={path.school.slug}
-                aria-labelledby={`contact-path-${path.school.slug}-title`}
-                data-contact-path={path.school.slug}
-                data-reveal
-              >
-                <span>{path.number}</span>
-                <h3 id={`contact-path-${path.school.slug}-title`}>
-                  {path.school.name}
-                </h3>
-                <p>{path.description}</p>
-                <b aria-hidden="true">↗</b>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section
           className={styles.enquirySection}
           aria-labelledby="contact-next-title"
         >
@@ -175,6 +145,35 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               initialMessage={enquiryDefaults?.message}
               initialProgrammeSlug={programme?.slug.current}
             />
+          </div>
+        </section>
+        <section
+          className={styles.section}
+          aria-labelledby="contact-paths-title"
+        >
+          <div className={styles.pathsHeading} data-reveal>
+            <h2 className={styles.eyebrow} id="contact-paths-title">
+              {copy.exploreEyebrow}
+            </h2>
+          </div>
+          <div className={styles.pathGrid}>
+            {contactPaths.map((path) => (
+              <Link
+                className={`${styles.pathCard} ${path.tone}`}
+                href={path.href}
+                key={path.school.slug}
+                aria-labelledby={`contact-path-${path.school.slug}-title`}
+                data-contact-path={path.school.slug}
+                data-reveal
+              >
+                <span>{path.number}</span>
+                <h3 id={`contact-path-${path.school.slug}-title`}>
+                  {path.school.name}
+                </h3>
+                <p>{path.description}</p>
+                <b aria-hidden="true">↗</b>
+              </Link>
+            ))}
           </div>
         </section>
       </main>

@@ -199,10 +199,7 @@ describe('POST /api/enquiries', () => {
     expect(createEnquiry).not.toHaveBeenCalled();
   });
 
-  it('rejects missing qualification fields and contact preferences that require a phone', async () => {
-    const missingCity = await POST(
-      createRequest({ ...validEnquiry, city: '' }, '203.0.113.18'),
-    );
+  it('rejects contact preferences without the required contact details', async () => {
     const missingPhone = await POST(
       createRequest(
         { ...validEnquiry, preferredContact: 'WHATSAPP', phone: '' },
@@ -210,9 +207,38 @@ describe('POST /api/enquiries', () => {
       ),
     );
 
-    expect(missingCity.status).toBe(400);
     expect(missingPhone.status).toBe(400);
     expect(createEnquiry).not.toHaveBeenCalled();
+  });
+
+  it('stores a minimal enquiry with absent qualification fields as null', async () => {
+    const response = await POST(
+      createRequest(
+        {
+          name: 'Luminol Learner',
+          phone: '0555 12 34 56',
+          preferredContact: 'WHATSAPP',
+          school: 'PSYCHOLOGY',
+          locale: 'ar',
+          consent: true,
+        },
+        '203.0.113.18',
+      ),
+    );
+
+    expect(response.status).toBe(201);
+    expect(await response.json()).toEqual({ submitted: true });
+    expect(createEnquiry).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        email: '',
+        message: '',
+        city: null,
+        deliveryPreference: null,
+        timingPreference: null,
+        preferredContact: 'WHATSAPP',
+        phone: '0555 12 34 56',
+      }),
+    });
   });
 
   it('persists a phone number when WhatsApp follow-up is requested', async () => {
