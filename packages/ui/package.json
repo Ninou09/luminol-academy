@@ -13,13 +13,13 @@
     "test": "vitest run --passWithNoTests"
   },
   "peerDependencies": {
-    "react": "^19.1.0"
+    "react": "^19.3.0"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",
-    "@types/react": "^19.2.18",
-    "eslint": "^10.9.1",
-    "react": "^19.1.0",
+    "@types/react": "^19.3.0",
+    "eslint": "^10.10.0",
+    "react": "^19.3.0",
     "typescript": "^5.8.3",
     "vitest": "^4.1.11"
   }
