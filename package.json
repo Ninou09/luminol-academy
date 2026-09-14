@@ -17,8 +17,8 @@
     "db:studio": "pnpm --filter @luminol/database studio"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
-    "eslint": "^10.9.1",
+    "@playwright/test": "^1.63.0",
+    "eslint": "^10.10.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "turbo": "^2.10.12",
