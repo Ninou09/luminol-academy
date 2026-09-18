@@ -573,7 +573,14 @@
     grid-template-columns: 1fr;
   }
   .schoolCard {
-    min-height: 28rem;
+    min-height: auto;
+  }
+  .schoolCard h3 {
+    margin-top: 2rem;
+  }
+  .sectionHeading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
   }
   .approach,
   .about,
@@ -620,30 +627,103 @@
   }
 }
 
-.programmeSpotlight {
-  display: flex;
-  flex-wrap: wrap;
+/* Arabic display text needs its own font and line rhythm, including CMS text. */
+.page:dir(rtl) :is(h1, h2, h3, .schoolPromise, .aboutLede, .pathwayLinks a),
+.stageSchoolCopy:dir(rtl) strong {
+  font-family: var(--font-arabic);
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+.page:dir(rtl) :is(.heroTitle span, .schoolPromise) {
+  font-style: normal;
+}
+.page:dir(rtl) :is(.eyebrow, .proof dd, .textLink, .values span) {
+  letter-spacing: normal;
+}
+.stageMonogram:dir(rtl) {
+  translate: 50% -50%;
+}
+.heroCopy,
+.schoolCard,
+.sectionHeading > *,
+.aboutCopy,
+.pathway > * {
+  min-width: 0;
+}
+.heroTitle,
+.schoolCard h3,
+.sectionHeading h2,
+.pathwayLinks a {
+  overflow-wrap: anywhere;
+}
+.textLink {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem 3rem;
-  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
-  margin-inline: auto;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  border: 1px solid var(--color-brand-line);
-  border-radius: var(--luminol-media-radius);
-  background: var(--color-brand-surface);
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  width: fit-content;
+  font-size: 0.85rem;
 }
-.programmeSpotlight > div {
-  flex: 1 1 26rem;
+.heroActions a:focus-visible,
+.textLink:focus-visible,
+.pathwayLinks a:focus-visible {
+  outline: 3px solid var(--color-brand-gold-strong);
+  outline-offset: 4px;
 }
-.programmeSpotlight h2 {
-  margin: 0;
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
-  line-height: 1.4;
-}
-.programmeSpotlight p:last-child {
-  max-width: 48rem;
-  margin-bottom: 0;
-  line-height: 1.8;
-  color: var(--color-brand-ink-soft);
+@media (max-width: 680px) {
+  .heroActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .heroActions a {
+    min-height: 3rem;
+    width: 100%;
+    text-align: center;
+  }
+  .proof {
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .proof div {
+    min-width: 0;
+  }
+  .proof dt {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+  .proof dd {
+    font-size: 0.75rem;
+    line-height: 1.7;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  .page:dir(rtl) .heroTitle {
+    font-size: clamp(2rem, 8.5vw, 3rem);
+  }
+  .page:dir(rtl)
+    :is(
+      .sectionHeading h2,
+      .aboutCopy h2,
+      .pathway h2,
+      .approachIntro h2,
+      .cta h2
+    ) {
+    font-size: clamp(1.75rem, 7vw, 2.75rem);
+  }
+  .page:dir(rtl) .schoolCard h3 {
+    font-size: clamp(1.65rem, 6.5vw, 2.4rem);
+  }
+  .schoolCard li {
+    font-size: 0.875rem;
+    line-height: 1.8;
+  }
+  .principles li {
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+  .pathwayLinks a {
+    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+    gap: 0.75rem;
+  }
 }
