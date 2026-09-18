@@ -55,6 +55,11 @@ export default async function Page() {
     languages: styles.languages ?? '',
     training: styles.training ?? '',
   };
+  const stagePosition = {
+    psychology: styles.stagePsychology ?? '',
+    languages: styles.stageLanguages ?? '',
+    training: styles.stageTraining ?? '',
+  };
 
   return (
     <>
@@ -99,35 +104,35 @@ export default async function Page() {
 
           <div className={styles.stage} aria-hidden="true" data-reveal>
             <div className={styles.stageGrid} />
-            <div className={styles.glow} data-motion-float />
-            <div className={styles.orbit} data-motion-orbit />
-            <div
-              className={`${styles.orbit} ${styles.orbitInner}`}
-              data-motion-orbit="reverse"
-            />
-            <div className={styles.core} data-motion-float>
+            <div className={styles.stageGlow} />
+            <div className={styles.stageHeader}>
+              <span>Luminol Academy</span>
+              <span>AR · FR · EN</span>
+            </div>
+            <div className={styles.stageMonogram} data-motion-float>
               Lu
             </div>
-            <div
-              className={`${styles.signal} ${styles.signalOne}`}
-              data-motion-float
-            >
-              <span>{copy.mind}</span>
-              <strong>{copy.understand}</strong>
+            <div className={styles.stageSchools}>
+              {schoolList.map((school) => (
+                <div
+                  className={`${styles.stageSchool} ${
+                    schoolTone[school.slug]
+                  } ${stagePosition[school.slug]}`}
+                  key={`hero-${school.slug}`}
+                >
+                  <span className={styles.stageSchoolNumber}>
+                    {school.number}
+                  </span>
+                  <div className={styles.stageSchoolCopy}>
+                    <strong>{school.name}</strong>
+                    <span>{school.promise}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div
-              className={`${styles.signal} ${styles.signalTwo}`}
-              data-motion-float
-            >
-              <span>{copy.voice}</span>
-              <strong>{copy.connect}</strong>
-            </div>
-            <div
-              className={`${styles.signal} ${styles.signalThree}`}
-              data-motion-float
-            >
-              <span>{copy.work}</span>
-              <strong>{copy.advance}</strong>
+            <div className={styles.stageFooter}>
+              <span>{copy.aboutVisual}</span>
+              <span>01 — 03</span>
             </div>
           </div>
         </section>
