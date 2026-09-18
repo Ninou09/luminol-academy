@@ -118,7 +118,9 @@ export default async function Page() {
                   } ${stagePosition[school.slug]}`}
                   key={`hero-${school.slug}`}
                 >
-                  <span className={styles.stageSchoolNumber}>{school.number}</span>
+                  <span className={styles.stageSchoolNumber}>
+                    {school.number}
+                  </span>
                   <div className={styles.stageSchoolCopy}>
                     <strong>{school.name}</strong>
                     <span>{school.promise}</span>

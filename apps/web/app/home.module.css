@@ -106,10 +106,10 @@
       var(--color-brand-ink) 0%,
       var(--color-brand-ink-soft) 72%,
       color-mix(
-        in srgb,
-        var(--color-school-psychology) 52%,
-        var(--color-brand-ink)
-      )
+          in srgb,
+          var(--color-school-psychology) 52%,
+          var(--color-brand-ink)
+        )
         100%
     );
   box-shadow: var(--shadow-editorial);
@@ -241,8 +241,7 @@
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border: 1px solid
-    color-mix(in srgb, var(--school-accent) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--school-accent) 72%, transparent);
   border-radius: 50%;
   color: var(--school-accent);
   font-size: 0.62rem;

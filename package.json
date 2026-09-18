@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "format": "prettier --write .",
-    "format:check": "prettier --write apps/web/app/page.tsx apps/web/app/home.module.css && git diff -- apps/web/app/page.tsx apps/web/app/home.module.css && false",
+    "format:check": "prettier --check .",
     "security:check": "node scripts/security-check.mjs && node scripts/check-action-pins.mjs",
     "db:generate": "node scripts/generate-prisma-client.mjs",
     "db:migrate": "pnpm --filter @luminol/database migrate",
