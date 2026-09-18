@@ -1,6 +1,7 @@
 import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
 import {
   buildLanguageAlternates,
+  getAttendanceCertificateCopy,
   getOpenGraphLocale,
   localizeHref,
   localizePathname,
@@ -129,6 +130,7 @@ export default async function ProgrammesPage({
           <p className="eyebrow">{copy.eyebrow}</p>
           <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
           <p>{copy.heroBody}</p>
+          <p>{getAttendanceCertificateCopy(locale).scope}</p>
         </section>
 
         <section className={`section-shell ${styles.discovery}`}>

@@ -9,6 +9,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { OrganizationJsonLd } from '../components/organization-json-ld';
+import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
@@ -69,7 +70,7 @@ export default async function Page() {
             </h1>
             <p className={styles.heroLede}>{copy.heroLede}</p>
             <div className={styles.heroActions}>
-              <ButtonLink href="#schools" size="lg">
+              <ButtonLink href={localizeHref(locale, '/programmes')} size="lg">
                 {copy.exploreSchools} <span aria-hidden="true">↘</span>
               </ButtonLink>
               <ButtonLink
@@ -78,13 +79,6 @@ export default async function Page() {
                 variant="secondary"
               >
                 {copy.pathwayPsychology} <span aria-hidden="true">→</span>
-              </ButtonLink>
-              <ButtonLink
-                href={localizeHref(locale, '/about')}
-                size="lg"
-                variant="secondary"
-              >
-                {copy.discoverLuminol}
               </ButtonLink>
             </div>
             <dl className={styles.proof} aria-label={copy.strengthsAria}>
@@ -137,6 +131,8 @@ export default async function Page() {
             </div>
           </div>
         </section>
+
+        <PublishedProgrammeSpotlight locale={locale} />
 
         <section
           id="schools"

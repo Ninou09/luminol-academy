@@ -2,7 +2,7 @@
 
 import type { Locale } from '@luminol/localization';
 import { Button } from '@luminol/ui';
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 
 import {
   getCurrentEnquiryAttribution,
@@ -16,7 +16,7 @@ import {
 import type { getPublicCopy } from '../lib/public-localization';
 
 type FormCopy = ReturnType<typeof getPublicCopy>['form'];
-type ContactPreference = '' | 'EMAIL' | 'PHONE' | 'WHATSAPP';
+type ContactPreference = 'EMAIL' | 'PHONE' | 'WHATSAPP';
 
 type SubmissionState =
   | { status: 'idle'; message: '' }
@@ -41,18 +41,19 @@ export function EnquiryForm({
 }: EnquiryFormProps) {
   const qualification = getEnquiryQualificationCopy(locale);
   const [preferredContact, setPreferredContact] =
-    useState<ContactPreference>('');
+    useState<ContactPreference>('WHATSAPP');
   const [submission, setSubmission] = useState<SubmissionState>({
     status: 'idle',
     message: '',
   });
+  const submissionLock = useRef(false);
   const isSubmitting = submission.status === 'submitting';
   const requiresEmail = preferredContact === 'EMAIL';
-  const requiresPhone =
-    preferredContact === 'PHONE' || preferredContact === 'WHATSAPP';
 
   async function submitEnquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submissionLock.current) return;
+    submissionLock.current = true;
     const form = event.currentTarget;
     const formData = new FormData(form);
     const referrerPathname = getSameOriginReferrerPath(
@@ -78,16 +79,16 @@ export function EnquiryForm({
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           name: formData.get('name'),
-          email: formData.get('email'),
-          phone: formData.get('phone'),
+          email: formData.get('email') ?? '',
+          phone: formData.get('phone') ?? '',
           city: formData.get('city'),
           preferredContact: formData.get('preferredContact'),
-          deliveryPreference: formData.get('deliveryPreference'),
-          timingPreference: formData.get('timingPreference'),
+          deliveryPreference: formData.get('deliveryPreference') || undefined,
+          timingPreference: formData.get('timingPreference') || undefined,
           school: formData.get('school'),
           programmeSlug,
           ...attribution,
-          message: formData.get('message'),
+          message: formData.get('message') ?? '',
           locale,
           consent: formData.get('consent') === 'on',
           website: formData.get('website'),
@@ -98,10 +99,12 @@ export function EnquiryForm({
       if (!response.ok || !payload.submitted) throw new Error(copy.error);
 
       form.reset();
-      setPreferredContact('');
+      setPreferredContact('WHATSAPP');
       setSubmission({ status: 'success', message: copy.success });
     } catch {
       setSubmission({ status: 'error', message: copy.error });
+    } finally {
+      submissionLock.current = false;
     }
   }
 
@@ -118,6 +121,10 @@ export function EnquiryForm({
         <p>{copy.intro}</p>
       </div>
 
+      {initialMessage ? (
+        <p className="enquiry-context">{initialMessage}</p>
+      ) : null}
+
       <div className="form-grid">
         <label>
           <span>{copy.fullName}</span>
@@ -131,33 +138,9 @@ export function EnquiryForm({
           />
         </label>
         <label>
-          <span>
-            {copy.email}{' '}
-            {!requiresEmail ? <small>{copy.optional}</small> : null}
-          </span>
-          <input
-            autoComplete="email"
-            maxLength={254}
-            name="email"
-            required={requiresEmail}
-            type="email"
-          />
-        </label>
-        <label>
-          <span>{qualification.city}</span>
-          <input
-            autoComplete="address-level2"
-            maxLength={120}
-            minLength={2}
-            name="city"
-            required
-            type="text"
-          />
-        </label>
-        <label>
           <span>{qualification.preferredContact}</span>
           <select
-            defaultValue=""
+            value={preferredContact}
             name="preferredContact"
             onChange={(event) =>
               setPreferredContact(
@@ -166,52 +149,39 @@ export function EnquiryForm({
             }
             required
           >
-            <option value="" disabled>
-              {qualification.chooseContact}
-            </option>
-            <option value="EMAIL">{qualification.contactEmail}</option>
-            <option value="PHONE">{qualification.contactPhone}</option>
             <option value="WHATSAPP">{qualification.contactWhatsapp}</option>
+            <option value="PHONE">{qualification.contactPhone}</option>
+            <option value="EMAIL">{qualification.contactEmail}</option>
           </select>
         </label>
-        <label>
-          <span>
-            {copy.phone}{' '}
-            {!requiresPhone ? <small>{copy.optional}</small> : null}
-          </span>
-          <input
-            autoComplete="tel"
-            maxLength={30}
-            name="phone"
-            required={requiresPhone}
-            type="tel"
-          />
-          <small>{qualification.phoneHint}</small>
-        </label>
-        <label>
-          <span>{qualification.deliveryPreference}</span>
-          <select defaultValue="" name="deliveryPreference" required>
-            <option value="" disabled>
-              {qualification.chooseDelivery}
-            </option>
-            <option value="IN_PERSON">{qualification.inPerson}</option>
-            <option value="ONLINE">{qualification.online}</option>
-            <option value="FLEXIBLE">{qualification.flexible}</option>
-            <option value="NOT_SURE">{qualification.notSure}</option>
-          </select>
-        </label>
-        <label>
-          <span>{qualification.timingPreference}</span>
-          <select defaultValue="" name="timingPreference" required>
-            <option value="" disabled>
-              {qualification.chooseTiming}
-            </option>
-            <option value="SOON">{qualification.soon}</option>
-            <option value="WITHIN_MONTH">{qualification.withinMonth}</option>
-            <option value="LATER">{qualification.later}</option>
-            <option value="NOT_SURE">{qualification.notSure}</option>
-          </select>
-        </label>
+        {requiresEmail ? (
+          <label>
+            <span>{copy.email}</span>
+            <input
+              key="email"
+              autoComplete="email"
+              dir="ltr"
+              maxLength={254}
+              name="email"
+              required
+              type="email"
+            />
+          </label>
+        ) : (
+          <label>
+            <span>{copy.phone}</span>
+            <input
+              key="phone"
+              autoComplete="tel"
+              dir="ltr"
+              maxLength={30}
+              name="phone"
+              required
+              type="tel"
+            />
+            <small>{qualification.phoneHint}</small>
+          </label>
+        )}
         <label>
           <span>{copy.interest}</span>
           <select defaultValue={initialSchool} name="school" required>
@@ -221,18 +191,65 @@ export function EnquiryForm({
             <option value="TRAINING">{copy.training}</option>
           </select>
         </label>
-        <label className="message-field">
-          <span>{copy.message}</span>
-          <textarea
-            defaultValue={initialMessage}
-            maxLength={2000}
-            minLength={10}
-            name="message"
-            required
-            rows={7}
-          />
-        </label>
       </div>
+
+      <details
+        className="enquiry-details"
+        onInvalidCapture={(event) => {
+          event.currentTarget.open = true;
+        }}
+      >
+        <summary>{qualification.optionalDetails}</summary>
+        <p>{qualification.optionalDetailsHint}</p>
+        <div className="form-grid">
+          <label className="message-field">
+            <span>
+              {copy.message} <small>{copy.optional}</small>
+            </span>
+            <textarea
+              defaultValue={initialMessage}
+              maxLength={2000}
+              name="message"
+              rows={3}
+            />
+          </label>
+          <label>
+            <span>
+              {qualification.city} <small>{copy.optional}</small>
+            </span>
+            <input
+              autoComplete="address-level2"
+              maxLength={120}
+              name="city"
+              type="text"
+            />
+          </label>
+          <label>
+            <span>
+              {qualification.deliveryPreference} <small>{copy.optional}</small>
+            </span>
+            <select defaultValue="" name="deliveryPreference">
+              <option value="">{qualification.chooseDelivery}</option>
+              <option value="IN_PERSON">{qualification.inPerson}</option>
+              <option value="ONLINE">{qualification.online}</option>
+              <option value="FLEXIBLE">{qualification.flexible}</option>
+              <option value="NOT_SURE">{qualification.notSure}</option>
+            </select>
+          </label>
+          <label>
+            <span>
+              {qualification.timingPreference} <small>{copy.optional}</small>
+            </span>
+            <select defaultValue="" name="timingPreference">
+              <option value="">{qualification.chooseTiming}</option>
+              <option value="SOON">{qualification.soon}</option>
+              <option value="WITHIN_MONTH">{qualification.withinMonth}</option>
+              <option value="LATER">{qualification.later}</option>
+              <option value="NOT_SURE">{qualification.notSure}</option>
+            </select>
+          </label>
+        </div>
+      </details>
 
       <label className="honeypot" aria-hidden="true">
         Website

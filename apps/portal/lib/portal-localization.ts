@@ -1,4 +1,7 @@
-import type { Locale } from '@luminol/localization';
+import {
+  getAttendanceCertificateCopy,
+  type Locale,
+} from '@luminol/localization';
 
 type PortalCopy = {
   metadata: { title: string; description: string };
@@ -99,6 +102,7 @@ type PortalCopy = {
     serial: string;
     status: string;
     printHint: string;
+    scopeNotice: string;
   };
   course: {
     back: string;
@@ -280,9 +284,10 @@ const PORTAL_COPY = {
       renews: 'renews',
     },
     certificate: {
-      title: 'Certificate of completion',
+      title: getAttendanceCertificateCopy('en').title,
       certifies: 'This certifies that',
-      completed: 'successfully completed',
+      completed: getAttendanceCertificateCopy('en').participation,
+      scopeNotice: getAttendanceCertificateCopy('en').scope,
       issued: 'Issued',
       serial: 'Serial',
       status: 'Status',
@@ -478,9 +483,10 @@ const PORTAL_COPY = {
       renews: 'renouvellement le',
     },
     certificate: {
-      title: 'Certificat de réussite',
+      title: getAttendanceCertificateCopy('fr').title,
       certifies: 'Ceci certifie que',
-      completed: 'a terminé avec succès',
+      completed: getAttendanceCertificateCopy('fr').participation,
+      scopeNotice: getAttendanceCertificateCopy('fr').scope,
       issued: 'Émis',
       serial: 'Numéro de série',
       status: 'Statut',
@@ -672,9 +678,10 @@ const PORTAL_COPY = {
       renews: 'يتجدد في',
     },
     certificate: {
-      title: 'شهادة إتمام',
+      title: getAttendanceCertificateCopy('ar').title,
       certifies: 'تشهد هذه الوثيقة أن',
-      completed: 'أتم بنجاح',
+      completed: getAttendanceCertificateCopy('ar').participation,
+      scopeNotice: getAttendanceCertificateCopy('ar').scope,
       issued: 'تاريخ الإصدار',
       serial: 'الرقم التسلسلي',
       status: 'الحالة',

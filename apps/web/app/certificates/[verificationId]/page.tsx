@@ -116,6 +116,7 @@ export default async function CertificateVerificationPage({
               </dd>
             </div>
           </dl>
+          <p>{copy.scopeNotice}</p>
           {!valid && <p className={styles.notice}>{copy.revokedNotice}</p>}
         </section>
 

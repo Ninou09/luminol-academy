@@ -1,4 +1,7 @@
-import type { Locale } from '@luminol/localization';
+import {
+  getAttendanceCertificateCopy,
+  type Locale,
+} from '@luminol/localization';
 
 type PublicCopy = {
   site: {
@@ -185,6 +188,7 @@ type PublicCopy = {
     verifiedTitle: string;
     revokedTitle: string;
     registryBody: string;
+    scopeNotice: string;
     validCredential: string;
     revokedCredential: string;
     certifies: string;
@@ -221,8 +225,8 @@ export const PUBLIC_COPY = {
       heroTitle: 'Grow with clarity.',
       heroAccent: 'Learn with purpose.',
       heroLede:
-        'Luminol brings mental wellbeing, language learning and professional development together in one thoughtful human ecosystem.',
-      exploreSchools: 'Explore our schools',
+        'Explore Luminol’s published training programmes or request a psychology consultation. Programme details explain who each course is for and how to enquire about the next cohort.',
+      exploreSchools: 'Explore training programmes',
       discoverLuminol: 'Discover Luminol',
       strengthsAria: 'Luminol platform strengths',
       connectedSchools: 'Connected schools',
@@ -432,7 +436,7 @@ export const PUBLIC_COPY = {
     form: {
       sending: 'Sending your enquiry…',
       success:
-        'Thank you. Your enquiry is safely with Luminol, and the team will review it.',
+        'Thank you. Luminol has received your request and will contact you using your chosen method. Your place or appointment is confirmed only after the team follows up.',
       error: 'Unable to submit the enquiry. Please try again.',
       eyebrow: 'Tell us about your goal',
       title: 'Start your Luminol journey.',
@@ -454,26 +458,27 @@ export const PUBLIC_COPY = {
     },
     certificate: {
       title: 'Certificate verification',
-      description: 'Verify a Luminol Academy learning certificate.',
-      eyebrow: 'Credential verification',
+      description: 'Verify a Luminol Academy attendance certificate.',
+      eyebrow: 'Attendance certificate verification',
       verifiedTitle: 'Certificate verified.',
       revokedTitle: 'Certificate revoked.',
       registryBody:
         "This record comes directly from Luminol Academy's secure certificate registry.",
-      validCredential: 'Valid credential',
-      revokedCredential: 'Revoked credential',
+      validCredential: 'Valid attendance certificate',
+      revokedCredential: 'Revoked attendance certificate',
       certifies: 'This certifies that',
-      completed: 'completed the Luminol programme',
+      completed: getAttendanceCertificateCopy('en').participation,
+      scopeNotice: getAttendanceCertificateCopy('en').scope,
       issued: 'Issued',
       status: 'Status',
       verified: 'Verified',
       revoked: 'Revoked',
       serial: 'Serial number',
       revokedNotice:
-        'This credential is no longer valid. Contact Luminol Academy for further information.',
+        'This certificate is no longer valid. Contact Luminol Academy for further information.',
       privacyTitle: 'Privacy-controlled verification',
       privacyBody:
-        'This page is available because the certificate holder chose to make this credential public. It is excluded from search indexing.',
+        'This page is available because the certificate holder chose to make this certificate public. It is excluded from search indexing.',
     },
   },
   fr: {
@@ -496,8 +501,8 @@ export const PUBLIC_COPY = {
       heroTitle: 'Grandissez avec clarté.',
       heroAccent: 'Apprenez avec intention.',
       heroLede:
-        'Luminol réunit bien-être psychologique, apprentissage des langues et développement professionnel dans un même écosystème humain et cohérent.',
-      exploreSchools: 'Découvrir nos écoles',
+        'Explorez les formations publiées ou demandez une consultation en psychologie. Chaque programme présente ses objectifs, son public et la démarche pour se renseigner sur la prochaine cohorte.',
+      exploreSchools: 'Explorer les formations',
       discoverLuminol: 'Découvrir Luminol',
       strengthsAria: 'Forces de la plateforme Luminol',
       connectedSchools: 'Écoles complémentaires',
@@ -716,7 +721,7 @@ export const PUBLIC_COPY = {
     form: {
       sending: 'Envoi de votre demande…',
       success:
-        'Merci. Votre demande a bien été transmise à Luminol et notre équipe va l’examiner.',
+        'Merci. Luminol a reçu votre demande et vous contactera par le moyen choisi. Votre inscription ou rendez-vous sera confirmé après cet échange.',
       error: 'Impossible d’envoyer votre demande. Veuillez réessayer.',
       eyebrow: 'Parlez-nous de votre objectif',
       title: 'Commencez votre parcours Luminol.',
@@ -738,26 +743,27 @@ export const PUBLIC_COPY = {
     },
     certificate: {
       title: 'Vérification du certificat',
-      description: 'Vérifiez un certificat de formation Luminol Academy.',
-      eyebrow: 'Vérification du titre',
+      description: 'Vérifiez une attestation de présence de Luminol Academy.',
+      eyebrow: 'Vérification de l’attestation de présence',
       verifiedTitle: 'Certificat vérifié.',
       revokedTitle: 'Certificat révoqué.',
       registryBody:
         'Cet enregistrement provient directement du registre sécurisé des certificats de Luminol Academy.',
-      validCredential: 'Titre valide',
-      revokedCredential: 'Titre révoqué',
+      validCredential: 'Attestation de présence valide',
+      revokedCredential: 'Attestation de présence révoquée',
       certifies: 'Ceci certifie que',
-      completed: 'a terminé le programme Luminol',
+      completed: getAttendanceCertificateCopy('fr').participation,
+      scopeNotice: getAttendanceCertificateCopy('fr').scope,
       issued: 'Délivré le',
       status: 'Statut',
       verified: 'Vérifié',
       revoked: 'Révoqué',
       serial: 'Numéro de série',
       revokedNotice:
-        'Ce titre n’est plus valide. Contactez Luminol Academy pour plus d’informations.',
+        'Cette attestation n’est plus valide. Contactez Luminol Academy pour plus d’informations.',
       privacyTitle: 'Vérification respectueuse de la confidentialité',
       privacyBody:
-        'Cette page est disponible parce que le titulaire du certificat a choisi de rendre ce titre public. Elle est exclue de l’indexation des moteurs de recherche.',
+        'Cette page est disponible parce que le titulaire du certificat a choisi de rendre cette attestation publique. Elle est exclue de l’indexation des moteurs de recherche.',
     },
   },
   ar: {
@@ -780,8 +786,8 @@ export const PUBLIC_COPY = {
       heroTitle: 'تقدّم بوضوح.',
       heroAccent: 'وتعلّم بهدف.',
       heroLede:
-        'تجمع لومينول بين التوازن النفسي وتعلّم اللغات والتطور المهني في منظومة إنسانية واحدة متكاملة ومدروسة.',
-      exploreSchools: 'اكتشف مدارسنا',
+        'استكشف البرامج التدريبية المنشورة أو اطلب استشارة نفسية. تعرّف على أهداف كل برنامج والفئة المستهدفة، واستفسر عن الفوج القادم.',
+      exploreSchools: 'استكشف البرامج التدريبية',
       discoverLuminol: 'اكتشف لومينول',
       strengthsAria: 'نقاط قوة منصة لومينول',
       connectedSchools: 'مدارس مترابطة',
@@ -986,7 +992,8 @@ export const PUBLIC_COPY = {
     },
     form: {
       sending: 'جارٍ إرسال طلبك…',
-      success: 'شكرًا لك. وصل طلبك إلى لومينول وسيقوم الفريق بمراجعته.',
+      success:
+        'شكرًا لك. وصل طلبك إلى لومينول وسيتواصل معك الفريق عبر الوسيلة التي اخترتها. يتأكد تسجيلك أو موعدك بعد التواصل مع الفريق.',
       error: 'تعذّر إرسال طلبك. يرجى المحاولة مرة أخرى.',
       eyebrow: 'أخبرنا عن هدفك',
       title: 'ابدأ رحلتك مع لومينول.',
@@ -1008,16 +1015,17 @@ export const PUBLIC_COPY = {
     },
     certificate: {
       title: 'التحقق من الشهادة',
-      description: 'تحقق من شهادة تعليمية صادرة عن أكاديمية لومينول.',
-      eyebrow: 'التحقق من الاعتماد',
+      description: 'تحقق من شهادة حضور صادرة عن أكاديمية لومينول.',
+      eyebrow: 'التحقق من شهادة الحضور',
       verifiedTitle: 'تم التحقق من الشهادة.',
       revokedTitle: 'تم إلغاء الشهادة.',
       registryBody:
         'يأتي هذا السجل مباشرة من سجل الشهادات الآمن لدى أكاديمية لومينول.',
-      validCredential: 'اعتماد صالح',
-      revokedCredential: 'اعتماد ملغى',
+      validCredential: 'شهادة حضور صالحة',
+      revokedCredential: 'شهادة حضور ملغاة',
       certifies: 'تشهد هذه الوثيقة أن',
-      completed: 'قد أتم برنامج لومينول',
+      completed: getAttendanceCertificateCopy('ar').participation,
+      scopeNotice: getAttendanceCertificateCopy('ar').scope,
       issued: 'تاريخ الإصدار',
       status: 'الحالة',
       verified: 'موثقة',
@@ -1027,7 +1035,7 @@ export const PUBLIC_COPY = {
         'لم تعد هذه الشهادة صالحة. تواصل مع أكاديمية لومينول لمزيد من المعلومات.',
       privacyTitle: 'تحقق يحترم الخصوصية',
       privacyBody:
-        'هذه الصفحة متاحة لأن صاحب الشهادة اختار جعل هذا الاعتماد عامًا، وهي مستبعدة من فهرسة محركات البحث.',
+        'هذه الصفحة متاحة لأن صاحب الشهادة اختار إتاحة هذه الشهادة للعموم، وهي مستبعدة من فهرسة محركات البحث.',
     },
   },
 } as const satisfies Record<Locale, PublicCopy>;
