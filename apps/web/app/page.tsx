@@ -113,7 +113,9 @@ export default async function Page() {
             <div className={styles.stageSchools}>
               {schoolList.map((school) => (
                 <div
-                  className={`${styles.stageSchool} ${schoolTone[school.slug]} ${stagePosition[school.slug]}`}
+                  className={`${styles.stageSchool} ${
+                    schoolTone[school.slug]
+                  } ${stagePosition[school.slug]}`}
                   key={`hero-${school.slug}`}
                 >
                   <span className={styles.stageSchoolNumber}>{school.number}</span>
