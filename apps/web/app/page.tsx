@@ -109,7 +109,9 @@ export default async function Page() {
               <span>Luminol Academy</span>
               <span>AR · FR · EN</span>
             </div>
-            <div className={styles.stageMonogram}>L</div>
+            <div className={styles.stageMonogram} data-motion-float>
+              Lu
+            </div>
             <div className={styles.stageSchools}>
               {schoolList.map((school) => (
                 <div
