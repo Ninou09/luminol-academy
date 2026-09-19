@@ -40,10 +40,10 @@ export function ProgrammeSpotlight({
           <span>{getSchools(locale)[programme.school].name}</span>
         </div>
         <h2 id="home-programme-title" className={styles.title} dir="auto">
-          {programme.title}
+          {presentation.title}
         </h2>
         <p className={styles.summary} dir="auto">
-          {programme.summary}
+          {presentation.summary}
         </p>
         {presentation.details.length > 0 ? (
           <ul className={styles.details} aria-label={copy.detailsAria}>
@@ -58,7 +58,7 @@ export function ProgrammeSpotlight({
           <Link
             className={styles.primaryAction}
             href={presentation.programmeHref}
-            aria-label={`${localizeProgrammeViewAction(locale)}: ${programme.title}`}
+            aria-label={`${localizeProgrammeViewAction(locale)}: ${presentation.title}`}
             data-spotlight-view-action
           >
             {localizeProgrammeViewAction(locale)}
@@ -67,7 +67,7 @@ export function ProgrammeSpotlight({
           <Link
             className={styles.secondaryAction}
             href={presentation.contactHref}
-            aria-label={`${enquiryAction}: ${programme.title}`}
+            aria-label={`${enquiryAction}: ${presentation.title}`}
             data-spotlight-enquiry-action
           >
             {enquiryAction}

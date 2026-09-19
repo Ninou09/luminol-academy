@@ -17,6 +17,7 @@ import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
+  localizeProgrammePublicCopy,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
 } from '../../../lib/programme-presentation';
@@ -133,11 +134,17 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         const isWaitlist = programmeSlug
           ? isProgrammeWaitlist(programmeSlug)
           : false;
+        const publicCopy = programmeSlug
+          ? localizeProgrammePublicCopy(locale, {
+              ...programme,
+              slug: { current: programmeSlug },
+            })
+          : { title: programme.title, summary: programme.summary };
 
         return {
           id: programme._id,
-          title: programme.title,
-          description: programme.summary,
+          title: publicCopy.title,
+          description: publicCopy.summary,
           slug: programmeSlug,
           delivery: isWaitlist
             ? localizeProgrammeWaitlistLabel(locale)
