@@ -58,8 +58,8 @@ type LocalizableProgramme = {
   slug: { current: string };
   localizedCopy?:
     | {
-        fr?: LocalizedProgrammeCopy | undefined;
-        en?: LocalizedProgrammeCopy | undefined;
+        fr?: LocalizedProgrammeCopy | null | undefined;
+        en?: LocalizedProgrammeCopy | null | undefined;
       }
     | null
     | undefined;
