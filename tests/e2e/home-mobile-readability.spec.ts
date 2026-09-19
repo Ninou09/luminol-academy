@@ -54,7 +54,6 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
   }
 }
 
-
 const expectedHeroTitles = {
   ar: 'تقدّم بوضوح. وتعلّم بهدف.',
   fr: 'Grandissez avec clarté. Apprenez avec intention.',
@@ -62,7 +61,9 @@ const expectedHeroTitles = {
 } as const;
 
 for (const locale of ['ar', 'fr', 'en'] as const) {
-  test(`${locale} homepage exposes a separated hero heading`, async ({ page }) => {
+  test(`${locale} homepage exposes a separated hero heading`, async ({
+    page,
+  }) => {
     await page.goto(`/${locale}`);
     await expect(
       page.getByRole('heading', {
