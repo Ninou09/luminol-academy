@@ -13,10 +13,7 @@ import { notFound } from 'next/navigation';
 
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { buildProgrammeContactHref } from '../../../lib/programme-contact';
-import {
-  getPublicProgrammeBySlug,
-  type PublicProgrammeDetail,
-} from '../../../lib/programme-detail';
+import { getPublicProgrammeBySlug } from '../../../lib/programme-detail';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
