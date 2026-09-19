@@ -7,6 +7,8 @@ const { resolve } = require('node:path');
 const root = resolve(__dirname, '../..');
 const app = resolve(root, 'apps/web');
 const cli = require.resolve('next/dist/bin/next', { paths: [app] });
+// NextURL normalizes loopback IPs to localhost. Keep the server bind origin
+// identical so locale rewrites remain internal instead of redirecting to self.
 const child = spawn(
   process.execPath,
   [
@@ -15,7 +17,7 @@ const child = spawn(
     cli,
     'start',
     '--hostname',
-    '127.0.0.1',
+    'localhost',
     '--port',
     '3001',
   ],
