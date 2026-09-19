@@ -102,7 +102,17 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps --only-shell chromium
       - name: Run public launch smoke tests
-        run: pnpm test:e2e --grep-invert "authenticated launch journeys"
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test:e2e --grep-invert "authenticated launch journeys" 2>&1 | tee browser-tests.log
+      - name: Upload public browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: public-browser-diagnostics
+          path: browser-tests.log
+          if-no-files-found: ignore
       - name: Check authenticated smoke configuration
         id: authenticated-smoke
         shell: bash
