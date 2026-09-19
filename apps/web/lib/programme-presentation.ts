@@ -56,10 +56,12 @@ type LocalizableProgramme = {
   title: string;
   summary: string;
   slug: { current: string };
-  localizedCopy?: {
-    fr?: LocalizedProgrammeCopy;
-    en?: LocalizedProgrammeCopy;
-  };
+  localizedCopy?:
+    | {
+        fr?: LocalizedProgrammeCopy;
+        en?: LocalizedProgrammeCopy;
+      }
+    | null;
 };
 
 const REVIEWED_PROGRAMME_COPY_OVERRIDES: Partial<

@@ -17,7 +17,7 @@ const localizedProgrammeCopiesSchema = z
     fr: localizedProgrammeCopySchema.optional(),
     en: localizedProgrammeCopySchema.optional(),
   })
-  .optional();
+  .nullish();
 
 const programmeImageSchema = z.object({
   url: z

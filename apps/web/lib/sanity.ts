@@ -20,7 +20,7 @@ const localizedProgrammeCopiesSchema = z
     fr: localizedProgrammeCopySchema.optional(),
     en: localizedProgrammeCopySchema.optional(),
   })
-  .optional();
+  .nullish();
 
 function isApprovedSanityImageUrl(value: string) {
   try {
