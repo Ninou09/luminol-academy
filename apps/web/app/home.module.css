@@ -627,6 +627,226 @@
   }
 }
 
+/* Cinematic editorial direction: a full-bleed first frame, photographic
+   storytelling, and restrained interface details. */
+.hero {
+  min-height: calc(100svh - 5.5rem);
+  grid-template-columns: 1fr;
+  align-items: end;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: clamp(7rem, 16vh, 11rem)
+    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2))
+    clamp(6.5rem, 12vh, 9rem);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
+  isolation: isolate;
+}
+
+.hero::before {
+  display: none;
+}
+
+.heroCopy {
+  max-width: min(62rem, 78vw);
+}
+
+.hero .eyebrow {
+  color: var(--color-brand-gold);
+}
+
+.heroActions a:first-child {
+  background: var(--color-brand-surface);
+  color: var(--color-brand-ink);
+}
+
+.heroActions a:last-child {
+  border-color: var(--color-brand-surface);
+  color: var(--color-brand-surface);
+}
+
+.heroTitle {
+  max-width: 12ch;
+  font-size: clamp(4rem, 9.2vw, 9.5rem);
+  line-height: 0.77;
+  text-wrap: balance;
+}
+
+.heroTitle span {
+  color: var(--color-brand-surface);
+}
+
+.heroLede {
+  max-width: 36rem;
+  color: color-mix(in srgb, var(--color-brand-surface) 78%, transparent);
+}
+
+.hero .proof {
+  max-width: 43rem;
+  border-color: color-mix(in srgb, var(--color-brand-surface) 24%, transparent);
+}
+
+.hero .proof dd {
+  color: color-mix(in srgb, var(--color-brand-surface) 62%, transparent);
+}
+
+.heroLocation {
+  position: absolute;
+  inset-inline: max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
+  inset-block-start: clamp(1.5rem, 4vw, 3rem);
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: color-mix(in srgb, var(--color-brand-surface) 68%, transparent);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.scrollCue {
+  position: absolute;
+  inset-inline-start: max(
+    var(--luminol-page-gutter),
+    calc((100vw - 82rem) / 2)
+  );
+  inset-block-end: clamp(2rem, 4vw, 3rem);
+  z-index: 3;
+  display: inline-flex;
+  gap: 0.7rem;
+  align-items: center;
+  color: var(--color-brand-surface);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.scrollCue span {
+  color: var(--color-brand-gold);
+  font-size: 1rem;
+}
+
+.schoolCard {
+  min-height: 44rem;
+  padding: 1.1rem;
+}
+
+.schoolCard::before {
+  display: none;
+}
+
+.schoolTop {
+  padding: 0.45rem 0.35rem 0.2rem;
+}
+
+.schoolPhoto {
+  height: clamp(13rem, 20vw, 18rem);
+  margin-top: 1rem;
+  border-radius: calc(var(--luminol-media-radius) * 0.72);
+}
+
+.schoolCard h3 {
+  margin: 1.8rem 0 0.8rem;
+  padding-inline: 0.35rem;
+}
+
+.schoolPromise,
+.schoolDescription,
+.schoolCard ul,
+.schoolCard .textLink {
+  margin-inline: 0.35rem;
+}
+
+.aboutVisual {
+  min-height: clamp(28rem, 46vw, 42rem);
+  background: var(--color-brand-ink);
+}
+
+.mediaCredits {
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  margin: -2rem auto 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-brand-line);
+  color: var(--color-brand-muted);
+  font-size: 0.62rem;
+}
+
+.mediaCredits span {
+  color: var(--color-brand-ink);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.mediaCredits a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+@media (min-width: 1001px) {
+  .schoolCard:nth-child(2) {
+    transform: translateY(2.5rem);
+  }
+
+  .schoolCard:nth-child(2):hover {
+    transform: translateY(2rem);
+  }
+}
+
+@media (max-width: 1000px) {
+  .schoolCard {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero {
+    width: 100%;
+    min-height: calc(100svh - 4.5rem);
+    padding: 8rem 1.25rem 6.5rem;
+  }
+
+  .heroCopy {
+    max-width: none;
+  }
+
+  .heroTitle {
+    font-size: clamp(3.4rem, 17vw, 5.5rem);
+  }
+
+  .heroLocation {
+    inset-inline: 1.25rem;
+  }
+
+  .heroLocation span:first-child {
+    display: none;
+  }
+
+  .scrollCue {
+    inset-inline-end: auto;
+    inset-inline-start: 1.25rem;
+    inset-block-end: 1.5rem;
+  }
+
+  .schoolCard {
+    min-height: auto;
+  }
+
+  .schoolPhoto {
+    height: 15rem;
+  }
+
+  .mediaCredits {
+    width: calc(100% - 2.5rem);
+  }
+}
+
 /* Arabic display text needs its own font and line rhythm, including CMS text. */
 .page:dir(rtl) :is(h1, h2, h3, .schoolPromise, .aboutLede, .pathwayLinks a),
 .stageSchoolCopy:dir(rtl) strong {
