@@ -70,7 +70,7 @@ export default async function Page() {
           <div className={styles.heroCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.heroEyebrow}</p>
             <h1 id="hero-title" className={styles.heroTitle}>
-              {copy.heroTitle}
+              {copy.heroTitle}{' '}
               <span>{copy.heroAccent}</span>
             </h1>
             <p className={styles.heroLede}>{copy.heroLede}</p>
