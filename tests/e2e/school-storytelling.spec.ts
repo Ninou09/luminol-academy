@@ -23,23 +23,20 @@ test('premium school storytelling preserves landmarks and governed media', async
     ).toBeVisible();
   }
 
-  const founderMedia = page.locator(
-    '[data-school-hero="psychology"] [data-founder-media]',
+  const academyMedia = page.locator(
+    '[data-school-hero="psychology"] [data-academy-media="psychology"]',
   );
-  await expect(founderMedia).toBeVisible();
-  await expect(founderMedia).toHaveAttribute(
+  await expect(academyMedia).toBeVisible();
+  await expect(academyMedia).toHaveAttribute(
     'data-media-source',
-    'user-approved-upload',
-  );
-  await expect(founderMedia).toHaveAttribute(
-    'data-media-approval',
-    '2026-08-13',
+    'https://www.pexels.com/photo/3184306/',
   );
   await expect(
-    founderMedia.getByRole('img', {
-      name: 'Kheddaoui Fettouma, founder of Luminol Academy',
+    academyMedia.getByRole('img', {
+      name: 'A diverse learning group collaborating around a table',
     }),
   ).toBeVisible();
+  await expect(page.locator('[data-founder-media]')).toHaveCount(0);
 
   const programmeCards = page.locator('[data-programme-card]');
   await expect(programmeCards).not.toHaveCount(0);
@@ -80,7 +77,7 @@ test('premium school storytelling preserves landmarks and governed media', async
   ).toBeTruthy();
 });
 
-test('school reduced motion keeps the centered editorial core in place', async ({
+test('school reduced motion keeps the editorial image in place', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -88,10 +85,11 @@ test('school reduced motion keeps the centered editorial core in place', async (
 
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);
-  const core = page.locator(
-    '[data-school-hero="languages"] [data-motion-float]',
+  const image = page.locator(
+    '[data-school-hero="languages"] [data-academy-media="languages"] img',
   );
-  await expect(core).toHaveCSS('translate', '-50% -50%');
+  await expect(image).toBeVisible();
+  await expect(image).toHaveCSS('transform', 'none');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 });
 

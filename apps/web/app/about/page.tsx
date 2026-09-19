@@ -9,6 +9,7 @@ import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { AcademyImage } from '../../components/academy-image';
 import { FounderJsonLd } from '../../components/founder-json-ld';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
@@ -16,19 +17,10 @@ import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
 
-const founderMediaByLocale = {
-  en: {
-    name: 'Kheddaoui Fettouma',
-    alt: 'Kheddaoui Fettouma, founder of Luminol Academy',
-  },
-  fr: {
-    name: 'Kheddaoui Fettouma',
-    alt: 'Kheddaoui Fettouma, fondatrice de Luminol Academy',
-  },
-  ar: {
-    name: 'خداوي فطومة',
-    alt: 'خداوي فطومة، مؤسسة أكاديمية لومينول',
-  },
+const founderNameByLocale = {
+  en: 'Kheddaoui Fettouma',
+  fr: 'Kheddaoui Fettouma',
+  ar: 'خداوي فطومة',
 } as const;
 
 const founderAuthorityByLocale = {
@@ -141,7 +133,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale).about;
-  const founderMedia = founderMediaByLocale[locale];
+  const founderName = founderNameByLocale[locale];
   const founderAuthority = founderAuthorityByLocale[locale];
   const schoolCards = [
     {
@@ -171,7 +163,7 @@ export default async function AboutPage() {
     <>
       <SiteHeader />
       <FounderJsonLd
-        name={founderMedia.name}
+        name={founderName}
         description={founderAuthority.body}
         href={localizePathname(locale, '/about')}
       />
@@ -186,57 +178,13 @@ export default async function AboutPage() {
             <h1 id="about-hero-title">{copy.heroTitle}</h1>
             <p>{copy.heroBody}</p>
           </div>
-          <div
+          <AcademyImage
             className={styles.heroVisual}
-            data-founder-media
-            data-media-source="user-approved-upload"
-            data-media-approval="2026-08-13"
-            data-media-crop="portrait-center-face"
-            data-reveal
-          >
-            <span
-              role="img"
-              aria-label={founderMedia.alt}
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundImage:
-                  "url('/media/founder-kheddaoui-fettouma.webp')",
-                backgroundSize: 'cover',
-                backgroundPosition: '50% 35%',
-                backgroundRepeat: 'no-repeat',
-                zIndex: 0,
-              }}
-            />
-            <div className={styles.rays} aria-hidden="true" />
-            <span
-              className={styles.core}
-              data-motion-float
-              aria-hidden="true"
-              style={{ opacity: 0, pointerEvents: 'none' }}
-            >
-              L
-            </span>
-            <p
-              style={{
-                zIndex: 2,
-                display: 'grid',
-                gap: '0.2rem',
-              }}
-            >
-              <strong
-                style={{
-                  color: 'var(--color-brand-surface)',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.5rem',
-                  fontWeight: 500,
-                }}
-              >
-                {founderMedia.name}
-              </strong>
-              <span>{copy.visualCaption}</span>
-            </p>
-          </div>
+            school="psychology"
+            locale={locale}
+            priority
+            sizes="(max-width: 1000px) 100vw, 48vw"
+          />
         </section>
 
         <section

@@ -8,9 +8,12 @@ import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { AcademyImage } from '../components/academy-image';
+import { CinematicBackdrop } from '../components/cinematic-backdrop';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
+import { academyMedia, cinematicCopy } from '../lib/academy-media';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
@@ -55,11 +58,7 @@ export default async function Page() {
     languages: styles.languages ?? '',
     training: styles.training ?? '',
   };
-  const stagePosition = {
-    psychology: styles.stagePsychology ?? '',
-    languages: styles.stageLanguages ?? '',
-    training: styles.stageTraining ?? '',
-  };
+  const cinematic = cinematicCopy[locale];
 
   return (
     <>
@@ -67,6 +66,14 @@ export default async function Page() {
       <OrganizationJsonLd description={publicCopy.site.description} />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
+          <CinematicBackdrop
+            pauseLabel={cinematic.pause}
+            playLabel={cinematic.play}
+          />
+          <div className={styles.heroLocation} aria-hidden="true">
+            <span>36.7538° N · 3.0588° E</span>
+            <span>{cinematic.location}</span>
+          </div>
           <div className={styles.heroCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.heroEyebrow}</p>
             <h1 id="hero-title" className={styles.heroTitle}>
@@ -100,40 +107,9 @@ export default async function Page() {
               </div>
             </dl>
           </div>
-
-          <div className={styles.stage} aria-hidden="true" data-reveal>
-            <div className={styles.stageGrid} />
-            <div className={styles.stageGlow} />
-            <div className={styles.stageHeader}>
-              <span>Luminol Academy</span>
-              <span>AR · FR · EN</span>
-            </div>
-            <div className={styles.stageMonogram} data-motion-float>
-              Lu
-            </div>
-            <div className={styles.stageSchools}>
-              {schoolList.map((school) => (
-                <div
-                  className={`${styles.stageSchool} ${
-                    schoolTone[school.slug]
-                  } ${stagePosition[school.slug]}`}
-                  key={`hero-${school.slug}`}
-                >
-                  <span className={styles.stageSchoolNumber}>
-                    {school.number}
-                  </span>
-                  <div className={styles.stageSchoolCopy}>
-                    <strong>{school.name}</strong>
-                    <span>{school.promise}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className={styles.stageFooter}>
-              <span>{copy.aboutVisual}</span>
-              <span>01 — 03</span>
-            </div>
-          </div>
+          <a className={styles.scrollCue} href="#schools">
+            {cinematic.discover} <span aria-hidden="true">↓</span>
+          </a>
         </section>
 
         <PublishedProgrammeSpotlight locale={locale} />
@@ -164,6 +140,12 @@ export default async function Page() {
                   <span>{school.number}</span>
                   <span className={styles.schoolGlyph} aria-hidden="true" />
                 </div>
+                <AcademyImage
+                  className={styles.schoolPhoto}
+                  school={school.slug}
+                  locale={locale}
+                  sizes="(max-width: 1000px) 100vw, 33vw"
+                />
                 <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
                 <p className={styles.schoolPromise}>{school.promise}</p>
                 <p className={styles.schoolDescription}>
@@ -216,10 +198,12 @@ export default async function Page() {
           className={`${styles.section} ${styles.about}`}
           aria-labelledby="home-about-title"
         >
-          <div className={styles.aboutVisual} aria-hidden="true" data-reveal>
-            <div className={styles.monogram}>L</div>
-            <p>{copy.aboutVisual}</p>
-          </div>
+          <AcademyImage
+            className={styles.aboutVisual}
+            school="psychology"
+            locale={locale}
+            sizes="(max-width: 1000px) 100vw, 40vw"
+          />
           <div className={styles.aboutCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.aboutEyebrow}</p>
             <h2 id="home-about-title">{copy.aboutTitle}</h2>
@@ -232,6 +216,20 @@ export default async function Page() {
             </div>
           </div>
         </section>
+
+        <aside className={styles.mediaCredits} aria-label={cinematic.credits}>
+          <span>{cinematic.credits}</span>
+          {Object.values(academyMedia).map((media) => (
+            <a
+              key={media.sourceUrl}
+              href={media.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {media.credit}
+            </a>
+          ))}
+        </aside>
 
         <section
           className={`${styles.section} ${styles.pathway}`}
