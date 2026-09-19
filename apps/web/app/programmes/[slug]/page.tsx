@@ -20,6 +20,7 @@ import {
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
+  localizeProgrammeDetailContent,
   localizeProgrammePublicCopy,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
@@ -130,13 +131,6 @@ type ProgrammeDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-function getBodyParagraphs(programme: PublicProgrammeDetail) {
-  return programme.bodyText
-    .split(/\n+/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean);
-}
-
 export async function generateMetadata({
   params,
 }: ProgrammeDetailPageProps): Promise<Metadata> {
@@ -208,7 +202,13 @@ export default async function ProgrammeDetailPage({
   const primaryActionLabel = isWaitlist
     ? localizeProgrammeWaitlistAction(locale)
     : copy.ask;
-  const bodyParagraphs = isWaitlist ? [] : getBodyParagraphs(programme);
+  const localizedDetail = localizeProgrammeDetailContent(locale, programme);
+  const bodyParagraphs = isWaitlist
+    ? []
+    : localizedDetail.bodyText
+        .split(/\n+/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean);
   const languageNames = isWaitlist
     ? []
     : programme.languages.map((language) => LANGUAGE_NAMES[locale][language]);
@@ -353,9 +353,10 @@ export default async function ProgrammeDetailPage({
               </section>
             ) : null}
 
-            {programme.outcomes.length > 0 || programme.audience.length > 0 ? (
+            {localizedDetail.outcomes.length > 0 ||
+            localizedDetail.audience.length > 0 ? (
               <div className={styles.detailGrid}>
-                {programme.outcomes.length > 0 ? (
+                {localizedDetail.outcomes.length > 0 ? (
                   <section
                     className={styles.detailCard}
                     aria-labelledby="programme-outcomes-title"
@@ -363,7 +364,7 @@ export default async function ProgrammeDetailPage({
                   >
                     <h2 id="programme-outcomes-title">{copy.outcomes}</h2>
                     <ul>
-                      {programme.outcomes.map((outcome) => (
+                      {localizedDetail.outcomes.map((outcome) => (
                         <li key={outcome} dir="auto">
                           {outcome}
                         </li>
@@ -372,7 +373,7 @@ export default async function ProgrammeDetailPage({
                   </section>
                 ) : null}
 
-                {programme.audience.length > 0 ? (
+                {localizedDetail.audience.length > 0 ? (
                   <section
                     className={styles.detailCard}
                     aria-labelledby="programme-audience-title"
@@ -380,7 +381,7 @@ export default async function ProgrammeDetailPage({
                   >
                     <h2 id="programme-audience-title">{copy.audience}</h2>
                     <ul>
-                      {programme.audience.map((audience) => (
+                      {localizedDetail.audience.map((audience) => (
                         <li key={audience} dir="auto">
                           {audience}
                         </li>

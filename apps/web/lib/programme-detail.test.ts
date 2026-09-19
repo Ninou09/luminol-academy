@@ -33,6 +33,9 @@ describe('getPublicProgrammeBySlug', () => {
                 title: 'Acceptance and Commitment Therapy (ACT)',
                 summary:
                   'A reviewed English summary for the published ACT programme detail.',
+                bodyText: 'A reviewed English detail body.',
+                outcomes: ['A reviewed English outcome'],
+                audience: ['A reviewed English audience'],
               },
             },
             slug: { current: 'acceptance-commitment-therapy-act' },
@@ -73,6 +76,9 @@ describe('getPublicProgrammeBySlug', () => {
           title: 'Acceptance and Commitment Therapy (ACT)',
           summary:
             'A reviewed English summary for the published ACT programme detail.',
+          bodyText: 'A reviewed English detail body.',
+          outcomes: ['A reviewed English outcome'],
+          audience: ['A reviewed English audience'],
         },
       },
       languages: ['ar'],
@@ -99,7 +105,9 @@ describe('getPublicProgrammeBySlug', () => {
     expect(query).toContain('!(_id in path("drafts.**"))');
     expect(query).toContain('image.publicationApproved');
     expect(query).toContain('pt::text(body)');
-    expect(query).toContain('localizedCopy');
+    expect(query).toContain('localizedCopy.fr.body');
+    expect(query).toContain('localizedCopy.en.outcomes');
+    expect(query).toContain('localizedCopy.en.audience');
   });
 
   it('fails closed when the CMS payload is malformed', async () => {

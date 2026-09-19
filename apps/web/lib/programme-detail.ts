@@ -10,12 +10,15 @@ const fractionSchema = z.number().finite().min(0).max(1);
 const localizedProgrammeCopySchema = z.object({
   title: z.string().trim().min(3).max(120),
   summary: z.string().trim().min(20).max(320),
+  bodyText: z.string().trim().max(20_000).optional(),
+  outcomes: z.array(z.string().trim().min(1).max(500)).max(12).optional(),
+  audience: z.array(z.string().trim().min(1).max(500)).max(12).optional(),
 });
 
 const localizedProgrammeCopiesSchema = z
   .object({
-    fr: localizedProgrammeCopySchema.optional(),
-    en: localizedProgrammeCopySchema.optional(),
+    fr: localizedProgrammeCopySchema.nullish(),
+    en: localizedProgrammeCopySchema.nullish(),
   })
   .nullish();
 
@@ -102,7 +105,22 @@ export async function getPublicProgrammeBySlug(
     _id,
     title,
     summary,
-    localizedCopy,
+    "localizedCopy": {
+      "fr": select(defined(localizedCopy.fr.title) && defined(localizedCopy.fr.summary) => {
+        "title": localizedCopy.fr.title,
+        "summary": localizedCopy.fr.summary,
+        "bodyText": coalesce(pt::text(localizedCopy.fr.body), ""),
+        "outcomes": coalesce(localizedCopy.fr.outcomes, []),
+        "audience": coalesce(localizedCopy.fr.audience, [])
+      }, null),
+      "en": select(defined(localizedCopy.en.title) && defined(localizedCopy.en.summary) => {
+        "title": localizedCopy.en.title,
+        "summary": localizedCopy.en.summary,
+        "bodyText": coalesce(pt::text(localizedCopy.en.body), ""),
+        "outcomes": coalesce(localizedCopy.en.outcomes, []),
+        "audience": coalesce(localizedCopy.en.audience, [])
+      }, null)
+    },
     slug,
     school,
     "languages": coalesce(languages, []),

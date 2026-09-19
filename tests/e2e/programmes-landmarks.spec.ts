@@ -98,3 +98,29 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
     }
   });
 }
+
+for (const locale of ['en', 'fr'] as const) {
+  test(`${locale} ACT detail content does not leak Arabic outcomes or audience`, async ({
+    page,
+  }) => {
+    await page.goto(`/${locale}/programmes/acceptance-commitment-therapy-act`);
+
+    const detailText = await page
+      .locator(
+        '[data-programme-detail-region="outcomes"], [data-programme-detail-region="audience"]',
+      )
+      .allTextContents();
+    expect(detailText.length).toBe(2);
+    expect(detailText.join(' ')).not.toMatch(/[\u0600-\u06FF]/);
+
+    if (locale === 'en') {
+      await expect(
+        page.getByText(/core principles of Acceptance/i),
+      ).toBeVisible();
+    } else {
+      await expect(
+        page.getByText(/principes fondamentaux de la thérapie/i),
+      ).toBeVisible();
+    }
+  });
+}
