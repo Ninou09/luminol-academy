@@ -4,6 +4,7 @@ import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
   localizeProgrammeEnquiryAction,
+  localizeProgrammePublicCopy,
   localizeProgrammeViewAction,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
@@ -61,6 +62,68 @@ describe('programme conversion actions', () => {
       expect(localizeProgrammeEnquiryAction(locale)).toBe(expected);
     },
   );
+});
+
+describe('programme public copy localization', () => {
+  const act = {
+    title: 'العلاج بالتقبل والالتزام ACT',
+    summary:
+      'دورة تدريبية متخصصة في العلاج بالتقبل والالتزام تهدف إلى تقديم مبادئ وتقنيات عملية تساعد المختصين والمهتمين بالمجال النفسي على فهم هذا التوجه العلاجي وتطبيق أدواته الأساسية.',
+    slug: { current: 'acceptance-commitment-therapy-act' },
+  };
+
+  it('keeps the canonical Arabic copy on Arabic routes', () => {
+    expect(localizeProgrammePublicCopy('ar', act)).toEqual({
+      title: act.title,
+      summary: act.summary,
+    });
+  });
+
+  it('uses reviewed ACT fallback translations until CMS translations are present', () => {
+    expect(localizeProgrammePublicCopy('fr', act).title).toBe(
+      'Thérapie d’acceptation et d’engagement (ACT)',
+    );
+    expect(localizeProgrammePublicCopy('en', act).title).toBe(
+      'Acceptance and Commitment Therapy (ACT)',
+    );
+    expect(localizeProgrammePublicCopy('fr', act).summary).toContain(
+      'formation spécialisée',
+    );
+    expect(localizeProgrammePublicCopy('en', act).summary).toContain(
+      'specialized training course',
+    );
+  });
+
+  it('prefers reviewed CMS translations over the temporary ACT fallback', () => {
+    expect(
+      localizeProgrammePublicCopy('en', {
+        ...act,
+        localizedCopy: {
+          en: {
+            title: 'Reviewed CMS ACT title',
+            summary:
+              'A reviewed English CMS summary that is intentionally long enough for the public content contract.',
+          },
+        },
+      }),
+    ).toEqual({
+      title: 'Reviewed CMS ACT title',
+      summary:
+        'A reviewed English CMS summary that is intentionally long enough for the public content contract.',
+    });
+  });
+
+  it('falls back to canonical copy for programmes without a reviewed translation', () => {
+    const programme = {
+      title: 'Canonical programme',
+      summary: 'Canonical programme summary.',
+      slug: { current: 'another-programme' },
+    };
+    expect(localizeProgrammePublicCopy('fr', programme)).toEqual({
+      title: programme.title,
+      summary: programme.summary,
+    });
+  });
 });
 
 describe('programme waitlist presentation', () => {

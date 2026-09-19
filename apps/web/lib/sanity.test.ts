@@ -99,6 +99,13 @@ describe('getProgrammesForSchool', () => {
                 title: 'Confident Communication',
                 summary:
                   'A practical pathway for clear and confident communication.',
+                localizedCopy: {
+                  fr: {
+                    title: 'Communication avec assurance',
+                    summary:
+                      'Un parcours pratique pour une communication claire et assurée.',
+                  },
+                },
                 slug: { current: 'confident-communication' },
                 delivery: 'Hybrid',
                 featured: true,
@@ -136,6 +143,13 @@ describe('getProgrammesForSchool', () => {
         _id: 'programme-1',
         title: 'Confident Communication',
         summary: 'A practical pathway for clear and confident communication.',
+        localizedCopy: {
+          fr: {
+            title: 'Communication avec assurance',
+            summary:
+              'Un parcours pratique pour une communication claire et assurée.',
+          },
+        },
         slug: { current: 'confident-communication' },
         delivery: 'Hybrid',
         featured: true,
