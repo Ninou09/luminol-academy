@@ -54,6 +54,27 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
   }
 }
 
+const expectedHeroTitles = {
+  ar: 'تقدّم بوضوح. وتعلّم بهدف.',
+  fr: 'Grandissez avec clarté. Apprenez avec intention.',
+  en: 'Grow with clarity. Learn with purpose.',
+} as const;
+
+for (const locale of ['ar', 'fr', 'en'] as const) {
+  test(`${locale} homepage exposes a separated hero heading`, async ({
+    page,
+  }) => {
+    await page.goto(`/${locale}`);
+    await expect(
+      page.getByRole('heading', {
+        level: 1,
+        name: expectedHeroTitles[locale],
+        exact: true,
+      }),
+    ).toBeVisible();
+  });
+}
+
 test('Arabic desktop watermark stays centered in the RTL hero', async ({
   page,
 }) => {
