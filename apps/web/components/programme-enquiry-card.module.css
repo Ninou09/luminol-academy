@@ -1,0 +1,96 @@
+.card {
+  min-width: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--color-brand-line);
+  border-block-start: 3px solid var(--color-brand-gold-strong);
+  border-radius: var(--luminol-media-radius);
+  background: var(--color-brand-surface);
+  color: var(--color-brand-ink);
+  box-shadow: var(--shadow-editorial);
+  overflow-wrap: anywhere;
+}
+.status {
+  width: fit-content;
+  margin: 0 0 1.25rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 2.6vw, 2.4rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.guidance {
+  margin: 1rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.85;
+}
+.certificate {
+  margin-block: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--radius-control);
+  background: var(--color-brand-canvas);
+}
+.certificateTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.certificate p {
+  margin: 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.875rem;
+  line-height: 1.85;
+}
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--color-brand-ink);
+  border-radius: var(--radius-control);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.6;
+  text-decoration: none;
+}
+.action:hover {
+  background: var(--color-brand-ink-soft);
+  color: var(--color-brand-surface);
+}
+.action:focus-visible {
+  outline: 3px solid var(--color-brand-gold-strong);
+  outline-offset: 4px;
+}
+.context {
+  margin: 0.75rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+.title:dir(rtl) {
+  font-family: var(--font-arabic);
+  font-size: clamp(1.5rem, 2.3vw, 2rem);
+  line-height: 1.6;
+  letter-spacing: normal;
+}
+@media (max-width: 640px) {
+  .card {
+    box-shadow: none;
+  }
+}
