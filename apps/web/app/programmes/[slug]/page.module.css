@@ -28,19 +28,19 @@
 
 .heroGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(22rem, 0.95fr);
-  gap: clamp(2.5rem, 7vw, 6rem);
-  align-items: center;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+  align-items: start;
 }
 
 .heroCopy h1 {
   max-width: 15ch;
   margin: 0.85rem 0 1.5rem;
   font-family: var(--font-display);
-  font-size: clamp(3rem, 6.6vw, 6.4rem);
+  font-size: clamp(2.3rem, 5vw, 4.8rem);
   font-weight: 500;
   letter-spacing: -0.045em;
-  line-height: 0.94;
+  line-height: 1.12;
 }
 
 .summary {
@@ -77,6 +77,7 @@
 }
 
 .mediaFrame {
+  margin: 0;
   overflow: hidden;
   border: 1px solid var(--color-brand-line);
   border-radius: var(--luminol-media-radius);
@@ -295,5 +296,79 @@
   .footerActions > a {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* Keep the real programme information useful at phone and desktop widths. */
+.heroCopy,
+.heroAside {
+  min-width: 0;
+}
+.heroAside {
+  display: grid;
+  gap: 1.25rem;
+}
+.heroCopy h1,
+.detailCard h2,
+.footerCta h2,
+.facts dd {
+  overflow-wrap: anywhere;
+}
+.heroCopy h1:dir(rtl),
+.detailCard h2:dir(rtl),
+.footerCta h2:dir(rtl),
+.facts dd:dir(rtl) {
+  font-family: var(--font-arabic);
+  line-height: 1.6;
+  letter-spacing: normal;
+}
+.heroCopy h1:dir(rtl) {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  max-width: 20ch;
+}
+.detailCard h2:dir(rtl) {
+  font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+}
+.footerCta h2:dir(rtl) {
+  font-size: clamp(1.75rem, 4vw, 3.5rem);
+  max-width: 24ch;
+}
+.detailGrid:first-child,
+.facts:first-child {
+  margin-top: 0;
+}
+.actions > a,
+.footerActions > a {
+  min-height: 3rem;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.breadcrumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+.actions > a:focus-visible,
+.footerActions > a:focus-visible,
+.breadcrumbs a:focus-visible {
+  outline: 3px solid var(--color-brand-gold-strong);
+  outline-offset: 4px;
+}
+@media (max-width: 640px) {
+  .hero {
+    padding-block: 2rem 2.5rem;
+  }
+  .heroGrid {
+    gap: 2rem;
+  }
+  .actions,
+  .footerActions {
+    flex-direction: column;
+  }
+  .meta li {
+    font-size: 0.8rem;
+    line-height: 1.7;
   }
 }

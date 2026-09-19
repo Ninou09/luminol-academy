@@ -11,6 +11,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { ProgrammeEnquiryCard } from '../../../components/programme-enquiry-card';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { buildProgrammeContactHref } from '../../../lib/programme-contact';
 import { getPublicProgrammeBySlug } from '../../../lib/programme-detail';
@@ -311,18 +312,24 @@ export default async function ProgrammeDetailPage({
               </div>
             </div>
 
-            {!isWaitlist && programme.image ? (
-              <figure className={styles.mediaFrame}>
-                <Image
-                  src={buildSanityProgrammeImageUrl(programme.image)}
-                  alt={programme.image.alt}
-                  width={1200}
-                  height={675}
-                  priority
-                  sizes="(max-width: 900px) 100vw, 46vw"
-                />
-              </figure>
-            ) : null}
+            <div className={styles.heroAside}>
+              {!isWaitlist && programme.image ? (
+                <figure className={styles.mediaFrame}>
+                  <Image
+                    src={buildSanityProgrammeImageUrl(programme.image)}
+                    alt={programme.image.alt}
+                    width={1200}
+                    height={675}
+                    priority
+                    sizes="(max-width: 900px) 100vw, 46vw"
+                  />
+                </figure>
+              ) : null}
+              <ProgrammeEnquiryCard
+                locale={locale}
+                programmeSlug={programme.slug.current}
+              />
+            </div>
           </div>
         </section>
 
