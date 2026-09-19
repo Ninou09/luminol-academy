@@ -16,6 +16,7 @@ import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
   localizeProgrammeEnquiryAction,
+  localizeProgrammePublicCopy,
   localizeProgrammeViewAction,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
@@ -97,7 +98,7 @@ export default async function ProgrammesPage({
     programmes !== null && programmes.length > 0 && isUnfilteredCatalogue
       ? buildProgrammeListJsonLd(
           programmes.map((programme) => ({
-            name: programme.title,
+            name: localizeProgrammePublicCopy(locale, programme).title,
             href: localizeHref(locale, `/programmes/${programme.slug.current}`),
           })),
         )
@@ -224,6 +225,10 @@ export default async function ProgrammesPage({
 
               <div className={styles.grid}>
                 {programmes.map((programme, index) => {
+                  const publicCopy = localizeProgrammePublicCopy(
+                    locale,
+                    programme,
+                  );
                   const isWaitlist = isProgrammeWaitlist(
                     programme.slug.current,
                   );
@@ -245,9 +250,9 @@ export default async function ProgrammesPage({
                     programme.slug.current,
                   );
                   const schoolName = schools[programme.school].name;
-                  const programmeActionLabel = `${viewProgrammeLabel}: ${programme.title}`;
+                  const programmeActionLabel = `${viewProgrammeLabel}: ${publicCopy.title}`;
                   const schoolActionLabel = `${copy.viewSchool}: ${schoolName}`;
-                  const contactActionLabel = `${contactLabel}: ${programme.title}`;
+                  const contactActionLabel = `${contactLabel}: ${publicCopy.title}`;
                   const titleId = `programme-card-${index + 1}-title`;
 
                   return (
@@ -281,10 +286,10 @@ export default async function ProgrammesPage({
                             className={styles.titleLink}
                             href={programmeHref}
                           >
-                            {programme.title}
+                            {publicCopy.title}
                           </Link>
                         </h3>
-                        <p dir="auto">{programme.summary}</p>
+                        <p dir="auto">{publicCopy.summary}</p>
                         {!isWaitlist ? (
                           <ul
                             className={styles.tags}

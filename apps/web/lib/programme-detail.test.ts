@@ -28,6 +28,13 @@ describe('getPublicProgrammeBySlug', () => {
             title: 'العلاج بالتقبل والالتزام ACT',
             summary:
               'دورة تدريبية متخصصة في العلاج بالتقبل والالتزام ACT، تقدم مدخلًا إلى مبادئ هذا التوجه وتطبيقاته العملية.',
+            localizedCopy: {
+              en: {
+                title: 'Acceptance and Commitment Therapy (ACT)',
+                summary:
+                  'A reviewed English summary for the published ACT programme detail.',
+              },
+            },
             slug: { current: 'acceptance-commitment-therapy-act' },
             school: 'psychology',
             languages: ['ar'],
@@ -61,6 +68,13 @@ describe('getPublicProgrammeBySlug', () => {
     expect(result).toMatchObject({
       _id: 'programme-act',
       school: 'psychology',
+      localizedCopy: {
+        en: {
+          title: 'Acceptance and Commitment Therapy (ACT)',
+          summary:
+            'A reviewed English summary for the published ACT programme detail.',
+        },
+      },
       languages: ['ar'],
       outcomes: [
         'فهم المبادئ الأساسية للعلاج بالتقبل والالتزام ACT',
@@ -85,6 +99,7 @@ describe('getPublicProgrammeBySlug', () => {
     expect(query).toContain('!(_id in path("drafts.**"))');
     expect(query).toContain('image.publicationApproved');
     expect(query).toContain('pt::text(body)');
+    expect(query).toContain('localizedCopy');
   });
 
   it('fails closed when the CMS payload is malformed', async () => {

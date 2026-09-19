@@ -68,6 +68,24 @@ describe('homepage programme spotlight presentation', () => {
       expect(view.enquiryAction).toBeTruthy();
     },
   );
+  it('localizes ACT spotlight title and summary for French and English', () => {
+    const act = {
+      ...programme,
+      title: 'العلاج بالتقبل والالتزام ACT',
+      summary:
+        'دورة تدريبية متخصصة في العلاج بالتقبل والالتزام تساعد على فهم هذا التوجه العلاجي وتطبيق أدواته الأساسية.',
+      slug: { current: 'acceptance-commitment-therapy-act' },
+    };
+
+    expect(getProgrammeSpotlightPresentation('fr', act).title).toBe(
+      'Thérapie d’acceptation et d’engagement (ACT)',
+    );
+    expect(getProgrammeSpotlightPresentation('en', act).title).toBe(
+      'Acceptance and Commitment Therapy (ACT)',
+    );
+    expect(getProgrammeSpotlightPresentation('ar', act).title).toBe(act.title);
+  });
+
   it('keeps the approved image source, alternative text and editorial crop', () => {
     const view = getProgrammeSpotlightPresentation('en', {
       ...programme,

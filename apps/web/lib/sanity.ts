@@ -10,6 +10,18 @@ const placeholderProjectIds = new Set(['example', 'placeholder', 'replace-me']);
 const schoolSlugSchema = z.enum(['psychology', 'languages', 'training']);
 const programmeLanguageSchema = z.enum(PROGRAMME_LANGUAGE_CODES);
 
+const localizedProgrammeCopySchema = z.object({
+  title: z.string().trim().min(3).max(120),
+  summary: z.string().trim().min(20).max(320),
+});
+
+const localizedProgrammeCopiesSchema = z
+  .object({
+    fr: localizedProgrammeCopySchema.optional(),
+    en: localizedProgrammeCopySchema.optional(),
+  })
+  .nullish();
+
 function isApprovedSanityImageUrl(value: string) {
   try {
     const url = new URL(value);
@@ -111,6 +123,7 @@ const cmsProgrammeSchema = z.object({
   _id: z.string().min(1),
   title: z.string().trim().min(1).max(120),
   summary: z.string().trim().min(1).max(320),
+  localizedCopy: localizedProgrammeCopiesSchema,
   slug: z.object({ current: z.string().min(1) }).nullish(),
   school: schoolSlugSchema.nullish(),
   languages: z.array(programmeLanguageSchema).max(3).optional(),
@@ -294,6 +307,7 @@ export async function getProgrammesForSchool(
     _id,
     title,
     summary,
+    localizedCopy,
     slug,
     school,
     "languages": coalesce(languages, []),
@@ -350,6 +364,7 @@ export async function getPublicProgrammes(): Promise<
     _id,
     title,
     summary,
+    localizedCopy,
     slug,
     school,
     "languages": coalesce(languages, []),

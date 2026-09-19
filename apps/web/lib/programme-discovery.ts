@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-import { localizeProgrammeDelivery } from './programme-presentation';
+import {
+  localizeProgrammeDelivery,
+  localizeProgrammePublicCopy,
+} from './programme-presentation';
 import {
   PROGRAMME_LANGUAGE_CODES,
   type CmsProgrammeLanguage,
@@ -90,8 +93,11 @@ export function hasProgrammeDiscoveryFilters(
 function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
   if (!foldedQuery) return 0;
 
-  const title = fold(programme.title);
-  const summary = fold(programme.summary);
+  const localizedCopies = (['ar', 'fr', 'en'] as const).map((locale) =>
+    localizeProgrammePublicCopy(locale, programme),
+  );
+  const titles = localizedCopies.map((copy) => fold(copy.title));
+  const summaries = localizedCopies.map((copy) => fold(copy.summary));
   const delivery = fold(
     (['ar', 'fr', 'en'] as const)
       .map(
@@ -110,9 +116,13 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
       .join(' '),
   );
   const queryTerms = [...new Set(foldedQuery.split(' ').filter(Boolean))];
-  const searchableText = [title, summary, school, delivery, languageText].join(
-    ' ',
-  );
+  const searchableText = [
+    ...titles,
+    ...summaries,
+    school,
+    delivery,
+    languageText,
+  ].join(' ');
 
   if (
     queryTerms.length > 1 &&
@@ -122,11 +132,11 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
   }
 
   let score = 0;
-  if (title === foldedQuery) score += 120;
-  else if (title.startsWith(foldedQuery)) score += 90;
-  else if (title.includes(foldedQuery)) score += 70;
+  if (titles.some((title) => title === foldedQuery)) score += 120;
+  else if (titles.some((title) => title.startsWith(foldedQuery))) score += 90;
+  else if (titles.some((title) => title.includes(foldedQuery))) score += 70;
 
-  if (summary.includes(foldedQuery)) score += 30;
+  if (summaries.some((summary) => summary.includes(foldedQuery))) score += 30;
   if (school.includes(foldedQuery)) score += 20;
   if (delivery.includes(foldedQuery)) score += 10;
   if (languageText.includes(foldedQuery)) score += 10;
@@ -134,11 +144,11 @@ function textScore(programme: PublicCmsProgramme, foldedQuery: string) {
   if (score > 0 || queryTerms.length <= 1) return score;
 
   for (const term of queryTerms) {
-    if (title === term) score += 60;
-    else if (title.startsWith(term)) score += 45;
-    else if (title.includes(term)) score += 35;
+    if (titles.some((title) => title === term)) score += 60;
+    else if (titles.some((title) => title.startsWith(term))) score += 45;
+    else if (titles.some((title) => title.includes(term))) score += 35;
 
-    if (summary.includes(term)) score += 15;
+    if (summaries.some((summary) => summary.includes(term))) score += 15;
     if (school.includes(term)) score += 10;
     if (delivery.includes(term)) score += 5;
     if (languageText.includes(term)) score += 5;

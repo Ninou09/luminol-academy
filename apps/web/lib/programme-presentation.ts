@@ -47,6 +47,67 @@ const PROGRAMME_WAITLIST_ACTION_LABELS = {
 
 const waitlistProgrammeSlugs = new Set(['acceptance-commitment-therapy-act']);
 
+type LocalizedProgrammeCopy = {
+  title: string;
+  summary: string;
+};
+
+type LocalizableProgramme = {
+  title: string;
+  summary: string;
+  slug: { current: string };
+  localizedCopy?:
+    | {
+        fr?: LocalizedProgrammeCopy | undefined;
+        en?: LocalizedProgrammeCopy | undefined;
+      }
+    | null
+    | undefined;
+};
+
+const REVIEWED_PROGRAMME_COPY_OVERRIDES: Partial<
+  Record<string, Partial<Record<Locale, LocalizedProgrammeCopy>>>
+> = {
+  'acceptance-commitment-therapy-act': {
+    fr: {
+      title: 'Thérapie d’acceptation et d’engagement (ACT)',
+      summary:
+        'Une formation spécialisée en thérapie d’acceptation et d’engagement (ACT), qui présente des principes et des techniques pratiques pour aider les professionnels de la psychologie et les personnes intéressées par le domaine à comprendre cette approche thérapeutique et à appliquer ses outils essentiels.',
+    },
+    en: {
+      title: 'Acceptance and Commitment Therapy (ACT)',
+      summary:
+        'A specialized training course in Acceptance and Commitment Therapy (ACT), introducing practical principles and techniques to help psychology professionals and people interested in the field understand this therapeutic approach and apply its core tools.',
+    },
+  },
+};
+
+export function localizeProgrammePublicCopy(
+  locale: Locale,
+  programme: LocalizableProgramme,
+): LocalizedProgrammeCopy {
+  if (locale === 'ar') {
+    return { title: programme.title, summary: programme.summary };
+  }
+
+  const cmsCopy = programme.localizedCopy?.[locale];
+  if (cmsCopy) {
+    return { title: cmsCopy.title.trim(), summary: cmsCopy.summary.trim() };
+  }
+
+  const reviewedFallback =
+    REVIEWED_PROGRAMME_COPY_OVERRIDES[
+      programme.slug.current.trim().toLowerCase()
+    ]?.[locale];
+
+  return (
+    reviewedFallback ?? {
+      title: programme.title,
+      summary: programme.summary,
+    }
+  );
+}
+
 export function localizeProgrammeDelivery(
   locale: Locale,
   delivery: string | null | undefined,

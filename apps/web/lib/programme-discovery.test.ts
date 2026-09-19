@@ -93,6 +93,32 @@ describe('programme discovery filters', () => {
     ).toEqual(['programme-leadership']);
   });
 
+  it('searches reviewed localized programme copy', () => {
+    const actProgramme: PublicCmsProgramme = {
+      _id: 'programme-act',
+      title: 'العلاج بالتقبل والالتزام ACT',
+      summary:
+        'دورة تدريبية متخصصة في العلاج بالتقبل والالتزام تساعد على فهم هذا التوجه العلاجي وتطبيق أدواته الأساسية.',
+      slug: { current: 'acceptance-commitment-therapy-act' },
+      school: 'psychology',
+      languages: ['ar'],
+      delivery: null,
+      featured: false,
+      image: null,
+    };
+
+    expect(
+      filterPublicProgrammes([actProgramme], {
+        query: 'Acceptance Commitment',
+      })[0]?._id,
+    ).toBe('programme-act');
+    expect(
+      filterPublicProgrammes([actProgramme], {
+        query: 'acceptation engagement',
+      })[0]?._id,
+    ).toBe('programme-act');
+  });
+
   it('supports normalized Arabic programme search', () => {
     expect(
       filterPublicProgrammes(programmes, { query: 'ادارة الضغط' })[0]?._id,

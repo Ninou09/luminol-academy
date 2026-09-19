@@ -5,6 +5,7 @@ import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
   localizeProgrammeEnquiryAction,
+  localizeProgrammePublicCopy,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
 } from './programme-presentation';
@@ -30,6 +31,7 @@ export function getProgrammeSpotlightPresentation(
 ) {
   const copy = getPublicCopy(locale).programmes;
   const isWaitlist = isProgrammeWaitlist(programme.slug.current);
+  const publicCopy = localizeProgrammePublicCopy(locale, programme);
   const delivery = isWaitlist
     ? null
     : localizeProgrammeDelivery(locale, programme.delivery);
@@ -46,6 +48,7 @@ export function getProgrammeSpotlightPresentation(
   return {
     isWaitlist,
     asset,
+    ...publicCopy,
     status: isWaitlist
       ? localizeProgrammeWaitlistLabel(locale)
       : copy.published,

@@ -15,9 +15,13 @@ Programmes belong to one of the three stable school values:
 - `training`
 
 The public website reads only documents where `active` is true. Title, slug,
-school and summary are required. Display order controls the sequence within a
-school page. Images require meaningful alternative text and explicit publication
-approval before the public website may render them.
+school and summary are required. The canonical title and summary remain the
+Arabic source copy. Editors may also add reviewed French and English values in
+`localizedCopy`; the public website uses those translations on the matching
+locale and safely falls back to the canonical copy when a translation is absent.
+Display order controls the sequence within a school page. Images require
+meaningful alternative text and explicit publication approval before the public
+website may render them.
 
 When a programme image is present, the public website projects it only when
 `publicationApproved` is explicitly true. Missing approval is treated exactly

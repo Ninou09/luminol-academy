@@ -7,6 +7,18 @@ const programmeLanguageSchema = z.enum(['ar', 'fr', 'en']);
 const schoolSlugSchema = z.enum(['psychology', 'languages', 'training']);
 const fractionSchema = z.number().finite().min(0).max(1);
 
+const localizedProgrammeCopySchema = z.object({
+  title: z.string().trim().min(3).max(120),
+  summary: z.string().trim().min(20).max(320),
+});
+
+const localizedProgrammeCopiesSchema = z
+  .object({
+    fr: localizedProgrammeCopySchema.optional(),
+    en: localizedProgrammeCopySchema.optional(),
+  })
+  .nullish();
+
 const programmeImageSchema = z.object({
   url: z
     .string()
@@ -47,6 +59,7 @@ const publicProgrammeDetailSchema = z.object({
   _id: z.string().min(1),
   title: z.string().trim().min(1).max(120),
   summary: z.string().trim().min(1).max(320),
+  localizedCopy: localizedProgrammeCopiesSchema,
   slug: z.object({ current: z.string().trim().min(1).max(96) }),
   school: schoolSlugSchema,
   languages: z.array(programmeLanguageSchema).max(3).default([]),
@@ -89,6 +102,7 @@ export async function getPublicProgrammeBySlug(
     _id,
     title,
     summary,
+    localizedCopy,
     slug,
     school,
     "languages": coalesce(languages, []),

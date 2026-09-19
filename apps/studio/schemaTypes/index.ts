@@ -46,6 +46,55 @@ const programme = defineType({
       validation: (rule) => rule.required().min(20).max(320),
     }),
     defineField({
+      name: 'localizedCopy',
+      title: 'Public translations',
+      description:
+        'Optional reviewed French and English translations for public cards and programme metadata. Arabic remains the canonical source in Title and Summary.',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'fr',
+          title: 'French',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'French title',
+              type: 'string',
+              validation: (rule) => rule.required().min(3).max(120),
+            }),
+            defineField({
+              name: 'summary',
+              title: 'French summary',
+              type: 'text',
+              rows: 4,
+              validation: (rule) => rule.required().min(20).max(320),
+            }),
+          ],
+        }),
+        defineField({
+          name: 'en',
+          title: 'English',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'English title',
+              type: 'string',
+              validation: (rule) => rule.required().min(3).max(120),
+            }),
+            defineField({
+              name: 'summary',
+              title: 'English summary',
+              type: 'text',
+              rows: 4,
+              validation: (rule) => rule.required().min(20).max(320),
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
       name: 'body',
       title: 'Programme details',
       type: 'array',

@@ -20,6 +20,7 @@ import {
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
+  localizeProgrammePublicCopy,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
 } from '../../../lib/programme-presentation';
@@ -150,6 +151,7 @@ export async function generateMetadata({
     };
   }
 
+  const publicCopy = localizeProgrammePublicCopy(locale, programme);
   const pathname = `/programmes/${programme.slug.current}`;
   const route = localizePathname(locale, pathname);
   const isWaitlist = isProgrammeWaitlist(programme.slug.current);
@@ -164,15 +166,15 @@ export async function generateMetadata({
       : getSocialPreviewImage(locale);
 
   return {
-    title: programme.title,
-    description: programme.summary,
+    title: publicCopy.title,
+    description: publicCopy.summary,
     alternates: {
       canonical: route,
       languages: buildLanguageAlternates(pathname),
     },
     openGraph: {
-      title: programme.title,
-      description: programme.summary,
+      title: publicCopy.title,
+      description: publicCopy.summary,
       siteName: 'Luminol Academy',
       locale: getOpenGraphLocale(locale),
       type: 'website',
@@ -181,8 +183,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: programme.title,
-      description: programme.summary,
+      title: publicCopy.title,
+      description: publicCopy.summary,
       images: [socialImage],
     },
   };
@@ -196,6 +198,7 @@ export default async function ProgrammeDetailPage({
   if (!programme) notFound();
 
   const copy = DETAIL_COPY[locale];
+  const publicCopy = localizeProgrammePublicCopy(locale, programme);
   const schools = getSchools(locale);
   const school = schools[programme.school];
   const isWaitlist = isProgrammeWaitlist(programme.slug.current);
@@ -225,13 +228,13 @@ export default async function ProgrammeDetailPage({
       href: localizeHref(locale, `/schools/${programme.school}`),
     },
     {
-      name: programme.title,
+      name: publicCopy.title,
       href: localizedProgrammeHref,
     },
   ]);
   const courseJsonLd = buildCourseJsonLd({
-    name: programme.title,
-    description: programme.summary,
+    name: publicCopy.title,
+    description: publicCopy.summary,
     href: localizedProgrammeHref,
     languages: isWaitlist ? [] : programme.languages,
     ...(!isWaitlist && programme.image
@@ -273,7 +276,7 @@ export default async function ProgrammeDetailPage({
             </Link>
             <span aria-hidden="true">/</span>
             <span aria-current="page" dir="auto">
-              {programme.title}
+              {publicCopy.title}
             </span>
           </nav>
 
@@ -281,10 +284,10 @@ export default async function ProgrammeDetailPage({
             <div className={styles.heroCopy}>
               <p className="eyebrow">{waitlistLabel ?? copy.eyebrow}</p>
               <h1 id="programme-detail-title" dir="auto">
-                {programme.title}
+                {publicCopy.title}
               </h1>
               <p className={styles.summary} dir="auto">
-                {programme.summary}
+                {publicCopy.summary}
               </p>
 
               <ul className={styles.meta} aria-label={copy.facts}>
