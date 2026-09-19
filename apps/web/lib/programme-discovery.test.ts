@@ -108,14 +108,14 @@ describe('programme discovery filters', () => {
     };
 
     expect(
-      filterPublicProgrammes([actProgramme], { query: 'Acceptance Commitment' })[
-        0
-      ]?._id,
+      filterPublicProgrammes([actProgramme], {
+        query: 'Acceptance Commitment',
+      })[0]?._id,
     ).toBe('programme-act');
     expect(
-      filterPublicProgrammes([actProgramme], { query: 'acceptation engagement' })[
-        0
-      ]?._id,
+      filterPublicProgrammes([actProgramme], {
+        query: 'acceptation engagement',
+      })[0]?._id,
     ).toBe('programme-act');
   });
 
