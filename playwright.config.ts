@@ -23,8 +23,11 @@ export default defineConfig({
     },
     {
       command: 'node tests/fixtures/programme-server.cjs',
-      url: 'http://127.0.0.1:3001',
+      // Readiness must not depend on rendering a CMS-backed homepage.
+      url: 'http://127.0.0.1:3001/robots.txt',
       reuseExistingServer: false,
+      stdout: 'pipe',
+      stderr: 'pipe',
       timeout: 120_000,
     },
   ],
