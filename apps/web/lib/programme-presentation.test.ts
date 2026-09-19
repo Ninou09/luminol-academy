@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
+  localizeProgrammeDetailContent,
   localizeProgrammeEnquiryAction,
   localizeProgrammePublicCopy,
   localizeProgrammeViewAction,
@@ -123,6 +124,67 @@ describe('programme public copy localization', () => {
       title: programme.title,
       summary: programme.summary,
     });
+  });
+});
+
+describe('programme detail localization', () => {
+  const act = {
+    slug: { current: 'acceptance-commitment-therapy-act' },
+    bodyText: 'تفاصيل عربية',
+    outcomes: ['نتيجة عربية'],
+    audience: ['فئة عربية'],
+  };
+
+  it('keeps canonical Arabic detail content on Arabic routes', () => {
+    expect(localizeProgrammeDetailContent('ar', act)).toEqual({
+      bodyText: act.bodyText,
+      outcomes: act.outcomes,
+      audience: act.audience,
+    });
+  });
+
+  it('uses reviewed ACT detail translations for French and English', () => {
+    const english = localizeProgrammeDetailContent('en', act);
+    const french = localizeProgrammeDetailContent('fr', act);
+
+    expect(english.outcomes).toHaveLength(8);
+    expect(english.audience).toHaveLength(5);
+    expect(english.outcomes[0]).toContain('core principles');
+    expect(french.outcomes[0]).toContain('principes fondamentaux');
+    expect(french.audience[0]).toContain('Psychologues');
+  });
+
+  it('prefers reviewed CMS detail translations over the ACT fallback', () => {
+    expect(
+      localizeProgrammeDetailContent('en', {
+        ...act,
+        localizedCopy: {
+          en: {
+            title: 'Reviewed title',
+            summary:
+              'A reviewed summary long enough to represent the public content contract.',
+            bodyText: 'Reviewed body text.',
+            outcomes: ['Reviewed outcome'],
+            audience: ['Reviewed audience'],
+          },
+        },
+      }),
+    ).toEqual({
+      bodyText: 'Reviewed body text.',
+      outcomes: ['Reviewed outcome'],
+      audience: ['Reviewed audience'],
+    });
+  });
+
+  it('does not show canonical Arabic detail blocks on untranslated non-Arabic routes', () => {
+    expect(
+      localizeProgrammeDetailContent('fr', {
+        slug: { current: 'another-programme' },
+        bodyText: 'تفاصيل عربية',
+        outcomes: ['نتيجة عربية'],
+        audience: ['فئة عربية'],
+      }),
+    ).toEqual({ bodyText: '', outcomes: [], audience: [] });
   });
 });
 

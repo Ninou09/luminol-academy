@@ -17,8 +17,11 @@ Programmes belong to one of the three stable school values:
 The public website reads only documents where `active` is true. Title, slug,
 school and summary are required. The canonical title and summary remain the
 Arabic source copy. Editors may also add reviewed French and English values in
-`localizedCopy`; the public website uses those translations on the matching
-locale and safely falls back to the canonical copy when a translation is absent.
+`localizedCopy`; each translation can include title, summary, programme body,
+learning outcomes and intended audience. The public website uses those values on
+the matching locale. If translated detail blocks are missing on French or English
+routes, those detail blocks stay hidden rather than leaking Arabic copy into a
+mixed-language page.
 Display order controls the sequence within a school page. Images require
 meaningful alternative text and explicit publication approval before the public
 website may render them.
