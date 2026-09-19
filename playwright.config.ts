@@ -10,7 +10,7 @@ export default defineConfig({
     {
       name: 'programme-fixture',
       testMatch: '**/programme-enquiry-card.spec.ts',
-      use: { baseURL: 'http://127.0.0.1:3001' },
+      use: { baseURL: 'http://localhost:3001' },
     },
   ],
   webServer: [
@@ -24,7 +24,7 @@ export default defineConfig({
     {
       command: 'node tests/fixtures/programme-server.cjs',
       // Readiness must not depend on rendering a CMS-backed homepage.
-      url: 'http://127.0.0.1:3001/robots.txt',
+      url: 'http://localhost:3001/robots.txt',
       reuseExistingServer: false,
       stdout: 'pipe',
       stderr: 'pipe',
