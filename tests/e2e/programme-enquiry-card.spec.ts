@@ -81,14 +81,16 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
 
 test('programme enquiry remains a usable native link without JavaScript', async ({
   browser,
+  baseURL,
 }) => {
   const context = await browser.newContext({
+    baseURL: baseURL!,
     javaScriptEnabled: false,
     viewport: { width: 390, height: 1000 },
   });
   try {
     const page = await context.newPage();
-    await page.goto(`http://127.0.0.1:3000/ar/programmes/${slug}`);
+    await page.goto(`/ar/programmes/${slug}`);
     await expect(page.locator('[data-programme-certificate]')).toContainText(
       certificateTitles.ar,
     );
