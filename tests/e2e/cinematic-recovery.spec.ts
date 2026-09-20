@@ -65,6 +65,11 @@ for (const width of [390, 1440]) {
     await page.getByRole('contentinfo').locator('a[href="/ar/about"]').click();
     await expect(page).toHaveURL(/\/ar\/about$/);
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+    const headingLineRatio = await page.locator('h1').evaluate((heading) => {
+      const style = getComputedStyle(heading);
+      return parseFloat(style.lineHeight) / parseFloat(style.fontSize);
+    });
+    expect(headingLineRatio).toBeGreaterThanOrEqual(1.4);
     await page.getByRole('banner').locator('a[href="/ar#schools"]').click();
     await expect(page).toHaveURL(/\/ar#schools$/);
     await expect
