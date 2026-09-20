@@ -1,0 +1,44 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  direction: ltr;
+  color: inherit;
+}
+
+.mark {
+  position: relative;
+  display: block;
+  flex: 0 0 2.75rem;
+  width: 2.75rem;
+  height: 3.0625rem;
+  overflow: hidden;
+  background: var(--color-brand-surface);
+  border-radius: 0.3rem;
+}
+
+.mark .original {
+  position: absolute;
+  width: 5.73125rem;
+  height: 12.8rem;
+  max-width: none;
+  left: -1.375rem;
+  top: -4.375rem;
+}
+
+.name {
+  display: grid;
+  gap: 0.3rem;
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.name > span {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-brand-cyan);
+}

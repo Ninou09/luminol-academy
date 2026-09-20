@@ -64,17 +64,17 @@ test('premium About storytelling preserves public landmarks and school pathways'
   }
 });
 
-test('About reduced motion keeps the centered brand core in place', async ({
+test('About reduced motion keeps the editorial image in place', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/en/about');
 
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
-  await expect(page.locator('[data-about-hero] [data-motion-float]')).toHaveCSS(
-    'translate',
-    '-50% -50%',
-  );
+  await expect(
+    page.locator('[data-about-hero] [data-academy-media="psychology"] img'),
+  ).toBeVisible();
+  await expect(page.locator('[data-founder-media]')).toHaveCount(0);
 });
 
 test('premium Contact page preserves the enquiry form contract', async ({

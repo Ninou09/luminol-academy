@@ -1,11 +1,7 @@
 import { colors } from '@luminol/config/tailwind';
 import { getLocaleDirection, getOpenGraphLocale } from '@luminol/localization';
 import type { Metadata, Viewport } from 'next';
-import {
-  Cormorant_Garamond,
-  Manrope,
-  Noto_Sans_Arabic,
-} from 'next/font/google';
+import localFont from 'next/font/local';
 
 import { PublicMotionController } from '../components/public-motion-controller';
 import { getPublicCopy } from '../lib/public-localization';
@@ -16,20 +12,31 @@ import './globals.css';
 import './localization.css';
 import './motion.css';
 
-const manrope = Manrope({
-  subsets: ['latin'],
+const manrope = localFont({
+  src: './fonts/manrope.ttf',
+  weight: '200 800',
   display: 'swap',
   variable: '--font-manrope',
 });
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  style: ['normal', 'italic'],
+const cormorant = localFont({
+  src: [
+    {
+      path: './fonts/cormorant-garamond.ttf',
+      weight: '300 700',
+      style: 'normal',
+    },
+    {
+      path: './fonts/cormorant-garamond-italic.ttf',
+      weight: '300 700',
+      style: 'italic',
+    },
+  ],
   display: 'swap',
   variable: '--font-cormorant',
 });
-const notoSansArabic = Noto_Sans_Arabic({
-  subsets: ['arabic'],
+const notoSansArabic = localFont({
+  src: './fonts/noto-sans-arabic.ttf',
+  weight: '100 900',
   display: 'swap',
   variable: '--font-noto-arabic',
 });

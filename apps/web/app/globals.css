@@ -2,6 +2,12 @@
 @import '@luminol/config/tokens.css';
 @source '../../../packages/ui/src';
 
+:root {
+  --color-brand-cyan: #159bc2;
+  --color-brand-cyan-light: #8bdeef;
+  --color-brand-cyan-deep: #087397;
+}
+
 * {
   box-sizing: border-box;
 }

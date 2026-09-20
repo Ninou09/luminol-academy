@@ -1,0 +1,90 @@
+.backdrop,
+.poster,
+.video,
+.veil {
+  position: absolute;
+  inset: 0;
+}
+
+.backdrop {
+  z-index: 0;
+  overflow: hidden;
+  background: var(--color-brand-ink);
+}
+
+.poster,
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video {
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .poster,
+  .video {
+    transform: translateY(var(--scene-y, 0px)) scale(var(--scene-scale, 1.06));
+    will-change: transform;
+  }
+}
+
+.veil {
+  z-index: 2;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-brand-ink) 90%, transparent),
+      color-mix(in srgb, var(--color-brand-ink) 28%, transparent) 70%
+    ),
+    linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--color-brand-ink) 66%, transparent),
+      transparent 52%
+    );
+}
+
+.veil:dir(rtl) {
+  transform: scaleX(-1);
+}
+
+.control {
+  position: absolute;
+  inset-inline-end: clamp(1.25rem, 3vw, 3rem);
+  inset-block-end: clamp(1.25rem, 3vw, 3rem);
+  z-index: 4;
+  width: 2.9rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 46%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-brand-ink) 60%, transparent);
+  color: var(--color-brand-surface);
+  cursor: pointer;
+  backdrop-filter: blur(0.6rem);
+}
+
+.control:focus-visible {
+  outline: 3px solid var(--color-brand-gold);
+  outline-offset: 4px;
+}
+
+@media (max-width: 680px) {
+  .veil {
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-brand-ink) 82%, transparent),
+        color-mix(in srgb, var(--color-brand-ink) 42%, transparent)
+      ),
+      linear-gradient(
+        0deg,
+        color-mix(in srgb, var(--color-brand-ink) 72%, transparent),
+        transparent 60%
+      );
+  }
+}

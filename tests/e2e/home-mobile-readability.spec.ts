@@ -29,7 +29,9 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
         expect(metrics.font.toLowerCase()).toContain('arabic');
       }
 
-      const actions = page.locator('#top a');
+      const actions = page.locator(
+        '#top a[href*="/programmes"], #top a[href*="/consultations"]',
+      );
       await expect(actions).toHaveCount(2);
       for (const action of await actions.all()) {
         const box = await action.boundingBox();
@@ -40,7 +42,10 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
       }
       const firstCard = page.locator('[data-school-card]').first();
       await expect(firstCard).toHaveCSS('min-height', 'auto');
-      await expect(firstCard.getByRole('link')).toHaveCSS('min-height', '44px');
+      await expect(firstCard.locator('a[href*="/schools/"]')).toHaveCSS(
+        'min-height',
+        '44px',
+      );
       expect(
         await page.locator('main').evaluate((element) => {
           return Array.from(element.querySelectorAll('h1, h2, h3')).every(
@@ -75,21 +80,15 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
   });
 }
 
-test('Arabic desktop watermark stays centered in the RTL hero', async ({
+test('Arabic desktop hero preserves its poster under reduced motion', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/ar');
-  const mark = page.locator('[data-motion-float]').filter({ hasText: /^Lu$/ });
-  await expect(mark).toHaveCSS('translate', '50% -50%');
-  expect(
-    await mark.evaluate((element) => {
-      const parent = element.parentElement!.getBoundingClientRect();
-      const box = element.getBoundingClientRect();
-      return Math.abs(box.x + box.width / 2 - (parent.x + parent.width / 2));
-    }),
-  ).toBeLessThanOrEqual(1);
+  await expect(page.locator('#top img').first()).toBeVisible();
+  expect(await page.locator('#top video').getAttribute('src')).toBeNull();
+  await expect(page.locator('#top button')).toHaveCount(0);
 });
 
 test('mobile training and consultation links work without JavaScript', async ({
@@ -103,7 +102,7 @@ test('mobile training and consultation links work without JavaScript', async ({
     const page = await context.newPage();
     await page.goto('http://127.0.0.1:3000/ar');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await page.locator('#top a').first().click();
+    await page.locator('#top a[href*="/programmes"]').click();
     await expect(page).toHaveURL(/\/ar\/programmes$/);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   } finally {

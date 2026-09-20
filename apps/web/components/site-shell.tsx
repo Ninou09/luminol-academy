@@ -3,13 +3,13 @@ import {
   localizeHref,
   type Locale,
 } from '@luminol/localization';
-import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
 
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { CurrentPageLink } from './current-page-link';
 import { LanguageSwitcher } from './language-switcher';
+import { AcademyLogo as Wordmark } from './academy-logo';
 import styles from './site-shell.module.css';
 
 const skipToContentLabel = {
