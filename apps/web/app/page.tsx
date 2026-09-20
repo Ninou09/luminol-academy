@@ -10,6 +10,7 @@ import Link from 'next/link';
 
 import { AcademyImage } from '../components/academy-image';
 import { CinematicBackdrop } from '../components/cinematic-backdrop';
+import { CinematicScroll } from '../components/cinematic-scroll';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
@@ -63,6 +64,7 @@ export default async function Page() {
   return (
     <>
       <SiteHeader />
+      <CinematicScroll />
       <OrganizationJsonLd description={publicCopy.site.description} />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">

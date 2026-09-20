@@ -76,7 +76,12 @@ export function CinematicBackdrop({
   };
 
   return (
-    <div className={styles.backdrop}>
+    <div
+      className={styles.backdrop}
+      data-media-source="https://www.pexels.com/video/a-sunlight-shines-through-trees-4867892/"
+      data-media-license="Pexels license"
+      data-media-crop="center-center"
+    >
       <Image
         className={styles.poster}
         src="/media/cinematic/hero-poster.webp"

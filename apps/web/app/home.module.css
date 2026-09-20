@@ -1,4 +1,6 @@
 .page {
+  --color-brand-gold-strong: var(--color-brand-cyan-deep);
+  --color-brand-gold: var(--color-brand-cyan-light);
   overflow: clip;
   background: var(--color-brand-canvas);
   color: var(--color-brand-ink);
@@ -669,12 +671,12 @@
 .heroTitle {
   max-width: 12ch;
   font-size: clamp(4rem, 9.2vw, 9.5rem);
-  line-height: 0.77;
+  line-height: 0.92;
   text-wrap: balance;
 }
 
 .heroTitle span {
-  color: var(--color-brand-surface);
+  color: var(--color-brand-cyan-light);
 }
 
 .heroLede {
@@ -747,6 +749,66 @@
   height: clamp(13rem, 20vw, 18rem);
   margin-top: 1rem;
   border-radius: calc(var(--luminol-media-radius) * 0.72);
+}
+
+.schoolCard:focus-within {
+  border-color: var(--color-brand-cyan);
+}
+
+.schoolCard:hover .schoolPhoto img {
+  transform: scale(1.065);
+}
+
+.heroActions a {
+  transition:
+    transform 250ms var(--luminol-ease-out),
+    background 250ms ease;
+}
+
+.heroActions a:hover {
+  transform: translateY(-3px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .heroTitle {
+    animation: titleArrival 1.1s var(--luminol-ease-out) both;
+  }
+
+  .heroTitle span {
+    animation: titleArrival 1.3s 120ms var(--luminol-ease-out) both;
+  }
+
+  .heroLede,
+  .heroActions,
+  .proof {
+    animation: titleArrival 1.1s 220ms var(--luminol-ease-out) both;
+  }
+
+  .schoolCard:nth-child(2) {
+    transition-delay: 80ms;
+  }
+
+  .schoolCard:nth-child(3) {
+    transition-delay: 160ms;
+  }
+}
+
+@keyframes titleArrival {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schoolCard:hover .schoolPhoto img,
+  .heroActions a:hover {
+    transform: none;
+  }
 }
 
 .schoolCard h3 {

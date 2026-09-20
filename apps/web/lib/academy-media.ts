@@ -23,26 +23,25 @@ export const academyMedia: Record<AcademySchool, AcademyMediaAsset> = {
     },
   },
   languages: {
-    src: '/media/cinematic/books.webp',
-    sourceUrl: 'https://www.pexels.com/photo/159711/',
-    credit: 'Pexels · Pixabay',
+    src: '/media/cinematic/learning.jpg',
+    sourceUrl: 'https://www.pexels.com/photo/1181533/',
+    credit: 'Pexels · Christina Morillo',
     crop: 'center-center',
     alt: {
-      en: 'Shelves filled with books in a warm library',
-      fr: 'Des étagères remplies de livres dans une bibliothèque chaleureuse',
-      ar: 'رفوف مليئة بالكتب في مكتبة دافئة',
+      en: 'Two people exchanging ideas at a whiteboard',
+      fr: 'Deux personnes échangent des idées devant un tableau',
+      ar: 'شخصان يتبادلان الأفكار أمام لوحة للكتابة',
     },
   },
   training: {
-    src: '/media/cinematic/hero-poster.webp',
-    sourceUrl:
-      'https://www.pexels.com/video/a-sunlight-shines-through-trees-4867892/',
-    credit: 'Pexels · Martina Tomšič',
+    src: '/media/cinematic/workshop.jpg',
+    sourceUrl: 'https://www.pexels.com/photo/3183197/',
+    credit: 'Pexels · fauxels',
     crop: 'center-center',
     alt: {
-      en: 'Warm sunlight filtering through coastal trees',
-      fr: 'Une lumière dorée traverse des arbres côtiers',
-      ar: 'ضوء ذهبي يتسلل بين أشجار ساحلية',
+      en: 'An overhead view of a team collaborating and shaking hands',
+      fr: 'Vue de dessus d’une équipe qui collabore et se serre la main',
+      ar: 'منظر علوي لفريق يتعاون ويتصافح حول طاولة',
     },
   },
 };

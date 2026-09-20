@@ -23,6 +23,14 @@
   z-index: 1;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .poster,
+  .video {
+    transform: translateY(var(--scene-y, 0px)) scale(var(--scene-scale, 1.06));
+    will-change: transform;
+  }
+}
+
 .veil {
   z-index: 2;
   background:
