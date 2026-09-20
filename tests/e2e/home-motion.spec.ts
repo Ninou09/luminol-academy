@@ -47,9 +47,11 @@ test('full motion progressively reveals the homepage', async ({ page }) => {
     'true',
   );
   await expect(page.locator('html')).toHaveCSS('scroll-behavior', 'smooth');
-  await expect(
-    page.locator('[data-reveal-state="visible"]').first(),
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  const reveal = page.locator('[data-reveal]').first();
+  await reveal.scrollIntoViewIfNeeded();
+  await expect(reveal).toHaveAttribute('data-reveal-state', 'visible');
+  await expect(reveal).toBeVisible();
 });
 
 test('mobile in-page navigation clears the sticky header', async ({ page }) => {
@@ -89,9 +91,10 @@ test('motion targets are discovered after client navigation to home', async ({
 
   await expect(page).toHaveURL(/\/en\/?$/);
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'full');
-  await expect(
-    page.locator('[data-reveal-state="visible"]').first(),
-  ).toBeVisible();
+  const reveal = page.locator('[data-reveal]').first();
+  await reveal.scrollIntoViewIfNeeded();
+  await expect(reveal).toHaveAttribute('data-reveal-state', 'visible');
+  await expect(reveal).toBeVisible();
 });
 
 test('school card hover lift remains active after reveal', async ({ page }) => {

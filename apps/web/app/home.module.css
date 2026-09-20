@@ -633,14 +633,14 @@
    storytelling, and restrained interface details. */
 .hero {
   min-height: calc(100svh - 5.5rem);
-  grid-template-columns: 1fr;
-  align-items: end;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
+  align-items: center;
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: clamp(7rem, 16vh, 11rem)
+  padding: clamp(6.5rem, 12vh, 9rem)
     max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2))
-    clamp(6.5rem, 12vh, 9rem);
+    clamp(6rem, 10vh, 8rem);
   background: var(--color-brand-ink);
   color: var(--color-brand-surface);
   isolation: isolate;
@@ -651,7 +651,14 @@
 }
 
 .heroCopy {
-  max-width: min(62rem, 78vw);
+  max-width: 48rem;
+}
+
+.heroSculpture {
+  z-index: 2;
+  align-self: center;
+  max-width: 36rem;
+  justify-self: center;
 }
 
 .hero .eyebrow {
@@ -670,8 +677,8 @@
 
 .heroTitle {
   max-width: 12ch;
-  font-size: clamp(4rem, 9.2vw, 9.5rem);
-  line-height: 0.92;
+  font-size: clamp(3.8rem, 6.4vw, 7rem);
+  line-height: 1;
   text-wrap: balance;
 }
 
@@ -702,7 +709,7 @@
   justify-content: space-between;
   gap: 1rem;
   color: color-mix(in srgb, var(--color-brand-surface) 68%, transparent);
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -795,8 +802,8 @@
 
 @keyframes titleArrival {
   from {
-    opacity: 0;
-    transform: translateY(2rem);
+    opacity: 0.75;
+    transform: translateY(1rem);
   }
   to {
     opacity: 1;
@@ -857,11 +864,24 @@
   }
 
   .schoolCard:nth-child(2):hover {
-    transform: translateY(2rem);
+    transform: perspective(1200px) translateY(2rem) rotateX(2deg) rotateY(2deg);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .schoolCard:hover {
+    transform: perspective(1200px) translateY(-0.5rem) rotateX(2deg)
+      rotateY(-2deg);
+    box-shadow: 0 2rem 4rem
+      color-mix(in srgb, var(--color-brand-ink) 14%, transparent);
   }
 }
 
 @media (max-width: 1000px) {
+  .hero {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
+    gap: 1rem;
+  }
   .schoolCard {
     min-height: auto;
   }
@@ -871,7 +891,8 @@
   .hero {
     width: 100%;
     min-height: calc(100svh - 4.5rem);
-    padding: 8rem 1.25rem 6.5rem;
+    grid-template-columns: 1fr;
+    padding: 5.5rem 1.25rem 6rem;
   }
 
   .heroCopy {
@@ -879,7 +900,12 @@
   }
 
   .heroTitle {
-    font-size: clamp(3.4rem, 17vw, 5.5rem);
+    font-size: clamp(3.2rem, 14vw, 5rem);
+  }
+
+  .heroSculpture {
+    width: min(68vw, 20rem);
+    margin-top: 0.5rem;
   }
 
   .heroLocation {
@@ -918,6 +944,24 @@
 }
 .page:dir(rtl) :is(.heroTitle span, .schoolPromise) {
   font-style: normal;
+}
+.page:dir(rtl) .heroTitle {
+  font-size: clamp(2.6rem, 4.6vw, 5.1rem);
+  line-height: 1.4;
+}
+.page:dir(rtl) .heroTitle span {
+  line-height: inherit;
+}
+@media (max-width: 680px) {
+  .page:dir(rtl) .heroTitle {
+    font-size: clamp(2.4rem, 10.5vw, 4rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .schoolCard:hover,
+  .schoolCard:nth-child(2):hover {
+    transform: none;
+  }
 }
 .page:dir(rtl) :is(.eyebrow, .proof dd, .textLink, .values span) {
   letter-spacing: normal;

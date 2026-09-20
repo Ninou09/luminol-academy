@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { AcademyImage } from '../components/academy-image';
 import { CinematicBackdrop } from '../components/cinematic-backdrop';
 import { CinematicScroll } from '../components/cinematic-scroll';
+import { KnowledgeSculpture } from '../components/knowledge-sculpture';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
@@ -73,10 +74,10 @@ export default async function Page() {
             playLabel={cinematic.play}
           />
           <div className={styles.heroLocation} aria-hidden="true">
-            <span>36.7538° N · 3.0588° E</span>
+            <span>Luminol Academy</span>
             <span>{cinematic.location}</span>
           </div>
-          <div className={styles.heroCopy} data-reveal>
+          <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{copy.heroEyebrow}</p>
             <h1 id="hero-title" className={styles.heroTitle}>
               {copy.heroTitle} <span>{copy.heroAccent}</span>
@@ -109,6 +110,7 @@ export default async function Page() {
               </div>
             </dl>
           </div>
+          <KnowledgeSculpture className={styles.heroSculpture ?? ''} />
           <a className={styles.scrollCue} href="#schools">
             {cinematic.discover} <span aria-hidden="true">↓</span>
           </a>

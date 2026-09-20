@@ -11,7 +11,7 @@ type CinematicBackdropProps = {
 };
 
 type DataAwareNavigator = Navigator & {
-  connection?: { saveData?: boolean };
+  connection?: EventTarget & { saveData?: boolean };
 };
 
 export function CinematicBackdrop({
@@ -19,43 +19,66 @@ export function CinematicBackdrop({
   playLabel,
 }: CinematicBackdropProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const userPaused = useRef(false);
   const [canLoadVideo, setCanLoadVideo] = useState(false);
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-    const saveData = (navigator as DataAwareNavigator).connection?.saveData;
-
-    if (!reducedMotion && !saveData) setCanLoadVideo(true);
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const connection = (navigator as DataAwareNavigator).connection;
+    const syncPreference = () => {
+      const allowed = !preference.matches && !connection?.saveData;
+      if (!allowed) videoRef.current?.pause();
+      setCanLoadVideo(allowed);
+    };
+    syncPreference();
+    preference.addEventListener('change', syncPreference);
+    connection?.addEventListener('change', syncPreference);
+    return () => {
+      preference.removeEventListener('change', syncPreference);
+      connection?.removeEventListener('change', syncPreference);
+    };
   }, []);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !canLoadVideo) return;
 
-    const syncVisibility = () => {
-      if (document.hidden) {
+    let active = true;
+    let inView = false;
+    const shouldPlay = () =>
+      active && inView && !document.hidden && !userPaused.current;
+    const syncPlayback = () => {
+      if (!shouldPlay()) {
         video.pause();
-        setPlaying(false);
+        return;
       }
+      // Autoplay may be refused. Keep the poster and an explicit play button;
+      // never retry on a timer or mistake a visibility pause for user intent.
+      void video
+        .play()
+        .then(() => {
+          if (!shouldPlay()) video.pause();
+        })
+        .catch(() => {
+          if (active) setPlaying(false);
+        });
     };
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting) {
-          video.pause();
-          setPlaying(false);
-        }
+        inView = Boolean(entry?.isIntersecting);
+        syncPlayback();
       },
-      { threshold: 0.1 },
+      { threshold: 0 },
     );
 
     observer.observe(video);
-    document.addEventListener('visibilitychange', syncVisibility);
+    document.addEventListener('visibilitychange', syncPlayback);
     return () => {
+      active = false;
+      video.pause();
       observer.disconnect();
-      document.removeEventListener('visibilitychange', syncVisibility);
+      document.removeEventListener('visibilitychange', syncPlayback);
     };
   }, [canLoadVideo]);
 
@@ -64,12 +87,14 @@ export function CinematicBackdrop({
     if (!video) return;
 
     if (video.paused) {
+      userPaused.current = false;
       try {
         await video.play();
       } catch {
         setPlaying(false);
       }
     } else {
+      userPaused.current = true;
       video.pause();
       setPlaying(false);
     }
@@ -100,7 +125,6 @@ export function CinematicBackdrop({
         preload="none"
         loop
         playsInline
-        autoPlay={canLoadVideo}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onError={() => setCanLoadVideo(false)}

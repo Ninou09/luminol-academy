@@ -52,6 +52,7 @@
   justify-content: center;
 }
 .nav a {
+  position: relative;
   padding-block: 0.65rem;
   color: var(--color-brand-ink-soft);
   font-size: 0.68rem;
@@ -59,6 +60,21 @@
   letter-spacing: 0.08em;
   text-decoration: none;
   text-transform: uppercase;
+}
+.nav a::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0.2rem;
+  height: 1px;
+  background: var(--color-brand-cyan);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 250ms var(--luminol-ease-out);
+}
+.nav a:hover::after,
+.nav a[aria-current='page']::after {
+  transform: scaleX(1);
 }
 .actions {
   display: flex;

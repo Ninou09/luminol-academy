@@ -17,6 +17,7 @@ export function AcademyLogo({ className = '' }: { className?: string }) {
           width={917}
           height={2048}
           sizes="110px"
+          unoptimized
           className={styles.original}
         />
       </span>
