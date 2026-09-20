@@ -96,7 +96,11 @@ export function PublicMotionController() {
       }
 
       for (const element of elements) {
-        element.dataset.revealState = 'pending';
+        // Never hide already-readable content when hydration completes.
+        element.dataset.revealState =
+          element.getBoundingClientRect().top < window.innerHeight
+            ? 'visible'
+            : 'pending';
       }
       root.dataset.motionReady = 'true';
 
@@ -112,7 +116,10 @@ export function PublicMotionController() {
         { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
       );
 
-      for (const element of elements) observer.observe(element);
+      for (const element of elements) {
+        if (element.dataset.revealState === 'pending')
+          observer.observe(element);
+      }
     };
 
     const syncMotionPreference = () => {

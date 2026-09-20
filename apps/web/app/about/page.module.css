@@ -83,6 +83,18 @@
   box-shadow: var(--shadow-editorial);
   overflow: hidden;
   isolation: isolate;
+  transition:
+    transform 800ms var(--luminol-ease-out),
+    box-shadow 800ms var(--luminol-ease-out);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .heroVisual:hover {
+    transform: perspective(1400px) rotateY(-3deg) rotateX(1deg)
+      translateY(-0.4rem);
+    box-shadow: 0 2.5rem 5rem
+      color-mix(in srgb, var(--color-brand-ink) 18%, transparent);
+  }
 }
 
 .rays {

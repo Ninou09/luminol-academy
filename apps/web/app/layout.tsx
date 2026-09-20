@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
 import { PublicMotionController } from '../components/public-motion-controller';
+import { PageNavigation } from '../components/page-navigation';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { resolvePublicSiteUrl } from '../lib/site-url';
@@ -102,6 +103,7 @@ export default async function RootLayout({
       dir={getLocaleDirection(locale)}
     >
       <body>
+        <PageNavigation />
         <PublicMotionController />
         {children}
       </body>

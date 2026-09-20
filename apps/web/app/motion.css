@@ -2,6 +2,24 @@ html {
   scroll-padding-block-start: 6.5rem;
 }
 
+/* Each route gets a quiet arrival; persistent navigation never leaves the frame. */
+@media (prefers-reduced-motion: no-preference) {
+  main h1 {
+    animation: luminol-page-arrival 650ms var(--luminol-ease-out) both;
+  }
+}
+
+@keyframes luminol-page-arrival {
+  from {
+    opacity: 0.75;
+    translate: 0 0.75rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
 html[data-motion='full'][data-motion-ready='true']
   [data-reveal][data-reveal-state='pending'] {
   opacity: 0;

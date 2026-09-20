@@ -36,8 +36,8 @@
   background:
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--color-brand-ink) 90%, transparent),
-      color-mix(in srgb, var(--color-brand-ink) 28%, transparent) 70%
+      color-mix(in srgb, var(--color-brand-ink) 92%, transparent),
+      color-mix(in srgb, var(--color-brand-ink) 65%, transparent) 70%
     ),
     linear-gradient(
       0deg,
