@@ -17,6 +17,22 @@ const professionalTemplateKeys = [
 ] as const;
 
 describe('notification policy', () => {
+  it('accepts the transactional new-enquiry template', () => {
+    expect(
+      notificationEventSchema.safeParse({
+        idempotencyKey: 'enquiry-received-enquiry-1-admin-1',
+        recipientId: 'admin-1',
+        templateKey: 'enquiry_received',
+        category: 'transactional',
+        payload: {
+          subject: 'New website enquiry',
+          message: 'Open the protected enquiry desk to review it.',
+        },
+        channels: ['in_app', 'email'],
+      }).success,
+    ).toBe(true);
+  });
+
   it('never suppresses mandatory transactional messages', () =>
     expect(shouldDeliver('transactional', false)).toBe(true));
   it('honours marketing opt-out', () =>

@@ -1,6 +1,8 @@
 import { db } from '@luminol/database';
 import { contactSchema } from '@luminol/validation';
+import { after } from 'next/server';
 
+import { dispatchEnquiryCommunications } from '../../../lib/enquiry-communications.server';
 import { getPublicProgrammeBySlug } from '../../../lib/programme-detail';
 
 const MAX_BODY_SIZE = 20_000;
@@ -135,8 +137,9 @@ export async function POST(request: Request): Promise<Response> {
       )
     : null;
 
+  let enquiry: { id: string };
   try {
-    await db.enquiry.create({
+    enquiry = await db.enquiry.create({
       data: {
         name: result.data.name,
         email: result.data.email,
@@ -163,6 +166,32 @@ export async function POST(request: Request): Promise<Response> {
       { error: 'We could not save your enquiry. Please try again.' },
       500,
     );
+  }
+
+  try {
+    after(async () => {
+      const communication = await dispatchEnquiryCommunications({
+        id: enquiry.id,
+        name: result.data.name,
+        email: result.data.email,
+        phone: result.data.phone || null,
+        preferredContact: result.data.preferredContact,
+        school: result.data.school,
+        programmeTitleSnapshot: programme?.title ?? null,
+        locale: result.data.locale,
+        message: result.data.message,
+      });
+      if (communication.failures > 0) {
+        console.error('Enquiry communication dispatch incomplete', {
+          enquiryId: enquiry.id,
+          failures: communication.failures,
+        });
+      }
+    });
+  } catch {
+    console.error('Enquiry communication scheduling failed', {
+      enquiryId: enquiry.id,
+    });
   }
 
   return jsonResponse({ submitted: true }, 201);
