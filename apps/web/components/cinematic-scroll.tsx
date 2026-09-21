@@ -2,20 +2,21 @@
 
 import { useEffect } from 'react';
 
-/** Event-driven transforms: no render loop, scroll interception or React updates. */
+/** Native scrolling drives the film framing; no pinned scroll or render loop. */
 export function CinematicScroll() {
   useEffect(() => {
     const hero = document.getElementById('top');
     if (!hero) return;
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
     let frame = 0;
     const reset = () => {
-      hero.style.removeProperty('--scene-y');
-      hero.style.removeProperty('--scene-scale');
-      hero.style.removeProperty('--scene-turn');
-      hero.style.removeProperty('--scene-pointer-x');
-      hero.style.removeProperty('--scene-pointer-y');
+      for (const name of [
+        '--scene-y',
+        '--scene-scale',
+        '--scene-copy-y',
+        '--scene-inset',
+      ])
+        hero.style.removeProperty(name);
     };
     const paint = () => {
       frame = 0;
@@ -23,9 +24,10 @@ export function CinematicScroll() {
       const rect = hero.getBoundingClientRect();
       if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
       const progress = Math.min(1, Math.max(0, -rect.top / rect.height));
-      hero.style.setProperty('--scene-y', `${progress * 70}px`);
-      hero.style.setProperty('--scene-scale', `${1.06 + progress * 0.08}`);
-      hero.style.setProperty('--scene-turn', `${progress * 24}deg`);
+      hero.style.setProperty('--scene-y', `${progress * 55}px`);
+      hero.style.setProperty('--scene-scale', `${1.04 + progress * 0.07}`);
+      hero.style.setProperty('--scene-copy-y', `${progress * -30}px`);
+      hero.style.setProperty('--scene-inset', `${progress * 2}%`);
     };
     const schedule = () => {
       if (!frame && !preference.matches) frame = requestAnimationFrame(paint);
@@ -36,24 +38,6 @@ export function CinematicScroll() {
       reset();
       schedule();
     };
-    const trackPointer = (event: PointerEvent) => {
-      if (preference.matches || !finePointer.matches) return;
-      const bounds = hero.getBoundingClientRect();
-      hero.style.setProperty(
-        '--scene-pointer-x',
-        `${((event.clientX - bounds.left) / bounds.width - 0.5) * 14}deg`,
-      );
-      hero.style.setProperty(
-        '--scene-pointer-y',
-        `${((event.clientY - bounds.top) / bounds.height - 0.5) * -9}deg`,
-      );
-    };
-    const resetPointer = () => {
-      hero.style.removeProperty('--scene-pointer-x');
-      hero.style.removeProperty('--scene-pointer-y');
-    };
-    hero.addEventListener('pointermove', trackPointer, { passive: true });
-    hero.addEventListener('pointerleave', resetPointer);
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule, { passive: true });
     preference.addEventListener('change', syncPreference);
@@ -63,8 +47,6 @@ export function CinematicScroll() {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
       preference.removeEventListener('change', syncPreference);
-      hero.removeEventListener('pointermove', trackPointer);
-      hero.removeEventListener('pointerleave', resetPointer);
       reset();
     };
   }, []);

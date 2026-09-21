@@ -1,38 +1,46 @@
 # Cinematic public-site media
 
-## Refinement
+## Current film direction
 
-The header and footer display the user's original `1000077217.jpg` logo artwork.
-The source is preserved as `luminol-logo-original.jpg`; CSS clips the phone UI
-and isolates the emblem (x220, y700, width440, height490). The academy name remains
-accessible HTML beside it. No generated or redrawn logo is substituted.
+The user requested removal of the decorative 3D model and replacement of the
+forest video and previous photographs. The uploaded 11:30 reference was reviewed
+at 30-second intervals, with closer frame sequences around 05:15–05:45 and
+07:50–08:20. Its relevant ideas are large moving visual subjects, bold type,
+restrained navigation and staged transitions. The academy translates those ideas
+into a full-width learning film, phrase-level title masks, native-scroll framing,
+and alternating large photographs. The rejected sculpture is removed.
 
-Languages now uses https://www.pexels.com/photo/1181533/ (Christina Morillo),
-showing a whiteboard conversation. Training uses
-https://www.pexels.com/photo/3183197/ (fauxels), showing team collaboration.
-These are illustrative stock images, not photographs of academy staff.
+The logo remains the original supplied artwork. Arabic, French and English
+content, attendance-certificate wording and public routes remain unchanged.
 
-The homepage adds a scroll-linked hero transform, staggered title entrance,
-and card-image zoom. Scroll work is passive and requestAnimationFrame-throttled;
-reduced-motion preferences disable these effects. Navigation is never scroll-jacked.
+## Media provenance
 
-The public website uses locally optimized media sourced from Pexels under the
-[Pexels license](https://www.pexels.com/license/).
+All new media is illustrative stock, not Luminol premises, staff or participants.
+Source links and licenses remain in the rendered markup and visible credits.
 
-| Asset                                   | Creator           | Source                                                                | Local use                    |
-| --------------------------------------- | ----------------- | --------------------------------------------------------------------- | ---------------------------- |
-| Sunlight through trees video and poster | Martina Tomšič    | https://www.pexels.com/video/a-sunlight-shines-through-trees-4867892/ | Homepage hero                |
-| Whiteboard conversation                 | Christina Morillo | https://www.pexels.com/photo/1181533/                                 | Languages imagery            |
-| Team workshop                           | fauxels           | https://www.pexels.com/photo/3183197/                                 | Training imagery             |
-| Collaboration photograph                | fauxels           | https://www.pexels.com/photo/3184306/                                 | Psychology and About imagery |
+| Local asset                                         | Source                                                                                       | Creator / license                                | Crop                         |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------ | ---------------------------- |
+| `editorial/academy-film.mp4`, `academy-poster.webp` | https://mixkit.co/free-stock-video/a-hand-runs-through-the-book-spines-in-the-library-50726/ | Mixkit Stock Video Free License                  | Centered 16:9                |
+| Second shot in the film                             | https://mixkit.co/free-stock-video/reverse-tour-of-a-library-full-of-books-21595/            | Mixkit Stock Video Free License                  | Centered 16:9                |
+| `editorial/conversation.jpg`                        | https://unsplash.com/photos/LQ1t-8Ms5PY                                                      | Christina @ wocintechchat.com / Unsplash License | Centered, keep both speakers |
+| `editorial/students.jpg`                            | https://unsplash.com/photos/omeaHbEFlN4                                                      | Alexis Brown / Unsplash License                  | Centered, books and students |
+| `editorial/team.jpg`                                | https://unsplash.com/photos/vdXMSiX-n6M                                                      | Mimi Thian / Unsplash License                    | Centered, preserve group     |
 
-The hero serves a WebP poster immediately. The MP4 is attached only after
-hydration, and is not loaded when the visitor requests reduced motion or has
-data-saving enabled. It pauses when the tab or hero leaves view.
+Both exact Mixkit asset pages state free commercial/personal use. The 16-second
+film combines excerpts with a one-second dissolve, H.264 1280×720 at 24fps,
+without audio, faststart enabled, approximately 1.7 MB. A local WebP poster is
+served first. Reduced-motion or Save-Data visitors never load the film.
+Playback pauses offscreen and resumes on return, while respecting manual pause.
+The new photographs are locally hosted and optimized by Next Image.
 
-All media components retain source, license, crop, credit, and localized alt
-metadata in the rendered markup. No founder portrait is rendered.
+MotionSites reference supplied by the user:
+https://motionsites.ai/?prompt=future-machine . Use only publicly available/free
+material; do not import paid assets or add an account requirement to Luminol.
 
-Manrope, Noto Sans Arabic, and Cormorant Garamond are self-hosted from the
-Google Fonts repository. Their SIL Open Font License files are included beside
-the fonts in `apps/web/app/fonts`, so builds do not require a Google Fonts request.
+## Verification and rollback
+
+Keep regression coverage for video recovery, dynamic reduced motion, source
+metadata, Arabic mobile/desktop navigation, and the sticky-header anchor offset.
+Run lint, typecheck, unit tests, build and CI browser tests before merge. Visually
+review the actual preview. Deploy with the existing GitHub/Vercel integration.
+Rollback by reverting this scoped change; there are no data migrations.

@@ -103,13 +103,14 @@ export function CinematicBackdrop({
   return (
     <div
       className={styles.backdrop}
-      data-media-source="https://www.pexels.com/video/a-sunlight-shines-through-trees-4867892/"
-      data-media-license="Pexels license"
+      data-media-source="https://mixkit.co/free-stock-video/a-hand-runs-through-the-book-spines-in-the-library-50726/"
+      data-media-secondary-source="https://mixkit.co/free-stock-video/reverse-tour-of-a-library-full-of-books-21595/"
+      data-media-license="Mixkit Stock Video Free License"
       data-media-crop="center-center"
     >
       <Image
         className={styles.poster}
-        src="/media/cinematic/hero-poster.webp"
+        src="/media/editorial/academy-poster.webp"
         alt=""
         fill
         priority
@@ -118,8 +119,8 @@ export function CinematicBackdrop({
       <video
         ref={videoRef}
         className={styles.video}
-        src={canLoadVideo ? '/media/cinematic/hero-loop.mp4' : undefined}
-        poster="/media/cinematic/hero-poster.webp"
+        src={canLoadVideo ? '/media/editorial/academy-film.mp4' : undefined}
+        poster="/media/editorial/academy-poster.webp"
         muted
         aria-hidden="true"
         preload="none"

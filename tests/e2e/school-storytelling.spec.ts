@@ -29,11 +29,11 @@ test('premium school storytelling preserves landmarks and governed media', async
   await expect(academyMedia).toBeVisible();
   await expect(academyMedia).toHaveAttribute(
     'data-media-source',
-    'https://www.pexels.com/photo/3184306/',
+    'https://unsplash.com/photos/LQ1t-8Ms5PY',
   );
   await expect(
     academyMedia.getByRole('img', {
-      name: 'A diverse learning group collaborating around a table',
+      name: 'Two women having a conversation beside a sunlit window',
     }),
   ).toBeVisible();
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);
