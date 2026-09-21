@@ -114,6 +114,8 @@ import {
   getEnquiryDeliveryPreferenceLabel,
   getEnquiryDeskCopy,
   getEnquiryFirstResponseStepLabel,
+  getEnquiryReadinessLabel,
+  getEnquiryRequestKindLabel,
   getEnquiryTimingPreferenceLabel,
 } from '../../lib/enquiry-desk-localization';
 import {
@@ -406,6 +408,9 @@ export default async function EnquiriesAdminPage({
         email: true,
         phone: true,
         city: true,
+        profession: true,
+        requestKind: true,
+        readiness: true,
         preferredContact: true,
         deliveryPreference: true,
         timingPreference: true,
@@ -1548,6 +1553,27 @@ export default async function EnquiriesAdminPage({
                       <div className={styles.metaItem}>
                         <span>{copy.city}</span>
                         <p dir="auto">{enquiry.city || copy.notProvided}</p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.profession}</span>
+                        <p dir="auto">
+                          {enquiry.profession || copy.notProvided}
+                        </p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.requestKind}</span>
+                        <p>
+                          {getEnquiryRequestKindLabel(
+                            locale,
+                            enquiry.requestKind,
+                          )}
+                        </p>
+                      </div>
+                      <div className={styles.metaItem}>
+                        <span>{copy.readiness}</span>
+                        <p>
+                          {getEnquiryReadinessLabel(locale, enquiry.readiness)}
+                        </p>
                       </div>
                       <div className={styles.metaItem}>
                         <span>{copy.preferredContact}</span>

@@ -30,6 +30,23 @@ const consultationsLabel = {
   en: 'Consultations',
 } as const satisfies Record<Locale, string>;
 
+const legalLabels = {
+  ar: { privacy: 'الخصوصية', terms: 'الشروط', booking: 'الحجز والإلغاء' },
+  fr: {
+    privacy: 'Confidentialité',
+    terms: 'Conditions',
+    booking: 'Réservation et annulation',
+  },
+  en: {
+    privacy: 'Privacy',
+    terms: 'Terms',
+    booking: 'Booking and cancellation',
+  },
+} as const satisfies Record<
+  Locale,
+  Record<'privacy' | 'terms' | 'booking', string>
+>;
+
 export async function SiteHeader() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
@@ -168,6 +185,20 @@ export async function SiteFooter() {
       </div>
       <div className={styles.footerBottom}>
         <p>© {new Date().getFullYear()} Luminol Academy</p>
+        <nav
+          className={styles.footerLegal}
+          aria-label={footerNavigationLabel[locale]}
+        >
+          <Link href={localizeHref(locale, '/legal/privacy')}>
+            {legalLabels[locale].privacy}
+          </Link>
+          <Link href={localizeHref(locale, '/legal/terms')}>
+            {legalLabels[locale].terms}
+          </Link>
+          <Link href={localizeHref(locale, '/legal/booking')}>
+            {legalLabels[locale].booking}
+          </Link>
+        </nav>
         <p>Luminol · {copy.site.footerDisciplines}</p>
       </div>
     </footer>

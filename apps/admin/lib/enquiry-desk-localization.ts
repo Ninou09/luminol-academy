@@ -8,6 +8,8 @@ export type EnquiryDeliveryPreferenceValue =
   'IN_PERSON' | 'ONLINE' | 'FLEXIBLE' | 'NOT_SURE';
 export type EnquiryTimingPreferenceValue =
   'SOON' | 'WITHIN_MONTH' | 'LATER' | 'NOT_SURE';
+export type EnquiryRequestKindValue = 'CONSULTATION' | 'PROGRAMME' | 'GENERAL';
+export type EnquiryReadinessValue = 'INFORMATION' | 'REGISTRATION_BOOKING';
 
 export type EnquiryDeskCopy = {
   eyebrow: string;
@@ -36,6 +38,9 @@ export type EnquiryDeskCopy = {
   call: string;
   noPhone: string;
   city: string;
+  profession: string;
+  requestKind: string;
+  readiness: string;
   preferredContact: string;
   deliveryPreference: string;
   timingPreference: string;
@@ -106,6 +111,9 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     call: 'Call',
     noPhone: 'No phone provided',
     city: 'City / area',
+    profession: 'Profession or field',
+    requestKind: 'Request type',
+    readiness: 'Requested next step',
     preferredContact: 'Preferred contact',
     deliveryPreference: 'Preferred format',
     timingPreference: 'Preferred timing',
@@ -179,6 +187,9 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     call: 'Appeler',
     noPhone: 'Aucun téléphone fourni',
     city: 'Ville / région',
+    profession: 'Profession ou spécialité',
+    requestKind: 'Type de demande',
+    readiness: 'Prochaine étape demandée',
     preferredContact: 'Contact préféré',
     deliveryPreference: 'Format préféré',
     timingPreference: 'Délai souhaité',
@@ -252,6 +263,9 @@ const ENQUIRY_DESK_COPY: Record<Locale, EnquiryDeskCopy> = {
     call: 'اتصال',
     noPhone: 'لم يتم تقديم رقم هاتف',
     city: 'المدينة / المنطقة',
+    profession: 'المهنة أو التخصص',
+    requestKind: 'نوع الطلب',
+    readiness: 'الخطوة التالية المطلوبة',
     preferredContact: 'وسيلة التواصل المفضلة',
     deliveryPreference: 'طريقة الحضور المفضلة',
     timingPreference: 'التوقيت المفضل',
@@ -485,6 +499,45 @@ const TIMING_LABELS: Record<
   },
 };
 
+const REQUEST_KIND_LABELS: Record<
+  Locale,
+  Record<EnquiryRequestKindValue, string>
+> = {
+  en: {
+    CONSULTATION: 'Consultation',
+    PROGRAMME: 'Programme',
+    GENERAL: 'General information',
+  },
+  fr: {
+    CONSULTATION: 'Consultation',
+    PROGRAMME: 'Programme',
+    GENERAL: 'Informations générales',
+  },
+  ar: {
+    CONSULTATION: 'استشارة',
+    PROGRAMME: 'دورة أو برنامج',
+    GENERAL: 'معلومات عامة',
+  },
+};
+
+const READINESS_LABELS: Record<
+  Locale,
+  Record<EnquiryReadinessValue, string>
+> = {
+  en: {
+    INFORMATION: 'Send details first',
+    REGISTRATION_BOOKING: 'Start registration or booking',
+  },
+  fr: {
+    INFORMATION: 'Envoyer les informations d’abord',
+    REGISTRATION_BOOKING: 'Commencer l’inscription ou la réservation',
+  },
+  ar: {
+    INFORMATION: 'إرسال التفاصيل أولًا',
+    REGISTRATION_BOOKING: 'بدء التسجيل أو الحجز',
+  },
+};
+
 export function getEnquiryDeskCopy(locale: Locale): EnquiryDeskCopy {
   return ENQUIRY_DESK_COPY[locale];
 }
@@ -527,5 +580,21 @@ export function getEnquiryTimingPreferenceLabel(
 ): string {
   return value
     ? TIMING_LABELS[locale][value]
+    : ENQUIRY_DESK_COPY[locale].notProvided;
+}
+
+export function getEnquiryRequestKindLabel(
+  locale: Locale,
+  value: EnquiryRequestKindValue,
+): string {
+  return REQUEST_KIND_LABELS[locale][value];
+}
+
+export function getEnquiryReadinessLabel(
+  locale: Locale,
+  value: EnquiryReadinessValue | null,
+): string {
+  return value
+    ? READINESS_LABELS[locale][value]
     : ENQUIRY_DESK_COPY[locale].notProvided;
 }
