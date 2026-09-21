@@ -24,6 +24,12 @@ const footerNavigationLabel = {
   en: 'Footer navigation',
 } as const satisfies Record<Locale, string>;
 
+const legalNavigationLabel = {
+  ar: 'الروابط القانونية',
+  fr: 'Liens juridiques',
+  en: 'Legal links',
+} as const satisfies Record<Locale, string>;
+
 const consultationsLabel = {
   ar: 'الاستشارات النفسية',
   fr: 'Consultations',
@@ -187,7 +193,7 @@ export async function SiteFooter() {
         <p>© {new Date().getFullYear()} Luminol Academy</p>
         <nav
           className={styles.footerLegal}
-          aria-label={footerNavigationLabel[locale]}
+          aria-label={legalNavigationLabel[locale]}
         >
           <Link href={localizeHref(locale, '/legal/privacy')}>
             {legalLabels[locale].privacy}
