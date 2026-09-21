@@ -6,6 +6,7 @@ export const notificationCategorySchema = z.enum([
 ]);
 export const notificationChannelSchema = z.enum(['in_app', 'email']);
 export const notificationTemplateKeySchema = z.enum([
+  'enquiry_received',
   'course_completed',
   'certificate_issued',
   'account_notice',

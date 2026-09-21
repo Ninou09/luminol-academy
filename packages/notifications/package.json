@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./server": "./src/server.ts"
+    "./server": "./src/server.ts",
+    "./resend": "./src/resend.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",

@@ -1,8 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { createEnquiry, getPublicProgrammeBySlug } = vi.hoisted(() => ({
+const {
+  afterTasks,
+  createEnquiry,
+  dispatchEnquiryCommunications,
+  getPublicProgrammeBySlug,
+  scheduleAfter,
+} = vi.hoisted(() => ({
+  afterTasks: [] as Array<() => Promise<unknown> | unknown>,
   createEnquiry: vi.fn(),
+  dispatchEnquiryCommunications: vi.fn(),
   getPublicProgrammeBySlug: vi.fn(),
+  scheduleAfter: vi.fn((task: () => Promise<unknown> | unknown) => {
+    afterTasks.push(task);
+  }),
 }));
 
 vi.mock('@luminol/database', () => ({
@@ -12,6 +23,12 @@ vi.mock('@luminol/database', () => ({
 vi.mock('../../../lib/programme-detail', () => ({
   getPublicProgrammeBySlug,
 }));
+
+vi.mock('../../../lib/enquiry-communications.server', () => ({
+  dispatchEnquiryCommunications,
+}));
+
+vi.mock('next/server', () => ({ after: scheduleAfter }));
 
 import { POST } from './route';
 
@@ -49,10 +66,18 @@ function createRequest(
 describe('POST /api/enquiries', () => {
   beforeEach(() => {
     vi.stubEnv('VERCEL', '1');
+    afterTasks.length = 0;
     createEnquiry.mockReset();
     createEnquiry.mockResolvedValue({ id: 'enquiry_1' });
+    dispatchEnquiryCommunications.mockReset();
+    dispatchEnquiryCommunications.mockResolvedValue({
+      staffNotificationsQueued: 1,
+      visitorAcknowledgement: 'sent',
+      failures: 0,
+    });
     getPublicProgrammeBySlug.mockReset();
     getPublicProgrammeBySlug.mockResolvedValue(null);
+    scheduleAfter.mockClear();
   });
 
   afterEach(() => {
@@ -91,6 +116,19 @@ describe('POST /api/enquiries', () => {
         locale: validEnquiry.locale,
         consent: true,
       },
+    });
+    expect(scheduleAfter).toHaveBeenCalledOnce();
+    await afterTasks[0]?.();
+    expect(dispatchEnquiryCommunications).toHaveBeenCalledWith({
+      id: 'enquiry_1',
+      name: validEnquiry.name,
+      email: validEnquiry.email,
+      phone: null,
+      preferredContact: validEnquiry.preferredContact,
+      school: validEnquiry.school,
+      programmeTitleSnapshot: null,
+      locale: validEnquiry.locale,
+      message: validEnquiry.message,
     });
   });
 
@@ -316,6 +354,26 @@ describe('POST /api/enquiries', () => {
     await expect(response.json()).resolves.toEqual({
       error: 'We could not save your enquiry. Please try again.',
     });
+  });
+
+  it('keeps the saved lead successful when background scheduling is unavailable', async () => {
+    scheduleAfter.mockImplementationOnce(() => {
+      throw new Error('after unavailable');
+    });
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    const response = await POST(createRequest(validEnquiry, '203.0.113.25'));
+
+    expect(response.status).toBe(201);
+    expect(await response.json()).toEqual({ submitted: true });
+    expect(createEnquiry).toHaveBeenCalledOnce();
+    expect(consoleError).toHaveBeenCalledWith(
+      'Enquiry communication scheduling failed',
+      { enquiryId: 'enquiry_1' },
+    );
+    consoleError.mockRestore();
   });
 
   it('limits repeated submissions from one trusted edge address and returns retry timing', async () => {
