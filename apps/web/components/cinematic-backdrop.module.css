@@ -10,6 +10,7 @@
   z-index: 0;
   overflow: hidden;
   background: var(--color-brand-ink);
+  clip-path: inset(var(--scene-inset, 0%) round 0.25rem);
 }
 
 .poster,
@@ -36,13 +37,14 @@
   background:
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--color-brand-ink) 92%, transparent),
-      color-mix(in srgb, var(--color-brand-ink) 65%, transparent) 70%
+      color-mix(in srgb, var(--color-brand-ink) 58%, transparent),
+      color-mix(in srgb, var(--color-brand-ink) 26%, transparent) 70%
     ),
     linear-gradient(
       0deg,
-      color-mix(in srgb, var(--color-brand-ink) 66%, transparent),
-      transparent 52%
+      color-mix(in srgb, var(--color-brand-ink) 96%, transparent),
+      color-mix(in srgb, var(--color-brand-ink) 36%, transparent) 65%,
+      color-mix(in srgb, var(--color-brand-ink) 24%, transparent)
     );
 }
 

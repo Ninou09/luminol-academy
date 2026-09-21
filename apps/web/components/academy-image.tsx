@@ -26,7 +26,7 @@ export function AcademyImage({
       className={`${styles.frame} ${className ?? ''}`}
       data-academy-media={school}
       data-media-source={media.sourceUrl}
-      data-media-license="Pexels license"
+      data-media-license="Unsplash License"
       data-media-crop={media.crop}
     >
       <Image

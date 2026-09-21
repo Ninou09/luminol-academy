@@ -11,7 +11,6 @@ import Link from 'next/link';
 import { AcademyImage } from '../components/academy-image';
 import { CinematicBackdrop } from '../components/cinematic-backdrop';
 import { CinematicScroll } from '../components/cinematic-scroll';
-import { KnowledgeSculpture } from '../components/knowledge-sculpture';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
@@ -82,6 +81,8 @@ export default async function Page() {
             <h1 id="hero-title" className={styles.heroTitle}>
               {copy.heroTitle} <span>{copy.heroAccent}</span>
             </h1>
+          </div>
+          <div className={styles.heroSummary}>
             <p className={styles.heroLede}>{copy.heroLede}</p>
             <div className={styles.heroActions}>
               <ButtonLink href={localizeHref(locale, '/programmes')} size="lg">
@@ -95,26 +96,25 @@ export default async function Page() {
                 {copy.pathwayPsychology} <span aria-hidden="true">→</span>
               </ButtonLink>
             </div>
-            <dl className={styles.proof} aria-label={copy.strengthsAria}>
-              <div>
-                <dt>3</dt>
-                <dd>{copy.connectedSchools}</dd>
-              </div>
-              <div>
-                <dt>1</dt>
-                <dd>{copy.humanJourney}</dd>
-              </div>
-              <div>
-                <dt>AR · FR · EN</dt>
-                <dd>{copy.multilingualFoundation}</dd>
-              </div>
-            </dl>
           </div>
-          <KnowledgeSculpture className={styles.heroSculpture ?? ''} />
           <a className={styles.scrollCue} href="#schools">
             {cinematic.discover} <span aria-hidden="true">↓</span>
           </a>
         </section>
+        <dl className={styles.proof} aria-label={copy.strengthsAria}>
+          <div>
+            <dt>3</dt>
+            <dd>{copy.connectedSchools}</dd>
+          </div>
+          <div>
+            <dt>1</dt>
+            <dd>{copy.humanJourney}</dd>
+          </div>
+          <div>
+            <dt>AR · FR · EN</dt>
+            <dd>{copy.multilingualFoundation}</dd>
+          </div>
+        </dl>
 
         <PublishedProgrammeSpotlight locale={locale} />
 
@@ -140,33 +140,35 @@ export default async function Page() {
                 data-school-card
                 data-reveal
               >
-                <div className={styles.schoolTop}>
-                  <span>{school.number}</span>
-                  <span className={styles.schoolGlyph} aria-hidden="true" />
-                </div>
                 <AcademyImage
                   className={styles.schoolPhoto}
                   school={school.slug}
                   locale={locale}
-                  sizes="(max-width: 1000px) 100vw, 33vw"
+                  sizes="(max-width: 800px) 100vw, 55vw"
                 />
-                <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
-                <p className={styles.schoolPromise}>{school.promise}</p>
-                <p className={styles.schoolDescription}>
-                  {school.introduction}
-                </p>
-                <ul aria-label={`${school.name} — ${copy.focusAreas}`}>
-                  {school.programs.slice(0, 3).map((program) => (
-                    <li key={program.title}>{program.title}</li>
-                  ))}
-                </ul>
-                <Link
-                  className={styles.textLink}
-                  href={localizeHref(locale, `/schools/${school.slug}`)}
-                  aria-label={`${copy.discoverSchool}: ${school.name}`}
-                >
-                  {copy.discoverSchool} <span aria-hidden="true">→</span>
-                </Link>
+                <div className={styles.schoolDetails}>
+                  <div className={styles.schoolTop}>
+                    <span>{school.number}</span>
+                    <span aria-hidden="true">Luminol Academy</span>
+                  </div>
+                  <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
+                  <p className={styles.schoolPromise}>{school.promise}</p>
+                  <p className={styles.schoolDescription}>
+                    {school.introduction}
+                  </p>
+                  <ul aria-label={`${school.name} — ${copy.focusAreas}`}>
+                    {school.programs.slice(0, 3).map((program) => (
+                      <li key={program.title}>{program.title}</li>
+                    ))}
+                  </ul>
+                  <Link
+                    className={styles.textLink}
+                    href={localizeHref(locale, `/schools/${school.slug}`)}
+                    aria-label={`${copy.discoverSchool}: ${school.name}`}
+                  >
+                    {copy.discoverSchool} <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
               </article>
             ))}
           </div>
@@ -204,7 +206,7 @@ export default async function Page() {
         >
           <AcademyImage
             className={styles.aboutVisual}
-            school="psychology"
+            school="training"
             locale={locale}
             sizes="(max-width: 1000px) 100vw, 40vw"
           />
@@ -223,6 +225,20 @@ export default async function Page() {
 
         <aside className={styles.mediaCredits} aria-label={cinematic.credits}>
           <span>{cinematic.credits}</span>
+          <a
+            href="https://mixkit.co/free-stock-video/a-hand-runs-through-the-book-spines-in-the-library-50726/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Mixkit · 50726
+          </a>
+          <a
+            href="https://mixkit.co/free-stock-video/reverse-tour-of-a-library-full-of-books-21595/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Mixkit · 21595
+          </a>
           {Object.values(academyMedia).map((media) => (
             <a
               key={media.sourceUrl}

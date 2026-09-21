@@ -5,299 +5,168 @@
   background: var(--color-brand-canvas);
   color: var(--color-brand-ink);
 }
+
+/* Film, typography and real people carry the composition. */
 .hero {
   position: relative;
+  isolation: isolate;
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(24rem, 0.95fr);
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: center;
-  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 92rem);
-  margin-inline: auto;
-  padding-block: clamp(3rem, 5vw, 5rem);
+  align-content: end;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  min-height: calc(100svh - 5.5rem);
+  padding: clamp(8rem, 17vh, 12rem)
+    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2))
+    clamp(5.5rem, 9vh, 7rem);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
 }
-.hero::before {
-  content: '';
-  position: absolute;
-  width: 38rem;
-  aspect-ratio: 1;
-  inset-inline-start: -20rem;
-  inset-block-start: -16rem;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--color-brand-gold) 10%, transparent);
-  filter: blur(6rem);
-  pointer-events: none;
-}
-.heroCopy {
+.heroCopy,
+.heroSummary {
   position: relative;
   z-index: 2;
-  max-width: 50rem;
+  min-width: 0;
+}
+.heroCopy {
+  transform: translateY(var(--scene-copy-y, 0px));
 }
 .eyebrow {
-  margin: 0 0 1.25rem;
-  color: var(--color-brand-gold-strong);
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-.heroTitle {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(3.4rem, 6.2vw, 6.5rem);
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 0.82;
-}
-.heroTitle span {
-  display: block;
-  margin-top: 0.12em;
-  color: var(--color-brand-gold-strong);
-  font-style: italic;
-  font-weight: 400;
-}
-.heroLede {
-  max-width: 39rem;
-  margin: 2rem 0 0;
-  color: var(--color-brand-ink-soft);
-  font-size: clamp(1rem, 1.45vw, 1.25rem);
-  line-height: 1.8;
-}
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-top: 2rem;
-}
-.proof {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin: 3rem 0 0;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--color-brand-line);
-}
-.proof div {
-  display: grid;
-  gap: 0.35rem;
-}
-.proof dt {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-}
-.proof dd {
-  margin: 0;
-  color: var(--color-brand-muted);
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-.stage {
-  position: relative;
-  min-height: clamp(29rem, 42vw, 36rem);
-  border: 1px solid color-mix(in srgb, var(--color-brand-ink) 16%, transparent);
-  border-radius: clamp(1.2rem, 2.6vw, 2rem);
-  background:
-    radial-gradient(
-      circle at 18% 8%,
-      color-mix(in srgb, var(--color-brand-gold) 18%, transparent),
-      transparent 34%
-    ),
-    linear-gradient(
-      150deg,
-      var(--color-brand-ink) 0%,
-      var(--color-brand-ink-soft) 72%,
-      color-mix(
-          in srgb,
-          var(--color-school-psychology) 52%,
-          var(--color-brand-ink)
-        )
-        100%
-    );
-  box-shadow: var(--shadow-editorial);
-  overflow: hidden;
-  isolation: isolate;
-}
-.stage::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-brand-ink) 2%, transparent),
-    color-mix(in srgb, var(--color-brand-ink) 22%, transparent)
-  );
-  pointer-events: none;
-}
-.stageGrid {
-  position: absolute;
-  inset: 0;
-  opacity: 0.11;
-  background-image:
-    linear-gradient(
-      color-mix(in srgb, var(--color-brand-surface) 42%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--color-brand-surface) 42%, transparent) 1px,
-      transparent 1px
-    );
-  background-size: 4.5rem 4.5rem;
-  mask-image: linear-gradient(145deg, black, transparent 86%);
-}
-.stageGlow {
-  position: absolute;
-  width: 24rem;
-  aspect-ratio: 1;
-  inset-inline-end: -8rem;
-  inset-block-end: -10rem;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--color-brand-gold) 26%, transparent),
-    transparent 68%
-  );
-  filter: blur(0.75rem);
-}
-.stageHeader,
-.stageFooter {
-  position: absolute;
-  inset-inline: clamp(1.25rem, 3vw, 2.25rem);
-  z-index: 3;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
-}
-.stageHeader {
-  inset-block-start: clamp(1.25rem, 3vw, 2rem);
-  padding-bottom: 0.9rem;
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--color-brand-surface) 18%, transparent);
-}
-.stageHeader span:first-child {
-  color: var(--color-brand-surface);
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  letter-spacing: 0.02em;
-}
-.stageHeader span:last-child,
-.stageFooter {
-  color: color-mix(in srgb, var(--color-brand-surface) 58%, transparent);
-  font-size: 0.6rem;
+  margin: 0 0 1.3rem;
+  color: var(--color-brand-cyan-deep);
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.stageMonogram {
-  position: absolute;
-  inset-inline-start: 50%;
-  inset-block-start: 50%;
-  z-index: 0;
-  translate: -50% -50%;
-  color: color-mix(in srgb, var(--color-brand-surface) 5%, transparent);
-  font-family: var(--font-display);
-  font-size: clamp(14rem, 30vw, 25rem);
-  font-weight: 500;
-  line-height: 0.65;
-  user-select: none;
+.hero .eyebrow {
+  color: var(--color-brand-cyan-light);
 }
-.stageSchools {
+.heroTitle {
+  max-width: 20ch;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(3.5rem, 7.7vw, 7.75rem);
+  font-weight: 600;
+  letter-spacing: -0.065em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.heroTitle span {
+  display: block;
+  color: var(--color-brand-cyan-light);
+}
+.heroSummary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(2rem, 5vw, 6rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 30%, transparent);
+}
+.heroLede {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--color-brand-surface);
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  line-height: 1.9;
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+.heroActions a {
+  min-height: 3.25rem;
+  border-radius: 0.25rem;
+  transition:
+    transform 250ms var(--luminol-ease-out),
+    background 250ms ease;
+}
+.heroActions a:first-child {
+  background: var(--color-brand-surface);
+  color: var(--color-brand-ink);
+}
+.heroActions a:last-child {
+  border-color: var(--color-brand-surface);
+  color: var(--color-brand-surface);
+}
+.heroLocation {
   position: absolute;
-  inset: clamp(4.9rem, 8vw, 6.2rem) clamp(1.25rem, 3vw, 2.25rem)
-    clamp(3.9rem, 6vw, 4.8rem);
+  inset-inline: max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
+  inset-block-start: 2rem;
   z-index: 2;
-  display: grid;
-  grid-template-rows: repeat(3, minmax(0, 1fr));
-  gap: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--color-brand-surface);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
-.stageSchool {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+.scrollCue {
+  position: absolute;
+  inset-inline-start: max(
+    var(--luminol-page-gutter),
+    calc((100vw - 82rem) / 2)
+  );
+  inset-block-end: 2rem;
+  z-index: 3;
+  display: inline-flex;
   gap: 1rem;
   align-items: center;
-  min-height: 6.5rem;
-  padding: 1rem 1.2rem;
-  border: 1px solid
-    color-mix(in srgb, var(--color-brand-surface) 18%, transparent);
-  border-radius: 1rem;
-  background: color-mix(in srgb, var(--color-brand-ink) 58%, transparent);
-  box-shadow: 0 1rem 3rem
-    color-mix(in srgb, var(--color-brand-ink) 18%, transparent);
-  backdrop-filter: blur(1rem);
-  overflow: hidden;
+  color: var(--color-brand-surface);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-decoration: none;
 }
-.stageSchool::before {
-  content: '';
-  position: absolute;
-  width: 0.22rem;
-  inset-block: 0;
-  inset-inline-start: 0;
-  background: var(--school-accent);
-}
-.stageSchoolNumber {
-  width: 2.35rem;
-  aspect-ratio: 1;
+.scrollCue span {
   display: grid;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--school-accent) 72%, transparent);
+  width: 2rem;
+  aspect-ratio: 1;
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 40%, transparent);
   border-radius: 50%;
-  color: var(--school-accent);
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
 }
-.stageSchoolCopy {
-  min-width: 0;
+.proof {
   display: grid;
-  gap: 0.3rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
+  gap: 1.5rem;
+  margin: 0 auto 4rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--color-brand-line);
 }
-.stageSchoolCopy strong {
-  color: var(--color-brand-surface);
+.proof div {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+.proof dt {
+  flex-shrink: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
-  font-weight: 500;
-  line-height: 1;
+  font-size: clamp(1.4rem, 2.5vw, 2.25rem);
 }
-.stageSchoolCopy span {
-  overflow: hidden;
-  color: color-mix(in srgb, var(--color-brand-surface) 66%, transparent);
-  font-size: 0.7rem;
-  line-height: 1.45;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.stagePsychology {
-  margin-inline-end: 17%;
-}
-.stageLanguages {
-  margin-inline-start: 12%;
-  margin-inline-end: 5%;
-}
-.stageTraining {
-  margin-inline-start: 5%;
-  margin-inline-end: 13%;
-}
-.stageFooter {
-  inset-block-end: clamp(1.2rem, 2.5vw, 1.8rem);
-}
-.stageFooter span:first-child {
-  color: color-mix(in srgb, var(--color-brand-surface) 76%, transparent);
+.proof dd {
+  margin: 0;
+  color: var(--color-brand-muted);
+  font-size: 0.8rem;
+  line-height: 1.6;
 }
 .section {
-  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
   margin-inline: auto;
   padding-block: var(--luminol-section-space);
 }
 .sectionHeading {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(20rem, 34rem);
-  gap: 3rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: clamp(2rem, 7vw, 8rem);
   align-items: end;
-  margin-bottom: clamp(2.5rem, 6vw, 5rem);
+  margin-bottom: clamp(3rem, 7vw, 6rem);
 }
 .sectionHeading h2,
 .aboutCopy h2,
@@ -306,119 +175,107 @@
 .cta h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 5vw, 5.5rem);
+  font-size: clamp(2.6rem, 4.8vw, 5rem);
   font-weight: 500;
   letter-spacing: -0.035em;
-  line-height: 0.95;
+  line-height: 1.05;
+  text-wrap: balance;
 }
-.sectionHeading > p {
-  margin: 0;
+.sectionHeading > p,
+.schoolDescription,
+.aboutCopy > p:not(.eyebrow) {
+  margin-block: 1rem;
   color: var(--color-brand-muted);
-  line-height: 1.8;
+  line-height: 1.85;
 }
 .schoolGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: clamp(3rem, 6vw, 6rem);
 }
 .schoolCard {
-  position: relative;
-  min-height: 35rem;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(1.5rem, 2.5vw, 2.25rem);
-  border: 1px solid var(--color-brand-line);
-  border-radius: var(--luminol-media-radius);
-  background: var(--color-brand-surface);
-  overflow: hidden;
-  transition:
-    transform var(--luminol-motion-standard) var(--luminol-ease-out),
-    box-shadow var(--luminol-motion-standard) ease;
-}
-.schoolCard::before {
-  content: '';
-  position: absolute;
-  width: 18rem;
-  aspect-ratio: 1;
-  inset-inline-end: -8rem;
-  inset-block-start: -9rem;
-  border-radius: 50%;
-  background: var(--school-soft);
-}
-.schoolCard:hover {
-  transform: translateY(-0.5rem);
-  box-shadow: var(--shadow-editorial);
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-brand-line);
+  transition: transform 500ms var(--luminol-ease-out);
 }
 .psychology {
   --school-accent: var(--color-school-psychology);
-  --school-soft: var(--color-school-psychology-soft);
 }
 .languages {
   --school-accent: var(--color-school-languages);
-  --school-soft: var(--color-school-languages-soft);
 }
 .training {
   --school-accent: var(--color-school-training);
-  --school-soft: var(--color-school-training-soft);
+}
+.schoolPhoto {
+  height: 100%;
+  min-height: 30rem;
+  border-radius: 0.25rem;
+}
+.schoolDetails {
+  min-width: 0;
+  padding-block: 1.5rem;
 }
 .schoolTop {
-  position: relative;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  color: var(--school-accent);
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  gap: 1rem;
+  color: var(--color-brand-muted);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
-.schoolGlyph {
-  width: 2.3rem;
-  aspect-ratio: 1;
-  border: 1px solid var(--school-accent);
-  border-radius: 50%;
+.schoolTop span:first-child {
+  color: var(--school-accent);
+  font-size: 1rem;
 }
 .schoolCard h3 {
-  position: relative;
-  margin: auto 0 1rem;
+  margin: 2rem 0 1.25rem;
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 3.8vw, 4.2rem);
+  font-size: clamp(2.5rem, 4.5vw, 4.75rem);
   font-weight: 500;
-  line-height: 0.95;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
 }
 .schoolPromise {
   color: var(--school-accent);
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-style: italic;
-}
-.schoolDescription {
-  color: var(--color-brand-muted);
-  line-height: 1.7;
+  font-size: 1.15rem;
+  line-height: 1.75;
 }
 .schoolCard ul {
-  display: grid;
-  gap: 0.55rem;
-  margin: 1.25rem 0 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1.5rem 0;
   padding: 1.25rem 0 0;
-  border-top: 1px solid var(--color-brand-line);
   list-style: none;
+  border-top: 1px solid var(--color-brand-line);
 }
 .schoolCard li {
-  font-size: 0.76rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.8;
 }
 .textLink {
-  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  min-height: 2.75rem;
   color: var(--color-brand-ink);
-  font-size: 0.72rem;
+  font-size: 0.9rem;
   font-weight: 800;
-  letter-spacing: 0.05em;
   text-decoration: none;
-  text-transform: uppercase;
+}
+.textLink span {
+  transition: translate 250ms ease;
 }
 .approach {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(4rem, 10vw, 10rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(3rem, 8vw, 8rem);
   padding: var(--luminol-section-space)
     max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
   background: var(--color-brand-ink);
@@ -429,13 +286,14 @@
   top: 8rem;
   align-self: start;
 }
-.approachIntro p:last-child {
-  max-width: 31rem;
-  color: color-mix(in srgb, var(--color-brand-surface) 65%, transparent);
-  line-height: 1.8;
+.approachIntro p:last-child,
+.principles p,
+.cta p:last-child {
+  color: color-mix(in srgb, var(--color-brand-surface) 80%, transparent);
+  line-height: 1.85;
 }
 .light {
-  color: var(--color-brand-gold);
+  color: var(--color-brand-cyan-light);
 }
 .principles {
   margin: 0;
@@ -444,88 +302,54 @@
 }
 .principles li {
   display: grid;
-  grid-template-columns: 3rem 1fr;
+  grid-template-columns: 2rem minmax(0, 1fr);
   gap: 1.5rem;
   padding-block: 2rem;
   border-top: 1px solid
-    color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
+    color-mix(in srgb, var(--color-brand-surface) 25%, transparent);
 }
 .principles li > span {
-  color: var(--color-brand-gold);
-  font-size: 0.68rem;
+  color: var(--color-brand-cyan-light);
+  font-size: 0.8rem;
 }
 .principles h3 {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.7rem, 2.8vw, 2.6rem);
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
   font-weight: 500;
 }
 .principles p {
-  margin: 0.6rem 0 0;
-  color: color-mix(in srgb, var(--color-brand-surface) 62%, transparent);
-  line-height: 1.7;
+  margin-bottom: 0;
 }
 .about {
   display: grid;
-  grid-template-columns: minmax(19rem, 0.75fr) minmax(0, 1.25fr);
-  gap: clamp(3rem, 9vw, 9rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(3rem, 7vw, 7rem);
   align-items: center;
 }
 .aboutVisual {
-  position: relative;
-  min-height: 34rem;
-  display: grid;
-  place-items: center;
-  border-radius: var(--luminol-media-radius);
-  background: linear-gradient(
-    145deg,
-    var(--color-school-psychology-soft),
-    var(--color-school-languages-soft)
-  );
-  overflow: hidden;
-}
-.monogram {
-  font-family: var(--font-display);
-  font-size: clamp(12rem, 24vw, 21rem);
-  color: color-mix(in srgb, var(--color-brand-ink) 10%, transparent);
-  line-height: 1;
-}
-.aboutVisual p {
-  position: absolute;
-  inset-inline: 2rem;
-  inset-block-end: 2rem;
-  margin: 0;
-  color: var(--color-brand-ink);
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-}
-.aboutCopy > p:not(.eyebrow) {
-  max-width: 42rem;
-  color: var(--color-brand-muted);
-  line-height: 1.8;
+  min-height: clamp(28rem, 40vw, 38rem);
+  border-radius: 0.25rem;
+  background: var(--color-brand-ink);
 }
 .aboutLede {
+  font-size: 1.25rem;
   color: var(--color-brand-ink) !important;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
 }
 .values {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.55rem;
-  margin-top: 1.75rem;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 .values span {
-  padding: 0.55rem 0.8rem;
-  border: 1px solid var(--color-brand-line);
-  border-radius: var(--radius-pill);
-  font-size: 0.66rem;
-  font-weight: 800;
+  border-bottom: 1px solid var(--color-brand-cyan);
+  padding-bottom: 0.5rem;
+  font-size: 0.85rem;
 }
 .pathway {
   display: grid;
-  grid-template-columns: 0.7fr 1.3fr;
-  gap: clamp(3rem, 8vw, 8rem);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(3rem, 7vw, 7rem);
 }
 .pathwayLinks {
   display: grid;
@@ -533,21 +357,21 @@
 }
 .pathwayLinks a {
   display: grid;
-  grid-template-columns: 3rem 1fr auto;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
   gap: 1rem;
   align-items: center;
-  padding-block: 1.5rem;
+  padding-block: 1.75rem;
   border-bottom: 1px solid var(--color-brand-line);
   color: var(--color-brand-ink);
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+  font-size: clamp(1.4rem, 2.5vw, 2.3rem);
   text-decoration: none;
 }
 .pathwayLinks span,
 .pathwayLinks b {
-  color: var(--color-brand-gold-strong);
+  color: var(--color-brand-cyan-deep);
   font-family: var(--font-sans);
-  font-size: 0.65rem;
+  font-size: 0.85rem;
 }
 .cta {
   display: grid;
@@ -556,476 +380,215 @@
   align-items: end;
   padding: clamp(4rem, 9vw, 8rem)
     max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
-  background: var(--color-brand-ink-soft);
+  background: var(--color-brand-ink);
   color: var(--color-brand-surface);
 }
 .cta p:last-child {
   max-width: 40rem;
-  color: color-mix(in srgb, var(--color-brand-surface) 65%, transparent);
-  line-height: 1.8;
 }
-@media (max-width: 1000px) {
-  .hero {
-    grid-template-columns: 1fr;
-  }
-  .stage {
-    min-height: 34rem;
-  }
-  .schoolGrid {
-    grid-template-columns: 1fr;
-  }
-  .schoolCard {
-    min-height: auto;
-  }
-  .schoolCard h3 {
-    margin-top: 2rem;
-  }
-  .sectionHeading {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
-  }
-  .approach,
-  .about,
-  .pathway {
-    grid-template-columns: 1fr;
-  }
-  .approachIntro {
-    position: static;
-  }
-}
-@media (max-width: 680px) {
-  .hero {
-    width: calc(100% - 2.5rem);
-    padding-block: 2.5rem 3rem;
-  }
-  .heroTitle {
-    font-size: clamp(2.8rem, 12vw, 4.2rem);
-  }
-  .proof {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .proof dt {
-    font-size: 1.15rem;
-  }
-  .stage {
-    display: none;
-  }
-  .section {
-    width: calc(100% - 2.5rem);
-  }
-  .sectionHeading {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  .approach {
-    padding-inline: 1.25rem;
-  }
-  .aboutVisual {
-    min-height: 25rem;
-  }
-  .cta {
-    grid-template-columns: 1fr;
-    padding-inline: 1.25rem;
-  }
-}
-
-/* Cinematic editorial direction: a full-bleed first frame, photographic
-   storytelling, and restrained interface details. */
-.hero {
-  min-height: calc(100svh - 5.5rem);
-  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr);
-  align-items: center;
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: clamp(6.5rem, 12vh, 9rem)
-    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2))
-    clamp(6rem, 10vh, 8rem);
-  background: var(--color-brand-ink);
-  color: var(--color-brand-surface);
-  isolation: isolate;
-}
-
-.hero::before {
-  display: none;
-}
-
-.heroCopy {
-  max-width: 48rem;
-}
-
-.heroSculpture {
-  z-index: 2;
-  align-self: center;
-  max-width: 36rem;
-  justify-self: center;
-}
-
-.hero .eyebrow {
-  color: var(--color-brand-gold);
-}
-
-.heroActions a:first-child {
-  background: var(--color-brand-surface);
-  color: var(--color-brand-ink);
-}
-
-.heroActions a:last-child {
-  border-color: var(--color-brand-surface);
-  color: var(--color-brand-surface);
-}
-
-.heroTitle {
-  max-width: 12ch;
-  font-size: clamp(3.8rem, 6.4vw, 7rem);
-  line-height: 1;
-  text-wrap: balance;
-}
-
-.heroTitle span {
-  color: var(--color-brand-cyan-light);
-}
-
-.heroLede {
-  max-width: 36rem;
-  color: color-mix(in srgb, var(--color-brand-surface) 78%, transparent);
-}
-
-.hero .proof {
-  max-width: 43rem;
-  border-color: color-mix(in srgb, var(--color-brand-surface) 24%, transparent);
-}
-
-.hero .proof dd {
-  color: color-mix(in srgb, var(--color-brand-surface) 62%, transparent);
-}
-
-.heroLocation {
-  position: absolute;
-  inset-inline: max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
-  inset-block-start: clamp(1.5rem, 4vw, 3rem);
-  z-index: 3;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  color: color-mix(in srgb, var(--color-brand-surface) 68%, transparent);
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.scrollCue {
-  position: absolute;
-  inset-inline-start: max(
-    var(--luminol-page-gutter),
-    calc((100vw - 82rem) / 2)
-  );
-  inset-block-end: clamp(2rem, 4vw, 3rem);
-  z-index: 3;
-  display: inline-flex;
-  gap: 0.7rem;
-  align-items: center;
-  color: var(--color-brand-surface);
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-.scrollCue span {
-  color: var(--color-brand-gold);
-  font-size: 1rem;
-}
-
-.schoolCard {
-  min-height: 44rem;
-  padding: 1.1rem;
-}
-
-.schoolCard::before {
-  display: none;
-}
-
-.schoolTop {
-  padding: 0.45rem 0.35rem 0.2rem;
-}
-
-.schoolPhoto {
-  height: clamp(13rem, 20vw, 18rem);
-  margin-top: 1rem;
-  border-radius: calc(var(--luminol-media-radius) * 0.72);
-}
-
-.schoolCard:focus-within {
-  border-color: var(--color-brand-cyan);
-}
-
-.schoolCard:hover .schoolPhoto img {
-  transform: scale(1.065);
-}
-
-.heroActions a {
-  transition:
-    transform 250ms var(--luminol-ease-out),
-    background 250ms ease;
-}
-
-.heroActions a:hover {
-  transform: translateY(-3px);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .heroTitle {
-    animation: titleArrival 1.1s var(--luminol-ease-out) both;
-  }
-
-  .heroTitle span {
-    animation: titleArrival 1.3s 120ms var(--luminol-ease-out) both;
-  }
-
-  .heroLede,
-  .heroActions,
-  .proof {
-    animation: titleArrival 1.1s 220ms var(--luminol-ease-out) both;
-  }
-
-  .schoolCard:nth-child(2) {
-    transition-delay: 80ms;
-  }
-
-  .schoolCard:nth-child(3) {
-    transition-delay: 160ms;
-  }
-}
-
-@keyframes titleArrival {
-  from {
-    opacity: 0.75;
-    transform: translateY(1rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .schoolCard:hover .schoolPhoto img,
-  .heroActions a:hover {
-    transform: none;
-  }
-}
-
-.schoolCard h3 {
-  margin: 1.8rem 0 0.8rem;
-  padding-inline: 0.35rem;
-}
-
-.schoolPromise,
-.schoolDescription,
-.schoolCard ul,
-.schoolCard .textLink {
-  margin-inline: 0.35rem;
-}
-
-.aboutVisual {
-  min-height: clamp(28rem, 46vw, 42rem);
-  background: var(--color-brand-ink);
-}
-
 .mediaCredits {
-  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem 1.25rem;
-  margin: -2rem auto 2rem;
+  gap: 0.75rem 1.25rem;
+  margin: -1rem auto 0;
   padding-top: 1.25rem;
   border-top: 1px solid var(--color-brand-line);
   color: var(--color-brand-muted);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
 }
-
-.mediaCredits span {
-  color: var(--color-brand-ink);
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
 .mediaCredits a {
   color: inherit;
   text-underline-offset: 0.2em;
 }
-
-@media (min-width: 1001px) {
-  .schoolCard:nth-child(2) {
-    transform: translateY(2.5rem);
-  }
-
-  .schoolCard:nth-child(2):hover {
-    transform: perspective(1200px) translateY(2rem) rotateX(2deg) rotateY(2deg);
-  }
+.heroActions a:focus-visible,
+.textLink:focus-visible,
+.pathwayLinks a:focus-visible,
+.scrollCue:focus-visible {
+  outline: 3px solid var(--color-brand-cyan);
+  outline-offset: 5px;
 }
 
+@media (min-width: 801px) {
+  .schoolCard:nth-child(even) .schoolPhoto {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .schoolCard:nth-child(even) .schoolDetails {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .schoolCard:hover {
-    transform: perspective(1200px) translateY(-0.5rem) rotateX(2deg)
-      rotateY(-2deg);
-    box-shadow: 0 2rem 4rem
-      color-mix(in srgb, var(--color-brand-ink) 14%, transparent);
+    transform: translateY(-0.3rem);
+  }
+  .schoolCard:hover .schoolPhoto img {
+    transform: scale(1.045);
+  }
+  .heroActions a:hover {
+    transform: translateY(-3px);
+  }
+  .textLink:hover span {
+    translate: 0.25rem 0;
   }
 }
-
-@media (max-width: 1000px) {
-  .hero {
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
-    gap: 1rem;
-  }
-  .schoolCard {
-    min-height: auto;
-  }
-}
-
-@media (max-width: 680px) {
-  .hero {
-    width: 100%;
-    min-height: calc(100svh - 4.5rem);
-    grid-template-columns: 1fr;
-    padding: 5.5rem 1.25rem 6rem;
-  }
-
-  .heroCopy {
-    max-width: none;
-  }
-
+@media (prefers-reduced-motion: no-preference) {
   .heroTitle {
-    font-size: clamp(3.2rem, 14vw, 5rem);
+    animation: film-title 1.15s var(--luminol-ease-out) both;
   }
-
-  .heroSculpture {
-    width: min(68vw, 20rem);
-    margin-top: 0.5rem;
+  .heroTitle span {
+    animation: film-title 1.35s 100ms var(--luminol-ease-out) both;
   }
-
-  .heroLocation {
-    inset-inline: 1.25rem;
-  }
-
-  .heroLocation span:first-child {
-    display: none;
-  }
-
-  .scrollCue {
-    inset-inline-end: auto;
-    inset-inline-start: 1.25rem;
-    inset-block-end: 1.5rem;
-  }
-
-  .schoolCard {
-    min-height: auto;
-  }
-
-  .schoolPhoto {
-    height: 15rem;
-  }
-
-  .mediaCredits {
-    width: calc(100% - 2.5rem);
+  .heroSummary {
+    animation: film-summary 1.2s 200ms var(--luminol-ease-out) both;
   }
 }
-
-/* Arabic display text needs its own font and line rhythm, including CMS text. */
-.page:dir(rtl) :is(h1, h2, h3, .schoolPromise, .aboutLede, .pathwayLinks a),
-.stageSchoolCopy:dir(rtl) strong {
+@keyframes film-title {
+  from {
+    clip-path: inset(0 0 100%);
+    transform: translateY(1.5rem);
+  }
+  to {
+    clip-path: inset(0);
+    transform: translateY(0);
+  }
+}
+@keyframes film-summary {
+  from {
+    opacity: 0.4;
+    translate: 0 0.8rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.page:dir(rtl) :is(h1, h2, h3, .schoolPromise, .aboutLede, .pathwayLinks a) {
   font-family: var(--font-arabic);
   line-height: 1.5;
   letter-spacing: normal;
 }
-.page:dir(rtl) :is(.heroTitle span, .schoolPromise) {
-  font-style: normal;
-}
 .page:dir(rtl) .heroTitle {
-  font-size: clamp(2.6rem, 4.6vw, 5.1rem);
-  line-height: 1.4;
+  font-size: clamp(3rem, 6.5vw, 6.25rem);
+  line-height: 1.45;
+  font-weight: 500;
 }
-.page:dir(rtl) .heroTitle span {
-  line-height: inherit;
-}
-@media (max-width: 680px) {
-  .page:dir(rtl) .heroTitle {
-    font-size: clamp(2.4rem, 10.5vw, 4rem);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .schoolCard:hover,
-  .schoolCard:nth-child(2):hover {
-    transform: none;
-  }
-}
-.page:dir(rtl) :is(.eyebrow, .proof dd, .textLink, .values span) {
+.page:dir(rtl) :is(.eyebrow, .schoolTop, .heroLocation) {
   letter-spacing: normal;
 }
-.stageMonogram:dir(rtl) {
-  translate: 50% -50%;
-}
-.heroCopy,
-.schoolCard,
-.sectionHeading > *,
-.aboutCopy,
-.pathway > * {
-  min-width: 0;
-}
 .heroTitle,
-.schoolCard h3,
 .sectionHeading h2,
+.schoolCard h3,
 .pathwayLinks a {
   overflow-wrap: anywhere;
 }
-.textLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-  width: fit-content;
-  font-size: 0.85rem;
+@media (max-width: 1000px) {
+  .heroSummary {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .heroActions {
+    justify-content: flex-start;
+  }
+  .heroLede {
+    max-width: 44rem;
+  }
 }
-.heroActions a:focus-visible,
-.textLink:focus-visible,
-.pathwayLinks a:focus-visible {
-  outline: 3px solid var(--color-brand-gold-strong);
-  outline-offset: 4px;
+@media (max-width: 800px) {
+  .schoolCard,
+  .sectionHeading,
+  .approach,
+  .about,
+  .pathway,
+  .cta {
+    grid-template-columns: 1fr;
+  }
+  .schoolPhoto {
+    min-height: 0;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+  .schoolDetails {
+    padding: 0;
+  }
+  .schoolCard h3 {
+    margin-top: 1rem;
+  }
+  .approachIntro {
+    position: static;
+  }
+  .proof div {
+    display: grid;
+    gap: 0.3rem;
+  }
 }
 @media (max-width: 680px) {
+  .hero {
+    min-height: calc(100svh - 8rem);
+    padding: 6rem 1.25rem 5.5rem;
+    gap: 1.5rem;
+  }
+  .heroTitle {
+    font-size: clamp(2.75rem, 10.5vw, 4rem);
+    letter-spacing: -0.045em;
+  }
+  .page:dir(rtl) .heroTitle {
+    font-size: clamp(2.2rem, 9.5vw, 3.6rem);
+  }
+  .heroLocation {
+    inset-inline: 1.25rem;
+    top: 1.5rem;
+    font-size: 0.6rem;
+  }
+  .heroSummary {
+    padding-top: 1rem;
+  }
+  .heroLede {
+    font-size: 0.95rem;
+  }
   .heroActions {
     flex-direction: column;
     align-items: stretch;
   }
   .heroActions a {
-    min-height: 3rem;
     width: 100%;
     text-align: center;
   }
-  .proof {
-    gap: 0.75rem;
-    margin-top: 2rem;
+  .scrollCue {
+    inset-inline-start: 1.25rem;
+    bottom: 1.5rem;
   }
-  .proof div {
-    min-width: 0;
+  .proof {
+    width: calc(100% - 2.5rem);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
   }
   .proof dt {
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    overflow-wrap: anywhere;
+    font-size: 1.2rem;
   }
   .proof dd {
     font-size: 0.75rem;
-    line-height: 1.7;
-    letter-spacing: normal;
-    text-transform: none;
   }
-  .page:dir(rtl) .heroTitle {
-    font-size: clamp(2rem, 8.5vw, 3rem);
+  .section,
+  .mediaCredits {
+    width: calc(100% - 2.5rem);
+  }
+  .approach,
+  .cta {
+    padding-inline: 1.25rem;
+  }
+  .schoolGrid {
+    gap: 3.5rem;
+  }
+  .schoolCard {
+    gap: 1.5rem;
+  }
+  .schoolTop {
+    font-size: 0.6rem;
+  }
+  .aboutVisual {
+    min-height: 25rem;
   }
   .page:dir(rtl)
     :is(
@@ -1038,18 +601,20 @@
     font-size: clamp(1.75rem, 7vw, 2.75rem);
   }
   .page:dir(rtl) .schoolCard h3 {
-    font-size: clamp(1.65rem, 6.5vw, 2.4rem);
-  }
-  .schoolCard li {
-    font-size: 0.875rem;
-    line-height: 1.8;
+    font-size: clamp(1.8rem, 7vw, 2.5rem);
   }
   .principles li {
-    grid-template-columns: 1.75rem minmax(0, 1fr);
+    grid-template-columns: 1.5rem minmax(0, 1fr);
     gap: 0.75rem;
   }
-  .pathwayLinks a {
-    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
-    gap: 0.75rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .heroCopy,
+  .schoolCard:hover,
+  .heroActions a:hover {
+    transform: none;
+  }
+  .schoolCard {
+    transition: none;
   }
 }

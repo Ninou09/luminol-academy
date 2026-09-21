@@ -50,12 +50,16 @@ test('new learning and workshop photos retain their source metadata', async ({
   page,
 }) => {
   await page.goto('/en');
+  await expect(page.locator('#top video')).toHaveAttribute(
+    'src',
+    '/media/editorial/academy-film.mp4',
+  );
   await expect(page.locator('#languages [data-academy-media]')).toHaveAttribute(
     'data-media-source',
-    'https://www.pexels.com/photo/1181533/',
+    'https://unsplash.com/photos/omeaHbEFlN4',
   );
   await expect(page.locator('#training [data-academy-media]')).toHaveAttribute(
     'data-media-source',
-    'https://www.pexels.com/photo/3183197/',
+    'https://unsplash.com/photos/vdXMSiX-n6M',
   );
 });
