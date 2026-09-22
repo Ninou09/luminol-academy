@@ -19,6 +19,16 @@ test('workshop page preserves the approved Tally flow and safe attribution', asy
     }),
   ).toBeVisible();
 
+  const subjectImage = page.getByRole('img', {
+    name: 'صورة توضيحية لأسرة تتحاور بهدوء وتقدّم المساندة',
+  });
+  await expect(subjectImage).toBeVisible();
+  expect(
+    await subjectImage.evaluate(
+      (image: HTMLImageElement) => image.complete && image.naturalWidth > 0,
+    ),
+  ).toBe(true);
+
   const links = page.locator('[data-registration-link]');
   expect(await links.count()).toBeGreaterThanOrEqual(3);
   const registrationHref = await links.first().getAttribute('href');
@@ -68,6 +78,17 @@ test('desktop participant experience exposes working tabs, FAQ and privacy dialo
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'إغلاق نافذة الخصوصية' }).click();
   await expect(dialog).toBeHidden();
+
+  const presenterImage = page.getByRole('img', {
+    name: 'الأستاذة خداوي فطومة، مقدّمة اللقاء',
+  });
+  await presenterImage.scrollIntoViewIfNeeded();
+  await expect(presenterImage).toBeVisible();
+  expect(
+    await presenterImage.evaluate(
+      (image: HTMLImageElement) => image.complete && image.naturalWidth > 0,
+    ),
+  ).toBe(true);
 
   expect(
     await page

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState, type KeyboardEvent } from 'react';
 
@@ -220,10 +221,20 @@ export function WorkshopExperience({
           </div>
 
           <aside className={styles.eventCard} aria-label="تفاصيل اللقاء">
-            <div className={styles.eventIllustration} aria-hidden="true">
-              <span className={styles.orbitOne} />
-              <span className={styles.orbitTwo} />
-              <span className={styles.homeMark}>ل</span>
+            <div className={styles.eventVisual}>
+              <Image
+                className={styles.eventImage}
+                src="/workshops/family-after-trauma/family-support.webp"
+                alt="صورة توضيحية لأسرة تتحاور بهدوء وتقدّم المساندة"
+                width={1600}
+                height={800}
+                sizes="(max-width: 768px) 100vw, (max-width: 1088px) 55vw, 42vw"
+                preload
+              />
+              <div className={styles.eventImageCaption}>
+                <span>صورة توضيحية</span>
+                <strong>الفهم يبدأ بالإنصات</strong>
+              </div>
             </div>
             <dl>
               <div>
@@ -360,9 +371,21 @@ export function WorkshopExperience({
           className={styles.presenter}
           aria-labelledby="presenter-title"
         >
-          <div className={styles.presenterMonogram} aria-hidden="true">
-            <span>ف</span>
-            <small>Luminol Academy</small>
+          <div className={styles.presenterPortrait}>
+            <Image
+              className={styles.presenterImage}
+              src="/workshops/family-after-trauma/fettouma-professional.webp"
+              alt="الأستاذة خداوي فطومة، مقدّمة اللقاء"
+              width={1122}
+              height={1402}
+              sizes="(max-width: 1088px) 100vw, 42vw"
+              loading="eager"
+            />
+            <div className={styles.presenterExperience}>
+              <span>خبرة ميدانية</span>
+              <strong>+30</strong>
+              <small>سنة</small>
+            </div>
           </div>
           <div className={styles.presenterCopy}>
             <p className={styles.sectionLabel}>تقديم اللقاء</p>

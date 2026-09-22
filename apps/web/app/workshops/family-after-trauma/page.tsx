@@ -22,11 +22,20 @@ export const metadata: Metadata = {
     url: route,
     siteName: 'Luminol Academy',
     locale: 'ar_DZ',
+    images: [
+      {
+        url: '/workshops/family-after-trauma/family-support.webp',
+        width: 1600,
+        height: 800,
+        alt: 'صورة توضيحية لأسرة تتحاور بهدوء وتقدّم المساندة',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title,
     description,
+    images: ['/workshops/family-after-trauma/family-support.webp'],
   },
 };
 

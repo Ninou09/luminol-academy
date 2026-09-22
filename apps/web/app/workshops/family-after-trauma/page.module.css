@@ -244,91 +244,76 @@
 
 .eventCard {
   min-width: 0;
+  align-self: center;
   display: grid;
-  grid-template-rows: minmax(22rem, 1fr) auto;
-  border-inline-start: 1px solid
+  grid-template-rows: auto auto;
+  margin: clamp(2rem, 5vw, 5rem) clamp(1.5rem, 3vw, 3.5rem);
+  overflow: hidden;
+  border: 1px solid
     color-mix(in srgb, var(--color-brand-canvas) 14%, transparent);
   background: color-mix(
     in srgb,
     var(--color-brand-ink) 88%,
     var(--color-school-psychology)
   );
+  box-shadow: 0 2rem 5rem color-mix(in srgb, black 30%, transparent);
 }
 
-.eventIllustration {
+.eventVisual {
   position: relative;
-  min-height: 28rem;
-  display: grid;
-  place-items: center;
+  min-height: 0;
+  aspect-ratio: 2 / 1;
   overflow: hidden;
-  background:
-    linear-gradient(
-      color-mix(in srgb, var(--color-brand-canvas) 6%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--color-brand-canvas) 6%, transparent) 1px,
-      transparent 1px
-    );
-  background-size: 4rem 4rem;
+  background: var(--color-brand-ink-soft);
 }
 
-.orbitOne,
-.orbitTwo {
-  position: absolute;
-  width: min(30rem, 72%);
-  aspect-ratio: 1;
-  border: 1px solid color-mix(in srgb, var(--color-brand-gold) 66%, transparent);
-  border-radius: 50%;
-}
-
-.orbitOne::before,
-.orbitTwo::before,
-.orbitTwo::after {
+.eventVisual::after {
   content: '';
   position: absolute;
-  width: 0.65rem;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--color-brand-gold);
-  box-shadow: 0 0 2rem var(--color-brand-gold);
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-brand-ink) 92%, transparent),
+    transparent 56%
+  );
+  pointer-events: none;
 }
 
-.orbitOne::before {
-  inset-block-start: 10%;
-  inset-inline-end: 14%;
+.eventImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  transition: transform var(--luminol-motion-slow) var(--luminol-ease-out);
 }
 
-.orbitTwo {
-  width: min(22rem, 52%);
-  border-color: color-mix(in srgb, var(--color-brand-canvas) 28%, transparent);
+.eventVisual:hover .eventImage {
+  transform: scale(1.018);
 }
 
-.orbitTwo::before {
-  inset-block-end: 4%;
-  inset-inline-start: 26%;
-}
-
-.orbitTwo::after {
-  inset-block-start: 20%;
-  inset-inline-start: 2%;
-  width: 0.35rem;
-  background: var(--color-brand-canvas);
-}
-
-.homeMark {
-  position: relative;
-  width: clamp(8rem, 20vw, 13rem);
-  aspect-ratio: 1;
+.eventImageCaption {
+  position: absolute;
+  z-index: 1;
+  inset-inline: clamp(1.25rem, 3vw, 2rem);
+  inset-block-end: clamp(1.25rem, 3vw, 2rem);
   display: grid;
-  place-items: center;
-  clip-path: polygon(50% 0, 100% 26%, 100% 78%, 50% 100%, 0 78%, 0 26%);
-  background: var(--color-brand-gold);
-  color: var(--color-brand-ink);
-  font-size: clamp(4rem, 9vw, 7rem);
-  font-weight: 900;
-  line-height: 1;
+  gap: 0.35rem;
+}
+
+.eventImageCaption span {
+  color: var(--color-brand-gold);
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+}
+
+.eventImageCaption strong {
+  color: var(--color-brand-canvas);
+  font-family: var(--font-arabic);
+  font-size: clamp(1.45rem, 3vw, 2.45rem);
+  font-weight: 760;
+  line-height: 1.35;
 }
 
 .eventCard dl {
@@ -587,6 +572,8 @@
 
 .presenter {
   align-items: stretch;
+  grid-template-columns: minmax(20rem, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(2.5rem, 7vw, 6.5rem);
   background: color-mix(
     in srgb,
     var(--color-school-psychology-soft) 64%,
@@ -594,53 +581,70 @@
   );
 }
 
-.presenterMonogram {
+.presenterPortrait {
   position: relative;
   min-height: 36rem;
-  display: grid;
-  place-content: center;
   overflow: hidden;
-  background: var(--color-school-psychology);
-  color: var(--color-brand-canvas);
+  border: 1px solid
+    color-mix(in srgb, var(--color-school-psychology) 24%, transparent);
+  background: var(--color-school-psychology-soft);
+  box-shadow: var(--shadow-editorial);
 }
 
-.presenterMonogram::before,
-.presenterMonogram::after {
+.presenterPortrait::after {
   content: '';
   position: absolute;
-  width: 72%;
-  aspect-ratio: 1;
-  inset: 14%;
-  border: 1px solid
-    color-mix(in srgb, var(--color-brand-canvas) 28%, transparent);
-  border-radius: 50%;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-brand-ink) 42%, transparent),
+    transparent 32%
+  );
+  pointer-events: none;
 }
 
-.presenterMonogram::after {
-  width: 46%;
-  inset: 27%;
+.presenterImage {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center 18%;
 }
 
-.presenterMonogram > span {
-  position: relative;
-  z-index: 1;
-  font-size: clamp(9rem, 20vw, 16rem);
-  font-weight: 800;
-  line-height: 0.8;
-}
-
-.presenterMonogram small {
+.presenterExperience {
   position: absolute;
   z-index: 1;
-  inset-inline: 2rem;
-  inset-block-end: 2rem;
-  color: var(--color-brand-gold);
-  font-family: var(--font-sans);
+  inset-inline-start: clamp(1rem, 3vw, 2rem);
+  inset-block-end: clamp(1rem, 3vw, 2rem);
+  min-width: 8.5rem;
+  display: grid;
+  justify-items: start;
+  padding: 1rem 1.15rem;
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-canvas) 22%, transparent);
+  background: color-mix(in srgb, var(--color-brand-ink) 92%, transparent);
+  box-shadow: var(--shadow-elevated);
+  color: var(--color-brand-canvas);
+  backdrop-filter: blur(0.75rem);
+}
+
+.presenterExperience span,
+.presenterExperience small {
   font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
-  text-align: center;
-  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.presenterExperience span {
+  color: color-mix(in srgb, var(--color-brand-canvas) 72%, transparent);
+}
+
+.presenterExperience strong {
+  margin-block: 0.2rem;
+  color: var(--color-brand-gold);
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 850;
+  line-height: 1;
 }
 
 .presenterCopy {
@@ -972,15 +976,20 @@
   }
 
   .eventCard {
+    align-self: stretch;
     grid-template-columns: minmax(20rem, 1fr) minmax(22rem, 0.9fr);
     grid-template-rows: auto;
+    margin: 0;
+    border: 0;
     border-inline-start: 0;
     border-top: 1px solid
       color-mix(in srgb, var(--color-brand-canvas) 14%, transparent);
+    box-shadow: none;
   }
 
-  .eventIllustration {
-    min-height: 30rem;
+  .eventVisual {
+    min-height: 0;
+    aspect-ratio: 2 / 1;
   }
 
   .eventCard dl {
@@ -996,6 +1005,13 @@
   .presenter,
   .faq {
     grid-template-columns: 1fr;
+  }
+
+  .presenterPortrait {
+    width: min(100%, 42rem);
+    min-height: 0;
+    aspect-ratio: 4 / 5;
+    justify-self: center;
   }
 
   .topicExperience {
@@ -1069,6 +1085,11 @@
     grid-template-columns: 1fr;
   }
 
+  .eventVisual {
+    min-height: 0;
+    aspect-ratio: 2 / 1;
+  }
+
   .eventCard dl {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     border-inline-start: 0;
@@ -1100,8 +1121,8 @@
     min-height: 7rem;
   }
 
-  .presenterMonogram {
-    min-height: 28rem;
+  .presenterPortrait {
+    min-height: 0;
   }
 
   .joining li {
@@ -1166,8 +1187,9 @@
     width: 100%;
   }
 
-  .eventIllustration {
-    min-height: 23rem;
+  .eventVisual {
+    min-height: 0;
+    aspect-ratio: 2 / 1;
   }
 
   .eventCard dl {

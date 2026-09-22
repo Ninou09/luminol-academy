@@ -15,5 +15,11 @@ describe('public workshop privacy contract', () => {
     expect(source).not.toMatch(/(?:\+?213|0)[567]\d{8}/);
     expect(source).toContain('20:00 بتوقيت الجزائر');
     expect(source).toContain('data-registration-link');
+    expect(source).toContain(
+      '/workshops/family-after-trauma/family-support.webp',
+    );
+    expect(source).toContain(
+      '/workshops/family-after-trauma/fettouma-professional.webp',
+    );
   });
 });
