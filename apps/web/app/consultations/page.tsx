@@ -8,6 +8,7 @@ import {
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 
+import { AcademyImage } from '../../components/academy-image';
 import { EnquiryForm } from '../../components/enquiry-form';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
@@ -219,6 +220,13 @@ export default async function ConsultationsPage() {
             <p className={styles.lede}>{copy.heroBody as string}</p>
           </div>
           <aside className={styles.heroAside}>
+            <AcademyImage
+              asset="consultation"
+              locale={locale}
+              priority
+              className={styles.heroPhoto}
+              sizes="(max-width: 700px) 100vw, 40vw"
+            />
             <p>{copy.aside as string}</p>
             <div className={styles.heroActions}>
               <ButtonLink href="#consultation-enquiry">

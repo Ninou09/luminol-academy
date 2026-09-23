@@ -163,3 +163,11 @@
     width: 100%;
   }
 }
+
+.feature {
+  border-radius: 0;
+  box-shadow: none;
+  border-width: 1px 0;
+  padding-inline: 0;
+  background: transparent;
+}

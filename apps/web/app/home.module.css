@@ -1,620 +1,750 @@
 .page {
-  --color-brand-gold-strong: var(--color-brand-cyan-deep);
-  --color-brand-gold: var(--color-brand-cyan-light);
   overflow: clip;
   background: var(--color-brand-canvas);
-  color: var(--color-brand-ink);
 }
-
-/* Film, typography and real people carry the composition. */
 .hero {
   position: relative;
   isolation: isolate;
-  display: grid;
-  align-content: end;
-  gap: clamp(1.5rem, 3vw, 3rem);
-  min-height: calc(100svh - 5.5rem);
-  padding: clamp(8rem, 17vh, 12rem)
-    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2))
-    clamp(5.5rem, 9vh, 7rem);
+  min-height: min(850px, calc(100svh - 124px));
+  display: flex;
+  align-items: center;
   background: var(--color-brand-ink);
   color: var(--color-brand-surface);
 }
-.heroCopy,
-.heroSummary {
-  position: relative;
-  z-index: 2;
-  min-width: 0;
+.hero .heroImage {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  transform: translateY(var(--scene-y, 0px)) scale(var(--scene-scale, 1.04));
+}
+.heroImage figcaption {
+  display: none;
+}
+.heroShade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(5 22 30 / 0.8),
+      rgb(5 22 30 / 0.2) 63%,
+      rgb(5 22 30 / 0.05)
+    ),
+    linear-gradient(0deg, rgb(5 22 30 / 0.45), transparent 45%);
 }
 .heroCopy {
+  width: min(100%, 1600px);
+  margin: auto;
+  padding: 80px var(--luminol-page-gutter) 120px;
   transform: translateY(var(--scene-copy-y, 0px));
 }
 .eyebrow {
-  margin: 0 0 1.3rem;
-  color: var(--color-brand-cyan-deep);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.17em;
   text-transform: uppercase;
+  font-weight: 750;
+  line-height: 1.7;
+  margin: 0 0 1.4rem;
+  color: var(--color-brand-cyan-deep);
 }
 .hero .eyebrow {
-  color: var(--color-brand-cyan-light);
+  color: var(--color-brand-surface);
 }
-.heroTitle {
-  max-width: 20ch;
+.hero h1 {
+  max-width: 10ch;
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: clamp(3.5rem, 7.7vw, 7.75rem);
-  font-weight: 600;
-  letter-spacing: -0.065em;
-  line-height: 1.05;
+  font-family: var(--font-display);
+  font-size: clamp(4.5rem, 8vw, 8.5rem);
+  letter-spacing: -0.045em;
+  font-weight: 500;
+  line-height: 0.95;
   text-wrap: balance;
 }
-.heroTitle span {
+.hero h1 em {
   display: block;
   color: var(--color-brand-cyan-light);
-}
-.heroSummary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: end;
-  gap: clamp(2rem, 5vw, 6rem);
-  padding-top: 1.5rem;
-  border-top: 1px solid
-    color-mix(in srgb, var(--color-brand-surface) 30%, transparent);
+  font-weight: 400;
 }
 .heroLede {
-  max-width: 38rem;
-  margin: 0;
-  color: var(--color-brand-surface);
-  font-size: clamp(1rem, 1.35vw, 1.2rem);
-  line-height: 1.9;
+  max-width: 26rem;
+  line-height: 1.8;
+  font-size: 0.95rem;
+  margin: 1.8rem 0 2rem;
 }
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-.heroActions a {
-  min-height: 3.25rem;
-  border-radius: 0.25rem;
-  transition:
-    transform 250ms var(--luminol-ease-out),
-    background 250ms ease;
-}
-.heroActions a:first-child {
+.whiteButton {
+  display: inline-flex;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+  padding: 1rem 1.5rem;
   background: var(--color-brand-surface);
   color: var(--color-brand-ink);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 750;
+  transition: background 0.2s;
 }
-.heroActions a:last-child {
-  border-color: var(--color-brand-surface);
-  color: var(--color-brand-surface);
+.whiteButton:hover {
+  background: var(--color-brand-cyan-light);
 }
-.heroLocation {
+.whiteButton span {
+  font-size: 1.3rem;
+}
+.heroBottom {
   position: absolute;
-  inset-inline: max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
-  inset-block-start: 2rem;
-  z-index: 2;
+  bottom: 2rem;
+  inset-inline: var(--luminol-page-gutter);
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  color: var(--color-brand-surface);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  gap: 1.5rem;
 }
-.scrollCue {
-  position: absolute;
-  inset-inline-start: max(
-    var(--luminol-page-gutter),
-    calc((100vw - 82rem) / 2)
-  );
-  inset-block-end: 2rem;
-  z-index: 3;
-  display: inline-flex;
-  gap: 1rem;
+.heroBottom a {
+  display: flex;
   align-items: center;
-  color: var(--color-brand-surface);
-  font-size: 0.7rem;
-  font-weight: 700;
+  gap: 1rem;
   text-decoration: none;
 }
-.scrollCue span {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  aspect-ratio: 1;
-  border: 1px solid
-    color-mix(in srgb, var(--color-brand-surface) 40%, transparent);
-  border-radius: 50%;
+.heroBottom a span {
+  font-size: 1.3rem;
 }
-.proof {
+.schoolRail {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
-  gap: 1.5rem;
-  margin: 0 auto 4rem;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--color-brand-line);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
 }
-.proof div {
+.schoolRail a {
+  padding: 1.8rem clamp(1.3rem, 4vw, 4rem);
   display: flex;
   align-items: center;
-  gap: 1rem;
-  min-width: 0;
+  gap: 1.5rem;
+  border-inline-end: 1px solid rgb(255 255 255 / 0.18);
+  text-decoration: none;
+  transition: background 0.25s;
 }
-.proof dt {
-  flex-shrink: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.5vw, 2.25rem);
+.schoolRail a:hover {
+  background: var(--color-brand-ink-soft);
 }
-.proof dd {
-  margin: 0;
-  color: var(--color-brand-muted);
-  font-size: 0.8rem;
-  line-height: 1.6;
+.schoolRail span {
+  color: var(--color-brand-cyan-light);
+  font-size: 0.65rem;
+}
+.schoolRail strong {
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+.schoolRail b {
+  margin-inline-start: auto;
+  font-size: 1.4rem;
+  font-weight: 400;
 }
 .section {
-  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
+  max-width: 1500px;
   margin-inline: auto;
-  padding-block: var(--luminol-section-space);
+  padding: clamp(5rem, 9vw, 9rem) var(--luminol-page-gutter);
 }
-.sectionHeading {
+.spirit {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-  gap: clamp(2rem, 7vw, 8rem);
-  align-items: end;
-  margin-bottom: clamp(3rem, 7vw, 6rem);
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(3rem, 8vw, 8rem);
+  align-items: center;
 }
+.spiritImages {
+  position: relative;
+  min-height: 38rem;
+}
+.spiritPortrait {
+  position: absolute;
+  width: 72%;
+  height: 86%;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}
+.spiritDetail {
+  position: absolute;
+  width: 64%;
+  height: 45%;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  border: 10px solid var(--color-brand-canvas);
+}
+.imageStamp {
+  position: absolute;
+  inset-inline-end: 1.5rem;
+  inset-block-start: 3rem;
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-style: italic;
+  color: var(--color-brand-cyan-deep);
+  writing-mode: vertical-rl;
+}
+.spiritCopy h2,
 .sectionHeading h2,
-.aboutCopy h2,
-.pathway h2,
-.approachIntro h2,
-.cta h2 {
+.journeyHeading h2,
+.closing h2 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 4.6vw, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  white-space: pre-line;
   margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 4.8vw, 5rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
-  text-wrap: balance;
 }
-.sectionHeading > p,
-.schoolDescription,
-.aboutCopy > p:not(.eyebrow) {
-  margin-block: 1rem;
+.spiritCopy > p:not(.eyebrow) {
+  max-width: 31rem;
+  font-size: 0.94rem;
+  line-height: 1.95;
   color: var(--color-brand-muted);
-  line-height: 1.85;
-}
-.schoolGrid {
-  display: grid;
-  gap: clamp(3rem, 6vw, 6rem);
-}
-.schoolCard {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  gap: clamp(2rem, 5vw, 5rem);
-  align-items: center;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--color-brand-line);
-  transition: transform 500ms var(--luminol-ease-out);
-}
-.psychology {
-  --school-accent: var(--color-school-psychology);
-}
-.languages {
-  --school-accent: var(--color-school-languages);
-}
-.training {
-  --school-accent: var(--color-school-training);
-}
-.schoolPhoto {
-  height: 100%;
-  min-height: 30rem;
-  border-radius: 0.25rem;
-}
-.schoolDetails {
-  min-width: 0;
-  padding-block: 1.5rem;
-}
-.schoolTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  color: var(--color-brand-muted);
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.schoolTop span:first-child {
-  color: var(--school-accent);
-  font-size: 1rem;
-}
-.schoolCard h3 {
-  margin: 2rem 0 1.25rem;
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 4.5vw, 4.75rem);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.035em;
-}
-.schoolPromise {
-  color: var(--school-accent);
-  font-size: 1.15rem;
-  line-height: 1.75;
-}
-.schoolCard ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
-  margin: 1.5rem 0;
-  padding: 1.25rem 0 0;
-  list-style: none;
-  border-top: 1px solid var(--color-brand-line);
-}
-.schoolCard li {
-  font-size: 0.85rem;
-  line-height: 1.8;
+  margin: 1.75rem 0;
 }
 .textLink {
   display: inline-flex;
   align-items: center;
-  gap: 1.5rem;
-  min-height: 2.75rem;
-  color: var(--color-brand-ink);
-  font-size: 0.9rem;
-  font-weight: 800;
+  gap: 2rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid currentColor;
   text-decoration: none;
+  font-size: 0.76rem;
+  font-weight: 750;
 }
 .textLink span {
-  transition: translate 250ms ease;
+  font-size: 1.25rem;
 }
-.approach {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(3rem, 8vw, 8rem);
-  padding: var(--luminol-section-space)
-    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
-  background: var(--color-brand-ink);
-  color: var(--color-brand-surface);
-}
-.approachIntro {
-  position: sticky;
-  top: 8rem;
-  align-self: start;
-}
-.approachIntro p:last-child,
-.principles p,
-.cta p:last-child {
-  color: color-mix(in srgb, var(--color-brand-surface) 80%, transparent);
-  line-height: 1.85;
-}
-.light {
-  color: var(--color-brand-cyan-light);
-}
-.principles {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.principles li {
-  display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
+.founderStat {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-brand-line);
+  display: flex;
   gap: 1.5rem;
-  padding-block: 2rem;
-  border-top: 1px solid
-    color-mix(in srgb, var(--color-brand-surface) 25%, transparent);
+  align-items: center;
 }
-.principles li > span {
-  color: var(--color-brand-cyan-light);
-  font-size: 0.8rem;
-}
-.principles h3 {
-  margin: 0;
-  font-size: clamp(1.4rem, 2.2vw, 2rem);
+.founderStat strong {
+  font-family: var(--font-display);
+  font-size: 4.2rem;
+  line-height: 1;
   font-weight: 500;
 }
-.principles p {
-  margin-bottom: 0;
+.founderStat strong span {
+  color: var(--color-brand-cyan-deep);
 }
-.about {
+.founderStat p {
+  font-size: 0.72rem;
+  color: var(--color-brand-muted);
+  max-width: 13rem;
+  line-height: 1.7;
+}
+.schools {
+  background: var(--color-brand-mist);
+  padding: clamp(5rem, 8vw, 8rem) var(--luminol-page-gutter);
+}
+.sectionHeading {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(3rem, 7vw, 7rem);
-  align-items: center;
+  grid-template-columns: 1.35fr 1fr;
+  align-items: end;
+  gap: 3rem;
+  margin: 0 auto 3.5rem;
+  max-width: 1340px;
 }
-.aboutVisual {
-  min-height: clamp(28rem, 40vw, 38rem);
-  border-radius: 0.25rem;
-  background: var(--color-brand-ink);
+.sectionHeading > p {
+  max-width: 27rem;
+  color: var(--color-brand-muted);
+  font-size: 0.94rem;
+  line-height: 1.9;
+  margin: 0;
+  justify-self: end;
 }
-.aboutLede {
-  font-size: 1.25rem;
-  color: var(--color-brand-ink) !important;
+.schoolGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  max-width: 1340px;
+  margin: auto;
 }
-.values {
+.schoolCard {
+  --school-accent: var(--color-school-psychology);
+  background: var(--color-brand-surface);
+}
+.schoolCard[data-school='languages'] {
+  --school-accent: var(--color-school-languages);
+}
+.schoolCard[data-school='training'] {
+  --school-accent: var(--color-school-training);
+}
+.schoolCard > a {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-.values span {
-  border-bottom: 1px solid var(--color-brand-cyan);
-  padding-bottom: 0.5rem;
-  font-size: 0.85rem;
-}
-.pathway {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(3rem, 7vw, 7rem);
-}
-.pathwayLinks {
-  display: grid;
-  border-top: 1px solid var(--color-brand-line);
-}
-.pathwayLinks a {
-  display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr) auto;
-  gap: 1rem;
-  align-items: center;
-  padding-block: 1.75rem;
-  border-bottom: 1px solid var(--color-brand-line);
-  color: var(--color-brand-ink);
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.5vw, 2.3rem);
+  flex-direction: column;
+  height: 100%;
   text-decoration: none;
 }
-.pathwayLinks span,
-.pathwayLinks b {
-  color: var(--color-brand-cyan-deep);
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
+.schoolPhoto {
+  position: relative;
+  height: clamp(14rem, 24vw, 23rem);
+  overflow: hidden;
 }
-.cta {
+.schoolPhoto figure {
+  height: 100%;
+}
+.schoolPhoto img {
+  transition: transform 0.6s;
+}
+.schoolCard a:hover img {
+  transform: scale(1.045);
+}
+.schoolNumber {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
+  z-index: 3;
+  width: 2.3rem;
+  height: 2.3rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 0.55);
+  color: white;
+  border-radius: 50%;
+  background: rgb(16 42 67 / 0.35);
+  font-size: 0.7rem;
+}
+.schoolContent {
+  padding: 2rem;
+  border-top: 4px solid var(--school-accent);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.schoolContent h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 2.8vw, 3rem);
+  margin: 0 0 1rem;
+}
+.schoolContent p {
+  font-size: 0.82rem;
+  color: var(--color-brand-muted);
+  line-height: 1.85;
+  margin: 0 0 2rem;
+}
+.schoolAction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  margin-top: auto;
+  border-top: 1px solid var(--color-brand-line);
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: var(--school-accent);
+}
+.schoolAction b {
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+.journey {
+  background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
+  padding: 6rem var(--luminol-page-gutter);
+}
+.journeyHeading {
+  max-width: 1340px;
+  margin: 0 auto 4rem;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem 4rem;
+}
+.journeyHeading .eyebrow {
+  grid-column: 1 / -1;
+  color: var(--color-brand-cyan-light);
+  margin: 0;
+}
+.journeyHeading > p:last-child {
+  max-width: 24rem;
+  align-self: end;
+  justify-self: end;
+  line-height: 1.9;
+  font-size: 0.9rem;
+  color: var(--color-brand-line);
+}
+.chapters {
+  max-width: 1340px;
+  margin: auto;
+}
+.chapter {
+  position: sticky;
+  top: 112px;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  min-height: 34rem;
+  background: var(--color-brand-ink);
+  border-top: 1px solid rgb(255 255 255 / 0.25);
+  margin-bottom: 4rem;
+  box-shadow: 0 -1rem 2rem var(--color-brand-ink);
+}
+.chapterCopy {
+  padding: clamp(2rem, 4vw, 4rem) clamp(1.5rem, 4vw, 4rem) 3rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+.chapterCopy .eyebrow {
+  color: var(--color-brand-cyan-light);
+}
+.chapterCopy h3 {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(3rem, 5vw, 5.8rem);
+  letter-spacing: -0.04em;
+}
+.chapterCopy > p:not(.eyebrow) {
+  line-height: 1.9;
+  max-width: 27rem;
+  color: var(--color-brand-line);
+  font-size: 0.9rem;
+}
+.chapterCopy .textLink {
+  margin-top: 1.5rem;
+  color: var(--color-brand-cyan-light);
+}
+.chapterImage {
+  min-height: 34rem;
+}
+.programmeFeature {
+  padding-top: 5rem;
+}
+.programmeFeature:empty {
+  display: none;
+}
+.languageLine {
+  justify-self: end;
+  font-size: 0.75rem;
+  color: var(--color-brand-muted);
+  padding-bottom: 0.6rem;
+}
+.momentsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+}
+.moment {
+  text-decoration: none;
+}
+.moment:nth-child(2) {
+  margin-top: 5rem;
+}
+.momentImage {
+  height: clamp(16rem, 28vw, 26rem);
+}
+.moment > div {
+  position: relative;
+  padding: 1.5rem 0 0 2.5rem;
+}
+.moment > div > span {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 2rem;
+  font-size: 0.7rem;
+  color: var(--color-brand-cyan-deep);
+}
+.moment h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.35rem;
+  line-height: 1.15;
+  font-weight: 500;
+}
+.moment p {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--color-brand-line);
+  color: var(--color-brand-muted);
+}
+.closing {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(4rem, 8vw, 8rem)
+    max(var(--luminol-page-gutter), calc((100vw - 1340px) / 2));
+  background: var(--color-brand-cyan-pale);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 3rem;
-  align-items: end;
-  padding: clamp(4rem, 9vw, 8rem)
-    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
+}
+.closing > div {
+  max-width: 48rem;
+}
+.closing p:not(.eyebrow) {
+  max-width: 30rem;
+  line-height: 1.8;
+  margin-top: 1.5rem;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.9rem;
+}
+.closingMonogram {
+  position: absolute;
+  z-index: -1;
+  font-family: var(--font-display);
+  font-size: 38rem;
+  line-height: 0.8;
+  color: color-mix(in srgb, var(--color-brand-cyan-deep) 7%, transparent);
+  inset-inline-end: 15%;
+  bottom: -6rem;
+}
+.roundAction {
+  width: 11rem;
+  height: 11rem;
+  padding: 2rem;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  border: 1px solid var(--color-brand-ink);
+  text-decoration: none;
+  font-size: 0.8rem;
+  text-align: center;
+  transition:
+    background 0.25s,
+    color 0.25s;
+}
+.roundAction b {
+  font-size: 2.5rem;
+  font-weight: 400;
+}
+.roundAction:hover {
   background: var(--color-brand-ink);
   color: var(--color-brand-surface);
 }
-.cta p:last-child {
-  max-width: 40rem;
-}
-.mediaCredits {
-  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.25rem;
-  margin: -1rem auto 0;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--color-brand-line);
-  color: var(--color-brand-muted);
-  font-size: 0.7rem;
-}
-.mediaCredits a {
-  color: inherit;
-  text-underline-offset: 0.2em;
-}
-.heroActions a:focus-visible,
-.textLink:focus-visible,
-.pathwayLinks a:focus-visible,
-.scrollCue:focus-visible {
+.page a:focus-visible {
   outline: 3px solid var(--color-brand-cyan);
-  outline-offset: 5px;
+  outline-offset: 6px;
 }
-
-@media (min-width: 801px) {
-  .schoolCard:nth-child(even) .schoolPhoto {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .schoolCard:nth-child(even) .schoolDetails {
-    grid-column: 1;
-    grid-row: 1;
-  }
-}
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .schoolCard:hover {
-    transform: translateY(-0.3rem);
-  }
-  .schoolCard:hover .schoolPhoto img {
-    transform: scale(1.045);
-  }
-  .heroActions a:hover {
-    transform: translateY(-3px);
-  }
-  .textLink:hover span {
-    translate: 0.25rem 0;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .heroTitle {
-    animation: film-title 1.15s var(--luminol-ease-out) both;
-  }
-  .heroTitle span {
-    animation: film-title 1.35s 100ms var(--luminol-ease-out) both;
-  }
-  .heroSummary {
-    animation: film-summary 1.2s 200ms var(--luminol-ease-out) both;
-  }
-}
-@keyframes film-title {
-  from {
-    clip-path: inset(0 0 100%);
-    transform: translateY(1.5rem);
-  }
-  to {
-    clip-path: inset(0);
-    transform: translateY(0);
-  }
-}
-@keyframes film-summary {
-  from {
-    opacity: 0.4;
-    translate: 0 0.8rem;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-.page:dir(rtl) :is(h1, h2, h3, .schoolPromise, .aboutLede, .pathwayLinks a) {
+.page:dir(rtl) h1,
+.page:dir(rtl) h2,
+.page:dir(rtl) h3 {
   font-family: var(--font-arabic);
-  line-height: 1.5;
-  letter-spacing: normal;
-}
-.page:dir(rtl) .heroTitle {
-  font-size: clamp(3rem, 6.5vw, 6.25rem);
   line-height: 1.45;
-  font-weight: 500;
+  letter-spacing: 0;
 }
-.page:dir(rtl) :is(.eyebrow, .schoolTop, .heroLocation) {
-  letter-spacing: normal;
+.page:dir(rtl) .hero h1 {
+  font-size: clamp(3.25rem, 6.3vw, 6rem);
+  max-width: 11ch;
 }
-.heroTitle,
-.sectionHeading h2,
-.schoolCard h3,
-.pathwayLinks a {
-  overflow-wrap: anywhere;
+.page:dir(rtl) .heroShade {
+  background:
+    linear-gradient(270deg, rgb(5 22 30 / 0.82), rgb(5 22 30 / 0.2) 80%),
+    linear-gradient(0deg, rgb(5 22 30 / 0.4), transparent);
+}
+.page:dir(rtl) .heroImage img {
+  object-position: 70% 48%;
+}
+.page:dir(rtl) .chapterCopy {
+  padding-inline: 0 3rem;
+}
+.page:dir(rtl) .moment > div {
+  padding-inline: 2.5rem 0;
+}
+@media (min-width: 1600px) {
+  .hero {
+    min-height: 850px;
+  }
 }
 @media (max-width: 1000px) {
-  .heroSummary {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .heroActions {
-    justify-content: flex-start;
-  }
-  .heroLede {
-    max-width: 44rem;
-  }
-}
-@media (max-width: 800px) {
-  .schoolCard,
-  .sectionHeading,
-  .approach,
-  .about,
-  .pathway,
-  .cta {
-    grid-template-columns: 1fr;
-  }
-  .schoolPhoto {
-    min-height: 0;
-    height: auto;
-    aspect-ratio: 4 / 3;
-  }
-  .schoolDetails {
-    padding: 0;
-  }
-  .schoolCard h3 {
-    margin-top: 1rem;
-  }
-  .approachIntro {
-    position: static;
-  }
-  .proof div {
-    display: grid;
-    gap: 0.3rem;
-  }
-}
-@media (max-width: 680px) {
-  .hero {
-    min-height: calc(100svh - 8rem);
-    padding: 6rem 1.25rem 5.5rem;
-    gap: 1.5rem;
-  }
-  .heroTitle {
-    font-size: clamp(2.75rem, 10.5vw, 4rem);
-    letter-spacing: -0.045em;
-  }
-  .page:dir(rtl) .heroTitle {
-    font-size: clamp(2.2rem, 9.5vw, 3.6rem);
-  }
-  .heroLocation {
-    inset-inline: 1.25rem;
-    top: 1.5rem;
-    font-size: 0.6rem;
-  }
-  .heroSummary {
-    padding-top: 1rem;
-  }
-  .heroLede {
-    font-size: 0.95rem;
-  }
-  .heroActions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .heroActions a {
-    width: 100%;
-    text-align: center;
-  }
-  .scrollCue {
-    inset-inline-start: 1.25rem;
-    bottom: 1.5rem;
-  }
-  .proof {
-    width: calc(100% - 2.5rem);
-    gap: 1rem;
-    margin-bottom: 2.5rem;
-  }
-  .proof dt {
-    font-size: 1.2rem;
-  }
-  .proof dd {
-    font-size: 0.75rem;
-  }
-  .section,
-  .mediaCredits {
-    width: calc(100% - 2.5rem);
-  }
-  .approach,
-  .cta {
-    padding-inline: 1.25rem;
+  .spiritImages {
+    min-height: 30rem;
   }
   .schoolGrid {
-    gap: 3.5rem;
+    gap: 1rem;
   }
-  .schoolCard {
+  .schoolContent {
+    padding: 1.4rem;
+  }
+  .chapter {
+    min-height: 30rem;
+    top: 84px;
+  }
+  .chapterImage {
+    min-height: 30rem;
+  }
+  .chapterCopy h3 {
+    font-size: 3.5rem;
+  }
+}
+@media (max-width: 700px) {
+  .hero {
+    min-height: 730px;
+    min-height: calc(100svh - 80px);
+    align-items: end;
+  }
+  .hero .heroImage img {
+    object-position: 68% center;
+  }
+  .heroShade,
+  .page:dir(rtl) .heroShade {
+    background: linear-gradient(
+      0deg,
+      rgb(5 22 30 / 0.93),
+      rgb(5 22 30 / 0.3) 70%,
+      rgb(5 22 30 / 0.07)
+    );
+  }
+  .heroCopy {
+    padding: 16rem 1.5rem 6rem;
+    margin: 0;
+  }
+  .hero h1 {
+    font-size: clamp(3.7rem, 14vw, 5.5rem);
+    max-width: 12ch;
+  }
+  .page:dir(rtl) .hero h1 {
+    font-size: clamp(2.9rem, 11vw, 4.5rem);
+  }
+  .heroLede {
+    max-width: 22rem;
+    margin-block: 1.3rem 1.5rem;
+    font-size: 0.85rem;
+  }
+  .heroBottom {
+    inset-inline: 1.5rem;
+    bottom: 1.5rem;
+    font-size: 0.54rem;
+  }
+  .heroBottom > span {
+    max-width: 11rem;
+    line-height: 1.6;
+  }
+  .schoolRail {
+    grid-template-columns: 1fr;
+  }
+  .schoolRail a {
+    padding: 1.3rem 1.5rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.16);
+  }
+  .schoolRail strong {
+    font-size: 0.88rem;
+  }
+  .section {
+    padding: 4.5rem 1.5rem;
+  }
+  .spirit {
+    grid-template-columns: 1fr;
+    gap: 2.75rem;
+  }
+  .spiritImages {
+    min-height: 30rem;
+    max-width: 32rem;
+    width: 100%;
+    margin: auto;
+  }
+  .spiritCopy h2,
+  .sectionHeading h2,
+  .journeyHeading h2,
+  .closing h2 {
+    font-size: 3.25rem;
+  }
+  .page:dir(rtl) h2 {
+    font-size: 2.4rem;
+  }
+  .schools {
+    padding: 4.5rem 1.5rem;
+  }
+  .sectionHeading {
+    grid-template-columns: 1fr;
     gap: 1.5rem;
+    margin-bottom: 2.5rem;
   }
-  .schoolTop {
-    font-size: 0.6rem;
+  .sectionHeading > p {
+    justify-self: start;
   }
-  .aboutVisual {
-    min-height: 25rem;
+  .schoolGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  .page:dir(rtl)
-    :is(
-      .sectionHeading h2,
-      .aboutCopy h2,
-      .pathway h2,
-      .approachIntro h2,
-      .cta h2
-    ) {
-    font-size: clamp(1.75rem, 7vw, 2.75rem);
+  .schoolPhoto {
+    height: 19rem;
   }
-  .page:dir(rtl) .schoolCard h3 {
-    font-size: clamp(1.8rem, 7vw, 2.5rem);
+  .schoolContent {
+    padding: 1.7rem;
   }
-  .principles li {
-    grid-template-columns: 1.5rem minmax(0, 1fr);
-    gap: 0.75rem;
+  .schoolContent h3 {
+    font-size: 2.6rem;
+  }
+  .journey {
+    padding: 4.5rem 1.5rem 1rem;
+  }
+  .journeyHeading {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .journeyHeading > p:last-child {
+    justify-self: start;
+  }
+  .chapter {
+    position: relative;
+    top: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    min-height: 0;
+    margin-bottom: 2.5rem;
+  }
+  .chapterImage {
+    min-height: 19rem;
+  }
+  .chapterCopy,
+  .page:dir(rtl) .chapterCopy {
+    padding: 2rem 0;
+  }
+  .chapterCopy h3 {
+    font-size: 3.4rem;
+  }
+  .chapterCopy .textLink {
+    margin-top: 0.5rem;
+  }
+  .momentsGrid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .moment:nth-child(2) {
+    margin-top: 0;
+  }
+  .momentImage {
+    height: 20rem;
+  }
+  .languageLine {
+    justify-self: start;
+  }
+  .closing {
+    padding: 4.5rem 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+  .roundAction {
+    width: 8rem;
+    height: 8rem;
+    padding: 1rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .hero .heroImage,
   .heroCopy,
-  .schoolCard:hover,
-  .heroActions a:hover {
+  .schoolCard a:hover img {
     transform: none;
   }
-  .schoolCard {
+  .chapter {
+    position: relative;
+    top: auto;
+  }
+  .page * {
     transition: none;
   }
 }

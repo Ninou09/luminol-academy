@@ -259,3 +259,44 @@
     grid-template-columns: 1fr;
   }
 }
+
+.hero {
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  padding-block: 4rem;
+}
+.hero h1 {
+  font-size: clamp(3.2rem, 5.2vw, 5.6rem);
+  line-height: 1.04;
+}
+.lede {
+  font-size: 1rem;
+  line-height: 1.9;
+}
+.heroAside {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.heroPhoto {
+  min-height: 20rem;
+  margin-bottom: 1.5rem;
+}
+.heroAside p {
+  font-size: 0.85rem;
+}
+.pathCard {
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--color-brand-surface);
+}
+@media (max-width: 700px) {
+  .hero {
+    padding-block: 3rem;
+  }
+  .heroPhoto {
+    min-height: 19rem;
+  }
+}

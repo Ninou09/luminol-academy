@@ -10,6 +10,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { AcademyImage } from '../../components/academy-image';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { buildProgrammeContactHref } from '../../lib/programme-contact';
 import {
@@ -128,10 +129,19 @@ export default async function ProgrammesPage({
           className={`section-shell ${styles.hero}`}
           aria-labelledby="programmes-hero-title"
         >
-          <p className="eyebrow">{copy.eyebrow}</p>
-          <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
-          <p>{copy.heroBody}</p>
-          <p>{getAttendanceCertificateCopy(locale).scope}</p>
+          <div className={styles.heroCopy}>
+            <p className="eyebrow">{copy.eyebrow}</p>
+            <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
+            <p>{copy.heroBody}</p>
+            <p>{getAttendanceCertificateCopy(locale).scope}</p>
+          </div>
+          <AcademyImage
+            asset="detail"
+            locale={locale}
+            priority
+            className={styles.heroPhoto}
+            sizes="(max-width: 700px) 100vw, 40vw"
+          />
         </section>
 
         <section className={`section-shell ${styles.discovery}`}>

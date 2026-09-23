@@ -1,0 +1,107 @@
+{
+  "collection": "Luminol Academy editorial imagery",
+  "created": "2026-09-23",
+  "source": "OpenAI image generation; existing owner-commissioned Luminol asset kit v3 plus community-courtyard generated for this redesign",
+  "authorization": "Site owner explicitly requested realistic, diverse AI-generated assets and their integration in the public redesign.",
+  "representation": "Illustrative scenes. These do not document actual Luminol students, staff, facilities or outcomes.",
+  "rights": "Owner-commissioned AI-generated editorial assets; no third-party school imagery used.",
+  "cropPolicy": "Responsive cover; per-image focal points and localized alt text are specified in apps/web/lib/academy-media.ts. Keep subjects visible and avoid cropping faces.",
+  "assets": [
+    {
+      "file": "about-students-portrait.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 111474
+    },
+    {
+      "file": "communication-presentation.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 87012
+    },
+    {
+      "file": "community-courtyard.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 207938
+    },
+    {
+      "file": "consultations-room.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 158610
+    },
+    {
+      "file": "contact-inquiry.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 104404
+    },
+    {
+      "file": "home-hero-classroom.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 84550
+    },
+    {
+      "file": "language-practice.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 122170
+    },
+    {
+      "file": "languages-flags-classroom.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 105032
+    },
+    {
+      "file": "online-learning.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 136694
+    },
+    {
+      "file": "parenting-guidance-group.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 119070
+    },
+    {
+      "file": "professional-skills-workshop.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 116316
+    },
+    {
+      "file": "professional-training-room.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 191862
+    },
+    {
+      "file": "programmes-workshop-generic.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 130958
+    },
+    {
+      "file": "psychology-consultation-room.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 238670
+    },
+    {
+      "file": "psychology-workshop.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 112178
+    },
+    {
+      "file": "students-study.webp",
+      "source": "OpenAI built-in image generation",
+      "usage": "Editorial illustration",
+      "bytes": 95642
+    }
+  ]
+}

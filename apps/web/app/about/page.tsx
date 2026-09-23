@@ -181,6 +181,7 @@ export default async function AboutPage() {
           <AcademyImage
             className={styles.heroVisual}
             school="psychology"
+            asset="classroom"
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"

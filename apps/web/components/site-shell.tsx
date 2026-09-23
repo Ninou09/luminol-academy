@@ -5,6 +5,8 @@ import {
 } from '@luminol/localization';
 import Link from 'next/link';
 
+import { experienceCopy } from '../lib/experience-copy';
+import { SiteMenu } from './site-menu';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { CurrentPageLink } from './current-page-link';
@@ -34,6 +36,7 @@ export async function SiteHeader() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
   const common = getCommonDictionary(locale);
+  const experience = experienceCopy[locale];
 
   return (
     <>
@@ -41,6 +44,13 @@ export async function SiteHeader() {
         {skipToContentLabel[locale]}
       </a>
       <header className={styles.header}>
+        <div className={styles.utility}>
+          <span>{experience.location}</span>
+          <Link href={localizeHref(locale, '/programmes')}>
+            {copy.site.nav.programmes}
+            <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
         <div className={styles.headerInner}>
           <CurrentPageLink
             className={styles.brand}
@@ -97,6 +107,30 @@ export async function SiteHeader() {
               </span>{' '}
               <span aria-hidden="true">↗</span>
             </CurrentPageLink>
+            <SiteMenu
+              label={experience.menu}
+              closeLabel={experience.close}
+              title={experience.navigation}
+            >
+              <nav
+                className={styles.menuNav}
+                aria-label={copy.site.nav.primaryAria}
+              >
+                {[
+                  ['/#schools', copy.site.nav.schools],
+                  ['/programmes', copy.site.nav.programmes],
+                  ['/consultations', consultationsLabel[locale]],
+                  ['/about', copy.site.nav.about],
+                  ['/contact', copy.site.nav.contact],
+                ].map(([href, label], index) => (
+                  <Link href={localizeHref(locale, href ?? '/')} key={href}>
+                    <span>0{index + 1}</span>
+                    {label}
+                    <b aria-hidden="true">↗</b>
+                  </Link>
+                ))}
+              </nav>
+            </SiteMenu>
           </div>
         </div>
       </header>
@@ -166,9 +200,14 @@ export async function SiteFooter() {
           <p>{copy.site.description}</p>
         </div>
       </div>
+      <p className={styles.footerSignature} aria-hidden="true">
+        Luminol<span>Academy</span>
+      </p>
       <div className={styles.footerBottom}>
         <p>© {new Date().getFullYear()} Luminol Academy</p>
-        <p>Luminol · {copy.site.footerDisciplines}</p>
+        <a href="/media/academy/manifest.json">
+          {experienceCopy[locale].photoNote}
+        </a>
       </div>
     </footer>
   );

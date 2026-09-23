@@ -1,11 +1,17 @@
 import type { Locale } from '@luminol/localization';
 import Image from 'next/image';
 
-import { academyMedia, type AcademySchool } from '../lib/academy-media';
+import {
+  academyMedia,
+  academyStoryMedia,
+  type AcademyAssetKey,
+  type AcademySchool,
+} from '../lib/academy-media';
 import styles from './academy-image.module.css';
 
 type AcademyImageProps = {
-  school: AcademySchool;
+  school?: AcademySchool;
+  asset?: AcademyAssetKey;
   locale: Locale;
   className?: string | undefined;
   priority?: boolean;
@@ -14,19 +20,22 @@ type AcademyImageProps = {
 
 export function AcademyImage({
   school,
+  asset,
   locale,
   className,
   priority = false,
   sizes = '(max-width: 900px) 100vw, 50vw',
 }: AcademyImageProps) {
-  const media = academyMedia[school];
+  const media = asset
+    ? academyStoryMedia[asset]
+    : academyMedia[school ?? 'training'];
 
   return (
     <figure
       className={`${styles.frame} ${className ?? ''}`}
-      data-academy-media={school}
+      data-academy-media={asset ?? school}
       data-media-source={media.sourceUrl}
-      data-media-license="Unsplash License"
+      data-media-license={media.license ?? 'Unsplash License'}
       data-media-crop={media.crop}
     >
       <Image
@@ -36,12 +45,9 @@ export function AcademyImage({
         fill
         priority={priority}
         sizes={sizes}
+        style={{ objectPosition: media.position ?? '50% 50%' }}
       />
-      <figcaption className={styles.credit}>
-        <a href={media.sourceUrl} target="_blank" rel="noreferrer">
-          {media.credit}
-        </a>
-      </figcaption>
+      <figcaption className={styles.credit}>{media.credit}</figcaption>
     </figure>
   );
 }

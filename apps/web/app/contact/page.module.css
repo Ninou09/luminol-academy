@@ -370,3 +370,37 @@
     grid-column: auto;
   }
 }
+
+.hero {
+  padding-block: 4rem;
+  min-height: 0;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+.hero::before {
+  display: none;
+}
+.hero h1 {
+  font-size: clamp(3.4rem, 5.5vw, 6rem);
+  line-height: 1.04;
+}
+.heroBody {
+  margin-top: 1.75rem;
+  font-size: 1rem;
+  line-height: 1.9;
+}
+.heroPhoto {
+  height: 28rem;
+}
+.pathCard {
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--color-brand-surface);
+}
+@media (max-width: 700px) {
+  .hero {
+    padding-block: 3rem;
+  }
+  .heroPhoto {
+    height: 21rem;
+  }
+}

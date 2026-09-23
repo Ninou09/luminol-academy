@@ -629,3 +629,44 @@
     padding-inline: 1.25rem;
   }
 }
+
+/* The editorial system continues from the homepage. */
+.hero {
+  gap: clamp(2rem, 5vw, 5rem);
+  min-height: 0;
+  padding-block: 4rem 5rem;
+}
+.hero::before {
+  display: none;
+}
+.hero h1 {
+  font-size: clamp(3.5rem, 5.5vw, 6rem);
+  line-height: 1.02;
+}
+.heroVisual {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: clamp(28rem, 43vw, 40rem);
+}
+.heroVisual:hover {
+  transform: none;
+  box-shadow: none;
+}
+.heroLede,
+.heroCopy > p:last-child {
+  font-size: 1rem;
+  line-height: 1.9;
+}
+@media (max-width: 700px) {
+  .hero {
+    padding-block: 3rem;
+    gap: 2.5rem;
+  }
+  .hero h1 {
+    font-size: 3.5rem;
+  }
+  .heroVisual {
+    min-height: 27rem;
+  }
+}

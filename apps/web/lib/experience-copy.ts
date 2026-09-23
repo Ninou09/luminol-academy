@@ -1,0 +1,170 @@
+import type { Locale } from '@luminol/localization';
+
+export const experienceCopy = {
+  en: {
+    welcome: 'Welcome to Luminol Academy',
+    title: 'Your next chapter',
+    accent: 'starts here.',
+    intro:
+      'Understand yourself. Find your voice. Build the skills to move forward.',
+    explore: 'Discover your path',
+    enquire: 'Let’s talk',
+    location: 'Rooted in Algeria. Open to the world.',
+    schools: 'Three schools. One academy.',
+    schoolTitle: 'A world of possibility.\nA path that’s yours.',
+    schoolBody:
+      'Psychology, languages and professional training. Connected by one belief: meaningful progress begins with you.',
+    communityLabel: 'The Luminol spirit',
+    communityTitle: 'A place to learn.\nThe space to become.',
+    communityBody:
+      'A question asked with confidence. An idea shared with others. A new perspective that stays with you. We make room for the moments that move you forward.',
+    about: 'Get to know Luminol',
+    journeyLabel: 'Learning, with you at the centre',
+    journeyTitle: 'Small steps.\nNew horizons.',
+    journeyIntro:
+      'Discover an approach that brings understanding, connection and practice into everyday life.',
+    chapters: [
+      {
+        word: 'Understand.',
+        label: '01 / A new perspective',
+        body: 'Begin with curiosity. Ask questions, explore ideas and make space for a clearer understanding of yourself and others.',
+      },
+      {
+        word: 'Connect.',
+        label: '02 / A voice of your own',
+        body: 'Bring learning into conversation. Exchange perspectives and practise expressing what matters to you.',
+      },
+      {
+        word: 'Become.',
+        label: '03 / Possibility in practice',
+        body: 'Turn knowledge into something you can use. Develop skills through purposeful exercises, feedback and shared experience.',
+      },
+    ],
+    momentsLabel: 'More ways to grow',
+    momentsTitle: 'Learning belongs\nin your life.',
+    moments: ['Together, ideas go further.', 'Your ambition. Your rhythm.'],
+    momentLinks: ['Explore our programmes', 'Find your learning format'],
+    closingLabel: 'Your next chapter',
+    closingTitle: 'Let’s find your\nplace at Luminol.',
+    closingBody:
+      'Tell us what you want to learn, change or explore. We’ll help you find the right first step.',
+    scroll: 'Scroll to discover',
+    menu: 'Menu',
+    close: 'Close menu',
+    navigation: 'Explore Luminol',
+    founder: 'Years of field experience behind our founder',
+    languages: 'Arabic · French · English',
+    photoNote: 'Editorial illustrations',
+  },
+  fr: {
+    welcome: 'Bienvenue à Luminol Academy',
+    title: 'Votre prochain chapitre',
+    accent: 'commence ici.',
+    intro:
+      'Mieux vous comprendre. Trouver votre voix. Développer les compétences pour avancer.',
+    explore: 'Découvrez votre parcours',
+    enquire: 'Parlons de votre projet',
+    location: 'Ancrée en Algérie. Ouverte sur le monde.',
+    schools: 'Trois écoles. Une académie.',
+    schoolTitle: 'Un monde de possibilités.\nVotre propre parcours.',
+    schoolBody:
+      'Psychologie, langues et formation professionnelle. Une même conviction : tout progrès commence avec vous.',
+    communityLabel: 'L’esprit Luminol',
+    communityTitle: 'Un lieu pour apprendre.\nUn espace pour devenir.',
+    communityBody:
+      'Une question posée avec confiance. Une idée partagée. Une nouvelle perspective qui vous accompagne. Nous créons l’espace pour ces moments qui vous font avancer.',
+    about: 'Découvrez Luminol',
+    journeyLabel: 'Vous, au cœur de l’apprentissage',
+    journeyTitle: 'De petits pas.\nDe nouveaux horizons.',
+    journeyIntro:
+      'Une approche qui relie compréhension, échange et pratique au quotidien.',
+    chapters: [
+      {
+        word: 'Comprendre.',
+        label: '01 / Un nouveau regard',
+        body: 'Commencez par la curiosité. Posez des questions et explorez de nouvelles idées pour mieux vous comprendre et comprendre les autres.',
+      },
+      {
+        word: 'Échanger.',
+        label: '02 / Votre propre voix',
+        body: 'Faites vivre vos connaissances dans la conversation. Partagez des points de vue et exprimez ce qui compte pour vous.',
+      },
+      {
+        word: 'Devenir.',
+        label: '03 / La pratique ouvre des portes',
+        body: 'Transformez vos connaissances en compétences utiles grâce à des exercices concrets, des retours et des expériences partagées.',
+      },
+    ],
+    momentsLabel: 'Plusieurs façons de grandir',
+    momentsTitle: 'L’apprentissage a sa place\ndans votre vie.',
+    moments: [
+      'Ensemble, les idées vont plus loin.',
+      'Votre ambition. Votre rythme.',
+    ],
+    momentLinks: ['Explorez nos programmes', 'Trouvez votre format'],
+    closingLabel: 'Votre prochain chapitre',
+    closingTitle: 'Trouvez votre place\nchez Luminol.',
+    closingBody:
+      'Dites-nous ce que vous souhaitez apprendre, changer ou explorer. Nous vous aiderons à faire le premier pas.',
+    scroll: 'Défiler pour découvrir',
+    menu: 'Menu',
+    close: 'Fermer le menu',
+    navigation: 'Explorer Luminol',
+    founder: 'Années d’expérience de terrain de notre fondatrice',
+    languages: 'Arabe · Français · Anglais',
+    photoNote: 'Illustrations éditoriales',
+  },
+  ar: {
+    welcome: 'أهلاً بك في أكاديمية لومينول',
+    title: 'فصلك القادم',
+    accent: 'يبدأ هنا.',
+    intro: 'افهم نفسك. اكتشف صوتك. وامتلك المهارات التي تقودك إلى الأمام.',
+    explore: 'اكتشف مسارك',
+    enquire: 'لنتحدث عن هدفك',
+    location: 'جذورنا في الجزائر. وآفاقنا نحو العالم.',
+    schools: 'ثلاث مدارس. أكاديمية واحدة.',
+    schoolTitle: 'عالم من الإمكانات.\nومسار يشبهك.',
+    schoolBody:
+      'علم النفس واللغات والتكوين المهني. تجمعنا قناعة واحدة: كل تقدّم حقيقي يبدأ بك.',
+    communityLabel: 'روح لومينول',
+    communityTitle: 'مكان لتتعلّم.\nومساحة لتصبح.',
+    communityBody:
+      'سؤال تطرحه بثقة. فكرة تتشاركها مع الآخرين. ونظرة جديدة ترافقك. نمنح هذه اللحظات مساحة لتكون بداية خطواتك القادمة.',
+    about: 'تعرّف على لومينول',
+    journeyLabel: 'أنت في قلب التعلّم',
+    journeyTitle: 'خطوات صغيرة.\nوآفاق جديدة.',
+    journeyIntro: 'اكتشف نهجاً يجمع الفهم والتواصل والتطبيق في حياتك اليومية.',
+    chapters: [
+      {
+        word: 'افهم.',
+        label: '01 / نظرة جديدة',
+        body: 'ابدأ بالفضول. اطرح الأسئلة واستكشف الأفكار وافسح المجال لفهم أعمق لنفسك وللآخرين.',
+      },
+      {
+        word: 'تواصل.',
+        label: '02 / صوت يشبهك',
+        body: 'حوّل ما تتعلّمه إلى حوار. تبادل وجهات النظر وتدرّب على التعبير عمّا يهمّك.',
+      },
+      {
+        word: 'تطوّر.',
+        label: '03 / معرفة تتحول إلى ممارسة',
+        body: 'حوّل المعرفة إلى مهارات تستخدمها. تعلّم من التمارين الهادفة والملاحظات والتجارب المشتركة.',
+      },
+    ],
+    momentsLabel: 'طرق متعددة للنمو',
+    momentsTitle: 'للتعلّم مكان\nفي حياتك.',
+    moments: ['معاً، تأخذنا الأفكار أبعد.', 'طموحك. بإيقاعك.'],
+    momentLinks: ['استكشف برامجنا', 'اختر طريقة تعلّمك'],
+    closingLabel: 'فصلك القادم',
+    closingTitle: 'لنجد مكانك\nفي لومينول.',
+    closingBody:
+      'أخبرنا بما تريد تعلّمه أو تغييره أو استكشافه. نساعدك على اختيار الخطوة الأولى المناسبة.',
+    scroll: 'اكتشف المزيد',
+    menu: 'القائمة',
+    close: 'إغلاق القائمة',
+    navigation: 'اكتشف لومينول',
+    founder: 'سنة من الخبرة الميدانية لدى مؤسستنا',
+    languages: 'العربية · الفرنسية · الإنجليزية',
+    photoNote: 'صور توضيحية',
+  },
+} as const satisfies Record<Locale, unknown>;
