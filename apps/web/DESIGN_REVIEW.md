@@ -28,6 +28,7 @@ New hero prompt: Wide 16:9 candid editorial photograph of three North African ad
 - Root `pnpm typecheck`: pass (20 workspace tasks).
 - Root `pnpm test`: pass (986 tests, 114 existing skips).
 - Root `pnpm build`: pass (20 workspace tasks, including public web/admin/portal builds).
-- Visual and interaction verification: pending preview deployment.
+- Live preview visually reviewed in Arabic and English. French copy and locale switching verified. Programme search and programme-to-enquiry context verified without submitting an enquiry. Native menu opens and dismisses with Escape. Arabic hero composition keeps the people clear of its heading.
+- Browser regression coverage now follows the redesigned layout, including 320/390/768px readability in all three languages, navigation, no-JavaScript school links, reduced motion and distinct image provenance. CI results are recorded on PR #552.
 
 No database, authentication, payment, outbound messaging, operational application or production environment changes are included.

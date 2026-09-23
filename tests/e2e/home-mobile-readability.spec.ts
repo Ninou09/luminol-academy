@@ -43,13 +43,11 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
       expect(cardAction!.height).toBeGreaterThanOrEqual(44);
       expect(
         await page.locator('main').evaluate((element) => {
-          return Array.from(element.querySelectorAll('h1, h2, h3')).every(
-            (heading) => {
-              return heading.scrollWidth <= heading.clientWidth + 1;
-            },
-          );
+          return Array.from(element.querySelectorAll('h1, h2, h3'))
+            .filter((heading) => heading.scrollWidth > heading.clientWidth + 1)
+            .map((heading) => heading.textContent);
         }),
-      ).toBe(true);
+      ).toEqual([]);
     });
   }
 }

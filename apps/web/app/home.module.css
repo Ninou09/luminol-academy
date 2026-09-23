@@ -580,7 +580,20 @@
     min-height: 30rem;
   }
   .chapterCopy h3 {
-    font-size: 3.5rem;
+    font-size: clamp(2.4rem, 4.4vw, 3.5rem);
+  }
+}
+@media (min-width: 701px) and (max-width: 1000px) {
+  .schoolGrid {
+    grid-template-columns: 1fr;
+  }
+  .schoolCard > a {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .schoolPhoto {
+    height: 100%;
+    min-height: 18rem;
   }
 }
 @media (max-width: 700px) {
