@@ -16,8 +16,8 @@ test('the hero remains available after returning from the footer', async ({
       ),
     )
     .toBe(true);
-  await page.locator('#top a[href="#schools"]').click();
-  await expect(page).toHaveURL(/#schools$/);
+  await page.locator('#top a[href="/en/programmes"]').click();
+  await expect(page).toHaveURL(/\/en\/programmes$/);
 });
 
 test('changing reduced motion disables sticky chapters without hiding content', async ({

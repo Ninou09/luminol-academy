@@ -170,7 +170,7 @@
 .footerBottom p {
   margin: 0;
   color: color-mix(in srgb, var(--color-brand-line) 58%, transparent);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -427,7 +427,7 @@
   text-transform: uppercase;
 }
 .footerBottom a {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: var(--color-brand-line);
 }
 .header:dir(rtl) .menuNav a {

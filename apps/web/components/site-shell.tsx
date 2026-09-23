@@ -240,6 +240,9 @@ export async function SiteFooter() {
         <a href="/media/academy/manifest.json">
           {experienceCopy[locale].photoNote}
         </a>
+        <a href="/media/stock/manifest.json">
+          {experienceCopy[locale].stockNote}
+        </a>
       </div>
     </footer>
   );

@@ -29,8 +29,10 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
         expect(metrics.font.toLowerCase()).toContain('arabic');
       }
 
-      const actions = page.locator('#top a[href="#schools"], main > nav a');
-      await expect(actions).toHaveCount(4);
+      const actions = page.locator(
+        '#top a[href$="/programmes"], #top a[href$="/consultations#consultation-enquiry"], main > nav a',
+      );
+      await expect(actions).toHaveCount(5);
       for (const action of await actions.all()) {
         const box = await action.boundingBox();
         expect(box).not.toBeNull();

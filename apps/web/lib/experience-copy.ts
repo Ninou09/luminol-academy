@@ -7,7 +7,8 @@ export const experienceCopy = {
     accent: 'starts here.',
     intro:
       'Understand yourself. Find your voice. Build the skills to move forward.',
-    explore: 'Discover your path',
+    explore: 'Explore programmes',
+    consultation: 'Request a consultation',
     enquire: 'Let’s talk',
     location: 'Rooted in Algeria. Open to the world.',
     schools: 'Three schools. One academy.',
@@ -55,6 +56,7 @@ export const experienceCopy = {
     founder: 'Years of field experience behind our founder',
     languages: 'Arabic · French · English',
     photoNote: 'Editorial illustrations',
+    stockNote: 'Photo & film credits',
   },
   fr: {
     welcome: 'Bienvenue à Luminol Academy',
@@ -62,7 +64,8 @@ export const experienceCopy = {
     accent: 'commence ici.',
     intro:
       'Mieux vous comprendre. Trouver votre voix. Développer les compétences pour avancer.',
-    explore: 'Découvrez votre parcours',
+    explore: 'Explorer les programmes',
+    consultation: 'Demander une consultation',
     enquire: 'Parlons de votre projet',
     location: 'Ancrée en Algérie. Ouverte sur le monde.',
     schools: 'Trois écoles. Une académie.',
@@ -113,13 +116,15 @@ export const experienceCopy = {
     founder: 'Années d’expérience de terrain de notre fondatrice',
     languages: 'Arabe · Français · Anglais',
     photoNote: 'Illustrations éditoriales',
+    stockNote: 'Crédits photos et vidéo',
   },
   ar: {
     welcome: 'أهلاً بك في أكاديمية لومينول',
     title: 'فصلك القادم',
     accent: 'يبدأ هنا.',
     intro: 'افهم نفسك. اكتشف صوتك. وامتلك المهارات التي تقودك إلى الأمام.',
-    explore: 'اكتشف مسارك',
+    explore: 'استكشف البرامج',
+    consultation: 'اطلب استشارة',
     enquire: 'لنتحدث عن هدفك',
     location: 'جذورنا في الجزائر. وآفاقنا نحو العالم.',
     schools: 'ثلاث مدارس. أكاديمية واحدة.',
@@ -166,5 +171,6 @@ export const experienceCopy = {
     founder: 'سنة من الخبرة الميدانية لدى مؤسستنا',
     languages: 'العربية · الفرنسية · الإنجليزية',
     photoNote: 'صور توضيحية',
+    stockNote: 'مصادر الصور والفيديو',
   },
 } as const satisfies Record<Locale, unknown>;

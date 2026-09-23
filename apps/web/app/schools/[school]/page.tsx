@@ -10,11 +10,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { AcademyImage } from '../../../components/academy-image';
-import type { AcademyAssetKey } from '../../../lib/academy-media';
-import {
-  EditorialMedia,
-  type EditorialMediaAsset,
-} from '../../../components/editorial-media';
+import { ProgrammeMedia } from '../../../components/programme-media';
+import type { ProgrammeMediaInput } from '../../../lib/programme-media';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { buildProgrammeContactHref } from '../../../lib/programme-contact';
 import {
@@ -27,10 +24,7 @@ import {
 import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
 import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
-import {
-  buildSanityProgrammeImageUrl,
-  getProgrammesForSchool,
-} from '../../../lib/sanity';
+import { getProgrammesForSchool } from '../../../lib/sanity';
 import {
   getSchool,
   getSchools,
@@ -111,10 +105,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     id: string;
     title: string;
     description: string;
-    slug?: string;
+    slug?: string | undefined;
     delivery?: string | null;
     actionLabel?: string;
-    image?: EditorialMediaAsset | null;
+    media: ProgrammeMediaInput;
   }> = cmsProgrammes?.length
     ? cmsProgrammes.map((programme) => {
         const programmeSlug = programme.slug?.current;
@@ -139,20 +133,19 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           actionLabel: isWaitlist
             ? localizeProgrammeWaitlistAction(locale)
             : copy.askProgram,
-          image:
-            !isWaitlist && programme.image
-              ? {
-                  src: buildSanityProgrammeImageUrl(programme.image),
-                  alt: programme.image.alt,
-                  source: 'sanity' as const,
-                }
-              : null,
+          media: { ...programme, school: school.slug },
         };
       })
     : school.programs.map((programme) => ({
         id: programme.title,
         title: programme.title,
         description: programme.description,
+        media: {
+          school: school.slug,
+          mediaTopic: programme.mediaTopic,
+          image: null,
+          slug: null,
+        },
       }));
   const relatedSchools = Object.values(localizedSchools).filter(
     (item) => item.slug !== school.slug,
@@ -161,14 +154,6 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     psychology: styles.psychology ?? '',
     languages: styles.languages ?? '',
     training: styles.training ?? '',
-  };
-  const programmeScenes: Record<
-    typeof school.slug,
-    readonly AcademyAssetKey[]
-  > = {
-    psychology: ['psychology', 'parenting', 'study', 'quiet'],
-    languages: ['lounge', 'conversation', 'online', 'study'],
-    training: ['atelier', 'training', 'workshop', 'detail'],
   };
 
   return (
@@ -262,24 +247,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 <span className={styles.programIndex}>
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                {program.image ? (
-                  <EditorialMedia
-                    className={styles.programMedia}
-                    school={school.slug}
-                    asset={program.image}
-                  />
-                ) : (
-                  <AcademyImage
-                    className={`${styles.programMedia} ${styles.programIllustration}`}
-                    asset={
-                      programmeScenes[school.slug][
-                        index % programmeScenes[school.slug].length
-                      ] ?? 'detail'
-                    }
-                    locale={locale}
-                    sizes="(max-width: 720px) 100vw, 45vw"
-                  />
-                )}
+                <ProgrammeMedia
+                  className={styles.programMedia}
+                  programme={program.media}
+                  locale={locale}
+                  sizes="(max-width: 720px) 100vw, 45vw"
+                />
                 <h3 id={`school-programme-${index + 1}-title`} dir="auto">
                   {program.slug ? (
                     <Link

@@ -38,7 +38,7 @@
   background: color-mix(in srgb, var(--color-brand-ink) 88%, transparent);
   color: var(--color-brand-surface);
   font-family: var(--font-sans);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.5;
   letter-spacing: 0.015em;

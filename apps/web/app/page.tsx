@@ -9,6 +9,9 @@ import Link from 'next/link';
 
 import { AcademyImage } from '../components/academy-image';
 import { CinematicScroll } from '../components/cinematic-scroll';
+import { EnquiryForm } from '../components/enquiry-form';
+import { LearningFilm } from '../components/learning-film';
+import { StockImage } from '../components/stock-image';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
@@ -17,6 +20,7 @@ import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import { getSchools } from '../lib/schools';
+import { academyTestimonials, testimonialCopy } from '../lib/testimonials';
 import styles from './home.module.css';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,7 +56,7 @@ export default async function Page() {
   const publicCopy = getPublicCopy(locale);
   const copy = experienceCopy[locale];
   const schools = Object.values(getSchools(locale));
-  const chapterAssets = ['detail', 'lounge', 'atelier'] as const;
+  const voices = testimonialCopy[locale];
 
   return (
     <>
@@ -70,15 +74,30 @@ export default async function Page() {
           />
           <div className={styles.heroShade} />
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>{copy.welcome}</p>
+            <p className={styles.welcome}>{copy.welcome}</p>
             <h1 id="hero-title">
               {copy.title} <em>{copy.accent}</em>
             </h1>
             <p className={styles.heroLede}>{copy.intro}</p>
-            <Link className={styles.whiteButton} href="#schools">
-              {copy.explore}
-              <span aria-hidden="true">↗</span>
-            </Link>
+            <div className={styles.heroActions}>
+              <Link
+                className={styles.whiteButton}
+                href={localizeHref(locale, '/programmes')}
+              >
+                {copy.explore}
+                <span aria-hidden="true">↗</span>
+              </Link>
+              <Link
+                className={styles.ghostButton}
+                href={localizeHref(
+                  locale,
+                  '/consultations#consultation-enquiry',
+                )}
+              >
+                {copy.consultation}
+                <span aria-hidden="true">↗</span>
+              </Link>
+            </div>
           </div>
           <div className={styles.heroBottom}>
             <span>{copy.location}</span>
@@ -107,21 +126,21 @@ export default async function Page() {
           className={`${styles.section} ${styles.spirit}`}
           aria-labelledby="spirit-title"
         >
-          <div className={styles.spiritImages}>
-            <AcademyImage
-              asset="about"
+          <div className={styles.spiritImages} data-depth-scene>
+            <StockImage
+              asset="community"
               locale={locale}
               className={styles.spiritPortrait}
               sizes="(max-width: 700px) 65vw, 32vw"
             />
-            <AcademyImage
-              asset="study"
+            <StockImage
+              asset="online"
               locale={locale}
               className={styles.spiritDetail}
               sizes="(max-width: 700px) 50vw, 22vw"
             />
             <span className={styles.imageStamp} aria-hidden="true">
-              L / A
+              Luminol
             </span>
           </div>
           <div className={styles.spiritCopy} data-reveal>
@@ -135,11 +154,17 @@ export default async function Page() {
               {copy.about}
               <span aria-hidden="true">↗</span>
             </Link>
-            <div className={styles.founderStat}>
-              <strong dir="ltr">
-                30<span>+</span>
-              </strong>
-              <p>{copy.founder}</p>
+            <div className={styles.facts}>
+              <div className={styles.founderStat}>
+                <strong dir="ltr">
+                  30<span>+</span>
+                </strong>
+                <p>{copy.founder}</p>
+              </div>
+              <div className={styles.founderStat}>
+                <strong dir="ltr">0{schools.length}</strong>
+                <p>{copy.schools}</p>
+              </div>
             </div>
           </div>
         </section>
@@ -170,16 +195,31 @@ export default async function Page() {
                   aria-label={`${publicCopy.home.discoverSchool}: ${school.name}`}
                 >
                   <div className={styles.schoolPhoto}>
-                    <AcademyImage
-                      asset={school.slug}
-                      locale={locale}
-                      sizes="(max-width: 700px) 100vw, 34vw"
-                    />
+                    {school.slug === 'psychology' ? (
+                      <AcademyImage
+                        asset="psychology"
+                        locale={locale}
+                        sizes="(max-width: 700px) 100vw, 34vw"
+                      />
+                    ) : (
+                      <StockImage
+                        asset={
+                          school.slug === 'languages' ? 'french' : 'speaking'
+                        }
+                        locale={locale}
+                        sizes="(max-width: 700px) 100vw, 34vw"
+                      />
+                    )}
                     <span className={styles.schoolNumber}>{school.number}</span>
                   </div>
                   <div className={styles.schoolContent}>
                     <h3 id={`school-${school.slug}-title`}>{school.name}</h3>
                     <p>{school.promise}</p>
+                    <ul className={styles.schoolTopics}>
+                      {school.programs.slice(0, 3).map((programme) => (
+                        <li key={programme.title}>{programme.title}</li>
+                      ))}
+                    </ul>
                     <span className={styles.schoolAction}>
                       {publicCopy.home.discoverSchool}
                       <b aria-hidden="true">↗</b>
@@ -203,7 +243,11 @@ export default async function Page() {
           </div>
           <div className={styles.chapters}>
             {copy.chapters.map((chapter, index) => (
-              <article className={styles.chapter} key={chapter.word}>
+              <article
+                className={styles.chapter}
+                key={chapter.word}
+                data-depth-scene
+              >
                 <div className={styles.chapterCopy}>
                   <p className={styles.eyebrow}>{chapter.label}</p>
                   <h3>{chapter.word}</h3>
@@ -219,12 +263,26 @@ export default async function Page() {
                     <span aria-hidden="true">↗</span>
                   </Link>
                 </div>
-                <AcademyImage
-                  asset={chapterAssets[index] ?? 'detail'}
-                  locale={locale}
-                  className={styles.chapterImage}
-                  sizes="(max-width: 700px) 100vw, 60vw"
-                />
+                {index === 0 ? (
+                  <LearningFilm
+                    locale={locale}
+                    className={styles.chapterImage}
+                  />
+                ) : index === 1 ? (
+                  <AcademyImage
+                    asset="lounge"
+                    locale={locale}
+                    className={styles.chapterImage}
+                    sizes="(max-width: 700px) 100vw, 55vw"
+                  />
+                ) : (
+                  <AcademyImage
+                    asset="workshop"
+                    locale={locale}
+                    className={styles.chapterImage}
+                    sizes="(max-width: 700px) 100vw, 60vw"
+                  />
+                )}
               </article>
             ))}
           </div>
@@ -233,6 +291,36 @@ export default async function Page() {
         <div className={styles.programmeFeature}>
           <PublishedProgrammeSpotlight locale={locale} />
         </div>
+
+        <section
+          className={`${styles.section} ${styles.testimonials}`}
+          aria-labelledby="voices-title"
+        >
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.eyebrow}>{voices.eyebrow}</p>
+              <h2 id="voices-title">{voices.title}</h2>
+            </div>
+            <p>{voices.intro}</p>
+          </div>
+          <div className={styles.quoteGrid}>
+            {academyTestimonials.map((review) => (
+              <figure className={styles.quoteCard} key={review.id}>
+                <span aria-hidden="true" className={styles.quoteMark}>
+                  “
+                </span>
+                <blockquote>
+                  <p>{review.quote[locale]}</p>
+                </blockquote>
+                <figcaption>
+                  <strong dir="auto">{review.name}</strong>
+                  <span>{voices.excerptLabel}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <p className={styles.sourceNote}>{voices.sourceNote}</p>
+        </section>
 
         <section
           className={`${styles.section} ${styles.moments}`}
@@ -246,7 +334,7 @@ export default async function Page() {
             <span className={styles.languageLine}>{copy.languages}</span>
           </div>
           <div className={styles.momentsGrid}>
-            {(['parenting', 'online'] as const).map((asset, index) => (
+            {(['atelier', 'online'] as const).map((asset, index) => (
               <Link
                 className={styles.moment}
                 key={asset}
@@ -279,21 +367,27 @@ export default async function Page() {
           className={styles.closing}
           aria-labelledby="closing-title"
         >
-          <span className={styles.closingMonogram} aria-hidden="true">
-            L
-          </span>
-          <div>
+          <div className={styles.closingCopy}>
             <p className={styles.eyebrow}>{copy.closingLabel}</p>
             <h2 id="closing-title">{copy.closingTitle}</h2>
             <p>{copy.closingBody}</p>
+            <StockImage
+              asset="consultation"
+              locale={locale}
+              className={styles.closingImage}
+              sizes="(max-width: 700px) 100vw, 40vw"
+            />
+            <Link
+              className={styles.textLink}
+              href={localizeHref(locale, '/consultations#consultation-enquiry')}
+            >
+              {copy.consultation}
+              <span aria-hidden="true">↗</span>
+            </Link>
           </div>
-          <Link
-            className={styles.roundAction}
-            href={localizeHref(locale, '/contact')}
-          >
-            <span>{copy.enquire}</span>
-            <b aria-hidden="true">↗</b>
-          </Link>
+          <div className={styles.enquirySurface}>
+            <EnquiryForm locale={locale} copy={publicCopy.form} />
+          </div>
         </section>
       </main>
       <SiteFooter />

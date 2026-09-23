@@ -7,7 +7,7 @@
 .hero {
   width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
   margin-inline: auto;
-  padding-block: clamp(3.5rem, 8vw, 7rem) clamp(3rem, 6vw, 5rem);
+  padding-block: clamp(3rem, 4.5vw, 4rem);
 }
 
 .breadcrumbs {
@@ -15,7 +15,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: var(--color-brand-muted);
   font-size: 0.72rem;
   font-weight: 700;
@@ -28,16 +28,16 @@
 
 .heroGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-  gap: clamp(1.5rem, 5vw, 4.5rem);
-  align-items: start;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
 }
 
 .heroCopy h1 {
-  max-width: 15ch;
-  margin: 0.85rem 0 1.5rem;
+  max-width: 19ch;
+  margin: 0.75rem 0 1rem;
   font-family: var(--font-display);
-  font-size: clamp(2.3rem, 5vw, 4.8rem);
+  font-size: clamp(2.3rem, 4.2vw, 4rem);
   font-weight: 500;
   letter-spacing: -0.045em;
   line-height: 1.12;
@@ -47,15 +47,15 @@
   max-width: 48rem;
   margin: 0;
   color: var(--color-brand-ink-soft);
-  font-size: clamp(1rem, 1.4vw, 1.2rem);
-  line-height: 1.85;
+  font-size: clamp(1rem, 1.2vw, 1.08rem);
+  line-height: 1.75;
 }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
   padding: 0;
   list-style: none;
 }
@@ -73,16 +73,20 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 2rem;
+  margin-top: 1.4rem;
 }
 
 .mediaFrame {
   margin: 0;
   overflow: hidden;
   border: 1px solid var(--color-brand-line);
-  border-radius: var(--luminol-media-radius);
+  border-radius: 0;
   background: var(--color-brand-surface);
-  box-shadow: var(--shadow-editorial);
+  box-shadow: none;
+}
+
+.enquiryPanel {
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .mediaFrame img {

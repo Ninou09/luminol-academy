@@ -5,6 +5,7 @@
 .hero {
   position: relative;
   isolation: isolate;
+  overflow: clip;
   min-height: min(850px, calc(100svh - 124px));
   display: flex;
   align-items: center;
@@ -18,7 +19,7 @@
   transform: translateY(var(--scene-y, 0px)) scale(var(--scene-scale, 1.04));
 }
 .heroImage figcaption {
-  display: none;
+  inset-block: 1rem auto;
 }
 .heroShade {
   position: absolute;
@@ -41,7 +42,7 @@
 }
 .eyebrow {
   font-family: var(--font-sans);
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   letter-spacing: 0.17em;
   text-transform: uppercase;
   font-weight: 750;
@@ -51,6 +52,34 @@
 }
 .hero .eyebrow {
   color: var(--color-brand-surface);
+}
+.welcome {
+  font-size: clamp(1.125rem, 1.6vw, 1.6rem);
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+.ghostButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 3.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgb(255 255 255 / 0.6);
+  background: rgb(5 22 30 / 0.25);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 200ms;
+}
+.ghostButton:hover {
+  background: var(--color-brand-ink);
 }
 .hero h1 {
   max-width: 10ch;
@@ -70,7 +99,7 @@
 .heroLede {
   max-width: 26rem;
   line-height: 1.8;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   margin: 1.8rem 0 2rem;
 }
 .whiteButton {
@@ -83,7 +112,7 @@
   background: var(--color-brand-surface);
   color: var(--color-brand-ink);
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 750;
   transition: background 0.2s;
 }
@@ -99,7 +128,7 @@
   inset-inline: var(--luminol-page-gutter);
   display: flex;
   justify-content: space-between;
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   letter-spacing: 0.08em;
   gap: 1.5rem;
 }
@@ -132,7 +161,7 @@
 }
 .schoolRail span {
   color: var(--color-brand-cyan-light);
-  font-size: 0.65rem;
+  font-size: 0.8rem;
 }
 .schoolRail strong {
   font-size: 0.92rem;
@@ -146,49 +175,49 @@
 .section {
   max-width: 1500px;
   margin-inline: auto;
-  padding: clamp(5rem, 9vw, 9rem) var(--luminol-page-gutter);
+  padding: clamp(3rem, 5vw, 5rem) var(--luminol-page-gutter);
 }
 .spirit {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(3rem, 8vw, 8rem);
+  gap: clamp(2rem, 5vw, 5rem);
   align-items: center;
 }
 .spiritImages {
   position: relative;
-  min-height: 38rem;
+  height: clamp(25rem, 34vw, 34rem);
+  perspective: 1200px;
 }
-.spiritPortrait {
+.spiritImages .spiritPortrait {
   position: absolute;
-  width: 72%;
-  height: 86%;
+  width: 86%;
+  height: 80%;
   inset-block-start: 0;
   inset-inline-start: 0;
 }
-.spiritDetail {
+.spiritImages .spiritDetail {
   position: absolute;
-  width: 64%;
-  height: 45%;
+  width: 56%;
+  height: 46%;
   inset-block-end: 0;
   inset-inline-end: 0;
   border: 10px solid var(--color-brand-canvas);
 }
 .imageStamp {
   position: absolute;
-  inset-inline-end: 1.5rem;
-  inset-block-start: 3rem;
+  inset-inline-start: 0;
+  inset-block-end: 0.5rem;
   font-family: var(--font-display);
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-style: italic;
   color: var(--color-brand-cyan-deep);
-  writing-mode: vertical-rl;
 }
 .spiritCopy h2,
 .sectionHeading h2,
 .journeyHeading h2,
 .closing h2 {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 4.6vw, 5.25rem);
+  font-size: clamp(2.7rem, 3.6vw, 4.4rem);
   line-height: 1.02;
   letter-spacing: -0.035em;
   font-weight: 500;
@@ -197,8 +226,8 @@
 }
 .spiritCopy > p:not(.eyebrow) {
   max-width: 31rem;
-  font-size: 0.94rem;
-  line-height: 1.95;
+  font-size: 1rem;
+  line-height: 1.8;
   color: var(--color-brand-muted);
   margin: 1.75rem 0;
 }
@@ -209,23 +238,29 @@
   padding: 0.75rem 0;
   border-bottom: 1px solid currentColor;
   text-decoration: none;
-  font-size: 0.76rem;
+  font-size: 0.9rem;
   font-weight: 750;
 }
 .textLink span {
   font-size: 1.25rem;
 }
 .founderStat {
-  margin-top: 2.5rem;
+  min-width: 0;
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+.facts {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.75rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--color-brand-line);
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
 }
 .founderStat strong {
   font-family: var(--font-display);
-  font-size: 4.2rem;
+  font-size: 3.5rem;
   line-height: 1;
   font-weight: 500;
 }
@@ -233,27 +268,27 @@
   color: var(--color-brand-cyan-deep);
 }
 .founderStat p {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: var(--color-brand-muted);
   max-width: 13rem;
   line-height: 1.7;
 }
 .schools {
   background: var(--color-brand-mist);
-  padding: clamp(5rem, 8vw, 8rem) var(--luminol-page-gutter);
+  padding: clamp(3rem, 5vw, 5rem) var(--luminol-page-gutter);
 }
 .sectionHeading {
   display: grid;
   grid-template-columns: 1.35fr 1fr;
   align-items: end;
   gap: 3rem;
-  margin: 0 auto 3.5rem;
+  margin: 0 auto 2.5rem;
   max-width: 1340px;
 }
 .sectionHeading > p {
   max-width: 27rem;
   color: var(--color-brand-muted);
-  font-size: 0.94rem;
+  font-size: 1rem;
   line-height: 1.9;
   margin: 0;
   justify-self: end;
@@ -283,7 +318,7 @@
 }
 .schoolPhoto {
   position: relative;
-  height: clamp(14rem, 24vw, 23rem);
+  height: clamp(14rem, 20vw, 19rem);
   overflow: hidden;
 }
 .schoolPhoto figure {
@@ -311,7 +346,7 @@
   font-size: 0.7rem;
 }
 .schoolContent {
-  padding: 2rem;
+  padding: 1.5rem;
   border-top: 4px solid var(--school-accent);
   display: flex;
   flex-direction: column;
@@ -320,14 +355,30 @@
 .schoolContent h3 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(2rem, 2.8vw, 3rem);
+  font-size: clamp(1.8rem, 2.5vw, 2.7rem);
+  line-height: 1.15;
   margin: 0 0 1rem;
 }
 .schoolContent p {
-  font-size: 0.82rem;
+  font-size: 0.94rem;
   color: var(--color-brand-muted);
   line-height: 1.85;
-  margin: 0 0 2rem;
+  margin: 0 0 1rem;
+}
+.schoolTopics {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+.schoolTopics li {
+  padding: 0.3rem 0.55rem;
+  background: var(--color-brand-mist);
+  color: var(--color-brand-ink-soft);
+  font-size: 0.75rem;
+  line-height: 1.6;
 }
 .schoolAction {
   display: flex;
@@ -336,7 +387,7 @@
   padding-top: 1rem;
   margin-top: auto;
   border-top: 1px solid var(--color-brand-line);
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   font-weight: 750;
   color: var(--school-accent);
 }
@@ -347,11 +398,11 @@
 .journey {
   background: var(--color-brand-ink);
   color: var(--color-brand-surface);
-  padding: 6rem var(--luminol-page-gutter);
+  padding: clamp(3rem, 5vw, 5rem) var(--luminol-page-gutter) 2rem;
 }
 .journeyHeading {
   max-width: 1340px;
-  margin: 0 auto 4rem;
+  margin: 0 auto 2.5rem;
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 1rem 4rem;
@@ -366,7 +417,7 @@
   align-self: end;
   justify-self: end;
   line-height: 1.9;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--color-brand-line);
 }
 .chapters {
@@ -378,14 +429,14 @@
   top: 128px;
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
-  min-height: 34rem;
+  min-height: 25rem;
   background: var(--color-brand-ink);
   border-top: 1px solid rgb(255 255 255 / 0.25);
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
   box-shadow: 0 -1rem 2rem var(--color-brand-ink);
 }
 .chapterCopy {
-  padding: clamp(2rem, 4vw, 4rem) clamp(1.5rem, 4vw, 4rem) 3rem 0;
+  padding: 2rem clamp(1.5rem, 4vw, 4rem) 2rem 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -398,31 +449,31 @@
   margin: 0 0 1.5rem;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(3rem, 5vw, 5.8rem);
+  font-size: clamp(2.8rem, 4vw, 4.5rem);
   letter-spacing: -0.04em;
 }
 .chapterCopy > p:not(.eyebrow) {
   line-height: 1.9;
   max-width: 27rem;
   color: var(--color-brand-line);
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 .chapterCopy .textLink {
   margin-top: 1.5rem;
   color: var(--color-brand-cyan-light);
 }
 .chapterImage {
-  min-height: 34rem;
+  min-height: 25rem;
 }
 .programmeFeature {
-  padding-top: 5rem;
+  padding-top: 3.5rem;
 }
 .programmeFeature:empty {
   display: none;
 }
 .languageLine {
   justify-self: end;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--color-brand-muted);
   padding-bottom: 0.6rem;
 }
@@ -435,10 +486,10 @@
   text-decoration: none;
 }
 .moment:nth-child(2) {
-  margin-top: 5rem;
+  margin-top: 0;
 }
 .momentImage {
-  height: clamp(16rem, 28vw, 26rem);
+  height: clamp(15rem, 23vw, 21rem);
 }
 .moment > div {
   position: relative;
@@ -448,7 +499,7 @@
   position: absolute;
   inset-inline-start: 0;
   top: 2rem;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   color: var(--color-brand-cyan-deep);
 }
 .moment h3 {
@@ -461,7 +512,7 @@
 .moment p {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   padding: 1rem 0;
   border-bottom: 1px solid var(--color-brand-line);
   color: var(--color-brand-muted);
@@ -470,59 +521,117 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: clamp(4rem, 8vw, 8rem)
+  padding: clamp(3rem, 5vw, 5rem)
     max(var(--luminol-page-gutter), calc((100vw - 1340px) / 2));
   background: var(--color-brand-cyan-pale);
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
   gap: 3rem;
 }
-.closing > div {
+.closingCopy {
   max-width: 48rem;
 }
-.closing p:not(.eyebrow) {
+.closingCopy > p:not(.eyebrow) {
   max-width: 30rem;
   line-height: 1.8;
   margin-top: 1.5rem;
   color: var(--color-brand-ink-soft);
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
-.closingMonogram {
-  position: absolute;
-  z-index: -1;
-  font-family: var(--font-display);
-  font-size: 38rem;
-  line-height: 0.8;
-  color: color-mix(in srgb, var(--color-brand-cyan-deep) 7%, transparent);
-  inset-inline-end: 15%;
-  bottom: -6rem;
+.closingImage {
+  aspect-ratio: 2 / 1;
+  margin-top: 1.75rem;
 }
-.roundAction {
-  width: 11rem;
-  height: 11rem;
-  padding: 2rem;
-  border-radius: 50%;
+.enquirySurface {
+  background: var(--color-brand-surface);
+  padding: clamp(1.25rem, 2.5vw, 2.5rem);
+}
+.enquirySurface :global(.enquiry-form) {
+  margin: 0;
+}
+.enquirySurface :global(.form-heading h2) {
+  font-size: 2rem;
+}
+.enquirySurface :global(.form-heading p) {
+  line-height: 1.7;
+}
+.testimonials {
+  padding-bottom: 1.5rem;
+}
+.quoteGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.quoteCard {
+  margin: 0;
+  padding: 1.75rem;
+  background: var(--color-brand-mist);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-  border: 1px solid var(--color-brand-ink);
-  text-decoration: none;
-  font-size: 0.8rem;
-  text-align: center;
-  transition:
-    background 0.25s,
-    color 0.25s;
 }
-.roundAction b {
-  font-size: 2.5rem;
-  font-weight: 400;
-}
-.roundAction:hover {
+.quoteCard:first-child {
   background: var(--color-brand-ink);
-  color: var(--color-brand-surface);
+  color: var(--color-brand-canvas);
+}
+.quoteMark {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  line-height: 0.8;
+  color: var(--color-brand-cyan-deep);
+}
+.quoteCard:first-child .quoteMark {
+  color: var(--color-brand-cyan-light);
+}
+.quoteCard blockquote {
+  margin: 1rem 0 1.5rem;
+  flex: 1;
+}
+.quoteCard blockquote p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  line-height: 1.35;
+}
+.quoteCard figcaption {
+  display: grid;
+  gap: 0.35rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+}
+.quoteCard figcaption strong {
+  font-size: 0.95rem;
+}
+.quoteCard figcaption span,
+.sourceNote {
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
+.sourceNote {
+  color: var(--color-brand-muted);
+  margin: 1rem 0 0;
+}
+.page:dir(rtl) .quoteCard blockquote p {
+  font-family: var(--font-arabic);
+  font-size: 1.3rem;
+  line-height: 1.9;
+}
+.page:dir(rtl) .eyebrow {
+  letter-spacing: normal;
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 1001px) {
+  .spiritImages .spiritPortrait {
+    transform: translateY(calc(var(--depth-progress, 0) * -14px))
+      rotateY(calc(var(--depth-progress, 0) * 3deg));
+  }
+  .spiritImages .spiritDetail {
+    transform: translateY(calc(var(--depth-progress, 0) * 18px));
+  }
+  .chapterImage img {
+    transform: scale(1.06) translateY(calc(var(--depth-progress, 0) * -12px));
+  }
 }
 .page a:focus-visible {
   outline: 3px solid var(--color-brand-cyan);
@@ -564,7 +673,7 @@
 }
 @media (max-width: 1000px) {
   .spiritImages {
-    min-height: 30rem;
+    height: 27rem;
   }
   .schoolGrid {
     gap: 1rem;
@@ -573,14 +682,41 @@
     padding: 1.4rem;
   }
   .chapter {
-    min-height: 30rem;
+    min-height: 24rem;
     top: 128px;
   }
   .chapterImage {
-    min-height: 30rem;
+    min-height: 24rem;
   }
   .chapterCopy h3 {
     font-size: clamp(2.4rem, 4.4vw, 3.5rem);
+  }
+  .facts {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .quoteGrid {
+    grid-template-columns: 1fr;
+  }
+  .quoteCard {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 1rem;
+  }
+  .quoteCard figcaption {
+    grid-column: 2;
+  }
+  .quoteCard blockquote {
+    margin: 0;
+  }
+  .closing {
+    grid-template-columns: 1fr;
+  }
+  .closingCopy {
+    max-width: none;
+  }
+  .closingImage {
+    max-width: 35rem;
   }
 }
 @media (min-width: 701px) and (max-width: 1000px) {
@@ -615,7 +751,7 @@
     );
   }
   .heroCopy {
-    padding: 16rem 1.5rem 6rem;
+    padding: 13rem 1.5rem 6rem;
     margin: 0;
   }
   .hero h1 {
@@ -628,12 +764,12 @@
   .heroLede {
     max-width: 22rem;
     margin-block: 1.3rem 1.5rem;
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
   .heroBottom {
     inset-inline: 1.5rem;
     bottom: 1.5rem;
-    font-size: 0.54rem;
+    font-size: 0.75rem;
   }
   .heroBottom > span {
     max-width: 11rem;
@@ -650,14 +786,14 @@
     font-size: 0.88rem;
   }
   .section {
-    padding: 4.5rem 1.5rem;
+    padding: 3rem 1.5rem;
   }
   .spirit {
     grid-template-columns: 1fr;
-    gap: 2.75rem;
+    gap: 2rem;
   }
   .spiritImages {
-    min-height: 30rem;
+    height: clamp(22rem, 100vw, 30rem);
     max-width: 32rem;
     width: 100%;
     margin: auto;
@@ -666,13 +802,13 @@
   .sectionHeading h2,
   .journeyHeading h2,
   .closing h2 {
-    font-size: 3.25rem;
+    font-size: 2.75rem;
   }
   .page:dir(rtl) h2 {
     font-size: 2.4rem;
   }
   .schools {
-    padding: 4.5rem 1.5rem;
+    padding: 3rem 1.5rem;
   }
   .sectionHeading {
     grid-template-columns: 1fr;
@@ -687,7 +823,7 @@
     gap: 2rem;
   }
   .schoolPhoto {
-    height: 19rem;
+    height: 17rem;
   }
   .schoolContent {
     padding: 1.7rem;
@@ -696,7 +832,7 @@
     font-size: 2.6rem;
   }
   .journey {
-    padding: 4.5rem 1.5rem 1rem;
+    padding: 3rem 1.5rem 1rem;
   }
   .journeyHeading {
     grid-template-columns: 1fr;
@@ -714,7 +850,7 @@
     margin-bottom: 2.5rem;
   }
   .chapterImage {
-    min-height: 19rem;
+    min-height: 17rem;
   }
   .chapterCopy,
   .page:dir(rtl) .chapterCopy {
@@ -734,21 +870,39 @@
     margin-top: 0;
   }
   .momentImage {
-    height: 20rem;
+    height: 17rem;
   }
   .languageLine {
     justify-self: start;
   }
   .closing {
-    padding: 4.5rem 1.5rem;
-    flex-direction: column;
-    align-items: flex-start;
+    padding: 3rem 1.5rem;
     gap: 2rem;
   }
-  .roundAction {
-    width: 8rem;
-    height: 8rem;
-    padding: 1rem;
+  .heroActions {
+    flex-direction: column;
+    align-items: stretch;
+    max-width: 25rem;
+  }
+  .heroImage figcaption {
+    max-width: 70%;
+  }
+  .facts {
+    grid-template-columns: 1fr 1fr;
+  }
+  .founderStat {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+  .quoteCard {
+    padding: 1.25rem;
+  }
+  .quoteCard blockquote p {
+    font-size: 1.7rem;
+  }
+  .enquirySurface :global(.form-grid) {
+    grid-template-columns: 1fr;
   }
 }
 @media (prefers-reduced-motion: reduce) {

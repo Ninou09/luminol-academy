@@ -8,6 +8,48 @@ const certificateTitles = {
 } as const;
 
 for (const locale of ['ar', 'fr', 'en'] as const) {
+  test(`${locale} waitlist imagery is complete across every programme surface`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    for (const route of [
+      '',
+      '/programmes',
+      `/programmes/${slug}`,
+      '/schools/psychology',
+    ]) {
+      await page.goto(`/${locale}${route}`);
+      const media = page.locator('[data-programme-media]').first();
+      await media.scrollIntoViewIfNeeded();
+      await expect(media).toBeVisible();
+      await expect(media).toHaveAttribute('data-programme-media', 'stock');
+      await expect(media).toHaveAttribute(
+        'data-programme-media-source',
+        /^https:\/\//,
+      );
+      await expect(media).toHaveAttribute(
+        'data-programme-media-crop',
+        /focal point/,
+      );
+      const image = media.getByRole('img');
+      await expect(image).toHaveAttribute('alt', /\S+/);
+      await expect
+        .poll(() =>
+          image.evaluate(
+            (element) => (element as HTMLImageElement).naturalWidth,
+          ),
+        )
+        .toBeGreaterThan(0);
+      const source = await image.evaluate((element) => {
+        const url = new URL((element as HTMLImageElement).currentSrc);
+        return url.searchParams.get('url') ?? url.pathname;
+      });
+      expect(source).toBe('/media/stock/reflection.webp');
+      await expect(media.locator('figcaption')).toBeVisible();
+      await expect(media.locator('figcaption')).not.toBeEmpty();
+    }
+  });
+
   test(`${locale} school programme enquiry preserves the selected course without JavaScript`, async ({
     browser,
     baseURL,

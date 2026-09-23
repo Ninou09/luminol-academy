@@ -1,5 +1,7 @@
 # Luminol public website — editorial redesign
 
+The September 24 continuation adds denser layouts, topic-specific stock media, a lightweight film, real testimonial excerpts and a homepage enquiry form. See [the current refinement notes](../../docs/dense-cinematic-refinement.md) and [testimonial provenance](../../docs/testimonial-provenance.md). Validation: 996 unit tests and all 149 public browser cases pass; CI and preview status are recorded on PR #552. The sections below document the earlier design work.
+
 ## Direction
 
 The reference video (https://www.youtube.com/watch?v=h2MjhbwVKLk) was analyzed from its full 15:20 auto-generated transcript. Its useful principles are visual storytelling through scroll, deliberate camera/image composition, consistent brand details, and a separately composed mobile layout. This implementation uses lightweight photographic parallax and native sticky story chapters, not a video frame sequence. Reduced-motion preferences disable both effects.

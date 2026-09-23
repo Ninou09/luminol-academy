@@ -7,11 +7,11 @@ import {
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { ProgrammeEnquiryCard } from '../../../components/programme-enquiry-card';
+import { ProgrammeMedia } from '../../../components/programme-media';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { buildProgrammeContactHref } from '../../../lib/programme-contact';
 import { getPublicProgrammeBySlug } from '../../../lib/programme-detail';
@@ -313,23 +313,21 @@ export default async function ProgrammeDetailPage({
             </div>
 
             <div className={styles.heroAside}>
-              {!isWaitlist && programme.image ? (
-                <figure className={styles.mediaFrame}>
-                  <Image
-                    src={buildSanityProgrammeImageUrl(programme.image)}
-                    alt={programme.image.alt}
-                    width={1200}
-                    height={675}
-                    priority
-                    sizes="(max-width: 900px) 100vw, 46vw"
-                  />
-                </figure>
-              ) : null}
-              <ProgrammeEnquiryCard
+              <ProgrammeMedia
+                className={styles.mediaFrame}
+                programme={programme}
                 locale={locale}
-                programmeSlug={programme.slug.current}
+                priority
+                sizes="(max-width: 900px) 100vw, 46vw"
               />
             </div>
+          </div>
+          <div className={styles.enquiryPanel}>
+            <ProgrammeEnquiryCard
+              locale={locale}
+              programmeSlug={programme.slug.current}
+              variant="wide"
+            />
           </div>
         </section>
 

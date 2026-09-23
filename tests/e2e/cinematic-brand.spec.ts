@@ -50,28 +50,53 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
   page,
 }) => {
   await page.goto('/en');
-  const scenes = page.locator('main [data-academy-media]');
+  const scenes = page.locator(
+    'main [data-academy-media], main [data-stock-media]',
+  );
   const sources: string[] = [];
   for (const scene of await scenes.all()) {
-    await expect(scene).toHaveAttribute(
-      'data-media-source',
-      '/media/academy/manifest.json',
-    );
-    await expect(scene).toHaveAttribute(
-      'data-media-license',
-      /AI-generated editorial illustration/,
-    );
+    if (await scene.getAttribute('data-stock-media')) {
+      await expect(scene).toHaveAttribute(
+        'data-media-source',
+        /^https:\/\/www.pexels.com\/photo\//,
+      );
+      await expect(scene).toHaveAttribute(
+        'data-media-license',
+        'Pexels License',
+      );
+      await expect(scene).toHaveAttribute(
+        'data-media-publication-approved',
+        'true',
+      );
+      await expect(scene.locator('figcaption')).toContainText(
+        'Stock photograph',
+      );
+    } else {
+      await expect(scene).toHaveAttribute(
+        'data-media-source',
+        '/media/academy/manifest.json',
+      );
+      await expect(scene).toHaveAttribute(
+        'data-media-license',
+        /AI-generated editorial illustration/,
+      );
+      await expect(scene.locator('figcaption')).toContainText(
+        'AI illustration',
+      );
+    }
     await expect(scene).toHaveAttribute('data-media-crop', /focal point/);
     const image = scene.getByRole('img');
     await expect(image).toHaveAttribute('alt', /.+/);
     const src = await image.getAttribute('src');
     expect(src).toBeTruthy();
-    sources.push(src!);
+    sources.push(
+      new URL(src!, 'http://localhost').searchParams.get('url') ?? src!,
+    );
   }
   expect(sources.length).toBeGreaterThanOrEqual(10);
   expect(new Set(sources).size).toBe(sources.length);
   await expect(page.locator('[data-school="languages"] img')).toHaveAttribute(
     'alt',
-    /Algerian, French and British flags/,
+    /bookstall/,
   );
 });

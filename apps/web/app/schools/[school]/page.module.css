@@ -610,6 +610,11 @@
   .relatedGrid {
     grid-template-columns: 1fr;
   }
+  .audience li {
+    min-height: 4.5rem;
+    align-items: center;
+    padding-block: 1rem;
+  }
 
   .relatedGrid a:nth-child(odd) {
     border-inline-end: 0;

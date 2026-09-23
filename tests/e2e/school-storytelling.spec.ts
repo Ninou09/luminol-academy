@@ -63,19 +63,22 @@ test('premium school storytelling preserves landmarks and governed media', async
     .getAttribute('aria-label');
   expect(contactActionLabel).toContain(firstProgrammeTitle);
 
-  const mediaSources = await page
-    .locator('[data-programme-card] [data-media-source]')
-    .evaluateAll((elements) =>
-      elements.map((element) => element.getAttribute('data-media-source')),
+  const programmeMedia = page.locator(
+    '[data-programme-card] [data-programme-media]',
+  );
+  await expect(programmeMedia).toHaveCount(await programmeCards.count());
+  for (const media of await programmeMedia.all()) {
+    await expect(media).toHaveAttribute(
+      'data-programme-media',
+      /^(stock|illustration|sanity)$/,
     );
-
-  expect(mediaSources.length).toBeGreaterThan(0);
-  expect(
-    mediaSources.every(
-      (source) =>
-        source === '/media/academy/manifest.json' || source === 'sanity',
-    ),
-  ).toBeTruthy();
+    await expect(media).toHaveAttribute(
+      'data-programme-media-source',
+      /^(https:\/\/|\/media\/)/,
+    );
+    await expect(media).toHaveAttribute('data-programme-media-crop', /\S+/);
+    await expect(media.getByRole('img')).toHaveAttribute('alt', /\S+/);
+  }
 });
 
 test('school reduced motion keeps the editorial image in place', async ({

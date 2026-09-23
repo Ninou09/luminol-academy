@@ -1,0 +1,311 @@
+{
+  "preparedAt": "2026-09-24",
+  "license": {
+    "name": "Pexels License",
+    "url": "https://www.pexels.com/license/",
+    "verifiedAt": "2026-09-24",
+    "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+  },
+  "photos": [
+    {
+      "key": "reflection",
+      "file": "reflection.webp",
+      "kind": "stock-photograph",
+      "illustrative": true,
+      "depictsActualLuminolPeopleOrPremises": false,
+      "originalAssetId": "4240576",
+      "provider": "Pexels",
+      "sourceAssetUrl": "https://images.pexels.com/photos/4240576/pexels-photo-4240576.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      "downloadedSourceDimensions": {
+        "width": 1125,
+        "height": 750
+      },
+      "dimensions": {
+        "width": 1125,
+        "height": 750
+      },
+      "bytes": 109170,
+      "quality": 84,
+      "license": {
+        "name": "Pexels License",
+        "url": "https://www.pexels.com/license/",
+        "verifiedAt": "2026-09-24",
+        "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+      },
+      "creator": "Ivan S",
+      "sourceUrl": "https://www.pexels.com/photo/woman-writing-in-notebook-4240576/",
+      "focalPoint": "50% 38%",
+      "cropIntent": "Keep the notebook, writing hand and upper body together. Prefer 3:2 or 4:3; do not use a tight face crop. The laptop has a visible manufacturer logo in the lower part; a slightly higher crop deemphasizes it.",
+      "alt": {
+        "en": "Stock photograph of an adult writing in a notebook at a wooden desk with a laptop and books.",
+        "fr": "Photo de banque d’images montrant une adulte qui écrit dans un carnet, à un bureau en bois avec un ordinateur et des livres.",
+        "ar": "صورة من مكتبة صور لشخص بالغ يكتب في دفتر على مكتب خشبي بجانب حاسوب وكتب."
+      },
+      "visualReview": "Downloaded image visually inspected; no content modification, only resize/WebP encoding."
+    },
+    {
+      "key": "consultation",
+      "file": "consultation.webp",
+      "kind": "stock-photograph",
+      "illustrative": true,
+      "depictsActualLuminolPeopleOrPremises": false,
+      "originalAssetId": "5336957",
+      "provider": "Pexels",
+      "sourceAssetUrl": "https://images.pexels.com/photos/5336957/pexels-photo-5336957.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      "downloadedSourceDimensions": {
+        "width": 1154,
+        "height": 750
+      },
+      "dimensions": {
+        "width": 1154,
+        "height": 750
+      },
+      "bytes": 56726,
+      "quality": 84,
+      "license": {
+        "name": "Pexels License",
+        "url": "https://www.pexels.com/license/",
+        "verifiedAt": "2026-09-24",
+        "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+      },
+      "creator": "Tima Miroshnichenko",
+      "sourceUrl": "https://www.pexels.com/photo/two-men-talking-together-5336957/",
+      "focalPoint": "58% 52%",
+      "cropIntent": "Keep both seated adults and their conversational relationship visible. Prefer 3:2 or 16:9; avoid a narrow portrait crop. Do not label either person as having a diagnosis or as a Luminol clinician/client.",
+      "alt": {
+        "en": "Stock photograph of two adults seated opposite each other in a room, one holding a notebook.",
+        "fr": "Photo de banque d’images montrant deux adultes assis face à face dans une pièce, dont l’un tient un carnet.",
+        "ar": "صورة من مكتبة صور لشخصين بالغين يجلسان متقابلين في غرفة، ويحمل أحدهما دفترًا."
+      },
+      "visualReview": "Downloaded image visually inspected; no content modification, only resize/WebP encoding."
+    },
+    {
+      "key": "english",
+      "file": "english.webp",
+      "kind": "stock-photograph",
+      "illustrative": true,
+      "depictsActualLuminolPeopleOrPremises": false,
+      "originalAssetId": "5427868",
+      "provider": "Pexels",
+      "sourceAssetUrl": "https://images.pexels.com/photos/5427868/pexels-photo-5427868.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      "downloadedSourceDimensions": {
+        "width": 1125,
+        "height": 750
+      },
+      "dimensions": {
+        "width": 1125,
+        "height": 750
+      },
+      "bytes": 40114,
+      "quality": 84,
+      "license": {
+        "name": "Pexels License",
+        "url": "https://www.pexels.com/license/",
+        "verifiedAt": "2026-09-24",
+        "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+      },
+      "creator": "Tima Miroshnichenko",
+      "sourceUrl": "https://www.pexels.com/photo/woman-teaching-english-in-class-5427868/",
+      "focalPoint": "53% 45%",
+      "cropIntent": "Retain the instructor, seated learner and the English heading on the whiteboard. Best at 3:2. The board uses alphabet magnets and elementary phrases; appropriate to foundational English, not advanced professional language claims.",
+      "alt": {
+        "en": "Stock photograph of a teacher beside a whiteboard marked English, facing a seated learner.",
+        "fr": "Photo de banque d’images montrant une enseignante près d’un tableau portant le mot « English », face à une apprenante assise.",
+        "ar": "صورة من مكتبة صور لمعلّمة بجوار لوحة كُتبت عليها كلمة «English»، أمام متعلّمة جالسة."
+      },
+      "visualReview": "Downloaded image visually inspected; no content modification, only resize/WebP encoding."
+    },
+    {
+      "key": "french",
+      "file": "french.webp",
+      "kind": "stock-photograph",
+      "illustrative": true,
+      "depictsActualLuminolPeopleOrPremises": false,
+      "originalAssetId": "28345117",
+      "provider": "Pexels",
+      "sourceAssetUrl": "https://images.pexels.com/photos/28345117/pexels-photo-28345117/free-photo-of-a-woman-is-standing-in-front-of-a-book-stand.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      "downloadedSourceDimensions": {
+        "width": 500,
+        "height": 750
+      },
+      "dimensions": {
+        "width": 500,
+        "height": 750
+      },
+      "bytes": 41604,
+      "quality": 84,
+      "license": {
+        "name": "Pexels License",
+        "url": "https://www.pexels.com/license/",
+        "verifiedAt": "2026-09-24",
+        "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+      },
+      "creator": "Céline |",
+      "sourceUrl": "https://www.pexels.com/photo/a-woman-is-standing-in-front-of-a-book-stand-28345117/",
+      "focalPoint": "49% 52%",
+      "cropIntent": "Portrait source. Preserve bookstall and browsing person; use 2:3 or 4:5 if possible. For landscape programme cards, focal 49% 52% keeps the books and person but loses most of the distant cathedral. Label as cultural inspiration, not a Luminol campus or organized trip.",
+      "alt": {
+        "en": "Stock photograph of a person browsing a riverside bookstall in Paris, with Notre-Dame in the background.",
+        "fr": "Photo de banque d’images montrant une personne qui regarde les livres d’un bouquiniste à Paris, avec Notre-Dame en arrière-plan.",
+        "ar": "صورة من مكتبة صور لشخص يتصفّح كتبًا لدى بائع على ضفة النهر في باريس، وتظهر كاتدرائية نوتردام في الخلفية."
+      },
+      "visualReview": "Downloaded image visually inspected; no content modification, only resize/WebP encoding."
+    },
+    {
+      "key": "online",
+      "file": "online.webp",
+      "kind": "stock-photograph",
+      "illustrative": true,
+      "depictsActualLuminolPeopleOrPremises": false,
+      "originalAssetId": "4443160",
+      "provider": "Pexels",
+      "sourceAssetUrl": "https://images.pexels.com/photos/4443160/pexels-photo-4443160.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      "downloadedSourceDimensions": {
+        "width": 1125,
+        "height": 750
+      },
+      "dimensions": {
+        "width": 1125,
+        "height": 750
+      },
+      "bytes": 70712,
+      "quality": 84,
+      "license": {
+        "name": "Pexels License",
+        "url": "https://www.pexels.com/license/",
+        "verifiedAt": "2026-09-24",
+        "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+      },
+      "creator": "Polina Tankilevitch",
+      "sourceUrl": "https://www.pexels.com/photo/a-person-holding-a-digital-tablet-4443160/",
+      "focalPoint": "42% 52%",
+      "cropIntent": "Keep the tablet, stylus and headphones. Use 3:2 or 4:3. The tablet visibly reads courses; the laptop screen is background detail.",
+      "alt": {
+        "en": "Stock photograph of a person wearing headphones using a stylus on a tablet beside a laptop and an open notebook.",
+        "fr": "Photo de banque d’images montrant une personne avec un casque qui utilise un stylet sur une tablette, près d’un ordinateur et d’un carnet ouvert.",
+        "ar": "صورة من مكتبة صور لشخص يرتدي سماعات ويستخدم قلمًا على جهاز لوحي بجانب حاسوب ودفتر مفتوح."
+      },
+      "visualReview": "Downloaded image visually inspected; no content modification, only resize/WebP encoding."
+    },
+    {
+      "key": "speaking",
+      "file": "speaking.webp",
+      "kind": "stock-photograph",
+      "illustrative": true,
+      "depictsActualLuminolPeopleOrPremises": false,
+      "originalAssetId": "8761515",
+      "provider": "Pexels",
+      "sourceAssetUrl": "https://images.pexels.com/photos/8761515/pexels-photo-8761515.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      "downloadedSourceDimensions": {
+        "width": 1123,
+        "height": 750
+      },
+      "dimensions": {
+        "width": 1123,
+        "height": 750
+      },
+      "bytes": 46934,
+      "quality": 84,
+      "license": {
+        "name": "Pexels License",
+        "url": "https://www.pexels.com/license/",
+        "verifiedAt": "2026-09-24",
+        "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+      },
+      "creator": "Pavel Danilyuk",
+      "sourceUrl": "https://www.pexels.com/photo/a-woman-holding-a-microphone-8761515/",
+      "focalPoint": "27% 44%",
+      "cropIntent": "Speaker is on the left; keep face, microphone and gesturing hand. Use 3:2 or 4:3. Do not centre a portrait crop on the background attendee.",
+      "alt": {
+        "en": "Stock photograph of a woman speaking into a microphone beside a lectern, with an attendee in the background.",
+        "fr": "Photo de banque d’images montrant une femme qui parle dans un microphone près d’un pupitre, avec une participante en arrière-plan.",
+        "ar": "صورة من مكتبة صور لامرأة تتحدث في ميكروفون بجوار منصّة للعرض، وتظهر إحدى الحاضرات في الخلفية."
+      },
+      "visualReview": "Downloaded image visually inspected; no content modification, only resize/WebP encoding."
+    },
+    {
+      "key": "community",
+      "file": "community.webp",
+      "kind": "stock-photograph",
+      "illustrative": true,
+      "depictsActualLuminolPeopleOrPremises": false,
+      "originalAssetId": "27175732",
+      "provider": "Pexels",
+      "sourceAssetUrl": "https://images.pexels.com/photos/27175732/pexels-photo-27175732/free-photo-of-young-adults-studying-outdoors-on-a-laptop.jpeg?auto=compress&dpr=1&h=750&w=1260",
+      "downloadedSourceDimensions": {
+        "width": 1125,
+        "height": 750
+      },
+      "dimensions": {
+        "width": 1125,
+        "height": 750
+      },
+      "bytes": 136758,
+      "quality": 84,
+      "license": {
+        "name": "Pexels License",
+        "url": "https://www.pexels.com/license/",
+        "verifiedAt": "2026-09-24",
+        "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+      },
+      "creator": "Helena Lopes",
+      "sourceUrl": "https://www.pexels.com/photo/young-adults-studying-outdoors-on-a-laptop-27175732/",
+      "focalPoint": "48% 46%",
+      "cropIntent": "Keep both adults, the laptop and the picnic blanket visible. Use 3:2 or 4:3. The photograph shows informal outdoor device use; do not claim a specific course or campus.",
+      "alt": {
+        "en": "Stock photograph of two adults sitting on a picnic blanket outdoors, one using a laptop and the other holding a phone.",
+        "fr": "Photo de banque d’images montrant deux adultes sur une couverture à l’extérieur, l’une utilisant un ordinateur et l’autre tenant un téléphone.",
+        "ar": "صورة من مكتبة صور لشخصين بالغين يجلسان على بطانية في الهواء الطلق، يستخدم أحدهما حاسوبًا ويحمل الآخر هاتفًا."
+      },
+      "visualReview": "Downloaded image visually inspected; no content modification, only resize/WebP encoding."
+    }
+  ],
+  "video": {
+    "key": "notebook",
+    "file": "notebook.mp4",
+    "poster": "notebook-poster.webp",
+    "kind": "stock-video",
+    "illustrative": true,
+    "depictsActualLuminolPeopleOrPremises": false,
+    "provider": "Pexels",
+    "creator": "SHVETS production",
+    "originalAssetId": "7192325",
+    "sourceUrl": "https://www.pexels.com/video/writing-on-a-notebook-7192325/",
+    "sourceAssetUrl": "https://videos.pexels.com/video-files/7192325/7192325-uhd_3840_2160_25fps.mp4",
+    "license": {
+      "name": "Pexels License",
+      "url": "https://www.pexels.com/license/",
+      "verifiedAt": "2026-09-24",
+      "summary": "Free website/commercial use and modification; attribution appreciated. Do not imply endorsement or portray identifiable people in a bad light."
+    },
+    "sourceDimensions": {
+      "width": 3840,
+      "height": 2160
+    },
+    "sourceDurationSeconds": 10.72,
+    "sourceTrim": {
+      "startSeconds": 1,
+      "durationSeconds": 6
+    },
+    "dimensions": {
+      "width": 1280,
+      "height": 720
+    },
+    "durationSeconds": 6,
+    "bytes": 726090,
+    "posterBytes": 24486,
+    "codec": "H.264",
+    "pixelFormat": "yuv420p",
+    "framesPerSecond": 25,
+    "audioStreams": 0,
+    "fastStart": true,
+    "focalPoint": "42% 55%",
+    "cropIntent": "Preserve writing hand and notebook. Keep 16:9 or 4:3; the quiet blank desk area can support overlaid text if contrast remains sufficient.",
+    "alt": {
+      "en": "Stock footage of hands writing in a notebook beside a keyboard and mouse.",
+      "fr": "Vidéo de banque d’images montrant des mains qui écrivent dans un carnet, près d’un clavier et d’une souris.",
+      "ar": "مقطع من مكتبة فيديو يُظهر يدين تكتبان في دفتر بجوار لوحة مفاتيح وفأرة."
+    },
+    "visualReview": "Frames at start/middle/end reviewed before and after encoding. Slow natural writing motion, no cuts or flashes. No audio track. A visible pause control and reduced-motion still fallback are appropriate."
+  }
+}
