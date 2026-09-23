@@ -10,11 +10,13 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { AcademyImage } from '../../../components/academy-image';
+import type { AcademyAssetKey } from '../../../lib/academy-media';
 import {
   EditorialMedia,
   type EditorialMediaAsset,
 } from '../../../components/editorial-media';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { buildProgrammeContactHref } from '../../../lib/programme-contact';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
@@ -160,6 +162,14 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     languages: styles.languages ?? '',
     training: styles.training ?? '',
   };
+  const programmeScenes: Record<
+    typeof school.slug,
+    readonly AcademyAssetKey[]
+  > = {
+    psychology: ['psychology', 'parenting', 'study', 'quiet'],
+    languages: ['lounge', 'conversation', 'online', 'study'],
+    training: ['atelier', 'training', 'workshop', 'detail'],
+  };
 
   return (
     <>
@@ -252,11 +262,24 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 <span className={styles.programIndex}>
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <EditorialMedia
-                  className={styles.programMedia}
-                  school={school.slug}
-                  asset={program.image}
-                />
+                {program.image ? (
+                  <EditorialMedia
+                    className={styles.programMedia}
+                    school={school.slug}
+                    asset={program.image}
+                  />
+                ) : (
+                  <AcademyImage
+                    className={`${styles.programMedia} ${styles.programIllustration}`}
+                    asset={
+                      programmeScenes[school.slug][
+                        index % programmeScenes[school.slug].length
+                      ] ?? 'detail'
+                    }
+                    locale={locale}
+                    sizes="(max-width: 720px) 100vw, 45vw"
+                  />
+                )}
                 <h3 id={`school-programme-${index + 1}-title`} dir="auto">
                   {program.slug ? (
                     <Link
@@ -275,7 +298,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 ) : null}
                 <p dir="auto">{program.description}</p>
                 <Link
-                  href={localizeHref(locale, '/contact')}
+                  href={
+                    program.slug
+                      ? buildProgrammeContactHref(locale, program.slug)
+                      : localizeHref(locale, '/contact')
+                  }
                   aria-label={`${program.actionLabel ?? copy.askProgram}: ${program.title}`}
                 >
                   {program.actionLabel ?? copy.askProgram}{' '}

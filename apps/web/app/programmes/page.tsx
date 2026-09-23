@@ -145,7 +145,35 @@ export default async function ProgrammesPage({
         </section>
 
         <section className={`section-shell ${styles.discovery}`}>
+          <nav
+            className={styles.schoolTabs}
+            aria-label={copy.schoolLabel}
+            data-programme-pathways
+          >
+            {[
+              { slug: '', name: copy.allSchools },
+              ...Object.values(schools),
+            ].map((school) => {
+              const query = new URLSearchParams();
+              if (filters.query) query.set('q', filters.query);
+              if (filters.language) query.set('language', filters.language);
+              if (school.slug) query.set('school', school.slug);
+              return (
+                <Link
+                  key={school.slug}
+                  href={`${localizeHref(locale, '/programmes')}${query.size ? `?${query}` : ''}`}
+                  aria-current={
+                    (filters.school ?? '') === school.slug ? 'true' : undefined
+                  }
+                >
+                  {school.name}
+                  <span aria-hidden="true">↗</span>
+                </Link>
+              );
+            })}
+          </nav>
           <form
+            key={`${filters.query}:${filters.school ?? ''}:${filters.language ?? ''}`}
             className={styles.filters}
             action={localizeHref(locale, '/programmes')}
             method="get"

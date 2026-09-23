@@ -271,7 +271,7 @@
   gap: clamp(1rem, 1.7vw, 1.9rem);
 }
 .nav a {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   letter-spacing: 0.02em;
   text-transform: none;
   font-weight: 600;
@@ -296,7 +296,7 @@
   min-height: 44px;
   padding: 0.5rem 0 0.5rem 0.75rem;
   font: inherit;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -491,5 +491,121 @@
   }
   .footerSignature span {
     font-size: 0.5rem;
+  }
+}
+
+/* Readable editorial footer and a photographic menu, with no continuous motion. */
+.footerBrand p,
+.footerColumn p {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+.footerSchools {
+  display: grid;
+  gap: 0.1rem;
+  margin-top: 1.5rem;
+  max-width: 22rem;
+}
+.footerSchools a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  min-height: 44px;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-brand-canvas) 18%, transparent);
+  font-size: 0.8rem;
+  color: var(--color-brand-canvas);
+  text-decoration: none;
+}
+.footerSchools a span {
+  color: var(--color-brand-cyan-light);
+}
+.footerSchools a:hover,
+.footerNav a:hover {
+  color: var(--color-brand-cyan-light);
+}
+.footerSignature {
+  text-transform: none;
+  font-style: italic;
+  font-size: clamp(5rem, 11vw, 12rem);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  color: var(--color-brand-canvas);
+}
+.footerSignature span {
+  font-style: normal;
+}
+.footerMain {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.65fr) minmax(0, 0.8fr);
+  gap: clamp(2rem, 6vw, 6rem);
+}
+.menuFeature {
+  min-width: 0;
+  align-self: center;
+}
+.menuPhoto {
+  aspect-ratio: 3 / 2;
+}
+.menuSignature {
+  font-size: clamp(3rem, 6vw, 6rem);
+  margin-top: 1.2rem;
+  line-height: 1;
+}
+.menuSignature span {
+  margin-top: 0.6rem;
+}
+.menuDialog[open] .menuBody {
+  animation: menu-arrive 350ms var(--luminol-ease-out);
+}
+.menuNav a {
+  transition:
+    color 200ms,
+    padding-inline-start 250ms var(--luminol-ease-out);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .menuNav a:hover {
+    padding-inline-start: 0.7rem;
+  }
+}
+@keyframes menu-arrive {
+  from {
+    opacity: 0.5;
+    translate: 0 1rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (max-width: 960px) {
+  .footerMain {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .menuPhoto {
+    aspect-ratio: 2 / 1;
+  }
+  .menuSignature {
+    display: none;
+  }
+  .footerMain {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .footerSignature {
+    font-size: clamp(3.2rem, 18vw, 7rem);
+  }
+  .menuToggle {
+    min-width: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .menuDialog[open] .menuBody {
+    animation: none;
   }
 }

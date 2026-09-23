@@ -300,3 +300,67 @@
     min-height: 19rem;
   }
 }
+
+.routingHeader {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+}
+.routing h2,
+.authority h2,
+.enquiryContext h2 {
+  font-size: clamp(2.3rem, 3.5vw, 3.8rem);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.pathCard {
+  min-height: 0;
+  border: 0;
+  border-top: 2px solid var(--color-school-psychology);
+  padding: 1.6rem;
+  background: var(--color-school-psychology-soft);
+}
+.pathCard span {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-brand-surface);
+  color: var(--color-school-psychology);
+}
+.pathCard h3 {
+  margin-top: 1.8rem;
+}
+.authority {
+  border: 0;
+  border-radius: 0;
+  background: var(--color-brand-mist);
+  box-shadow: none;
+  gap: 3rem;
+}
+.authorityLead {
+  grid-template-columns: 1fr;
+}
+.enquiry {
+  border-radius: 0;
+}
+.formSurface {
+  border-radius: 0.35rem;
+}
+@media (max-width: 860px) {
+  .routingHeader {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .authority,
+  .enquiry {
+    padding: 1.5rem;
+  }
+}
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: clamp(2.5rem, 10vw, 3.8rem);
+  }
+  .hero {
+    padding-block: 2.5rem;
+  }
+}

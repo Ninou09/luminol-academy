@@ -18,9 +18,21 @@ Kent College (https://kentcollege.com/) informed the community photography and c
 
 The owner explicitly asked to integrate the previously commissioned AI-generated academy asset kit and add diverse realistic assets. `public/media/academy/manifest.json` records source, owner authorization and illustrative status. Localized descriptions, crop intent and focal positions live in `lib/academy-media.ts`. These illustrative scenes are not evidence of actual Luminol staff, students, premises or outcomes.
 
-One new image was generated with the built-in image-generation tool: `public/media/academy/community-courtyard.webp`. All other new project images come from the owner's Luminol Website Asset Kit v3. The homepage uses distinct scenes for the hero, community, school cards, learning chapters and learning formats.
+Three images were generated with the built-in image-generation tool: `community-courtyard.webp`, `ideas-atelier.webp` and `conversation-lounge.webp`. The other 15 project images come from the owner's Luminol Website Asset Kit v3. The homepage uses distinct scenes for the hero, community, school cards, learning chapters and learning formats. Each AcademyImage now displays a localized AI-illustration caption, in addition to its localized alt text and source/crop metadata.
 
 New hero prompt: Wide 16:9 candid editorial photograph of three North African adult learners, aged 22–30, walking and talking with notebooks in a modest sunlit Mediterranean courtyard. Cream headscarf/navy overshirt, olive cardigan and light-blue shirt; group in the right two-thirds, shaded foliage and limestone to the left for the heading. Natural late-afternoon light, realistic skin, hair and hands, 35mm documentary photography, no invented school signage, logos, text, uniforms, certificates or glamour retouching.
+
+## September 23 refinement
+
+Continued from verified branch commit `b45180a6a621aea10c0a5461b6e6f518180772fc`, with no replacement project. The supplied About screenshots and the live three-language, three-viewport audit exposed oversized headings in narrow columns and long, visually empty sections. The founding story now pairs a full-width heading with a study photograph and readable text; the values section pairs a conversation scene with compact numbered principles. Three photographic school links replace the empty orbital diagram. A courtyard invitation closes the page.
+
+School pages now use distinct, governed programme illustrations only when CMS imagery is absent. Tablet heading scale and mobile photo ratios avoid clipping and awkward face crops. Contact has a direct enquiry anchor, readable school choices at 320px and compact tablet cards. Consultations retain their existing clinical routing and copy, with clearer service hierarchy. The menu gains a learning scene and a short entrance transition; the footer offers direct school links. Existing scroll storytelling remains, with reduced-motion fallbacks. No video or animation dependency was added.
+
+The new atelier scene shows adults developing ideas with a facilitator, while the reading lounge shows a small language conversation. These original imagined scenes add varied compositions rather than repeating classroom rows. Their 1440px WebP files total 246,750 bytes (about 241 KiB), with lazy loading outside the hero and responsive Next image delivery. They depict no identified Luminol person or premises.
+
+Programme school shortcuts retain the current search and language, update the native dropdown after client navigation and reset correctly. School programme enquiry links now carry course context in server-rendered HTML, including with JavaScript disabled. Regression coverage exercises all three locales. A Windows-only Prisma generation failure discovered during validation is fixed by invoking the installed CLI through Node instead of spawning a `.cmd` shim; schema and database behavior are unchanged.
+
+Additional research included Motion's official scroll examples (https://motion.dev/docs/react-scroll-animations) and its public repository (https://github.com/motiondivision/motion). The implementation keeps native CSS/HTML effects and does not copy reference code or media. The supplied ZIP documents were treated as reference material, not task instructions.
 
 ## Verification
 
@@ -29,6 +41,6 @@ New hero prompt: Wide 16:9 candid editorial photograph of three North African ad
 - Root `pnpm test`: pass (986 tests, 114 existing skips).
 - Root `pnpm build`: pass (20 workspace tasks, including public web/admin/portal builds).
 - Live preview visually reviewed in Arabic and English. French copy and locale switching verified. Programme search and programme-to-enquiry context verified without submitting an enquiry. Native menu opens and dismisses with Escape. Arabic hero composition keeps the people clear of its heading.
-- Browser regression coverage now follows the redesigned layout, including 320/390/768px readability in all three languages, navigation, no-JavaScript school links, reduced motion and distinct image provenance. CI results are recorded on PR #552.
+- Public browser suite: 133 tests passed using the production build, including programme fixtures (authenticated operational launch journeys excluded). Browser regression coverage now follows the redesigned layout, including 320/390/768px readability in all three languages, navigation, no-JavaScript school links, reduced motion and distinct image provenance. CI results are recorded on PR #552.
 
 No database, authentication, payment, outbound messaging, operational application or production environment changes are included.

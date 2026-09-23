@@ -8,11 +8,13 @@ export function SiteMenu({
   closeLabel,
   title,
   children,
+  visual,
 }: {
   label: string;
   closeLabel: string;
   title: string;
   children: ReactNode;
+  visual: ReactNode;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
@@ -66,8 +68,11 @@ export function SiteMenu({
         </div>
         <div className={styles.menuBody}>
           {children}
-          <div className={styles.menuSignature} aria-hidden="true">
-            Luminol<span>Academy</span>
+          <div className={styles.menuFeature}>
+            {visual}
+            <div className={styles.menuSignature} aria-hidden="true">
+              Luminol<span>Academy</span>
+            </div>
           </div>
         </div>
       </dialog>

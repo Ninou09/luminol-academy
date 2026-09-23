@@ -13,6 +13,8 @@ import { CurrentPageLink } from './current-page-link';
 import { LanguageSwitcher } from './language-switcher';
 import { AcademyLogo as Wordmark } from './academy-logo';
 import styles from './site-shell.module.css';
+import { AcademyImage } from './academy-image';
+import { getSchools } from '../lib/schools';
 
 const skipToContentLabel = {
   ar: 'انتقل إلى المحتوى الرئيسي',
@@ -112,6 +114,14 @@ export async function SiteHeader() {
               <span aria-hidden="true">↗</span>
             </CurrentPageLink>
             <SiteMenu
+              visual={
+                <AcademyImage
+                  asset="lounge"
+                  locale={locale}
+                  className={styles.menuPhoto}
+                  sizes="(max-width: 700px) 100vw, 40vw"
+                />
+              }
               label={experience.menu}
               closeLabel={experience.close}
               title={experience.navigation}
@@ -165,6 +175,17 @@ export async function SiteFooter() {
             <Wordmark className={styles.footerWordmark ?? ''} />
           </CurrentPageLink>
           <p>{copy.site.footerDisciplines}</p>
+          <div className={styles.footerSchools}>
+            {Object.values(getSchools(locale)).map((school) => (
+              <Link
+                href={localizeHref(locale, `/schools/${school.slug}`)}
+                key={school.slug}
+              >
+                {school.name}
+                <span aria-hidden="true">↗</span>
+              </Link>
+            ))}
+          </div>
         </div>
         <div className={styles.footerColumn}>
           <span>{copy.site.nav.primaryAria}</span>

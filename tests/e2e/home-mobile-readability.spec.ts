@@ -84,14 +84,18 @@ test('Arabic desktop hero preserves its image under reduced motion', async ({
   await expect(page.locator('#top button')).toHaveCount(0);
 });
 
-test('mobile school links work without JavaScript', async ({ browser }) => {
+test('mobile school links work without JavaScript', async ({
+  browser,
+  baseURL,
+}) => {
   const context = await browser.newContext({
     javaScriptEnabled: false,
+    baseURL,
     viewport: { width: 390, height: 900 },
   });
   try {
     const page = await context.newPage();
-    await page.goto('http://127.0.0.1:3000/ar');
+    await page.goto('/ar');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await page.locator('main > nav a[href="/ar/schools/training"]').click();
     await expect(page).toHaveURL(/\/ar\/schools\/training$/);

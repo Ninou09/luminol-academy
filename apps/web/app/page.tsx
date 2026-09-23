@@ -52,7 +52,7 @@ export default async function Page() {
   const publicCopy = getPublicCopy(locale);
   const copy = experienceCopy[locale];
   const schools = Object.values(getSchools(locale));
-  const chapterAssets = ['detail', 'conversation', 'workshop'] as const;
+  const chapterAssets = ['detail', 'lounge', 'atelier'] as const;
 
   return (
     <>

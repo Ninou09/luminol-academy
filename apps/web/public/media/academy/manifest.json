@@ -102,6 +102,24 @@
       "source": "OpenAI built-in image generation",
       "usage": "Editorial illustration",
       "bytes": 95642
+    },
+    {
+      "file": "ideas-atelier.webp",
+      "source": "OpenAI built-in image generation",
+      "created": "2026-09-23",
+      "authorization": "Owner requested original illustrative academy scenes in PR 552 refinement",
+      "usage": "Editorial illustration; fictional people and premises",
+      "scene": "Four adults sharing ideas around a practical workshop table",
+      "bytes": 128182
+    },
+    {
+      "file": "conversation-lounge.webp",
+      "source": "OpenAI built-in image generation",
+      "created": "2026-09-23",
+      "authorization": "Owner requested original illustrative academy scenes in PR 552 refinement",
+      "usage": "Editorial illustration; fictional people and premises",
+      "scene": "Adult language conversation in a reading lounge",
+      "bytes": 118568
     }
   ]
 }

@@ -33,6 +33,20 @@ function illustration(
 
 /** Owner-requested editorial illustrations; never evidence of actual staff or premises. */
 export const academyStoryMedia = {
+  atelier: illustration(
+    'ideas-atelier',
+    'Adult learners and a facilitator developing ideas around a workshop table',
+    'Des adultes et une animatrice développent leurs idées autour d’une table de travail',
+    'متعلمون بالغون وميسّرة يطوّرون أفكارهم حول طاولة ورشة عمل',
+    '50% 42%',
+  ),
+  lounge: illustration(
+    'conversation-lounge',
+    'Two adult learners practising conversation with a tutor in a reading lounge',
+    'Deux apprenantes adultes pratiquent la conversation avec un enseignant dans un salon de lecture',
+    'متعلّمتان بالغتان تتدرّبان على المحادثة مع مدرّس في صالون للقراءة',
+    '50% 40%',
+  ),
   classroom: illustration(
     'home-hero-classroom',
     'An instructor leading a class of adult learners',

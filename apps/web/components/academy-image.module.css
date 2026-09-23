@@ -29,25 +29,19 @@
 
 .credit {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.credit:focus-within {
-  width: auto;
-  height: auto;
   margin: 0;
-  padding: 0.5rem;
-  clip-path: none;
-  inset-inline-end: 0;
-  inset-block-end: 0;
+  padding: 0.4rem 0.65rem;
+  inset-inline-end: 0.65rem;
+  inset-block-end: 0.65rem;
+  max-width: calc(100% - 1.3rem);
   z-index: 3;
-  background: var(--color-brand-ink);
+  background: color-mix(in srgb, var(--color-brand-ink) 88%, transparent);
   color: var(--color-brand-surface);
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.015em;
 }
 
 @media (prefers-reduced-motion: reduce) {

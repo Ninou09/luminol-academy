@@ -670,3 +670,147 @@
     min-height: 27rem;
   }
 }
+
+/* School pages share the calmer scale and varied editorial rhythm. */
+.heroVisual {
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+}
+.hero {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.sectionHeading,
+.relatedHeading {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: clamp(2rem, 5vw, 5rem);
+}
+.sectionHeading h2,
+.methodHeading h2,
+.audience h2,
+.relatedHeading h2,
+.finalCta h2 {
+  font-size: clamp(2.5rem, 4.1vw, 4.5rem);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.sectionHeading h2,
+.relatedHeading h2 {
+  max-width: 22ch;
+}
+.programCard {
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0 0 1.8rem;
+  background: var(--school-soft);
+  overflow: hidden;
+  box-shadow: none;
+}
+.programCard:hover {
+  box-shadow: none;
+}
+.programCard > :not(.programMedia) {
+  margin-inline: 1.7rem;
+}
+.programIndex {
+  padding-top: 1.2rem;
+}
+.programMedia {
+  margin-top: 1rem;
+  border-radius: 0;
+}
+.programIllustration {
+  aspect-ratio: 16 / 10;
+}
+.programCard > a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid
+    color-mix(in srgb, var(--school-accent) 24%, transparent);
+  padding-top: 0.7rem;
+}
+.programCard > h3 {
+  font-size: clamp(1.8rem, 2.7vw, 2.8rem);
+  line-height: 1.15;
+}
+.relatedGrid a {
+  min-height: 8rem;
+  align-items: center;
+  padding: 1.5rem;
+}
+.relatedGrid h3 {
+  font-size: clamp(1.8rem, 2.6vw, 2.8rem);
+  line-height: 1.2;
+}
+.audience li,
+.note {
+  border-radius: 0;
+  background: var(--school-soft);
+}
+.finalCta {
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.finalCta > a {
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+  border-radius: 0;
+  position: relative;
+}
+.finalCtaText {
+  position: relative;
+}
+.finalCta::before {
+  content: '';
+  position: absolute;
+  width: 25rem;
+  aspect-ratio: 1;
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-surface) 15%, transparent);
+  border-radius: 50%;
+  inset-inline-end: -4rem;
+  inset-block-start: -12rem;
+  box-shadow: 0 0 0 3rem
+    color-mix(in srgb, var(--color-brand-surface) 3%, transparent);
+}
+@media (max-width: 1000px) {
+  .hero,
+  .sectionHeading,
+  .relatedHeading {
+    grid-template-columns: 1fr;
+  }
+  .heroVisual {
+    min-height: 0;
+    aspect-ratio: 3 / 2;
+  }
+  .sectionHeading,
+  .relatedHeading {
+    gap: 1.4rem;
+  }
+  .finalCta {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .finalCta > a {
+    justify-self: start;
+  }
+}
+@media (max-width: 720px) {
+  .hero h1 {
+    font-size: clamp(2.7rem, 10vw, 3.5rem);
+  }
+  .relatedGrid a {
+    min-height: 7rem;
+  }
+  .programCard > :not(.programMedia) {
+    margin-inline: 1.3rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .programCard:hover {
+    transform: none;
+  }
+}

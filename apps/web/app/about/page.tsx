@@ -181,7 +181,7 @@ export default async function AboutPage() {
           <AcademyImage
             className={styles.heroVisual}
             school="psychology"
-            asset="classroom"
+            asset="atelier"
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
@@ -192,10 +192,15 @@ export default async function AboutPage() {
           className={`${styles.section} ${styles.origin}`}
           aria-labelledby="about-origin-title"
         >
-          <div data-reveal>
+          <div className={styles.originHeading} data-reveal>
             <p className={styles.eyebrow}>{copy.originEyebrow}</p>
             <h2 id="about-origin-title">{copy.originTitle}</h2>
           </div>
+          <AcademyImage
+            asset="study"
+            locale={locale}
+            className={styles.originImage}
+          />
           <div className={styles.originCopy} data-reveal>
             <p className={styles.originLede}>{copy.originLede}</p>
             <p>{copy.originBodyOne}</p>
@@ -204,7 +209,7 @@ export default async function AboutPage() {
         </section>
 
         <section
-          className={styles.section}
+          className={`${styles.section} ${styles.founder}`}
           aria-labelledby="founder-authority-title"
           data-founder-authority
         >
@@ -215,10 +220,10 @@ export default async function AboutPage() {
             </div>
             <p>{founderAuthority.body}</p>
           </div>
-          <div className={styles.valueGrid}>
+          <div className={styles.founderFacts}>
             {founderAuthority.facts.map((fact) => (
               <article
-                className={styles.valueCard}
+                className={styles.founderFact}
                 key={`${fact.number}-${fact.title}`}
                 data-reveal
               >
@@ -228,7 +233,7 @@ export default async function AboutPage() {
               </article>
             ))}
           </div>
-          <div style={{ marginTop: '2rem' }} data-reveal>
+          <div className={styles.founderAction} data-reveal>
             <ButtonLink href={localizeHref(locale, '/consultations')} size="lg">
               {founderAuthority.action} <span aria-hidden="true">→</span>
             </ButtonLink>
@@ -256,24 +261,31 @@ export default async function AboutPage() {
             </div>
             <p>{copy.valuesBody}</p>
           </div>
-          <div className={styles.valueGrid}>
-            {copy.values.map((value) => {
-              const valueTitleId = `about-value-${value.number}-title`;
+          <div className={styles.valuesLayout}>
+            <AcademyImage
+              asset="lounge"
+              locale={locale}
+              className={styles.valuesImage}
+            />
+            <div className={styles.valueGrid}>
+              {copy.values.map((value) => {
+                const valueTitleId = `about-value-${value.number}-title`;
 
-              return (
-                <article
-                  className={styles.valueCard}
-                  key={value.number}
-                  aria-labelledby={valueTitleId}
-                  data-value-card
-                  data-reveal
-                >
-                  <span>{value.number}</span>
-                  <h3 id={valueTitleId}>{value.title}</h3>
-                  <p>{value.description}</p>
-                </article>
-              );
-            })}
+                return (
+                  <article
+                    className={styles.valueCard}
+                    key={value.number}
+                    aria-labelledby={valueTitleId}
+                    data-value-card
+                    data-reveal
+                  >
+                    <span>{value.number}</span>
+                    <h3 id={valueTitleId}>{value.title}</h3>
+                    <p>{value.description}</p>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </section>
 
@@ -287,11 +299,7 @@ export default async function AboutPage() {
               <h2 id="ecosystem-title">Luminol</h2>
             </div>
           </div>
-          <div className={styles.ecosystemStage} data-reveal>
-            <div className={styles.ecosystemCore} data-motion-float>
-              Luminol
-              <small>{copy.oneJourney}</small>
-            </div>
+          <div className={styles.ecosystemStage}>
             {schoolCards.map((school) => (
               <Link
                 className={`${styles.schoolCard} ${school.tone}`}
@@ -299,10 +307,24 @@ export default async function AboutPage() {
                 key={school.slug}
                 aria-labelledby={`about-school-${school.slug}-title`}
                 data-ecosystem-school={school.slug}
+                data-reveal
               >
-                <span>{school.number}</span>
-                <h3 id={`about-school-${school.slug}-title`}>{school.name}</h3>
-                <p>{school.tagline}</p>
+                <AcademyImage
+                  asset={
+                    school.slug === 'languages' ? 'conversation' : school.slug
+                  }
+                  locale={locale}
+                  className={styles.schoolImage}
+                  sizes="(max-width: 760px) 100vw, 33vw"
+                />
+                <div className={styles.schoolCopy}>
+                  <span>{school.number}</span>
+                  <h3 id={`about-school-${school.slug}-title`}>
+                    {school.name}
+                  </h3>
+                  <p>{school.tagline}</p>
+                  <b aria-hidden="true">↗</b>
+                </div>
               </Link>
             ))}
           </div>
@@ -313,16 +335,21 @@ export default async function AboutPage() {
           aria-labelledby="about-cta-title"
           data-reveal
         >
+          <AcademyImage
+            asset="community"
+            locale={locale}
+            className={styles.ctaImage}
+          />
           <div className={styles.ctaText}>
             <p className={`${styles.eyebrow} ${styles.eyebrowLight}`}>
               {copy.ctaEyebrow}
             </p>
             <h2 id="about-cta-title">{copy.ctaTitle}</h2>
             <p>{copy.ctaBody}</p>
+            <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
+              {copy.ctaAction} <span aria-hidden="true">→</span>
+            </ButtonLink>
           </div>
-          <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
-            {copy.ctaAction} <span aria-hidden="true">→</span>
-          </ButtonLink>
         </section>
       </main>
       <SiteFooter />

@@ -59,7 +59,7 @@ test('premium school storytelling preserves landmarks and governed media', async
     await firstProgrammeCard.getByRole('heading', { level: 3 }).innerText()
   ).trim();
   const contactActionLabel = await firstProgrammeCard
-    .locator('a[href="/en/contact"]')
+    .locator('a[href^="/en/contact"]')
     .getAttribute('aria-label');
   expect(contactActionLabel).toContain(firstProgrammeTitle);
 
@@ -72,7 +72,8 @@ test('premium school storytelling preserves landmarks and governed media', async
   expect(mediaSources.length).toBeGreaterThan(0);
   expect(
     mediaSources.every(
-      (source) => source === 'governed-fallback' || source === 'sanity',
+      (source) =>
+        source === '/media/academy/manifest.json' || source === 'sanity',
     ),
   ).toBeTruthy();
 });

@@ -114,6 +114,9 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             <p className={styles.eyebrow}>{copy.eyebrow}</p>
             <h1 id="contact-hero-title">{copy.heroTitle}</h1>
             <p className={styles.heroBody}>{copy.heroBody}</p>
+            <Link className={styles.enquiryJump} href="#contact-enquiry">
+              {publicCopy.site.nav.contact} <span aria-hidden="true">↓</span>
+            </Link>
           </div>
           <AcademyImage
             asset="contact"
@@ -125,6 +128,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         </section>
 
         <section
+          id="contact-enquiry"
           className={styles.enquirySection}
           aria-labelledby="contact-next-title"
         >
