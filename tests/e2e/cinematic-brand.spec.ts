@@ -68,9 +68,6 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
         'data-media-publication-approved',
         'true',
       );
-      await expect(scene.locator('figcaption')).toContainText(
-        'Stock photograph',
-      );
     } else if (
       (await scene.getAttribute('data-media-source'))?.startsWith(
         'Owner-provided',
@@ -84,7 +81,6 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
         'data-media-publication-approved',
         'true',
       );
-      await expect(scene.locator('figcaption')).toContainText('Provided image');
     } else {
       await expect(scene).toHaveAttribute(
         'data-media-source',
@@ -94,10 +90,8 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
         'data-media-license',
         /AI-generated editorial illustration/,
       );
-      await expect(scene.locator('figcaption')).toContainText(
-        'AI illustration',
-      );
     }
+    await expect(scene.locator('figcaption')).toHaveCount(0);
     await expect(scene).toHaveAttribute(
       'data-media-crop',
       /focal point|center 53%/,
@@ -110,8 +104,16 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
       new URL(src!, 'http://localhost').searchParams.get('url') ?? src!,
     );
   }
-  expect(sources.length).toBeGreaterThanOrEqual(10);
+  expect(sources.length).toBeGreaterThanOrEqual(8);
   expect(new Set(sources).size).toBe(sources.length);
+  for (const asset of [
+    'psychologyConversation',
+    'professionalWorkshop',
+    'libraryReading',
+    'libraryBooks',
+  ]) {
+    await expect(page.locator(`[data-stock-media="${asset}"]`)).toHaveCount(1);
+  }
   await expect(page.locator('[data-school="languages"] img')).toHaveAttribute(
     'alt',
     /French-learning still life/,
@@ -121,6 +123,10 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
   await expect(film).toHaveAttribute('data-media-crop', /unmirrored in RTL/);
   await expect(film.locator('img')).toHaveAttribute(
     'src',
-    /academy-community-poster/,
+    /academy-library-poster/,
   );
+  await expect(page.locator('#approach [data-approach-film]')).toHaveCount(3);
+  await expect(
+    page.getByText('Stock film · Illustrative learning scene'),
+  ).toHaveCount(0);
 });

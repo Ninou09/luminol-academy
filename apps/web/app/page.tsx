@@ -7,7 +7,6 @@ import {
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-import { AcademyImage } from '../components/academy-image';
 import { CinematicBackdrop } from '../components/cinematic-backdrop';
 import { CinematicScroll } from '../components/cinematic-scroll';
 import { EnquiryForm } from '../components/enquiry-form';
@@ -70,7 +69,6 @@ export default async function Page() {
           <CinematicBackdrop
             pauseLabel={copy.pauseFilm}
             playLabel={copy.playFilm}
-            filmNote={copy.filmNote}
           />
           <div className={styles.heroCopy}>
             <p className={styles.welcome}>{copy.welcome}</p>
@@ -127,13 +125,13 @@ export default async function Page() {
         >
           <div className={styles.spiritImages} data-depth-scene>
             <StockImage
-              asset="community"
+              asset="libraryReading"
               locale={locale}
               className={styles.spiritPortrait}
               sizes="(max-width: 700px) 65vw, 32vw"
             />
             <StockImage
-              asset="online"
+              asset="libraryBooks"
               locale={locale}
               className={styles.spiritDetail}
               sizes="(max-width: 700px) 50vw, 22vw"
@@ -195,8 +193,8 @@ export default async function Page() {
                 >
                   <div className={styles.schoolPhoto}>
                     {school.slug === 'psychology' ? (
-                      <AcademyImage
-                        asset="psychology"
+                      <StockImage
+                        asset="psychologyConversation"
                         locale={locale}
                         sizes="(max-width: 700px) 100vw, 34vw"
                       />
@@ -204,7 +202,7 @@ export default async function Page() {
                       <ProvidedFrenchImage locale={locale} />
                     ) : (
                       <StockImage
-                        asset="speaking"
+                        asset="professionalWorkshop"
                         locale={locale}
                         sizes="(max-width: 700px) 100vw, 34vw"
                       />
@@ -268,18 +266,16 @@ export default async function Page() {
                     className={styles.chapterImage}
                   />
                 ) : index === 1 ? (
-                  <AcademyImage
-                    asset="lounge"
+                  <LearningFilm
+                    film="conversation"
                     locale={locale}
                     className={styles.chapterImage}
-                    sizes="(max-width: 700px) 100vw, 55vw"
                   />
                 ) : (
-                  <AcademyImage
-                    asset="workshop"
+                  <LearningFilm
+                    film="workshop"
                     locale={locale}
                     className={styles.chapterImage}
-                    sizes="(max-width: 700px) 100vw, 60vw"
                   />
                 )}
               </article>
@@ -333,7 +329,7 @@ export default async function Page() {
             <span className={styles.languageLine}>{copy.languages}</span>
           </div>
           <div className={styles.momentsGrid}>
-            {(['atelier', 'online'] as const).map((asset, index) => (
+            {(['community', 'online'] as const).map((asset, index) => (
               <Link
                 className={styles.moment}
                 key={asset}
@@ -342,7 +338,7 @@ export default async function Page() {
                   index === 0 ? '/programmes' : '/contact',
                 )}
               >
-                <AcademyImage
+                <StockImage
                   asset={asset}
                   locale={locale}
                   className={styles.momentImage}

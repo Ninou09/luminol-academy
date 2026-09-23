@@ -33,14 +33,3 @@
   outline: 3px solid var(--color-brand-cyan);
   outline-offset: 4px;
 }
-.film figcaption {
-  position: absolute;
-  inset-block-end: 0.75rem;
-  inset-inline-end: 0.75rem;
-  max-width: calc(100% - 1.5rem);
-  background: var(--color-brand-ink);
-  color: var(--color-brand-surface);
-  padding: 0.4rem 0.65rem;
-  font-size: 0.75rem;
-  line-height: 1.5;
-}

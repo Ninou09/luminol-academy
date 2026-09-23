@@ -5,19 +5,6 @@
   isolation: isolate;
 }
 
-.frame::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    transparent 52%,
-    color-mix(in srgb, var(--color-brand-ink) 55%, transparent)
-  );
-  pointer-events: none;
-}
-
 .image {
   object-fit: cover;
   transition: transform 900ms var(--luminol-ease-out);
@@ -25,23 +12,6 @@
 
 .frame:hover .image {
   transform: scale(1.025);
-}
-
-.credit {
-  position: absolute;
-  margin: 0;
-  padding: 0.4rem 0.65rem;
-  inset-inline-end: 0.65rem;
-  inset-block-end: 0.65rem;
-  max-width: calc(100% - 1.3rem);
-  z-index: 3;
-  background: color-mix(in srgb, var(--color-brand-ink) 88%, transparent);
-  color: var(--color-brand-surface);
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1.5;
-  letter-spacing: 0.015em;
 }
 
 @media (prefers-reduced-motion: reduce) {

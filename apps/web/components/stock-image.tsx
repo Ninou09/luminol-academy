@@ -4,12 +4,6 @@ import Image from 'next/image';
 import { stockMedia, type StockAsset } from '../lib/stock-media';
 import styles from './academy-image.module.css';
 
-const labels: Record<Locale, string> = {
-  en: 'Stock photograph · Illustrative scene',
-  fr: 'Photo de banque d’images · Scène illustrative',
-  ar: 'صورة من مكتبة صور · مشهد توضيحي',
-};
-
 export function StockImage({
   asset,
   locale,
@@ -42,7 +36,6 @@ export function StockImage({
         sizes={sizes}
         style={{ objectPosition: media.position }}
       />
-      <figcaption className={styles.credit}>{labels[locale]}</figcaption>
     </figure>
   );
 }

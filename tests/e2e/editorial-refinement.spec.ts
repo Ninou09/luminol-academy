@@ -54,10 +54,9 @@ for (const locale of ['en', 'fr', 'ar'] as const) {
           () => document.documentElement.scrollWidth - innerWidth,
         );
         expect(overflow).toBeLessThanOrEqual(1);
-        const heroCredit = page.locator('main figure figcaption').first();
-        await expect(heroCredit).toBeVisible();
-        const bounds = await heroCredit.boundingBox();
-        expect(bounds?.height).toBeGreaterThan(12);
+        const media = page.locator('main [data-media-source]').first();
+        await expect(media).toHaveAttribute('data-media-source', /\S+/);
+        await expect(page.locator('main figure figcaption')).toHaveCount(0);
       }
     });
   }

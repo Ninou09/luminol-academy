@@ -18,12 +18,6 @@ type AcademyImageProps = {
   sizes?: string;
 };
 
-const illustrationLabel: Record<Locale, string> = {
-  en: 'AI illustration · Imagined learning scene',
-  fr: 'Illustration IA · Scène d’apprentissage imaginée',
-  ar: 'صورة بالذكاء الاصطناعي · مشهد تعلّم تخيّلي',
-};
-
 export function AcademyImage({
   school,
   asset,
@@ -53,9 +47,6 @@ export function AcademyImage({
         sizes={sizes}
         style={{ objectPosition: media.position ?? '50% 50%' }}
       />
-      <figcaption className={styles.credit}>
-        {illustrationLabel[locale]}
-      </figcaption>
     </figure>
   );
 }

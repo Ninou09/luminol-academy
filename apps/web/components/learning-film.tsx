@@ -9,36 +9,70 @@ const copy = {
   en: {
     play: 'Play learning moment',
     pause: 'Pause learning moment',
-    alt: 'A close-up of a person making notes in a notebook',
-    caption: 'Stock film · Illustrative scene · No audio',
   },
   fr: {
     play: 'Lire le moment d’apprentissage',
     pause: 'Mettre la vidéo en pause',
-    alt: 'Gros plan d’une personne prenant des notes dans un carnet',
-    caption: 'Vidéo de banque d’images · Scène illustrative · Sans son',
   },
   ar: {
     play: 'تشغيل لحظة تعلّم',
     pause: 'إيقاف الفيديو مؤقتاً',
-    alt: 'لقطة مقرّبة لشخص يدوّن ملاحظات في دفتر',
-    caption: 'فيديو من مكتبة مقاطع · مشهد توضيحي · بلا صوت',
   },
 } as const;
+
+const films = {
+  notebook: {
+    file: '/media/stock/notebook.mp4',
+    poster: '/media/stock/notebook-poster.webp',
+    source: 'https://www.pexels.com/video/writing-on-a-notebook-7192325/',
+    alt: {
+      en: 'A person making notes in a notebook beside a keyboard.',
+      fr: 'Une personne prend des notes dans un carnet près d’un clavier.',
+      ar: 'شخص يدوّن ملاحظات في دفتر بجوار لوحة مفاتيح.',
+    },
+  },
+  conversation: {
+    file: '/media/stock/conversation.mp4',
+    poster: '/media/stock/conversation-poster.webp',
+    source:
+      'https://www.pexels.com/video/people-having-a-conversation-at-the-library-8199516/',
+    alt: {
+      en: 'Two learners discussing an open book in a library.',
+      fr: 'Deux personnes échangent autour d’un livre ouvert dans une bibliothèque.',
+      ar: 'شخصان يتحاوران حول كتاب مفتوح في مكتبة.',
+    },
+  },
+  workshop: {
+    file: '/media/stock/workshop.mp4',
+    poster: '/media/stock/workshop-poster.webp',
+    source:
+      'https://www.pexels.com/video/a-group-of-people-sitting-around-a-conference-table-6172811/',
+    alt: {
+      en: 'A facilitator presenting work to a professional group around a table.',
+      fr: 'Une animatrice présente un travail à un groupe de professionnels autour d’une table.',
+      ar: 'ميسّرة تعرض عملًا على مجموعة من المهنيين حول طاولة.',
+    },
+  },
+} as const;
+
+type Film = keyof typeof films;
 
 /** A lightweight detail film. Mobile, data saving and reduced motion keep the poster until requested. */
 export function LearningFilm({
   locale,
   className,
+  film = 'notebook',
 }: {
   locale: Locale;
   className?: string | undefined;
+  film?: Film;
 }) {
   const video = useRef<HTMLVideoElement>(null);
   const userPaused = useRef(false);
   const userRequestedPlayback = useRef(false);
   const [playing, setPlaying] = useState(false);
   const labels = copy[locale];
+  const scene = films[film];
 
   useEffect(() => {
     const element = video.current;
@@ -53,8 +87,7 @@ export function LearningFilm({
       (userRequestedPlayback.current ||
         (!reduce.matches && !mobile.matches && !connection?.saveData));
     const play = () => {
-      if (!element.getAttribute('src'))
-        element.src = '/media/stock/notebook.mp4';
+      if (!element.getAttribute('src')) element.src = scene.file;
       void element.play().catch(() => setPlaying(false));
     };
     let visible = false;
@@ -116,7 +149,7 @@ export function LearningFilm({
       document.removeEventListener('visibilitychange', sync);
       document.removeEventListener('toggle', sync, true);
     };
-  }, []);
+  }, [scene.file]);
 
   function toggle() {
     const element = video.current;
@@ -128,8 +161,7 @@ export function LearningFilm({
     } else {
       userPaused.current = false;
       userRequestedPlayback.current = true;
-      if (!element.getAttribute('src'))
-        element.src = '/media/stock/notebook.mp4';
+      if (!element.getAttribute('src')) element.src = scene.file;
       void element.play().catch(() => setPlaying(false));
     }
   }
@@ -137,20 +169,22 @@ export function LearningFilm({
   return (
     <figure
       className={`${styles.film} ${className ?? ''}`}
-      data-learning-film
-      data-media-source="https://www.pexels.com/video/writing-on-a-notebook-7192325/"
+      data-learning-film={film === 'notebook' ? '' : undefined}
+      data-approach-film={film}
+      data-media-source={scene.source}
       data-media-license="Pexels License"
+      data-media-crop="center-center; cover; unmirrored in RTL"
     >
       <Image
-        src="/media/stock/notebook-poster.webp"
-        alt={labels.alt}
+        src={scene.poster}
+        alt={scene.alt[locale]}
         fill
         sizes="(max-width: 700px) 100vw, 55vw"
         className={styles.poster}
       />
       <video
         ref={video}
-        poster="/media/stock/notebook-poster.webp"
+        poster={scene.poster}
         muted
         loop
         playsInline
@@ -170,7 +204,6 @@ export function LearningFilm({
         <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span>
         {playing ? labels.pause : labels.play}
       </button>
-      <figcaption>{labels.caption}</figcaption>
     </figure>
   );
 }

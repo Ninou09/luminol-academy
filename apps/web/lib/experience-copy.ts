@@ -5,7 +5,6 @@ export const experienceCopy = {
     welcome: 'Welcome to Luminol Academy',
     playFilm: 'Play background film',
     pauseFilm: 'Pause background film',
-    filmNote: 'Stock film · Illustrative learning scene',
     title: 'Your next chapter',
     accent: 'starts here.',
     intro:
@@ -58,15 +57,11 @@ export const experienceCopy = {
     navigation: 'Explore Luminol',
     founder: 'Years of field experience behind our founder',
     languages: 'Arabic · French · English',
-    photoNote: 'Editorial illustrations',
-    stockNote: 'Photo & film credits',
-    providedNote: 'Provided image credit',
   },
   fr: {
     welcome: 'Bienvenue à Luminol Academy',
     playFilm: 'Lancer la vidéo de fond',
     pauseFilm: 'Mettre la vidéo de fond en pause',
-    filmNote: 'Vidéo de banque d’images · Scène illustrative',
     title: 'Votre prochain chapitre',
     accent: 'commence ici.',
     intro:
@@ -122,15 +117,11 @@ export const experienceCopy = {
     navigation: 'Explorer Luminol',
     founder: 'Années d’expérience de terrain de notre fondatrice',
     languages: 'Arabe · Français · Anglais',
-    photoNote: 'Illustrations éditoriales',
-    stockNote: 'Crédits photos et vidéo',
-    providedNote: 'Crédit de l’image fournie',
   },
   ar: {
     welcome: 'أهلاً بك في أكاديمية لومينول',
     playFilm: 'تشغيل الفيديو الخلفي',
     pauseFilm: 'إيقاف الفيديو الخلفي مؤقتًا',
-    filmNote: 'فيديو توضيحي من مكتبة صور',
     title: 'فصلك القادم',
     accent: 'يبدأ هنا.',
     intro: 'افهم نفسك. اكتشف صوتك. وامتلك المهارات التي تقودك إلى الأمام.',
@@ -181,8 +172,5 @@ export const experienceCopy = {
     navigation: 'اكتشف لومينول',
     founder: 'سنة من الخبرة الميدانية لدى مؤسستنا',
     languages: 'العربية · الفرنسية · الإنجليزية',
-    photoNote: 'صور توضيحية',
-    stockNote: 'مصادر الصور والفيديو',
-    providedNote: 'مصدر الصورة المقدّمة',
   },
 } as const satisfies Record<Locale, unknown>;

@@ -45,8 +45,7 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
         return url.searchParams.get('url') ?? url.pathname;
       });
       expect(source).toBe('/media/stock/reflection.webp');
-      await expect(media.locator('figcaption')).toBeVisible();
-      await expect(media.locator('figcaption')).not.toBeEmpty();
+      await expect(media.locator('figcaption')).toHaveCount(0);
     }
   });
 

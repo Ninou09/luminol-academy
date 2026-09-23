@@ -35,6 +35,23 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
   }
 }
 
+test('learning moment photographs load as they enter the viewport', async ({
+  page,
+}) => {
+  await page.goto('/en');
+  const photos = page.locator('section[aria-labelledby="moments-title"] img');
+  await expect(photos).toHaveCount(2);
+  for (const photo of await photos.all()) {
+    await photo.scrollIntoViewIfNeeded();
+    await expect(photo).toBeVisible();
+    await expect
+      .poll(() =>
+        photo.evaluate((image: HTMLImageElement) => image.naturalWidth),
+      )
+      .toBeGreaterThan(0);
+  }
+});
+
 for (const locale of ['en', 'ar'] as const) {
   test(`${locale} school rail stays clickable beneath the moving hero`, async ({
     page,
@@ -147,7 +164,7 @@ test('homepage film plays when visible and offers a working pause control', asyn
 
   const hero = page.locator('#top');
   const video = hero.locator('video');
-  await expect(video).toHaveAttribute('src', /academy-community-film\.mp4$/);
+  await expect(video).toHaveAttribute('src', /academy-library-film\.mp4$/);
   await expect(hero.locator('[data-media-source]')).toHaveAttribute(
     'data-media-license',
     'Pexels License',
@@ -329,6 +346,33 @@ test('desktop learning film waits for meaningful visibility and preserves an exp
   expect(
     await video.evaluate((element: HTMLVideoElement) => element.currentTime),
   ).toBe(pausedAt);
+});
+
+test('all three approach chapters use distinct, playable films', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/en');
+  const films = page.locator('#approach [data-approach-film]');
+  await expect(films).toHaveCount(3);
+  for (const [index, name] of [
+    'notebook',
+    'conversation',
+    'workshop',
+  ].entries()) {
+    const scene = films.nth(index);
+    await expect(scene).toHaveAttribute('data-approach-film', name);
+    await expect(scene.locator('img')).toBeVisible();
+    await expect(scene.locator('video')).not.toHaveAttribute('src');
+    await scene.getByRole('button', { name: 'Play learning moment' }).click();
+    await expect(scene.locator('video')).toHaveAttribute(
+      'src',
+      new RegExp(`/${name}\\.mp4$`),
+    );
+    await expect(scene.locator('video')).toHaveJSProperty('paused', false);
+    await scene.getByRole('button', { name: 'Pause learning moment' }).click();
+  }
 });
 
 for (const mode of ['mobile', 'reduced-motion', 'data-saving'] as const) {

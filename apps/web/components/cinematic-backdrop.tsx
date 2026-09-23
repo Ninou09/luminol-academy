@@ -8,7 +8,6 @@ import styles from './cinematic-backdrop.module.css';
 type CinematicBackdropProps = {
   pauseLabel: string;
   playLabel: string;
-  filmNote: string;
 };
 
 type DataAwareNavigator = Navigator & {
@@ -18,7 +17,6 @@ type DataAwareNavigator = Navigator & {
 export function CinematicBackdrop({
   pauseLabel,
   playLabel,
-  filmNote,
 }: CinematicBackdropProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const userPaused = useRef(false);
@@ -105,14 +103,14 @@ export function CinematicBackdrop({
   return (
     <div
       className={styles.backdrop}
-      data-media-source="https://www.pexels.com/video/people-discussing-while-studying-together-6672571/"
+      data-media-source="https://www.pexels.com/video/students-studying-inside-a-library-9570403/"
       data-media-license="Pexels License"
       data-media-crop="center-center; cover; unmirrored in RTL"
       data-media-publication-approved="true"
     >
       <Image
         className={styles.poster}
-        src="/media/editorial/academy-community-poster.webp"
+        src="/media/editorial/academy-library-poster.webp"
         alt=""
         fill
         priority
@@ -122,8 +120,8 @@ export function CinematicBackdrop({
         <video
           ref={videoRef}
           className={styles.video}
-          src="/media/editorial/academy-community-film.mp4"
-          poster="/media/editorial/academy-community-poster.webp"
+          src="/media/editorial/academy-library-film.mp4"
+          poster="/media/editorial/academy-library-poster.webp"
           muted
           aria-hidden="true"
           preload="none"
@@ -135,7 +133,6 @@ export function CinematicBackdrop({
         />
       ) : null}
       <div className={styles.veil} />
-      <span className={styles.credit}>{filmNote}</span>
       {canLoadVideo ? (
         <button
           className={styles.control}

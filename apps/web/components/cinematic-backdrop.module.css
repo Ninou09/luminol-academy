@@ -52,18 +52,6 @@
   transform: scaleX(-1);
 }
 
-.credit {
-  position: absolute;
-  z-index: 4;
-  inset-block-start: clamp(4.75rem, 6vw, 6rem);
-  inset-inline-end: clamp(1.25rem, 3vw, 3rem);
-  max-width: 13rem;
-  color: var(--color-brand-surface);
-  font: 600 0.72rem/1.5 var(--font-sans);
-  text-align: end;
-  text-shadow: 0 1px 5px var(--color-brand-ink);
-}
-
 .control {
   position: absolute;
   inset-inline-end: clamp(1.25rem, 3vw, 3rem);

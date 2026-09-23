@@ -237,15 +237,6 @@ export async function SiteFooter() {
       </p>
       <div className={styles.footerBottom}>
         <p>© {new Date().getFullYear()} Luminol Academy</p>
-        <a href="/media/academy/manifest.json">
-          {experienceCopy[locale].photoNote}
-        </a>
-        <a href="/media/stock/manifest.json">
-          {experienceCopy[locale].stockNote}
-        </a>
-        <a href="/media/provided/manifest.json">
-          {experienceCopy[locale].providedNote}
-        </a>
       </div>
     </footer>
   );
