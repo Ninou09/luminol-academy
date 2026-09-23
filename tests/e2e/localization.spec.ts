@@ -40,12 +40,26 @@ for (const locale of ['fr', 'ar'] as const) {
       'href',
       `/${targetLocale}/programmes?q=english&school=languages#catalogue`,
     );
+    const overflow = await page.evaluate(() => {
+      const width = document.documentElement.clientWidth;
+      return {
+        extra: document.documentElement.scrollWidth - width,
+        elements: Array.from(document.body.querySelectorAll('*'))
+          .filter(
+            (element) => element.getBoundingClientRect().right > width + 1,
+          )
+          .slice(0, 12)
+          .map((element) => ({
+            tag: element.tagName,
+            className: String(element.className).slice(0, 80),
+            text: (element.textContent ?? '').trim().slice(0, 60),
+            right: Math.round(element.getBoundingClientRect().right),
+          })),
+      };
+    });
     expect(
-      await page.evaluate(
-        () =>
-          document.documentElement.scrollWidth -
-          document.documentElement.clientWidth,
-      ),
+      overflow.extra,
+      JSON.stringify(overflow.elements),
     ).toBeLessThanOrEqual(1);
   });
 }
