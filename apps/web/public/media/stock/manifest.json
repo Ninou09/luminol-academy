@@ -260,6 +260,31 @@
       "visualReview": "Downloaded image visually inspected; no content modification, only resize/WebP encoding."
     }
   ],
+  "homepageHeroVideo": {
+    "file": "/media/editorial/academy-community-film.mp4",
+    "poster": "/media/editorial/academy-community-poster.webp",
+    "kind": "stock-video",
+    "illustrative": true,
+    "depictsActualLuminolPeopleOrPremises": false,
+    "provider": "Pexels",
+    "creator": "Andy Barbour",
+    "originalAssetId": "6672571",
+    "sourceUrl": "https://www.pexels.com/video/people-discussing-while-studying-together-6672571/",
+    "sourceAssetUrl": "https://videos.pexels.com/video-files/6672571/6672571-hd_1920_1080_24fps.mp4",
+    "license": {
+      "name": "Pexels License",
+      "url": "https://www.pexels.com/license/",
+      "verifiedAt": "2026-09-24"
+    },
+    "dimensions": { "width": 1280, "height": 720 },
+    "durationSeconds": 14.04,
+    "framesPerSecond": 24,
+    "audioStreams": 0,
+    "bytes": 2164557,
+    "posterBytes": 64256,
+    "cropIntent": "Centered 16:9 cover, unmirrored in RTL. Dark navy gradient behind copy. The film shows illustrative adult learners in a library and is never presented as Luminol premises or alumni.",
+    "visualReview": "Poster frame at 3 seconds reviewed. Adult study group remains visible; no unrelated certificates, minors or claims. Reduced-motion and data-saver visitors see the still poster."
+  },
   "video": {
     "key": "notebook",
     "file": "notebook.mp4",

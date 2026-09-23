@@ -2,6 +2,14 @@
 
 Continues PR #552 from `76f69bf5` on `preview-luminol-premium-redesign`. The owner chose a dense cinematic layout, “Explore programmes” and “Request a consultation”, editorial judgment for motion, their supplied testimonial comments, verified content and the existing enquiry flow.
 
+## Owner-directed film and palette update
+
+The owner supplied more visual references and asked for the About page colors on Home, plus a moving professional-academy hero. The homepage now uses the same cream, mist, pale cyan and navy design tokens across its rail and learning section. The hero replaces the static courtyard illustration with a muted, looping 14-second Pexels film by Andy Barbour showing adults studying together. Its local H.264 file is 2,164,557 bytes at 1280×720, with a 64,256-byte WebP poster and no audio. It plays only when visible, pauses when the page is hidden or the visitor pauses it, and stays still for reduced-motion and Save-Data visitors. The stock-film label and provenance prevent the scene from being mistaken for Luminol's actual students or premises. The media and crop record is in `apps/web/public/media/stock/manifest.json`.
+
+The owner-provided French-learning still life replaces the homepage Languages card image. Its original JPEG is used without editing, labeled as illustrative, with localized alt text and a centered crop that keeps the notebook and Eiffel Tower together. Provenance is in `apps/web/public/media/provided/manifest.json`. Other supplied images with unrelated certificates, children, premises or prominent promotional claims were not used. The Pinterest link was treated as visual direction only.
+
+Browser verification found and fixed a pointer hit area that blocked the hero film pause control. Local validation for this update: root lint, typecheck, unit tests (996 passed) and production build, then 38 focused public browser tests covering playback, reduced motion, Save-Data and AR/FR/EN mobile layout. The preview branch and PR are updated without changing the production branch.
+
 ## Design and real defects
 
 - Fixed the community collage's collapsed fill-image containers with parent-qualified positioning and explicit responsive height. Downloaded images previously occupied zero visible height because the shared figure style overrode absolute positioning.

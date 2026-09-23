@@ -12,29 +12,10 @@
   background: var(--color-brand-ink);
   color: var(--color-brand-surface);
 }
-.hero .heroImage {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  transform: translateY(var(--scene-y, 0px)) scale(var(--scene-scale, 1.04));
-}
-.heroImage figcaption {
-  inset-block: 1rem auto;
-}
-.heroShade {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(
-      90deg,
-      rgb(5 22 30 / 0.8),
-      rgb(5 22 30 / 0.2) 63%,
-      rgb(5 22 30 / 0.05)
-    ),
-    linear-gradient(0deg, rgb(5 22 30 / 0.45), transparent 45%);
-}
 .heroCopy {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
   width: min(100%, 1600px);
   margin: auto;
   padding: 80px var(--luminol-page-gutter) 120px;
@@ -63,6 +44,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.85rem;
+}
+.heroActions a {
+  pointer-events: auto;
 }
 .ghostButton {
   display: inline-flex;
@@ -131,6 +115,7 @@
   font-size: 0.8rem;
   letter-spacing: 0.08em;
   gap: 1.5rem;
+  z-index: 2;
 }
 .heroBottom a {
   display: flex;
@@ -144,23 +129,23 @@
 .schoolRail {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  background: var(--color-brand-ink);
-  color: var(--color-brand-surface);
+  background: var(--color-brand-cyan-pale);
+  color: var(--color-brand-ink);
 }
 .schoolRail a {
   padding: 1.8rem clamp(1.3rem, 4vw, 4rem);
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  border-inline-end: 1px solid rgb(255 255 255 / 0.18);
+  border-inline-end: 1px solid var(--color-brand-line);
   text-decoration: none;
   transition: background 0.25s;
 }
 .schoolRail a:hover {
-  background: var(--color-brand-ink-soft);
+  background: var(--color-brand-mist);
 }
 .schoolRail span {
-  color: var(--color-brand-cyan-light);
+  color: var(--color-brand-cyan-deep);
   font-size: 0.8rem;
 }
 .schoolRail strong {
@@ -396,8 +381,8 @@
   font-weight: 400;
 }
 .journey {
-  background: var(--color-brand-ink);
-  color: var(--color-brand-surface);
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
   padding: clamp(3rem, 5vw, 5rem) var(--luminol-page-gutter) 2rem;
 }
 .journeyHeading {
@@ -409,7 +394,7 @@
 }
 .journeyHeading .eyebrow {
   grid-column: 1 / -1;
-  color: var(--color-brand-cyan-light);
+  color: var(--color-brand-cyan-deep);
   margin: 0;
 }
 .journeyHeading > p:last-child {
@@ -418,7 +403,7 @@
   justify-self: end;
   line-height: 1.9;
   font-size: 1rem;
-  color: var(--color-brand-line);
+  color: var(--color-brand-muted);
 }
 .chapters {
   max-width: 1340px;
@@ -431,9 +416,11 @@
   grid-template-columns: 0.9fr 1.1fr;
   min-height: 25rem;
   background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
   border-top: 1px solid rgb(255 255 255 / 0.25);
   margin-bottom: 2rem;
-  box-shadow: 0 -1rem 2rem var(--color-brand-ink);
+  box-shadow: 0 -1rem 2rem
+    color-mix(in srgb, var(--color-brand-ink) 12%, transparent);
 }
 .chapterCopy {
   padding: 2rem clamp(1.5rem, 4vw, 4rem) 2rem 0;
@@ -648,15 +635,6 @@
   font-size: clamp(3.25rem, 6.3vw, 6rem);
   max-width: 11ch;
 }
-.page:dir(rtl) .heroShade {
-  background:
-    linear-gradient(270deg, rgb(5 22 30 / 0.82), rgb(5 22 30 / 0.2) 80%),
-    linear-gradient(0deg, rgb(5 22 30 / 0.4), transparent);
-}
-.page:dir(rtl) .heroImage img {
-  object-position: 70% 48%;
-  scale: -1 1;
-}
 .page:dir(rtl) .hero h1 em {
   font-style: normal;
 }
@@ -738,18 +716,6 @@
     min-height: calc(100svh - 80px);
     align-items: end;
   }
-  .hero .heroImage img {
-    object-position: 68% center;
-  }
-  .heroShade,
-  .page:dir(rtl) .heroShade {
-    background: linear-gradient(
-      0deg,
-      rgb(5 22 30 / 0.93),
-      rgb(5 22 30 / 0.3) 70%,
-      rgb(5 22 30 / 0.07)
-    );
-  }
   .heroCopy {
     padding: 13rem 1.5rem 6rem;
     margin: 0;
@@ -780,7 +746,7 @@
   }
   .schoolRail a {
     padding: 1.3rem 1.5rem;
-    border-bottom: 1px solid rgb(255 255 255 / 0.16);
+    border-bottom: 1px solid var(--color-brand-line);
   }
   .schoolRail strong {
     font-size: 0.88rem;
@@ -884,9 +850,6 @@
     align-items: stretch;
     max-width: 25rem;
   }
-  .heroImage figcaption {
-    max-width: 70%;
-  }
   .facts {
     grid-template-columns: 1fr 1fr;
   }
@@ -906,7 +869,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero .heroImage,
   .heroCopy,
   .schoolCard a:hover img {
     transform: none;

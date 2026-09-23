@@ -8,15 +8,17 @@ import styles from './cinematic-backdrop.module.css';
 type CinematicBackdropProps = {
   pauseLabel: string;
   playLabel: string;
+  filmNote: string;
 };
 
 type DataAwareNavigator = Navigator & {
-  connection?: EventTarget & { saveData?: boolean };
+  connection?: Partial<EventTarget> & { saveData?: boolean };
 };
 
 export function CinematicBackdrop({
   pauseLabel,
   playLabel,
+  filmNote,
 }: CinematicBackdropProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const userPaused = useRef(false);
@@ -33,10 +35,10 @@ export function CinematicBackdrop({
     };
     syncPreference();
     preference.addEventListener('change', syncPreference);
-    connection?.addEventListener('change', syncPreference);
+    connection?.addEventListener?.('change', syncPreference);
     return () => {
       preference.removeEventListener('change', syncPreference);
-      connection?.removeEventListener('change', syncPreference);
+      connection?.removeEventListener?.('change', syncPreference);
     };
   }, []);
 
@@ -103,34 +105,37 @@ export function CinematicBackdrop({
   return (
     <div
       className={styles.backdrop}
-      data-media-source="https://mixkit.co/free-stock-video/a-hand-runs-through-the-book-spines-in-the-library-50726/"
-      data-media-secondary-source="https://mixkit.co/free-stock-video/reverse-tour-of-a-library-full-of-books-21595/"
-      data-media-license="Mixkit Stock Video Free License"
-      data-media-crop="center-center"
+      data-media-source="https://www.pexels.com/video/people-discussing-while-studying-together-6672571/"
+      data-media-license="Pexels License"
+      data-media-crop="center-center; cover; unmirrored in RTL"
+      data-media-publication-approved="true"
     >
       <Image
         className={styles.poster}
-        src="/media/editorial/academy-poster.webp"
+        src="/media/editorial/academy-community-poster.webp"
         alt=""
         fill
         priority
         sizes="100vw"
       />
-      <video
-        ref={videoRef}
-        className={styles.video}
-        src={canLoadVideo ? '/media/editorial/academy-film.mp4' : undefined}
-        poster="/media/editorial/academy-poster.webp"
-        muted
-        aria-hidden="true"
-        preload="none"
-        loop
-        playsInline
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onError={() => setCanLoadVideo(false)}
-      />
+      {canLoadVideo ? (
+        <video
+          ref={videoRef}
+          className={styles.video}
+          src="/media/editorial/academy-community-film.mp4"
+          poster="/media/editorial/academy-community-poster.webp"
+          muted
+          aria-hidden="true"
+          preload="none"
+          loop
+          playsInline
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onError={() => setCanLoadVideo(false)}
+        />
+      ) : null}
       <div className={styles.veil} />
+      <span className={styles.credit}>{filmNote}</span>
       {canLoadVideo ? (
         <button
           className={styles.control}

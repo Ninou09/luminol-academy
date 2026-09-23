@@ -139,6 +139,27 @@ test('motion controller honors reduced motion without hiding content', async ({
   await expect(page.locator('#top video')).toHaveCount(0);
 });
 
+test('homepage film plays when visible and offers a working pause control', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/en');
+
+  const hero = page.locator('#top');
+  const video = hero.locator('video');
+  await expect(video).toHaveAttribute('src', /academy-community-film\.mp4$/);
+  await expect(hero.locator('[data-media-source]')).toHaveAttribute(
+    'data-media-license',
+    'Pexels License',
+  );
+  await expect(video).toHaveJSProperty('paused', false);
+
+  await hero.getByRole('button', { name: 'Pause background film' }).click();
+  await expect(video).toHaveJSProperty('paused', true);
+  await hero.getByRole('button', { name: 'Play background film' }).click();
+  await expect(video).toHaveJSProperty('paused', false);
+});
+
 test('full motion progressively reveals the homepage', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/en');
@@ -339,6 +360,10 @@ for (const mode of ['mobile', 'reduced-motion', 'data-saving'] as const) {
       'data-motion',
       mode === 'reduced-motion' ? 'reduced' : 'full',
     );
+    if (mode === 'data-saving') {
+      await expect(page.locator('#top img')).toBeVisible();
+      await expect(page.locator('#top video')).toHaveCount(0);
+    }
     const film = page.locator('[data-learning-film]');
     const video = film.locator('video');
     await film.scrollIntoViewIfNeeded();

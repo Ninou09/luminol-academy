@@ -8,12 +8,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { AcademyImage } from '../components/academy-image';
+import { CinematicBackdrop } from '../components/cinematic-backdrop';
 import { CinematicScroll } from '../components/cinematic-scroll';
 import { EnquiryForm } from '../components/enquiry-form';
 import { LearningFilm } from '../components/learning-film';
 import { StockImage } from '../components/stock-image';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
+import { ProvidedFrenchImage } from '../components/provided-image';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { experienceCopy } from '../lib/experience-copy';
 import { getPublicCopy } from '../lib/public-localization';
@@ -65,14 +67,11 @@ export default async function Page() {
       <OrganizationJsonLd description={publicCopy.site.description} />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
-          <AcademyImage
-            asset="community"
-            locale={locale}
-            priority
-            sizes="100vw"
-            className={styles.heroImage}
+          <CinematicBackdrop
+            pauseLabel={copy.pauseFilm}
+            playLabel={copy.playFilm}
+            filmNote={copy.filmNote}
           />
-          <div className={styles.heroShade} />
           <div className={styles.heroCopy}>
             <p className={styles.welcome}>{copy.welcome}</p>
             <h1 id="hero-title">
@@ -201,11 +200,11 @@ export default async function Page() {
                         locale={locale}
                         sizes="(max-width: 700px) 100vw, 34vw"
                       />
+                    ) : school.slug === 'languages' ? (
+                      <ProvidedFrenchImage locale={locale} />
                     ) : (
                       <StockImage
-                        asset={
-                          school.slug === 'languages' ? 'french' : 'speaking'
-                        }
+                        asset="speaking"
                         locale={locale}
                         sizes="(max-width: 700px) 100vw, 34vw"
                       />
