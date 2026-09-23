@@ -10,6 +10,7 @@ Continues PR #552 from `76f69bf5` on `preview-luminol-premium-redesign`. The own
 - Added three source-backed testimonial excerpts with Arabic originals and clearly labeled French/English translations. These are general training feedback, not endorsements of the current ACT cohort. Provenance: `docs/testimonial-provenance.md`.
 - Reused the existing enquiry component on the homepage, including consent, contact preference, optional qualification fields, validation, attribution and submission behavior.
 - Programme imagery resolves centrally: approved current CMS imagery first; evergreen reflection imagery for the ACT waitlist (never an expired cohort poster); reviewed topic or school fallback otherwise. All 12 school offerings have stable localized topic keys. Approved Sanity crops are contained rather than cropped again.
+- The published psychology school currently has one CMS programme. That state now uses the full programme grid width, pairing its image and content horizontally on desktop and stacking them at tablet/mobile sizes. This removes the empty second column while preserving the existing layout for schools with several programmes. Verified with the isolated single-ACT fixture at English 1440px, French 768px and Arabic 390px, including decoded imagery, full grid-width coverage and unclipped headings.
 
 ## Assets, facts and motion
 

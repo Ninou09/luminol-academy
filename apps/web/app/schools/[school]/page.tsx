@@ -235,10 +235,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             </div>
             <p>{copy.programsBody}</p>
           </div>
-          <div className={styles.programGrid}>
+          <div
+            className={`${styles.programGrid} ${programmes.length === 1 ? styles.singleProgramGrid : ''}`}
+          >
             {programmes.map((program, index) => (
               <article
-                className={styles.programCard}
+                className={`${styles.programCard} ${programmes.length === 1 ? styles.singleProgramCard : ''}`}
                 key={program.id}
                 aria-labelledby={`school-programme-${index + 1}-title`}
                 data-programme-card
@@ -251,7 +253,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                   className={styles.programMedia}
                   programme={program.media}
                   locale={locale}
-                  sizes="(max-width: 720px) 100vw, 45vw"
+                  sizes={
+                    programmes.length === 1
+                      ? '(max-width: 900px) 100vw, 45vw'
+                      : '(max-width: 720px) 100vw, 45vw'
+                  }
                 />
                 <h3 id={`school-programme-${index + 1}-title`} dir="auto">
                   {program.slug ? (
