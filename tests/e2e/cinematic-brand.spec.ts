@@ -51,7 +51,7 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
 }) => {
   await page.goto('/en');
   const scenes = page.locator(
-    'main [data-academy-media], main [data-stock-media]',
+    'main [data-academy-media], main [data-stock-media], main [data-media-source^="Owner-provided"]',
   );
   const sources: string[] = [];
   for (const scene of await scenes.all()) {
@@ -71,6 +71,20 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
       await expect(scene.locator('figcaption')).toContainText(
         'Stock photograph',
       );
+    } else if (
+      (await scene.getAttribute('data-media-source'))?.startsWith(
+        'Owner-provided',
+      )
+    ) {
+      await expect(scene).toHaveAttribute(
+        'data-media-source',
+        'Owner-provided attachment: Estudiar frances.jpg',
+      );
+      await expect(scene).toHaveAttribute(
+        'data-media-publication-approved',
+        'true',
+      );
+      await expect(scene.locator('figcaption')).toContainText('Provided image');
     } else {
       await expect(scene).toHaveAttribute(
         'data-media-source',
@@ -84,7 +98,10 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
         'AI illustration',
       );
     }
-    await expect(scene).toHaveAttribute('data-media-crop', /focal point/);
+    await expect(scene).toHaveAttribute(
+      'data-media-crop',
+      /focal point|center 53%/,
+    );
     const image = scene.getByRole('img');
     await expect(image).toHaveAttribute('alt', /.+/);
     const src = await image.getAttribute('src');
@@ -97,6 +114,13 @@ test('distinct academy scenes retain provenance, crop intent and descriptive alt
   expect(new Set(sources).size).toBe(sources.length);
   await expect(page.locator('[data-school="languages"] img')).toHaveAttribute(
     'alt',
-    /bookstall/,
+    /French-learning still life/,
+  );
+  const film = page.locator('#top [data-media-source]');
+  await expect(film).toHaveAttribute('data-media-license', 'Pexels License');
+  await expect(film).toHaveAttribute('data-media-crop', /unmirrored in RTL/);
+  await expect(film.locator('img')).toHaveAttribute(
+    'src',
+    /academy-community-poster/,
   );
 });

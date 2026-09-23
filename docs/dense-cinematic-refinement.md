@@ -8,7 +8,7 @@ The owner supplied more visual references and asked for the About page colors on
 
 The owner-provided French-learning still life replaces the homepage Languages card image. Its original JPEG is used without editing, labeled as illustrative, with localized alt text and a centered crop that keeps the notebook and Eiffel Tower together. Provenance is in `apps/web/public/media/provided/manifest.json`. Other supplied images with unrelated certificates, children, premises or prominent promotional claims were not used. The Pinterest link was treated as visual direction only.
 
-Browser verification found and fixed a pointer hit area that blocked the hero film pause control. Local validation for this update: root lint, typecheck, unit tests (996 passed) and production build, then 38 focused public browser tests covering playback, reduced motion, Save-Data and AR/FR/EN mobile layout. The preview branch and PR are updated without changing the production branch.
+Browser verification found and fixed a pointer hit area that blocked the hero film pause control. Local validation for this update: root lint, typecheck, unit tests (996 passed) and production build, then 41 focused public browser tests covering scene provenance, playback, reduced motion, Save-Data and AR/FR/EN mobile layout. The preview branch and PR are updated without changing the production branch.
 
 ## Design and real defects
 
