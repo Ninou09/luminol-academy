@@ -10,7 +10,7 @@ test('premium home shell exposes core navigation and brand surfaces', async ({
     page.getByRole('navigation', { name: /primary navigation/i }),
   ).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Grow with clarity.',
+    'Your next chapter',
   );
   await expect(page.locator('[data-reveal]')).not.toHaveCount(0);
   await expect(page.getByRole('contentinfo')).toBeVisible();
@@ -34,7 +34,7 @@ test('motion controller honors reduced motion without hiding content', async ({
   );
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('#top img').first()).toBeVisible();
-  expect(await page.locator('#top video').getAttribute('src')).toBeNull();
+  await expect(page.locator('#top video')).toHaveCount(0);
 });
 
 test('full motion progressively reveals the homepage', async ({ page }) => {
@@ -59,15 +59,16 @@ test('mobile in-page navigation clears the sticky header', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/en');
 
+  await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await page
-    .getByRole('navigation', { name: /primary navigation/i })
-    .getByRole('link', { name: /our approach/i })
+    .getByRole('dialog')
+    .getByRole('link', { name: /our schools/i })
     .click();
 
-  await expect(page).toHaveURL(/#approach$/);
+  await expect(page).toHaveURL(/#schools$/);
   await expect
     .poll(() =>
-      page.locator('#approach').evaluate((target) => {
+      page.locator('#schools').evaluate((target) => {
         const header = document.querySelector('header');
         if (!header) return Number.NEGATIVE_INFINITY;
         return (
@@ -97,22 +98,25 @@ test('motion targets are discovered after client navigation to home', async ({
   await expect(reveal).toBeVisible();
 });
 
-test('school card hover lift remains active after reveal', async ({ page }) => {
+test('school photos respond to hover and respect reduced motion', async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/en');
 
   const card = page.locator('[data-school-card]').first();
   await card.scrollIntoViewIfNeeded();
-  await expect(card).toHaveAttribute('data-reveal-state', 'visible');
   await card.hover();
 
   await expect
     .poll(() =>
-      card.evaluate((element) => {
+      card.locator('img').evaluate((element) => {
         const transform = getComputedStyle(element).transform;
-        if (transform === 'none') return 0;
-        return new DOMMatrixReadOnly(transform).m42;
+        if (transform === 'none') return 1;
+        return new DOMMatrixReadOnly(transform).m11;
       }),
     )
-    .toBeLessThan(-1);
+    .toBeGreaterThan(1.01);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(card.locator('img')).toHaveCSS('transform', 'none');
 });

@@ -375,7 +375,7 @@
 }
 .chapter {
   position: sticky;
-  top: 112px;
+  top: 128px;
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
   min-height: 34rem;
@@ -533,7 +533,7 @@
 .page:dir(rtl) h3 {
   font-family: var(--font-arabic);
   line-height: 1.45;
-  letter-spacing: 0;
+  letter-spacing: normal;
 }
 .page:dir(rtl) .hero h1 {
   font-size: clamp(3.25rem, 6.3vw, 6rem);
@@ -546,6 +546,10 @@
 }
 .page:dir(rtl) .heroImage img {
   object-position: 70% 48%;
+  scale: -1 1;
+}
+.page:dir(rtl) .hero h1 em {
+  font-style: normal;
 }
 .page:dir(rtl) .chapterCopy {
   padding-inline: 0 3rem;
@@ -570,7 +574,7 @@
   }
   .chapter {
     min-height: 30rem;
-    top: 84px;
+    top: 128px;
   }
   .chapterImage {
     min-height: 30rem;

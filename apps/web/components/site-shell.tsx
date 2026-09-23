@@ -46,10 +46,14 @@ export async function SiteHeader() {
       <header className={styles.header}>
         <div className={styles.utility}>
           <span>{experience.location}</span>
-          <Link href={localizeHref(locale, '/programmes')}>
+          <CurrentPageLink
+            href={localizeHref(locale, '/programmes')}
+            activePathname="/programmes"
+            matchDescendants
+          >
             {copy.site.nav.programmes}
             <span aria-hidden="true">↗</span>
-          </Link>
+          </CurrentPageLink>
         </div>
         <div className={styles.headerInner}>
           <CurrentPageLink
@@ -123,11 +127,18 @@ export async function SiteHeader() {
                   ['/about', copy.site.nav.about],
                   ['/contact', copy.site.nav.contact],
                 ].map(([href, label], index) => (
-                  <Link href={localizeHref(locale, href ?? '/')} key={href}>
+                  <CurrentPageLink
+                    href={localizeHref(locale, href ?? '/')}
+                    key={href}
+                    activePathname={
+                      href === '/#schools' ? '/schools' : (href ?? '/')
+                    }
+                    matchDescendants
+                  >
                     <span>0{index + 1}</span>
                     {label}
                     <b aria-hidden="true">↗</b>
-                  </Link>
+                  </CurrentPageLink>
                 ))}
               </nav>
             </SiteMenu>

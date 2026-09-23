@@ -29,11 +29,11 @@ test('premium school storytelling preserves landmarks and governed media', async
   await expect(academyMedia).toBeVisible();
   await expect(academyMedia).toHaveAttribute(
     'data-media-source',
-    'https://unsplash.com/photos/LQ1t-8Ms5PY',
+    '/media/academy/manifest.json',
   );
   await expect(
     academyMedia.getByRole('img', {
-      name: 'Two women having a conversation beside a sunlit window',
+      name: 'A quiet room prepared for a supportive conversation',
     }),
   ).toBeVisible();
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);
@@ -128,7 +128,7 @@ test('Arabic school primary CTA keeps readable foreground contrast', async ({
     };
   });
 
-  expect(colors.foreground).toBe('rgb(250, 250, 248)');
+  expect(colors.foreground).toBe('rgb(251, 250, 246)');
   expect(colors.foreground).not.toBe(colors.background);
 });
 

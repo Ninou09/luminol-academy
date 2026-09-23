@@ -72,8 +72,7 @@ export default async function Page() {
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{copy.welcome}</p>
             <h1 id="hero-title">
-              {copy.title}
-              <em>{copy.accent}</em>
+              {copy.title} <em>{copy.accent}</em>
             </h1>
             <p className={styles.heroLede}>{copy.intro}</p>
             <Link className={styles.whiteButton} href="#schools">
@@ -164,6 +163,7 @@ export default async function Page() {
                 className={styles.schoolCard}
                 data-school={school.slug}
                 data-school-card
+                aria-labelledby={`school-${school.slug}-title`}
               >
                 <Link
                   href={localizeHref(locale, `/schools/${school.slug}`)}
@@ -178,7 +178,7 @@ export default async function Page() {
                     <span className={styles.schoolNumber}>{school.number}</span>
                   </div>
                   <div className={styles.schoolContent}>
-                    <h3>{school.name}</h3>
+                    <h3 id={`school-${school.slug}-title`}>{school.name}</h3>
                     <p>{school.promise}</p>
                     <span className={styles.schoolAction}>
                       {publicCopy.home.discoverSchool}
@@ -274,7 +274,11 @@ export default async function Page() {
           </div>
         </section>
 
-        <section className={styles.closing} aria-labelledby="closing-title">
+        <section
+          id="contact"
+          className={styles.closing}
+          aria-labelledby="closing-title"
+        >
           <span className={styles.closingMonogram} aria-hidden="true">
             L
           </span>

@@ -1,5 +1,5 @@
 html {
-  scroll-padding-block-start: 6.5rem;
+  scroll-padding-block-start: 8rem;
 }
 
 /* Each route gets a quiet arrival; persistent navigation never leaves the frame. */
@@ -67,9 +67,9 @@ html[data-motion='full'] [data-motion-orbit='reverse'] {
   }
 }
 
-@media (max-width: 960px) {
+@media (max-width: 700px) {
   html {
-    scroll-padding-block-start: 9.5rem;
+    scroll-padding-block-start: 6rem;
   }
 }
 
