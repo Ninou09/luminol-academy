@@ -4,7 +4,10 @@ import { join } from 'node:path';
 export const runtime = 'nodejs';
 
 export async function GET() {
-  const html = await readFile(join(process.cwd(), 'public', 'psy-library.html'), 'utf8');
+  const html = await readFile(
+    join(process.cwd(), 'public', 'psy-library.html'),
+    'utf8',
+  );
 
   return new Response(html, {
     headers: {
