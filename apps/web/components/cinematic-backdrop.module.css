@@ -37,14 +37,14 @@
   background:
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--color-brand-ink) 58%, transparent),
-      color-mix(in srgb, var(--color-brand-ink) 26%, transparent) 70%
+      color-mix(in srgb, var(--color-brand-ink) 88%, transparent),
+      color-mix(in srgb, var(--color-brand-ink) 42%, transparent) 62%,
+      color-mix(in srgb, var(--color-brand-ink) 18%, transparent)
     ),
     linear-gradient(
       0deg,
-      color-mix(in srgb, var(--color-brand-ink) 96%, transparent),
-      color-mix(in srgb, var(--color-brand-ink) 36%, transparent) 65%,
-      color-mix(in srgb, var(--color-brand-ink) 24%, transparent)
+      color-mix(in srgb, var(--color-brand-ink) 64%, transparent),
+      transparent 55%
     );
 }
 
@@ -55,7 +55,7 @@
 .control {
   position: absolute;
   inset-inline-end: clamp(1.25rem, 3vw, 3rem);
-  inset-block-end: clamp(1.25rem, 3vw, 3rem);
+  inset-block-start: clamp(1.25rem, 3vw, 3rem);
   z-index: 4;
   width: 2.9rem;
   aspect-ratio: 1;
@@ -77,16 +77,11 @@
 
 @media (max-width: 680px) {
   .veil {
-    background:
-      linear-gradient(
-        90deg,
-        color-mix(in srgb, var(--color-brand-ink) 82%, transparent),
-        color-mix(in srgb, var(--color-brand-ink) 42%, transparent)
-      ),
-      linear-gradient(
-        0deg,
-        color-mix(in srgb, var(--color-brand-ink) 72%, transparent),
-        transparent 60%
-      );
+    background: linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--color-brand-ink) 94%, transparent),
+      color-mix(in srgb, var(--color-brand-ink) 55%, transparent) 68%,
+      color-mix(in srgb, var(--color-brand-ink) 12%, transparent)
+    );
   }
 }

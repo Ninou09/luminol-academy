@@ -1,50 +1,39 @@
 import { expect, test } from '@playwright/test';
 
-test('video resumes after leaving the hero, but preserves an explicit pause', async ({
+test('the hero remains available after returning from the footer', async ({
   page,
 }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/en');
-  const video = page.locator('#top video');
+  const image = page.locator('#top img');
+  await page.getByRole('contentinfo').scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await expect(image).toBeVisible();
   await expect
     .poll(() =>
-      video.evaluate((v: HTMLVideoElement) => !v.paused && v.readyState >= 2),
+      image.evaluate(
+        (element: HTMLImageElement) =>
+          element.complete && element.naturalWidth > 0,
+      ),
     )
     .toBe(true);
-  await page.getByRole('contentinfo').scrollIntoViewIfNeeded();
-  await expect
-    .poll(() => video.evaluate((v: HTMLVideoElement) => v.paused))
-    .toBe(true);
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await expect
-    .poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused))
-    .toBe(true);
-  await page
-    .getByRole('button', { name: 'Pause background video', exact: true })
-    .click();
-  await page.getByRole('contentinfo').scrollIntoViewIfNeeded();
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await expect(
-    page.getByRole('button', { name: 'Play background video', exact: true }),
-  ).toBeVisible();
-  expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
+  await page.locator('#top a[href="/en/programmes"]').click();
+  await expect(page).toHaveURL(/\/en\/programmes$/);
 });
 
-test('changing reduced motion during playback stops video and optional motion', async ({
+test('changing reduced motion disables sticky chapters without hiding content', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/en');
-  const video = page.locator('#top video');
-  await expect
-    .poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused))
-    .toBe(true);
+  const chapters = page.locator('#approach article');
+  await expect(chapters).toHaveCount(3);
+  await expect(chapters.first()).toHaveCSS('position', 'sticky');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect
-    .poll(() => video.evaluate((v: HTMLVideoElement) => v.paused))
-    .toBe(true);
-  await expect(video).not.toHaveAttribute('src');
-  await expect(page.locator('h1')).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+  for (const chapter of await chapters.all()) {
+    await expect(chapter).toHaveCSS('position', 'relative');
+    await expect(chapter.getByRole('heading')).toBeVisible();
+  }
 });
 
 for (const width of [390, 1440]) {
@@ -70,7 +59,9 @@ for (const width of [390, 1440]) {
       return parseFloat(style.lineHeight) / parseFloat(style.fontSize);
     });
     expect(headingLineRatio).toBeGreaterThanOrEqual(1.4);
-    await page.getByRole('banner').locator('a[href="/ar#schools"]').click();
+    await page.getByRole('button', { name: 'القائمة', exact: true }).click();
+    await page.getByRole('dialog').locator('a[href="/ar#schools"]').click();
+    await expect(page.getByRole('dialog')).not.toBeVisible();
     await expect(page).toHaveURL(/\/ar#schools$/);
     await expect
       .poll(() =>

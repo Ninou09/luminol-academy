@@ -4,7 +4,7 @@ test('institutional home is available', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveURL(/\/en\/?$/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Grow with clarity.',
+    'Your next chapter',
   );
 });
 
@@ -31,10 +31,12 @@ test('locale routing persists language and document direction', async ({
 test('public copy follows the canonical locale', async ({ page }) => {
   await page.goto('/ar');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'تقدّم بوضوح.',
+    'فصلك القادم',
   );
   await expect(
-    page.locator('header').getByRole('link', { name: 'البرامج' }),
+    page
+      .getByRole('navigation', { name: 'التنقل الرئيسي' })
+      .getByRole('link', { name: 'البرامج' }),
   ).toBeVisible();
 
   await page.goto('/fr/contact');

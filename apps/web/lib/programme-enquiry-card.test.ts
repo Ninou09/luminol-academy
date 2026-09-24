@@ -62,15 +62,15 @@ describe('course enquiry presentation', () => {
     expect(source).toContain('href={card.href}');
     expect(source).not.toContain('<form');
   });
-  it('mounts the card without changing programme-media publication conditions', async () => {
+  it('mounts the contextual card alongside the shared programme-media boundary', async () => {
     const source = await readFile(
       new URL('../app/programmes/[slug]/page.tsx', import.meta.url),
       'utf8',
     );
     expect(source).toContain('<ProgrammeEnquiryCard');
     expect(source).toContain('programmeSlug={programme.slug.current}');
-    expect(source).toContain('!isWaitlist && programme.image');
-    expect(source).toContain('buildSanityProgrammeImageUrl(programme.image)');
-    expect(source).toContain('alt={programme.image.alt}');
+    expect(source).toContain('<ProgrammeMedia');
+    expect(source).toContain('programme={programme}');
+    expect(source).toContain('locale={locale}');
   });
 });

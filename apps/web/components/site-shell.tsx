@@ -5,12 +5,16 @@ import {
 } from '@luminol/localization';
 import Link from 'next/link';
 
+import { experienceCopy } from '../lib/experience-copy';
+import { SiteMenu } from './site-menu';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { CurrentPageLink } from './current-page-link';
 import { LanguageSwitcher } from './language-switcher';
 import { AcademyLogo as Wordmark } from './academy-logo';
 import styles from './site-shell.module.css';
+import { AcademyImage } from './academy-image';
+import { getSchools } from '../lib/schools';
 
 const skipToContentLabel = {
   ar: 'انتقل إلى المحتوى الرئيسي',
@@ -34,6 +38,7 @@ export async function SiteHeader() {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
   const common = getCommonDictionary(locale);
+  const experience = experienceCopy[locale];
 
   return (
     <>
@@ -41,6 +46,17 @@ export async function SiteHeader() {
         {skipToContentLabel[locale]}
       </a>
       <header className={styles.header}>
+        <div className={styles.utility}>
+          <span>{experience.location}</span>
+          <CurrentPageLink
+            href={localizeHref(locale, '/programmes')}
+            activePathname="/programmes"
+            matchDescendants
+          >
+            {copy.site.nav.programmes}
+            <span aria-hidden="true">↗</span>
+          </CurrentPageLink>
+        </div>
         <div className={styles.headerInner}>
           <CurrentPageLink
             className={styles.brand}
@@ -97,6 +113,45 @@ export async function SiteHeader() {
               </span>{' '}
               <span aria-hidden="true">↗</span>
             </CurrentPageLink>
+            <SiteMenu
+              visual={
+                <AcademyImage
+                  asset="lounge"
+                  locale={locale}
+                  className={styles.menuPhoto}
+                  sizes="(max-width: 700px) 100vw, 40vw"
+                />
+              }
+              label={experience.menu}
+              closeLabel={experience.close}
+              title={experience.navigation}
+            >
+              <nav
+                className={styles.menuNav}
+                aria-label={copy.site.nav.primaryAria}
+              >
+                {[
+                  ['/#schools', copy.site.nav.schools],
+                  ['/programmes', copy.site.nav.programmes],
+                  ['/consultations', consultationsLabel[locale]],
+                  ['/about', copy.site.nav.about],
+                  ['/contact', copy.site.nav.contact],
+                ].map(([href, label], index) => (
+                  <CurrentPageLink
+                    href={localizeHref(locale, href ?? '/')}
+                    key={href}
+                    activePathname={
+                      href === '/#schools' ? '/schools' : (href ?? '/')
+                    }
+                    matchDescendants
+                  >
+                    <span>0{index + 1}</span>
+                    {label}
+                    <b aria-hidden="true">↗</b>
+                  </CurrentPageLink>
+                ))}
+              </nav>
+            </SiteMenu>
           </div>
         </div>
       </header>
@@ -120,6 +175,17 @@ export async function SiteFooter() {
             <Wordmark className={styles.footerWordmark ?? ''} />
           </CurrentPageLink>
           <p>{copy.site.footerDisciplines}</p>
+          <div className={styles.footerSchools}>
+            {Object.values(getSchools(locale)).map((school) => (
+              <Link
+                href={localizeHref(locale, `/schools/${school.slug}`)}
+                key={school.slug}
+              >
+                {school.name}
+                <span aria-hidden="true">↗</span>
+              </Link>
+            ))}
+          </div>
         </div>
         <div className={styles.footerColumn}>
           <span>{copy.site.nav.primaryAria}</span>
@@ -166,9 +232,11 @@ export async function SiteFooter() {
           <p>{copy.site.description}</p>
         </div>
       </div>
+      <p className={styles.footerSignature} aria-hidden="true">
+        Luminol<span>Academy</span>
+      </p>
       <div className={styles.footerBottom}>
         <p>© {new Date().getFullYear()} Luminol Academy</p>
-        <p>Luminol · {copy.site.footerDisciplines}</p>
       </div>
     </footer>
   );

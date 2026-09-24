@@ -10,11 +10,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { AcademyImage } from '../../../components/academy-image';
-import {
-  EditorialMedia,
-  type EditorialMediaAsset,
-} from '../../../components/editorial-media';
+import { ProgrammeMedia } from '../../../components/programme-media';
+import type { ProgrammeMediaInput } from '../../../lib/programme-media';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { buildProgrammeContactHref } from '../../../lib/programme-contact';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
@@ -25,10 +24,7 @@ import {
 import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
 import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
-import {
-  buildSanityProgrammeImageUrl,
-  getProgrammesForSchool,
-} from '../../../lib/sanity';
+import { getProgrammesForSchool } from '../../../lib/sanity';
 import {
   getSchool,
   getSchools,
@@ -109,10 +105,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
     id: string;
     title: string;
     description: string;
-    slug?: string;
+    slug?: string | undefined;
     delivery?: string | null;
     actionLabel?: string;
-    image?: EditorialMediaAsset | null;
+    media: ProgrammeMediaInput;
   }> = cmsProgrammes?.length
     ? cmsProgrammes.map((programme) => {
         const programmeSlug = programme.slug?.current;
@@ -137,20 +133,19 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           actionLabel: isWaitlist
             ? localizeProgrammeWaitlistAction(locale)
             : copy.askProgram,
-          image:
-            !isWaitlist && programme.image
-              ? {
-                  src: buildSanityProgrammeImageUrl(programme.image),
-                  alt: programme.image.alt,
-                  source: 'sanity' as const,
-                }
-              : null,
+          media: { ...programme, school: school.slug },
         };
       })
     : school.programs.map((programme) => ({
         id: programme.title,
         title: programme.title,
         description: programme.description,
+        media: {
+          school: school.slug,
+          mediaTopic: programme.mediaTopic,
+          image: null,
+          slug: null,
+        },
       }));
   const relatedSchools = Object.values(localizedSchools).filter(
     (item) => item.slug !== school.slug,
@@ -240,10 +235,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             </div>
             <p>{copy.programsBody}</p>
           </div>
-          <div className={styles.programGrid}>
+          <div
+            className={`${styles.programGrid} ${programmes.length === 1 ? styles.singleProgramGrid : ''}`}
+          >
             {programmes.map((program, index) => (
               <article
-                className={styles.programCard}
+                className={`${styles.programCard} ${programmes.length === 1 ? styles.singleProgramCard : ''}`}
                 key={program.id}
                 aria-labelledby={`school-programme-${index + 1}-title`}
                 data-programme-card
@@ -252,10 +249,15 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 <span className={styles.programIndex}>
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <EditorialMedia
+                <ProgrammeMedia
                   className={styles.programMedia}
-                  school={school.slug}
-                  asset={program.image}
+                  programme={program.media}
+                  locale={locale}
+                  sizes={
+                    programmes.length === 1
+                      ? '(max-width: 900px) 100vw, 45vw'
+                      : '(max-width: 720px) 100vw, 45vw'
+                  }
                 />
                 <h3 id={`school-programme-${index + 1}-title`} dir="auto">
                   {program.slug ? (
@@ -275,7 +277,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 ) : null}
                 <p dir="auto">{program.description}</p>
                 <Link
-                  href={localizeHref(locale, '/contact')}
+                  href={
+                    program.slug
+                      ? buildProgrammeContactHref(locale, program.slug)
+                      : localizeHref(locale, '/contact')
+                  }
                   aria-label={`${program.actionLabel ?? copy.askProgram}: ${program.title}`}
                 >
                   {program.actionLabel ?? copy.askProgram}{' '}

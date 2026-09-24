@@ -46,20 +46,87 @@ test('cinematic depth responds to scroll without intercepting navigation', async
     .toBe('');
 });
 
-test('new learning and workshop photos retain their source metadata', async ({
+test('distinct academy scenes retain provenance, crop intent and descriptive alternatives', async ({
   page,
 }) => {
   await page.goto('/en');
-  await expect(page.locator('#top video')).toHaveAttribute(
+  const scenes = page.locator(
+    'main [data-academy-media], main [data-stock-media], main [data-media-source^="Owner-provided"]',
+  );
+  const sources: string[] = [];
+  for (const scene of await scenes.all()) {
+    if (await scene.getAttribute('data-stock-media')) {
+      await expect(scene).toHaveAttribute(
+        'data-media-source',
+        /^https:\/\/www.pexels.com\/photo\//,
+      );
+      await expect(scene).toHaveAttribute(
+        'data-media-license',
+        'Pexels License',
+      );
+      await expect(scene).toHaveAttribute(
+        'data-media-publication-approved',
+        'true',
+      );
+    } else if (
+      (await scene.getAttribute('data-media-source'))?.startsWith(
+        'Owner-provided',
+      )
+    ) {
+      await expect(scene).toHaveAttribute(
+        'data-media-source',
+        'Owner-provided attachment: Estudiar frances.jpg',
+      );
+      await expect(scene).toHaveAttribute(
+        'data-media-publication-approved',
+        'true',
+      );
+    } else {
+      await expect(scene).toHaveAttribute(
+        'data-media-source',
+        '/media/academy/manifest.json',
+      );
+      await expect(scene).toHaveAttribute(
+        'data-media-license',
+        /AI-generated editorial illustration/,
+      );
+    }
+    await expect(scene.locator('figcaption')).toHaveCount(0);
+    await expect(scene).toHaveAttribute(
+      'data-media-crop',
+      /focal point|center 53%/,
+    );
+    const image = scene.getByRole('img');
+    await expect(image).toHaveAttribute('alt', /.+/);
+    const src = await image.getAttribute('src');
+    expect(src).toBeTruthy();
+    sources.push(
+      new URL(src!, 'http://localhost').searchParams.get('url') ?? src!,
+    );
+  }
+  expect(sources.length).toBeGreaterThanOrEqual(8);
+  expect(new Set(sources).size).toBe(sources.length);
+  for (const asset of [
+    'psychologyConversation',
+    'professionalWorkshop',
+    'libraryReading',
+    'libraryBooks',
+  ]) {
+    await expect(page.locator(`[data-stock-media="${asset}"]`)).toHaveCount(1);
+  }
+  await expect(page.locator('[data-school="languages"] img')).toHaveAttribute(
+    'alt',
+    /French-learning still life/,
+  );
+  const film = page.locator('#top [data-media-source]');
+  await expect(film).toHaveAttribute('data-media-license', 'Pexels License');
+  await expect(film).toHaveAttribute('data-media-crop', /unmirrored in RTL/);
+  await expect(film.locator('img')).toHaveAttribute(
     'src',
-    '/media/editorial/academy-film.mp4',
+    /academy-library-poster/,
   );
-  await expect(page.locator('#languages [data-academy-media]')).toHaveAttribute(
-    'data-media-source',
-    'https://unsplash.com/photos/omeaHbEFlN4',
-  );
-  await expect(page.locator('#training [data-academy-media]')).toHaveAttribute(
-    'data-media-source',
-    'https://unsplash.com/photos/vdXMSiX-n6M',
-  );
+  await expect(page.locator('#approach [data-approach-film]')).toHaveCount(3);
+  await expect(
+    page.getByText('Stock film · Illustrative learning scene'),
+  ).toHaveCount(0);
 });

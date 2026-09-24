@@ -7,6 +7,7 @@ import {
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { AcademyImage } from '../../components/academy-image';
 import { EnquiryForm } from '../../components/enquiry-form';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPsychologyContactPathDescription } from '../../lib/contact-paths';
@@ -112,13 +113,22 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           <div className={styles.heroCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.eyebrow}</p>
             <h1 id="contact-hero-title">{copy.heroTitle}</h1>
+            <p className={styles.heroBody}>{copy.heroBody}</p>
+            <Link className={styles.enquiryJump} href="#contact-enquiry">
+              {publicCopy.site.nav.contact} <span aria-hidden="true">↓</span>
+            </Link>
           </div>
-          <p className={styles.heroBody} data-reveal>
-            {copy.heroBody}
-          </p>
+          <AcademyImage
+            asset="contact"
+            locale={locale}
+            priority
+            className={styles.heroPhoto}
+            sizes="(max-width: 700px) 100vw, 45vw"
+          />
         </section>
 
         <section
+          id="contact-enquiry"
           className={styles.enquirySection}
           aria-labelledby="contact-next-title"
         >
