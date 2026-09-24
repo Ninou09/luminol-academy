@@ -9,3 +9,7 @@ apps/admin/lib/admin-localization.ts
 
 # Reviewed self-contained static artifact; generated outside the app formatter.
 apps/web/public/psy-library.html
+
+# Reviewed static browser bundles for the Arabic psychology library.
+apps/web/public/psy-library*.css
+apps/web/public/psy-library*.js
