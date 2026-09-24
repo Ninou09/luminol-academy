@@ -6,3 +6,6 @@ pnpm-lock.yaml
 
 # Static translation catalog; validated by localization tests and typechecking.
 apps/admin/lib/admin-localization.ts
+
+# Reviewed self-contained static artifact; generated outside the app formatter.
+apps/web/public/psy-library.html
