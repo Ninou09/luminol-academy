@@ -33,7 +33,7 @@ describe('public sitemap localization', () => {
       (entry) => entry.url === 'https://academy.example.com/ar/consultations',
     );
 
-    expect(entries).toHaveLength(24);
+    expect(entries).toHaveLength(33);
     expect(frenchAbout?.alternates?.languages).toEqual({
       ar: 'https://academy.example.com/ar/about',
       fr: 'https://academy.example.com/fr/about',

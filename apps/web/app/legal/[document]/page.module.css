@@ -1,0 +1,58 @@
+.page {
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+  min-height: 70vh;
+  padding: clamp(7rem, 13vw, 11rem) var(--luminol-page-gutter)
+    clamp(5rem, 9vw, 8rem);
+}
+
+.hero,
+.sections {
+  margin-inline: auto;
+  max-width: 880px;
+}
+
+.hero {
+  border-bottom: 1px solid var(--color-brand-line);
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  line-height: 0.96;
+  margin: 1rem 0 1.5rem;
+  max-width: 15ch;
+}
+
+.intro {
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.8;
+  max-width: 66ch;
+}
+
+.updated {
+  color: var(--color-brand-muted);
+  font-size: 0.88rem;
+  margin-top: 1.5rem;
+}
+
+.sections {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  padding-top: clamp(3rem, 6vw, 5rem);
+}
+
+.section h2 {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  margin-bottom: 1rem;
+}
+
+.section p {
+  color: var(--color-brand-ink-soft);
+  line-height: 1.85;
+  max-width: 72ch;
+}
+
+.section p + p {
+  margin-top: 0.9rem;
+}

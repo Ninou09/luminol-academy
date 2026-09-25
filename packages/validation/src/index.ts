@@ -24,6 +24,15 @@ export const enquiryTimingPreferenceSchema = z.enum([
   'LATER',
   'NOT_SURE',
 ]);
+export const enquiryRequestKindSchema = z.enum([
+  'CONSULTATION',
+  'PROGRAMME',
+  'GENERAL',
+]);
+export const enquiryReadinessSchema = z.enum([
+  'INFORMATION',
+  'REGISTRATION_BOOKING',
+]);
 export const publicProgrammeSlugSchema = z
   .string()
   .trim()
@@ -61,6 +70,9 @@ export const contactSchema = z
     email: enquiryEmailSchema.default(''),
     phone: z.string().trim().max(30).optional(),
     city: z.string().trim().max(120).optional(),
+    profession: z.string().trim().max(120).optional(),
+    requestKind: enquiryRequestKindSchema.default('GENERAL'),
+    readiness: enquiryReadinessSchema.optional(),
     preferredContact: enquiryContactPreferenceSchema,
     deliveryPreference: enquiryDeliveryPreferenceSchema.optional(),
     timingPreference: enquiryTimingPreferenceSchema.optional(),

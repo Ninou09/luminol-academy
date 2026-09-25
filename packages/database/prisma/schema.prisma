@@ -80,6 +80,17 @@ enum EnquiryTimingPreference {
   NOT_SURE
 }
 
+enum EnquiryRequestKind {
+  CONSULTATION
+  PROGRAMME
+  GENERAL
+}
+
+enum EnquiryReadiness {
+  INFORMATION
+  REGISTRATION_BOOKING
+}
+
 enum CefrLevel {
   A1
   A2
@@ -1428,6 +1439,9 @@ model Enquiry {
   email                  String
   phone                  String?
   city                   String?
+  profession             String?
+  requestKind            EnquiryRequestKind           @default(GENERAL)
+  readiness              EnquiryReadiness?
   preferredContact       EnquiryContactPreference?
   deliveryPreference     EnquiryDeliveryPreference?
   timingPreference       EnquiryTimingPreference?
@@ -1461,6 +1475,7 @@ model Enquiry {
   @@index([ownerUserId, status, createdAt])
   @@index([nextFollowUpAt, status])
   @@index([programmeSlug, createdAt])
+  @@index([requestKind, readiness, createdAt])
   @@index([utmSource, utmCampaign, createdAt])
   @@index([email])
   @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "Enquiry_name_trgm_idx")

@@ -14,6 +14,8 @@ const enquiry: EnquiryCommunicationRecord = {
   phone: '+213 555 12 34 56',
   preferredContact: 'EMAIL',
   school: 'PSYCHOLOGY',
+  requestKind: 'PROGRAMME',
+  readiness: 'REGISTRATION_BOOKING',
   programmeTitleSnapshot: 'Acceptance and Commitment Therapy',
   locale: 'ar',
   message:
@@ -32,6 +34,8 @@ describe('new-enquiry communications', () => {
       channels: ['in_app', 'email'],
     });
     expect(notification.payload.message).toContain('enquiry_123456789');
+    expect(notification.payload.message).toContain('PROGRAMME');
+    expect(notification.payload.message).toContain('REGISTRATION_BOOKING');
     expect(notification.payload.message).toContain('لوحة الاستفسارات المحمية');
     expect(notification.payload.message).not.toContain(enquiry.message);
     expect(notification.payload.message).not.toContain(enquiry.email);

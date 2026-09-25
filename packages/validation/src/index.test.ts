@@ -6,6 +6,9 @@ const validEnquiry = {
   email: 'learner@example.com',
   phone: '',
   city: 'Blida',
+  profession: 'Psychologist',
+  requestKind: 'PROGRAMME',
+  readiness: 'INFORMATION',
   preferredContact: 'EMAIL',
   deliveryPreference: 'FLEXIBLE',
   timingPreference: 'WITHIN_MONTH',
@@ -19,6 +22,31 @@ const validEnquiry = {
 describe('contactSchema', () => {
   it('accepts a complete public enquiry', () => {
     expect(contactSchema.safeParse(validEnquiry).success).toBe(true);
+  });
+
+  it('keeps the operational qualification fields structured', () => {
+    const result = contactSchema.safeParse(validEnquiry);
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data).toMatchObject({
+      profession: 'Psychologist',
+      requestKind: 'PROGRAMME',
+      readiness: 'INFORMATION',
+    });
+  });
+
+  it('rejects unknown request kinds and overlong professions', () => {
+    expect(
+      contactSchema.safeParse({ ...validEnquiry, requestKind: 'PAYMENT' })
+        .success,
+    ).toBe(false);
+    expect(
+      contactSchema.safeParse({
+        ...validEnquiry,
+        profession: 'x'.repeat(121),
+      }).success,
+    ).toBe(false);
   });
 
   it('requires privacy consent', () => {
