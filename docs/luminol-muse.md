@@ -52,4 +52,6 @@ Run from repo root using pnpm 10.34.5: `pnpm lint`, `pnpm typecheck`, `pnpm test
 
 Windows: the Prisma generation wrapper now executes Prisma's JS entry through Node rather than spawning `pnpm.cmd` without a shell. This fixes the observed EINVAL failure while keeping the generation lock and fingerprint behavior.
 
+Release verification also detected existing dependency audit failures. The preview branch updates Next.js and its lint plugin to 16.3.8 and the fast-uri override to 3.1.7; the audit threshold remains unchanged. References: [Next.js ImageResponse advisory](https://github.com/advisories/GHSA-vcvr-r3jv-pc5j), [fast-uri authority validation advisory](https://github.com/advisories/GHSA-qw65-cvwx-89v3), [fast-uri bracket validation advisory](https://github.com/advisories/GHSA-58mr-gqgx-xq4g).
+
 Official implementation references: [Next.js authorization in server functions](https://nextjs.org/docs/app/guides/authentication), [Prisma production migrations](https://docs.prisma.io/docs/cli/migrate/deploy).
