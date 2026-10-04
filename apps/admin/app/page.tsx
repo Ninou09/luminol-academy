@@ -137,6 +137,9 @@ export default async function Page() {
         </Link>
         <p className="admin-label">{copy.shell.administration}</p>
         <nav aria-label={copy.shell.navigationAria}>
+          <Link href={localizeHref(locale, '/muse')}>
+            <span>✦</span> Luminol Muse
+          </Link>
           <a className="active" href="#overview">
             <span>01</span> {copy.shell.overview}
           </a>

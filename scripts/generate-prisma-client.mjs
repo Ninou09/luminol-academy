@@ -3,6 +3,7 @@ import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const databaseDirectory = join(repositoryRoot, 'packages', 'database');
@@ -92,14 +93,27 @@ async function acquireLock() {
 }
 
 function runPrismaGenerate() {
-  const command = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+  // Execute Prisma's JS entry directly: spawning a .cmd without a shell fails
+  // on Windows, while adding a shell would needlessly introduce quoting risks.
+  const command = process.execPath;
 
   return new Promise((resolveRun, rejectRun) => {
     const child = spawn(
       command,
-      ['--filter', '@luminol/database', 'exec', 'prisma', 'generate'],
+      [
+        join(
+          dirname(
+            createRequire(join(databaseDirectory, 'package.json')).resolve(
+              'prisma/package.json',
+            ),
+          ),
+          'build',
+          'index.js',
+        ),
+        'generate',
+      ],
       {
-        cwd: repositoryRoot,
+        cwd: databaseDirectory,
         stdio: 'inherit',
       },
     );

@@ -43,6 +43,7 @@ export async function decideAiOperatorProposalAction(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/ai-operator');
+  revalidatePath('/muse');
 }
 
 export async function executeAiOperatorProposalAction(formData: FormData) {
@@ -57,4 +58,5 @@ export async function executeAiOperatorProposalAction(formData: FormData) {
   revalidatePath('/');
   revalidatePath('/ai-operator');
   revalidatePath('/enquiries');
+  revalidatePath('/muse');
 }

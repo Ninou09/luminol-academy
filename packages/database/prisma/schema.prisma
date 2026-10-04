@@ -316,6 +316,11 @@ enum AiProviderUsageOutcome {
 }
 
 model User {
+  museDrafts                  MuseDraft[]
+  museRuns                    MuseRun[]
+  museKnowledge               MuseKnowledge[]
+  museTasks                   MuseTask[]
+  museEvents                  MuseEvent[]
   id                          String                       @id @default(cuid())
   clerkId                     String                       @unique
   email                       String                       @unique
@@ -1423,6 +1428,7 @@ model CertificateAuditEvent {
 }
 
 model Enquiry {
+  museDrafts             MuseDraft[]
   id                     String                     @id @default(cuid())
   name                   String
   email                  String
@@ -1555,4 +1561,73 @@ model CohortDeliveryAuditEvent {
   @@index([cohortId, occurredAt])
   @@index([actorUserId, occurredAt])
   @@index([subjectType, subjectId, occurredAt])
+}
+
+// Muse stays in the existing academy database and identity boundary.
+model MuseRun {
+  id        String   @id @default(cuid())
+  requestId String   @unique
+  actorId   String
+  agent     String
+  intent    String
+  prompt    String
+  response  Json
+  createdAt DateTime @default(now())
+  actor     User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([actorId, createdAt])
+}
+
+model MuseKnowledge {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  source    String
+  agent     String
+  locale    String
+  actorId   String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  actor     User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([active, locale, agent])
+}
+
+model MuseTask {
+  id        String   @id @default(cuid())
+  title     String
+  goal      String
+  dueAt     DateTime @db.Date
+  agent     String
+  actorId   String
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  actor     User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([actorId, done, dueAt])
+}
+
+model MuseEvent {
+  id        String   @id @default(cuid())
+  actorId   String
+  kind      String
+  reference String
+  createdAt DateTime @default(now())
+  actor     User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([actorId, createdAt])
+}
+
+model MuseDraft {
+  id        String   @id @default(cuid())
+  requestId String   @unique
+  actorId   String
+  enquiryId String
+  recipient String
+  text      String
+  createdAt DateTime @default(now())
+  actor     User     @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Restrict)
+
+  @@index([actorId, createdAt])
 }

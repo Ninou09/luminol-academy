@@ -8,7 +8,8 @@
     "./ai-operator": "./src/ai-operator.ts",
     "./ai-provider": "./src/ai-provider.ts",
     "./content-calendar": "./src/content-calendar.ts",
-    "./env": "./src/env.ts"
+    "./env": "./src/env.ts",
+    "./muse": "./src/muse.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",

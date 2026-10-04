@@ -385,6 +385,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@luminol/types':
+        specifier: workspace:*
+        version: link:../types
       '@luminol/validation':
         specifier: workspace:*
         version: link:../validation

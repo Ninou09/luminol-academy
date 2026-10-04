@@ -1,0 +1,55 @@
+# Luminol Muse — integrated operating workspace
+
+Muse lives at `/ar/muse` (also `/fr/muse` and `/en/muse`) in **apps/admin**. The public website and learner portal retain their routes and RTL behavior. Reuse: Clerk identities, academy permissions, PostgreSQL/Prisma, localisation, shared brand tokens, CRM enquiries, published courses, invoices, notifications, AI usage gateway, content calendar and the existing approval/execution ledger. No separate application, database, login or external agent service.
+
+## Delivered vertical slice
+
+- Persistent, personal conversational command history with nine guided intents. Arabic first; French and English. Local commands have no model cost. This is guided command routing, not unrestricted autonomous reasoning.
+- Main coordinator delegates typed commands to Leads, Booking, Courses, Revenue, Content and Fettouma Knowledge. Delegation is an in-process domain boundary, not six ungoverned LLM calls.
+- Academy briefing from live CRM counts; proactive overdue/unassigned/missing-plan suggestions. Lead attention score = 50 overdue + 30 unassigned + 20 waiting at least 48 hours, with reasons. This is workflow attention, not conversion, psychological or clinical scoring. The panel ranks the latest 200 active enquiries and displays 20; the briefing counts the full active queue.
+- Reviewed follow-up drafts and dated plan proposals. The plan is queued in the existing approval center; its existing separate executor writes the CRM plan only after approval. Drafts and recipient numbers are immutable snapshots.
+- WhatsApp is manual only. The operator must first approve the exact draft, then explicitly open a handoff. Server rechecks the proposal, message identity, recipient snapshot, consent, preferred channel, open enquiry and international number. Opening is audited as **not sent**. No send API exists in Muse.
+- Persistent administrator-approved knowledge with title, source, language, domain and audit history. FAQ returns matching original excerpts with source references and dates; it abstains when no source matches. Fettouma knowledge uses the dedicated domain filter. No invented facts, prices, availability or clinical recommendations. Retiring a source removes it from future retrieval.
+- Personal goals, dated tasks, completion and overdue notifications. Shared approval counts and links to the existing notifications workspace. Notifications in this slice appear in-app on visit; no new background scheduler or outbound delivery is enabled.
+- Captions for published academy courses and a suggested three-day sequence, with course evidence, routed to the existing content calendar for editorial review. No publication occurs from Muse.
+- Finance-protected monthly paid-invoice totals grouped by currency; explicitly gross before refunds, not net revenue or ROI. Course-linked leads are not claimed to be paid. Role revocation hides stored revenue conversations/tasks/knowledge.
+- Existing optional AI gateway is available inside Muse for aggregate summaries, recommendations and CRM campaign analysis. It remains OFF unless configured. Each run is an explicit operator action, subject to its existing budget reservation, usage ledger and provider limits. No lead text, contact details, knowledge snippets or chat prompts enter that provider. It is not Meta insights.
+- Append-only database triggers protect run, draft and activity records. Task/knowledge edits create audit events; proposal creation, decisions and execution use the existing proposal event ledger.
+
+## Permission and execution boundary
+
+All pages/actions require existing `academy:manage`; revenue additionally requires `finance:manage`. Every server action reauthorizes. Histories and tasks use the current user's ID rather than client-supplied ownership. Shared academy knowledge follows the existing platform admin boundary; Muse does not introduce a new multi-tenant membership model. Task creation/completion and knowledge approval/retirement are direct, explicit internal administrator actions. Record changes, outbound messages and publishing require exact action envelopes in the existing approval ledger. Model output is advisory and cannot invoke executors.
+
+## Connector roadmap and credentials
+
+| Source                                                 | Current state                                                    | Production setup                                                                                                                                                                   |
+| ------------------------------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Academy website, course registrations and existing CRM | Reads existing Enquiry, Course and related app workspaces        | Existing DATABASE_URL and Clerk configuration; verify existing public enquiry consent rules                                                                                        |
+| Content calendar / Instagram Reels                     | Existing reviewed content and publishing pipeline reused by link | Existing Meta account registry, Graph version and server-side access token; keep existing publishing switches OFF until tested and explicitly enabled                              |
+| Facebook / Instagram insights                          | Architected, not connected                                       | Meta app, verified page/IG business account and authorized read scopes. Ingest dated metrics keyed by account/platform; separate insights from publishing                          |
+| Gmail                                                  | Architected, not connected                                       | Google OAuth consent, refresh token stored server-side, authorized mailbox. Separate read/draft capability from send scope; queue exact message/recipient attachments for approval |
+| Google Calendar                                        | Architected, not connected                                       | Google OAuth and authorized calendar IDs/timezone. Read availability before proposing; approval before event creation/update; recheck conflicts at execution                       |
+| Tally leads                                            | Architected, not connected                                       | Form IDs and webhook signing secret. Verify signature over raw bytes; dedupe submission IDs; validate consent and map to existing Enquiry intake                                   |
+| WhatsApp                                               | Approved manual handoff implemented                              | International phone in CRM, recorded consent and WHATSAPP preference. Direct API requires Meta business credentials, opt-in/template governance and a separately approved executor |
+| Telegram                                               | Architected, not connected                                       | Bot token, allowed chat IDs and webhook secret. Never permit inbound chat to bypass Clerk/platform permissions; approve any outbound text                                          |
+| Consultations/bookings                                 | Architected, not connected                                       | Identify the existing scheduling provider and appointment identifiers; import availability/status with consent and timezone. No clinical triage or fabricated appointments         |
+| Fettouma Knowledge                                     | Persistent approved knowledge implemented                        | Import approved academy documents with provenance, owner, language and review dates; no credentials required for manual entries                                                    |
+
+For every future adapter, normalize inbound records with Zod, verify provider authentication, use provider event IDs for idempotency, and write ingestion provenance. Read-only tools return timestamped evidence; writes produce an immutable action envelope with exact recipient/account/payload/revision, then queue approval. Executors must recheck permission, approval, current resource revision, consent and connector readiness before claiming a delivery attempt. Retry using stable provider idempotency keys. Redact credentials from errors/logs. No generic arbitrary HTTP or model-provided SQL tools.
+
+## Preview and production rollout
+
+1. Use the existing Vercel **luminol-academy-admin** project with the feature branch `preview-luminol-muse`. The repository already enables `preview-*` builds. Do not promote or merge as part of preview delivery.
+2. Prepare an isolated PostgreSQL preview database with the existing schema/data needed for testing. Apply the additive `20261004120000_luminol_muse` migration through the normal migration pipeline; never run the full pending migration set blindly against a shared production database. New tables require synchronized Clerk users/permissions.
+3. Confirm `/ar/muse`, `/fr/muse`, `/en/muse`, current sign-in, public website and learner portal. Test permission revocation, a rejected proposal, approved plan execution, changed recipient/consent, and blocked handoffs.
+4. Populate approved course and Fettouma knowledge. Connect read-only sources first. Configure optional OpenAI key/model/pricing/monthly ceiling only after explicitly accepting that budget. Then build signed Tally ingestion and read-only calendar/Meta insights adapters.
+5. Add a scheduled daily briefing worker using existing worker/notification infrastructure, user timezone/preferences, dedupe date/recipient and failure monitoring. Require separate approval before any outbound delivery. Current briefing is on-demand.
+6. Review retention/export requirements for private conversation and append-only audit data; redact or archive sensitive contents through a governed future retention process. The current database triggers intentionally prevent deleting immutable records via ordinary app actions.
+
+## Validation
+
+Run from repo root using pnpm 10.34.5: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`. Muse tests cover multilingual routing, bounded input, workflow score reasons, permissions, grounded source lookup, missing connector abstention, message/recipient binding, revoked consent, closed contacts and ambiguous phone numbers. PostgreSQL integration tests additionally require **TEST_DATABASE_URL** pointing to a disposable database with migrations applied. Those tests deliberately preserve immutable fixtures there.
+
+Windows: the Prisma generation wrapper now executes Prisma's JS entry through Node rather than spawning `pnpm.cmd` without a shell. This fixes the observed EINVAL failure while keeping the generation lock and fingerprint behavior.
+
+Official implementation references: [Next.js authorization in server functions](https://nextjs.org/docs/app/guides/authentication), [Prisma production migrations](https://docs.prisma.io/docs/cli/migrate/deploy).

@@ -23,6 +23,7 @@ import {
   decideAiOperatorProposalAction,
   executeAiOperatorProposalAction,
 } from './actions';
+import { getMuseCopy } from '../../lib/muse-copy';
 
 function actorLabel(actor: { email: string } | null, fallback: string) {
   return actor?.email ?? fallback;
@@ -60,6 +61,7 @@ export default async function AiOperatorApprovalQueuePage() {
   const locale = await getAdminRequestLocale();
   const copy = getAiOperatorProposalQueueCopy(locale);
   const common = getCommonDictionary(locale);
+  const museCopy = getMuseCopy(locale);
 
   const [proposals, pending, approved, rejected, cancelled, executed] =
     await Promise.all([
@@ -93,6 +95,19 @@ export default async function AiOperatorApprovalQueuePage() {
       }),
     ]);
 
+  const museDrafts = proposals.some((item) =>
+    item.actionId.startsWith('muse-message:'),
+  )
+    ? await db.museDraft.findMany({
+        where: {
+          requestId: {
+            in: proposals
+              .filter((item) => item.actionId.startsWith('muse-message:'))
+              .map((item) => item.actionId.replace('muse-message:', '')),
+          },
+        },
+      })
+    : [];
   const number = (value: number) => formatLocalizedNumber(value, locale);
   const date = (value: Date) => formatLocalizedDate(value, locale);
 
@@ -118,6 +133,7 @@ export default async function AiOperatorApprovalQueuePage() {
               }}
             >
               <Link href={localizeHref(locale, '/')}>{copy.back}</Link>
+              <Link href={localizeHref(locale, '/muse')}>Luminol Muse</Link>
               <AdminLanguageSwitcher
                 locale={locale}
                 label={common.languageSelectorLabel}
@@ -213,6 +229,24 @@ export default async function AiOperatorApprovalQueuePage() {
                         ) : (
                           <p>{copy.invalidEnvelope}</p>
                         )}
+                        {museDrafts
+                          .filter(
+                            (draft) =>
+                              `muse-message:${draft.requestId}` ===
+                              proposal.actionId,
+                          )
+                          .map((draft) => (
+                            <section key={draft.id}>
+                              <h4>{museCopy.draft}</h4>
+                              <p>
+                                <bdi>{draft.recipient}</bdi>
+                              </p>
+                              <p dir="auto" style={{ whiteSpace: 'pre-wrap' }}>
+                                {draft.text}
+                              </p>
+                              <p>{museCopy.handoffNote}</p>
+                            </section>
+                          ))}
                         <p dir="auto">
                           {copy.proposedBy}:{' '}
                           {actorLabel(proposal.proposedBy, copy.noActor)} ·{' '}
