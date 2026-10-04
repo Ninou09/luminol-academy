@@ -1,11 +1,26 @@
-import { describe, expect, test } from 'vitest';
-import { db } from './index';
+import { afterAll, describe, expect, test } from 'vitest';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../generated/prisma/client';
+import { normalizePrismaPostgresConnectionString } from './index';
 
-const suite = process.env.TEST_DATABASE_URL ? describe : describe.skip;
+const testDatabaseUrl = process.env.TEST_DATABASE_URL;
+const suite = testDatabaseUrl ? describe : describe.skip;
+const db = testDatabaseUrl
+  ? new PrismaClient({
+      adapter: new PrismaPg({
+        connectionString:
+          normalizePrismaPostgresConnectionString(testDatabaseUrl),
+      }),
+    })
+  : null;
 suite(
   'Muse PostgreSQL audit and identity invariants (isolated test database only)',
   () => {
+    afterAll(async () => {
+      await db?.$disconnect();
+    });
     test('enforces actor foreign keys and append-only run/event/draft records', async () => {
+      if (!db) throw new Error('TEST_DATABASE_URL_REQUIRED');
       const suffix = `${process.pid}-${Date.now()}`;
       const actor = await db.user.create({
         data: {
