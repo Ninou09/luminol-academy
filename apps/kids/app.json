@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "خطوة",
+    "slug": "khatwa",
+    "scheme": "khatwa",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "platforms": ["ios", "android"],
+    "backgroundColor": "#F5F1EA",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "allowBackup": false
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-localization",
+        {
+          "supportsRTL": true,
+          "forcesRTL": true
+        }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "useSQLCipher": true
+        }
+      ],
+      "expo-secure-store",
+      "expo-audio"
+    ]
+  }
+}

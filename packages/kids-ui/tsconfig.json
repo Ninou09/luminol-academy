@@ -1,0 +1,9 @@
+{
+  "extends": "@luminol/config/typescript/base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "lib": ["ES2022"]
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

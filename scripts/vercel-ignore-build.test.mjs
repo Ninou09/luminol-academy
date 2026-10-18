@@ -125,6 +125,19 @@ describe('Vercel ignored build classifier', () => {
     }
   });
 
+  it('skips every web project for kids app and kids package changes', () => {
+    for (const project of ['web', 'portal', 'admin']) {
+      expect(builds(project, ['apps/kids/app/session.tsx'])).toBe(false);
+      expect(builds(project, ['packages/kids-content/src/phrases.ts'])).toBe(
+        false,
+      );
+      expect(builds(project, ['packages/kids-learning/src/adaptive.ts'])).toBe(
+        false,
+      );
+      expect(builds(project, ['packages/kids-ui/src/tokens.ts'])).toBe(false);
+    }
+  });
+
   it('builds portal and administration for finance changes', () => {
     expect(builds('web', ['packages/finance/src/index.ts'])).toBe(false);
     expect(builds('portal', ['packages/finance/src/index.ts'])).toBe(true);
