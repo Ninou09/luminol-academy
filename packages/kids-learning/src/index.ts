@@ -1,3 +1,4 @@
+export * from './aac';
 export * from './adaptive';
 export * from './pieces';
 export * from './profile';

@@ -43,6 +43,13 @@ const MIGRATIONS: readonly string[] = [
   CREATE INDEX trials_by_child_skill ON trials (child_id, skill_id, at);
   CREATE INDEX sessions_by_child ON sessions (child_id, started_at);
   `,
+  `
+  CREATE TABLE aac_boards (
+    child_id TEXT PRIMARY KEY NOT NULL REFERENCES child_profiles(id) ON DELETE CASCADE,
+    data TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+  `,
 ];
 
 export const SCHEMA_VERSION = MIGRATIONS.length;

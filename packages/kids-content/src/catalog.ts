@@ -10,13 +10,20 @@ import {
   skillsForAge,
 } from '@luminol/kids-learning';
 
+import { aacBuiltinUtterances, aacCategoryUtterances } from './aac';
 import { PHRASE_KEYS, phrase, skillTitle } from './phrases';
 import { colorName, describePiece, shapeName, sizeName } from './pieces';
 import { scheduleAnnouncement } from './schedule';
 import type { Utterance } from './utterance';
 
 export type SpokenCategory =
-  'phrase' | 'activity' | 'schedule' | 'group' | 'shape';
+  | 'phrase'
+  | 'activity'
+  | 'schedule'
+  | 'group'
+  | 'shape'
+  | 'aac-card'
+  | 'aac-group';
 
 export type SpokenEntry = Utterance & { category: SpokenCategory };
 
@@ -69,6 +76,8 @@ export function spokenCatalog(): SpokenEntry[] {
         describePiece({ shape, color, size: 'medium' }),
       ),
     ).map(tag('shape')),
+    ...aacBuiltinUtterances().map(tag('aac-card')),
+    ...aacCategoryUtterances().map(tag('aac-group')),
   ];
 }
 
@@ -78,6 +87,8 @@ const CATEGORY_LABELS: Record<SpokenCategory, string> = {
   schedule: 'Schedule (first, then)',
   group: 'Sorting group name / hint',
   shape: 'Shape name / hint',
+  'aac-card': 'Communication board word',
+  'aac-group': 'Communication board group',
 };
 
 function csvCell(value: string): string {

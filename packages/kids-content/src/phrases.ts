@@ -15,6 +15,7 @@ const PHRASE_TEXT = {
   'schedule.allDone': 'انتهينا! أحسنت',
   'nav.schedule': 'جدولي',
   'nav.calm': 'ركن الهدوء',
+  'nav.talk': 'لوحة الكلام',
   'nav.finish': 'إلى اللقاء',
   'activity.finish': 'احتفال صغير',
   'activity.done': 'انتهى هذا النشاط. أحسنت!',
@@ -35,6 +36,10 @@ const PHRASE_TEXT = {
   'calm.soundOn': 'صوت هادئ',
   'calm.soundOff': 'بلا صوت',
   'calm.back': 'لنعد إلى اللعب',
+  'aac.empty': 'لنختر صورة',
+  'aac.speak': 'لنسمع',
+  'aac.removeLast': 'لنمسح كلمة',
+  'aac.clear': 'لنبدأ من جديد',
 } as const;
 
 export type PhraseKey = keyof typeof PHRASE_TEXT;

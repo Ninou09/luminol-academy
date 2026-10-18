@@ -1,5 +1,8 @@
 import {
+  aacBoardSchema,
   childProfileSchema,
+  EMPTY_AAC_BOARD,
+  type AacBoard,
   sessionRecordSchema,
   skillProgressSchema,
   trialRecordSchema,
@@ -24,6 +27,9 @@ export interface KidsRepository {
   saveSession(session: SessionRecord): Promise<void>;
   countSessions(childId: string): Promise<number>;
   listTrials(childId: string): Promise<TrialRecord[]>;
+  /** The child's communication board; an empty board if none is saved. */
+  getBoard(childId: string): Promise<AacBoard>;
+  saveBoard(childId: string, board: AacBoard, now: Date): Promise<void>;
 }
 
 type DataRow = { data: string };
@@ -137,6 +143,23 @@ export class SqlRepository implements KidsRepository {
       [childId],
     );
     return row?.total ?? 0;
+  }
+
+  async getBoard(childId: string): Promise<AacBoard> {
+    const row = await this.db.getFirstAsync<DataRow>(
+      'SELECT data FROM aac_boards WHERE child_id = ?',
+      [childId],
+    );
+    return (row && parseRow(aacBoardSchema, row)) ?? EMPTY_AAC_BOARD;
+  }
+
+  async saveBoard(childId: string, board: AacBoard, now: Date): Promise<void> {
+    const valid = aacBoardSchema.parse(board);
+    await this.db.runAsync(
+      `INSERT INTO aac_boards (child_id, data, updated_at) VALUES (?, ?, ?)
+       ON CONFLICT(child_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`,
+      [childId, JSON.stringify(valid), now.toISOString()],
+    );
   }
 
   async listTrials(childId: string): Promise<TrialRecord[]> {

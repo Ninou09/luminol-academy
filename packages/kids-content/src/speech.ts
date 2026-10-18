@@ -66,3 +66,41 @@ export function recordedDialects<Asset>(
   }
   return [...found];
 }
+
+/** One thing to say, optionally in a parent's own recorded voice. */
+export type SpeechItem = {
+  utterance: Utterance;
+  /** A file URI of a parent recording; it wins over every other source. */
+  recordingUri?: string;
+};
+
+export type PlaybackStep<Asset> =
+  { kind: 'clip'; source: Asset | string } | { kind: 'tts'; text: string };
+
+/**
+ * Turns a sentence into playback steps. Neighbouring text-to-speech words are
+ * joined so the device voice reads them as one natural phrase.
+ */
+export function planPlayback<Asset>(
+  items: readonly SpeechItem[],
+  dialect: Dialect,
+  manifest: RecordedAudioManifest<Asset>,
+): PlaybackStep<Asset>[] {
+  const steps: PlaybackStep<Asset>[] = [];
+  for (const item of items) {
+    if (item.recordingUri) {
+      steps.push({ kind: 'clip', source: item.recordingUri });
+      continue;
+    }
+    const source = resolveSpeech(item.utterance, dialect, manifest);
+    if (source.kind === 'recorded') {
+      steps.push({ kind: 'clip', source: source.asset });
+      continue;
+    }
+    const previous = steps.at(-1);
+    if (previous?.kind === 'tts')
+      previous.text = `${previous.text} ${source.text}`;
+    else steps.push({ kind: 'tts', text: source.text });
+  }
+  return steps;
+}

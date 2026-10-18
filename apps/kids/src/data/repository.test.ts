@@ -1,4 +1,9 @@
-import { createSkillProgress, type TrialRecord } from '@luminol/kids-learning';
+import {
+  createSkillProgress,
+  EMPTY_AAC_BOARD,
+  setOverride,
+  type TrialRecord,
+} from '@luminol/kids-learning';
 
 import { SCHEMA_VERSION } from './database';
 import { addChild, createTestServices } from '../test/support';
@@ -124,5 +129,49 @@ describe('SqlRepository', () => {
       );
       expect(row?.total).toBe(0);
     }
+  });
+
+  it('returns an empty board until one is saved, then the saved board', async () => {
+    const { services, child } = await setup();
+    expect(await services.repository.getBoard(child.id)).toEqual(
+      EMPTY_AAC_BOARD,
+    );
+    const board = setOverride(EMPTY_AAC_BOARD, 'milk', {
+      hidden: true,
+      picture: null,
+      voicePath: null,
+    });
+    await services.repository.saveBoard(child.id, board, services.now());
+    expect(await services.repository.getBoard(child.id)).toEqual(board);
+  });
+
+  it('falls back to an empty board when the stored board is invalid', async () => {
+    const { services, child } = await setup();
+    await services.db.runAsync(
+      'INSERT INTO aac_boards (child_id, data, updated_at) VALUES (?, ?, ?)',
+      [
+        child.id,
+        '{"overrides":{"water":{"hidden":"yes"}}}',
+        '2026-10-18T10:00:00.000Z',
+      ],
+    );
+    expect(await services.repository.getBoard(child.id)).toEqual(
+      EMPTY_AAC_BOARD,
+    );
+  });
+
+  it('deletes the board with the child', async () => {
+    const { services, child } = await setup();
+    await services.repository.saveBoard(
+      child.id,
+      EMPTY_AAC_BOARD,
+      services.now(),
+    );
+    await services.repository.deleteProfile(child.id);
+    const row = await services.db.getFirstAsync<{ total: number }>(
+      'SELECT COUNT(*) AS total FROM aac_boards',
+      [],
+    );
+    expect(row?.total).toBe(0);
   });
 });

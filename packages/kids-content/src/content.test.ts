@@ -17,6 +17,7 @@ import {
 import { PHRASE_KEYS, phrase, praiseFor, skillTitle } from './phrases';
 import { avatarLabel, binLabel, describePiece } from './pieces';
 import {
+  planPlayback,
   recordedDialects,
   resolveSpeech,
   type RecordedAudioManifest,
@@ -151,5 +152,38 @@ describe('parent copy', () => {
     expect(minutesLabel(15)).toBe('15 دقيقة');
     expect(volumeLabel(0)).toBe('صامت');
     expect(volumeLabel(0.75)).toBe('75%');
+  });
+});
+
+describe('planPlayback', () => {
+  const manifest: RecordedAudioManifest<number> = {
+    'aac.card.want': { msa: 1 },
+  };
+  const word = (key: string, text: string) => ({ utterance: { key, text } });
+
+  it('plays recordings in order and joins neighbouring device-voice words', () => {
+    expect(
+      planPlayback(
+        [
+          word('aac.card.want', 'أريد'),
+          word('aac.card.water', 'ماء'),
+          word('aac.card.bread', 'خبز'),
+          {
+            ...word('aac.card.mother', 'أمي'),
+            recordingUri: 'file:///mum.m4a',
+          },
+        ],
+        'maghrebi',
+        manifest,
+      ),
+    ).toEqual([
+      { kind: 'clip', source: 1 },
+      { kind: 'tts', text: 'ماء خبز' },
+      { kind: 'clip', source: 'file:///mum.m4a' },
+    ]);
+  });
+
+  it('returns nothing for an empty sentence', () => {
+    expect(planPlayback([], 'msa', manifest)).toEqual([]);
   });
 });

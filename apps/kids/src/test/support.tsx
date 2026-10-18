@@ -1,4 +1,4 @@
-import type { Utterance } from '@luminol/kids-content';
+import type { SpeechItem, Utterance } from '@luminol/kids-content';
 import {
   createChildProfile,
   type ChildProfile,
@@ -16,6 +16,7 @@ import {
   type SqlValue,
 } from '../data/database';
 import { SqlRepository } from '../data/repository';
+import type { MediaService, PhotoResult } from '../media/media';
 import type { KidsServices } from '../services/services';
 import { AppStateProvider, useAppState } from '../state/AppState';
 
@@ -61,12 +62,28 @@ export async function createTestDatabase(): Promise<SqlDatabase> {
 }
 
 export class FakeSpeech implements SpeechService {
-  readonly spoken: { utterance: Utterance; settings: SpeechSettings }[] = [];
+  /** One entry per call; a sentence's words are joined into one text. */
+  readonly spoken: {
+    utterance: Utterance;
+    items: readonly SpeechItem[];
+    settings: SpeechSettings;
+  }[] = [];
   stops = 0;
   arabicVoice = true;
 
   say(utterance: Utterance, settings: SpeechSettings): void {
-    this.spoken.push({ utterance, settings });
+    this.sayAll([{ utterance }], settings);
+  }
+
+  sayAll(items: readonly SpeechItem[], settings: SpeechSettings): void {
+    this.spoken.push({
+      utterance: {
+        key: items.map((item) => item.utterance.key).join(' '),
+        text: items.map((item) => item.utterance.text).join(' '),
+      },
+      items,
+      settings,
+    });
   }
 
   stop(): void {
@@ -98,9 +115,49 @@ export class FakeCalmSound implements CalmSoundService {
   }
 }
 
+/** Stands in for the camera, photo library and private file storage. */
+export class FakeMedia implements MediaService {
+  nextPhoto: PhotoResult['status'] = 'saved';
+  readonly files = new Set<string>();
+  readonly removed: string[] = [];
+  readonly removedChildren: string[] = [];
+
+  constructor(private readonly newId: () => string) {}
+
+  async pickPhoto(childId: string): Promise<PhotoResult> {
+    if (this.nextPhoto !== 'saved') return { status: this.nextPhoto };
+    const path = `children/${childId}/aac/${this.newId()}.jpg`;
+    this.files.add(path);
+    return { status: 'saved', path };
+  }
+
+  async saveRecording(childId: string): Promise<string> {
+    const path = `children/${childId}/aac/${this.newId()}.m4a`;
+    this.files.add(path);
+    return path;
+  }
+
+  uri(path: string): string {
+    return `file:///documents/${path}`;
+  }
+
+  remove(path: string): void {
+    this.removed.push(path);
+    this.files.delete(path);
+  }
+
+  removeChild(childId: string): void {
+    this.removedChildren.push(childId);
+    for (const path of this.files) {
+      if (path.startsWith(`children/${childId}/`)) this.files.delete(path);
+    }
+  }
+}
+
 export type TestServices = KidsServices & {
   speech: FakeSpeech;
   calmSound: FakeCalmSound;
+  media: FakeMedia;
   repository: SqlRepository;
   db: SqlDatabase;
 };
@@ -108,16 +165,18 @@ export type TestServices = KidsServices & {
 export async function createTestServices(seed = 1): Promise<TestServices> {
   const db = await createTestDatabase();
   let ids = 0;
+  const newId = () => {
+    ids += 1;
+    return `00000000-0000-4000-8000-${String(ids).padStart(12, '0')}`;
+  };
   let clock = Date.parse('2026-10-18T09:00:00.000Z');
   return {
     db,
     repository: new SqlRepository(db),
     speech: new FakeSpeech(),
     calmSound: new FakeCalmSound(),
-    newId: () => {
-      ids += 1;
-      return `00000000-0000-4000-8000-${String(ids).padStart(12, '0')}`;
-    },
+    media: new FakeMedia(newId),
+    newId,
     now: () => {
       clock += 1000;
       return new Date(clock);

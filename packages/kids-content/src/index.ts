@@ -1,3 +1,4 @@
+export * from './aac';
 export * from './catalog';
 export * from './parent-copy';
 export * from './phrases';

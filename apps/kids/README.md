@@ -33,13 +33,19 @@ The root `pnpm test` runs these jest tests after the Vitest suite.
 
 ## Layout
 
-- `app/` — routes. Child routes (`session`, `activity`, `calm`) share the
-  fixed `ChildScreen` frame; `parent/*` sits behind the `gate` route.
+- `app/` — routes. Child routes (`session`, `activity`, `talk`, `calm`) share
+  the fixed `ChildScreen` frame; `parent/*` sits behind the `gate` route.
+- `src/aac/` and `app/talk.tsx` — the communication board; `app/parent/board/`
+  and `src/parent/CardEditor.tsx` let parents customise it.
+- `src/media/` — parent photos and recordings, kept in the app's private
+  folder per child and deleted with the card or the profile.
 - `src/games/` — the three games and `useTrialFlow`, which runs the adaptive
   engine, the hint ladder and trial recording.
 - `src/data/` — SQL schema, migrations and the validated repository.
-- `src/audio/` — recorded-clip manifest, speech fallback and the generated
-  calm sound.
+- `src/audio/` — recorded-clip manifest, speech queue with fallback and the
+  generated calm sound.
+- `assets/` — bundled images; `assets/media.json` keeps each file's source,
+  alt text, crop intent and approval.
 
 ## Audio
 

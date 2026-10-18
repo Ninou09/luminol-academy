@@ -1,4 +1,4 @@
-import type { Utterance } from '@luminol/kids-content';
+import type { SpeechItem, Utterance } from '@luminol/kids-content';
 import {
   DEFAULT_SENSORY_SETTINGS,
   planSession,
@@ -42,6 +42,8 @@ type AppStateValue = {
   endSession: () => Promise<void>;
   /** Speaks with the active child's dialect, volume and voice speed. */
   say: (utterance: Utterance) => void;
+  /** Speaks several items in order, e.g. a communication board sentence. */
+  sayItems: (items: readonly SpeechItem[]) => void;
 };
 
 const AppStateContext = createContext<AppStateValue | null>(null);
@@ -102,6 +104,7 @@ export function AppStateProvider({
   const deleteProfile = useCallback(
     async (childId: string) => {
       await services.repository.deleteProfile(childId);
+      services.media.removeChild(childId);
       if (activeChildId === childId) selectChild(null);
       setProfiles(await services.repository.listProfiles());
     },
@@ -175,16 +178,21 @@ export function AppStateProvider({
     selectChild(null);
   }, [selectChild, services, session]);
 
-  const say = useCallback(
-    (utterance: Utterance) => {
+  const sayItems = useCallback(
+    (items: readonly SpeechItem[]) => {
       const sensory = activeChild?.sensory ?? DEFAULT_SENSORY_SETTINGS;
-      services.speech.say(utterance, {
+      services.speech.sayAll(items, {
         dialect: activeChild?.dialect ?? 'msa',
         volume: sensory.volume,
         voiceSpeed: sensory.voiceSpeed,
       });
     },
     [activeChild, services],
+  );
+
+  const say = useCallback(
+    (utterance: Utterance) => sayItems([{ utterance }]),
+    [sayItems],
   );
 
   const value = useMemo<AppStateValue>(
@@ -204,6 +212,7 @@ export function AppStateProvider({
       noteCalmVisit,
       endSession,
       say,
+      sayItems,
     }),
     [
       activeChild,
@@ -216,6 +225,7 @@ export function AppStateProvider({
       profiles,
       saveProfile,
       say,
+      sayItems,
       selectChild,
       services,
       session,

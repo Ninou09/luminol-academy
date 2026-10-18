@@ -14,38 +14,15 @@ import {
   createTestServices,
   type TestServices,
 } from './test/support';
-import ActivityScreen from '../app/activity';
-import CalmScreen from '../app/calm';
-import GateScreen from '../app/gate';
-import ChooserScreen from '../app/index';
-import RootLayout from '../app/_layout';
-import EditProfileScreen from '../app/parent/[childId]';
-import ParentHomeScreen from '../app/parent/index';
-import ParentLayout from '../app/parent/_layout';
-import NewProfileScreen from '../app/parent/new';
-import SessionScreen from '../app/session';
-
+import { APP_ROUTES } from './test/routes';
 jest.mock('./services/createServices', () => ({ createServices: jest.fn() }));
 jest.useFakeTimers();
-
-const routes = {
-  _layout: RootLayout,
-  index: ChooserScreen,
-  gate: GateScreen,
-  session: SessionScreen,
-  activity: ActivityScreen,
-  calm: CalmScreen,
-  'parent/_layout': ParentLayout,
-  'parent/index': ParentHomeScreen,
-  'parent/new': NewProfileScreen,
-  'parent/[childId]': EditProfileScreen,
-};
 
 async function start(prepare?: (services: TestServices) => Promise<void>) {
   const services = await createTestServices(3);
   await prepare?.(services);
   jest.mocked(createServices).mockResolvedValue(services);
-  renderRouter(routes, { initialUrl: '/' });
+  renderRouter(APP_ROUTES, { initialUrl: '/' });
   return services;
 }
 

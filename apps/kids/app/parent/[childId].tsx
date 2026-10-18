@@ -69,6 +69,18 @@ export default function EditProfileScreen() {
         }}
         nicknameError={nicknameError}
       />
+      <BigButton
+        label={PARENT_COPY.board.open}
+        variant="secondary"
+        audience="parent"
+        onPress={() =>
+          router.push({
+            pathname: '/parent/board/[childId]',
+            params: { childId: profile.id },
+          })
+        }
+        testID="profile-board"
+      />
       <SensoryFields
         value={sensory}
         onChange={(next) => {

@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
+import { AAC_PICTURES } from '@luminol/kids-learning';
 import { kidsColors } from '@luminol/kids-ui';
 import { z } from 'zod';
 
@@ -59,6 +60,13 @@ describe('bundled media', () => {
       .filter((file) => file !== 'media.json')
       .sort();
     expect(listed).toEqual(onDisk);
+  });
+
+  it('records every communication board picture', () => {
+    const files = new Set(media.assets.map((asset) => asset.file));
+    for (const picture of AAC_PICTURES) {
+      expect(files).toContain(`aac/${picture}.png`);
+    }
   });
 
   it('only derives assets from other recorded assets', () => {
