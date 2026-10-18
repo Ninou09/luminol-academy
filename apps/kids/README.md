@@ -1,4 +1,4 @@
-# Khatwa (خطوة) — kids app
+# Luminol Noor (لومينول نور) — kids app
 
 Arabic-first learning games for autistic children. See
 [`docs/kids/ROADMAP.md`](../../docs/kids/ROADMAP.md) for the product rules and

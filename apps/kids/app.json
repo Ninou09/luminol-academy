@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "خطوة",
-    "slug": "khatwa",
-    "scheme": "khatwa",
+    "name": "Luminol Noor",
+    "slug": "luminol-noor",
+    "scheme": "luminolnoor",
     "version": "0.1.0",
     "orientation": "default",
     "userInterfaceStyle": "light",
@@ -12,6 +12,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.luminolacademy.noor",
       "allowBackup": false
     },
     "plugins": [

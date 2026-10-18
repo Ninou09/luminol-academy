@@ -600,6 +600,9 @@ importers:
       '@luminol/config':
         specifier: workspace:*
         version: link:../config
+      '@types/node':
+        specifier: ^20.19.43
+        version: 20.19.43
       eslint:
         specifier: ^10.9.1
         version: 10.9.1(jiti@2.7.0)

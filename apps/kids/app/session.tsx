@@ -1,5 +1,9 @@
-import { phrase, skillTitle, type Utterance } from '@luminol/kids-content';
-import { firstThen, type ScheduleStep } from '@luminol/kids-learning';
+import {
+  phrase,
+  scheduleAnnouncement,
+  scheduleStepTitle,
+} from '@luminol/kids-content';
+import { firstThen } from '@luminol/kids-learning';
 import { BigButton, FirstThenBoard, kidsSpacing } from '@luminol/kids-ui';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect } from 'react';
@@ -9,26 +13,6 @@ import { ActivityPicture } from '../src/components/ActivityPicture';
 import { ChildScreen } from '../src/components/ChildScreen';
 import { SpeakableText } from '../src/components/SpeakableText';
 import { useAppState } from '../src/state/AppState';
-
-function stepTitle(step: ScheduleStep): Utterance {
-  return step.kind === 'finish'
-    ? phrase('activity.finish')
-    : skillTitle(step.skillId);
-}
-
-function scheduleUtterance(
-  first: ScheduleStep,
-  then: ScheduleStep | null,
-): Utterance {
-  const firstTitle = stepTitle(first);
-  const firstPart = `${phrase('schedule.first').text} ${firstTitle.text}`;
-  if (!then) return { key: `schedule.${firstTitle.key}`, text: firstPart };
-  const thenTitle = stepTitle(then);
-  return {
-    key: `schedule.${firstTitle.key}.${thenTitle.key}`,
-    text: `${firstPart}، ${phrase('schedule.then').text} ${thenTitle.text}`,
-  };
-}
 
 /** The visual schedule: what happens first, and what comes next. */
 export default function SessionScreen() {
@@ -42,7 +26,9 @@ export default function SessionScreen() {
   const pair = session
     ? firstThen(session.steps, session.record.activitiesCompleted)
     : null;
-  const announcement = pair ? scheduleUtterance(pair.first, pair.then) : null;
+  const announcement = pair
+    ? scheduleAnnouncement(pair.first, pair.then)
+    : null;
   const announcementText = announcement?.text;
 
   // Read the schedule aloud whenever the child returns to it.
@@ -65,7 +51,7 @@ export default function SessionScreen() {
           firstLabel={phrase('schedule.first').text}
           thenLabel={phrase('schedule.then').text}
           first={{
-            label: stepTitle(first).text,
+            label: scheduleStepTitle(first).text,
             picture: (
               <ActivityPicture step={first} avatar={activeChild.avatar} />
             ),
@@ -73,7 +59,7 @@ export default function SessionScreen() {
           then={
             then
               ? {
-                  label: stepTitle(then).text,
+                  label: scheduleStepTitle(then).text,
                   picture: (
                     <ActivityPicture step={then} avatar={activeChild.avatar} />
                   ),

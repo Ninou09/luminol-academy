@@ -9,7 +9,7 @@ import type {
 
 /** Text for the parent area. Parents read it, so it is not voiced. */
 export const PARENT_COPY = {
-  appName: 'خطوة',
+  appName: 'لومينول نور',
   gate: {
     title: 'للوالدين فقط',
     instruction: 'للمتابعة، اختر ناتج هذه العملية:',
@@ -34,7 +34,7 @@ export const PARENT_COPY = {
       'تعذّر فتح التخزين الآمن على هذا الجهاز. أغلق التطبيق ثم افتحه من جديد.',
   },
   welcome: {
-    title: 'أهلًا بكم في خطوة',
+    title: 'أهلًا بكم في لومينول نور',
     body: 'ألعاب تعليمية هادئة بالعربية. يبدأ أحد الوالدين بإعداد ملف للطفل.',
     start: 'إعداد للوالدين',
   },

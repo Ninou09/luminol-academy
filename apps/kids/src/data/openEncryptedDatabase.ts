@@ -4,8 +4,8 @@ import { openDatabaseAsync } from 'expo-sqlite';
 
 import { configureConnection, migrate, type SqlDatabase } from './database';
 
-const DATABASE_NAME = 'khatwa.db';
-const KEY_NAME = 'khatwa.database-key.v1';
+const DATABASE_NAME = 'noor.db';
+const KEY_NAME = 'noor.database-key.v1';
 const KEY_PATTERN = /^[0-9a-f]{64}$/;
 
 export class EncryptionUnavailableError extends Error {

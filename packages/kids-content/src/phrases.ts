@@ -28,7 +28,6 @@ const PHRASE_TEXT = {
   'praise.great': 'رائع!',
   'praise.lovely': 'عمل جميل!',
   'praise.excellent': 'ممتاز!',
-  'reward.star': 'نجمة جديدة',
   'calm.title': 'ركن الهدوء',
   'calm.intro': 'لنتنفّس معًا ببطء',
   'calm.inhale': 'شهيق',
