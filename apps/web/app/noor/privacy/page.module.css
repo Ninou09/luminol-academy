@@ -1,0 +1,52 @@
+.page {
+  background: var(--color-brand-canvas);
+  color: var(--color-brand-ink);
+}
+
+.policy {
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 48rem);
+  margin-inline: auto;
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+
+.header {
+  margin-block-end: 2.5rem;
+}
+
+.header h1 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.updated {
+  margin: 0 0 1.25rem;
+  color: var(--color-brand-gold-strong);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.intro {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.7;
+}
+
+.section {
+  padding-block: 1.25rem;
+  border-block-start: 1px solid
+    color-mix(in srgb, var(--color-brand-ink) 14%, transparent);
+}
+
+.section h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.section p {
+  margin: 0;
+  line-height: 1.8;
+}

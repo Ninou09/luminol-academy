@@ -18,6 +18,7 @@ const routes = [
   '/schools/psychology',
   '/schools/languages',
   '/schools/training',
+  '/noor/privacy',
 ] as const;
 
 function buildAbsoluteLanguageAlternates(origin: string, pathname: string) {
@@ -49,7 +50,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             ? 1
             : route === '/consultations' || route.startsWith('/schools/')
               ? 0.8
-              : 0.7,
+              : route === '/noor/privacy'
+                ? 0.3
+                : 0.7,
       };
     }),
   );

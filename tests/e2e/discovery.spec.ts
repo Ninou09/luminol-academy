@@ -9,6 +9,7 @@ const routePaths = [
   '/schools/psychology',
   '/schools/languages',
   '/schools/training',
+  '/noor/privacy',
 ] as const;
 
 const locales = ['ar', 'fr', 'en'] as const;

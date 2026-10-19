@@ -47,6 +47,7 @@ const PROJECTS = {
 
 const KNOWN_APP_PREFIXES = [
   'apps/admin/',
+  'apps/kids/',
   'apps/portal/',
   'apps/studio/',
   'apps/web/',
@@ -60,6 +61,9 @@ const KNOWN_PACKAGE_PREFIXES = [
   'packages/database/',
   'packages/emails/',
   'packages/finance/',
+  'packages/kids-content/',
+  'packages/kids-learning/',
+  'packages/kids-ui/',
   'packages/language/',
   'packages/notifications/',
   'packages/professional/',

@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "Luminol Noor",
+    "slug": "luminol-noor",
+    "scheme": "luminolnoor",
+    "version": "0.1.0",
+    "icon": "./assets/brand/icon.png",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "platforms": ["ios", "android"],
+    "backgroundColor": "#F5F1EA",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.luminolacademy.noor",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/icon-foreground.png",
+        "backgroundColor": "#2F6B69"
+      },
+      "allowBackup": false,
+      "blockedPermissions": [
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-localization",
+        {
+          "supportsRTL": true,
+          "forcesRTL": true
+        }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "useSQLCipher": true
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "يستخدم لومينول نور الميكروفون لتسجيل صوتك على بطاقات لوحة الكلام. تبقى التسجيلات على هذا الجهاز.",
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "يستخدم لومينول نور صورك لإنشاء بطاقات لوحة الكلام. تبقى الصور على هذا الجهاز.",
+          "cameraPermission": "يستخدم لومينول نور الكاميرا لالتقاط صور لبطاقات لوحة الكلام. تبقى الصور على هذا الجهاز.",
+          "microphonePermission": "يستخدم لومينول نور الميكروفون لتسجيل صوتك على بطاقات لوحة الكلام. تبقى التسجيلات على هذا الجهاز."
+        }
+      ]
+    ]
+  }
+}

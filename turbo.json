@@ -44,6 +44,18 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "@luminol/kids-content#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/kids-learning#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@luminol/kids-ui#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "@luminol/language#build": {
       "dependsOn": ["^build"],
       "outputs": []
