@@ -114,7 +114,8 @@ backend and accounts.
 - Confirm the Android package name `com.luminolacademy.noor`, then follow
   [PLAY_RELEASE.md](./PLAY_RELEASE.md): RevenueCat products and the `plus`
   entitlement, the EAS key, Play Console app content, data safety and the
-  listing. Host [PRIVACY_POLICY.md](./PRIVACY_POLICY.md) and have it reviewed.
+  listing. The privacy policy is on the website at `/ar/noor/privacy`; have it
+  reviewed.
 - Record the voice-over lines in
   [voice-recording-list.csv](./voice-recording-list.csv) after specialist
   approval.

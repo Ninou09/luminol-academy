@@ -1,13 +1,15 @@
 # Luminol Noor privacy policy
 
 Last updated: 19 October 2026. The Arabic text below is the same policy and is
-the one shown inside the app (parent area → الخصوصية). Keep both versions in
-step with `packages/kids-content/src/privacy.ts`.
+the one shown inside the app (parent area → الخصوصية). Keep this file, the
+in-app copy in `packages/kids-content/src/privacy.ts` and the website copy in
+`apps/web/lib/noor-privacy.ts` in step.
 
-Host this page at a public URL and enter that URL in Google Play Console
-(App content → Privacy policy and the store listing). Before publishing,
-replace the contact line with the developer email shown on the Play listing,
-and have it reviewed for the countries you launch in.
+It is published on the Luminol Academy website at `/ar/noor/privacy`
+(also `/fr/noor/privacy` and `/en/noor/privacy`), from
+`apps/web/lib/noor-privacy.ts`. Enter the Arabic URL on the production domain
+in Google Play Console (App content → Privacy policy). Have it reviewed for
+the countries you launch in.
 
 ## English
 

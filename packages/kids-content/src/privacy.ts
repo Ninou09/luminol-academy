@@ -1,6 +1,7 @@
 /**
- * The privacy policy shown in the parent area. The hosted copy for the
- * store listing is docs/kids/PRIVACY_POLICY.md; keep both in step.
+ * The privacy policy shown in the parent area. The same policy is published
+ * on the website (apps/web/lib/noor-privacy.ts) for the store listing and in
+ * docs/kids/PRIVACY_POLICY.md; keep all three in step.
  */
 export const PRIVACY_POLICY_UPDATED = '2026-10-19';
 
