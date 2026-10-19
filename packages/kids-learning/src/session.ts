@@ -48,6 +48,7 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'turn-taking',
     'emotion-situation',
     'greetings',
+    'sequence-steps',
   ],
   '7-8': [
     'match-shapes',
@@ -65,6 +66,7 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'greetings',
     'turn-taking',
     'emotion-find',
+    'sequence-steps',
   ],
   '9-10': [
     'match-shapes',
@@ -82,6 +84,7 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'emotion-situation',
     'turn-taking',
     'emotion-find',
+    'sequence-steps',
   ],
 };
 

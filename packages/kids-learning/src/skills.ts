@@ -4,6 +4,7 @@ import type {
   LetterFormsLevel,
 } from './letters';
 import type { AgeBand } from './profile';
+import type { SequenceLevel } from './routines';
 import type { EmotionLevel, GreetingLevel, TurnLevel } from './social';
 
 export type GameKind =
@@ -21,7 +22,8 @@ export type GameKind =
   | 'emotion'
   | 'situation'
   | 'turns'
-  | 'greetings';
+  | 'greetings'
+  | 'sequence';
 export type SortDimension = 'color' | 'shape' | 'size';
 
 /**
@@ -157,7 +159,13 @@ export type GreetingSkill = SkillBase<'greetings'> & {
   levels: readonly GreetingLevel[];
 };
 
+export type SequenceSkill = SkillBase<'sequence-steps'> & {
+  game: 'sequence';
+  levels: readonly SequenceLevel[];
+};
+
 export type Skill =
+  | SequenceSkill
   | EmotionSkill
   | SituationSkill
   | TurnSkill
@@ -366,6 +374,13 @@ export const SKILLS = {
     ageBands: ['5-6', '7-8', '9-10'],
     trialsPerActivity: 4,
     levels: [{ choices: 2 }, { choices: 3 }, { choices: 4 }],
+  },
+  'sequence-steps': {
+    id: 'sequence-steps',
+    game: 'sequence',
+    ageBands: ['5-6', '7-8', '9-10'],
+    trialsPerActivity: 3,
+    levels: [{ steps: 2 }, { steps: 3 }, { steps: 4 }, { steps: 5 }],
   },
 } as const satisfies { [Id in SkillId]: Skill & { id: Id } };
 

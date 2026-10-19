@@ -4,6 +4,7 @@ import { join, relative } from 'node:path';
 import {
   AAC_PICTURES,
   GAME_ONLY_PICTURES,
+  ROUTINE_PICTURES,
   STORY_SCENES,
 } from '@luminol/kids-learning';
 import { kidsColors } from '@luminol/kids-ui';
@@ -105,12 +106,15 @@ describe('app config', () => {
 describe('game pictures', () => {
   const files = new Set(media.assets.map((asset) => asset.file));
 
-  it('records every theme picture and story scene', () => {
+  it('records every theme picture, story scene and routine picture', () => {
     for (const picture of GAME_ONLY_PICTURES) {
       expect(files).toContain(`themes/${picture}.png`);
     }
     for (const scene of STORY_SCENES) {
       expect(files).toContain(`scenes/${scene}.png`);
+    }
+    for (const picture of ROUTINE_PICTURES) {
+      expect(files).toContain(`routines/${picture}.png`);
     }
   });
 });

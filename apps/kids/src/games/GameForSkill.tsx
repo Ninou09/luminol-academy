@@ -10,6 +10,7 @@ import { MatchingGame } from './MatchingGame';
 import { MemoryGame } from './MemoryGame';
 import { PatternGame } from './PatternGame';
 import { PuzzleGame } from './PuzzleGame';
+import { SequenceGame } from './SequenceGame';
 import { SortingGame } from './SortingGame';
 import { TraceGame } from './TraceGame';
 import { TurnGame } from './TurnGame';
@@ -47,5 +48,7 @@ export function GameForSkill({
       return <TurnGame {...props} />;
     case 'greetings':
       return <GreetingGame {...props} />;
+    case 'sequence':
+      return <SequenceGame {...props} />;
   }
 }

@@ -38,6 +38,7 @@ export default function EditProfileScreen() {
           numeralStyle: profile.numeralStyle,
           disabledSkills: profile.disabledSkills,
           religiousPack: profile.religiousPack,
+          prayerPictures: profile.prayerPictures,
         }
       : null,
   );

@@ -174,6 +174,38 @@ describe('stories for the child', () => {
   });
 });
 
+describe('built-in routines', () => {
+  it('walks through hand washing with its step pictures', async () => {
+    const setup = await start();
+    await openStories(setup);
+    expect(screen.queryByTestId('open-wudu')).toBeNull();
+    fireEvent.press(screen.getByTestId('open-handwashing'));
+    await waitFor(() =>
+      expect(setup.services.speech.last()).toBe(
+        'غسل اليدين أبلّل يديّ بالماء.',
+      ),
+    );
+    expect(screen.getAllByTestId('picture-wash-wet').length).toBeGreaterThan(0);
+    for (let step = 0; step < 4; step += 1) {
+      fireEvent.press(screen.getByTestId('routine-done'));
+    }
+    expect(screen.getByTestId('routine-all-done')).toBeTruthy();
+  });
+
+  it("shows prayer with the parent's choice of pictures", async () => {
+    const setup = await start({
+      child: { religiousPack: true, prayerPictures: 'girl' },
+    });
+    await openStories(setup);
+    expect(screen.getByTestId('open-wudu')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('open-prayer'));
+    expect(
+      (await screen.findAllByTestId('picture-prayer-girl-stand')).length,
+    ).toBeGreaterThan(0);
+    expect(screen.queryAllByTestId(/^picture-prayer-boy-/)).toHaveLength(0);
+  });
+});
+
 describe('routine editor for parents', () => {
   it('builds, reorders and saves a routine', async () => {
     const setup = await start();

@@ -1,12 +1,19 @@
 import {
+  routineStep,
+  routineTitle,
   storyPage,
   storyTitle,
   type SpeechItem,
   type Utterance,
 } from '@luminol/kids-content';
 import {
+  availableRoutines,
+  availableStories,
   BUILTIN_STORIES,
+  isBuiltinRoutineId,
   isBuiltinStoryId,
+  routineSteps,
+  type ChildProfile,
   type ChildSequences,
   type Sequence,
   type StepPicture,
@@ -48,14 +55,37 @@ export function parentTitle(sequence: Sequence): Utterance {
   return { key: `sequence.${sequence.id}.title`, text: sequence.title };
 }
 
-/** A built-in story or one of the child's own, by id; null if unknown. */
+/**
+ * A built-in routine or story, or one of the child's own, by id. Built-in
+ * religious content is only found when the child's religious pack is on.
+ */
 export function findReadable(
   id: string,
   sequences: ChildSequences,
   media: MediaService,
   kind: Sequence['kind'],
+  child: Pick<ChildProfile, 'religiousPack' | 'prayerPictures'>,
 ): ReadableSequence | null {
-  if (kind === 'story' && isBuiltinStoryId(id)) {
+  if (
+    kind === 'routine' &&
+    isBuiltinRoutineId(id) &&
+    availableRoutines(child.religiousPack).includes(id)
+  ) {
+    return {
+      id,
+      title: routineTitle(id),
+      pages: routineSteps(id, child.prayerPictures).map((picture, index) => ({
+        key: picture,
+        picture: { kind: 'routine', id: picture },
+        speech: { utterance: routineStep(id, index) },
+      })),
+    };
+  }
+  if (
+    kind === 'story' &&
+    isBuiltinStoryId(id) &&
+    availableStories(child.religiousPack).includes(id)
+  ) {
     return {
       id,
       title: storyTitle(id),

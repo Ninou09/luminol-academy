@@ -130,6 +130,8 @@ export const childProfileInputSchema = z.object({
   disabledSkills: disabledSkillsSchema.default([]),
   /** Wudu, prayer, Ramadan and Eid content; off until a parent turns it on. */
   religiousPack: z.boolean().default(false),
+  /** Whether the prayer steps show a boy or a girl. */
+  prayerPictures: z.enum(['boy', 'girl']).default('boy'),
 });
 export type ChildProfileInput = z.input<typeof childProfileInputSchema>;
 

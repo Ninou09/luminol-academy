@@ -4,6 +4,7 @@ export * from './letters';
 export * from './parent-copy';
 export * from './phrases';
 export * from './pieces';
+export * from './routines';
 export * from './schedule';
 export * from './social';
 export * from './speech';

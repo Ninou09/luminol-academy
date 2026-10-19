@@ -55,16 +55,16 @@ The kids packages are separate from `@luminol/ui`, `@luminol/types` and
 
 ## Milestones
 
-| #   | Milestone                    | Status                                                                                                                                                                                                                                                                                                                                                                                                  |
-| --- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Foundation + first 3 games   | Done: app shell, RTL tokens, parental gate, child profiles, sensory settings, encrypted storage, audio with TTS fallback, visual schedule, calm-down corner, adaptive engine, matching, sorting (color, shape, size) and cause-and-effect, with tests                                                                                                                                                   |
-| 2   | AAC communication board      | Done: 37 picture cards in 6 groups, sentence strip read aloud, per-child board (hide cards, parent photos, parent voice, second mother picture), parents' own cards, files deleted with the card or profile, with tests                                                                                                                                                                                 |
-| 3   | Interest themes + more games | Done: patterns (AB, AAB, ABB, ABC), memory pairs and complete-the-picture games on the adaptive engine; interest themes chosen per child (shapes, food, toys and places) rotating through the picture games; sorting stays on shapes, with tests                                                                                                                                                        |
-| 4   | Arabic letters and numbers   | Done: 28 letters with names and sounds; find the letter, hear-and-find, and positional forms (start, middle, end via the font's own joining); tracing in writing order with progress kept when the finger lifts; counting to 20 with tap-to-count; Western or Arabic-Indic digits per child, with tests                                                                                                 |
-| 5   | Emotions + social skills     | Done: find the face for a feeling (clearest feelings first), "how does Sami feel?" stories, building a tower in turns, "what do we say?" greetings with the choices read aloud, parents can switch any activity off per child, and the spoken schedule is built from recorded parts, with tests                                                                                                         |
-| 6   | Daily life skills            | In progress. Done: routines and social stories that parents build from board pictures or their own photos and voice; a child screen to follow a routine step by step or read a story page by page; 5 built-in social stories; an optional religious pack (off by default) with Ramadan and Eid stories, with tests. Next, once the step pictures arrive: the sequencing game, and wudu and prayer steps |
-| 7   | Parent dashboard and reports | Planned: progress per skill, history, goals, PDF report, export and delete                                                                                                                                                                                                                                                                                                                              |
-| 8   | Store readiness              | Planned: RevenueCat subscriptions, entitlements, Play data-safety form, Designed for Families review                                                                                                                                                                                                                                                                                                    |
+| #   | Milestone                    | Status                                                                                                                                                                                                                                                                                                                                                                     |
+| --- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Foundation + first 3 games   | Done: app shell, RTL tokens, parental gate, child profiles, sensory settings, encrypted storage, audio with TTS fallback, visual schedule, calm-down corner, adaptive engine, matching, sorting (color, shape, size) and cause-and-effect, with tests                                                                                                                      |
+| 2   | AAC communication board      | Done: 37 picture cards in 6 groups, sentence strip read aloud, per-child board (hide cards, parent photos, parent voice, second mother picture), parents' own cards, files deleted with the card or profile, with tests                                                                                                                                                    |
+| 3   | Interest themes + more games | Done: patterns (AB, AAB, ABB, ABC), memory pairs and complete-the-picture games on the adaptive engine; interest themes chosen per child (shapes, food, toys and places) rotating through the picture games; sorting stays on shapes, with tests                                                                                                                           |
+| 4   | Arabic letters and numbers   | Done: 28 letters with names and sounds; find the letter, hear-and-find, and positional forms (start, middle, end via the font's own joining); tracing in writing order with progress kept when the finger lifts; counting to 20 with tap-to-count; Western or Arabic-Indic digits per child, with tests                                                                    |
+| 5   | Emotions + social skills     | Done: find the face for a feeling (clearest feelings first), "how does Sami feel?" stories, building a tower in turns, "what do we say?" greetings with the choices read aloud, parents can switch any activity off per child, and the spoken schedule is built from recorded parts, with tests                                                                            |
+| 6   | Daily life skills            | Done: routines and social stories that parents build from board pictures, routine pictures or their own photos and voice; built-in routines (hand washing, brushing teeth, getting dressed); 5 built-in social stories; a "put the steps in order" game; an optional religious pack (off by default) with wudu, prayer (boy or girl pictures), Ramadan and Eid, with tests |
+| 7   | Parent dashboard and reports | Next: progress per skill, history, goals, PDF report, export and delete                                                                                                                                                                                                                                                                                                    |
+| 8   | Store readiness              | Planned: RevenueCat subscriptions, entitlements, Play data-safety form, Designed for Families review                                                                                                                                                                                                                                                                       |
 
 Cloud sync and the clinic licence come after launch, because they need a
 backend and accounts.
@@ -95,17 +95,17 @@ backend and accounts.
   in "toy taken" Sami could read as handing the truck over, and "tower
   knocked" shows the blocks falling but not who knocked them.
 
-- Scenes for the three stories that are still told in words only (park,
-  friend gone home, long day), and optional greeting scenes.
+- Optional greeting scenes (every Sami story now has its scene).
 
 - Specialist review of the built-in social stories in
   `packages/kids-content/src/stories.ts`, and a religious review of the
   Ramadan and Eid stories (and later the wudu and prayer steps) for the
   Maliki practice most families in the Maghreb follow.
 
-- Step pictures for the sequencing game and the religious pack (hand
-  washing, brushing teeth, getting dressed, wudu, prayer), generated from the
-  milestone 6 prompts.
+- Religious review of the wudu and prayer steps: the prayer pictures show
+  the hands folded (qabd) while many Maliki families pray with the arms at
+  the sides (sadl), and the wudu sentences say "right, then left" while the
+  pictures show the right side only.
 
 - Confirm the Android package name `com.luminolacademy.noor`.
 - Record the voice-over lines in

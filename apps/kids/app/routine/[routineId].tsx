@@ -28,9 +28,16 @@ export default function RoutineScreen() {
   const { activeChild, services, sayItems } = useAppState();
   const { sequences } = useSequences(activeChild?.id);
   const [done, setDone] = useState(0);
-  const routine = sequences
-    ? findReadable(routineId, sequences, services.media, 'routine')
-    : null;
+  const routine =
+    sequences && activeChild
+      ? findReadable(
+          routineId,
+          sequences,
+          services.media,
+          'routine',
+          activeChild,
+        )
+      : null;
   const current = routine?.pages[done];
   const finished = routine !== null && done >= routine.pages.length;
 

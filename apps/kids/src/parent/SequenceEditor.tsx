@@ -1,9 +1,14 @@
-import { aacPictureLabel, PARENT_COPY } from '@luminol/kids-content';
+import {
+  aacPictureLabel,
+  PARENT_COPY,
+  ROUTINE_PICTURE_LABELS,
+} from '@luminol/kids-content';
 import {
   AAC_PICTURES,
   MAX_SEQUENCE_STEPS,
   moveStep,
   removeSequence,
+  routinePicturesFor,
   sequenceMedia,
   sequenceSchema,
   sequenceStepSchema,
@@ -11,9 +16,9 @@ import {
   upsertSequence,
   type ChildProfile,
   type ChildSequences,
-  type PictureChoice,
   type SequenceKind,
   type SequenceStep,
+  type StepPictureChoice,
 } from '@luminol/kids-learning';
 import {
   BigButton,
@@ -36,7 +41,7 @@ import { useVoiceRecorder } from './useVoiceRecorder';
 type StepDraft = {
   id: string;
   text: string;
-  picture: PictureChoice | null;
+  picture: StepPictureChoice | null;
   voicePath: string | null;
 };
 
@@ -118,9 +123,9 @@ function StepFields({
         <KidsText variant="parentBody" heading>
           {cardCopy.picture}
         </KidsText>
-        {draft.picture?.kind === 'photo' && (
+        {draft.picture && (
           <View style={styles.preview}>
-            <CardPicture picture={draft.picture} size={120} />
+            <SequencePicture picture={draft.picture} size={120} />
           </View>
         )}
         <View style={styles.row}>
@@ -166,6 +171,39 @@ function StepFields({
               >
                 <CardPicture
                   picture={{ kind: 'builtin', id: picture }}
+                  size={52}
+                />
+              </Pressable>
+            );
+          })}
+        </View>
+        <KidsText variant="parentBody">{copy.routinePicture}</KidsText>
+        <View
+          accessibilityRole="radiogroup"
+          accessibilityLabel={copy.routinePicture}
+          style={styles.pictures}
+        >
+          {routinePicturesFor(child.religiousPack).map((picture) => {
+            const selected =
+              draft.picture?.kind === 'routine' && draft.picture.id === picture;
+            return (
+              <Pressable
+                key={picture}
+                accessibilityRole="radio"
+                accessibilityLabel={ROUTINE_PICTURE_LABELS[picture]}
+                accessibilityState={{ selected, checked: selected }}
+                onPress={() => {
+                  onProblem(null);
+                  onChange({
+                    ...draft,
+                    picture: { kind: 'routine', id: picture },
+                  });
+                }}
+                style={[styles.picture, selected && styles.pictureSelected]}
+                testID={`step-picture-${picture}`}
+              >
+                <SequencePicture
+                  picture={{ kind: 'routine', id: picture }}
                   size={52}
                 />
               </Pressable>

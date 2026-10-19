@@ -23,9 +23,10 @@ export default function StoryScreen() {
   const { activeChild, services, sayItems } = useAppState();
   const { sequences } = useSequences(activeChild?.id);
   const [page, setPage] = useState(0);
-  const story = sequences
-    ? findReadable(storyId, sequences, services.media, 'story')
-    : null;
+  const story =
+    sequences && activeChild
+      ? findReadable(storyId, sequences, services.media, 'story', activeChild)
+      : null;
   const current = story?.pages[page];
 
   // Read each page when it opens; the first page starts with the title.

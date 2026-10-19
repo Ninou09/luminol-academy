@@ -15,6 +15,7 @@ import {
   NICKNAME_MAX_LENGTH,
   NUMERAL_STYLES,
   type NumeralStyle,
+  type PrayerPictures,
   skillsForAge,
   type SkillId,
   THEMES,
@@ -44,6 +45,7 @@ export type ProfileDraft = {
   numeralStyle: NumeralStyle;
   disabledSkills: SkillId[];
   religiousPack: boolean;
+  prayerPictures: PrayerPictures;
 };
 
 /**
@@ -181,6 +183,19 @@ export function ProfileFields({
         note={copy.religiousNote}
         testID="profile-religious"
       />
+
+      {draft.religiousPack && (
+        <SegmentedChoice
+          label={copy.prayerPictures}
+          options={[
+            { value: 'boy', label: copy.prayerBoy },
+            { value: 'girl', label: copy.prayerGirl },
+          ]}
+          value={draft.prayerPictures}
+          onChange={(prayerPictures) => onChange({ ...draft, prayerPictures })}
+          testID="profile-prayer"
+        />
+      )}
 
       <MultiChoice
         label={copy.activities}

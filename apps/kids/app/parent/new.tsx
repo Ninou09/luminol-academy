@@ -23,6 +23,7 @@ const EMPTY_DRAFT: ProfileDraft = {
   numeralStyle: 'western',
   disabledSkills: [],
   religiousPack: false,
+  prayerPictures: 'boy',
 };
 
 export default function NewProfileScreen() {

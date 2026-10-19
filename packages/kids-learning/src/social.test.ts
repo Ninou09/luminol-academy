@@ -41,7 +41,7 @@ describe('social catalogs', () => {
   it('gives each scene to one story', () => {
     expect(new Set(STORY_SCENES).size).toBe(STORY_SCENES.length);
     expect(situationScene('gift')).toBe('sami-gift');
-    expect(situationScene('park')).toBeNull();
+    expect(situationScene('park')).toBe('sami-park-slide');
     for (const id of Object.keys(SITUATION_SCENES)) {
       expect(SITUATION_IDS).toContain(id);
     }

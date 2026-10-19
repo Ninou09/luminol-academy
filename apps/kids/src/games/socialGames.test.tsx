@@ -30,6 +30,7 @@ import {
 } from '../test/support';
 import { EmotionGame } from './EmotionGame';
 import { GreetingGame } from './GreetingGame';
+import { SequenceGame } from './SequenceGame';
 import { FIRST_TURN_MS, TURN_MS, TurnGame } from './TurnGame';
 
 jest.useFakeTimers();
@@ -295,5 +296,48 @@ describe('TurnGame', () => {
     expect(
       screen.getByTestId('turn-add').props.accessibilityState,
     ).toMatchObject({ disabled: false });
+  });
+});
+
+describe('SequenceGame', () => {
+  function placeAll() {
+    for (;;) {
+      const next = screen.queryByTestId('sequence-next');
+      if (!next) return;
+      fireEvent.press(next);
+    }
+  }
+
+  it('fills the slots in order and records the routine as one trial', async () => {
+    const { services, child } = await renderGame((onDone) => (
+      <SequenceGame trials={3} onDone={onDone} />
+    ));
+    expect(services.speech.last()).toMatch(
+      /^لنرتّب الصور: ماذا نفعل أوّلًا؟ (غسل اليدين|تنظيف الأسنان|ارتداء الملابس)$/,
+    );
+    fireEvent.press(screen.getByTestId('sequence-next'));
+    expect(services.speech.last()).toMatch(/\.$/);
+    expect(screen.getByTestId('sequence-slot-0').props.accessibilityLabel).toBe(
+      services.speech.last(),
+    );
+    placeAll();
+    await waitFor(async () =>
+      expect(await trialCount(services, child)).toBe(1),
+    );
+    expect((await gameTrials(services, child))[0]).toMatchObject({
+      skillId: 'sequence-steps',
+      firstTryCorrect: true,
+    });
+  });
+
+  it('says the step that comes next after a card out of order', async () => {
+    const { services } = await renderGame(
+      (onDone) => <SequenceGame trials={3} onDone={onDone} />,
+      { independent: 'sequence-steps' },
+    );
+    const next = screen.getByTestId('sequence-next').props
+      .accessibilityLabel as string;
+    fireEvent.press(screen.getAllByTestId(/^sequence-card-/)[0]!);
+    expect(services.speech.last()).toBe(next);
   });
 });

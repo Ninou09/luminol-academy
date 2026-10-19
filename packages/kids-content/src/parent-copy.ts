@@ -55,7 +55,11 @@ export const PARENT_COPY = {
     religiousPack: 'الحزمة الدينية',
     religiousOn: 'مفعّلة',
     religiousOff: 'مطفأة',
-    religiousNote: 'تضيف قصصًا عن رمضان وعيد الفطر إلى قصص الطفل.',
+    religiousNote:
+      'تضيف الوضوء والصلاة إلى الروتين ولعبة الترتيب، وقصصًا عن رمضان وعيد الفطر.',
+    prayerPictures: 'صور الصلاة',
+    prayerBoy: 'ولد',
+    prayerGirl: 'بنت',
     activities: 'الأنشطة في الجدول',
     activitiesNote:
       'أوقف أيّ نشاط لا يناسب طفلك الآن، ويبقى نشاط واحد على الأقل. نشاطا الوجوه والمشاعر اختياريان، ولا يطلبان من الطفل النظر في العينين.',
@@ -137,6 +141,7 @@ export const PARENT_COPY = {
     textHint: 'جملة قصيرة يسمعها الطفل، مثل: أغسل يديّ.',
     textError: 'أدخل جملة من حرف واحد إلى 80 حرفًا، دون رموز خاصة.',
     boardPicture: 'صورة من لوحة الكلام',
+    routinePicture: 'صورة من الروتين',
     stepDone: 'تمّ',
     stepCancel: 'تجاهل التغييرات',
     pictureRequired: 'اختر صورة من اللوحة أو أضِف صورة.',

@@ -57,11 +57,14 @@ export const SITUATION_IDS = Object.keys(SITUATIONS) as SituationId[];
  */
 export const SITUATION_SCENES = {
   gift: 'sami-gift',
+  park: 'sami-park-slide',
   'broken-toy': 'sami-broken-car',
+  'friend-left': 'sami-goodbye-door',
   'toy-taken': 'sami-toy-taken',
   'tower-knocked': 'sami-tower-falling',
   thunder: 'sami-storm-window',
   'barking-dog': 'sami-barking-dog',
+  'long-day': 'sami-evening-sofa',
   'long-walk': 'sami-long-path',
 } as const satisfies Partial<Record<SituationId, string>>;
 export type StoryScene =

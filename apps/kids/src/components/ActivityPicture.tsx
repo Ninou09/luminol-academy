@@ -8,6 +8,7 @@ import { kidsSpacing, KidsText, ShapeGlyph } from '@luminol/kids-ui';
 import { StyleSheet, View } from 'react-native';
 
 import { CardPicture } from '../aac/CardPicture';
+import { SequencePicture } from '../sequences/SequencePicture';
 
 /**
  * A picture for each schedule step, code-drawn or a board picture, so
@@ -113,6 +114,19 @@ export function ActivityPicture({
         <View style={styles.tower}>
           <ShapeGlyph shape="square" color="blue" size={56} />
           <ShapeGlyph shape="square" color="yellow" size={56} />
+        </View>
+      );
+    case 'sequence-steps':
+      return (
+        <View style={styles.row}>
+          <SequencePicture
+            picture={{ kind: 'routine', id: 'wash-wet' }}
+            size={72}
+          />
+          <SequencePicture
+            picture={{ kind: 'routine', id: 'wash-dry' }}
+            size={72}
+          />
         </View>
       );
     case 'greetings':

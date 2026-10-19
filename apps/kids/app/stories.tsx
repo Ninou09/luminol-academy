@@ -1,7 +1,14 @@
-import { phrase, storyTitle, type Utterance } from '@luminol/kids-content';
 import {
+  phrase,
+  routineTitle,
+  storyTitle,
+  type Utterance,
+} from '@luminol/kids-content';
+import {
+  availableRoutines,
   availableStories,
   BUILTIN_STORIES,
+  routineSteps,
   type StepPicture,
 } from '@luminol/kids-learning';
 import {
@@ -80,7 +87,24 @@ export default function StoriesScreen() {
           },
         ];
       });
-  const routines = own('routine');
+  const routines: Entry[] = [
+    ...own('routine'),
+    ...availableRoutines(activeChild.religiousPack).flatMap((id) => {
+      const first = routineSteps(id, activeChild.prayerPictures)[0];
+      if (!first) return [];
+      return [
+        {
+          id,
+          title: routineTitle(id),
+          picture: { kind: 'routine' as const, id: first },
+          href: {
+            pathname: '/routine/[routineId]' as const,
+            params: { routineId: id },
+          },
+        },
+      ];
+    }),
+  ];
   const stories: Entry[] = [
     ...own('story'),
     ...availableStories(activeChild.religiousPack).flatMap((id) => {

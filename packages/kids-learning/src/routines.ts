@@ -7,8 +7,47 @@ import {
   type AacPicture,
   type PictureChoice,
 } from './aac';
+import { pickOne, sample, shuffle, type Random } from './random';
 import type { StoryScene } from './social';
 import type { GameOnlyPicture } from './themes';
+
+/** Step pictures for everyday routines; each has a file in apps/kids/assets/routines. */
+export const ROUTINE_PICTURES = [
+  'wash-wet',
+  'wash-soap',
+  'wash-rinse',
+  'wash-dry',
+  'teeth-paste',
+  'teeth-brush',
+  'teeth-rinse',
+  'teeth-cup',
+  'dress-shirt',
+  'dress-trousers',
+  'dress-socks',
+  'dress-shoes',
+  'wudu-hands',
+  'wudu-mouth',
+  'wudu-nose',
+  'wudu-face',
+  'wudu-arms',
+  'wudu-head',
+  'wudu-ears',
+  'wudu-feet',
+  'prayer-boy-stand',
+  'prayer-boy-bow',
+  'prayer-boy-rise',
+  'prayer-boy-prostrate',
+  'prayer-boy-sit',
+  'prayer-boy-salam',
+  'prayer-girl-stand',
+  'prayer-girl-bow',
+  'prayer-girl-rise',
+  'prayer-girl-prostrate',
+  'prayer-girl-sit',
+  'prayer-girl-salam',
+] as const;
+export const routinePictureSchema = z.enum(ROUTINE_PICTURES);
+export type RoutinePicture = z.infer<typeof routinePictureSchema>;
 
 /**
  * Routines and social stories are both ordered steps with a picture and a
@@ -33,10 +72,17 @@ export const stepTextSchema = z
     message: 'Text contains unsupported characters.',
   });
 
+/** What a parent can put on a step: a board picture, a routine picture or a photo. */
+export const stepPictureChoiceSchema = z.union([
+  pictureChoiceSchema,
+  z.object({ kind: z.literal('routine'), id: routinePictureSchema }),
+]);
+export type StepPictureChoice = z.infer<typeof stepPictureChoiceSchema>;
+
 export const sequenceStepSchema = z.object({
   id: z.uuid(),
   text: stepTextSchema,
-  picture: pictureChoiceSchema,
+  picture: stepPictureChoiceSchema,
   voicePath: voicePathSchema.nullable(),
 });
 export type SequenceStep = z.infer<typeof sequenceStepSchema>;
@@ -118,6 +164,7 @@ export function releasedSequenceMedia(
 /** A picture on a step: a parent's choice, or bundled game art and scenes. */
 export type StepPicture =
   | PictureChoice
+  | { kind: 'routine'; id: RoutinePicture }
   | { kind: 'game'; id: GameOnlyPicture }
   | { kind: 'scene'; id: StoryScene };
 
@@ -224,4 +271,133 @@ export function availableStories(religiousPack: boolean): BuiltinStoryId[] {
 
 export function isBuiltinStoryId(value: string): value is BuiltinStoryId {
   return Object.hasOwn(BUILTIN_STORIES, value);
+}
+
+/** Prayer pictures show a boy or a girl; parents choose which. */
+export const PRAYER_PICTURE_SETS = ['boy', 'girl'] as const;
+export const prayerPicturesSchema = z.enum(PRAYER_PICTURE_SETS);
+export type PrayerPictures = z.infer<typeof prayerPicturesSchema>;
+
+const PRAYER_POSES = [
+  'stand',
+  'bow',
+  'rise',
+  'prostrate',
+  'sit',
+  'salam',
+] as const;
+
+function prayerSteps(set: PrayerPictures): RoutinePicture[] {
+  return PRAYER_POSES.map((pose): RoutinePicture => `prayer-${set}-${pose}`);
+}
+
+/**
+ * Built-in routines, in the order the steps are done. The sentences live in
+ * content under `routine.<id>.<step>`.
+ */
+export const BUILTIN_ROUTINES = {
+  handwashing: {
+    pack: 'core',
+    steps: () => ['wash-wet', 'wash-soap', 'wash-rinse', 'wash-dry'],
+  },
+  toothbrushing: {
+    pack: 'core',
+    steps: () => ['teeth-paste', 'teeth-brush', 'teeth-rinse', 'teeth-cup'],
+  },
+  dressing: {
+    pack: 'core',
+    steps: () => [
+      'dress-shirt',
+      'dress-trousers',
+      'dress-socks',
+      'dress-shoes',
+    ],
+  },
+  wudu: {
+    pack: 'religious',
+    steps: () => [
+      'wudu-hands',
+      'wudu-mouth',
+      'wudu-nose',
+      'wudu-face',
+      'wudu-arms',
+      'wudu-head',
+      'wudu-ears',
+      'wudu-feet',
+    ],
+  },
+  prayer: {
+    pack: 'religious',
+    steps: prayerSteps,
+  },
+} as const satisfies Record<
+  string,
+  { pack: StoryPack; steps: (set: PrayerPictures) => RoutinePicture[] }
+>;
+export type BuiltinRoutineId = keyof typeof BUILTIN_ROUTINES;
+export const BUILTIN_ROUTINE_IDS = Object.keys(
+  BUILTIN_ROUTINES,
+) as BuiltinRoutineId[];
+
+export function isBuiltinRoutineId(value: string): value is BuiltinRoutineId {
+  return Object.hasOwn(BUILTIN_ROUTINES, value);
+}
+
+export function availableRoutines(religiousPack: boolean): BuiltinRoutineId[] {
+  return BUILTIN_ROUTINE_IDS.filter(
+    (id) => religiousPack || BUILTIN_ROUTINES[id].pack === 'core',
+  );
+}
+
+export function routineSteps(
+  id: BuiltinRoutineId,
+  prayerPictures: PrayerPictures,
+): RoutinePicture[] {
+  return BUILTIN_ROUTINES[id].steps(prayerPictures);
+}
+
+export type SequenceLevel = {
+  /** How many of a routine's steps the child puts in order. */
+  steps: number;
+};
+
+export type SequenceRound = {
+  routine: BuiltinRoutineId;
+  /** Step numbers (0-based, in routine order) that the child orders. */
+  order: number[];
+  /** The same steps as they are dealt on screen. */
+  dealt: number[];
+};
+
+/**
+ * Put a routine's steps in order. Fewer steps than the routine has are
+ * taken in their real order, so the answer is always the routine itself.
+ */
+export function createSequenceRound(
+  level: SequenceLevel,
+  religiousPack: boolean,
+  random: Random,
+): SequenceRound {
+  const routine = pickOne(random, availableRoutines(religiousPack));
+  const length = BUILTIN_ROUTINES[routine].steps('boy').length;
+  const all = Array.from({ length }, (_, index) => index);
+  const order = sample(random, all, Math.min(level.steps, length)).sort(
+    (a, b) => a - b,
+  );
+  let dealt = shuffle(random, order);
+  // Never deal the steps already in order, or there is nothing to do.
+  if (order.length > 1 && dealt.every((step, index) => step === order[index])) {
+    dealt = [...dealt.slice(1), ...dealt.slice(0, 1)];
+  }
+  return { routine, order, dealt };
+}
+
+/** Routine pictures a parent may pick, with wudu and prayer only in the pack. */
+export function routinePicturesFor(religiousPack: boolean): RoutinePicture[] {
+  const allowed = new Set(
+    availableRoutines(religiousPack).flatMap((id) =>
+      PRAYER_PICTURE_SETS.flatMap((set) => routineSteps(id, set)),
+    ),
+  );
+  return ROUTINE_PICTURES.filter((picture) => allowed.has(picture));
 }

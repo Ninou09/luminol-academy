@@ -1,7 +1,10 @@
 import {
   AVATARS,
+  BUILTIN_ROUTINE_IDS,
   BUILTIN_STORIES,
   BUILTIN_STORY_IDS,
+  ROUTINE_PICTURES,
+  routineSteps,
   EMOTIONS,
   GREETINGS,
   SITUATION_IDS,
@@ -42,6 +45,11 @@ import {
   resolveSpeech,
   type RecordedAudioManifest,
 } from './speech';
+import {
+  ROUTINE_PICTURE_LABELS,
+  routineStepCount,
+  routineUtterances,
+} from './routines';
 import { storyPage, storyPageCount, storyUtterances } from './stories';
 import type { Utterance } from './utterance';
 
@@ -278,5 +286,24 @@ describe('built-in stories', () => {
     const keys = utterances.map((utterance) => utterance.key);
     expect(new Set(keys).size).toBe(keys.length);
     expect(storyPage('eid', 0).key).toBe('story.eid.1');
+  });
+});
+
+describe('built-in routines', () => {
+  it('has a sentence for every step picture', () => {
+    for (const id of BUILTIN_ROUTINE_IDS) {
+      expect(routineStepCount(id)).toBe(routineSteps(id, 'boy').length);
+      expect(routineStepCount(id)).toBe(routineSteps(id, 'girl').length);
+    }
+  });
+
+  it('is Arabic text and labels every routine picture', () => {
+    for (const { text } of routineUtterances()) {
+      expect(text).toMatch(ARABIC);
+      expect(text).not.toMatch(LATIN);
+    }
+    for (const picture of ROUTINE_PICTURES) {
+      expect(ROUTINE_PICTURE_LABELS[picture]).toMatch(ARABIC);
+    }
   });
 });

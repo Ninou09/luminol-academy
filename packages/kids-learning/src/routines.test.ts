@@ -1,16 +1,24 @@
 import { describe, expect, it } from 'vitest';
 
 import { childProfileInputSchema } from './profile';
+import { createRandom } from './random';
+import { levelSpec, maxLevel, SKILLS } from './skills';
 import {
+  availableRoutines,
   availableStories,
+  BUILTIN_ROUTINE_IDS,
   BUILTIN_STORIES,
   BUILTIN_STORY_IDS,
   childSequencesSchema,
+  createSequenceRound,
   EMPTY_SEQUENCES,
   MAX_SEQUENCE_STEPS,
   moveStep,
   releasedSequenceMedia,
   removeSequence,
+  ROUTINE_PICTURES,
+  routinePicturesFor,
+  routineSteps,
   sequenceSchema,
   upsertSequence,
   type Sequence,
@@ -121,5 +129,83 @@ describe('built-in stories', () => {
       dialect: 'msa',
     });
     expect(profile.religiousPack).toBe(false);
+  });
+});
+
+describe('built-in routines', () => {
+  it('use only bundled routine pictures, each in one routine', () => {
+    const used = BUILTIN_ROUTINE_IDS.flatMap((id) => [
+      ...routineSteps(id, 'boy'),
+      ...(id === 'prayer' ? routineSteps(id, 'girl') : []),
+    ]);
+    expect(new Set(used).size).toBe(used.length);
+    expect([...used].sort()).toEqual([...ROUTINE_PICTURES].sort());
+  });
+
+  it('show the chosen prayer pictures', () => {
+    expect(routineSteps('prayer', 'girl')[0]).toBe('prayer-girl-stand');
+    expect(routineSteps('prayer', 'boy')).toHaveLength(6);
+  });
+
+  it('keep wudu and prayer in the religious pack', () => {
+    expect(availableRoutines(false)).toEqual([
+      'handwashing',
+      'toothbrushing',
+      'dressing',
+    ]);
+    expect(availableRoutines(true)).toContain('wudu');
+    expect(availableRoutines(true)).toContain('prayer');
+  });
+
+  it('offer parents wudu and prayer pictures only with the pack', () => {
+    expect(routinePicturesFor(false)).toHaveLength(12);
+    expect(routinePicturesFor(false)).not.toContain('wudu-face');
+    expect(routinePicturesFor(true)).toEqual([...ROUTINE_PICTURES]);
+  });
+
+  it('let parents use routine pictures on their own steps', () => {
+    expect(
+      sequenceSchema.safeParse(
+        routine(1, [{ ...eat, picture: { kind: 'routine', id: 'wash-dry' } }]),
+      ).success,
+    ).toBe(true);
+    expect(
+      sequenceSchema.safeParse({
+        ...routine(1, [eat]),
+        steps: [{ ...eat, picture: { kind: 'routine', id: 'not-a-picture' } }],
+      }).success,
+    ).toBe(false);
+  });
+});
+
+describe('sequence rounds', () => {
+  const SEEDS = Array.from({ length: 200 }, (_, index) => index + 1);
+
+  it('deal the steps of one routine out of order, keeping the real order as the answer', () => {
+    const skill = SKILLS['sequence-steps'];
+    for (let level = 1; level <= maxLevel(skill); level += 1) {
+      const spec = levelSpec(skill, level);
+      for (const seed of SEEDS) {
+        const round = createSequenceRound(spec, true, createRandom(seed));
+        const length = routineSteps(round.routine, 'boy').length;
+        expect(round.order).toHaveLength(Math.min(spec.steps, length));
+        expect(round.order).toEqual([...round.order].sort((a, b) => a - b));
+        expect([...round.dealt].sort((a, b) => a - b)).toEqual(round.order);
+        expect(round.dealt).not.toEqual(round.order);
+      }
+    }
+  });
+
+  it('only use wudu and prayer with the religious pack', () => {
+    for (const seed of SEEDS) {
+      const round = createSequenceRound(
+        { steps: 3 },
+        false,
+        createRandom(seed),
+      );
+      expect(['handwashing', 'toothbrushing', 'dressing']).toContain(
+        round.routine,
+      );
+    }
   });
 });
