@@ -14,6 +14,11 @@ export const DIALECTS = [
 export const dialectSchema = z.enum(DIALECTS);
 export type Dialect = z.infer<typeof dialectSchema>;
 
+/** Western digits (3) or Arabic-Indic digits (٣) for numbers the child sees. */
+export const NUMERAL_STYLES = ['western', 'arabic-indic'] as const;
+export const numeralStyleSchema = z.enum(NUMERAL_STYLES);
+export type NumeralStyle = z.infer<typeof numeralStyleSchema>;
+
 export const AGE_BANDS = ['3-4', '5-6', '7-8', '9-10'] as const;
 export const ageBandSchema = z.enum(AGE_BANDS);
 export type AgeBand = z.infer<typeof ageBandSchema>;
@@ -111,6 +116,7 @@ export const childProfileInputSchema = z.object({
   dialect: dialectSchema,
   /** Profiles saved before themes existed read back with shapes. */
   interests: interestsSchema.default(['shapes']),
+  numeralStyle: numeralStyleSchema.default('western'),
 });
 export type ChildProfileInput = z.input<typeof childProfileInputSchema>;
 

@@ -20,6 +20,7 @@ const EMPTY_DRAFT: ProfileDraft = {
   ageBand: '5-6',
   dialect: 'maghrebi',
   interests: ['shapes'],
+  numeralStyle: 'western',
 };
 
 export default function NewProfileScreen() {

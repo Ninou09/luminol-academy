@@ -23,6 +23,7 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'memory-pairs',
     'sort-color',
     'puzzle-complete',
+    'count-objects',
   ],
   '5-6': [
     'match-shapes',
@@ -32,7 +33,11 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'pattern-next',
     'puzzle-complete',
     'sort-size',
+    'letter-match',
+    'count-objects',
     'sort-shape',
+    'letter-trace',
+    'letter-sound',
   ],
   '7-8': [
     'match-shapes',
@@ -41,7 +46,11 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'memory-pairs',
     'puzzle-complete',
     'sort-color',
+    'letter-sound',
+    'letter-trace',
     'sort-size',
+    'letter-forms',
+    'count-objects',
   ],
   '9-10': [
     'match-shapes',
@@ -50,7 +59,11 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'puzzle-complete',
     'memory-pairs',
     'sort-size',
+    'letter-forms',
+    'letter-sound',
     'sort-color',
+    'letter-trace',
+    'count-objects',
   ],
 };
 
@@ -61,6 +74,7 @@ const THEMED_GAMES: ReadonlySet<GameKind> = new Set([
   'pattern',
   'memory',
   'puzzle',
+  'count',
 ]);
 
 export type ActivityStep = {

@@ -14,6 +14,15 @@ import {
   PARENT_COPY,
   volumeLabel,
 } from './parent-copy';
+import {
+  formatNumber,
+  letterNameUtterance,
+  letterSoundUtterance,
+  letterUtterances,
+  MAX_SPOKEN_NUMBER,
+  numberUtterance,
+  numberUtterances,
+} from './letters';
 import { PHRASE_KEYS, phrase, praiseFor, skillTitle } from './phrases';
 import { avatarLabel, binLabel, describePiece } from './pieces';
 import {
@@ -185,5 +194,30 @@ describe('planPlayback', () => {
 
   it('returns nothing for an empty sentence', () => {
     expect(planPlayback([], 'msa', manifest)).toEqual([]);
+  });
+});
+
+describe('letters and numbers', () => {
+  it('names and sounds every letter in Arabic', () => {
+    for (const { key, text } of letterUtterances()) {
+      expect(text, key).toMatch(ARABIC);
+      expect(text, key).not.toMatch(LATIN);
+    }
+    expect(letterSoundUtterance('ba').text).toBe('بَ');
+    expect(letterSoundUtterance('alif').text).toBe('أَ');
+    expect(letterNameUtterance('ayn').text).toBe('عين');
+  });
+
+  it('counts aloud from one to twenty', () => {
+    expect(numberUtterances()).toHaveLength(MAX_SPOKEN_NUMBER);
+    expect(numberUtterance(3).text).toBe('ثلاثة');
+    expect(numberUtterance(20).text).toBe('عشرون');
+    expect(() => numberUtterance(21)).toThrow();
+  });
+
+  it('formats digits in the chosen style', () => {
+    expect(formatNumber(17, 'western')).toBe('17');
+    expect(formatNumber(17, 'arabic-indic')).toBe('١٧');
+    expect(formatNumber(20, 'arabic-indic')).toBe('٢٠');
   });
 });

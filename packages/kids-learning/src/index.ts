@@ -1,5 +1,6 @@
 export * from './aac';
 export * from './adaptive';
+export * from './letters';
 export * from './pieces';
 export * from './profile';
 export * from './random';
@@ -9,3 +10,4 @@ export * from './session';
 export * from './skills';
 export * from './themedRounds';
 export * from './themes';
+export * from './tracing';

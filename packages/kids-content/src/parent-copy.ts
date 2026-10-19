@@ -2,6 +2,7 @@ import type {
   AgeBand,
   AnimationLevel,
   Dialect,
+  NumeralStyle,
   RewardStyle,
   SessionMinutes,
   VoiceSpeed,
@@ -47,6 +48,7 @@ export const PARENT_COPY = {
     avatar: 'الرمز',
     ageBand: 'العمر',
     dialect: 'اللهجة المسموعة',
+    numeralStyle: 'شكل الأرقام',
     interests: 'ما يحبّه الطفل',
     interestsNote:
       'تظهر هذه المواضيع في ألعاب الصور. اختر موضوعًا واحدًا على الأقل.',
@@ -117,6 +119,11 @@ export const DIALECT_LABELS: Record<Dialect, string> = {
   gulf: 'الخليجية',
   egyptian: 'المصرية',
   levantine: 'الشامية',
+};
+
+export const NUMERAL_STYLE_LABELS: Record<NumeralStyle, string> = {
+  western: 'أرقام 1 2 3',
+  'arabic-indic': 'أرقام ١ ٢ ٣',
 };
 
 export const AGE_BAND_LABELS: Record<AgeBand, string> = {

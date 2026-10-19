@@ -3,7 +3,7 @@ import {
   type Avatar,
   type ScheduleStep,
 } from '@luminol/kids-learning';
-import { kidsSpacing, ShapeGlyph } from '@luminol/kids-ui';
+import { kidsSpacing, KidsText, ShapeGlyph } from '@luminol/kids-ui';
 import { StyleSheet, View } from 'react-native';
 
 /** A code-drawn picture for each schedule step, so non-readers know what is next. */
@@ -67,6 +67,23 @@ export function ActivityPicture({
           <ShapeGlyph shape="star" color="green" size={72} />
         </View>
       );
+    case 'letter-match':
+    case 'letter-sound':
+    case 'letter-forms':
+    case 'letter-trace':
+      return (
+        <KidsText align="center" style={styles.letters}>
+          {step.skillId === 'letter-forms' ? 'بـ ـبـ ـب' : 'أ ب ت'}
+        </KidsText>
+      );
+    case 'count-objects':
+      return (
+        <View style={styles.row}>
+          <ShapeGlyph shape="circle" color="green" size={44} />
+          <ShapeGlyph shape="circle" color="green" size={44} />
+          <ShapeGlyph shape="circle" color="green" size={44} />
+        </View>
+      );
     case 'puzzle-complete':
       return (
         <View style={styles.row}>
@@ -78,6 +95,10 @@ export function ActivityPicture({
 }
 
 const styles = StyleSheet.create({
+  letters: {
+    fontSize: 56,
+    lineHeight: 84,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',

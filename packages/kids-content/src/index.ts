@@ -1,5 +1,6 @@
 export * from './aac';
 export * from './catalog';
+export * from './letters';
 export * from './parent-copy';
 export * from './phrases';
 export * from './pieces';

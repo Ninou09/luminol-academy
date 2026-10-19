@@ -11,6 +11,7 @@ import {
 } from '@luminol/kids-learning';
 
 import { aacBuiltinUtterances, aacCategoryUtterances } from './aac';
+import { letterUtterances, numberUtterances } from './letters';
 import { PHRASE_KEYS, phrase, skillTitle } from './phrases';
 import { colorName, describePiece, shapeName, sizeName } from './pieces';
 import { scheduleAnnouncement } from './schedule';
@@ -23,7 +24,9 @@ export type SpokenCategory =
   | 'group'
   | 'shape'
   | 'aac-card'
-  | 'aac-group';
+  | 'aac-group'
+  | 'letter'
+  | 'number';
 
 export type SpokenEntry = Utterance & { category: SpokenCategory };
 
@@ -78,6 +81,8 @@ export function spokenCatalog(): SpokenEntry[] {
     ).map(tag('shape')),
     ...aacBuiltinUtterances().map(tag('aac-card')),
     ...aacCategoryUtterances().map(tag('aac-group')),
+    ...letterUtterances().map(tag('letter')),
+    ...numberUtterances().map(tag('number')),
   ];
 }
 
@@ -89,6 +94,8 @@ const CATEGORY_LABELS: Record<SpokenCategory, string> = {
   shape: 'Shape name / hint',
   'aac-card': 'Communication board word',
   'aac-group': 'Communication board group',
+  letter: 'Letter name or sound',
+  number: 'Counting number',
 };
 
 function csvCell(value: string): string {

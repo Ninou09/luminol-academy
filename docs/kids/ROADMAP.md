@@ -55,21 +55,25 @@ The kids packages are separate from `@luminol/ui`, `@luminol/types` and
 
 ## Milestones
 
-| #   | Milestone                    | Status                                                                                                                                                                                                                                                |
-| --- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Foundation + first 3 games   | Done: app shell, RTL tokens, parental gate, child profiles, sensory settings, encrypted storage, audio with TTS fallback, visual schedule, calm-down corner, adaptive engine, matching, sorting (color, shape, size) and cause-and-effect, with tests |
-| 2   | AAC communication board      | Done: 37 picture cards in 6 groups, sentence strip read aloud, per-child board (hide cards, parent photos, parent voice, second mother picture), parents' own cards, files deleted with the card or profile, with tests                               |
-| 3   | Interest themes + more games | Done: patterns (AB, AAB, ABB, ABC), memory pairs and complete-the-picture games on the adaptive engine; interest themes chosen per child (shapes, food, toys and places) rotating through the picture games; sorting stays on shapes, with tests      |
-| 4   | Arabic letters and numbers   | Next: letter forms, stroke-order tracing, sounds, counting, numeral style                                                                                                                                                                             |
-| 5   | Emotions + social skills     | Planned: noticing faces and feelings (optional), turn-taking, greetings                                                                                                                                                                               |
-| 6   | Daily life skills            | Planned: social stories, sequencing, routine editor, optional religious pack (wudu, prayer, Ramadan, Eid)                                                                                                                                             |
-| 7   | Parent dashboard and reports | Planned: progress per skill, history, goals, PDF report, export and delete                                                                                                                                                                            |
-| 8   | Store readiness              | Planned: RevenueCat subscriptions, entitlements, Play data-safety form, Designed for Families review                                                                                                                                                  |
+| #   | Milestone                    | Status                                                                                                                                                                                                                                                                                                  |
+| --- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Foundation + first 3 games   | Done: app shell, RTL tokens, parental gate, child profiles, sensory settings, encrypted storage, audio with TTS fallback, visual schedule, calm-down corner, adaptive engine, matching, sorting (color, shape, size) and cause-and-effect, with tests                                                   |
+| 2   | AAC communication board      | Done: 37 picture cards in 6 groups, sentence strip read aloud, per-child board (hide cards, parent photos, parent voice, second mother picture), parents' own cards, files deleted with the card or profile, with tests                                                                                 |
+| 3   | Interest themes + more games | Done: patterns (AB, AAB, ABB, ABC), memory pairs and complete-the-picture games on the adaptive engine; interest themes chosen per child (shapes, food, toys and places) rotating through the picture games; sorting stays on shapes, with tests                                                        |
+| 4   | Arabic letters and numbers   | Done: 28 letters with names and sounds; find the letter, hear-and-find, and positional forms (start, middle, end via the font's own joining); tracing in writing order with progress kept when the finger lifts; counting to 20 with tap-to-count; Western or Arabic-Indic digits per child, with tests |
+| 5   | Emotions + social skills     | Next: noticing faces and feelings (optional), turn-taking, greetings                                                                                                                                                                                                                                    |
+| 6   | Daily life skills            | Planned: social stories, sequencing, routine editor, optional religious pack (wudu, prayer, Ramadan, Eid)                                                                                                                                                                                               |
+| 7   | Parent dashboard and reports | Planned: progress per skill, history, goals, PDF report, export and delete                                                                                                                                                                                                                              |
+| 8   | Store readiness              | Planned: RevenueCat subscriptions, entitlements, Play data-safety form, Designed for Families review                                                                                                                                                                                                    |
 
 Cloud sync and the clinic licence come after launch, because they need a
 backend and accounts.
 
 ## Open items for the product owner
+
+- Specialist or Arabic-teacher review of the tracing paths in
+  `packages/kids-learning/src/tracing.ts` (shape and stroke order of all 28
+  letters) and of the letter sounds before launch.
 
 - Artwork for more interest themes (animals, vehicles, space). Each theme is
   a picture list in `packages/kids-learning/src/themes.ts` plus its bundled

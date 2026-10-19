@@ -39,8 +39,8 @@ The root `pnpm test` runs these jest tests after the Vitest suite.
   and `src/parent/CardEditor.tsx` let parents customise it.
 - `src/media/` — parent photos and recordings, kept in the app's private
   folder per child and deleted with the card or the profile.
-- `src/games/` — matching, sorting, cause-and-effect, patterns, memory and
-  puzzle games, `TokenView` for themed pictures, and `useTrialFlow`, which runs
+- `src/games/` — matching, sorting, cause-and-effect, patterns, memory,
+  puzzle, letter, tracing and counting games, `TokenView` for themed pictures, and `useTrialFlow`, which runs
   the adaptive engine, the hint ladder and trial recording.
 - `src/data/` — SQL schema, migrations and the validated repository.
 - `src/audio/` — recorded-clip manifest, speech queue with fallback and the

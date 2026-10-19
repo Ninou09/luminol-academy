@@ -1,7 +1,22 @@
+import type {
+  CountLevel,
+  LetterChoiceLevel,
+  LetterFormsLevel,
+} from './letters';
 import type { AgeBand } from './profile';
 
 export type GameKind =
-  'matching' | 'sorting' | 'cause-effect' | 'pattern' | 'memory' | 'puzzle';
+  | 'matching'
+  | 'sorting'
+  | 'cause-effect'
+  | 'pattern'
+  | 'memory'
+  | 'puzzle'
+  | 'letter-match'
+  | 'letter-sound'
+  | 'letter-forms'
+  | 'trace'
+  | 'count';
 export type SortDimension = 'color' | 'shape' | 'size';
 
 /**
@@ -46,6 +61,13 @@ export type PuzzleLevel = {
   choices: number;
 };
 
+export type TraceLevel = {
+  /** `path` draws the whole letter, `dots` only checkpoints, `start` one dot. */
+  guide: 'path' | 'dots' | 'start';
+  /** Early levels use letters with one simple stroke. */
+  letters: 'simple' | 'all';
+};
+
 type SkillBase<Id extends string> = {
   id: Id;
   ageBands: readonly AgeBand[];
@@ -85,7 +107,37 @@ export type PuzzleSkill = SkillBase<'puzzle-complete'> & {
   levels: readonly PuzzleLevel[];
 };
 
+export type LetterMatchSkill = SkillBase<'letter-match'> & {
+  game: 'letter-match';
+  levels: readonly LetterChoiceLevel[];
+};
+
+export type LetterSoundSkill = SkillBase<'letter-sound'> & {
+  game: 'letter-sound';
+  levels: readonly LetterChoiceLevel[];
+};
+
+export type LetterFormsSkill = SkillBase<'letter-forms'> & {
+  game: 'letter-forms';
+  levels: readonly LetterFormsLevel[];
+};
+
+export type TraceSkill = SkillBase<'letter-trace'> & {
+  game: 'trace';
+  levels: readonly TraceLevel[];
+};
+
+export type CountSkill = SkillBase<'count-objects'> & {
+  game: 'count';
+  levels: readonly CountLevel[];
+};
+
 export type Skill =
+  | LetterMatchSkill
+  | LetterSoundSkill
+  | LetterFormsSkill
+  | TraceSkill
+  | CountSkill
   | MatchingSkill
   | SortingSkill
   | CauseEffectSkill
@@ -191,6 +243,71 @@ export const SKILLS = {
       { pieces: 2, choices: 3 },
       { pieces: 4, choices: 3 },
       { pieces: 4, choices: 4 },
+    ],
+  },
+  'letter-match': {
+    id: 'letter-match',
+    game: 'letter-match',
+    ageBands: ['5-6', '7-8', '9-10'],
+    trialsPerActivity: 5,
+    levels: [
+      { choices: 2, similar: false },
+      { choices: 3, similar: false },
+      { choices: 4, similar: false },
+      { choices: 3, similar: true },
+      { choices: 4, similar: true },
+    ],
+  },
+  'letter-sound': {
+    id: 'letter-sound',
+    game: 'letter-sound',
+    ageBands: ['5-6', '7-8', '9-10'],
+    trialsPerActivity: 5,
+    levels: [
+      { choices: 2, similar: false },
+      { choices: 3, similar: false },
+      { choices: 4, similar: false },
+      { choices: 3, similar: true },
+      { choices: 4, similar: true },
+    ],
+  },
+  'letter-forms': {
+    id: 'letter-forms',
+    game: 'letter-forms',
+    ageBands: ['7-8', '9-10'],
+    trialsPerActivity: 5,
+    levels: [
+      { position: 'final', choices: 2 },
+      { position: 'final', choices: 3 },
+      { position: 'initial', choices: 3 },
+      { position: 'medial', choices: 3 },
+      { position: 'medial', choices: 4 },
+    ],
+  },
+  'letter-trace': {
+    id: 'letter-trace',
+    game: 'trace',
+    ageBands: ['5-6', '7-8', '9-10'],
+    trialsPerActivity: 3,
+    levels: [
+      { guide: 'path', letters: 'simple' },
+      { guide: 'dots', letters: 'simple' },
+      { guide: 'path', letters: 'all' },
+      { guide: 'dots', letters: 'all' },
+      { guide: 'start', letters: 'all' },
+    ],
+  },
+  'count-objects': {
+    id: 'count-objects',
+    game: 'count',
+    ageBands: ALL_AGES,
+    trialsPerActivity: 5,
+    levels: [
+      { max: 3, choices: 2 },
+      { max: 5, choices: 3 },
+      { max: 10, choices: 3 },
+      { max: 10, choices: 4 },
+      { max: 20, choices: 4 },
     ],
   },
 } as const satisfies { [Id in SkillId]: Skill & { id: Id } };

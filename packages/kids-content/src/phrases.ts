@@ -29,6 +29,11 @@ const PHRASE_TEXT = {
   'memory.instruction': 'لنجد الصورتين المتشابهتين',
   'memory.hidden': 'بطاقة مقلوبة',
   'puzzle.instruction': 'لنكمل الصورة',
+  'letters.matchInstruction': 'لنبحث عن الحرف نفسه',
+  'letters.soundInstruction': 'لنجد الحرف',
+  'letters.formsInstruction': 'لنجد الحرف نفسه في الكلمة',
+  'trace.instruction': 'لنكتب الحرف مع النقاط',
+  'count.instruction': 'لنعدّ الصور',
   'hint.look': 'لننظر هنا',
   'praise.wellDone': 'أحسنت!',
   'praise.great': 'رائع!',
@@ -78,6 +83,11 @@ const SKILL_TITLES: Record<SkillId, string> = {
   'pattern-next': 'ماذا بعد؟',
   'memory-pairs': 'لعبة الذاكرة',
   'puzzle-complete': 'إكمال الصورة',
+  'letter-match': 'مطابقة الحروف',
+  'letter-sound': 'أصوات الحروف',
+  'letter-forms': 'أشكال الحروف',
+  'letter-trace': 'كتابة الحروف',
+  'count-objects': 'العدّ',
 };
 
 export function skillTitle(skillId: SkillId): Utterance {

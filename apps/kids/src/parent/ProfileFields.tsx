@@ -2,6 +2,7 @@ import {
   AGE_BAND_LABELS,
   avatarLabel,
   DIALECT_LABELS,
+  NUMERAL_STYLE_LABELS,
   PARENT_COPY,
   THEME_LABELS,
 } from '@luminol/kids-content';
@@ -11,6 +12,8 @@ import {
   AVATARS,
   DIALECTS,
   NICKNAME_MAX_LENGTH,
+  NUMERAL_STYLES,
+  type NumeralStyle,
   THEMES,
   type AgeBand,
   type Avatar,
@@ -35,6 +38,7 @@ export type ProfileDraft = {
   ageBand: AgeBand;
   dialect: Dialect;
   interests: ThemeId[];
+  numeralStyle: NumeralStyle;
 };
 
 export function ProfileFields({
@@ -120,6 +124,17 @@ export function ProfileFields({
         onChange={(dialect) => onChange({ ...draft, dialect })}
         note={copy.dialectNote}
         testID="profile-dialect"
+      />
+
+      <SegmentedChoice
+        label={copy.numeralStyle}
+        options={NUMERAL_STYLES.map((value) => ({
+          value,
+          label: NUMERAL_STYLE_LABELS[value],
+        }))}
+        value={draft.numeralStyle}
+        onChange={(numeralStyle) => onChange({ ...draft, numeralStyle })}
+        testID="profile-numerals"
       />
 
       <MultiChoice
