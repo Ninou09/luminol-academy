@@ -91,7 +91,8 @@ before submitting, as it describes exactly what its SDK sends.
 
 - [x] No ads and no ads SDKs.
 - [x] The advertising id permission is blocked in `app.json` and the app
-      sends no device identifiers.
+      sends no device identifiers. Unused biometric permissions that
+      libraries add are blocked too.
 - [x] No location, contacts or account sign-in.
 - [x] Camera, microphone and photos are only requested when a parent adds a
       photo or a recording, with Arabic explanations.

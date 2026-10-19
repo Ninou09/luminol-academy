@@ -21,7 +21,9 @@
       "allowBackup": false,
       "blockedPermissions": [
         "com.google.android.gms.permission.AD_ID",
-        "android.permission.SYSTEM_ALERT_WINDOW"
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
       ]
     },
     "plugins": [

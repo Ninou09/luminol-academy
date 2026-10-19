@@ -102,6 +102,15 @@ describe('app config', () => {
     );
   });
 
+  it('drops the biometric permissions secure storage adds but the app never uses', () => {
+    expect(app.expo.android.blockedPermissions).toEqual(
+      expect.arrayContaining([
+        'android.permission.USE_BIOMETRIC',
+        'android.permission.USE_FINGERPRINT',
+      ]),
+    );
+  });
+
   it('uses the kids design tokens for native colors', () => {
     expect(app.expo.backgroundColor.toUpperCase()).toBe(kidsColors.canvas);
     expect(app.expo.android.adaptiveIcon.backgroundColor.toUpperCase()).toBe(
