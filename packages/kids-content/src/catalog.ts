@@ -10,6 +10,7 @@ import { letterUtterances, numberUtterances } from './letters';
 import { PHRASE_KEYS, phrase, skillTitle } from './phrases';
 import { colorName, describePiece, shapeName, sizeName } from './pieces';
 import { socialUtterances } from './social';
+import { storyUtterances } from './stories';
 import { gamePictureUtterances } from './themes';
 import type { Utterance } from './utterance';
 
@@ -23,7 +24,8 @@ export type SpokenCategory =
   | 'letter'
   | 'number'
   | 'social'
-  | 'picture';
+  | 'picture'
+  | 'story';
 
 export type SpokenEntry = Utterance & { category: SpokenCategory };
 
@@ -53,6 +55,7 @@ export function spokenCatalog(): SpokenEntry[] {
     ...numberUtterances().map(tag('number')),
     ...socialUtterances().map(tag('social')),
     ...gamePictureUtterances().map(tag('picture')),
+    ...storyUtterances().map(tag('story')),
   ];
 }
 
@@ -67,6 +70,7 @@ const CATEGORY_LABELS: Record<SpokenCategory, string> = {
   number: 'Counting number',
   social: 'Feelings story, question or greeting',
   picture: 'Game picture name (animals, vehicles, sky and space)',
+  story: 'Social story title or page',
 };
 
 function csvCell(value: string): string {

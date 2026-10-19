@@ -1,5 +1,7 @@
 import {
   AVATARS,
+  BUILTIN_STORIES,
+  BUILTIN_STORY_IDS,
   EMOTIONS,
   GREETINGS,
   SITUATION_IDS,
@@ -40,6 +42,7 @@ import {
   resolveSpeech,
   type RecordedAudioManifest,
 } from './speech';
+import { storyPage, storyPageCount, storyUtterances } from './stories';
 import type { Utterance } from './utterance';
 
 const ARABIC = /[\u0600-\u06FF]/;
@@ -256,5 +259,24 @@ describe('feelings and greetings', () => {
   it('gives every greeting distinct words', () => {
     const words = GREETINGS.map((id) => greetingWords(id).text);
     expect(new Set(words).size).toBe(words.length);
+  });
+});
+
+describe('built-in stories', () => {
+  it('has a sentence for every picture page', () => {
+    for (const id of BUILTIN_STORY_IDS) {
+      expect(storyPageCount(id)).toBe(BUILTIN_STORIES[id].pages.length);
+    }
+  });
+
+  it('is Arabic text with distinct recording keys', () => {
+    const utterances = storyUtterances();
+    for (const { text } of utterances) {
+      expect(text).toMatch(ARABIC);
+      expect(text).not.toMatch(LATIN);
+    }
+    const keys = utterances.map((utterance) => utterance.key);
+    expect(new Set(keys).size).toBe(keys.length);
+    expect(storyPage('eid', 0).key).toBe('story.eid.1');
   });
 });

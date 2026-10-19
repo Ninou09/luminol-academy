@@ -6,6 +6,7 @@ export * from './profile';
 export * from './random';
 export * from './records';
 export * from './rounds';
+export * from './routines';
 export * from './session';
 export * from './skills';
 export * from './social';

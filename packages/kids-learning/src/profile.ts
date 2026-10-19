@@ -128,6 +128,8 @@ export const childProfileInputSchema = z.object({
   interests: interestsSchema.default(['shapes']),
   numeralStyle: numeralStyleSchema.default('western'),
   disabledSkills: disabledSkillsSchema.default([]),
+  /** Wudu, prayer, Ramadan and Eid content; off until a parent turns it on. */
+  religiousPack: z.boolean().default(false),
 });
 export type ChildProfileInput = z.input<typeof childProfileInputSchema>;
 

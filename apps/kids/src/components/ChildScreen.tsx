@@ -14,21 +14,22 @@ import { CardPicture } from '../aac/CardPicture';
 import { useAppState } from '../state/AppState';
 
 /**
- * Every child screen shares this frame so the schedule, communication board
- * and calm buttons are always in the same place. In RTL the schedule button
- * sits on the right and the calm corner on the left.
+ * Every child screen shares this frame so the schedule, communication board,
+ * stories and calm buttons are always in the same place. In RTL the schedule
+ * button sits on the right and the calm corner on the left.
  */
 export function ChildScreen({
   current,
   children,
 }: {
-  current: 'session' | 'activity' | 'talk' | 'calm';
+  current: 'session' | 'activity' | 'talk' | 'stories' | 'calm';
   children: ReactNode;
 }) {
   const router = useRouter();
   const { say } = useAppState();
   const schedule = phrase('nav.schedule');
   const talk = phrase('nav.talk');
+  const stories = phrase('nav.stories');
   const calm = phrase('nav.calm');
 
   return (
@@ -60,6 +61,19 @@ export function ChildScreen({
             router.push('/talk');
           }}
           testID="nav-talk"
+        />
+        <BigButton
+          label={stories.text}
+          variant="secondary"
+          disabled={current === 'stories'}
+          icon={
+            <CardPicture picture={{ kind: 'builtin', id: 'book' }} size={32} />
+          }
+          onPress={() => {
+            say(stories);
+            router.push('/stories');
+          }}
+          testID="nav-stories"
         />
         <BigButton
           label={calm.text}

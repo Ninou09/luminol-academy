@@ -43,6 +43,7 @@ export type ProfileDraft = {
   interests: ThemeId[];
   numeralStyle: NumeralStyle;
   disabledSkills: SkillId[];
+  religiousPack: boolean;
 };
 
 /**
@@ -165,6 +166,20 @@ export function ProfileFields({
         minimum={1}
         note={copy.interestsNote}
         testID="profile-interests"
+      />
+
+      <SegmentedChoice
+        label={copy.religiousPack}
+        options={[
+          { value: 'off', label: copy.religiousOff },
+          { value: 'on', label: copy.religiousOn },
+        ]}
+        value={draft.religiousPack ? 'on' : 'off'}
+        onChange={(value) =>
+          onChange({ ...draft, religiousPack: value === 'on' })
+        }
+        note={copy.religiousNote}
+        testID="profile-religious"
       />
 
       <MultiChoice

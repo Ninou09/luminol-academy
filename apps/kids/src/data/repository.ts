@@ -1,7 +1,11 @@
 import {
   aacBoardSchema,
   childProfileSchema,
+  childSequencesSchema,
   EMPTY_AAC_BOARD,
+  MAX_SEQUENCES,
+  sequenceSchema,
+  type ChildSequences,
   type AacBoard,
   sessionRecordSchema,
   skillProgressSchema,
@@ -30,6 +34,13 @@ export interface KidsRepository {
   /** The child's communication board; an empty board if none is saved. */
   getBoard(childId: string): Promise<AacBoard>;
   saveBoard(childId: string, board: AacBoard, now: Date): Promise<void>;
+  /** The child's routines and stories; any that fail validation are skipped. */
+  getSequences(childId: string): Promise<ChildSequences>;
+  saveSequences(
+    childId: string,
+    sequences: ChildSequences,
+    now: Date,
+  ): Promise<void>;
 }
 
 type DataRow = { data: string };
@@ -157,6 +168,46 @@ export class SqlRepository implements KidsRepository {
     const valid = aacBoardSchema.parse(board);
     await this.db.runAsync(
       `INSERT INTO aac_boards (child_id, data, updated_at) VALUES (?, ?, ?)
+       ON CONFLICT(child_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`,
+      [childId, JSON.stringify(valid), now.toISOString()],
+    );
+  }
+
+  async getSequences(childId: string): Promise<ChildSequences> {
+    const row = await this.db.getFirstAsync<DataRow>(
+      'SELECT data FROM child_sequences WHERE child_id = ?',
+      [childId],
+    );
+    if (!row) return { items: [] };
+    // One damaged routine must not hide the others, so items are checked
+    // one by one.
+    let stored: unknown;
+    try {
+      stored = JSON.parse(row.data);
+    } catch {
+      return { items: [] };
+    }
+    const items =
+      stored && typeof stored === 'object' && 'items' in stored
+        ? stored.items
+        : null;
+    if (!Array.isArray(items)) return { items: [] };
+    return {
+      items: items
+        .map((item: unknown) => sequenceSchema.safeParse(item))
+        .flatMap((result) => (result.success ? [result.data] : []))
+        .slice(0, MAX_SEQUENCES),
+    };
+  }
+
+  async saveSequences(
+    childId: string,
+    sequences: ChildSequences,
+    now: Date,
+  ): Promise<void> {
+    const valid = childSequencesSchema.parse(sequences);
+    await this.db.runAsync(
+      `INSERT INTO child_sequences (child_id, data, updated_at) VALUES (?, ?, ?)
        ON CONFLICT(child_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`,
       [childId, JSON.stringify(valid), now.toISOString()],
     );

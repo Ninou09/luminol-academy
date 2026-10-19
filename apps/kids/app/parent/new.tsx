@@ -22,6 +22,7 @@ const EMPTY_DRAFT: ProfileDraft = {
   interests: ['shapes'],
   numeralStyle: 'western',
   disabledSkills: [],
+  religiousPack: false,
 };
 
 export default function NewProfileScreen() {

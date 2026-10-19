@@ -7,5 +7,6 @@ export * from './pieces';
 export * from './schedule';
 export * from './social';
 export * from './speech';
+export * from './stories';
 export * from './themes';
 export * from './utterance';

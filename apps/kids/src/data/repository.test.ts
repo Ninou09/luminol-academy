@@ -174,4 +174,57 @@ describe('SqlRepository', () => {
     );
     expect(row?.total).toBe(0);
   });
+
+  it('keeps valid routines when another stored one is damaged', async () => {
+    const { services, child } = await setup();
+    expect(await services.repository.getSequences(child.id)).toEqual({
+      items: [],
+    });
+    const routine = {
+      id: services.newId(),
+      kind: 'routine' as const,
+      title: 'الصباح',
+      steps: [
+        {
+          id: services.newId(),
+          text: 'أتناول الفطور',
+          picture: { kind: 'builtin' as const, id: 'food' as const },
+          voicePath: null,
+        },
+      ],
+    };
+    await services.repository.saveSequences(
+      child.id,
+      { items: [routine] },
+      services.now(),
+    );
+    expect(await services.repository.getSequences(child.id)).toEqual({
+      items: [routine],
+    });
+    await services.db.runAsync(
+      'UPDATE child_sequences SET data = ? WHERE child_id = ?',
+      [
+        JSON.stringify({ items: [{ ...routine, title: '' }, routine] }),
+        child.id,
+      ],
+    );
+    expect(await services.repository.getSequences(child.id)).toEqual({
+      items: [routine],
+    });
+  });
+
+  it('deletes routines and stories with the child', async () => {
+    const { services, child } = await setup();
+    await services.repository.saveSequences(
+      child.id,
+      { items: [] },
+      services.now(),
+    );
+    await services.repository.deleteProfile(child.id);
+    const row = await services.db.getFirstAsync<{ total: number }>(
+      'SELECT COUNT(*) AS total FROM child_sequences',
+      [],
+    );
+    expect(row?.total).toBe(0);
+  });
 });

@@ -37,6 +37,7 @@ export default function EditProfileScreen() {
           interests: profile.interests,
           numeralStyle: profile.numeralStyle,
           disabledSkills: profile.disabledSkills,
+          religiousPack: profile.religiousPack,
         }
       : null,
   );
@@ -83,6 +84,18 @@ export default function EditProfileScreen() {
           })
         }
         testID="profile-board"
+      />
+      <BigButton
+        label={PARENT_COPY.sequences.open}
+        variant="secondary"
+        audience="parent"
+        onPress={() =>
+          router.push({
+            pathname: '/parent/sequences/[childId]',
+            params: { childId: profile.id },
+          })
+        }
+        testID="profile-sequences"
       />
       <SensoryFields
         value={sensory}
