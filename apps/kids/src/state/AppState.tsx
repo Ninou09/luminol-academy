@@ -1,12 +1,8 @@
 import type { SpeechItem, Utterance } from '@luminol/kids-content';
 import {
   DEFAULT_SENSORY_SETTINGS,
-  isSkillPlayable,
   planSession,
-  playableInterests,
-  SKILL_IDS,
   type ChildProfile,
-  type Plan,
   type ScheduleStep,
   type SessionRecord,
 } from '@luminol/kids-learning';
@@ -48,9 +44,6 @@ type AppStateValue = {
   say: (utterance: Utterance) => void;
   /** Speaks several items in order, e.g. a communication board sentence. */
   sayItems: (items: readonly SpeechItem[]) => void;
-  /** Free or Plus, as the store last reported it. */
-  plan: Plan;
-  setPlan: (plan: Plan) => void;
 };
 
 const AppStateContext = createContext<AppStateValue | null>(null);
@@ -68,7 +61,6 @@ export function AppStateProvider({
   const [activeChildId, setActiveChildId] = useState<string | null>(null);
   const [parentUnlocked, setParentUnlocked] = useState(false);
   const [session, setSession] = useState<ActiveSession | null>(null);
-  const [plan, setPlan] = useState<Plan>('free');
   const starting = useRef<{
     childId: string;
     promise: Promise<ActiveSession>;
@@ -84,19 +76,6 @@ export function AppStateProvider({
     });
     return () => subscription.remove();
   }, []);
-
-  // The plan starts as Free and follows the store from then on.
-  useEffect(() => {
-    let active = true;
-    void services.purchases.currentPlan().then((current) => {
-      if (active) setPlan(current);
-    });
-    const unsubscribe = services.purchases.onPlanChange(setPlan);
-    return () => {
-      active = false;
-      unsubscribe();
-    };
-  }, [services]);
 
   const unlockParent = useCallback(() => setParentUnlocked(true), []);
   const lockParent = useCallback(() => setParentUnlocked(false), []);
@@ -148,11 +127,8 @@ export function AppStateProvider({
           ageBand: child.ageBand,
           sessionMinutes: child.sensory.sessionMinutes,
           previousSessions,
-          interests: playableInterests(child.interests, plan),
+          interests: child.interests,
           disabledSkills: child.disabledSkills,
-          lockedSkills: SKILL_IDS.filter(
-            (skillId) => !isSkillPlayable(plan, skillId),
-          ),
         }),
         record: {
           id: services.newId(),
@@ -172,7 +148,7 @@ export function AppStateProvider({
     } finally {
       starting.current = null;
     }
-  }, [activeChild, persistSession, plan, services, session]);
+  }, [activeChild, persistSession, services, session]);
 
   const completeActivity = useCallback(async () => {
     if (!session) return;
@@ -239,11 +215,8 @@ export function AppStateProvider({
       endSession,
       say,
       sayItems,
-      plan,
-      setPlan,
     }),
     [
-      plan,
       activeChild,
       completeActivity,
       deleteProfile,

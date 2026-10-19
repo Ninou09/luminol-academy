@@ -7,7 +7,6 @@ import {
   TREND_LABELS,
 } from '@luminol/kids-content';
 import {
-  hasPlus,
   MAX_GOALS,
   maxLevel,
   SKILLS,
@@ -25,7 +24,7 @@ import {
   KidsText,
   SegmentedChoice,
 } from '@luminol/kids-ui';
-import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -332,8 +331,7 @@ function Goals({
 /** Progress, goals, history and the report and export for one child. */
 export default function ProgressScreen() {
   const { childId } = useLocalSearchParams<{ childId: string }>();
-  const router = useRouter();
-  const { profiles, services, plan } = useAppState();
+  const { profiles, services } = useAppState();
   const child = profiles.find((profile) => profile.id === childId);
   const { view, reload } = useProgress(child?.id);
   const [notice, setNotice] = useState<string | null>(null);
@@ -436,22 +434,12 @@ export default function ProgressScreen() {
       </View>
 
       <View style={styles.section}>
-        {hasPlus(plan) ? (
-          <BigButton
-            label={copy.report}
-            audience="parent"
-            onPress={() => void shareReport()}
-            testID="progress-report"
-          />
-        ) : (
-          <BigButton
-            label={`${copy.report} · ${PARENT_COPY.plus.locked}`}
-            variant="secondary"
-            audience="parent"
-            onPress={() => router.push('/parent/plus')}
-            testID="progress-report-locked"
-          />
-        )}
+        <BigButton
+          label={copy.report}
+          audience="parent"
+          onPress={() => void shareReport()}
+          testID="progress-report"
+        />
         <BigButton
           label={copy.export}
           variant="secondary"

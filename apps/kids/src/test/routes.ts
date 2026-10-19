@@ -10,7 +10,6 @@ import NewCardScreen from '../../app/parent/board/[childId]/new';
 import ParentHomeScreen from '../../app/parent/index';
 import ParentLayout from '../../app/parent/_layout';
 import NewProfileScreen from '../../app/parent/new';
-import PlusScreen from '../../app/parent/plus';
 import PrivacyScreen from '../../app/parent/privacy';
 import ProgressScreen from '../../app/parent/progress/[childId]';
 import EditSequenceScreen from '../../app/parent/sequences/[childId]/[sequenceId]';
@@ -37,7 +36,6 @@ export const APP_ROUTES = {
   'parent/_layout': ParentLayout,
   'parent/index': ParentHomeScreen,
   'parent/new': NewProfileScreen,
-  'parent/plus': PlusScreen,
   'parent/privacy': PrivacyScreen,
   'parent/[childId]': EditProfileScreen,
   'parent/board/[childId]/index': BoardEditorScreen,

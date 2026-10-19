@@ -29,7 +29,7 @@ account. It supports therapy; it does not replace it.
 | Specialist review | The Luminol Psy specialist approves every child-facing line, image and the adaptive thresholds.                                                                                            |
 | Faces             | "Noticing faces and feelings", optional, never forced eye contact.                                                                                                                         |
 | Religious content | Included as an optional pack (wudu, prayer, Ramadan, Eid) that parents switch on.                                                                                                          |
-| Purchases         | RevenueCat, used only in the parent area, so subscriptions are validated without running our own server.                                                                                   |
+| Purchases         | None. The app is completely free, with no account, subscription or in-app purchase, and connects to no server.                                                                             |
 | Store             | Google Play (Designed for Families) first.                                                                                                                                                 |
 
 ## Packages
@@ -64,7 +64,7 @@ The kids packages are separate from `@luminol/ui`, `@luminol/types` and
 | 5   | Emotions + social skills     | Done: find the face for a feeling (clearest feelings first), "how does Sami feel?" stories, building a tower in turns, "what do we say?" greetings with the choices read aloud, parents can switch any activity off per child, and the spoken schedule is built from recorded parts, with tests                                                                                                          |
 | 6   | Daily life skills            | Done: routines and social stories that parents build from board pictures, routine pictures or their own photos and voice; built-in routines (hand washing, brushing teeth, getting dressed); 5 built-in social stories; a "put the steps in order" game; an optional religious pack (off by default) with wudu, prayer (boy or girl pictures), Ramadan and Eid, with tests                               |
 | 7   | Parent dashboard and reports | Done: per-child dashboard with sessions, activities, practice days and calm-corner visits; per skill the level, how much help, first-try success over the last 10 trials and its trend; the last 10 sessions; goals (reach a level without help); a PDF report and a JSON export shared through the system share sheet; clearing the progress history; deleting a profile removes everything, with tests |
-| 8   | Store readiness              | Done in the app: Free and Plus plans, RevenueCat subscriptions behind the parental gate (buy, restore, manage in Google Play), plan-aware schedule, profiles, themes, own routines and PDF report, an in-app privacy policy, the advertising id blocked, with tests. Owner steps (RevenueCat, EAS, Play Console, data safety, listing) are in [PLAY_RELEASE.md](./PLAY_RELEASE.md)                       |
+| 8   | Store readiness              | Done in the app: every feature open and free (all activities and themes, up to 6 profiles, own routines, PDF report), an in-app privacy policy, the advertising id blocked, with tests. The app was later made fully free: plans, RevenueCat and the purchase code were removed. Owner steps (EAS, Play Console, data safety, listing) are in [PLAY_RELEASE.md](./PLAY_RELEASE.md)                       |
 | 9   | Competitor quick wins        | Done: a weekly report card at the top of the progress screen (practice days, trials, first-try success against the week before, most practised and strongest skill), free on every plan; a one-time lifetime Plus purchase listed after monthly and annual, with its own no-renewal note, with tests. Chosen from the competitor feature comparison                                                      |
 
 Cloud sync and the clinic licence come after launch, because they need a
@@ -113,10 +113,10 @@ backend and accounts.
   more) and of the report wording, which states it is not a diagnosis.
 
 - Confirm the Android package name `com.luminolacademy.noor`, then follow
-  [PLAY_RELEASE.md](./PLAY_RELEASE.md): RevenueCat products and the `plus`
-  entitlement, the EAS key, Play Console app content, data safety and the
-  listing. The privacy policy is on the website at `/ar/noor/privacy`; have it
-  reviewed.
+  [PLAY_RELEASE.md](./PLAY_RELEASE.md): the EAS build, Play Console app
+  content, data safety and the listing. The app is free with no purchases, so
+  no store billing is set up. The privacy policy is on the website at
+  `/ar/noor/privacy`; have it reviewed.
 - Record the voice-over lines in
   [voice-recording-list.csv](./voice-recording-list.csv) after specialist
   approval.

@@ -15,14 +15,17 @@ describe('Luminol Noor privacy policy', () => {
     }
   });
 
-  it('names the subscription processor and promises no ads in every language', () => {
+  it('states the app is free and promises no ads in every language', () => {
     for (const locale of SUPPORTED_LOCALES) {
       const text = NOOR_PRIVACY[locale].sections
         .map((section) => section.body)
         .join(' ');
-      expect(text).toContain('RevenueCat');
-      expect(text).toContain('Google Play');
+      // The app connects to no server, so RevenueCat must not be mentioned.
+      expect(text).not.toContain('RevenueCat');
     }
+    expect(NOOR_PRIVACY.en.sections.map((s) => s.body).join(' ')).toContain(
+      'no data ever leaves your device',
+    );
     expect(NOOR_PRIVACY.ar.sections[0]?.body).toContain('لا يعرض إعلانات');
   });
 

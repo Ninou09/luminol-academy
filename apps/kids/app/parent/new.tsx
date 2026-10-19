@@ -1,8 +1,8 @@
 import { PARENT_COPY } from '@luminol/kids-content';
 import {
-  canAddProfile,
   childProfileInputSchema,
   createChildProfile,
+  MAX_PROFILES,
 } from '@luminol/kids-learning';
 import { BigButton } from '@luminol/kids-ui';
 import { Redirect, useRouter } from 'expo-router';
@@ -29,15 +29,15 @@ const EMPTY_DRAFT: ProfileDraft = {
 
 export default function NewProfileScreen() {
   const router = useRouter();
-  const { services, saveProfile, profiles, plan } = useAppState();
+  const { services, saveProfile, profiles } = useAppState();
   const [draft, setDraft] = useState(EMPTY_DRAFT);
   const [nicknameError, setNicknameError] = useState(false);
   const [saving, setSaving] = useState(false);
   const copy = PARENT_COPY.profile;
   // Checked once on arrival, so saving the new child does not bounce away.
-  const [allowed] = useState(() => canAddProfile(plan, profiles.length));
+  const [allowed] = useState(() => profiles.length < MAX_PROFILES);
 
-  if (!allowed) return <Redirect href="/parent/plus" />;
+  if (!allowed) return <Redirect href="/parent" />;
 
   async function save() {
     const parsed = childProfileInputSchema.safeParse(draft);

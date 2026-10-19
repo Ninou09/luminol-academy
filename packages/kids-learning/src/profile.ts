@@ -107,6 +107,9 @@ export const disabledSkillsSchema = z
   .max(64)
   .transform((ids): SkillId[] => [...new Set(ids.filter(isSkillId))]);
 
+/** Child profiles one device can hold. */
+export const MAX_PROFILES = 6;
+
 export const NICKNAME_MAX_LENGTH = 24;
 
 export const nicknameSchema = z

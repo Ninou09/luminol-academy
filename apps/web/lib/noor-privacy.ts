@@ -6,7 +6,7 @@ import type { Locale } from '@luminol/localization';
  * (packages/kids-content/src/privacy.ts); keep them in step.
  */
 export const NOOR_PRIVACY_PATH = '/noor/privacy';
-export const NOOR_PRIVACY_UPDATED = '2026-10-19';
+export const NOOR_PRIVACY_UPDATED = '2026-10-20';
 
 type PolicyCopy = {
   title: string;
@@ -35,8 +35,8 @@ export const NOOR_PRIVACY: Record<Locale, PolicyCopy> = {
         body: 'The app only uses the camera, microphone or photo library when you add a photo or a recording in the parent area. They stay on the device, are deleted with the card or the profile, and have location data removed.',
       },
       {
-        heading: 'Subscriptions',
-        body: "Payments are made through Google Play. To confirm a subscription we use RevenueCat, which receives a random app identifier, purchase details, and technical information about the device and app version. It never receives your child's name or any of their data.",
+        heading: 'Completely free',
+        body: 'The app is completely free, with no subscription, no purchases and no in-app payment of any kind. The app connects to no server, and no data ever leaves your device.',
       },
       {
         heading: 'Sharing',
@@ -48,7 +48,7 @@ export const NOOR_PRIVACY: Record<Locale, PolicyCopy> = {
       },
       {
         heading: 'Children',
-        body: "The app is designed for children with a parent's supervision. The parent area, purchases and external links are behind a question only an adult can answer.",
+        body: "The app is designed for children with a parent's supervision. The parent area and external links are behind a question only an adult can answer.",
       },
       {
         heading: 'Contact',
@@ -75,8 +75,8 @@ export const NOOR_PRIVACY: Record<Locale, PolicyCopy> = {
         body: 'L’application n’utilise l’appareil photo, le micro ou la photothèque que lorsque vous ajoutez une photo ou un enregistrement dans l’espace parents. Ils restent sur l’appareil, sont supprimés avec la carte ou le profil, et leurs données de localisation sont retirées.',
       },
       {
-        heading: 'Abonnements',
-        body: 'Les paiements passent par Google Play. Pour vérifier un abonnement, nous utilisons RevenueCat, qui reçoit un identifiant aléatoire de l’application, les détails de l’achat et des informations techniques sur l’appareil et la version de l’application. RevenueCat ne reçoit jamais le nom de votre enfant ni aucune de ses données.',
+        heading: 'Entièrement gratuit',
+        body: 'L’application est entièrement gratuite, sans abonnement, sans achat et sans aucun paiement intégré. L’application ne se connecte à aucun serveur, et aucune donnée ne quitte votre appareil.',
       },
       {
         heading: 'Partage',
@@ -88,7 +88,7 @@ export const NOOR_PRIVACY: Record<Locale, PolicyCopy> = {
       },
       {
         heading: 'Enfants',
-        body: 'L’application est conçue pour les enfants, sous la supervision d’un parent. L’espace parents, les achats et les liens externes sont protégés par une question à laquelle seul un adulte peut répondre.',
+        body: 'L’application est conçue pour les enfants, sous la supervision d’un parent. L’espace parents et les liens externes sont protégés par une question à laquelle seul un adulte peut répondre.',
       },
       {
         heading: 'Contact',
@@ -115,8 +115,8 @@ export const NOOR_PRIVACY: Record<Locale, PolicyCopy> = {
         body: 'لا يستخدم التطبيق الكاميرا أو الميكروفون أو الصور إلا عندما تضيف أنت صورة أو تسجيلًا في منطقة الوالدين. تُحفظ على هذا الجهاز وتُحذف مع البطاقة أو الملف، وتُزال منها بيانات الموقع.',
       },
       {
-        heading: 'الاشتراك',
-        body: 'يتمّ الدفع عبر Google Play. للتحقّق من الاشتراك نستخدم خدمة RevenueCat، وتتلقّى معرّفًا عشوائيًا للتطبيق وبيانات الشراء ومعلومات تقنية عن الجهاز ونسخة التطبيق. لا تتلقّى اسم طفلك ولا أي شيء من بياناته.',
+        heading: 'مجاني بالكامل',
+        body: 'التطبيق مجاني بالكامل، بلا اشتراك ولا مشتريات ولا أي دفع داخل التطبيق. لا يتّصل التطبيق بأي خادم، ولا تغادر أي بيانات جهازك.',
       },
       {
         heading: 'المشاركة',
@@ -128,7 +128,7 @@ export const NOOR_PRIVACY: Record<Locale, PolicyCopy> = {
       },
       {
         heading: 'الأطفال',
-        body: 'صُمّم التطبيق للأطفال بإشراف الوالدين. منطقة الوالدين والشراء والروابط الخارجية محميّة بسؤال للوالدين.',
+        body: 'صُمّم التطبيق للأطفال بإشراف الوالدين. منطقة الوالدين والروابط الخارجية محميّة بسؤال للوالدين.',
       },
       {
         heading: 'التواصل',

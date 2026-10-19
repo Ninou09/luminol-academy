@@ -124,8 +124,6 @@ export const sessionPlanInputSchema = z.object({
   previousSessions: z.int().min(0),
   interests: interestsSchema.default(['shapes']),
   disabledSkills: disabledSkillsSchema.default([]),
-  /** Activities the current plan does not include; never scheduled. */
-  lockedSkills: disabledSkillsSchema.default([]),
 });
 export type SessionPlanInput = z.input<typeof sessionPlanInputSchema>;
 
@@ -134,22 +132,16 @@ export function skillsForAge(ageBand: AgeBand): readonly SkillId[] {
 }
 
 /**
- * The age band's rotation without locked activities and without the ones a
- * parent switched off. If every activity the plan includes is off, all of
- * them are used so a session never comes up empty.
+ * The age band's rotation without the activities a parent switched off. If
+ * every one is off, all of them are used so a session never comes up empty.
  */
 export function enabledSkills(
   ageBand: AgeBand,
   disabledSkills: readonly SkillId[],
-  lockedSkills: readonly SkillId[] = [],
 ): readonly SkillId[] {
-  const unlocked = SKILL_ROTATION[ageBand].filter(
-    (skillId) => !lockedSkills.includes(skillId),
-  );
-  const enabled = unlocked.filter(
-    (skillId) => !disabledSkills.includes(skillId),
-  );
-  return enabled.length > 0 ? enabled : unlocked;
+  const all = SKILL_ROTATION[ageBand];
+  const enabled = all.filter((skillId) => !disabledSkills.includes(skillId));
+  return enabled.length > 0 ? enabled : all;
 }
 
 export function planSession(input: SessionPlanInput): ScheduleStep[] {
@@ -159,9 +151,8 @@ export function planSession(input: SessionPlanInput): ScheduleStep[] {
     previousSessions,
     interests,
     disabledSkills,
-    lockedSkills,
   } = sessionPlanInputSchema.parse(input);
-  const rotation = enabledSkills(ageBand, disabledSkills, lockedSkills);
+  const rotation = enabledSkills(ageBand, disabledSkills);
   const count = ACTIVITIES_PER_SESSION[sessionMinutes];
   const activities: ActivityStep[] = [];
   let themed = 0;

@@ -3,7 +3,7 @@
  * on the website (apps/web/lib/noor-privacy.ts) for the store listing and in
  * docs/kids/PRIVACY_POLICY.md; keep all three in step.
  */
-export const PRIVACY_POLICY_UPDATED = '2026-10-19';
+export const PRIVACY_POLICY_UPDATED = '2026-10-20';
 
 export const PRIVACY_POLICY: readonly { heading: string; body: string }[] = [
   {
@@ -19,8 +19,8 @@ export const PRIVACY_POLICY: readonly { heading: string; body: string }[] = [
     body: 'لا يستخدم التطبيق الكاميرا أو الميكروفون أو الصور إلا عندما تضيف أنت صورة أو تسجيلًا في منطقة الوالدين. تُحفظ على هذا الجهاز وتُحذف مع البطاقة أو الملف، وتُزال منها بيانات الموقع.',
   },
   {
-    heading: 'الاشتراك',
-    body: 'يتمّ الدفع عبر Google Play. للتحقّق من الاشتراك نستخدم خدمة RevenueCat، وتتلقّى معرّفًا عشوائيًا للتطبيق وبيانات الشراء ومعلومات تقنية عن الجهاز ونسخة التطبيق. لا تتلقّى اسم طفلك ولا أي شيء من بياناته.',
+    heading: 'مجاني بالكامل',
+    body: 'التطبيق مجاني بالكامل، بلا اشتراك ولا مشتريات ولا أي دفع داخل التطبيق. لا يتّصل التطبيق بأي خادم، ولا تغادر أي بيانات جهازك.',
   },
   {
     heading: 'المشاركة',
@@ -32,7 +32,7 @@ export const PRIVACY_POLICY: readonly { heading: string; body: string }[] = [
   },
   {
     heading: 'الأطفال',
-    body: 'صُمّم التطبيق للأطفال بإشراف الوالدين. منطقة الوالدين والشراء والروابط الخارجية محميّة بسؤال للوالدين.',
+    body: 'صُمّم التطبيق للأطفال بإشراف الوالدين. منطقة الوالدين والروابط الخارجية محميّة بسؤال للوالدين.',
   },
   {
     heading: 'التواصل',

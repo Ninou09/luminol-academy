@@ -16,9 +16,8 @@ sold in recent years.
 
 ## What is different in the test build
 
-- Plus is open: every activity, theme, up to 6 profiles, your own routines and
-  the PDF report. Nothing can be bought, and the parent area shows a "testing
-  build" notice.
+- Every feature is open: every activity, theme, up to 6 profiles, your own
+  routines and the PDF report. The app is free, with nothing to buy.
 - The database is encrypted with SQLCipher, as in the store version.
 - Speech uses the tablet's Arabic text-to-speech voice until recordings are
   added. If nothing is heard, install an Arabic voice in Android settings
