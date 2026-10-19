@@ -98,6 +98,18 @@ export default function EditProfileScreen() {
         }
         testID="profile-sequences"
       />
+      <BigButton
+        label={PARENT_COPY.progress.open}
+        variant="secondary"
+        audience="parent"
+        onPress={() =>
+          router.push({
+            pathname: '/parent/progress/[childId]',
+            params: { childId: profile.id },
+          })
+        }
+        testID="profile-progress"
+      />
       <SensoryFields
         value={sensory}
         onChange={(next) => {

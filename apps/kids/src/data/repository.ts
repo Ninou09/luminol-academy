@@ -1,10 +1,14 @@
 import {
   aacBoardSchema,
+  childGoalsSchema,
   childProfileSchema,
   childSequencesSchema,
   EMPTY_AAC_BOARD,
   MAX_SEQUENCES,
   sequenceSchema,
+  goalSchema,
+  MAX_GOALS,
+  type ChildGoals,
   type ChildSequences,
   type AacBoard,
   sessionRecordSchema,
@@ -31,6 +35,16 @@ export interface KidsRepository {
   saveSession(session: SessionRecord): Promise<void>;
   countSessions(childId: string): Promise<number>;
   listTrials(childId: string): Promise<TrialRecord[]>;
+  /** Sessions newest first. */
+  listSessions(childId: string): Promise<SessionRecord[]>;
+  listProgress(childId: string): Promise<SkillProgress[]>;
+  getGoals(childId: string): Promise<ChildGoals>;
+  saveGoals(childId: string, goals: ChildGoals, now: Date): Promise<void>;
+  /**
+   * Removes the child's sessions, trials, levels and goals; the profile,
+   * board, routines and stories stay.
+   */
+  clearHistory(childId: string): Promise<void>;
   /** The child's communication board; an empty board if none is saved. */
   getBoard(childId: string): Promise<AacBoard>;
   saveBoard(childId: string, board: AacBoard, now: Date): Promise<void>;
@@ -65,6 +79,33 @@ function parseRows<Schema extends z.ZodType>(
   return rows
     .map((row) => parseRow(schema, row))
     .filter((value): value is z.infer<Schema> => value !== null);
+}
+
+/**
+ * Reads a stored `{ items: [...] }` list, keeping the items that validate, so
+ * one damaged entry never hides the others.
+ */
+function parseItems<Schema extends z.ZodType>(
+  schema: Schema,
+  row: DataRow | null,
+  max: number,
+): z.infer<Schema>[] {
+  if (!row) return [];
+  let stored: unknown;
+  try {
+    stored = JSON.parse(row.data);
+  } catch {
+    return [];
+  }
+  const items =
+    stored && typeof stored === 'object' && 'items' in stored
+      ? stored.items
+      : null;
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item: unknown) => schema.safeParse(item))
+    .flatMap((result) => (result.success ? [result.data] : []))
+    .slice(0, max);
 }
 
 export class SqlRepository implements KidsRepository {
@@ -178,26 +219,7 @@ export class SqlRepository implements KidsRepository {
       'SELECT data FROM child_sequences WHERE child_id = ?',
       [childId],
     );
-    if (!row) return { items: [] };
-    // One damaged routine must not hide the others, so items are checked
-    // one by one.
-    let stored: unknown;
-    try {
-      stored = JSON.parse(row.data);
-    } catch {
-      return { items: [] };
-    }
-    const items =
-      stored && typeof stored === 'object' && 'items' in stored
-        ? stored.items
-        : null;
-    if (!Array.isArray(items)) return { items: [] };
-    return {
-      items: items
-        .map((item: unknown) => sequenceSchema.safeParse(item))
-        .flatMap((result) => (result.success ? [result.data] : []))
-        .slice(0, MAX_SEQUENCES),
-    };
+    return { items: parseItems(sequenceSchema, row, MAX_SEQUENCES) };
   }
 
   async saveSequences(
@@ -219,5 +241,60 @@ export class SqlRepository implements KidsRepository {
       [childId],
     );
     return parseRows(trialRecordSchema, rows);
+  }
+
+  async listSessions(childId: string): Promise<SessionRecord[]> {
+    const rows = await this.db.getAllAsync<DataRow>(
+      'SELECT data FROM sessions WHERE child_id = ? ORDER BY started_at DESC',
+      [childId],
+    );
+    return parseRows(sessionRecordSchema, rows);
+  }
+
+  async listProgress(childId: string): Promise<SkillProgress[]> {
+    const rows = await this.db.getAllAsync<DataRow & { skill_id: string }>(
+      'SELECT data, skill_id FROM skill_progress WHERE child_id = ?',
+      [childId],
+    );
+    return rows.flatMap((row) => {
+      const progress = parseRow(skillProgressSchema, row);
+      return progress && progress.skillId === row.skill_id ? [progress] : [];
+    });
+  }
+
+  async getGoals(childId: string): Promise<ChildGoals> {
+    const row = await this.db.getFirstAsync<DataRow>(
+      'SELECT data FROM child_goals WHERE child_id = ?',
+      [childId],
+    );
+    return { items: parseItems(goalSchema, row, MAX_GOALS) };
+  }
+
+  async saveGoals(
+    childId: string,
+    goals: ChildGoals,
+    now: Date,
+  ): Promise<void> {
+    const valid = childGoalsSchema.parse(goals);
+    await this.db.runAsync(
+      `INSERT INTO child_goals (child_id, data, updated_at) VALUES (?, ?, ?)
+       ON CONFLICT(child_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`,
+      [childId, JSON.stringify(valid), now.toISOString()],
+    );
+  }
+
+  async clearHistory(childId: string): Promise<void> {
+    await this.db.withTransactionAsync(async () => {
+      for (const table of [
+        'trials',
+        'sessions',
+        'skill_progress',
+        'child_goals',
+      ]) {
+        await this.db.runAsync(`DELETE FROM ${table} WHERE child_id = ?`, [
+          childId,
+        ]);
+      }
+    });
   }
 }

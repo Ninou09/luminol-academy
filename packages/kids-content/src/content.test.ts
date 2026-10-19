@@ -18,6 +18,8 @@ import { describe, expect, it } from 'vitest';
 import {
   AGE_BAND_LABELS,
   DIALECT_LABELS,
+  formatDate,
+  formatPercent,
   minutesLabel,
   PARENT_COPY,
   volumeLabel,
@@ -305,5 +307,13 @@ describe('built-in routines', () => {
     for (const picture of ROUTINE_PICTURES) {
       expect(ROUTINE_PICTURE_LABELS[picture]).toMatch(ARABIC);
     }
+  });
+});
+
+describe('progress copy', () => {
+  it('formats dates and rates the same on every device', () => {
+    expect(formatDate('2026-10-05T08:00:00.000Z')).toBe('05/10/2026');
+    expect(formatPercent(0.8)).toBe('80%');
+    expect(formatPercent(2 / 3)).toBe('67%');
   });
 });

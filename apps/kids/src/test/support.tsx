@@ -17,6 +17,7 @@ import {
 } from '../data/database';
 import { SqlRepository } from '../data/repository';
 import type { MediaService, PhotoResult } from '../media/media';
+import type { ShareResult, ShareService } from '../reports/share';
 import type { KidsServices } from '../services/services';
 import { AppStateProvider, useAppState } from '../state/AppState';
 
@@ -154,10 +155,30 @@ export class FakeMedia implements MediaService {
   }
 }
 
+export class FakeShare implements ShareService {
+  result: ShareResult = 'shared';
+  readonly shared: { fileName: string; contents: string; kind: string }[] = [];
+
+  async sharePdf(html: string, fileName: string): Promise<ShareResult> {
+    this.shared.push({ fileName, contents: html, kind: 'pdf' });
+    return this.result;
+  }
+
+  async shareText(
+    contents: string,
+    fileName: string,
+    mimeType: string,
+  ): Promise<ShareResult> {
+    this.shared.push({ fileName, contents, kind: mimeType });
+    return this.result;
+  }
+}
+
 export type TestServices = KidsServices & {
   speech: FakeSpeech;
   calmSound: FakeCalmSound;
   media: FakeMedia;
+  share: FakeShare;
   repository: SqlRepository;
   db: SqlDatabase;
 };
@@ -176,6 +197,7 @@ export async function createTestServices(seed = 1): Promise<TestServices> {
     speech: new FakeSpeech(),
     calmSound: new FakeCalmSound(),
     media: new FakeMedia(newId),
+    share: new FakeShare(),
     newId,
     now: () => {
       clock += 1000;

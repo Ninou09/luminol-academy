@@ -3,6 +3,7 @@ export * from './adaptive';
 export * from './letters';
 export * from './pieces';
 export * from './profile';
+export * from './progress';
 export * from './random';
 export * from './records';
 export * from './rounds';

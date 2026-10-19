@@ -3,8 +3,10 @@ import type {
   AnimationLevel,
   Dialect,
   NumeralStyle,
+  PromptLevel,
   RewardStyle,
   SessionMinutes,
+  Trend,
   VoiceSpeed,
 } from '@luminol/kids-learning';
 
@@ -151,6 +153,58 @@ export const PARENT_COPY = {
     deleteConfirm: 'سيُحذف هذا نهائيًا مع صوره وتسجيلاته من هذا الجهاز.',
     deleteConfirmAction: 'حذف نهائي',
   },
+  progress: {
+    open: 'التقدّم والتقارير',
+    title: 'التقدّم',
+    summary: 'نظرة عامة',
+    sessions: 'الجلسات',
+    activities: 'الأنشطة المكتملة',
+    calmVisits: 'زيارات ركن الهدوء',
+    trialsWeek: 'محاولات آخر 7 أيام',
+    daysMonth: 'أيام التدرّب في آخر 30 يومًا',
+    skills: 'المهارات',
+    noSkills: 'لم يتدرّب الطفل على أي نشاط بعد.',
+    level: 'المستوى',
+    help: 'المساعدة',
+    firstTry: 'النجاح من أول محاولة (آخر 10)',
+    notEnough: 'محاولات قليلة بعد',
+    trend: 'الاتجاه',
+    trials: 'المحاولات',
+    lastPracticed: 'آخر تدريب',
+    rateNote:
+      'تُحسب نسبة النجاح من المحاولة الأولى فقط، والمساعدة لا تُعدّ خطأ.',
+    history: 'آخر الجلسات',
+    noHistory: 'لا توجد جلسات بعد.',
+    sessionLine: 'أنشطة مكتملة',
+    calmLine: 'زيارات للهدوء',
+    goals: 'الأهداف',
+    goalsIntro:
+      'اختر مهارة ومستوى تريد أن يصل إليه الطفل دون مساعدة. لا تغيّر الأهداف صعوبة الألعاب.',
+    noGoals: 'لا توجد أهداف بعد.',
+    addGoal: 'إضافة هدف',
+    goalSkill: 'المهارة',
+    goalLevel: 'المستوى المستهدف',
+    goalSave: 'حفظ الهدف',
+    goalStatus: 'الحالة',
+    goalAchieved: 'تحقّق',
+    goalInProgress: 'قيد العمل',
+    goalRemove: 'حذف الهدف',
+    goalLimit: 'وصلت إلى الحد الأقصى من الأهداف.',
+    report: 'مشاركة تقرير PDF',
+    reportTitle: 'تقرير تقدّم',
+    reportDate: 'تاريخ التقرير',
+    reportNote:
+      'أُعدّ هذا التقرير على الجهاز من بيانات لومينول نور. هو لدعم المتابعة مع الأخصائي، ولا يُعدّ تشخيصًا.',
+    export: 'تصدير البيانات (JSON)',
+    exportNote:
+      'يضمّ التصدير الملف والتقدّم والجلسات والأهداف والروتين والقصص، دون الصور والتسجيلات. أنت من يختار أين تُرسَل.',
+    shareFailed: 'تعذّرت المشاركة على هذا الجهاز.',
+    clear: 'مسح سجلّ التقدّم',
+    clearConfirm:
+      'ستُحذف الجلسات والمحاولات والمستويات والأهداف لهذا الطفل، ويبقى الملف ولوحة الكلام والروتين. لا يمكن التراجع عن ذلك.',
+    clearConfirmAction: 'مسح نهائي',
+    cleared: 'تم مسح السجلّ',
+  },
   sensory: {
     title: 'الإعدادات الحسية',
     volume: 'مستوى الصوت',
@@ -164,6 +218,29 @@ export const PARENT_COPY = {
     sessionNote: 'تُقاس الجلسة بعدد الأنشطة، ولا يرى الطفل أي مؤقّت.',
   },
 } as const;
+
+export const PROMPT_LEVEL_LABELS: Record<PromptLevel, string> = {
+  full: 'مساعدة كاملة',
+  partial: 'مساعدة جزئية',
+  independent: 'دون مساعدة',
+};
+
+/** Trends are described kindly; a dip asks for more support, never blame. */
+export const TREND_LABELS: Record<Trend, string> = {
+  up: 'في تحسّن',
+  steady: 'ثابت',
+  down: 'يحتاج دعمًا أكثر',
+};
+
+/** A day as dd/mm/yyyy in Western digits, the same on every device. */
+export function formatDate(iso: string): string {
+  const [year, month, day] = iso.slice(0, 10).split('-');
+  return `${day}/${month}/${year}`;
+}
+
+export function formatPercent(rate: number): string {
+  return `${Math.round(rate * 100)}%`;
+}
 
 export const DIALECT_LABELS: Record<Dialect, string> = {
   msa: 'العربية الفصحى',

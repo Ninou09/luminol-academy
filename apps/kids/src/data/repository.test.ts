@@ -227,4 +227,52 @@ describe('SqlRepository', () => {
     );
     expect(row?.total).toBe(0);
   });
+
+  it('lists sessions newest first and keeps the board when clearing history', async () => {
+    const { services, child } = await setup();
+    for (const startedAt of [
+      '2026-10-01T08:00:00.000Z',
+      '2026-10-03T08:00:00.000Z',
+    ]) {
+      await services.repository.saveSession({
+        id: services.newId(),
+        childId: child.id,
+        startedAt,
+        endedAt: null,
+        activitiesCompleted: 1,
+        calmVisits: 0,
+      });
+    }
+    const sessions = await services.repository.listSessions(child.id);
+    const starts = sessions.map((session) => session.startedAt);
+    expect(starts).toEqual([...starts].sort().reverse());
+    expect(starts.slice(-2)).toEqual([
+      '2026-10-03T08:00:00.000Z',
+      '2026-10-01T08:00:00.000Z',
+    ]);
+    await services.repository.saveGoals(
+      child.id,
+      {
+        items: [
+          {
+            id: services.newId(),
+            skillId: 'match-shapes',
+            targetLevel: 2,
+            createdAt: '2026-10-01T08:00:00.000Z',
+          },
+        ],
+      },
+      services.now(),
+    );
+    const board = setOverride(EMPTY_AAC_BOARD, 'milk', {
+      hidden: true,
+      picture: null,
+      voicePath: null,
+    });
+    await services.repository.saveBoard(child.id, board, services.now());
+    await services.repository.clearHistory(child.id);
+    expect(await services.repository.listSessions(child.id)).toEqual([]);
+    expect((await services.repository.getGoals(child.id)).items).toEqual([]);
+    expect(await services.repository.getBoard(child.id)).toEqual(board);
+  });
 });

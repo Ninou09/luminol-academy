@@ -40,6 +40,9 @@ The root `pnpm test` runs these jest tests after the Vitest suite.
   and `src/parent/CardEditor.tsx` let parents customise it.
 - `src/sequences/` and `src/parent/SequenceEditor.tsx` — routines and social
   stories: built-in stories, the child's own, and the parent editor.
+- `src/reports/` and `app/parent/progress/` — the parent dashboard, goals,
+  the PDF report and the JSON export; files go only to the system share
+  sheet and are deleted from the cache afterwards.
 - `src/media/` — parent photos and recordings, kept in the app's private
   folder per child and deleted with the card or the profile.
 - `src/games/` — matching, sorting, cause-and-effect, patterns, memory,

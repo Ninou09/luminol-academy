@@ -45,13 +45,13 @@ export class DeviceMediaService implements MediaService {
       compress: 0.85,
     });
     const name = `${this.newId()}.jpg`;
-    new File(saved.uri).move(new File(this.folder(childId), name));
+    await new File(saved.uri).move(new File(this.folder(childId), name));
     return { status: 'saved', path: `children/${childId}/aac/${name}` };
   }
 
   async saveRecording(childId: string, temporaryUri: string): Promise<string> {
     const name = `${this.newId()}.m4a`;
-    new File(temporaryUri).move(new File(this.folder(childId), name));
+    await new File(temporaryUri).move(new File(this.folder(childId), name));
     return `children/${childId}/aac/${name}`;
   }
 
