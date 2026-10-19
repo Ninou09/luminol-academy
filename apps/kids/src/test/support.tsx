@@ -200,6 +200,7 @@ export class FakePurchases implements PurchasesService {
   async offers(): Promise<PlusOffer[]> {
     return [
       { id: '$rc_monthly', period: 'monthly', price: '3,99 €' },
+      { id: '$rc_lifetime', period: 'lifetime', price: '59,99 €' },
       { id: '$rc_annual', period: 'annual', price: '29,99 €' },
     ];
   }

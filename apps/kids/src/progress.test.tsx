@@ -148,6 +148,27 @@ describe('progress dashboard', () => {
     expect(screen.getAllByText('17/10/2026')).toHaveLength(2);
   });
 
+  it('opens with a weekly report card', async () => {
+    const setup = await start({ practised: true });
+    await openProgress(setup);
+    expect(screen.getByTestId('week-card')).toBeTruthy();
+    expect(screen.getByLabelText('أيام التدرّب من 7: 1')).toBeTruthy();
+    expect(screen.getByLabelText('المحاولات: 10')).toBeTruthy();
+    expect(screen.getByTestId('week-rate').props.children).toBe('80%');
+    expect(screen.getByTestId('week-most').props.children).toBe(
+      'مطابقة الأشكال',
+    );
+    expect(screen.getByTestId('week-strongest').props.children).toBe(
+      'مطابقة الأشكال',
+    );
+  });
+
+  it('invites a short session when the week is empty', async () => {
+    const setup = await start();
+    await openProgress(setup);
+    expect(screen.getByTestId('week-none')).toBeTruthy();
+  });
+
   it('adds a goal and shows when it is reached', async () => {
     const setup = await start({ practised: true });
     await openProgress(setup);

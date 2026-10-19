@@ -123,6 +123,81 @@ export function summarizeActivity(
   };
 }
 
+export type WeekSummary = {
+  /** First and last day of the week, as UTC calendar dates. */
+  from: string;
+  to: string;
+  daysPracticed: number;
+  trials: number;
+  /** First-try success this week and the week before, or null when thin. */
+  firstTryRate: number | null;
+  previousFirstTryRate: number | null;
+  activitiesCompleted: number;
+  calmVisits: number;
+  /** Skills practised this week, most trials first. */
+  skillsPracticed: SkillId[];
+  /** Best first-try success among skills with enough trials, if any. */
+  strongestSkill: SkillId | null;
+};
+
+/**
+ * The parent's weekly report card: the last 7 days against the 7 before.
+ * Like the dashboard it counts first tries, so help never hides a struggle.
+ */
+export function summarizeWeek(
+  sessions: readonly SessionRecord[],
+  trials: readonly TrialRecord[],
+  now: Date,
+): WeekSummary {
+  const weekStart = now.getTime() - 7 * DAY_MS;
+  const inWeek = (at: string) => {
+    const time = Date.parse(at);
+    return time >= weekStart && time <= now.getTime();
+  };
+  const week = trials.filter((trial) => inWeek(trial.at));
+  const previous = trials.filter((trial) => {
+    const time = Date.parse(trial.at);
+    return time >= weekStart - 7 * DAY_MS && time < weekStart;
+  });
+  const weekSessions = sessions.filter((session) => inWeek(session.startedAt));
+
+  const bySkill = new Map<SkillId, TrialRecord[]>();
+  for (const trial of week) {
+    bySkill.set(trial.skillId, [...(bySkill.get(trial.skillId) ?? []), trial]);
+  }
+  const skillsPracticed = [...bySkill.entries()]
+    .sort((a, b) => b[1].length - a[1].length)
+    .map(([skillId]) => skillId);
+  let strongestSkill: SkillId | null = null;
+  let strongestRate = -1;
+  for (const skillId of skillsPracticed) {
+    const rate = firstTryRate(bySkill.get(skillId) ?? []);
+    if (rate !== null && rate > strongestRate) {
+      strongestSkill = skillId;
+      strongestRate = rate;
+    }
+  }
+
+  return {
+    from: new Date(weekStart).toISOString().slice(0, 10),
+    to: now.toISOString().slice(0, 10),
+    daysPracticed: new Set(week.map((trial) => trial.at.slice(0, 10))).size,
+    trials: week.length,
+    firstTryRate: firstTryRate(week),
+    previousFirstTryRate: firstTryRate(previous),
+    activitiesCompleted: weekSessions.reduce(
+      (total, session) => total + session.activitiesCompleted,
+      0,
+    ),
+    calmVisits: weekSessions.reduce(
+      (total, session) => total + session.calmVisits,
+      0,
+    ),
+    skillsPracticed,
+    strongestSkill,
+  };
+}
+
 export const MAX_GOALS = 12;
 
 /**

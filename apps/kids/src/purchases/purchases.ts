@@ -1,14 +1,31 @@
 import type { Plan } from '@luminol/kids-learning';
 
-export type OfferPeriod = 'monthly' | 'annual' | 'other';
+export type OfferPeriod = 'monthly' | 'annual' | 'lifetime' | 'other';
 
-/** A subscription option as the store prices it for this parent. */
+/**
+ * A way to get Plus, a subscription or a one-time lifetime purchase, as the
+ * store prices it for this parent.
+ */
 export type PlusOffer = {
   id: string;
   period: OfferPeriod;
   /** Localised by the store, such as "3,99 €". */
   price: string;
 };
+
+const PERIOD_ORDER: readonly OfferPeriod[] = [
+  'monthly',
+  'annual',
+  'lifetime',
+  'other',
+];
+
+/** Monthly, then annual, then lifetime, whatever order the store sends. */
+export function orderOffers(offers: readonly PlusOffer[]): PlusOffer[] {
+  return [...offers].sort(
+    (a, b) => PERIOD_ORDER.indexOf(a.period) - PERIOD_ORDER.indexOf(b.period),
+  );
+}
 
 export type PurchaseOutcome = 'purchased' | 'cancelled' | 'pending' | 'failed';
 

@@ -2,11 +2,13 @@ import {
   goalStatus,
   summarizeActivity,
   summarizeSkills,
+  summarizeWeek,
   type ActivitySummary,
   type ChildGoals,
   type GoalStatus,
   type SessionRecord,
   type SkillSummary,
+  type WeekSummary,
 } from '@luminol/kids-learning';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
@@ -15,6 +17,7 @@ import { useAppState } from '../state/AppState';
 
 export type ProgressView = {
   activity: ActivitySummary;
+  week: WeekSummary;
   skills: SkillSummary[];
   goals: ChildGoals;
   goalStatuses: GoalStatus[];
@@ -41,6 +44,7 @@ export function useProgress(childId: string | undefined) {
     const bySkill = new Map(progress.map((entry) => [entry.skillId, entry]));
     return {
       activity: summarizeActivity(sessions, trials, services.now()),
+      week: summarizeWeek(sessions, trials, services.now()),
       skills: summarizeSkills(trials, progress),
       goals,
       goalStatuses: goals.items.map((goal) =>

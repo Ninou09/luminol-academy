@@ -122,6 +122,25 @@ describe('Plus', () => {
     expect(services.purchases.purchased).toEqual(['$rc_annual']);
   });
 
+  it('offers a one-time lifetime purchase after the subscriptions', async () => {
+    const { services } = await start();
+    await openParent();
+    fireEvent.press(screen.getByTestId('open-plus'));
+    expect(await screen.findByText('59,99 € دفعة واحدة')).toBeTruthy();
+    expect(screen.getByText(PARENT_COPY.plus.lifetimeTerms)).toBeTruthy();
+    const order = screen
+      .getAllByTestId(/^plus-buy-/)
+      .map((button) => button.props.testID);
+    expect(order).toEqual([
+      'plus-buy-$rc_monthly',
+      'plus-buy-$rc_annual',
+      'plus-buy-$rc_lifetime',
+    ]);
+    fireEvent.press(screen.getByTestId('plus-buy-$rc_lifetime'));
+    expect(await screen.findByTestId('plus-active')).toBeTruthy();
+    expect(services.purchases.purchased).toEqual(['$rc_lifetime']);
+  });
+
   it('says when a payment is still pending', async () => {
     const { services } = await start();
     services.purchases.nextOutcome = 'pending';

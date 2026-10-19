@@ -15,6 +15,7 @@ import {
   type ChildProfile,
   type SkillId,
   type SkillSummary,
+  type WeekSummary,
 } from '@luminol/kids-learning';
 import {
   BigButton,
@@ -128,6 +129,69 @@ function SkillRow({ skill }: { skill: SkillSummary }) {
           </View>
         )}
       </View>
+    </View>
+  );
+}
+
+/** The weekly report card: the last 7 days, with last week's rate beside. */
+function WeekCard({ week }: { week: WeekSummary }) {
+  const mostPracticed = week.skillsPracticed
+    .slice(0, 3)
+    .map((skillId) => skillTitle(skillId).text)
+    .join('، ');
+  return (
+    <View style={[styles.section, styles.card]} testID="week-card">
+      <KidsText variant="title" heading>
+        {copy.week}
+      </KidsText>
+      <KidsText variant="parentBody" tone="soft">
+        {`${copy.weekRange} ${formatDate(week.from)} ${copy.weekTo} ${formatDate(week.to)}`}
+      </KidsText>
+      {week.trials === 0 ? (
+        <KidsText variant="parentBody" testID="week-none">
+          {copy.weekNone}
+        </KidsText>
+      ) : (
+        <>
+          <View style={styles.tiles}>
+            <Tile label={copy.weekDays} value={week.daysPracticed} />
+            <Tile label={copy.weekTrials} value={week.trials} />
+          </View>
+          <View style={styles.fact}>
+            <KidsText variant="parentBody" tone="soft">
+              {copy.weekRate}
+            </KidsText>
+            <KidsText variant="parentBody" testID="week-rate">
+              {week.firstTryRate === null
+                ? copy.notEnough
+                : week.previousFirstTryRate === null
+                  ? formatPercent(week.firstTryRate)
+                  : `${formatPercent(week.firstTryRate)} (${copy.weekPrevious}: ${formatPercent(week.previousFirstTryRate)})`}
+            </KidsText>
+          </View>
+          <View style={styles.fact}>
+            <KidsText variant="parentBody" tone="soft">
+              {copy.weekMostPracticed}
+            </KidsText>
+            <KidsText variant="parentBody" testID="week-most">
+              {mostPracticed}
+            </KidsText>
+          </View>
+          {week.strongestSkill && (
+            <View style={styles.fact}>
+              <KidsText variant="parentBody" tone="soft">
+                {copy.weekStrongest}
+              </KidsText>
+              <KidsText variant="parentBody" testID="week-strongest">
+                {skillTitle(week.strongestSkill).text}
+              </KidsText>
+            </View>
+          )}
+          <KidsText variant="parentBody" tone="soft">
+            {copy.rateNote}
+          </KidsText>
+        </>
+      )}
     </View>
   );
 }
@@ -319,6 +383,7 @@ export default function ProgressScreen() {
 
   return (
     <ParentScreen title={`${copy.title}: ${child.nickname}`}>
+      <WeekCard week={view.week} />
       <View style={styles.section}>
         <KidsText variant="title" heading>
           {copy.summary}

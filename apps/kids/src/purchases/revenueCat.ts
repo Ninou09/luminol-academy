@@ -23,6 +23,7 @@ function planOf(info: CustomerInfo): Plan {
 function periodOf(type: PACKAGE_TYPE): OfferPeriod {
   if (type === PACKAGE_TYPE.MONTHLY) return 'monthly';
   if (type === PACKAGE_TYPE.ANNUAL) return 'annual';
+  if (type === PACKAGE_TYPE.LIFETIME) return 'lifetime';
   return 'other';
 }
 

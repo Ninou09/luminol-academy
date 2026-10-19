@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 
 import { ParentScreen } from '../../src/components/ParentScreen';
-import type { PlusOffer } from '../../src/purchases/purchases';
+import { orderOffers, type PlusOffer } from '../../src/purchases/purchases';
 import { useAppState } from '../../src/state/AppState';
 
 const copy = PARENT_COPY.plus;
@@ -19,12 +19,14 @@ const copy = PARENT_COPY.plus;
 const PERIOD_LABELS: Record<PlusOffer['period'], string> = {
   monthly: copy.monthly,
   annual: copy.annual,
+  lifetime: copy.lifetime,
   other: copy.other,
 };
 
 const PER_PERIOD: Record<PlusOffer['period'], string> = {
   monthly: copy.perMonth,
   annual: copy.perYear,
+  lifetime: copy.oneTime,
   other: '',
 };
 
@@ -43,7 +45,7 @@ export default function PlusScreen() {
     if (!purchases.available) return;
     let active = true;
     void purchases.offers().then((loaded) => {
-      if (active) setOffers(loaded);
+      if (active) setOffers(orderOffers(loaded));
     });
     return () => {
       active = false;
@@ -114,7 +116,9 @@ export default function PlusScreen() {
                     </KidsText>
                   </View>
                   <BigButton
-                    label={copy.subscribe}
+                    label={
+                      offer.period === 'lifetime' ? copy.buy : copy.subscribe
+                    }
                     audience="parent"
                     disabled={busy}
                     accessibilityHint={`${PERIOD_LABELS[offer.period]} ${offer.price}`}
@@ -127,6 +131,11 @@ export default function PlusScreen() {
           <KidsText variant="parentBody" tone="soft">
             {copy.terms}
           </KidsText>
+          {offers?.some((offer) => offer.period === 'lifetime') && (
+            <KidsText variant="parentBody" tone="soft">
+              {copy.lifetimeTerms}
+            </KidsText>
+          )}
           <BigButton
             label={copy.restore}
             variant="secondary"

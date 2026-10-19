@@ -6,6 +6,7 @@ import {
   goalStatus,
   summarizeActivity,
   summarizeSkills,
+  summarizeWeek,
   type Goal,
 } from './progress';
 import type { SessionRecord, TrialRecord } from './records';
@@ -102,6 +103,62 @@ describe('summarizeActivity', () => {
       trialsLast7Days: 1,
       daysPracticedLast30: 2,
     });
+  });
+});
+
+describe('summarizeWeek', () => {
+  const NOW = new Date('2026-10-15T12:00:00.000Z');
+  const at = (day: number, hour = 8) =>
+    new Date(Date.UTC(2026, 9, day, hour)).toISOString();
+  const on = (
+    day: number,
+    firstTryCorrect: boolean,
+    skillId: TrialRecord['skillId'] = 'match-shapes',
+  ): TrialRecord => ({ ...trial(0, firstTryCorrect, skillId), at: at(day) });
+  const session = (day: number): SessionRecord => ({
+    id: SESSION,
+    childId: CHILD,
+    startedAt: at(day),
+    endedAt: null,
+    activitiesCompleted: 2,
+    calmVisits: 1,
+  });
+
+  it('compares the last 7 days with the week before', () => {
+    const summary = summarizeWeek(
+      [session(14), session(10), session(2)],
+      [
+        // This week: 6 match-shapes (5 first try) on two days, 2 counting.
+        ...[true, true, true, true, true, false].map((ok) => on(14, ok)),
+        on(10, false, 'count-objects'),
+        on(10, true, 'count-objects'),
+        // The week before: 5 trials, 2 first try.
+        ...[true, true, false, false, false].map((ok) => on(5, ok)),
+        // Older than two weeks: ignored.
+        on(1, true),
+      ],
+      NOW,
+    );
+    expect(summary).toEqual({
+      from: '2026-10-08',
+      to: '2026-10-15',
+      daysPracticed: 2,
+      trials: 8,
+      firstTryRate: 6 / 8,
+      previousFirstTryRate: 2 / 5,
+      activitiesCompleted: 4,
+      calmVisits: 2,
+      skillsPracticed: ['match-shapes', 'count-objects'],
+      strongestSkill: 'match-shapes',
+    });
+  });
+
+  it('gives no rate or strongest skill for a thin week', () => {
+    const summary = summarizeWeek([], [on(14, true), on(13, true)], NOW);
+    expect(summary.firstTryRate).toBeNull();
+    expect(summary.previousFirstTryRate).toBeNull();
+    expect(summary.strongestSkill).toBeNull();
+    expect(summary.skillsPracticed).toEqual(['match-shapes']);
   });
 });
 

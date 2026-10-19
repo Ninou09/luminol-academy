@@ -6,13 +6,13 @@ app as built; re-check them whenever a dependency or feature changes.
 
 ## 1. Plans
 
-| Free (one child)                                                                                                          | Plus (subscription)                            |
+| Free (one child)                                                                                                          | Plus (subscription or lifetime)                |
 | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | Communication board with parent photos and voice                                                                          | Every activity in the schedule                 |
 | Calm corner                                                                                                               | Every interest theme                           |
 | 8 activities: touch and see, matching, colour sorting, memory, counting, letter matching, faces and feelings, turn-taking | Up to 6 child profiles                         |
 | Built-in routines and social stories, religious pack                                                                      | Routines and social stories made by the parent |
-| Dashboard, goals, JSON export, clearing history, deleting profiles                                                        | PDF progress report                            |
+| Dashboard, weekly report card, goals, JSON export, clearing history, deleting profiles                                    | PDF progress report                            |
 
 The rules live in `packages/kids-learning/src/plans.ts`. When a
 subscription ends, nothing a child already has is taken away: existing
@@ -27,10 +27,15 @@ profiles, routines and stories stay. Only new ones need Plus again.
 3. In Play Console create two auto-renewing subscriptions, for example
    `noor_plus_monthly` and `noor_plus_annual`, each with one base plan. A free
    trial is optional; the paywall shows the store's own price either way.
+   For the lifetime option, also create a one-time in-app product (not a
+   subscription), for example `noor_plus_lifetime`.
 4. In RevenueCat create the entitlement **`plus`** (the app checks exactly this
-   identifier) and attach both products.
+   identifier) and attach all three products.
 5. Create the offering `default`, mark it current, and add the packages
-   `$rc_monthly` and `$rc_annual`.
+   `$rc_monthly`, `$rc_annual` and `$rc_lifetime`. The Plus screen lists them
+   in that order whatever order the offering uses, labels the lifetime one
+   "مدى الحياة · دفعة واحدة" and explains that it does not renew. Leave
+   `$rc_lifetime` out to sell subscriptions only; no app change is needed.
 6. Copy the public Google Play SDK key (it starts with `goog_`). It identifies
    the app and is not a secret, but it is kept out of the repository anyway.
 
@@ -148,3 +153,5 @@ taken from a preview build.
    purchases are free and renew quickly.
 3. On a tablet: buy monthly, restore after reinstalling, cancel from
    "إدارة الاشتراك" and check that Plus ends and nothing a child had is lost.
+4. With another tester account, buy lifetime and check that Plus stays on
+   after reinstalling and restoring.
