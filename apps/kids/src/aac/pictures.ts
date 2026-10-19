@@ -1,5 +1,6 @@
 import type { AacPicture } from '@luminol/kids-learning';
 
+import angryGirlPicture from '../../assets/aac/angry-girl.png';
 import angryPicture from '../../assets/aac/angry.png';
 import applePicture from '../../assets/aac/apple.png';
 import ballPicture from '../../assets/aac/ball.png';
@@ -13,6 +14,7 @@ import eggPicture from '../../assets/aac/egg.png';
 import fatherPicture from '../../assets/aac/father.png';
 import finishedPicture from '../../assets/aac/finished.png';
 import foodPicture from '../../assets/aac/food.png';
+import happyGirlPicture from '../../assets/aac/happy-girl.png';
 import happyPicture from '../../assets/aac/happy.png';
 import helpPicture from '../../assets/aac/help.png';
 import homePicture from '../../assets/aac/home.png';
@@ -27,12 +29,15 @@ import noPicture from '../../assets/aac/no.png';
 import parkPicture from '../../assets/aac/park.png';
 import playPicture from '../../assets/aac/play.png';
 import ricePicture from '../../assets/aac/rice.png';
+import sadGirlPicture from '../../assets/aac/sad-girl.png';
 import sadPicture from '../../assets/aac/sad.png';
+import scaredGirlPicture from '../../assets/aac/scared-girl.png';
 import scaredPicture from '../../assets/aac/scared.png';
 import schoolPicture from '../../assets/aac/school.png';
 import sleepPicture from '../../assets/aac/sleep.png';
 import stopPicture from '../../assets/aac/stop.png';
 import teacherPicture from '../../assets/aac/teacher.png';
+import tiredGirlPicture from '../../assets/aac/tired-girl.png';
 import tiredPicture from '../../assets/aac/tired.png';
 import toiletPicture from '../../assets/aac/toilet.png';
 import wantPicture from '../../assets/aac/want.png';
@@ -68,6 +73,11 @@ export const AAC_PICTURE_ASSETS: Record<AacPicture, number> = {
   angry: angryPicture,
   scared: scaredPicture,
   tired: tiredPicture,
+  'happy-girl': happyGirlPicture,
+  'sad-girl': sadGirlPicture,
+  'angry-girl': angryGirlPicture,
+  'scared-girl': scaredGirlPicture,
+  'tired-girl': tiredGirlPicture,
   mother: motherPicture,
   'mother-2': mother2Picture,
   father: fatherPicture,

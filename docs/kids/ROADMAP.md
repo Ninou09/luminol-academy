@@ -75,9 +75,10 @@ backend and accounts.
   `packages/kids-learning/src/tracing.ts` (shape and stroke order of all 28
   letters) and of the letter sounds before launch.
 
-- Artwork for more interest themes (animals, vehicles, space). Each theme is
-  a picture list in `packages/kids-learning/src/themes.ts` plus its bundled
-  images and media records; no game code changes.
+- More interest themes need only artwork: each theme is a picture list in
+  `packages/kids-learning/src/themes.ts` plus its bundled images and media
+  records, with no game code changes. Animals, vehicles, and sky and space
+  were added on 2026-10-19.
 
 - Specialist review of the 37 board words and pictures, especially "no"
   (the waving hand can read as "hello"). Girl versions of the sleep, play, break
@@ -88,9 +89,14 @@ backend and accounts.
   the feelings games should start switched off for some children (parents can
   already switch them off per child).
 
-- Girl versions of the five feelings faces, plus situation and greeting
-  scene pictures; the games show only the board's face pictures until they
-  are approved.
+- Specialist review of the new pictures: the girl feelings faces (now a
+  second picture on each feelings card and used in the faces game), the 22
+  theme pictures and the 7 Sami scenes. Two scenes may need a second look:
+  in "toy taken" Sami could read as handing the truck over, and "tower
+  knocked" shows the blocks falling but not who knocked them.
+
+- Scenes for the three stories that are still told in words only (park,
+  friend gone home, long day), and optional greeting scenes.
 
 - Confirm the Android package name `com.luminolacademy.noor`.
 - Record the voice-over lines in

@@ -40,6 +40,11 @@ export const AAC_PICTURES = [
   'angry',
   'scared',
   'tired',
+  'happy-girl',
+  'sad-girl',
+  'angry-girl',
+  'scared-girl',
+  'tired-girl',
   'mother',
   'mother-2',
   'father',
@@ -61,7 +66,10 @@ type BuiltinCardSpec = {
   pictures: readonly [AacPicture, ...AacPicture[]];
 };
 
-/** Built-in cards in board order. "mother" offers two pictures. */
+/**
+ * Built-in cards in board order. "mother" offers two pictures, and each
+ * feeling offers a boy's and a girl's face.
+ */
 export const AAC_BUILTIN_CARDS = {
   want: { category: 'core', pictures: ['want'] },
   yes: { category: 'core', pictures: ['yes'] },
@@ -85,11 +93,11 @@ export const AAC_BUILTIN_CARDS = {
   dates: { category: 'food', pictures: ['dates'] },
   rice: { category: 'food', pictures: ['rice'] },
   egg: { category: 'food', pictures: ['egg'] },
-  happy: { category: 'feelings', pictures: ['happy'] },
-  sad: { category: 'feelings', pictures: ['sad'] },
-  angry: { category: 'feelings', pictures: ['angry'] },
-  scared: { category: 'feelings', pictures: ['scared'] },
-  tired: { category: 'feelings', pictures: ['tired'] },
+  happy: { category: 'feelings', pictures: ['happy', 'happy-girl'] },
+  sad: { category: 'feelings', pictures: ['sad', 'sad-girl'] },
+  angry: { category: 'feelings', pictures: ['angry', 'angry-girl'] },
+  scared: { category: 'feelings', pictures: ['scared', 'scared-girl'] },
+  tired: { category: 'feelings', pictures: ['tired', 'tired-girl'] },
   mother: { category: 'people', pictures: ['mother', 'mother-2'] },
   father: { category: 'people', pictures: ['father'] },
   teacher: { category: 'people', pictures: ['teacher'] },

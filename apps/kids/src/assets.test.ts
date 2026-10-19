@@ -1,7 +1,11 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-import { AAC_PICTURES } from '@luminol/kids-learning';
+import {
+  AAC_PICTURES,
+  GAME_ONLY_PICTURES,
+  STORY_SCENES,
+} from '@luminol/kids-learning';
 import { kidsColors } from '@luminol/kids-ui';
 import { z } from 'zod';
 
@@ -95,5 +99,18 @@ describe('app config', () => {
     expect(app.expo.android.adaptiveIcon.backgroundColor.toUpperCase()).toBe(
       kidsColors.accent,
     );
+  });
+});
+
+describe('game pictures', () => {
+  const files = new Set(media.assets.map((asset) => asset.file));
+
+  it('records every theme picture and story scene', () => {
+    for (const picture of GAME_ONLY_PICTURES) {
+      expect(files).toContain(`themes/${picture}.png`);
+    }
+    for (const scene of STORY_SCENES) {
+      expect(files).toContain(`scenes/${scene}.png`);
+    }
   });
 });

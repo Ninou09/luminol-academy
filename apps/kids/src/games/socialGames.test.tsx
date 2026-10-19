@@ -1,6 +1,12 @@
 import { emotionName, greetingWords } from '@luminol/kids-content';
 import {
+  createEmotionRound,
+  createRandom,
+  createSituationRound,
   createSkillProgress,
+  levelSpec,
+  situationScene,
+  type Random,
   EMOTIONS,
   GREETINGS,
   SKILLS,
@@ -61,9 +67,9 @@ async function makeIndependent(
 
 async function renderGame(
   element: (onDone: () => void) => ReactElement,
-  options: { independent?: SkillId } = {},
+  options: { independent?: SkillId; seed?: number } = {},
 ) {
-  const services = await createTestServices(34);
+  const services = await createTestServices(options.seed ?? 34);
   const child = await addChild(services);
   if (options.independent) {
     await makeIndependent(services, child, options.independent);
@@ -142,6 +148,65 @@ describe('EmotionGame', () => {
     const story = services.speech.last()!.replace('لنستمع إلى القصة ', '');
     fireEvent.press(screen.getByTestId('emotion-replay'));
     expect(services.speech.last()).toBe(story);
+  });
+});
+
+/** The first seed whose opening round satisfies `test`. */
+function seedWhere(test: (random: Random) => boolean): number {
+  const seed = Array.from({ length: 200 }, (_, index) => index + 1).find(
+    (candidate) => test(createRandom(candidate)),
+  );
+  if (seed === undefined) throw new Error('No seed found.');
+  return seed;
+}
+
+describe('EmotionGame faces and scenes', () => {
+  it("names a girl's faces with the feminine words", async () => {
+    const seed = seedWhere(
+      (random) =>
+        createEmotionRound(levelSpec(SKILLS['emotion-find'], 1), random)
+          .character === 'girl',
+    );
+    await renderGame(
+      (onDone) => (
+        <EmotionGame
+          skill={SKILLS['emotion-find']}
+          trials={5}
+          onDone={onDone}
+        />
+      ),
+      { seed },
+    );
+    const pictures = screen.getAllByTestId(/^picture-/);
+    expect(pictures.length).toBeGreaterThanOrEqual(2);
+    for (const picture of pictures) {
+      expect(picture.props.testID).toMatch(/-girl$/);
+    }
+    const label = screen.getByTestId('choice-correct').props
+      .accessibilityLabel as string;
+    expect(label).toMatch(/ة$/);
+  });
+
+  it('shows the scene of a story that has one', async () => {
+    const seed = seedWhere((random) => {
+      const round = createSituationRound(
+        levelSpec(SKILLS['emotion-situation'], 1),
+        random,
+      );
+      return situationScene(round.target) === 'sami-barking-dog';
+    });
+    await renderGame(
+      (onDone) => (
+        <EmotionGame
+          skill={SKILLS['emotion-situation']}
+          trials={4}
+          onDone={onDone}
+        />
+      ),
+      { seed },
+    );
+    expect(screen.getByTestId('scene-sami-barking-dog')).toBeTruthy();
+    expect(screen.getByText(/نبح كلب كبير/)).toBeTruthy();
   });
 });
 

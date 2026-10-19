@@ -1,5 +1,6 @@
 import {
   createSkillProgress,
+  THEME_PICTURES,
   type ChildProfile,
   type SkillId,
 } from '@luminol/kids-learning';
@@ -88,6 +89,26 @@ describe('MatchingGame with a picture theme', () => {
     expect(screen.getAllByTestId(/^picture-/).length).toBeGreaterThan(1);
     expect(screen.queryAllByTestId(/^shape-/)).toHaveLength(0);
   });
+
+  it.each(['animals', 'vehicles', 'space'] as const)(
+    'shows the %s pictures with their names',
+    async (theme) => {
+      await renderGame((onDone) => (
+        <MatchingGame trials={5} theme={theme} onDone={onDone} />
+      ));
+      const allowed = THEME_PICTURES[theme].map(
+        (picture) => `picture-${picture}`,
+      );
+      const pictures = screen.getAllByTestId(/^picture-/);
+      expect(pictures.length).toBeGreaterThan(1);
+      for (const picture of pictures) {
+        expect(allowed).toContain(picture.props.testID);
+      }
+      const target = screen.getByTestId('choice-correct').props
+        .accessibilityLabel as string;
+      expect(target).toMatch(/^[\u0600-\u06FF ]+$/);
+    },
+  );
 });
 
 describe('PatternGame', () => {

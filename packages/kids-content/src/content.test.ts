@@ -238,6 +238,10 @@ describe('feelings and greetings', () => {
       key: 'aac.card.happy',
       text: 'سعيد',
     });
+    expect(emotionName('tired', 'girl')).toEqual({
+      key: 'aac.picture.tired-girl',
+      text: 'متعبة',
+    });
   });
 
   it('tells stories without naming the feeling', () => {

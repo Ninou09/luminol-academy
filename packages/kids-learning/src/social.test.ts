@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { AAC_PICTURES } from './aac';
+import { AAC_BUILTIN_CARDS, AAC_PICTURES } from './aac';
 import { childProfileInputSchema } from './profile';
 import { createRandom } from './random';
 import { enabledSkills, planSession, skillsForAge } from './session';
@@ -9,10 +9,15 @@ import {
   createEmotionRound,
   createGreetingRound,
   createSituationRound,
+  EMOTION_FACES,
   EMOTIONS,
+  FACE_CHARACTERS,
   GREETINGS,
   SITUATION_IDS,
+  SITUATION_SCENES,
+  situationScene,
   SITUATIONS,
+  STORY_SCENES,
 } from './social';
 
 const SEEDS = Array.from({ length: 150 }, (_, index) => index + 1);
@@ -21,6 +26,24 @@ describe('social catalogs', () => {
   it('uses feelings that have board pictures', () => {
     for (const emotion of EMOTIONS) {
       expect(AAC_PICTURES).toContain(emotion);
+    }
+  });
+
+  it("offers every feeling on a boy's and a girl's board card", () => {
+    for (const character of FACE_CHARACTERS) {
+      for (const emotion of EMOTIONS) {
+        const face = EMOTION_FACES[character][emotion];
+        expect(AAC_BUILTIN_CARDS[emotion].pictures).toContain(face);
+      }
+    }
+  });
+
+  it('gives each scene to one story', () => {
+    expect(new Set(STORY_SCENES).size).toBe(STORY_SCENES.length);
+    expect(situationScene('gift')).toBe('sami-gift');
+    expect(situationScene('park')).toBeNull();
+    for (const id of Object.keys(SITUATION_SCENES)) {
+      expect(SITUATION_IDS).toContain(id);
     }
   });
 
@@ -45,6 +68,16 @@ describe('emotion rounds', () => {
         expect(round.choices[round.correctIndex]).toBe(round.target);
       }
     }
+  });
+
+  it('shows both children across rounds', () => {
+    const characters = new Set(
+      SEEDS.map(
+        (seed) =>
+          createEmotionRound({ choices: 3 }, createRandom(seed)).character,
+      ),
+    );
+    expect([...characters].sort()).toEqual(['boy', 'girl']);
   });
 
   it('starts with the clearest feelings', () => {

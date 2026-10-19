@@ -59,11 +59,29 @@ const CATEGORY_LABELS: Record<AacCategory, string> = {
   places: 'أماكن وأشياء',
 };
 
+/**
+ * A card shown with a girl's face says the feminine word, so a girl's board
+ * speaks about herself and the face matches the word.
+ */
+const PICTURE_WORDS = {
+  'happy-girl': 'سعيدة',
+  'sad-girl': 'حزينة',
+  'angry-girl': 'غاضبة',
+  'scared-girl': 'خائفة',
+  'tired-girl': 'متعبة',
+} as const satisfies Partial<Record<AacPicture, string>>;
+type WordPicture = keyof typeof PICTURE_WORDS;
+
+function hasOwnWord(picture: AacPicture): picture is WordPicture {
+  return Object.hasOwn(PICTURE_WORDS, picture);
+}
+
 /** Describes each bundled picture for parents choosing between pictures. */
 const PICTURE_LABELS: Record<AacPicture, string> = {
   ...(Object.fromEntries(
     AAC_CARD_IDS.map((id) => [id, CARD_LABELS[id]]),
   ) as Record<AacCardId, string>),
+  ...PICTURE_WORDS,
   mother: 'أمي بحجاب',
   'mother-2': 'أمي دون حجاب',
 };
@@ -85,16 +103,26 @@ export function aacCategoryUtterance(category: AacCategory): Utterance {
  * unless the parent recorded one, so they have no recording key to share.
  */
 export function aacCardUtterance(card: BoardCard): Utterance {
-  return card.source === 'builtin'
-    ? { key: `aac.card.${card.id}`, text: CARD_LABELS[card.id] }
-    : { key: `aac.custom.${card.id}`, text: card.label };
+  if (card.source === 'custom')
+    return { key: `aac.custom.${card.id}`, text: card.label };
+  if (card.picture.kind === 'builtin' && hasOwnWord(card.picture.id))
+    return aacPictureWord(card.picture.id);
+  return { key: `aac.card.${card.id}`, text: CARD_LABELS[card.id] };
+}
+
+/** The word said for a picture that has its own word, such as "سعيدة". */
+export function aacPictureWord(picture: WordPicture): Utterance {
+  return { key: `aac.picture.${picture}`, text: PICTURE_WORDS[picture] };
 }
 
 export function aacBuiltinUtterances(): Utterance[] {
-  return AAC_CARD_IDS.map((id) => ({
-    key: `aac.card.${id}`,
-    text: CARD_LABELS[id],
-  }));
+  return [
+    ...AAC_CARD_IDS.map((id) => ({
+      key: `aac.card.${id}`,
+      text: CARD_LABELS[id],
+    })),
+    ...(Object.keys(PICTURE_WORDS) as WordPicture[]).map(aacPictureWord),
+  ];
 }
 
 export function aacCategoryUtterances(): Utterance[] {

@@ -1,18 +1,28 @@
 import {
+  EMOTION_FACES,
   EMOTIONS,
   GREETINGS,
   SITUATION_IDS,
   type Emotion,
+  type FaceCharacter,
   type GreetingId,
   type SituationId,
 } from '@luminol/kids-learning';
 
-import { aacCardLabel } from './aac';
+import { aacCardLabel, aacPictureWord } from './aac';
 import type { Utterance } from './utterance';
 
-/** Feelings are board words, so their names reuse the board's recordings. */
-export function emotionName(emotion: Emotion): Utterance {
-  return { key: `aac.card.${emotion}`, text: aacCardLabel(emotion) };
+/**
+ * Feelings are board words, so their names reuse the board's recordings. A
+ * girl's face is named with the feminine word.
+ */
+export function emotionName(
+  emotion: Emotion,
+  character: FaceCharacter = 'boy',
+): Utterance {
+  return character === 'girl'
+    ? aacPictureWord(EMOTION_FACES.girl[emotion])
+    : { key: `aac.card.${emotion}`, text: aacCardLabel(emotion) };
 }
 
 const EMOTION_QUESTIONS: Record<Emotion, string> = {
@@ -34,11 +44,11 @@ export function emotionQuestion(emotion: Emotion): Utterance {
 const SITUATION_TEXT: Record<SituationId, string> = {
   gift: 'حصل سامي على هديّة جميلة.',
   park: 'ذهب سامي إلى الحديقة ليلعب.',
-  'broken-toy': 'انكسرت لعبة سامي المفضّلة.',
+  'broken-toy': 'انكسرت سيّارة سامي، لعبته المفضّلة.',
   'friend-left': 'عاد صديق سامي إلى بيته، وبقي سامي وحده.',
   'toy-taken': 'أخذ ولد لعبة سامي دون أن يسأله.',
   'tower-knocked': 'بنى سامي برجًا، فأوقعه أحدهم.',
-  thunder: 'سمع سامي صوت رعد قويّ في الليل.',
+  thunder: 'رأى سامي البرق من النافذة، وسمع صوت رعد قويّ.',
   'barking-dog': 'نبح كلب كبير بصوت عالٍ قرب سامي.',
   'long-day': 'لعب سامي وركض طوال اليوم.',
   'long-walk': 'مشى سامي مسافة طويلة جدًّا.',

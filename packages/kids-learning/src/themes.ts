@@ -1,25 +1,82 @@
 import { z } from 'zod';
 
-import type { AacPicture } from './aac';
+import { AAC_PICTURES, type AacPicture } from './aac';
 import { PIECE_COLORS, SHAPES, type Piece } from './pieces';
 
 /**
  * Interest themes reskin the picture games. Every theme only uses reviewed
- * artwork: code-drawn shapes, or pictures from the communication board.
+ * artwork: code-drawn shapes, pictures from the communication board, or the
+ * theme pictures bundled in apps/kids/assets/themes.
  */
-export const THEMES = ['shapes', 'food', 'things'] as const;
+export const THEMES = [
+  'shapes',
+  'food',
+  'things',
+  'animals',
+  'vehicles',
+  'space',
+] as const;
 export const themeSchema = z.enum(THEMES);
 export type ThemeId = z.infer<typeof themeSchema>;
 
-/** Board pictures that are also board words, so their recordings are shared. */
+/** Pictures used only by the games; each has a file in apps/kids/assets/themes. */
+export const GAME_ONLY_PICTURES = [
+  'cat',
+  'dog',
+  'bird',
+  'fish',
+  'camel',
+  'horse',
+  'sheep',
+  'rabbit',
+  'bus',
+  'train',
+  'plane',
+  'boat',
+  'bike',
+  'truck',
+  'helicopter',
+  'tractor',
+  'sun',
+  'crescent',
+  'star',
+  'rocket',
+  'planet',
+  'astronaut',
+] as const;
+export type GameOnlyPicture = (typeof GAME_ONLY_PICTURES)[number];
+
+/** A picture a game can show: a board picture or a game-only picture. */
+export type GamePicture = AacPicture | GameOnlyPicture;
+
+export function isAacPicture(picture: GamePicture): picture is AacPicture {
+  return (AAC_PICTURES as readonly string[]).includes(picture);
+}
+
+/**
+ * The pictures of each theme. Food and things are board words, so their
+ * recordings are shared with the board.
+ */
 export const THEME_PICTURES = {
   food: ['apple', 'banana', 'bread', 'dates', 'egg', 'rice', 'milk', 'juice'],
   things: ['ball', 'car', 'book', 'home', 'school', 'park'],
-} as const satisfies Record<Exclude<ThemeId, 'shapes'>, readonly AacPicture[]>;
+  animals: ['cat', 'dog', 'bird', 'fish', 'camel', 'horse', 'sheep', 'rabbit'],
+  vehicles: [
+    'bus',
+    'train',
+    'plane',
+    'boat',
+    'bike',
+    'truck',
+    'helicopter',
+    'tractor',
+  ],
+  space: ['sun', 'crescent', 'star', 'rocket', 'planet', 'astronaut'],
+} as const satisfies Record<Exclude<ThemeId, 'shapes'>, readonly GamePicture[]>;
 
 /** One thing a game shows: a code-drawn shape or a theme picture. */
 export type Token =
-  { kind: 'shape'; piece: Piece } | { kind: 'picture'; picture: AacPicture };
+  { kind: 'shape'; piece: Piece } | { kind: 'picture'; picture: GamePicture };
 
 export function tokenKey(token: Token): string {
   return token.kind === 'shape'

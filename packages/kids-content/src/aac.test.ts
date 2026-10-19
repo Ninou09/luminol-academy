@@ -3,6 +3,7 @@ import {
   AAC_PICTURES,
   EMPTY_AAC_BOARD,
   findCard,
+  setOverride,
   THEMES,
   themeTokens,
   upsertCustomCard,
@@ -16,6 +17,7 @@ import {
   aacCategoryUtterances,
   aacPictureLabel,
 } from './aac';
+import { spokenCatalog } from './catalog';
 import { PARENT_COPY } from './parent-copy';
 import { THEME_LABELS, tokenUtterance } from './themes';
 
@@ -41,9 +43,26 @@ describe('communication board content', () => {
     expect(aacCardLabel('mother')).toBe('أمي');
   });
 
+  it("says the feminine word when a card shows a girl's face", () => {
+    const board = setOverride(EMPTY_AAC_BOARD, 'happy', {
+      hidden: false,
+      picture: { kind: 'builtin', id: 'happy-girl' },
+      voicePath: null,
+    });
+    const card = findCard(board, 'happy');
+    expect(card && aacCardUtterance(card)).toEqual({
+      key: 'aac.picture.happy-girl',
+      text: 'سعيدة',
+    });
+    const boyCard = findCard(EMPTY_AAC_BOARD, 'happy');
+    expect(boyCard && aacCardUtterance(boyCard).text).toBe('سعيد');
+  });
+
   it('gives each built-in word its own recording key', () => {
     const keys = aacBuiltinUtterances().map((utterance) => utterance.key);
-    expect(new Set(keys).size).toBe(AAC_CARD_IDS.length);
+    expect(new Set(keys).size).toBe(keys.length);
+    // One word per card, plus the feminine words for the five girl faces.
+    expect(keys).toHaveLength(AAC_CARD_IDS.length + 5);
   });
 
   it('reads parent cards with their own label', () => {
@@ -85,12 +104,22 @@ describe('interest themes', () => {
     }
   });
 
-  it('reuses board recordings for theme pictures', () => {
-    const boardKeys = new Set(aacBuiltinUtterances().map((u) => u.key));
+  it('gives every theme picture a recorded name', () => {
+    const keys = new Set(spokenCatalog().map((entry) => entry.key));
     for (const theme of THEMES.filter((value) => value !== 'shapes')) {
       for (const token of themeTokens(theme)) {
-        expect(boardKeys).toContain(tokenUtterance(token).key);
+        expect(keys).toContain(tokenUtterance(token).key);
       }
     }
+  });
+
+  it('reuses board recordings for board pictures', () => {
+    expect(tokenUtterance({ kind: 'picture', picture: 'apple' }).key).toBe(
+      'aac.card.apple',
+    );
+    expect(tokenUtterance({ kind: 'picture', picture: 'camel' })).toEqual({
+      key: 'picture.camel',
+      text: 'جمل',
+    });
   });
 });

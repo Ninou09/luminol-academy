@@ -1,8 +1,38 @@
-import { regionRect, type Token } from '@luminol/kids-learning';
+import {
+  isAacPicture,
+  regionRect,
+  type GamePicture,
+  type Token,
+} from '@luminol/kids-learning';
 import { ShapeGlyph } from '@luminol/kids-ui';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 
 import { CardPicture } from '../aac/CardPicture';
+import { GAME_PICTURE_ASSETS } from './pictures';
+
+/** A board picture or a game-only picture, shown whole (never cropped). */
+function GamePictureImage({
+  picture,
+  size,
+}: {
+  picture: GamePicture;
+  size: number;
+}) {
+  if (isAacPicture(picture))
+    return (
+      <CardPicture picture={{ kind: 'builtin', id: picture }} size={size} />
+    );
+  return (
+    <Image
+      source={GAME_PICTURE_ASSETS[picture]}
+      resizeMode="contain"
+      accessible={false}
+      importantForAccessibility="no"
+      style={{ width: size, height: size }}
+      testID={`picture-${picture}`}
+    />
+  );
+}
 
 /** A game token: a code-drawn shape or a theme picture, shown whole. */
 export function TokenView({
@@ -35,10 +65,7 @@ export function TokenView({
       accessibilityRole={label === undefined ? undefined : 'image'}
       accessibilityLabel={label}
     >
-      <CardPicture
-        picture={{ kind: 'builtin', id: token.picture }}
-        size={size}
-      />
+      <GamePictureImage picture={token.picture} size={size} />
     </View>
   );
 }

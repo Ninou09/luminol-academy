@@ -15,6 +15,8 @@ import {
   regionRect,
 } from './themedRounds';
 import {
+  GAME_ONLY_PICTURES,
+  isAacPicture,
   MIN_THEME_TOKENS,
   THEMES,
   themeTokens,
@@ -27,6 +29,13 @@ const SEEDS = Array.from({ length: 150 }, (_, index) => index + 1);
 const keys = (tokens: readonly Token[]) => tokens.map(tokenKey);
 
 describe('themes', () => {
+  it('keeps game-only pictures apart from board pictures', () => {
+    for (const picture of GAME_ONLY_PICTURES) {
+      expect(isAacPicture(picture)).toBe(false);
+    }
+    expect(isAacPicture('apple')).toBe(true);
+  });
+
   it('offers enough distinct tokens for every game', () => {
     for (const theme of THEMES) {
       const tokens = themeTokens(theme);
