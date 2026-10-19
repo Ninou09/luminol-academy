@@ -65,6 +65,23 @@ delegation.
 - Added technical `main` ruleset enforcement so pull requests and the existing `quality` gate are required before merge while force pushes and branch deletion are blocked.
 - Bounded outbound Resend provider requests with a validated application-level timeout while preserving idempotency and the existing retry/dead-letter flow.
 
+## Accepted production audit exceptions
+
+`pnpm audit --prod --audit-level high` ignores two advisories through
+`pnpm.auditConfig.ignoreGhsas` in the root `package.json`. Both have no patched
+release, and both sit in build tooling of the Luminol Noor app (`apps/kids`)
+that runs on the build machine and is never shipped in the app or in any web
+deployment. They are listed under `--prod` only because `expo` itself is a
+runtime dependency.
+
+| Advisory            | Package                     | Path                                               | Why it is accepted                                                      |
+| ------------------- | --------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------- |
+| GHSA-86w9-cpqp-85rv | node-forge ≤ 1.4.0 (newest) | `expo > @expo/cli > node-forge`                    | Used by the Expo CLI for local development certificates, not at runtime |
+| GHSA-vfj7-8cjw-p6xm | braces ≤ 3.0.3 (newest)     | `expo > @expo/metro > metro-file-map > micromatch` | Used by Metro to match file paths while bundling, not at runtime        |
+
+Remove each entry as soon as a patched release exists, and re-check both
+whenever Expo is upgraded.
+
 ## Data privacy and logging rule
 
 Never log request headers, cookies, authorization values, provider payloads, notification/email bodies, therapy or assessment content, finance credentials, or raw exceptions from external providers. Log an event code, correlation ID, sanitized resource type, outcome, and a stable non-personal error code. Use `redactSensitive` before structured metadata crosses a logging boundary. Delivery attempts retain only provider reference/error codes; provider failures exposed to users remain generic.
