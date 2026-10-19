@@ -10,6 +10,8 @@ import {
 import {
   AGE_BANDS,
   avatarPiece,
+  isSkillPlayable,
+  isThemeAvailable,
   AVATARS,
   DIALECTS,
   NICKNAME_MAX_LENGTH,
@@ -35,6 +37,8 @@ import {
   touchTargets,
 } from '@luminol/kids-ui';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+
+import { useAppState } from '../state/AppState';
 
 export type ProfileDraft = {
   nickname: string;
@@ -73,7 +77,13 @@ export function ProfileFields({
   nicknameError: boolean;
 }) {
   const copy = PARENT_COPY.profile;
-  const band = skillsForAge(draft.ageBand);
+  const { plan } = useAppState();
+  // Only what the plan includes is offered; earlier choices are kept as they are.
+  const band = skillsForAge(draft.ageBand).filter((skillId) =>
+    isSkillPlayable(plan, skillId),
+  );
+  const themes = THEMES.filter((theme) => isThemeAvailable(plan, theme));
+  const allThemes = themes.length === THEMES.length;
   return (
     <View style={styles.fields}>
       <View style={styles.group}>
@@ -162,11 +172,24 @@ export function ProfileFields({
 
       <MultiChoice
         label={copy.interests}
-        options={THEMES.map((value) => ({ value, label: THEME_LABELS[value] }))}
-        value={draft.interests}
-        onChange={(interests) => onChange({ ...draft, interests })}
+        options={themes.map((value) => ({ value, label: THEME_LABELS[value] }))}
+        value={draft.interests.filter((theme) => themes.includes(theme))}
+        onChange={(interests) =>
+          onChange({
+            ...draft,
+            // Themes outside the plan stay chosen for when Plus returns.
+            interests: [
+              ...draft.interests.filter((theme) => !themes.includes(theme)),
+              ...interests,
+            ],
+          })
+        }
         minimum={1}
-        note={copy.interestsNote}
+        note={
+          allThemes
+            ? copy.interestsNote
+            : `${copy.interestsNote} ${PARENT_COPY.plus.themesNote}`
+        }
         testID="profile-interests"
       />
 
@@ -213,7 +236,11 @@ export function ProfileFields({
           })
         }
         minimum={1}
-        note={copy.activitiesNote}
+        note={
+          band.length === skillsForAge(draft.ageBand).length
+            ? copy.activitiesNote
+            : `${copy.activitiesNote} ${PARENT_COPY.plus.activitiesNote}`
+        }
         testID="profile-activities"
       />
     </View>

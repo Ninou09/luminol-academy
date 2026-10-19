@@ -36,6 +36,7 @@ const appSchema = z.object({
     icon: z.string(),
     backgroundColor: z.string(),
     android: z.object({
+      blockedPermissions: z.array(z.string()),
       adaptiveIcon: z.object({
         foregroundImage: z.string(),
         backgroundColor: z.string(),
@@ -93,6 +94,12 @@ describe('app config', () => {
     ]) {
       expect(existsSync(join(APP_ROOT, path))).toBe(true);
     }
+  });
+
+  it('never asks for the advertising id, as Designed for Families requires', () => {
+    expect(app.expo.android.blockedPermissions).toContain(
+      'com.google.android.gms.permission.AD_ID',
+    );
   });
 
   it('uses the kids design tokens for native colors', () => {

@@ -1,5 +1,9 @@
 import { PARENT_COPY } from '@luminol/kids-content';
-import type { Sequence, SequenceKind } from '@luminol/kids-learning';
+import {
+  hasPlus,
+  type Sequence,
+  type SequenceKind,
+} from '@luminol/kids-learning';
 import {
   BigButton,
   kidsColors,
@@ -21,7 +25,7 @@ const copy = PARENT_COPY.sequences;
 export default function SequencesScreen() {
   const router = useRouter();
   const { childId } = useLocalSearchParams<{ childId: string }>();
-  const { profiles } = useAppState();
+  const { profiles, plan } = useAppState();
   const child = profiles.find((profile) => profile.id === childId);
   const { sequences } = useSequences(child?.id);
 
@@ -65,17 +69,27 @@ export default function SequencesScreen() {
             />
           </View>
         ))}
-        <BigButton
-          label={kind === 'routine' ? copy.addRoutine : copy.addStory}
-          audience="parent"
-          onPress={() =>
-            router.push({
-              pathname: '/parent/sequences/[childId]/new',
-              params: { childId: child.id, kind },
-            })
-          }
-          testID={`sequence-add-${kind}`}
-        />
+        {hasPlus(plan) ? (
+          <BigButton
+            label={kind === 'routine' ? copy.addRoutine : copy.addStory}
+            audience="parent"
+            onPress={() =>
+              router.push({
+                pathname: '/parent/sequences/[childId]/new',
+                params: { childId: child.id, kind },
+              })
+            }
+            testID={`sequence-add-${kind}`}
+          />
+        ) : (
+          <BigButton
+            label={`${kind === 'routine' ? copy.addRoutine : copy.addStory} · ${PARENT_COPY.plus.locked}`}
+            variant="secondary"
+            audience="parent"
+            onPress={() => router.push('/parent/plus')}
+            testID={`sequence-add-${kind}-locked`}
+          />
+        )}
       </View>
     );
   }

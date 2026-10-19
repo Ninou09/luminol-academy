@@ -2,6 +2,7 @@ export * from './aac';
 export * from './adaptive';
 export * from './letters';
 export * from './pieces';
+export * from './plans';
 export * from './profile';
 export * from './progress';
 export * from './random';

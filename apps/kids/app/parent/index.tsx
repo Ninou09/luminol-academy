@@ -1,5 +1,5 @@
 import { PARENT_COPY } from '@luminol/kids-content';
-import { avatarPiece } from '@luminol/kids-learning';
+import { avatarPiece, canAddProfile } from '@luminol/kids-learning';
 import {
   BigButton,
   kidsColors,
@@ -17,7 +17,7 @@ import { useAppState } from '../../src/state/AppState';
 
 export default function ParentHomeScreen() {
   const router = useRouter();
-  const { profiles, services } = useAppState();
+  const { profiles, services, plan } = useAppState();
   const [voiceMissing, setVoiceMissing] = useState(false);
   const copy = PARENT_COPY.home;
 
@@ -78,11 +78,31 @@ export default function ParentHomeScreen() {
         );
       })}
 
+      {canAddProfile(plan, profiles.length) ? (
+        <BigButton
+          label={copy.addChild}
+          audience="parent"
+          onPress={() => router.push('/parent/new')}
+          testID="add-child"
+        />
+      ) : (
+        <KidsText variant="parentBody" testID="profile-limit">
+          {PARENT_COPY.plus.profileLimit}
+        </KidsText>
+      )}
       <BigButton
-        label={copy.addChild}
+        label={PARENT_COPY.plus.open}
+        variant="secondary"
         audience="parent"
-        onPress={() => router.push('/parent/new')}
-        testID="add-child"
+        onPress={() => router.push('/parent/plus')}
+        testID="open-plus"
+      />
+      <BigButton
+        label={PARENT_COPY.privacy.open}
+        variant="secondary"
+        audience="parent"
+        onPress={() => router.push('/parent/privacy')}
+        testID="open-privacy"
       />
       <BigButton
         label={copy.exit}

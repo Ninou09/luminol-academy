@@ -3,6 +3,7 @@ import {
   createChildProfile,
   type ChildProfile,
   type ChildProfileInput,
+  type Plan,
 } from '@luminol/kids-learning';
 import { useEffect, useState, type ReactNode } from 'react';
 import initSqlJs from 'sql.js';
@@ -17,6 +18,11 @@ import {
 } from '../data/database';
 import { SqlRepository } from '../data/repository';
 import type { MediaService, PhotoResult } from '../media/media';
+import type {
+  PlusOffer,
+  PurchaseOutcome,
+  PurchasesService,
+} from '../purchases/purchases';
 import type { ShareResult, ShareService } from '../reports/share';
 import type { KidsServices } from '../services/services';
 import { AppStateProvider, useAppState } from '../state/AppState';
@@ -174,11 +180,59 @@ export class FakeShare implements ShareService {
   }
 }
 
+/**
+ * A store stand-in. Tests start on Plus so screens are fully open; Free-plan
+ * tests switch `plan` before rendering.
+ */
+export class FakePurchases implements PurchasesService {
+  available = true;
+  plan: Plan = 'plus';
+  readonly manageUrl = 'https://play.google.com/store/account/subscriptions';
+  nextOutcome: PurchaseOutcome = 'purchased';
+  readonly purchased: string[] = [];
+  private listeners = new Set<(plan: Plan) => void>();
+
+  async currentPlan(): Promise<Plan> {
+    return this.plan;
+  }
+
+  async offers(): Promise<PlusOffer[]> {
+    return [
+      { id: '$rc_monthly', period: 'monthly', price: '3,99 €' },
+      { id: '$rc_annual', period: 'annual', price: '29,99 €' },
+    ];
+  }
+
+  async purchase(
+    offerId: string,
+  ): Promise<{ outcome: PurchaseOutcome; plan: Plan }> {
+    this.purchased.push(offerId);
+    if (this.nextOutcome === 'purchased') this.setPlan('plus');
+    return { outcome: this.nextOutcome, plan: this.plan };
+  }
+
+  async restore(): Promise<Plan> {
+    return this.plan;
+  }
+
+  onPlanChange(listener: (plan: Plan) => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  /** Simulates the store reporting a change, e.g. a renewal or expiry. */
+  setPlan(plan: Plan) {
+    this.plan = plan;
+    for (const listener of this.listeners) listener(plan);
+  }
+}
+
 export type TestServices = KidsServices & {
   speech: FakeSpeech;
   calmSound: FakeCalmSound;
   media: FakeMedia;
   share: FakeShare;
+  purchases: FakePurchases;
   repository: SqlRepository;
   db: SqlDatabase;
 };
@@ -198,6 +252,7 @@ export async function createTestServices(seed = 1): Promise<TestServices> {
     calmSound: new FakeCalmSound(),
     media: new FakeMedia(newId),
     share: new FakeShare(),
+    purchases: new FakePurchases(),
     newId,
     now: () => {
       clock += 1000;

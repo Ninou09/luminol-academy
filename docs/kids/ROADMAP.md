@@ -64,7 +64,7 @@ The kids packages are separate from `@luminol/ui`, `@luminol/types` and
 | 5   | Emotions + social skills     | Done: find the face for a feeling (clearest feelings first), "how does Sami feel?" stories, building a tower in turns, "what do we say?" greetings with the choices read aloud, parents can switch any activity off per child, and the spoken schedule is built from recorded parts, with tests                                                                                                          |
 | 6   | Daily life skills            | Done: routines and social stories that parents build from board pictures, routine pictures or their own photos and voice; built-in routines (hand washing, brushing teeth, getting dressed); 5 built-in social stories; a "put the steps in order" game; an optional religious pack (off by default) with wudu, prayer (boy or girl pictures), Ramadan and Eid, with tests                               |
 | 7   | Parent dashboard and reports | Done: per-child dashboard with sessions, activities, practice days and calm-corner visits; per skill the level, how much help, first-try success over the last 10 trials and its trend; the last 10 sessions; goals (reach a level without help); a PDF report and a JSON export shared through the system share sheet; clearing the progress history; deleting a profile removes everything, with tests |
-| 8   | Store readiness              | Next: RevenueCat subscriptions, entitlements, Play data-safety form, Designed for Families review                                                                                                                                                                                                                                                                                                        |
+| 8   | Store readiness              | Done in the app: Free and Plus plans, RevenueCat subscriptions behind the parental gate (buy, restore, manage in Google Play), plan-aware schedule, profiles, themes, own routines and PDF report, an in-app privacy policy, the advertising id blocked, with tests. Owner steps (RevenueCat, EAS, Play Console, data safety, listing) are in [PLAY_RELEASE.md](./PLAY_RELEASE.md)                       |
 
 Cloud sync and the clinic licence come after launch, because they need a
 backend and accounts.
@@ -111,7 +111,10 @@ backend and accounts.
   success over the last 10 trials, a trend when it changes by 15 points or
   more) and of the report wording, which states it is not a diagnosis.
 
-- Confirm the Android package name `com.luminolacademy.noor`.
+- Confirm the Android package name `com.luminolacademy.noor`, then follow
+  [PLAY_RELEASE.md](./PLAY_RELEASE.md): RevenueCat products and the `plus`
+  entitlement, the EAS key, Play Console app content, data safety and the
+  listing. Host [PRIVACY_POLICY.md](./PRIVACY_POLICY.md) and have it reviewed.
 - Record the voice-over lines in
   [voice-recording-list.csv](./voice-recording-list.csv) after specialist
   approval.

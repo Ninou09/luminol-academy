@@ -1,5 +1,5 @@
 import { PARENT_COPY } from '@luminol/kids-content';
-import { sequenceKindSchema } from '@luminol/kids-learning';
+import { hasPlus, sequenceKindSchema } from '@luminol/kids-learning';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 
 import { ParentScreen } from '../../../../src/components/ParentScreen';
@@ -9,7 +9,7 @@ import { useAppState } from '../../../../src/state/AppState';
 
 export default function NewSequenceScreen() {
   const params = useLocalSearchParams<{ childId: string; kind?: string }>();
-  const { profiles } = useAppState();
+  const { profiles, plan } = useAppState();
   const child = profiles.find((profile) => profile.id === params.childId);
   const { sequences, save } = useSequences(child?.id);
   // The kind arrives in the URL, so it is validated like any other input.
@@ -18,6 +18,7 @@ export default function NewSequenceScreen() {
   const title = kind === 'story' ? copy.newStory : copy.newRoutine;
 
   if (!child) return <Redirect href="/parent" />;
+  if (!hasPlus(plan)) return <Redirect href="/parent/plus" />;
   if (!sequences) return <ParentScreen title={title}>{null}</ParentScreen>;
 
   return (

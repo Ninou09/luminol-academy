@@ -18,7 +18,11 @@
         "foregroundImage": "./assets/brand/icon-foreground.png",
         "backgroundColor": "#2F6B69"
       },
-      "allowBackup": false
+      "allowBackup": false,
+      "blockedPermissions": [
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "plugins": [
       "expo-router",

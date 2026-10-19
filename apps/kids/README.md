@@ -56,6 +56,15 @@ The root `pnpm test` runs these jest tests after the Vitest suite.
   pictures in `themes/` and story scenes in `scenes/`; `assets/media.json`
   keeps each file's source, alt text, crop intent and approval.
 
+## Subscriptions
+
+Plus is sold through RevenueCat (`src/purchases/`). Set
+`EXPO_PUBLIC_REVENUECAT_ANDROID_KEY` to the public `goog_` key in the EAS
+environment; without it the app runs on Free and the Plus screen says
+subscriptions are unavailable. Plan rules live in
+`packages/kids-learning/src/plans.ts`; release steps are in
+[`docs/kids/PLAY_RELEASE.md`](../../docs/kids/PLAY_RELEASE.md).
+
 ## Audio
 
 Speech resolves in this order: recorded clip in the child's dialect →
