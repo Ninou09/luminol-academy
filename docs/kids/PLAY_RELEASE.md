@@ -50,6 +50,11 @@ RevenueCat only receives its own anonymous app user id and purchase data.
 A build without the key still runs, on Free only, and the Plus screen says
 that subscriptions are not available in this build.
 
+For a tester build before the store is ready, set
+`EXPO_PUBLIC_UNLOCK_PLUS_FOR_TESTING=true` as well (never in `production`).
+It opens Plus without selling anything, the parent area shows a "testing
+build" notice, and any build that has the RevenueCat key ignores it.
+
 ## 4. Play Console: app content
 
 | Section                  | Answer                                                                                                                                                                                                                                              |

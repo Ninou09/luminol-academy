@@ -39,6 +39,7 @@ function errorCode(error: unknown): unknown {
  */
 export class RevenueCatPurchases implements PurchasesService {
   readonly available = true;
+  readonly testing = false;
   readonly manageUrl = PLAY_SUBSCRIPTIONS_URL;
   private packages = new Map<string, PurchasesPackage>();
 

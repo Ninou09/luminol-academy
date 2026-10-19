@@ -39,6 +39,11 @@ export default function ParentHomeScreen() {
       <View style={styles.notice}>
         <KidsText variant="parentBody">{copy.privacy}</KidsText>
       </View>
+      {services.purchases.testing && (
+        <View style={styles.notice} testID="testing-build">
+          <KidsText variant="parentBody">{PARENT_COPY.plus.testing}</KidsText>
+        </View>
+      )}
       {voiceMissing && (
         <View style={styles.notice} testID="voice-missing">
           <KidsText variant="parentBody">{copy.noArabicVoice}</KidsText>

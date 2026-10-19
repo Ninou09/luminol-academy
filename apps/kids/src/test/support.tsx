@@ -186,6 +186,7 @@ export class FakeShare implements ShareService {
  */
 export class FakePurchases implements PurchasesService {
   available = true;
+  testing = false;
   plan: Plan = 'plus';
   readonly manageUrl = 'https://play.google.com/store/account/subscriptions';
   nextOutcome: PurchaseOutcome = 'purchased';

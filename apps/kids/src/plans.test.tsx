@@ -156,6 +156,21 @@ describe('Plus', () => {
     expect(await screen.findByTestId('profile-limit')).toBeTruthy();
   });
 
+  it('marks a testing build that opens Plus without selling it', async () => {
+    const services = await createTestServices(8);
+    services.purchases.available = false;
+    services.purchases.testing = true;
+    await addChild(services);
+    jest.mocked(createServices).mockResolvedValue(services);
+    renderRouter(APP_ROUTES, { initialUrl: '/' });
+    await openParent();
+    expect(screen.getByTestId('testing-build')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('open-plus'));
+    expect((await screen.findByTestId('plus-unavailable')).props.children).toBe(
+      PARENT_COPY.plus.testing,
+    );
+  });
+
   it('explains when this build cannot sell subscriptions', async () => {
     await start({ available: false });
     await openParent();

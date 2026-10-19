@@ -93,7 +93,7 @@ export default function PlusScreen() {
 
       {!purchases.available ? (
         <KidsText variant="parentBody" testID="plus-unavailable">
-          {copy.unavailable}
+          {purchases.testing ? copy.testing : copy.unavailable}
         </KidsText>
       ) : (
         <>
