@@ -1,3 +1,4 @@
+import { MEDIA_CREDITS } from '@luminol/kids-content';
 import { router } from 'expo-router';
 import {
   act,
@@ -56,6 +57,17 @@ describe('kids app', () => {
 
     fireEvent.press(screen.getByTestId('parent-exit'));
     expect(await screen.findByText('من سيلعب اليوم؟')).toBeTruthy();
+  });
+
+  it('credits the ARASAAC pictograms on the privacy screen', async () => {
+    await start(async (services) => {
+      await addChild(services);
+    });
+    fireEvent.press(await screen.findByTestId('open-parent'));
+    await passGate();
+    fireEvent.press(await screen.findByTestId('open-privacy'));
+    expect(await screen.findByTestId('media-credits')).toBeTruthy();
+    expect(screen.getByText(MEDIA_CREDITS.original)).toBeTruthy();
   });
 
   it('rejects a wrong gate answer with a new question', async () => {

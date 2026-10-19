@@ -1,5 +1,6 @@
 import {
   formatDate,
+  MEDIA_CREDITS,
   PARENT_COPY,
   PRIVACY_POLICY,
   PRIVACY_POLICY_UPDATED,
@@ -22,6 +23,13 @@ export default function PrivacyScreen() {
           <KidsText variant="parentBody">{section.body}</KidsText>
         </View>
       ))}
+      <View style={styles.section} testID="media-credits">
+        <KidsText heading>{MEDIA_CREDITS.heading}</KidsText>
+        <KidsText variant="parentBody">{MEDIA_CREDITS.body}</KidsText>
+        <KidsText variant="parentBody" tone="soft">
+          {MEDIA_CREDITS.original}
+        </KidsText>
+      </View>
     </ParentScreen>
   );
 }

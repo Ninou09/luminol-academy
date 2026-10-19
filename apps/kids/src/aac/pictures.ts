@@ -43,6 +43,44 @@ import toiletPicture from '../../assets/aac/toilet.png';
 import wantPicture from '../../assets/aac/want.png';
 import waterPicture from '../../assets/aac/water.png';
 import yesPicture from '../../assets/aac/yes.png';
+import iPicture from '../../assets/aac/i.png';
+import youPicture from '../../assets/aac/you.png';
+import goPicture from '../../assets/aac/go.png';
+import comePicture from '../../assets/aac/come.png';
+import lookPicture from '../../assets/aac/look.png';
+import givePicture from '../../assets/aac/give.png';
+import openPicture from '../../assets/aac/open.png';
+import likePicture from '../../assets/aac/like.png';
+import hungryPicture from '../../assets/aac/hungry.png';
+import thirstyPicture from '../../assets/aac/thirsty.png';
+import coldPicture from '../../assets/aac/cold.png';
+import hotPicture from '../../assets/aac/hot.png';
+import washHandsPicture from '../../assets/aac/wash-hands.png';
+import getDressedPicture from '../../assets/aac/get-dressed.png';
+import bathPicture from '../../assets/aac/bath.png';
+import orangePicture from '../../assets/aac/orange.png';
+import cheesePicture from '../../assets/aac/cheese.png';
+import chickenPicture from '../../assets/aac/chicken.png';
+import soupPicture from '../../assets/aac/soup.png';
+import cakePicture from '../../assets/aac/cake.png';
+import biscuitPicture from '../../assets/aac/biscuit.png';
+import yogurtPicture from '../../assets/aac/yogurt.png';
+import tomatoPicture from '../../assets/aac/tomato.png';
+import brotherPicture from '../../assets/aac/brother.png';
+import sisterPicture from '../../assets/aac/sister.png';
+import grandmotherPicture from '../../assets/aac/grandmother.png';
+import grandfatherPicture from '../../assets/aac/grandfather.png';
+import friendPicture from '../../assets/aac/friend.png';
+import doctorPicture from '../../assets/aac/doctor.png';
+import bedPicture from '../../assets/aac/bed.png';
+import kitchenPicture from '../../assets/aac/kitchen.png';
+import shopPicture from '../../assets/aac/shop.png';
+import beachPicture from '../../assets/aac/beach.png';
+import televisionPicture from '../../assets/aac/television.png';
+import toyPicture from '../../assets/aac/toy.png';
+import crayonsPicture from '../../assets/aac/crayons.png';
+import bubblesPicture from '../../assets/aac/bubbles.png';
+import swingPicture from '../../assets/aac/swing.png';
 
 /** Bundled board pictures; see assets/media.json for their provenance. */
 export const AAC_PICTURE_ASSETS: Record<AacPicture, number> = {
@@ -89,4 +127,42 @@ export const AAC_PICTURE_ASSETS: Record<AacPicture, number> = {
   car: carPicture,
   book: bookPicture,
   ball: ballPicture,
+  i: iPicture,
+  you: youPicture,
+  go: goPicture,
+  come: comePicture,
+  look: lookPicture,
+  give: givePicture,
+  open: openPicture,
+  like: likePicture,
+  hungry: hungryPicture,
+  thirsty: thirstyPicture,
+  cold: coldPicture,
+  hot: hotPicture,
+  'wash-hands': washHandsPicture,
+  'get-dressed': getDressedPicture,
+  bath: bathPicture,
+  orange: orangePicture,
+  cheese: cheesePicture,
+  chicken: chickenPicture,
+  soup: soupPicture,
+  cake: cakePicture,
+  biscuit: biscuitPicture,
+  yogurt: yogurtPicture,
+  tomato: tomatoPicture,
+  brother: brotherPicture,
+  sister: sisterPicture,
+  grandmother: grandmotherPicture,
+  grandfather: grandfatherPicture,
+  friend: friendPicture,
+  doctor: doctorPicture,
+  bed: bedPicture,
+  kitchen: kitchenPicture,
+  shop: shopPicture,
+  beach: beachPicture,
+  television: televisionPicture,
+  toy: toyPicture,
+  crayons: crayonsPicture,
+  bubbles: bubblesPicture,
+  swing: swingPicture,
 };

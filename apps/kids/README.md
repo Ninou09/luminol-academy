@@ -52,7 +52,8 @@ The root `pnpm test` runs these jest tests after the Vitest suite.
 - `src/data/` — SQL schema, migrations and the validated repository.
 - `src/audio/` — recorded-clip manifest, speech queue with fallback and the
   generated calm sound.
-- `assets/` — bundled images: board pictures in `aac/`, game-only theme
+- `assets/` — bundled images: board pictures in `aac/` (the Luminol set plus
+  ARASAAC pictograms, credited in `media.json` and on the privacy screen), game-only theme
   pictures in `themes/` and story scenes in `scenes/`; `assets/media.json`
   keeps each file's source, alt text, crop intent and approval.
 

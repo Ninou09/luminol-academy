@@ -75,6 +75,21 @@ describe('bundled media', () => {
     }
   });
 
+  it('credits every ARASAAC pictogram with its author, owner and licence', () => {
+    const arasaac = media.assets.filter((asset) =>
+      asset.source.includes('ARASAAC'),
+    );
+    expect(arasaac.length).toBeGreaterThan(0);
+    for (const asset of arasaac) {
+      expect(asset.source).toMatch(
+        /ARASAAC pictogram \d+ \(https:\/\/arasaac\.org\//,
+      );
+      expect(asset.source).toContain('Sergio Palao');
+      expect(asset.source).toContain('Government of Aragón');
+      expect(asset.source).toContain('BY-NC-SA');
+    }
+  });
+
   it('only derives assets from other recorded assets', () => {
     const files = new Set(media.assets.map((asset) => asset.file));
     for (const asset of media.assets) {

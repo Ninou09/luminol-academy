@@ -39,3 +39,15 @@ export const PRIVACY_POLICY: readonly { heading: string; body: string }[] = [
     body: 'لأي سؤال عن الخصوصية، راسلنا على بريد المطوّر المذكور في صفحة التطبيق على Google Play.',
   },
 ];
+
+/**
+ * Credit for the ARASAAC pictograms on the communication board, which their
+ * Creative Commons BY-NC-SA licence requires wherever they are shown. The
+ * English line is ARASAAC's own wording.
+ */
+export const MEDIA_CREDITS = {
+  heading: 'حقوق الصور',
+  body: 'بعض رموز لوحة الكلام من ARASAAC (https://arasaac.org)، من تصميم سيرجيو بالاو، وهي ملك لحكومة أراغون (إسبانيا)، وتُوزَّع برخصة المشاع الإبداعي BY-NC-SA 4.0. باقي الصور من إعداد فريق لومينول.',
+  original:
+    'The pictographic symbols used are the property of the Government of Aragón and have been created by Sergio Palao for ARASAAC (https://arasaac.org), that distribute them under Creative Commons License BY-NC-SA.',
+} as const;

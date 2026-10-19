@@ -65,7 +65,8 @@ The kids packages are separate from `@luminol/ui`, `@luminol/types` and
 | 6   | Daily life skills            | Done: routines and social stories that parents build from board pictures, routine pictures or their own photos and voice; built-in routines (hand washing, brushing teeth, getting dressed); 5 built-in social stories; a "put the steps in order" game; an optional religious pack (off by default) with wudu, prayer (boy or girl pictures), Ramadan and Eid, with tests                               |
 | 7   | Parent dashboard and reports | Done: per-child dashboard with sessions, activities, practice days and calm-corner visits; per skill the level, how much help, first-try success over the last 10 trials and its trend; the last 10 sessions; goals (reach a level without help); a PDF report and a JSON export shared through the system share sheet; clearing the progress history; deleting a profile removes everything, with tests |
 | 8   | Store readiness              | Done in the app: every feature open and free (all activities and themes, up to 6 profiles, own routines, PDF report), an in-app privacy policy, the advertising id blocked, with tests. The app was later made fully free: plans, RevenueCat and the purchase code were removed. Owner steps (EAS, Play Console, data safety, listing) are in [PLAY_RELEASE.md](./PLAY_RELEASE.md)                       |
-| 9   | Competitor quick wins        | Done: a weekly report card at the top of the progress screen (practice days, trials, first-try success against the week before, most practised and strongest skill), free on every plan; a one-time lifetime Plus purchase listed after monthly and annual, with its own no-renewal note, with tests. Chosen from the competitor feature comparison                                                      |
+| 9   | Competitor quick wins        | Done: a weekly report card at the top of the progress screen (practice days, trials, first-try success against the week before, most practised and strongest skill), with tests. Chosen from the competitor feature comparison (its lifetime Plus purchase was removed when the app became fully free)                                                                                                   |
+| 10  | Bigger communication board   | Done: 38 more board words from the ARASAAC pictogram library (8 core words, 7 needs, 8 foods, 6 people, 9 places and things), for 75 built-in cards. Each picture keeps its ARASAAC id, author, owner and CC BY-NC-SA licence in `media.json`, and the parent area's privacy screen carries ARASAAC's credit, with tests. Mosque was left out because religious content is opt-in                        |
 
 Cloud sync and the clinic licence come after launch, because they need a
 backend and accounts.
@@ -81,7 +82,14 @@ backend and accounts.
   records, with no game code changes. Animals, vehicles, and sky and space
   were added on 2026-10-19.
 
-- Specialist review of the 37 board words and pictures, especially "no"
+- Specialist review of the 38 ARASAAC board pictograms added in milestone
+  10 (marked pending in `media.json`), and of their Arabic words. ARASAAC
+  pictures are licensed CC BY-NC-SA 4.0 (non-commercial, credit, share
+  alike): keep Noor free of charge while they are bundled, or ask ARASAAC
+  for permission before any paid version. A mosque card could join the
+  religious pack later.
+
+- Specialist review of the 37 original board words and pictures, especially "no"
   (the waving hand can read as "hello"). Girl versions of the sleep, play, break
   and hurts cards are still to be generated.
 
