@@ -7,3 +7,5 @@ export * from './records';
 export * from './rounds';
 export * from './session';
 export * from './skills';
+export * from './themedRounds';
+export * from './themes';

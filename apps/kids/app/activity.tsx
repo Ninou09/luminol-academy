@@ -59,6 +59,7 @@ export default function ActivityScreen() {
         <GameForSkill
           skillId={step.skillId}
           trials={step.trials}
+          theme={step.theme}
           onDone={onDone}
         />
       )}

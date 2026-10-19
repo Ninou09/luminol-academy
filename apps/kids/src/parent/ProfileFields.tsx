@@ -3,6 +3,7 @@ import {
   avatarLabel,
   DIALECT_LABELS,
   PARENT_COPY,
+  THEME_LABELS,
 } from '@luminol/kids-content';
 import {
   AGE_BANDS,
@@ -10,13 +11,18 @@ import {
   AVATARS,
   DIALECTS,
   NICKNAME_MAX_LENGTH,
-  type ChildProfileInput,
+  THEMES,
+  type AgeBand,
+  type Avatar,
+  type Dialect,
+  type ThemeId,
 } from '@luminol/kids-learning';
 import {
   kidsColors,
   kidsRadii,
   kidsSpacing,
   KidsText,
+  MultiChoice,
   SegmentedChoice,
   ShapeGlyph,
   touchTargets,
@@ -25,9 +31,10 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 export type ProfileDraft = {
   nickname: string;
-  avatar: ChildProfileInput['avatar'];
-  ageBand: ChildProfileInput['ageBand'];
-  dialect: ChildProfileInput['dialect'];
+  avatar: Avatar;
+  ageBand: AgeBand;
+  dialect: Dialect;
+  interests: ThemeId[];
 };
 
 export function ProfileFields({
@@ -113,6 +120,16 @@ export function ProfileFields({
         onChange={(dialect) => onChange({ ...draft, dialect })}
         note={copy.dialectNote}
         testID="profile-dialect"
+      />
+
+      <MultiChoice
+        label={copy.interests}
+        options={THEMES.map((value) => ({ value, label: THEME_LABELS[value] }))}
+        value={draft.interests}
+        onChange={(interests) => onChange({ ...draft, interests })}
+        minimum={1}
+        note={copy.interestsNote}
+        testID="profile-interests"
       />
     </View>
   );

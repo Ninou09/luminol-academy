@@ -24,7 +24,7 @@ import {
 } from './speech';
 import type { Utterance } from './utterance';
 
-const ARABIC = /[؀-ۿ]/;
+const ARABIC = /[\u0600-\u06FF]/;
 const LATIN = /[A-Za-z]/;
 
 function collectStrings(value: unknown): string[] {

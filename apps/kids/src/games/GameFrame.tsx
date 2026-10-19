@@ -1,5 +1,5 @@
 import type { Utterance } from '@luminol/kids-content';
-import type { AssistStep } from '@luminol/kids-learning';
+import type { AssistStep, ThemeId } from '@luminol/kids-learning';
 import { kidsSpacing, type ChoiceTileState } from '@luminol/kids-ui';
 import { useEffect, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -12,6 +12,8 @@ import type { TrialFlow } from './useTrialFlow';
 
 export type GameProps = {
   trials: number;
+  /** Picture games wear this theme; sorting always uses shapes. */
+  theme: ThemeId;
   onDone: () => void;
 };
 

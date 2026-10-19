@@ -34,6 +34,7 @@ export default function EditProfileScreen() {
           avatar: profile.avatar,
           ageBand: profile.ageBand,
           dialect: profile.dialect,
+          interests: profile.interests,
         }
       : null,
   );

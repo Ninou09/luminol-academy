@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import type { Piece } from './pieces';
+import { interestsSchema } from './themes';
 
 /** Spoken-audio dialects. Modern Standard Arabic is always available. */
 export const DIALECTS = [
@@ -108,8 +109,10 @@ export const childProfileInputSchema = z.object({
   avatar: avatarSchema,
   ageBand: ageBandSchema,
   dialect: dialectSchema,
+  /** Profiles saved before themes existed read back with shapes. */
+  interests: interestsSchema.default(['shapes']),
 });
-export type ChildProfileInput = z.infer<typeof childProfileInputSchema>;
+export type ChildProfileInput = z.input<typeof childProfileInputSchema>;
 
 export const childProfileSchema = childProfileInputSchema.extend({
   id: z.uuid(),

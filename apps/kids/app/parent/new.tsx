@@ -19,6 +19,7 @@ const EMPTY_DRAFT: ProfileDraft = {
   avatar: 'star-yellow',
   ageBand: '5-6',
   dialect: 'maghrebi',
+  interests: ['shapes'],
 };
 
 export default function NewProfileScreen() {

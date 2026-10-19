@@ -5,4 +5,5 @@ export * from './phrases';
 export * from './pieces';
 export * from './schedule';
 export * from './speech';
+export * from './themes';
 export * from './utterance';

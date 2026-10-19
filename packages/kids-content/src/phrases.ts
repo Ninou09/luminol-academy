@@ -20,10 +20,15 @@ const PHRASE_TEXT = {
   'activity.finish': 'احتفال صغير',
   'activity.done': 'انتهى هذا النشاط. أحسنت!',
   'matching.instruction': 'لنبحث عن الشكل نفسه',
+  'matching.instructionPicture': 'لنبحث عن الصورة نفسها',
   'sorting.instruction.color': 'لنضع الشكل مع لونه',
   'sorting.instruction.shape': 'لنضع الشكل مع شكله',
   'sorting.instruction.size': 'لنضع الشكل مع حجمه',
-  'causeEffect.instruction': 'لنلمس الشكل',
+  'causeEffect.instruction': 'لنلمس الصورة',
+  'pattern.instruction': 'ماذا يأتي بعد ذلك؟',
+  'memory.instruction': 'لنجد الصورتين المتشابهتين',
+  'memory.hidden': 'بطاقة مقلوبة',
+  'puzzle.instruction': 'لنكمل الصورة',
   'hint.look': 'لننظر هنا',
   'praise.wellDone': 'أحسنت!',
   'praise.great': 'رائع!',
@@ -70,6 +75,9 @@ const SKILL_TITLES: Record<SkillId, string> = {
   'sort-color': 'فرز الألوان',
   'sort-shape': 'فرز الأشكال',
   'sort-size': 'فرز الأحجام',
+  'pattern-next': 'ماذا بعد؟',
+  'memory-pairs': 'لعبة الذاكرة',
+  'puzzle-complete': 'إكمال الصورة',
 };
 
 export function skillTitle(skillId: SkillId): Utterance {

@@ -1,6 +1,7 @@
 import type { AgeBand } from './profile';
 
-export type GameKind = 'matching' | 'sorting' | 'cause-effect';
+export type GameKind =
+  'matching' | 'sorting' | 'cause-effect' | 'pattern' | 'memory' | 'puzzle';
 export type SortDimension = 'color' | 'shape' | 'size';
 
 /**
@@ -28,6 +29,23 @@ export type CauseEffectLevel = {
   moves: boolean;
 };
 
+export type PatternUnit = 'AB' | 'AAB' | 'ABB' | 'ABC';
+
+export type PatternLevel = {
+  pattern: PatternUnit;
+  choices: number;
+};
+
+export type MemoryLevel = {
+  pairs: number;
+};
+
+export type PuzzleLevel = {
+  /** Halves or quarters; one piece is missing. */
+  pieces: 2 | 4;
+  choices: number;
+};
+
 type SkillBase<Id extends string> = {
   id: Id;
   ageBands: readonly AgeBand[];
@@ -52,7 +70,28 @@ export type CauseEffectSkill = SkillBase<'cause-effect'> & {
   levels: readonly CauseEffectLevel[];
 };
 
-export type Skill = MatchingSkill | SortingSkill | CauseEffectSkill;
+export type PatternSkill = SkillBase<'pattern-next'> & {
+  game: 'pattern';
+  levels: readonly PatternLevel[];
+};
+
+export type MemorySkill = SkillBase<'memory-pairs'> & {
+  game: 'memory';
+  levels: readonly MemoryLevel[];
+};
+
+export type PuzzleSkill = SkillBase<'puzzle-complete'> & {
+  game: 'puzzle';
+  levels: readonly PuzzleLevel[];
+};
+
+export type Skill =
+  | MatchingSkill
+  | SortingSkill
+  | CauseEffectSkill
+  | PatternSkill
+  | MemorySkill
+  | PuzzleSkill;
 export type SkillId = Skill['id'];
 
 const ALL_AGES = ['3-4', '5-6', '7-8', '9-10'] as const;
@@ -120,6 +159,38 @@ export const SKILLS = {
       { bins: 2, varyOthers: true },
       { bins: 3, varyOthers: false },
       { bins: 3, varyOthers: true },
+    ],
+  },
+  'pattern-next': {
+    id: 'pattern-next',
+    game: 'pattern',
+    ageBands: ['5-6', '7-8', '9-10'],
+    trialsPerActivity: 5,
+    levels: [
+      { pattern: 'AB', choices: 2 },
+      { pattern: 'AB', choices: 3 },
+      { pattern: 'AAB', choices: 3 },
+      { pattern: 'ABB', choices: 3 },
+      { pattern: 'ABC', choices: 3 },
+    ],
+  },
+  'memory-pairs': {
+    id: 'memory-pairs',
+    game: 'memory',
+    ageBands: ALL_AGES,
+    trialsPerActivity: 6,
+    levels: [{ pairs: 2 }, { pairs: 3 }, { pairs: 4 }, { pairs: 6 }],
+  },
+  'puzzle-complete': {
+    id: 'puzzle-complete',
+    game: 'puzzle',
+    ageBands: ALL_AGES,
+    trialsPerActivity: 5,
+    levels: [
+      { pieces: 2, choices: 2 },
+      { pieces: 2, choices: 3 },
+      { pieces: 4, choices: 3 },
+      { pieces: 4, choices: 4 },
     ],
   },
 } as const satisfies { [Id in SkillId]: Skill & { id: Id } };

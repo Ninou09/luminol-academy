@@ -59,8 +59,8 @@ The kids packages are separate from `@luminol/ui`, `@luminol/types` and
 | --- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | Foundation + first 3 games   | Done: app shell, RTL tokens, parental gate, child profiles, sensory settings, encrypted storage, audio with TTS fallback, visual schedule, calm-down corner, adaptive engine, matching, sorting (color, shape, size) and cause-and-effect, with tests |
 | 2   | AAC communication board      | Done: 37 picture cards in 6 groups, sentence strip read aloud, per-child board (hide cards, parent photos, parent voice, second mother picture), parents' own cards, files deleted with the card or profile, with tests                               |
-| 3   | Interest themes + more games | Next: theme packs, patterns, memory, puzzles                                                                                                                                                                                                          |
-| 4   | Arabic letters and numbers   | Planned: letter forms, stroke-order tracing, sounds, counting, numeral style                                                                                                                                                                          |
+| 3   | Interest themes + more games | Done: patterns (AB, AAB, ABB, ABC), memory pairs and complete-the-picture games on the adaptive engine; interest themes chosen per child (shapes, food, toys and places) rotating through the picture games; sorting stays on shapes, with tests      |
+| 4   | Arabic letters and numbers   | Next: letter forms, stroke-order tracing, sounds, counting, numeral style                                                                                                                                                                             |
 | 5   | Emotions + social skills     | Planned: noticing faces and feelings (optional), turn-taking, greetings                                                                                                                                                                               |
 | 6   | Daily life skills            | Planned: social stories, sequencing, routine editor, optional religious pack (wudu, prayer, Ramadan, Eid)                                                                                                                                             |
 | 7   | Parent dashboard and reports | Planned: progress per skill, history, goals, PDF report, export and delete                                                                                                                                                                            |
@@ -70,6 +70,10 @@ Cloud sync and the clinic licence come after launch, because they need a
 backend and accounts.
 
 ## Open items for the product owner
+
+- Artwork for more interest themes (animals, vehicles, space). Each theme is
+  a picture list in `packages/kids-learning/src/themes.ts` plus its bundled
+  images and media records; no game code changes.
 
 - Specialist review of the 37 board words and pictures, especially "no"
   (the waving hand can read as "hello"). Girl versions of the feelings, sleep,

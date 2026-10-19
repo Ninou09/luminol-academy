@@ -51,6 +51,29 @@ export function ActivityPicture({
       );
     case 'cause-effect':
       return <ShapeGlyph shape="heart" color="red" size={110} face />;
+    case 'pattern-next':
+      return (
+        <View style={styles.row}>
+          <ShapeGlyph shape="circle" color="blue" size={44} />
+          <ShapeGlyph shape="square" color="yellow" size={44} />
+          <ShapeGlyph shape="circle" color="blue" size={44} />
+          <ShapeGlyph shape="square" color="yellow" size={44} tone="outline" />
+        </View>
+      );
+    case 'memory-pairs':
+      return (
+        <View style={styles.row}>
+          <ShapeGlyph shape="square" color="blue" size={72} tone="outline" />
+          <ShapeGlyph shape="star" color="green" size={72} />
+        </View>
+      );
+    case 'puzzle-complete':
+      return (
+        <View style={styles.row}>
+          <ShapeGlyph shape="heart" color="red" size={72} />
+          <ShapeGlyph shape="heart" color="red" size={72} tone="outline" />
+        </View>
+      );
   }
 }
 

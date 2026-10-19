@@ -57,7 +57,7 @@ function isDisabled(testId: string): boolean {
 describe('MatchingGame', () => {
   it('starts errorless: only the correct choice can be pressed', async () => {
     const { services } = await renderGame((onDone) => (
-      <MatchingGame trials={5} onDone={onDone} />
+      <MatchingGame trials={5} theme="shapes" onDone={onDone} />
     ));
     expect(services.speech.texts()).toContain('لنبحث عن الشكل نفسه');
     const others = screen.getAllByTestId(/^choice-other-/);
@@ -68,7 +68,7 @@ describe('MatchingGame', () => {
 
   it('praises, records the trial and updates progress on a correct answer', async () => {
     const { services, child } = await renderGame((onDone) => (
-      <MatchingGame trials={5} onDone={onDone} />
+      <MatchingGame trials={5} theme="shapes" onDone={onDone} />
     ));
     fireEvent.press(screen.getByTestId('choice-correct'));
     await waitFor(async () =>
@@ -91,7 +91,7 @@ describe('MatchingGame', () => {
 
   it('adds help one step at a time after wrong answers, never a failure state', async () => {
     const { services, child } = await renderGame(
-      (onDone) => <MatchingGame trials={5} onDone={onDone} />,
+      (onDone) => <MatchingGame trials={5} theme="shapes" onDone={onDone} />,
       async (prepared, profile) => {
         const sessionId = prepared.newId();
         await prepared.repository.saveSession({
@@ -155,7 +155,7 @@ describe('MatchingGame', () => {
 
   it('finishes the activity after the planned number of trials', async () => {
     const { onDone, services, child } = await renderGame((done) => (
-      <MatchingGame trials={3} onDone={done} />
+      <MatchingGame trials={3} theme="shapes" onDone={done} />
     ));
     for (let trial = 0; trial < 3; trial += 1) {
       fireEvent.press(screen.getByTestId('choice-correct'));
@@ -172,7 +172,7 @@ describe('MatchingGame', () => {
 
   it('ignores presses while praise is showing', async () => {
     const { services, child } = await renderGame((onDone) => (
-      <MatchingGame trials={5} onDone={onDone} />
+      <MatchingGame trials={5} theme="shapes" onDone={onDone} />
     ));
     fireEvent.press(screen.getByTestId('choice-correct'));
     fireEvent.press(screen.getByTestId('choice-correct'));
@@ -188,7 +188,12 @@ describe('SortingGame', () => {
   it('names the right group as the first hint and records a correct placement', async () => {
     const { services, child } = await renderGame(
       (onDone) => (
-        <SortingGame skill={SKILLS['sort-color']} trials={5} onDone={onDone} />
+        <SortingGame
+          skill={SKILLS['sort-color']}
+          trials={5}
+          theme="shapes"
+          onDone={onDone}
+        />
       ),
       async (prepared, profile) => {
         const sessionId = prepared.newId();
@@ -237,7 +242,7 @@ describe('SortingGame', () => {
 describe('CauseEffectGame', () => {
   it('names the touched shape as its effect', async () => {
     const { services, child } = await renderGame((onDone) => (
-      <CauseEffectGame trials={6} onDone={onDone} />
+      <CauseEffectGame trials={6} theme="shapes" onDone={onDone} />
     ));
     fireEvent(screen.getByTestId('cause-effect-background').parent!, 'layout', {
       nativeEvent: { layout: { x: 0, y: 0, width: 800, height: 600 } },
@@ -259,7 +264,7 @@ describe('CauseEffectGame', () => {
 
   it('treats background touches as a cue for more help', async () => {
     const { services } = await renderGame((onDone) => (
-      <CauseEffectGame trials={6} onDone={onDone} />
+      <CauseEffectGame trials={6} theme="shapes" onDone={onDone} />
     ));
     services.speech.spoken.length = 0;
     fireEvent.press(screen.getByTestId('cause-effect-background'));

@@ -1,10 +1,10 @@
-import { describePiece, phrase } from '@luminol/kids-content';
+import { phrase, tokenUtterance } from '@luminol/kids-content';
 import {
-  createCauseEffectRound,
+  createThemedCauseEffectRound,
   levelSpec,
   SKILLS,
 } from '@luminol/kids-learning';
-import { kidsColors, kidsRadii, ShapeGlyph } from '@luminol/kids-ui';
+import { kidsColors, kidsRadii } from '@luminol/kids-ui';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
@@ -17,35 +17,41 @@ import {
 import { useMotion } from '../motion/useMotion';
 import { useAppState } from '../state/AppState';
 import { GameFrame, type GameProps } from './GameFrame';
+import { TokenView } from './TokenView';
 import { useTrialFlow } from './useTrialFlow';
 
 const skill = SKILLS['cause-effect'];
 const instruction = phrase('causeEffect.instruction');
 
 /**
- * Touch the shape and it responds: it grows softly and says its name.
+ * Touch the picture and it responds: it grows softly and says its name.
  * Touching the background never punishes; it only brings help closer.
  */
-export function CauseEffectGame({ trials, onDone }: GameProps) {
+export function CauseEffectGame({ trials, theme, onDone }: GameProps) {
   const { activeChild } = useAppState();
   const motion = useMotion(activeChild?.sensory.animationLevel ?? 'low');
-  const roundRef = useRef<ReturnType<typeof createCauseEffectRound> | null>(
-    null,
-  );
+  const roundRef = useRef<ReturnType<
+    typeof createThemedCauseEffectRound
+  > | null>(null);
   const flow = useTrialFlow({
     skill,
     trials,
     instruction,
     hint: () =>
-      roundRef.current ? describePiece(roundRef.current.piece) : instruction,
+      roundRef.current ? tokenUtterance(roundRef.current.token) : instruction,
     praise: () =>
       roundRef.current
-        ? describePiece(roundRef.current.piece)
+        ? tokenUtterance(roundRef.current.token)
         : phrase('praise.great'),
   });
   const round = useMemo(
-    () => createCauseEffectRound(levelSpec(skill, flow.level), flow.random),
-    [flow.level, flow.random, flow.trialIndex],
+    () =>
+      createThemedCauseEffectRound(
+        levelSpec(skill, flow.level),
+        theme,
+        flow.random,
+      ),
+    [flow.level, flow.random, flow.trialIndex, theme],
   );
   roundRef.current = round;
   const [area, setArea] = useState({ width: 0, height: 0 });
@@ -107,14 +113,13 @@ export function CauseEffectGame({ trials, onDone }: GameProps) {
           >
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={describePiece(round.piece).text}
+              accessibilityLabel={tokenUtterance(round.token).text}
               onPress={() => flow.respond(true)}
               style={styles.press}
               testID="choice-correct"
             >
-              <ShapeGlyph
-                shape={round.piece.shape}
-                color={round.piece.color}
+              <TokenView
+                token={round.token}
                 size={size * 0.9}
                 face={celebrating}
               />

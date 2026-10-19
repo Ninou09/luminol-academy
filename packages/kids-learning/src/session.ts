@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
 import type { AgeBand, SessionMinutes } from './profile';
-import { SKILLS, type SkillId } from './skills';
+import { SKILLS, type GameKind, type SkillId } from './skills';
+import { interestsSchema, type ThemeId } from './themes';
 
 /**
  * Session length is expressed as a number of short activities, not a clock:
@@ -16,23 +17,59 @@ export const ACTIVITIES_PER_SESSION: Record<SessionMinutes, number> = {
 
 /** Rotation order per age band; the first entries suit that age best. */
 const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
-  '3-4': ['cause-effect', 'match-shapes', 'sort-color'],
+  '3-4': [
+    'cause-effect',
+    'match-shapes',
+    'memory-pairs',
+    'sort-color',
+    'puzzle-complete',
+  ],
   '5-6': [
     'match-shapes',
     'sort-color',
+    'memory-pairs',
     'cause-effect',
+    'pattern-next',
+    'puzzle-complete',
     'sort-size',
     'sort-shape',
   ],
-  '7-8': ['match-shapes', 'sort-shape', 'sort-color', 'sort-size'],
-  '9-10': ['match-shapes', 'sort-shape', 'sort-size', 'sort-color'],
+  '7-8': [
+    'match-shapes',
+    'sort-shape',
+    'pattern-next',
+    'memory-pairs',
+    'puzzle-complete',
+    'sort-color',
+    'sort-size',
+  ],
+  '9-10': [
+    'match-shapes',
+    'sort-shape',
+    'pattern-next',
+    'puzzle-complete',
+    'memory-pairs',
+    'sort-size',
+    'sort-color',
+  ],
 };
+
+/** Games that show pictures and can wear a child's interest theme. */
+const THEMED_GAMES: ReadonlySet<GameKind> = new Set([
+  'matching',
+  'cause-effect',
+  'pattern',
+  'memory',
+  'puzzle',
+]);
 
 export type ActivityStep = {
   kind: 'activity';
   id: string;
   skillId: SkillId;
   trials: number;
+  /** Sorting is about shape, color and size, so it always uses shapes. */
+  theme: ThemeId;
 };
 
 /** The "then" at the end of every schedule: a calm celebration. */
@@ -50,27 +87,36 @@ export const sessionPlanInputSchema = z.object({
   ]),
   /** How many sessions this child has started before, used for rotation. */
   previousSessions: z.int().min(0),
+  interests: interestsSchema.default(['shapes']),
 });
-export type SessionPlanInput = z.infer<typeof sessionPlanInputSchema>;
+export type SessionPlanInput = z.input<typeof sessionPlanInputSchema>;
 
 export function skillsForAge(ageBand: AgeBand): readonly SkillId[] {
   return SKILL_ROTATION[ageBand];
 }
 
 export function planSession(input: SessionPlanInput): ScheduleStep[] {
-  const { ageBand, sessionMinutes, previousSessions } =
+  const { ageBand, sessionMinutes, previousSessions, interests } =
     sessionPlanInputSchema.parse(input);
   const rotation = SKILL_ROTATION[ageBand];
   const count = ACTIVITIES_PER_SESSION[sessionMinutes];
   const activities: ActivityStep[] = [];
+  let themed = 0;
   for (let index = 0; index < count; index += 1) {
     const skillId = rotation[(previousSessions + index) % rotation.length];
     if (skillId === undefined) continue;
+    let theme: ThemeId = 'shapes';
+    if (THEMED_GAMES.has(SKILLS[skillId].game)) {
+      theme =
+        interests[(previousSessions + themed) % interests.length] ?? 'shapes';
+      themed += 1;
+    }
     activities.push({
       kind: 'activity',
       id: `${index}-${skillId}`,
       skillId,
       trials: SKILLS[skillId].trialsPerActivity,
+      theme,
     });
   }
   return [...activities, { kind: 'finish', id: 'finish' }];

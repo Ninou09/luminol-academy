@@ -104,9 +104,12 @@ describe('kids app', () => {
     fireEvent.press(screen.getByTestId('sensory-animation-none'));
     fireEvent.press(screen.getByTestId('sensory-reward-quiet'));
     fireEvent.press(screen.getByTestId('sensory-session-5'));
+    fireEvent.press(screen.getByTestId('profile-interests-food'));
+    fireEvent.press(screen.getByTestId('profile-interests-shapes'));
     fireEvent.press(screen.getByTestId('profile-save'));
     expect(await screen.findByTestId('profile-saved')).toBeTruthy();
     const [profile] = await services.repository.listProfiles();
+    expect(profile?.interests).toEqual(['food']);
     expect(profile?.sensory).toEqual({
       volume: 0.25,
       voiceSpeed: 'slow',
@@ -148,7 +151,7 @@ describe('kids app', () => {
     expect(await services.repository.countSessions(childId)).toBe(1);
 
     fireEvent.press(screen.getByTestId('session-start'));
-    expect(await screen.findByText('لنلمس الشكل')).toBeTruthy();
+    expect(await screen.findByText('لنلمس الصورة')).toBeTruthy();
     expect(screen.getByTestId('nav-schedule')).toBeTruthy();
     expect(screen.getByTestId('nav-calm')).toBeTruthy();
   });

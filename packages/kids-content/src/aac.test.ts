@@ -3,6 +3,8 @@ import {
   AAC_PICTURES,
   EMPTY_AAC_BOARD,
   findCard,
+  THEMES,
+  themeTokens,
   upsertCustomCard,
 } from '@luminol/kids-learning';
 import { describe, expect, it } from 'vitest';
@@ -15,8 +17,9 @@ import {
   aacPictureLabel,
 } from './aac';
 import { PARENT_COPY } from './parent-copy';
+import { THEME_LABELS, tokenUtterance } from './themes';
 
-const ARABIC = /[؀-ۿ]/;
+const ARABIC = /[\u0600-\u06FF]/;
 const LATIN = /[A-Za-z]/;
 
 describe('communication board content', () => {
@@ -66,6 +69,28 @@ describe('communication board content', () => {
       ...Object.values(PARENT_COPY.card),
     ]) {
       expect(text).toMatch(ARABIC);
+    }
+  });
+});
+
+describe('interest themes', () => {
+  it('names every theme and every theme token in Arabic', () => {
+    for (const theme of THEMES) {
+      expect(THEME_LABELS[theme]).toMatch(ARABIC);
+      for (const token of themeTokens(theme)) {
+        const { text } = tokenUtterance(token);
+        expect(text).toMatch(ARABIC);
+        expect(text).not.toMatch(LATIN);
+      }
+    }
+  });
+
+  it('reuses board recordings for theme pictures', () => {
+    const boardKeys = new Set(aacBuiltinUtterances().map((u) => u.key));
+    for (const theme of THEMES.filter((value) => value !== 'shapes')) {
+      for (const token of themeTokens(theme)) {
+        expect(boardKeys).toContain(tokenUtterance(token).key);
+      }
     }
   });
 });
