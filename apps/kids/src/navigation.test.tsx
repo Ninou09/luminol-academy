@@ -107,11 +107,13 @@ describe('kids app', () => {
     fireEvent.press(screen.getByTestId('profile-numerals-arabic-indic'));
     fireEvent.press(screen.getByTestId('profile-interests-food'));
     fireEvent.press(screen.getByTestId('profile-interests-shapes'));
+    fireEvent.press(screen.getByTestId('profile-activities-emotion-find'));
     fireEvent.press(screen.getByTestId('profile-save'));
     expect(await screen.findByTestId('profile-saved')).toBeTruthy();
     const [profile] = await services.repository.listProfiles();
     expect(profile?.interests).toEqual(['food']);
     expect(profile?.numeralStyle).toBe('arabic-indic');
+    expect(profile?.disabledSkills).toEqual(['emotion-find']);
     expect(profile?.sensory).toEqual({
       volume: 0.25,
       voiceSpeed: 'slow',
@@ -146,8 +148,8 @@ describe('kids app', () => {
     expect(await screen.findByText('المس وشاهد')).toBeTruthy();
     expect(screen.getByText('مطابقة الأشكال')).toBeTruthy();
     await waitFor(() =>
-      expect(services.speech.texts()).toContain(
-        'أوّلًا المس وشاهد، ثمّ مطابقة الأشكال',
+      expect(services.speech.texts().join(' ')).toContain(
+        'أوّلًا المس وشاهد ثمّ مطابقة الأشكال',
       ),
     );
     expect(await services.repository.countSessions(childId)).toBe(1);

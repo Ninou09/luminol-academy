@@ -9,17 +9,17 @@ export function scheduleStepTitle(step: ScheduleStep): Utterance {
     : skillTitle(step.skillId);
 }
 
-/** "أوّلًا …، ثمّ …", read aloud whenever the child returns to the schedule. */
+/**
+ * "أوّلًا …، ثمّ …", read aloud whenever the child returns to the schedule.
+ * It is spoken as separate recorded parts, so every pair of activities a
+ * session can hold is covered without recording each pair.
+ */
 export function scheduleAnnouncement(
   first: ScheduleStep,
   then: ScheduleStep | null,
-): Utterance {
-  const firstTitle = scheduleStepTitle(first);
-  const firstPart = `${phrase('schedule.first').text} ${firstTitle.text}`;
-  if (!then) return { key: `schedule.${firstTitle.key}`, text: firstPart };
-  const thenTitle = scheduleStepTitle(then);
-  return {
-    key: `schedule.${firstTitle.key}.${thenTitle.key}`,
-    text: `${firstPart}، ${phrase('schedule.then').text} ${thenTitle.text}`,
-  };
+): Utterance[] {
+  const firstPart = [phrase('schedule.first'), scheduleStepTitle(first)];
+  return then
+    ? [...firstPart, phrase('schedule.then'), scheduleStepTitle(then)]
+    : firstPart;
 }

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import type { Piece } from './pieces';
+import { isSkillId, type SkillId } from './skills';
 import { interestsSchema } from './themes';
 
 /** Spoken-audio dialects. Modern Standard Arabic is always available. */
@@ -97,6 +98,15 @@ export function avatarPiece(avatar: Avatar): Piece {
   return AVATAR_PIECES[avatar];
 }
 
+/**
+ * Activities a parent switched off. Ids the app no longer knows are dropped
+ * rather than rejected, so an update never makes a saved profile unreadable.
+ */
+export const disabledSkillsSchema = z
+  .array(z.string())
+  .max(64)
+  .transform((ids): SkillId[] => [...new Set(ids.filter(isSkillId))]);
+
 export const NICKNAME_MAX_LENGTH = 24;
 
 export const nicknameSchema = z
@@ -117,6 +127,7 @@ export const childProfileInputSchema = z.object({
   /** Profiles saved before themes existed read back with shapes. */
   interests: interestsSchema.default(['shapes']),
   numeralStyle: numeralStyleSchema.default('western'),
+  disabledSkills: disabledSkillsSchema.default([]),
 });
 export type ChildProfileInput = z.input<typeof childProfileInputSchema>;
 

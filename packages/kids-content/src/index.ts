@@ -5,6 +5,7 @@ export * from './parent-copy';
 export * from './phrases';
 export * from './pieces';
 export * from './schedule';
+export * from './social';
 export * from './speech';
 export * from './themes';
 export * from './utterance';

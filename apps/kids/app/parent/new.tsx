@@ -21,6 +21,7 @@ const EMPTY_DRAFT: ProfileDraft = {
   dialect: 'maghrebi',
   interests: ['shapes'],
   numeralStyle: 'western',
+  disabledSkills: [],
 };
 
 export default function NewProfileScreen() {

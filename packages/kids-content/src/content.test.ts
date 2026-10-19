@@ -1,5 +1,8 @@
 import {
   AVATARS,
+  EMOTIONS,
+  GREETINGS,
+  SITUATION_IDS,
   PIECE_COLORS,
   SHAPES,
   SKILL_IDS,
@@ -25,6 +28,12 @@ import {
 } from './letters';
 import { PHRASE_KEYS, phrase, praiseFor, skillTitle } from './phrases';
 import { avatarLabel, binLabel, describePiece } from './pieces';
+import {
+  emotionName,
+  greetingWords,
+  situationStory,
+  socialUtterances,
+} from './social';
 import {
   planPlayback,
   recordedDialects,
@@ -53,6 +62,7 @@ function allUtterances(): Utterance[] {
     ...pieces.map((piece) => describePiece(piece)),
     ...pieces.map((piece) => describePiece(piece, { includeSize: true })),
     ...AVATARS.map(avatarLabel),
+    ...socialUtterances(),
   ];
 }
 
@@ -219,5 +229,28 @@ describe('letters and numbers', () => {
     expect(formatNumber(17, 'western')).toBe('17');
     expect(formatNumber(17, 'arabic-indic')).toBe('١٧');
     expect(formatNumber(20, 'arabic-indic')).toBe('٢٠');
+  });
+});
+
+describe('feelings and greetings', () => {
+  it('names feelings with the board words', () => {
+    expect(emotionName('happy')).toEqual({
+      key: 'aac.card.happy',
+      text: 'سعيد',
+    });
+  });
+
+  it('tells stories without naming the feeling', () => {
+    const feelingWords = EMOTIONS.map((emotion) => emotionName(emotion).text);
+    for (const id of SITUATION_IDS) {
+      const story = situationStory(id).text;
+      expect(story).toContain('سامي');
+      for (const word of feelingWords) expect(story).not.toContain(word);
+    }
+  });
+
+  it('gives every greeting distinct words', () => {
+    const words = GREETINGS.map((id) => greetingWords(id).text);
+    expect(new Set(words).size).toBe(words.length);
   });
 });

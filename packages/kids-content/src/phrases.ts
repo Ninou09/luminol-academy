@@ -34,6 +34,15 @@ const PHRASE_TEXT = {
   'letters.formsInstruction': 'لنجد الحرف نفسه في الكلمة',
   'trace.instruction': 'لنكتب الحرف مع النقاط',
   'count.instruction': 'لنعدّ الصور',
+  'emotion.instruction': 'لننظر إلى الوجوه',
+  'situation.instruction': 'لنستمع إلى القصة',
+  'situation.question': 'كيف يشعر سامي؟',
+  'greetings.instruction': 'ماذا نقول؟',
+  'turns.instruction': 'لنلعب بالدور',
+  'turns.mine': 'دوري',
+  'turns.yours': 'دورك',
+  'turns.wait': 'لننتظر دورنا',
+  'turns.add': 'لنضع مكعّبًا',
   'hint.look': 'لننظر هنا',
   'praise.wellDone': 'أحسنت!',
   'praise.great': 'رائع!',
@@ -88,6 +97,10 @@ const SKILL_TITLES: Record<SkillId, string> = {
   'letter-forms': 'أشكال الحروف',
   'letter-trace': 'كتابة الحروف',
   'count-objects': 'العدّ',
+  'emotion-find': 'الوجوه والمشاعر',
+  'emotion-situation': 'كيف يشعر؟',
+  'turn-taking': 'دوري ودورك',
+  greetings: 'كلمات لطيفة',
 };
 
 export function skillTitle(skillId: SkillId): Utterance {

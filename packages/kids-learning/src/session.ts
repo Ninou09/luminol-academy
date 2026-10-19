@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-import type { AgeBand, SessionMinutes } from './profile';
+import {
+  disabledSkillsSchema,
+  type AgeBand,
+  type SessionMinutes,
+} from './profile';
 import { SKILLS, type GameKind, type SkillId } from './skills';
 import { interestsSchema, type ThemeId } from './themes';
 
@@ -23,7 +27,9 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'memory-pairs',
     'sort-color',
     'puzzle-complete',
+    'turn-taking',
     'count-objects',
+    'emotion-find',
   ],
   '5-6': [
     'match-shapes',
@@ -38,6 +44,10 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'sort-shape',
     'letter-trace',
     'letter-sound',
+    'emotion-find',
+    'turn-taking',
+    'emotion-situation',
+    'greetings',
   ],
   '7-8': [
     'match-shapes',
@@ -51,6 +61,10 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'sort-size',
     'letter-forms',
     'count-objects',
+    'emotion-situation',
+    'greetings',
+    'turn-taking',
+    'emotion-find',
   ],
   '9-10': [
     'match-shapes',
@@ -64,6 +78,10 @@ const SKILL_ROTATION: Record<AgeBand, readonly SkillId[]> = {
     'sort-color',
     'letter-trace',
     'count-objects',
+    'greetings',
+    'emotion-situation',
+    'turn-taking',
+    'emotion-find',
   ],
 };
 
@@ -102,6 +120,7 @@ export const sessionPlanInputSchema = z.object({
   /** How many sessions this child has started before, used for rotation. */
   previousSessions: z.int().min(0),
   interests: interestsSchema.default(['shapes']),
+  disabledSkills: disabledSkillsSchema.default([]),
 });
 export type SessionPlanInput = z.input<typeof sessionPlanInputSchema>;
 
@@ -109,10 +128,31 @@ export function skillsForAge(ageBand: AgeBand): readonly SkillId[] {
   return SKILL_ROTATION[ageBand];
 }
 
-export function planSession(input: SessionPlanInput): ScheduleStep[] {
-  const { ageBand, sessionMinutes, previousSessions, interests } =
-    sessionPlanInputSchema.parse(input);
+/**
+ * The age band's rotation without the activities a parent switched off. If
+ * every activity is off, the whole rotation is used so a session never comes
+ * up empty.
+ */
+export function enabledSkills(
+  ageBand: AgeBand,
+  disabledSkills: readonly SkillId[],
+): readonly SkillId[] {
   const rotation = SKILL_ROTATION[ageBand];
+  const enabled = rotation.filter(
+    (skillId) => !disabledSkills.includes(skillId),
+  );
+  return enabled.length > 0 ? enabled : rotation;
+}
+
+export function planSession(input: SessionPlanInput): ScheduleStep[] {
+  const {
+    ageBand,
+    sessionMinutes,
+    previousSessions,
+    interests,
+    disabledSkills,
+  } = sessionPlanInputSchema.parse(input);
+  const rotation = enabledSkills(ageBand, disabledSkills);
   const count = ACTIVITIES_PER_SESSION[sessionMinutes];
   const activities: ActivityStep[] = [];
   let themed = 0;

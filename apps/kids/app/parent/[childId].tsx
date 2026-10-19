@@ -36,6 +36,7 @@ export default function EditProfileScreen() {
           dialect: profile.dialect,
           interests: profile.interests,
           numeralStyle: profile.numeralStyle,
+          disabledSkills: profile.disabledSkills,
         }
       : null,
   );

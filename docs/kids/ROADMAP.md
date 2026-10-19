@@ -61,8 +61,8 @@ The kids packages are separate from `@luminol/ui`, `@luminol/types` and
 | 2   | AAC communication board      | Done: 37 picture cards in 6 groups, sentence strip read aloud, per-child board (hide cards, parent photos, parent voice, second mother picture), parents' own cards, files deleted with the card or profile, with tests                                                                                 |
 | 3   | Interest themes + more games | Done: patterns (AB, AAB, ABB, ABC), memory pairs and complete-the-picture games on the adaptive engine; interest themes chosen per child (shapes, food, toys and places) rotating through the picture games; sorting stays on shapes, with tests                                                        |
 | 4   | Arabic letters and numbers   | Done: 28 letters with names and sounds; find the letter, hear-and-find, and positional forms (start, middle, end via the font's own joining); tracing in writing order with progress kept when the finger lifts; counting to 20 with tap-to-count; Western or Arabic-Indic digits per child, with tests |
-| 5   | Emotions + social skills     | Next: noticing faces and feelings (optional), turn-taking, greetings                                                                                                                                                                                                                                    |
-| 6   | Daily life skills            | Planned: social stories, sequencing, routine editor, optional religious pack (wudu, prayer, Ramadan, Eid)                                                                                                                                                                                               |
+| 5   | Emotions + social skills     | Done: find the face for a feeling (clearest feelings first), "how does Sami feel?" stories, building a tower in turns, "what do we say?" greetings with the choices read aloud, parents can switch any activity off per child, and the spoken schedule is built from recorded parts, with tests         |
+| 6   | Daily life skills            | Next: social stories, sequencing, routine editor, optional religious pack (wudu, prayer, Ramadan, Eid)                                                                                                                                                                                                  |
 | 7   | Parent dashboard and reports | Planned: progress per skill, history, goals, PDF report, export and delete                                                                                                                                                                                                                              |
 | 8   | Store readiness              | Planned: RevenueCat subscriptions, entitlements, Play data-safety form, Designed for Families review                                                                                                                                                                                                    |
 
@@ -80,8 +80,17 @@ backend and accounts.
   images and media records; no game code changes.
 
 - Specialist review of the 37 board words and pictures, especially "no"
-  (the waving hand can read as "hello"). Girl versions of the feelings, sleep,
-  play, break and hurts cards are still to be generated.
+  (the waving hand can read as "hello"). Girl versions of the sleep, play, break
+  and hurts cards are still to be generated.
+
+- Specialist review of the 10 "how does Sami feel?" stories and the 7
+  greeting moments in `packages/kids-content/src/social.ts`, and of whether
+  the feelings games should start switched off for some children (parents can
+  already switch them off per child).
+
+- Girl versions of the five feelings faces, plus situation and greeting
+  scene pictures; the games show only the board's face pictures until they
+  are approved.
 
 - Confirm the Android package name `com.luminolacademy.noor`.
 - Record the voice-over lines in

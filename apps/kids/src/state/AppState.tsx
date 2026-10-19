@@ -128,6 +128,7 @@ export function AppStateProvider({
           sessionMinutes: child.sensory.sessionMinutes,
           previousSessions,
           interests: child.interests,
+          disabledSkills: child.disabledSkills,
         }),
         record: {
           id: services.newId(),

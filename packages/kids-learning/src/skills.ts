@@ -4,6 +4,7 @@ import type {
   LetterFormsLevel,
 } from './letters';
 import type { AgeBand } from './profile';
+import type { EmotionLevel, GreetingLevel, TurnLevel } from './social';
 
 export type GameKind =
   | 'matching'
@@ -16,7 +17,11 @@ export type GameKind =
   | 'letter-sound'
   | 'letter-forms'
   | 'trace'
-  | 'count';
+  | 'count'
+  | 'emotion'
+  | 'situation'
+  | 'turns'
+  | 'greetings';
 export type SortDimension = 'color' | 'shape' | 'size';
 
 /**
@@ -132,7 +137,31 @@ export type CountSkill = SkillBase<'count-objects'> & {
   levels: readonly CountLevel[];
 };
 
+export type EmotionSkill = SkillBase<'emotion-find'> & {
+  game: 'emotion';
+  levels: readonly EmotionLevel[];
+};
+
+export type SituationSkill = SkillBase<'emotion-situation'> & {
+  game: 'situation';
+  levels: readonly EmotionLevel[];
+};
+
+export type TurnSkill = SkillBase<'turn-taking'> & {
+  game: 'turns';
+  levels: readonly TurnLevel[];
+};
+
+export type GreetingSkill = SkillBase<'greetings'> & {
+  game: 'greetings';
+  levels: readonly GreetingLevel[];
+};
+
 export type Skill =
+  | EmotionSkill
+  | SituationSkill
+  | TurnSkill
+  | GreetingSkill
   | LetterMatchSkill
   | LetterSoundSkill
   | LetterFormsSkill
@@ -309,6 +338,34 @@ export const SKILLS = {
       { max: 10, choices: 4 },
       { max: 20, choices: 4 },
     ],
+  },
+  'emotion-find': {
+    id: 'emotion-find',
+    game: 'emotion',
+    ageBands: ALL_AGES,
+    trialsPerActivity: 5,
+    levels: [{ choices: 2 }, { choices: 3 }, { choices: 4 }, { choices: 5 }],
+  },
+  'emotion-situation': {
+    id: 'emotion-situation',
+    game: 'situation',
+    ageBands: ['5-6', '7-8', '9-10'],
+    trialsPerActivity: 4,
+    levels: [{ choices: 2 }, { choices: 3 }, { choices: 4 }],
+  },
+  'turn-taking': {
+    id: 'turn-taking',
+    game: 'turns',
+    ageBands: ALL_AGES,
+    trialsPerActivity: 5,
+    levels: [{ appTurns: 1 }, { appTurns: 2 }, { appTurns: 3 }],
+  },
+  greetings: {
+    id: 'greetings',
+    game: 'greetings',
+    ageBands: ['5-6', '7-8', '9-10'],
+    trialsPerActivity: 4,
+    levels: [{ choices: 2 }, { choices: 3 }, { choices: 4 }],
   },
 } as const satisfies { [Id in SkillId]: Skill & { id: Id } };
 

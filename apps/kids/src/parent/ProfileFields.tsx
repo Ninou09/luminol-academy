@@ -4,6 +4,7 @@ import {
   DIALECT_LABELS,
   NUMERAL_STYLE_LABELS,
   PARENT_COPY,
+  skillTitle,
   THEME_LABELS,
 } from '@luminol/kids-content';
 import {
@@ -14,6 +15,8 @@ import {
   NICKNAME_MAX_LENGTH,
   NUMERAL_STYLES,
   type NumeralStyle,
+  skillsForAge,
+  type SkillId,
   THEMES,
   type AgeBand,
   type Avatar,
@@ -39,7 +42,23 @@ export type ProfileDraft = {
   dialect: Dialect;
   interests: ThemeId[];
   numeralStyle: NumeralStyle;
+  disabledSkills: SkillId[];
 };
+
+/**
+ * Switches activities of the chosen age band on or off, keeping choices made
+ * for other age bands in case the age band changes back.
+ */
+function withEnabled(
+  draft: ProfileDraft,
+  band: readonly SkillId[],
+  enabled: readonly SkillId[],
+): SkillId[] {
+  return [
+    ...draft.disabledSkills.filter((skillId) => !band.includes(skillId)),
+    ...band.filter((skillId) => !enabled.includes(skillId)),
+  ];
+}
 
 export function ProfileFields({
   draft,
@@ -51,6 +70,7 @@ export function ProfileFields({
   nicknameError: boolean;
 }) {
   const copy = PARENT_COPY.profile;
+  const band = skillsForAge(draft.ageBand);
   return (
     <View style={styles.fields}>
       <View style={styles.group}>
@@ -145,6 +165,26 @@ export function ProfileFields({
         minimum={1}
         note={copy.interestsNote}
         testID="profile-interests"
+      />
+
+      <MultiChoice
+        label={copy.activities}
+        options={band.map((value) => ({
+          value,
+          label: skillTitle(value).text,
+        }))}
+        value={band.filter(
+          (skillId) => !draft.disabledSkills.includes(skillId),
+        )}
+        onChange={(enabled) =>
+          onChange({
+            ...draft,
+            disabledSkills: withEnabled(draft, band, enabled),
+          })
+        }
+        minimum={1}
+        note={copy.activitiesNote}
+        testID="profile-activities"
       />
     </View>
   );

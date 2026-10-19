@@ -17,7 +17,8 @@ import { useAppState } from '../src/state/AppState';
 /** The visual schedule: what happens first, and what comes next. */
 export default function SessionScreen() {
   const router = useRouter();
-  const { activeChild, session, startSession, endSession, say } = useAppState();
+  const { activeChild, session, startSession, endSession, say, sayItems } =
+    useAppState();
 
   useEffect(() => {
     if (activeChild && !session) void startSession();
@@ -29,13 +30,14 @@ export default function SessionScreen() {
   const announcement = pair
     ? scheduleAnnouncement(pair.first, pair.then)
     : null;
-  const announcementText = announcement?.text;
+  const announcementKey = announcement?.map((part) => part.key).join(' ');
 
   // Read the schedule aloud whenever the child returns to it.
   useFocusEffect(
     useCallback(() => {
-      if (announcement) say(announcement);
-    }, [announcementText, say]),
+      if (announcement)
+        sayItems(announcement.map((utterance) => ({ utterance })));
+    }, [announcementKey, sayItems]),
   );
 
   if (!activeChild) return <Redirect href="/" />;

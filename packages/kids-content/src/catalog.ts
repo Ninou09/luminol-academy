@@ -1,62 +1,29 @@
 import {
-  AGE_BANDS,
   PIECE_COLORS,
   PIECE_SIZES,
-  SESSION_MINUTES,
   SHAPES,
   SKILL_IDS,
-  firstThen,
-  planSession,
-  skillsForAge,
 } from '@luminol/kids-learning';
 
 import { aacBuiltinUtterances, aacCategoryUtterances } from './aac';
 import { letterUtterances, numberUtterances } from './letters';
 import { PHRASE_KEYS, phrase, skillTitle } from './phrases';
 import { colorName, describePiece, shapeName, sizeName } from './pieces';
-import { scheduleAnnouncement } from './schedule';
+import { socialUtterances } from './social';
 import type { Utterance } from './utterance';
 
 export type SpokenCategory =
   | 'phrase'
   | 'activity'
-  | 'schedule'
   | 'group'
   | 'shape'
   | 'aac-card'
   | 'aac-group'
   | 'letter'
-  | 'number';
+  | 'number'
+  | 'social';
 
 export type SpokenEntry = Utterance & { category: SpokenCategory };
-
-/** Every first-then pair the session planner can actually produce. */
-function scheduleAnnouncements(): Utterance[] {
-  const byKey = new Map<string, Utterance>();
-  for (const ageBand of AGE_BANDS) {
-    const rotation = skillsForAge(ageBand).length;
-    for (const sessionMinutes of SESSION_MINUTES) {
-      for (
-        let previousSessions = 0;
-        previousSessions < rotation;
-        previousSessions += 1
-      ) {
-        const steps = planSession({
-          ageBand,
-          sessionMinutes,
-          previousSessions,
-        });
-        for (let completed = 0; completed < steps.length; completed += 1) {
-          const pair = firstThen(steps, completed);
-          if (!pair) continue;
-          const utterance = scheduleAnnouncement(pair.first, pair.then);
-          byKey.set(utterance.key, utterance);
-        }
-      }
-    }
-  }
-  return [...byKey.values()].sort((a, b) => a.key.localeCompare(b.key));
-}
 
 /**
  * Everything the app can say aloud with a fixed text: the list voice actors
@@ -70,7 +37,6 @@ export function spokenCatalog(): SpokenEntry[] {
   return [
     ...PHRASE_KEYS.map(phrase).map(tag('phrase')),
     ...SKILL_IDS.map(skillTitle).map(tag('activity')),
-    ...scheduleAnnouncements().map(tag('schedule')),
     ...PIECE_COLORS.map(colorName).map(tag('group')),
     ...SHAPES.map(shapeName).map(tag('group')),
     ...PIECE_SIZES.map(sizeName).map(tag('group')),
@@ -83,19 +49,20 @@ export function spokenCatalog(): SpokenEntry[] {
     ...aacCategoryUtterances().map(tag('aac-group')),
     ...letterUtterances().map(tag('letter')),
     ...numberUtterances().map(tag('number')),
+    ...socialUtterances().map(tag('social')),
   ];
 }
 
 const CATEGORY_LABELS: Record<SpokenCategory, string> = {
-  phrase: 'Instruction, praise or calm corner',
-  activity: 'Activity name',
-  schedule: 'Schedule (first, then)',
+  phrase: 'Instruction, schedule, praise or calm corner',
+  activity: 'Activity name (also spoken in the schedule)',
   group: 'Sorting group name / hint',
   shape: 'Shape name / hint',
   'aac-card': 'Communication board word',
   'aac-group': 'Communication board group',
   letter: 'Letter name or sound',
   number: 'Counting number',
+  social: 'Feelings story, question or greeting',
 };
 
 function csvCell(value: string): string {

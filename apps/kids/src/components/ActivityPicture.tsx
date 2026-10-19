@@ -1,3 +1,4 @@
+import { greetingWords } from '@luminol/kids-content';
 import {
   avatarPiece,
   type Avatar,
@@ -6,7 +7,12 @@ import {
 import { kidsSpacing, KidsText, ShapeGlyph } from '@luminol/kids-ui';
 import { StyleSheet, View } from 'react-native';
 
-/** A code-drawn picture for each schedule step, so non-readers know what is next. */
+import { CardPicture } from '../aac/CardPicture';
+
+/**
+ * A picture for each schedule step, code-drawn or a board picture, so
+ * non-readers know what is next.
+ */
 export function ActivityPicture({
   step,
   avatar,
@@ -91,6 +97,30 @@ export function ActivityPicture({
           <ShapeGlyph shape="heart" color="red" size={72} tone="outline" />
         </View>
       );
+    case 'emotion-find':
+      return (
+        <CardPicture picture={{ kind: 'builtin', id: 'happy' }} size={110} />
+      );
+    case 'emotion-situation':
+      return (
+        <View style={styles.row}>
+          <CardPicture picture={{ kind: 'builtin', id: 'happy' }} size={80} />
+          <CardPicture picture={{ kind: 'builtin', id: 'sad' }} size={80} />
+        </View>
+      );
+    case 'turn-taking':
+      return (
+        <View style={styles.tower}>
+          <ShapeGlyph shape="square" color="blue" size={56} />
+          <ShapeGlyph shape="square" color="yellow" size={56} />
+        </View>
+      );
+    case 'greetings':
+      return (
+        <KidsText align="center" style={styles.words}>
+          {greetingWords('thanks').text}
+        </KidsText>
+      );
   }
 }
 
@@ -98,6 +128,13 @@ const styles = StyleSheet.create({
   letters: {
     fontSize: 56,
     lineHeight: 84,
+  },
+  words: {
+    fontSize: 40,
+    lineHeight: 60,
+  },
+  tower: {
+    alignItems: 'center',
   },
   row: {
     flexDirection: 'row',
