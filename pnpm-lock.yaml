@@ -64,6 +64,9 @@ importers:
       '@luminol/professional':
         specifier: workspace:*
         version: link:../../packages/professional
+      '@luminol/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@luminol/ui':
         specifier: workspace:*
         version: link:../../packages/ui

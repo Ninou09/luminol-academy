@@ -1,5 +1,5 @@
 import { UserButton } from '@clerk/nextjs';
-import { requirePermission } from '@luminol/auth';
+import { AuthorizationError, hasPermission, requireUser } from '@luminol/auth';
 import {
   formatLocalizedDate,
   formatLocalizedNumber,
@@ -8,6 +8,7 @@ import {
 } from '@luminol/localization';
 import { Wordmark } from '@luminol/ui';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { AdminLanguageSwitcher } from '../components/admin-language-switcher';
 import { AiOperationsBriefPanel } from '../components/ai-operations-brief-panel';
@@ -57,6 +58,8 @@ import {
 } from '../lib/operations';
 import { getOperationsDashboard } from '../lib/operations.server';
 import { getAdminRequestLocale } from '../lib/request-locale';
+import { resolveStaffLanding } from '../lib/staff-navigation';
+import { getStaffNavigationCopy } from '../lib/staff-navigation-localization';
 import {
   createEnrollment,
   transitionEnrollmentStatus,
@@ -64,8 +67,15 @@ import {
 import { transitionEnquiryStatus } from './enquiries/actions';
 
 export default async function Page() {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requireUser();
   const locale = await getAdminRequestLocale();
+  if (!hasPermission(administrator.roles, 'academy:manage')) {
+    const landing = resolveStaffLanding((permission) =>
+      hasPermission(administrator.roles, permission),
+    );
+    if (!landing) throw new AuthorizationError();
+    redirect(localizeHref(locale, landing));
+  }
   const copy = getAdminCopy(locale);
   const analyticsCopy = getAcademyAnalyticsCopy(locale);
   const campaignLinkBuilderCopy = getCampaignLinkBuilderCopy(locale);
@@ -92,6 +102,7 @@ export default async function Page() {
   const recentStatusMixCopy = getRecentEnquiryStatusMixCopy(locale);
   const statusMixCopy = getEnquiryStatusMixCopy(locale);
   const workflowCopy = getEnquiryWorkflowCopy(locale);
+  const staffNavigationCopy = getStaffNavigationCopy(locale);
   const common = getCommonDictionary(locale);
   const operations = await getOperationsDashboard();
   const administratorName = displayPersonName(
@@ -160,6 +171,9 @@ export default async function Page() {
           </Link>
           <Link href={localizeHref(locale, '/campaign-links')}>
             <span>08</span> {campaignLinkBuilderCopy.title}
+          </Link>
+          <Link href={localizeHref(locale, '/team')}>
+            <span>09</span> {staffNavigationCopy.destination.team}
           </Link>
         </nav>
         <div className="admin-sidebar-note">

@@ -368,6 +368,9 @@ model User {
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
+  staffRoleEventsActed    StaffRoleAuditEvent[] @relation("StaffRoleAuditActor")
+  staffRoleEventsReceived StaffRoleAuditEvent[] @relation("StaffRoleAuditTarget")
+
   @@index([email])
   @@index([deletedAt])
 }
@@ -1555,4 +1558,24 @@ model CohortDeliveryAuditEvent {
   @@index([cohortId, occurredAt])
   @@index([actorUserId, occurredAt])
   @@index([subjectType, subjectId, occurredAt])
+}
+
+enum StaffRoleAuditAction {
+  GRANTED
+  REVOKED
+}
+
+model StaffRoleAuditEvent {
+  id           String               @id @default(cuid())
+  actorUserId  String
+  targetUserId String
+  roleKey      String
+  action       StaffRoleAuditAction
+  occurredAt   DateTime             @default(now())
+  actor        User                 @relation("StaffRoleAuditActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  target       User                 @relation("StaffRoleAuditTarget", fields: [targetUserId], references: [id], onDelete: Restrict)
+
+  @@index([targetUserId, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([occurredAt])
 }

@@ -22,5 +22,7 @@ export const permissions = [
   'finance:manage',
   'finance:refund',
   'finance:reconcile',
+  'enquiry:work',
+  'team:manage',
 ] as const;
 export type PermissionKey = (typeof permissions)[number];

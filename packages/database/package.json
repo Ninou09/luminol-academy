@@ -7,7 +7,8 @@
     ".": "./src/index.ts",
     "./content-calendar": "./src/content-calendar.ts",
     "./social-publishing-attempts": "./src/social-publishing-attempts.ts",
-    "./social-publishing-delivery": "./src/social-publishing-delivery.ts"
+    "./social-publishing-delivery": "./src/social-publishing-delivery.ts",
+    "./staff-roles": "./src/staff-roles.ts"
   },
   "scripts": {
     "generate": "prisma generate",

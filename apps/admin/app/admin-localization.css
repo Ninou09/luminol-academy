@@ -57,3 +57,32 @@ html[dir='rtl']
 html[dir='rtl'] :where(.eyebrow, .admin-label, .admin-sidebar-note span) {
   text-transform: none;
 }
+
+.staff-navigation {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--radius-control);
+}
+
+.staff-navigation a {
+  padding: 0.4rem 0.7rem;
+  border-radius: calc(var(--radius-control) - 2px);
+  color: var(--color-brand-ink-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.staff-navigation a[aria-current='page'] {
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+}
+
+.staff-navigation a:focus-visible {
+  outline: 2px solid var(--color-brand-gold-strong);
+  outline-offset: 2px;
+}
