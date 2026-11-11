@@ -92,15 +92,18 @@ async function acquireLock() {
 }
 
 function runPrismaGenerate() {
-  const command = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+  const isWindows = process.platform === 'win32';
 
   return new Promise((resolveRun, rejectRun) => {
+    // Node refuses to spawn .cmd shims without a shell on Windows (EINVAL,
+    // CVE-2024-27980), so let the shell resolve pnpm there. Arguments are static.
     const child = spawn(
-      command,
+      'pnpm',
       ['--filter', '@luminol/database', 'exec', 'prisma', 'generate'],
       {
         cwd: repositoryRoot,
         stdio: 'inherit',
+        shell: isWindows,
       },
     );
 

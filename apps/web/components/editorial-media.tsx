@@ -1,6 +1,7 @@
 import type { SchoolSlug } from '../lib/schools';
 import Image from 'next/image';
 
+import { brandArtwork } from '../lib/academy-media';
 import styles from './editorial-media.module.css';
 
 export type EditorialMediaAsset = {
@@ -21,12 +22,6 @@ const schoolClass: Record<SchoolSlug, string> = {
   psychology: styles.psychology ?? '',
   languages: styles.languages ?? '',
   training: styles.training ?? '',
-};
-
-const schoolMark: Record<SchoolSlug, string> = {
-  psychology: 'P',
-  languages: 'L',
-  training: 'T',
 };
 
 function classes(...values: Array<string | false | null | undefined>) {
@@ -57,10 +52,16 @@ export function EditorialMedia({
         />
       ) : (
         <div className={styles.fallback} aria-hidden="true">
-          <span className={styles.grid} />
-          <span className={styles.halo} />
-          <span className={styles.axis} />
-          <span className={styles.mark}>{schoolMark[school]}</span>
+          <Image
+            className={styles.image}
+            src={brandArtwork.orb.src}
+            alt=""
+            width={brandArtwork.orb.width}
+            height={brandArtwork.orb.height}
+            sizes={sizes}
+            priority={priority}
+          />
+          <span className={styles.tint} />
         </div>
       )}
     </div>

@@ -1,0 +1,137 @@
+.backdrop,
+.scene,
+.art,
+.field,
+.veil,
+.grain {
+  position: absolute;
+  inset: 0;
+}
+
+.backdrop {
+  z-index: 0;
+  overflow: hidden;
+  background: var(--color-brand-night);
+  clip-path: inset(var(--scene-inset, 0%) round 0.25rem);
+  perspective: 1400px;
+}
+
+.scene {
+  /* Pointer parallax (--hero-px/py, -1…1) plus scroll depth from CinematicScroll. */
+  transform: translate3d(
+      calc(var(--hero-px, 0) * -1.1%),
+      calc(var(--scene-y, 0px) + var(--hero-py, 0) * -0.9%),
+      0
+    )
+    rotateX(calc(var(--hero-py, 0) * 2.2deg))
+    rotateY(calc(var(--hero-px, 0) * -3deg)) scale(var(--scene-scale, 1.06));
+  transform-origin: 60% 45%;
+  will-change: transform;
+}
+
+.scene:dir(rtl) {
+  scale: -1 1;
+}
+
+.art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: art-arrival 2.2s var(--luminol-ease-out) both;
+}
+
+.field {
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+
+.backdrop[data-field='live'] .field {
+  opacity: 1;
+}
+
+.veil {
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-brand-night) 82%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand-night) 40%, transparent) 42%,
+      transparent 68%
+    ),
+    linear-gradient(
+      0deg,
+      var(--color-brand-night) 0%,
+      color-mix(in srgb, var(--color-brand-night) 30%, transparent) 38%,
+      transparent 60%
+    );
+}
+
+.veil:dir(rtl) {
+  scale: -1 1;
+}
+
+/* Fine film grain keeps the gradients from banding on large screens. */
+.grain {
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+@keyframes art-arrival {
+  from {
+    opacity: 0;
+    filter: blur(14px) brightness(0.6);
+    scale: 1.08;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    scale: 1;
+  }
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  .veil {
+    background: linear-gradient(
+      0deg,
+      var(--color-brand-night) 0%,
+      color-mix(in srgb, var(--color-brand-night) 88%, transparent) 42%,
+      transparent 70%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    transform: none;
+    will-change: auto;
+  }
+  .art {
+    animation: none;
+  }
+}
+
+/* Portrait: the artwork keeps its own 9:16 frame at the top and the copy sits
+   below the sphere instead of on top of it. */
+@media (max-width: 760px) and (orientation: portrait) {
+  .scene {
+    inset-block-end: auto;
+    height: calc(100vw * 16 / 9);
+  }
+  .veil {
+    background: linear-gradient(
+      180deg,
+      transparent 0,
+      transparent calc(100vw * 0.7),
+      color-mix(in srgb, var(--color-brand-night) 70%, transparent)
+        calc(100vw * 1.05),
+      var(--color-brand-night) calc(100vw * 1.5)
+    );
+  }
+}

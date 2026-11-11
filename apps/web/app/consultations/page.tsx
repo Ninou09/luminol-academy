@@ -9,6 +9,7 @@ import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 
 import { EnquiryForm } from '../../components/enquiry-form';
+import { ImmersiveBand } from '../../components/psychology-art';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
@@ -233,6 +234,8 @@ export default async function ConsultationsPage() {
             </div>
           </aside>
         </section>
+
+        <ImmersiveBand art="innerWorld" locale={locale} priority />
 
         <section className={styles.routing} aria-labelledby="routing-title">
           <div className={styles.routingHeader}>

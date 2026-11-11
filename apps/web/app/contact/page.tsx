@@ -8,6 +8,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { EnquiryForm } from '../../components/enquiry-form';
+import { ImmersiveBand } from '../../components/psychology-art';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPsychologyContactPathDescription } from '../../lib/contact-paths';
 import { getProgrammeEnquiryDefaults } from '../../lib/programme-enquiry';
@@ -117,6 +118,8 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             {copy.heroBody}
           </p>
         </section>
+
+        <ImmersiveBand art="quietLake" locale={locale} />
 
         <section
           className={styles.enquirySection}

@@ -10,6 +10,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { FloatingArt } from '../../components/psychology-art';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { buildProgrammeContactHref } from '../../lib/programme-contact';
 import {
@@ -128,6 +129,11 @@ export default async function ProgrammesPage({
           className={`section-shell ${styles.hero}`}
           aria-labelledby="programmes-hero-title"
         >
+          <FloatingArt
+            art="untangledKnot"
+            locale={locale}
+            className={styles.heroArt}
+          />
           <p className="eyebrow">{copy.eyebrow}</p>
           <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
           <p>{copy.heroBody}</p>

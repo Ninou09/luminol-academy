@@ -1,0 +1,287 @@
+.constellation {
+  --constellation-progress: 0;
+  position: relative;
+  height: 290vh;
+  background:
+    radial-gradient(
+      ellipse at 50% 55%,
+      color-mix(in srgb, var(--color-brand-cyan-deep) 28%, transparent),
+      transparent 62%
+    ),
+    var(--color-brand-night);
+  color: var(--color-brand-surface);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  height: 100svh;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+
+.constellation[data-scene='live'] .canvas {
+  opacity: 1;
+}
+
+.intro {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 0;
+  inset-block-start: clamp(7rem, 16vh, 10rem);
+  display: grid;
+  justify-items: center;
+  padding-inline: var(--luminol-page-gutter);
+  text-align: center;
+  opacity: calc(1 - var(--constellation-progress) * 2.4);
+  translate: 0 calc(var(--constellation-progress) * -6rem);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: var(--color-brand-cyan-light);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 16ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 6.4vw, 6.25rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  text-wrap: balance;
+  text-shadow: 0 0 3rem rgb(139 222 239 / 0.35);
+}
+
+.title:dir(rtl) {
+  font-family: var(--font-arabic);
+  letter-spacing: normal;
+  line-height: 1.35;
+}
+
+.hint {
+  display: inline-flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 1.75rem 0 0;
+  color: color-mix(in srgb, var(--color-brand-surface) 65%, transparent);
+  font-size: 0.8rem;
+}
+
+.hint span {
+  position: relative;
+  width: 1.1rem;
+  height: 1.75rem;
+  border: 1px solid currentColor;
+  border-radius: 1rem;
+}
+
+.hint span::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 0.3rem;
+  width: 2px;
+  height: 0.35rem;
+  margin-inline-start: -1px;
+  border-radius: 2px;
+  background: var(--color-brand-cyan-light);
+  animation: wheel 1.8s ease-in-out infinite;
+}
+
+@keyframes wheel {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 0.6rem;
+  }
+}
+
+.labels {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Live: each label rides beside its sphere via JS-fed --x/--y (physical px). */
+.constellation[data-scene='live'] .label {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  width: min(17rem, 40vw);
+  opacity: var(--visible, 0);
+  transform: translate(
+      calc(var(--x, -999px) + 3.75rem),
+      calc(var(--y, 0px) - 50%)
+    )
+    scale(calc(0.9 + var(--visible, 0) * 0.1));
+  transform-origin: 0 50%;
+}
+
+.constellation[data-scene='live'] .label[data-side='before'] {
+  transform: translate(
+      calc(var(--x, -999px) - 100% - 3.75rem),
+      calc(var(--y, 0px) - 50%)
+    )
+    scale(calc(0.9 + var(--visible, 0) * 0.1));
+  transform-origin: 100% 50%;
+}
+
+.constellation[data-scene='live'] .label a {
+  pointer-events: none;
+}
+
+.constellation[data-scene='live'] .label[data-active] a {
+  pointer-events: auto;
+}
+
+.constellation[data-scene='live'] .label:focus-within {
+  opacity: 1;
+}
+
+.label a {
+  pointer-events: auto;
+}
+
+.label a {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-cyan-light) 25%, transparent);
+  border-radius: 1rem;
+  background: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 0.1),
+    rgb(255 255 255 / 0.02)
+  );
+  backdrop-filter: blur(14px);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 300ms ease,
+    background 300ms ease;
+}
+
+.label a:hover,
+.label a:focus-visible {
+  border-color: var(--color-brand-cyan-light);
+  background: linear-gradient(
+    150deg,
+    rgb(139 222 239 / 0.2),
+    rgb(255 255 255 / 0.04)
+  );
+}
+
+.label a:focus-visible {
+  outline: 2px solid var(--color-brand-cyan-light);
+  outline-offset: 3px;
+}
+
+.labelNumber {
+  color: var(--color-brand-cyan-light);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.label strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.label strong:dir(rtl) {
+  font-family: var(--font-arabic);
+}
+
+.labelPromise {
+  color: color-mix(in srgb, var(--color-brand-surface) 72%, transparent);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+/* Fallback (no WebGL / reduced motion): a calm static row of glass cards. */
+.constellation:not([data-scene='live']) .labels {
+  position: absolute;
+  z-index: 2;
+  inset-inline: var(--luminol-page-gutter);
+  inset-block-end: clamp(3rem, 10vh, 6rem);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+@media (max-width: 760px) {
+  .constellation {
+    height: 240vh;
+  }
+  /* Phones: labels stack under the orbit and light up in sequence. */
+  .constellation[data-scene='live'] .labels {
+    position: absolute;
+    z-index: 3;
+    inset-inline: 1.25rem;
+    inset-block-end: 1.5rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .constellation[data-scene='live'] .label,
+  .constellation[data-scene='live'] .label[data-side='before'] {
+    position: static;
+    width: auto;
+    transform: translateY(calc((1 - var(--visible, 0)) * 1rem));
+  }
+  .label a {
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+  .labelPromise {
+    display: none;
+  }
+  .constellation:not([data-scene='live']) .labels {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .constellation {
+    height: auto;
+  }
+  .stage {
+    position: relative;
+    min-height: 100svh;
+  }
+  .hint span::after {
+    animation: none;
+  }
+}
+
+/* Without the live scene there is nothing to scroll through. */
+.constellation:not([data-scene='live']) .hint {
+  display: none;
+}

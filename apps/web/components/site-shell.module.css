@@ -54,6 +54,7 @@
 .nav a {
   position: relative;
   padding-block: 0.65rem;
+  white-space: nowrap;
   color: var(--color-brand-ink-soft);
   font-size: 0.68rem;
   font-weight: 800;
@@ -95,6 +96,16 @@
   letter-spacing: 0.06em;
   text-decoration: none;
   text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background 250ms var(--luminol-ease-out),
+    color 250ms var(--luminol-ease-out),
+    box-shadow 250ms var(--luminol-ease-out);
+}
+.contactLink:hover {
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+  box-shadow: var(--luminol-glow);
 }
 .brand:focus-visible,
 .nav a:focus-visible,
@@ -174,7 +185,8 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-@media (max-width: 960px) {
+/* Collapse to the scrollable nav row before labels can wrap onto two lines. */
+@media (max-width: 1180px) {
   .actions {
     grid-column: 2;
     grid-row: 1;
@@ -236,5 +248,74 @@
   }
   .footerBottom {
     flex-direction: column;
+  }
+}
+
+/* Oversized luminous wordmark: a beam of light sweeps across it. */
+.megaMark {
+  width: min(100%, 82rem);
+  margin: 0 auto;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 21vw, 19rem);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  text-align: center;
+  user-select: none;
+}
+.megaMark span {
+  display: block;
+  padding-block-end: 0.1em;
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--color-brand-surface) 8%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand-surface) 8%, transparent) 38%,
+    var(--color-brand-cyan-light) 48%,
+    var(--color-brand-surface) 50%,
+    var(--color-brand-cyan-light) 52%,
+    color-mix(in srgb, var(--color-brand-surface) 8%, transparent) 62%,
+    color-mix(in srgb, var(--color-brand-surface) 8%, transparent) 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .megaMark span {
+    animation: beam 7s ease-in-out infinite;
+  }
+}
+@keyframes beam {
+  0% {
+    background-position: 110% 0;
+  }
+  60%,
+  100% {
+    background-position: -10% 0;
+  }
+}
+
+/* The header steps aside while reading down and returns on the way up. */
+.header {
+  transition:
+    translate 520ms var(--luminol-ease-out),
+    background 400ms ease,
+    box-shadow 400ms ease;
+}
+:global(html[data-scrolled]) .header {
+  background: color-mix(in srgb, var(--color-brand-canvas) 94%, transparent);
+  box-shadow: 0 1rem 2.5rem -1.75rem rgb(7 26 43 / 0.45);
+}
+:global(html[data-scroll-dir='down']) .header {
+  translate: 0 -105%;
+}
+.header:focus-within {
+  translate: 0 0 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .header {
+    transition: none;
   }
 }

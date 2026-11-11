@@ -1,0 +1,68 @@
+.dot,
+.ring {
+  position: fixed;
+  z-index: 200;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+:global(html[data-cursor='on']) .dot,
+:global(html[data-cursor='on']) .ring {
+  opacity: 1;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--color-brand-cyan-light);
+  box-shadow: 0 0 12px var(--color-brand-cyan-light);
+}
+
+.ring {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border: 1px solid color-mix(in srgb, var(--color-brand-cyan) 70%, transparent);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand-cyan-light) 16%, transparent),
+    transparent 70%
+  );
+  transition:
+    opacity 300ms ease,
+    width 350ms var(--luminol-ease-out),
+    height 350ms var(--luminol-ease-out),
+    margin 350ms var(--luminol-ease-out),
+    background 350ms ease,
+    border-color 350ms ease;
+}
+
+.ring[data-hover='true'] {
+  width: 70px;
+  height: 70px;
+  margin: -35px 0 0 -35px;
+  border-color: var(--color-brand-cyan-light);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand-cyan-light) 30%, transparent),
+    transparent 70%
+  );
+}
+
+.ring[data-press='true'] {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+}
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .dot,
+  .ring {
+    display: none;
+  }
+}

@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 import { AcademyImage } from '../../components/academy-image';
 import { FounderJsonLd } from '../../components/founder-json-ld';
+import { FloatingArt } from '../../components/psychology-art';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
@@ -184,6 +185,11 @@ export default async function AboutPage() {
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
+          />
+          <FloatingArt
+            art="humanConnection"
+            locale={locale}
+            className={styles.heroArt}
           />
         </section>
 

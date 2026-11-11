@@ -285,3 +285,26 @@
     margin-inline-start: 0;
   }
 }
+
+/* Untangled-knot artwork floats beside the catalogue introduction. */
+.hero {
+  position: relative;
+}
+.hero > :not(.heroArt) {
+  max-width: min(100%, 52rem);
+}
+.heroArt {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: clamp(2rem, 5vw, 4rem);
+  inset-inline-end: var(--luminol-page-gutter);
+  width: clamp(12rem, 24vw, 22rem);
+}
+@media (max-width: 900px) {
+  .heroArt {
+    position: relative;
+    inset: auto;
+    width: min(18rem, 70%);
+    margin: 0 auto 2rem;
+  }
+}

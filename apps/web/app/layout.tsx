@@ -3,8 +3,13 @@ import { getLocaleDirection, getOpenGraphLocale } from '@luminol/localization';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
+import { HoverPreview } from '../components/hover-preview';
+import { LuminousCursor } from '../components/luminous-cursor';
+import { PublicInteractions } from '../components/public-interactions';
 import { PublicMotionController } from '../components/public-motion-controller';
 import { PageNavigation } from '../components/page-navigation';
+import { ScrollExperience } from '../components/scroll-experience';
+import { SiteChrome } from '../components/site-chrome';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { resolvePublicSiteUrl } from '../lib/site-url';
@@ -105,6 +110,11 @@ export default async function RootLayout({
       <body>
         <PageNavigation />
         <PublicMotionController />
+        <PublicInteractions />
+        <ScrollExperience />
+        <LuminousCursor />
+        <HoverPreview />
+        <SiteChrome />
         {children}
       </body>
     </html>

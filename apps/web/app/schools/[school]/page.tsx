@@ -14,6 +14,7 @@ import {
   EditorialMedia,
   type EditorialMediaAsset,
 } from '../../../components/editorial-media';
+import { FloatingArt } from '../../../components/psychology-art';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import {
   isProgrammeWaitlist,
@@ -216,6 +217,13 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
           />
+          {school.slug === 'psychology' ? (
+            <FloatingArt
+              art="neuronTree"
+              locale={locale}
+              className={styles.heroArt}
+            />
+          ) : null}
         </section>
 
         <section

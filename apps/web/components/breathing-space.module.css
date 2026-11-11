@@ -1,0 +1,322 @@
+.space {
+  --breath: 0;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: center;
+  overflow: hidden;
+  padding: var(--luminol-section-space)
+    max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
+  background:
+    radial-gradient(
+      circle at 70% 50%,
+      color-mix(in srgb, var(--color-brand-cyan-light) 26%, transparent),
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      var(--color-brand-canvas),
+      color-mix(in srgb, var(--color-school-psychology-soft) 70%, white)
+    );
+  transition: background-color 2s ease;
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0 0 1.3rem;
+  color: var(--color-brand-cyan-deep);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 4.8vw, 5rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.title:dir(rtl) {
+  font-family: var(--font-arabic);
+  letter-spacing: normal;
+  line-height: 1.4;
+}
+
+.body {
+  max-width: 34rem;
+  margin: 1.5rem 0 2rem;
+  color: var(--color-brand-muted);
+  line-height: 1.85;
+}
+
+.control {
+  display: inline-flex;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 3.25rem;
+  padding: 0 1.6rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    translate 350ms var(--luminol-ease-out),
+    background 300ms ease,
+    box-shadow 400ms ease;
+}
+
+.control:hover {
+  background: var(--color-brand-cyan-deep);
+  box-shadow: var(--luminol-glow);
+}
+
+.control:focus-visible {
+  outline: 3px solid var(--color-brand-cyan);
+  outline-offset: 4px;
+}
+
+.note {
+  max-width: 30rem;
+  margin: 1.25rem 0 0;
+  color: var(--color-brand-muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.orb {
+  position: relative;
+  width: min(30rem, 78vw);
+  aspect-ratio: 1;
+}
+
+.orb > * {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 50%;
+}
+
+/* Every layer scales with --breath (0 rest → 1 full). */
+.aura {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand-cyan-light) 55%, transparent),
+    transparent 65%
+  );
+  filter: blur(18px);
+  opacity: calc(0.35 + var(--breath) * 0.5);
+  scale: calc(0.7 + var(--breath) * 0.35);
+}
+
+.halo {
+  width: 70%;
+  height: 70%;
+  border: 1px solid color-mix(in srgb, var(--color-brand-cyan) 45%, transparent);
+  box-shadow:
+    0 0 3rem color-mix(in srgb, var(--color-brand-cyan) 30%, transparent),
+    inset 0 0 3rem color-mix(in srgb, var(--color-brand-cyan) 20%, transparent);
+  scale: calc(0.8 + var(--breath) * 0.32);
+}
+
+.core {
+  width: 46%;
+  height: 46%;
+  background:
+    radial-gradient(
+      circle at 34% 28%,
+      rgb(255 255 255 / 0.95) 0 6%,
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 50% 55%,
+      var(--color-brand-cyan-light),
+      var(--color-brand-cyan) 55%,
+      var(--color-brand-cyan-deep) 100%
+    );
+  box-shadow:
+    0 0 4rem color-mix(in srgb, var(--color-brand-cyan) 60%, transparent),
+    inset -1.5rem -2rem 3rem rgb(7 26 43 / 0.35),
+    inset 0.5rem 0.5rem 2rem rgb(255 255 255 / 0.5);
+  scale: calc(0.72 + var(--breath) * 0.55);
+}
+
+.core::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    rgb(255 255 255 / 0.35),
+    transparent 30%
+  );
+  mix-blend-mode: soft-light;
+  animation: shimmer 9s linear infinite;
+}
+
+.ripple {
+  width: 46%;
+  height: 46%;
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-cyan-light) 70%, transparent);
+  opacity: 0;
+}
+
+.space[data-breathing='exhale'] .ripple {
+  animation: ripple 3s var(--luminol-ease-out) infinite;
+}
+
+.space[data-breathing='exhale'] .ripple + .ripple {
+  animation-delay: 1.5s;
+}
+
+/* Idle: the orb breathes on its own very slowly, inviting a click. */
+.space[data-breathing='idle'] .core,
+.space[data-breathing='idle'] .halo,
+.space[data-breathing='idle'] .aura {
+  animation: idle-breath 7s ease-in-out infinite;
+}
+
+.ring {
+  width: 100%;
+  height: 100%;
+  rotate: -90deg;
+  fill: none;
+  overflow: visible;
+}
+
+.ring circle {
+  stroke-width: 0.6;
+}
+
+.ring circle:first-child {
+  stroke: color-mix(in srgb, var(--color-brand-ink) 10%, transparent);
+}
+
+.ring circle:last-child {
+  stroke: var(--color-brand-cyan-deep);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke-linecap: round;
+  stroke-width: 1.4;
+}
+
+.ring:dir(rtl) {
+  scale: -1 1;
+}
+
+.space[data-breathing='idle'] .ring circle:last-child {
+  opacity: 0;
+}
+
+.readout {
+  text-align: center;
+}
+
+.phase {
+  min-height: 1.3em;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 500;
+  transition: opacity 500ms ease;
+}
+
+.phase:dir(rtl) {
+  font-family: var(--font-arabic);
+}
+
+.meta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 0.5rem 0 0;
+  color: var(--color-brand-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.count {
+  min-width: 1ch;
+  color: var(--color-brand-cyan-deep);
+}
+
+@keyframes ripple {
+  from {
+    opacity: 0.8;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 2.1;
+  }
+}
+
+@keyframes idle-breath {
+  0%,
+  100% {
+    translate: 0 0;
+    filter: brightness(0.95);
+  }
+  50% {
+    translate: 0 -0.4rem;
+    filter: brightness(1.08);
+  }
+}
+
+@keyframes shimmer {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@media (max-width: 800px) {
+  .space {
+    grid-template-columns: 1fr;
+  }
+  .stage {
+    order: -1;
+  }
+}
+
+/* Reduced motion: the guidance stays (text, timer, ring), the orb stays still. */
+@media (prefers-reduced-motion: reduce) {
+  .aura,
+  .halo,
+  .core {
+    scale: 1 !important;
+    animation: none !important;
+  }
+  .ripple,
+  .core::after {
+    display: none;
+  }
+}

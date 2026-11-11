@@ -46,19 +46,28 @@ test('cinematic depth responds to scroll without intercepting navigation', async
     .toBe('');
 });
 
-test('new learning and workshop photos retain their source metadata', async ({
+test('hero and school artwork retain their source metadata', async ({
   page,
 }) => {
   await page.goto('/en');
-  await expect(page.locator('#top video')).toHaveAttribute(
-    'src',
-    '/media/editorial/academy-film.mp4',
-  );
-  await expect(page.locator('#languages [data-academy-media]')).toHaveAttribute(
+  const hero = page.locator('#top [data-media-source]').first();
+  await expect(hero).toHaveAttribute(
     'data-media-source',
-    'https://unsplash.com/photos/omeaHbEFlN4',
+    'luminol-commissioned-3d',
   );
-  await expect(page.locator('#training [data-academy-media]')).toHaveAttribute(
+  await expect(hero.locator('img')).toHaveAttribute(
+    'alt',
+    'A glass sphere filled with flowing luminous cyan light',
+  );
+  for (const school of ['psychology', 'languages', 'training']) {
+    const art = page.locator(`#${school} [data-academy-media="${school}"]`);
+    await expect(art).toHaveAttribute(
+      'data-media-source',
+      'luminol-commissioned-3d',
+    );
+    await expect(art.locator('img')).not.toHaveAttribute('alt', '');
+  }
+  await expect(page.locator('#about [data-academy-media]')).toHaveAttribute(
     'data-media-source',
     'https://unsplash.com/photos/vdXMSiX-n6M',
   );
