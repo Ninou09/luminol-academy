@@ -113,12 +113,12 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
   const prefillLocale = clientLocaleSchema.safeParse(prefill?.locale);
 
   const clientFields = (defaults: {
-    displayName?: string;
-    phone?: string | null;
-    email?: string | null;
-    preferredLocale?: string;
-    contactConsent?: boolean;
-    operationalNote?: string | null;
+    displayName?: string | undefined;
+    phone?: string | null | undefined;
+    email?: string | null | undefined;
+    preferredLocale?: string | undefined;
+    contactConsent?: boolean | undefined;
+    operationalNote?: string | null | undefined;
   }) => (
     <div className={styles.grid}>
       <label className={styles.field}>
