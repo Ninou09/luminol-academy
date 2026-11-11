@@ -65,13 +65,21 @@ export function shiftLocalDate(date: string, days: number) {
     .slice(0, 10);
 }
 
-const returnPathPattern =
-  /^\/(?:(?:ar|fr|en)\/)?(?:consultations|clients)(?:\?[A-Za-z0-9=&%._:+-]*)?$/;
+const operationsWorkspaces = [
+  'consultations',
+  'clients',
+  'office-payments',
+] as const;
+export type OperationsWorkspace = (typeof operationsWorkspaces)[number];
 
-/** Accepts only internal consultation/client workspace paths for redirects. */
-export function safeConsultationReturnPath(
+const returnPathPattern = new RegExp(
+  `^/(?:(?:ar|fr|en)/)?(?:${operationsWorkspaces.join('|')})(?:\\?[A-Za-z0-9=&%._:+-]*)?$`,
+);
+
+/** Accepts only internal operations workspace paths for redirects. */
+export function safeOperationsReturnPath(
   value: unknown,
-  fallback: '/consultations' | '/clients',
+  fallback: `/${OperationsWorkspace}`,
 ) {
   return typeof value === 'string' && returnPathPattern.test(value)
     ? value

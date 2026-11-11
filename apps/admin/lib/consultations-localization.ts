@@ -40,6 +40,8 @@ export type ConsultationsCopy = {
   editNote: string;
   saveNote: string;
   saved: string;
+  paid: string;
+  recordPayment: string;
   status: Record<ConsultationStatusValue, string>;
   mode: Record<ConsultationModeValue, string>;
   moveTo: Record<ConsultationStatusValue, string>;
@@ -175,6 +177,8 @@ const englishConsultations: ConsultationsCopy = {
   editNote: 'Operational note',
   saveNote: 'Save note',
   saved: 'Saved.',
+  paid: 'Paid',
+  recordPayment: 'Record payment',
   status: {
     REQUESTED: 'Requested',
     CONFIRMED: 'Confirmed',
@@ -231,6 +235,8 @@ const frenchConsultations: ConsultationsCopy = {
   editNote: 'Note opérationnelle',
   saveNote: 'Enregistrer la note',
   saved: 'Enregistré.',
+  paid: 'Payé',
+  recordPayment: 'Encaisser',
   status: {
     REQUESTED: 'Demandé',
     CONFIRMED: 'Confirmé',
@@ -286,6 +292,8 @@ const arabicConsultations: ConsultationsCopy = {
   editNote: 'ملاحظة تنظيمية',
   saveNote: 'حفظ الملاحظة',
   saved: 'تم الحفظ.',
+  paid: 'مدفوع',
+  recordPayment: 'تسجيل دفعة',
   status: {
     REQUESTED: 'مطلوب',
     CONFIRMED: 'مؤكد',
