@@ -8,6 +8,19 @@ import {
 import { getStaffNavigationCopy } from './staff-navigation-localization';
 
 describe('staff navigation', () => {
+  it('shows consultation workspaces to owners and consultants alike', () => {
+    for (const permission of [
+      'consultation:manage',
+      'consultation:deliver',
+    ] as const) {
+      expect(
+        getStaffDestinations((granted) => granted === permission).map(
+          ({ key }) => key,
+        ),
+      ).toEqual(['consultations', 'clients']);
+    }
+  });
+
   it('shows only destinations the persisted permissions allow', () => {
     const enquiryAgent = getStaffDestinations(
       (permission) => permission === 'enquiry:work',
@@ -16,7 +29,12 @@ describe('staff navigation', () => {
   });
 
   it('keeps the owner on the overview and lands staff on their first workspace', () => {
-    expect(resolveStaffLanding(() => true)).toBe('/enquiries');
+    expect(resolveStaffLanding(() => true)).toBe('/consultations');
+    expect(
+      resolveStaffLanding(
+        (permission) => permission === 'consultation:deliver',
+      ),
+    ).toBe('/consultations');
     expect(
       resolveStaffLanding((permission) => permission === 'enquiry:work'),
     ).toBe('/enquiries');

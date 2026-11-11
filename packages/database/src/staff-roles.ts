@@ -8,7 +8,11 @@ import {
  * deliberately excluded: platform administration is never granted through a
  * browser workflow.
  */
-export const STAFF_ROLE_KEYS = ['staff', 'enquiry-agent'] as const;
+export const STAFF_ROLE_KEYS = [
+  'consultant',
+  'staff',
+  'enquiry-agent',
+] as const;
 export type StaffRoleKey = (typeof STAFF_ROLE_KEYS)[number];
 
 export class StaffRoleError extends Error {

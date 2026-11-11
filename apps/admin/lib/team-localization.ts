@@ -54,10 +54,13 @@ const english: TeamCopy = {
   by: 'by',
   adminNote: 'Platform administration is never granted from this page.',
   roleName: {
+    consultant: 'Consultant',
     staff: 'Trainer',
     'enquiry-agent': 'Enquiry follow-up',
   },
   roleDescription: {
+    consultant:
+      'Delivers psychology consultations: sees and manages only their own appointments and those clients.',
     staff:
       'Can be assigned as an instructor on cohorts and run sessions and attendance in the portal.',
     'enquiry-agent':
@@ -92,10 +95,13 @@ const french: TeamCopy = {
   adminNote:
     'L’administration de la plateforme n’est jamais attribuée depuis cette page.',
   roleName: {
+    consultant: 'Consultant(e)',
     staff: 'Formateur',
     'enquiry-agent': 'Suivi des demandes',
   },
   roleDescription: {
+    consultant:
+      'Assure les consultations psychologiques : voit et gère uniquement ses propres rendez-vous et ces clients.',
     staff:
       'Peut être affecté comme formateur sur des cohortes et gérer séances et présences dans le portail.',
     'enquiry-agent':
@@ -129,10 +135,13 @@ const arabic: TeamCopy = {
   by: 'بواسطة',
   adminNote: 'لا تُمنح إدارة المنصة أبدًا من هذه الصفحة.',
   roleName: {
+    consultant: 'أخصائي(ة) استشارات',
     staff: 'مكوّن',
     'enquiry-agent': 'متابعة الطلبات',
   },
   roleDescription: {
+    consultant:
+      'يقدّم الاستشارات النفسية: يرى ويدير مواعيده الخاصة وعملاءها فقط.',
     staff: 'يمكن تعيينه مكوّنًا على الأفواج وإدارة الحصص والحضور في البوابة.',
     'enquiry-agent':
       'يعالج الطلبات: المسؤولية وخطة المتابعة والنتيجة والحالة. بدون مالية أو استشارات.',
