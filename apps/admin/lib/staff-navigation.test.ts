@@ -34,7 +34,12 @@ describe('staff navigation', () => {
   });
 
   it('keeps the owner on the overview and lands staff on their first workspace', () => {
-    expect(resolveStaffLanding(() => true)).toBe('/consultations');
+    expect(resolveStaffLanding(() => true)).toBe('/today');
+    expect(
+      resolveStaffLanding((permission) =>
+        ['task:work', 'enquiry:work'].includes(permission),
+      ),
+    ).toBe('/today');
     expect(
       resolveStaffLanding(
         (permission) => permission === 'consultation:deliver',

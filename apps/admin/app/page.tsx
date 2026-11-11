@@ -172,8 +172,23 @@ export default async function Page() {
           <Link href={localizeHref(locale, '/campaign-links')}>
             <span>08</span> {campaignLinkBuilderCopy.title}
           </Link>
+          <Link href={localizeHref(locale, '/today')}>
+            <span>09</span> {staffNavigationCopy.destination.today}
+          </Link>
+          <Link href={localizeHref(locale, '/consultations')}>
+            <span>10</span> {staffNavigationCopy.destination.consultations}
+          </Link>
+          <Link href={localizeHref(locale, '/clients')}>
+            <span>11</span> {staffNavigationCopy.destination.clients}
+          </Link>
+          <Link href={localizeHref(locale, '/office-payments')}>
+            <span>12</span> {staffNavigationCopy.destination.payments}
+          </Link>
+          <Link href={localizeHref(locale, '/tasks')}>
+            <span>13</span> {staffNavigationCopy.destination.tasks}
+          </Link>
           <Link href={localizeHref(locale, '/team')}>
-            <span>09</span> {staffNavigationCopy.destination.team}
+            <span>14</span> {staffNavigationCopy.destination.team}
           </Link>
         </nav>
         <div className="admin-sidebar-note">

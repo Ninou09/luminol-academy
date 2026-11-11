@@ -10,7 +10,8 @@
     "./social-publishing-delivery": "./src/social-publishing-delivery.ts",
     "./staff-roles": "./src/staff-roles.ts",
     "./consultations": "./src/consultations.ts",
-    "./office-payments": "./src/office-payments.ts"
+    "./office-payments": "./src/office-payments.ts",
+    "./operations-tasks": "./src/operations-tasks.ts"
   },
   "scripts": {
     "generate": "prisma generate",

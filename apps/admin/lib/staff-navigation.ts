@@ -2,6 +2,7 @@ import type { PermissionKey } from '@luminol/types';
 
 export const staffDestinations = [
   { key: 'overview', href: '/', permissions: ['academy:manage'] },
+  { key: 'today', href: '/today', permissions: ['task:work'] },
   {
     key: 'consultations',
     href: '/consultations',
@@ -18,6 +19,7 @@ export const staffDestinations = [
     permissions: ['office-payment:record'],
   },
   { key: 'enquiries', href: '/enquiries', permissions: ['enquiry:work'] },
+  { key: 'tasks', href: '/tasks', permissions: ['task:work'] },
   { key: 'team', href: '/team', permissions: ['team:manage'] },
 ] as const satisfies readonly {
   key: string;

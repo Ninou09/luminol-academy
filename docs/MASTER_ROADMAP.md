@@ -175,8 +175,20 @@ Resolved dependency #241 must remain resolved without weakening Clerk protection
 
 The `Protect main` ruleset and exact-head GitHub Actions `quality` gate remain mandatory. Authenticated preview smoke may be skipped only when the protected credentials/configuration are genuinely unavailable; that skip is an operational evidence gap, not permission to claim the protected journeys have been verified.
 
+## Milestone 21 — Academy Operations: Staff Roles, Consultations, Office Payments, Tasks and Today
+
+Status: Committed on 2026-11-12 under governing issue #562; repository implementation in review through stacked pull requests. Not production-verified.
+
+Objective selected by the owner: one internal operating system for daily academy work inside the existing administration app and database, replacing the interim external ops-hub prototype.
+
+- Slice A (#563): governed staff roles (`consultant`, `enquiry-agent`, `staff`/trainer) granted from an owner-only Team page with append-only audit; enquiry desk guarded by `enquiry:work`; permission-aware staff navigation and landing.
+- Slice B (#565): client records (one-time enquiry conversion without widening consent) and psychology consultation scheduling with Blida business hours, Friday closure, per-consultant overlap protection, governed lifecycle and append-only history.
+- Slice C: office payments ledger in DZD (cash, BaridiMob, CCP, bank transfer) with sequential receipts, immutability enforced in the database and a single owner void with reason.
+- Slice D: staff tasks and owner approval requests (decision recording only) and a role-aware Today view.
+- Slice E: operator guide `docs/MILESTONE_21_OPERATIONS.md` and status updates.
+
+Boundaries: no clinical or assessment data; consultants see only their own appointments and clients; enquiry agents never see consultations or payments; nothing in this milestone sends messages, publishes, schedules outreach or spends money; no bulk export of client or payment data.
+
 ## Next product milestone
 
-No Milestone 21 is currently committed. Do not invent one solely because Milestone 20 repository implementation is complete. New numbered product work should be opened only after a concrete product objective is selected and its authorization, privacy, data-governance, testing, and operational boundaries are written down.
-
-Until then, prioritize non-blocked stabilization and public-experience polish under the existing issues without fabricating external approvals, legal facts, production evidence, or provider integrations.
+No Milestone 22 is committed. Open new numbered product work only after a concrete product objective is selected and its authorization, privacy, data-governance, testing, and operational boundaries are written down.
