@@ -1499,7 +1499,16 @@ export default async function EnquiriesAdminPage({
                   <article className={styles.card} key={enquiry.id}>
                     <header className={styles.cardHeader}>
                       <div className={styles.identity}>
-                        <h2 dir="auto">{enquiry.name}</h2>
+                        <h2 dir="auto">
+                          <Link
+                            href={localizeHref(
+                              locale,
+                              `/crm/leads/${enquiry.id}`,
+                            )}
+                          >
+                            {enquiry.name}
+                          </Link>
+                        </h2>
                         <p dir="auto">{enquiry.email}</p>
                       </div>
                       <div>

@@ -6,7 +6,6 @@ import {
   formatLocalizedCurrency,
   formatLocalizedDate,
   formatLocalizedNumber,
-  getCommonDictionary,
   localizeHref,
 } from '@luminol/localization';
 import {
@@ -17,10 +16,9 @@ import {
 import { summarizeOfficePayments } from '@luminol/validation/office-payments';
 import Link from 'next/link';
 
-import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import { OperationsTaskItem } from '../../components/operations-task-item';
 import styles from '../../components/operations.module.css';
-import { StaffNavigation } from '../../components/staff-navigation';
+import { CrmShell } from '../../components/crm-shell';
 import { resolveConsultationScope } from '../../lib/consultation-scope';
 import { getConsultationsCopy } from '../../lib/consultations-localization';
 import { resolveOfficePaymentScope } from '../../lib/office-payment-scope';
@@ -43,7 +41,6 @@ export default async function TodayPage() {
   const copy = getTodayCopy(locale);
   const taskCopy = getOperationsTasksCopy(locale);
   const consultationCopy = getConsultationsCopy(locale);
-  const common = getCommonDictionary(locale);
   const can = (permission: Parameters<typeof hasPermission>[1]) =>
     hasPermission(user.roles, permission);
   const now = new Date();
@@ -75,7 +72,7 @@ export default async function TodayPage() {
             orderBy: { startsAt: 'asc' },
             take: 50,
             include: {
-              client: { select: { displayName: true, phone: true } },
+              client: { select: { id: true, displayName: true, phone: true } },
             },
           })
         : Promise.resolve([]),
@@ -164,178 +161,161 @@ export default async function TodayPage() {
   };
 
   return (
-    <main
-      className="admin-shell"
-      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
-    >
-      <section className="admin-dashboard">
-        <div className="admin-content">
-          <section className="admin-intro">
-            <div>
-              <p className="eyebrow">{copy.eyebrow}</p>
-              <h1>
-                {copy.title} · {todayLabel}
-              </h1>
-              <p>{copy.intro}</p>
-            </div>
-            <div className={styles.toolbar}>
-              <StaffNavigation
-                locale={locale}
-                roles={user.roles}
-                current="today"
-              />
-              <AdminLanguageSwitcher
-                locale={locale}
-                label={common.languageSelectorLabel}
-              />
-            </div>
-          </section>
-
-          {consultationScope ? (
-            <section className="admin-panel">
-              <div className="panel-heading">
-                <h2>{copy.appointmentsTitle}</h2>
-                <Link href={localizeHref(locale, '/consultations')}>
-                  {copy.openWorkspace}
-                </Link>
-              </div>
-              {appointments.length === 0 ? (
-                <p className={styles.empty}>{copy.noAppointments}</p>
-              ) : (
-                <ul className={styles.list}>
-                  {appointments.map((appointment) => (
-                    <li className={styles.row} key={appointment.id}>
-                      <span>
-                        <strong>{time(appointment.startsAt)}</strong> ·{' '}
-                        <bdi>{appointment.client.displayName}</bdi>
-                        {appointment.client.phone ? (
-                          <>
-                            {' '}
-                            · <bdi dir="ltr">{appointment.client.phone}</bdi>
-                          </>
-                        ) : null}
-                      </span>
-                      <span className={styles.meta}>
-                        <span className={styles.chip}>
-                          {consultationCopy.status[appointment.status]}
-                        </span>
-                        <span>{consultationCopy.mode[appointment.mode]}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          ) : null}
-
-          {paymentScope ? (
-            <section className="admin-panel">
-              <div className="panel-heading">
-                <h2>{copy.paymentsTitle}</h2>
-                <Link href={localizeHref(locale, '/office-payments')}>
-                  {copy.openWorkspace}
-                </Link>
-              </div>
-              <p>
-                <strong>
-                  {copy.paymentsToday(
-                    money(totals.totalMinor),
-                    formatLocalizedNumber(totals.count, locale),
-                  )}
-                </strong>
-              </p>
-            </section>
-          ) : null}
-
-          {worksEnquiries ? (
-            <section className="admin-panel">
-              <div className="panel-heading">
-                <div>
-                  <h2>{copy.followUpsTitle}</h2>
-                  <p className={styles.note}>{copy.followUpsIntro}</p>
-                </div>
-                <Link href={localizeHref(locale, '/enquiries')}>
-                  {copy.openWorkspace}
-                </Link>
-              </div>
-              {followUps.length === 0 ? (
-                <p className={styles.empty}>{copy.noFollowUps}</p>
-              ) : (
-                <ul className={styles.list}>
-                  {followUps.map((enquiry) => (
-                    <li className={styles.row} key={enquiry.id}>
-                      <span>
-                        <bdi>{enquiry.name}</bdi>
-                        {enquiry.phone ? (
-                          <>
-                            {' '}
-                            · <bdi dir="ltr">{enquiry.phone}</bdi>
-                          </>
-                        ) : null}
-                      </span>
-                      <span className={styles.meta}>
-                        {enquiry.nextAction ? (
-                          <bdi>{enquiry.nextAction}</bdi>
-                        ) : null}
-                        {enquiry.nextFollowUpAt &&
-                        enquiry.nextFollowUpAt < start ? (
-                          <span className={styles.warning}>
-                            {taskCopy.overdue}
-                          </span>
-                        ) : null}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          ) : null}
-
-          <section className="admin-panel">
-            <div className="panel-heading">
-              <h2>{copy.tasksTitle}</h2>
-              <Link href={localizeHref(locale, '/tasks')}>
-                {copy.openWorkspace}
-              </Link>
-            </div>
-            {tasks.length === 0 ? (
-              <p className={styles.empty}>{copy.noTasks}</p>
-            ) : (
-              <ul className={styles.list}>
-                {tasks.map((task) => (
-                  <OperationsTaskItem
-                    key={task.id}
-                    task={task}
-                    {...itemProps}
-                  />
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section className="admin-panel">
-            <div className="panel-heading">
-              <h2>
-                {actor.canDecide ? copy.approvalsTitle : copy.myRequestsTitle}
-              </h2>
-            </div>
-            <p className={styles.note}>{taskCopy.approvalBoundary}</p>
-            {approvals.length === 0 ? (
-              <p className={styles.empty}>{copy.noApprovals}</p>
-            ) : (
-              <ul className={styles.list}>
-                {approvals.map((task) => (
-                  <OperationsTaskItem
-                    key={task.id}
-                    task={task}
-                    {...itemProps}
-                  />
-                ))}
-              </ul>
-            )}
-          </section>
+    <CrmShell locale={locale} user={user} current="today">
+      <section className="admin-intro">
+        <div>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1>
+            {copy.title} · {todayLabel}
+          </h1>
+          <p>{copy.intro}</p>
         </div>
       </section>
-    </main>
+
+      {consultationScope ? (
+        <section className="admin-panel">
+          <div className="panel-heading">
+            <h2>{copy.appointmentsTitle}</h2>
+            <Link href={localizeHref(locale, '/consultations')}>
+              {copy.openWorkspace}
+            </Link>
+          </div>
+          {appointments.length === 0 ? (
+            <p className={styles.empty}>{copy.noAppointments}</p>
+          ) : (
+            <ul className={styles.list}>
+              {appointments.map((appointment) => (
+                <li className={styles.row} key={appointment.id}>
+                  <span>
+                    <strong>{time(appointment.startsAt)}</strong> ·{' '}
+                    <Link
+                      href={localizeHref(
+                        locale,
+                        `/crm/contacts/${appointment.client.id}`,
+                      )}
+                    >
+                      <bdi>{appointment.client.displayName}</bdi>
+                    </Link>
+                    {appointment.client.phone ? (
+                      <>
+                        {' '}
+                        · <bdi dir="ltr">{appointment.client.phone}</bdi>
+                      </>
+                    ) : null}
+                  </span>
+                  <span className={styles.meta}>
+                    <span className={styles.chip}>
+                      {consultationCopy.status[appointment.status]}
+                    </span>
+                    <span>{consultationCopy.mode[appointment.mode]}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ) : null}
+
+      {paymentScope ? (
+        <section className="admin-panel">
+          <div className="panel-heading">
+            <h2>{copy.paymentsTitle}</h2>
+            <Link href={localizeHref(locale, '/office-payments')}>
+              {copy.openWorkspace}
+            </Link>
+          </div>
+          <p>
+            <strong>
+              {copy.paymentsToday(
+                money(totals.totalMinor),
+                formatLocalizedNumber(totals.count, locale),
+              )}
+            </strong>
+          </p>
+        </section>
+      ) : null}
+
+      {worksEnquiries ? (
+        <section className="admin-panel">
+          <div className="panel-heading">
+            <div>
+              <h2>{copy.followUpsTitle}</h2>
+              <p className={styles.note}>{copy.followUpsIntro}</p>
+            </div>
+            <Link href={localizeHref(locale, '/enquiries')}>
+              {copy.openWorkspace}
+            </Link>
+          </div>
+          {followUps.length === 0 ? (
+            <p className={styles.empty}>{copy.noFollowUps}</p>
+          ) : (
+            <ul className={styles.list}>
+              {followUps.map((enquiry) => (
+                <li className={styles.row} key={enquiry.id}>
+                  <span>
+                    <Link
+                      href={localizeHref(locale, `/crm/leads/${enquiry.id}`)}
+                    >
+                      <bdi>{enquiry.name}</bdi>
+                    </Link>
+                    {enquiry.phone ? (
+                      <>
+                        {' '}
+                        · <bdi dir="ltr">{enquiry.phone}</bdi>
+                      </>
+                    ) : null}
+                  </span>
+                  <span className={styles.meta}>
+                    {enquiry.nextAction ? (
+                      <bdi>{enquiry.nextAction}</bdi>
+                    ) : null}
+                    {enquiry.nextFollowUpAt &&
+                    enquiry.nextFollowUpAt < start ? (
+                      <span className={styles.warning}>{taskCopy.overdue}</span>
+                    ) : null}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ) : null}
+
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <h2>{copy.tasksTitle}</h2>
+          <Link href={localizeHref(locale, '/tasks')}>
+            {copy.openWorkspace}
+          </Link>
+        </div>
+        {tasks.length === 0 ? (
+          <p className={styles.empty}>{copy.noTasks}</p>
+        ) : (
+          <ul className={styles.list}>
+            {tasks.map((task) => (
+              <OperationsTaskItem key={task.id} task={task} {...itemProps} />
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <h2>
+            {actor.canDecide ? copy.approvalsTitle : copy.myRequestsTitle}
+          </h2>
+        </div>
+        <p className={styles.note}>{taskCopy.approvalBoundary}</p>
+        {approvals.length === 0 ? (
+          <p className={styles.empty}>{copy.noApprovals}</p>
+        ) : (
+          <ul className={styles.list}>
+            {approvals.map((task) => (
+              <OperationsTaskItem key={task.id} task={task} {...itemProps} />
+            ))}
+          </ul>
+        )}
+      </section>
+    </CrmShell>
   );
 }

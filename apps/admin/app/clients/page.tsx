@@ -1,16 +1,11 @@
 import { db } from '@luminol/database';
 import { clientScopeWhere } from '@luminol/database/consultations';
-import {
-  formatLocalizedNumber,
-  getCommonDictionary,
-  localizeHref,
-} from '@luminol/localization';
+import { formatLocalizedNumber, localizeHref } from '@luminol/localization';
 import { clientLocaleSchema } from '@luminol/validation/consultations';
 import Link from 'next/link';
 
-import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import styles from '../../components/operations.module.css';
-import { StaffNavigation } from '../../components/staff-navigation';
+import { CrmShell } from '../../components/crm-shell';
 import { requireConsultationActor } from '../../lib/consultation-actor.server';
 import { parseConsultationFeedback } from '../../lib/consultation-scope';
 import { getClientsCopy } from '../../lib/consultations-localization';
@@ -32,7 +27,6 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
   const { user, actor } = await requireConsultationActor();
   const locale = await getAdminRequestLocale();
   const copy = getClientsCopy(locale);
-  const common = getCommonDictionary(locale);
   const params = searchParams ? await searchParams : undefined;
   const query =
     typeof params?.q === 'string' ? params.q.trim().slice(0, 80) : '';
@@ -186,211 +180,174 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
   );
 
   return (
-    <main
-      className="admin-shell"
-      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
-    >
-      <section className="admin-dashboard">
-        <div className="admin-content">
-          <section className="admin-intro">
-            <div>
-              <p className="eyebrow">{copy.eyebrow}</p>
-              <h1>{copy.title}</h1>
-              <p>{copy.intro}</p>
-            </div>
-            <div className={styles.toolbar}>
-              <StaffNavigation
-                locale={locale}
-                roles={user.roles}
-                current="clients"
-              />
-              <AdminLanguageSwitcher
-                locale={locale}
-                label={common.languageSelectorLabel}
-              />
-            </div>
-          </section>
-
-          {feedback ? (
-            <p className={styles.warning} role="alert">
-              {copy.feedback[feedback]}
-            </p>
-          ) : saved ? (
-            <p className={styles.success} role="status">
-              {copy.saved}
-            </p>
-          ) : null}
-
-          <section className="admin-panel">
-            <div className="panel-heading">
-              <h2>{copy.listTitle}</h2>
-              <form className={styles.inline} method="get">
-                <input
-                  type="search"
-                  name="q"
-                  maxLength={80}
-                  defaultValue={query}
-                  aria-label={copy.searchLabel}
-                  placeholder={copy.searchLabel}
-                />
-                <button type="submit" className={styles.secondaryButton}>
-                  {copy.search}
-                </button>
-              </form>
-            </div>
-            {clients.length === 0 ? (
-              <p className={styles.empty}>{copy.noClients}</p>
-            ) : (
-              <ul className={styles.list}>
-                {clients.map((client) => (
-                  <li className={styles.row} key={client.id}>
-                    <div className={styles.rowBody}>
-                      <h3>
-                        <bdi>{client.displayName}</bdi>
-                      </h3>
-                      <p className={styles.meta}>
-                        {client.phone ? (
-                          <bdi dir="ltr">{client.phone}</bdi>
-                        ) : null}
-                        {client.email ? <bdi>{client.email}</bdi> : null}
-                        <span className={styles.chip}>
-                          {client.contactConsent
-                            ? copy.consentYes
-                            : copy.consentNo}
-                        </span>
-                        {client.sourceEnquiryId ? (
-                          <span className={styles.chip}>
-                            {copy.fromEnquiry}
-                          </span>
-                        ) : null}
-                        <span>
-                          {copy.upcoming(number(client._count.appointments))}
-                        </span>
-                      </p>
-                      {client.operationalNote ? (
-                        <p className={styles.note}>{client.operationalNote}</p>
-                      ) : null}
-                    </div>
-                    <div className={styles.rowBody}>
-                      <Link
-                        href={`${localizeHref(
-                          locale,
-                          `/consultations?client=${client.id}`,
-                        )}#book`}
-                      >
-                        {copy.book}
-                      </Link>
-                      <details>
-                        <summary>{copy.edit}</summary>
-                        <form
-                          action={updateClientAction}
-                          className={styles.form}
-                        >
-                          <input
-                            type="hidden"
-                            name="clientId"
-                            value={client.id}
-                          />
-                          <input
-                            type="hidden"
-                            name="returnTo"
-                            value={returnTo}
-                          />
-                          {clientFields(client)}
-                          <label className={styles.checkbox}>
-                            <input type="checkbox" name="archive" />
-                            <span>{copy.archiveLabel}</span>
-                          </label>
-                          <div>
-                            <button type="submit" className={styles.button}>
-                              {copy.save}
-                            </button>
-                          </div>
-                        </form>
-                      </details>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          <section className="admin-panel" id="new-client">
-            <div className="panel-heading">
-              <div>
-                <h2>{copy.createTitle}</h2>
-                <p className={styles.note}>{copy.createIntro}</p>
-                <p className={styles.note}>{copy.boundary}</p>
-                {prefill ? (
-                  <p className={styles.note}>
-                    {copy.prefilledFrom(prefill.name)} {copy.consentHelp}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-            <form action={createClientAction} className={styles.form}>
-              <input
-                type="hidden"
-                name="returnTo"
-                value={localizeHref(locale, '/clients')}
-              />
-              {prefill ? (
-                <input
-                  type="hidden"
-                  name="sourceEnquiryId"
-                  value={prefill.id}
-                />
-              ) : null}
-              {clientFields({
-                displayName: prefill?.name,
-                phone: prefill?.phone,
-                email: prefill?.email,
-                preferredLocale: prefillLocale.success
-                  ? prefillLocale.data
-                  : 'ar',
-                contactConsent: prefill?.consent ?? false,
-              })}
-              <div>
-                <button type="submit" className={styles.button}>
-                  {copy.create}
-                </button>
-              </div>
-            </form>
-          </section>
-
-          {actor.scope === 'all' ? (
-            <section className="admin-panel">
-              <div className="panel-heading">
-                <div>
-                  <h2>{copy.fromEnquiryTitle}</h2>
-                  <p className={styles.note}>{copy.fromEnquiryIntro}</p>
-                </div>
-              </div>
-              {enquiries.length === 0 ? (
-                <p className={styles.empty}>{copy.noEnquiries}</p>
-              ) : (
-                <ul className={styles.list}>
-                  {enquiries.map((enquiry) => (
-                    <li className={styles.row} key={enquiry.id}>
-                      <span>
-                        <bdi>{enquiry.name}</bdi>
-                      </span>
-                      <Link
-                        href={`${localizeHref(
-                          locale,
-                          `/clients?fromEnquiry=${enquiry.id}`,
-                        )}#new-client`}
-                      >
-                        {copy.useEnquiry}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          ) : null}
+    <CrmShell locale={locale} user={user} current="clients">
+      <section className="admin-intro">
+        <div>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1>{copy.title}</h1>
+          <p>{copy.intro}</p>
         </div>
       </section>
-    </main>
+
+      {feedback ? (
+        <p className={styles.warning} role="alert">
+          {copy.feedback[feedback]}
+        </p>
+      ) : saved ? (
+        <p className={styles.success} role="status">
+          {copy.saved}
+        </p>
+      ) : null}
+
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <h2>{copy.listTitle}</h2>
+          <form className={styles.inline} method="get">
+            <input
+              type="search"
+              name="q"
+              maxLength={80}
+              defaultValue={query}
+              aria-label={copy.searchLabel}
+              placeholder={copy.searchLabel}
+            />
+            <button type="submit" className={styles.secondaryButton}>
+              {copy.search}
+            </button>
+          </form>
+        </div>
+        {clients.length === 0 ? (
+          <p className={styles.empty}>{copy.noClients}</p>
+        ) : (
+          <ul className={styles.list}>
+            {clients.map((client) => (
+              <li className={styles.row} key={client.id}>
+                <div className={styles.rowBody}>
+                  <h3>
+                    <Link
+                      href={localizeHref(locale, `/crm/contacts/${client.id}`)}
+                    >
+                      <bdi>{client.displayName}</bdi>
+                    </Link>
+                  </h3>
+                  <p className={styles.meta}>
+                    {client.phone ? <bdi dir="ltr">{client.phone}</bdi> : null}
+                    {client.email ? <bdi>{client.email}</bdi> : null}
+                    <span className={styles.chip}>
+                      {client.contactConsent ? copy.consentYes : copy.consentNo}
+                    </span>
+                    {client.sourceEnquiryId ? (
+                      <span className={styles.chip}>{copy.fromEnquiry}</span>
+                    ) : null}
+                    <span>
+                      {copy.upcoming(number(client._count.appointments))}
+                    </span>
+                  </p>
+                  {client.operationalNote ? (
+                    <p className={styles.note}>{client.operationalNote}</p>
+                  ) : null}
+                </div>
+                <div className={styles.rowBody}>
+                  <Link
+                    href={`${localizeHref(
+                      locale,
+                      `/consultations?client=${client.id}`,
+                    )}#book`}
+                  >
+                    {copy.book}
+                  </Link>
+                  <details>
+                    <summary>{copy.edit}</summary>
+                    <form action={updateClientAction} className={styles.form}>
+                      <input type="hidden" name="clientId" value={client.id} />
+                      <input type="hidden" name="returnTo" value={returnTo} />
+                      {clientFields(client)}
+                      <label className={styles.checkbox}>
+                        <input type="checkbox" name="archive" />
+                        <span>{copy.archiveLabel}</span>
+                      </label>
+                      <div>
+                        <button type="submit" className={styles.button}>
+                          {copy.save}
+                        </button>
+                      </div>
+                    </form>
+                  </details>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="admin-panel" id="new-client">
+        <div className="panel-heading">
+          <div>
+            <h2>{copy.createTitle}</h2>
+            <p className={styles.note}>{copy.createIntro}</p>
+            <p className={styles.note}>{copy.boundary}</p>
+            {prefill ? (
+              <p className={styles.note}>
+                {copy.prefilledFrom(prefill.name)} {copy.consentHelp}
+              </p>
+            ) : null}
+          </div>
+        </div>
+        <form action={createClientAction} className={styles.form}>
+          <input
+            type="hidden"
+            name="returnTo"
+            value={localizeHref(locale, '/clients')}
+          />
+          {prefill ? (
+            <input type="hidden" name="sourceEnquiryId" value={prefill.id} />
+          ) : null}
+          {clientFields({
+            displayName: prefill?.name,
+            phone: prefill?.phone,
+            email: prefill?.email,
+            preferredLocale: prefillLocale.success ? prefillLocale.data : 'ar',
+            contactConsent: prefill?.consent ?? false,
+          })}
+          <div>
+            <button type="submit" className={styles.button}>
+              {copy.create}
+            </button>
+          </div>
+        </form>
+      </section>
+
+      {actor.scope === 'all' ? (
+        <section className="admin-panel">
+          <div className="panel-heading">
+            <div>
+              <h2>{copy.fromEnquiryTitle}</h2>
+              <p className={styles.note}>{copy.fromEnquiryIntro}</p>
+            </div>
+          </div>
+          {enquiries.length === 0 ? (
+            <p className={styles.empty}>{copy.noEnquiries}</p>
+          ) : (
+            <ul className={styles.list}>
+              {enquiries.map((enquiry) => (
+                <li className={styles.row} key={enquiry.id}>
+                  <span>
+                    <bdi>{enquiry.name}</bdi>
+                  </span>
+                  <Link
+                    href={`${localizeHref(
+                      locale,
+                      `/clients?fromEnquiry=${enquiry.id}`,
+                    )}#new-client`}
+                  >
+                    {copy.useEnquiry}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ) : null}
+    </CrmShell>
   );
 }

@@ -86,3 +86,131 @@ html[dir='rtl'] :where(.eyebrow, .admin-label, .admin-sidebar-note span) {
   outline: 2px solid var(--color-brand-gold-strong);
   outline-offset: 2px;
 }
+
+.crm-search {
+  display: flex;
+  flex: 1;
+  max-width: 34rem;
+  gap: 0.4rem;
+}
+
+.crm-search input {
+  flex: 1;
+  min-height: 2.4rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--radius-control);
+  background: var(--color-brand-surface);
+  color: var(--color-brand-ink);
+  font: inherit;
+}
+
+.crm-search button {
+  min-height: 2.4rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--color-brand-ink);
+  border-radius: var(--radius-control);
+  background: var(--color-brand-ink);
+  color: var(--color-brand-canvas);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.crm-search input:focus-visible,
+.crm-search button:focus-visible {
+  outline: 2px solid var(--color-brand-gold-strong);
+  outline-offset: 2px;
+}
+
+.crm-profile {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.crm-profile-main,
+.crm-profile-side {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.crm-timeline {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.crm-timeline li {
+  position: relative;
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 0 0.9rem;
+  padding-inline-start: 1.4rem;
+  border-inline-start: 2px solid var(--color-brand-line);
+}
+
+.crm-timeline li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -0.42rem;
+  top: 1rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--color-brand-ink-soft);
+}
+
+.crm-timeline li[data-kind='activity']::before {
+  background: var(--color-brand-gold-strong);
+}
+
+.crm-timeline li[data-tone='success']::before {
+  background: var(--color-brand-success);
+}
+
+.crm-timeline li[data-tone='warning']::before {
+  background: var(--color-brand-danger);
+}
+
+.crm-timeline time {
+  color: var(--color-brand-muted);
+  font-size: 0.75rem;
+}
+
+.crm-timeline p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.crm-facts {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.crm-facts div {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 0.5rem;
+}
+
+.crm-facts dt {
+  color: var(--color-brand-muted);
+  font-size: 0.8rem;
+}
+
+.crm-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 960px) {
+  .crm-profile {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

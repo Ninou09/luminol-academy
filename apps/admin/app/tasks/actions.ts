@@ -24,6 +24,7 @@ function returnPath(formData: FormData) {
 function revalidateTasks() {
   revalidatePath('/tasks');
   revalidatePath('/today');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function createOperationsTaskAction(formData: FormData) {
@@ -39,6 +40,7 @@ export async function createOperationsTaskAction(formData: FormData) {
       assigneeUserId: field(formData, 'assigneeUserId') || null,
       dueOn: field(formData, 'dueOn') || null,
       priority: field(formData, 'priority') ?? 'NORMAL',
+      clientId: field(formData, 'clientId') || null,
     });
     revalidateTasks();
   });

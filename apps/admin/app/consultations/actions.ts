@@ -46,6 +46,7 @@ function startsAtFrom(formData: FormData) {
 function revalidateConsultations() {
   revalidatePath('/consultations');
   revalidatePath('/clients');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function createConsultationAction(formData: FormData) {

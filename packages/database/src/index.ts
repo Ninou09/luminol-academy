@@ -172,6 +172,7 @@ export * from './ai-operator-proposals';
 export * from './ai-provider-gateway';
 export * from './consultations';
 export * from './content-calendar';
+export * from './crm';
 export * from './enquiry-follow-up';
 export * from './instructor-cohorts';
 export * from './learning-analytics';

@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { ConsultationError } from '@luminol/database/consultations';
+import { CrmError } from '@luminol/database/crm';
 import { OfficePaymentError } from '@luminol/database/office-payments';
 import { OperationsTaskError } from '@luminol/database/operations-tasks';
 import { redirect } from 'next/navigation';
@@ -32,7 +33,8 @@ export async function runOperationsMutation(
     if (
       error instanceof ConsultationError ||
       error instanceof OfficePaymentError ||
-      error instanceof OperationsTaskError
+      error instanceof OperationsTaskError ||
+      error instanceof CrmError
     ) {
       code = error.code;
     } else if (error instanceof ZodError) {

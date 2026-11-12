@@ -102,6 +102,7 @@ export async function transitionEnquiryStatus(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/enquiries');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function updateEnquiryOwnership(formData: FormData) {
@@ -144,6 +145,7 @@ export async function updateEnquiryOwnership(formData: FormData) {
   });
 
   revalidatePath('/enquiries');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function updateEnquiryFollowUpPlan(formData: FormData) {
@@ -176,6 +178,7 @@ export async function updateEnquiryFollowUpPlan(formData: FormData) {
   });
 
   revalidatePath('/enquiries');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function updateEnquiryOutcome(formData: FormData) {
@@ -226,4 +229,5 @@ export async function updateEnquiryOutcome(formData: FormData) {
   });
 
   revalidatePath('/enquiries');
+  revalidatePath('/crm', 'layout');
 }

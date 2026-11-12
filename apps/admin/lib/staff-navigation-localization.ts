@@ -4,11 +4,22 @@ import type { StaffDestinationKey } from './staff-navigation';
 
 export type StaffNavigationCopy = {
   aria: string;
+  crmLabel: string;
+  searchLabel: string;
+  searchPlaceholder: string;
+  search: string;
+  shellNote: string;
   destination: Record<StaffDestinationKey, string>;
 };
 
 const english: StaffNavigationCopy = {
   aria: 'Staff workspace',
+  crmLabel: 'Luminol CRM',
+  searchLabel: 'Search leads, contacts and receipts',
+  searchPlaceholder: 'Name, phone, email or receipt…',
+  search: 'Search',
+  shellNote:
+    'You only see the records your role allows. Nothing here sends messages automatically.',
   destination: {
     overview: 'Overview',
     today: 'Today',
@@ -23,6 +34,12 @@ const english: StaffNavigationCopy = {
 
 const french: StaffNavigationCopy = {
   aria: 'Espace équipe',
+  crmLabel: 'CRM Luminol',
+  searchLabel: 'Rechercher prospects, contacts et reçus',
+  searchPlaceholder: 'Nom, téléphone, e-mail ou reçu…',
+  search: 'Rechercher',
+  shellNote:
+    'Vous ne voyez que ce que votre rôle autorise. Rien n’est envoyé automatiquement.',
   destination: {
     overview: 'Vue d’ensemble',
     today: 'Aujourd’hui',
@@ -37,6 +54,11 @@ const french: StaffNavigationCopy = {
 
 const arabic: StaffNavigationCopy = {
   aria: 'مساحة الفريق',
+  crmLabel: 'نظام Luminol لإدارة العملاء',
+  searchLabel: 'البحث في الطلبات والعملاء والوصولات',
+  searchPlaceholder: 'الاسم أو الهاتف أو البريد أو رقم الوصل…',
+  search: 'بحث',
+  shellNote: 'ترى فقط السجلات التي يسمح بها دورك. لا يُرسل أي شيء تلقائيًا.',
   destination: {
     overview: 'نظرة عامة',
     today: 'اليوم',

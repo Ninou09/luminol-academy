@@ -1,15 +1,11 @@
 import { requirePermission } from '@luminol/auth';
 import { db } from '@luminol/database';
 import { STAFF_ROLE_KEYS, isStaffRoleKey } from '@luminol/database/staff-roles';
-import {
-  formatLocalizedDate,
-  getCommonDictionary,
-} from '@luminol/localization';
+import { formatLocalizedDate } from '@luminol/localization';
 import { z } from 'zod';
 
-import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import styles from '../../components/operations.module.css';
-import { StaffNavigation } from '../../components/staff-navigation';
+import { CrmShell } from '../../components/crm-shell';
 import { getAdminRequestLocale } from '../../lib/request-locale';
 import { getTeamCopy } from '../../lib/team-localization';
 import { grantStaffRoleAction, revokeStaffRoleAction } from './actions';
@@ -46,7 +42,6 @@ export default async function TeamPage({ searchParams }: TeamPageProps) {
   const owner = await requirePermission('team:manage');
   const locale = await getAdminRequestLocale();
   const copy = getTeamCopy(locale);
-  const common = getCommonDictionary(locale);
   const params = searchParams ? await searchParams : undefined;
   const email = parseEmail(params?.email);
 
@@ -139,116 +134,98 @@ export default async function TeamPage({ searchParams }: TeamPageProps) {
   };
 
   return (
-    <main
-      className="admin-shell"
-      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
-    >
-      <section className="admin-dashboard">
-        <div className="admin-content">
-          <section className="admin-intro">
-            <div>
-              <p className="eyebrow">{copy.eyebrow}</p>
-              <h1>{copy.title}</h1>
-              <p>{copy.intro}</p>
-            </div>
-            <div className={styles.toolbar}>
-              <StaffNavigation
-                locale={locale}
-                roles={owner.roles}
-                current="team"
-              />
-              <AdminLanguageSwitcher
-                locale={locale}
-                label={common.languageSelectorLabel}
-              />
-            </div>
-          </section>
-
-          <section className="admin-panel">
-            <div className="panel-heading">
-              <div>
-                <h2>{copy.findTitle}</h2>
-                <p className={styles.note}>{copy.findIntro}</p>
-              </div>
-            </div>
-            <form className={styles.inline} method="get">
-              <label className={styles.field}>
-                <span>{copy.emailLabel}</span>
-                <input
-                  type="email"
-                  name="email"
-                  maxLength={254}
-                  defaultValue={email ?? ''}
-                  required
-                />
-              </label>
-              <button type="submit" className={styles.button}>
-                {copy.find}
-              </button>
-            </form>
-            {email ? (
-              found ? (
-                <ul className={styles.list}>{renderMember(found)}</ul>
-              ) : (
-                <p className={styles.empty}>{copy.notFound}</p>
-              )
-            ) : null}
-            <ul className={styles.list}>
-              {STAFF_ROLE_KEYS.map((role) => (
-                <li key={role} className={styles.note}>
-                  <strong>{copy.roleName[role]}</strong> —{' '}
-                  {copy.roleDescription[role]}
-                </li>
-              ))}
-              <li className={styles.note}>{copy.adminNote}</li>
-            </ul>
-          </section>
-
-          <section className="admin-panel">
-            <div className="panel-heading">
-              <div>
-                <h2>{copy.staffTitle}</h2>
-                <p className={styles.note}>{copy.staffIntro}</p>
-              </div>
-            </div>
-            {staff.length > 0 ? (
-              <ul className={styles.list}>{staff.map(renderMember)}</ul>
-            ) : (
-              <p className={styles.empty}>{copy.noStaff}</p>
-            )}
-          </section>
-
-          <section className="admin-panel">
-            <div className="panel-heading">
-              <h2>{copy.auditTitle}</h2>
-            </div>
-            {events.length > 0 ? (
-              <ul className={styles.list}>
-                {events.map((event) => (
-                  <li className={styles.row} key={event.id}>
-                    <span>
-                      <bdi>{event.target.email}</bdi> —{' '}
-                      {isStaffRoleKey(event.roleKey)
-                        ? copy.roleName[event.roleKey]
-                        : event.roleKey}{' '}
-                      {event.action === 'GRANTED' ? copy.granted : copy.revoked}{' '}
-                      {copy.by} <bdi>{event.actor.email}</bdi>
-                    </span>
-                    <time
-                      className={styles.meta}
-                      dateTime={event.occurredAt.toISOString()}
-                    >
-                      {date(event.occurredAt)}
-                    </time>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className={styles.empty}>{copy.noAudit}</p>
-            )}
-          </section>
+    <CrmShell locale={locale} user={owner} current="team">
+      <section className="admin-intro">
+        <div>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1>{copy.title}</h1>
+          <p>{copy.intro}</p>
         </div>
       </section>
-    </main>
+
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <div>
+            <h2>{copy.findTitle}</h2>
+            <p className={styles.note}>{copy.findIntro}</p>
+          </div>
+        </div>
+        <form className={styles.inline} method="get">
+          <label className={styles.field}>
+            <span>{copy.emailLabel}</span>
+            <input
+              type="email"
+              name="email"
+              maxLength={254}
+              defaultValue={email ?? ''}
+              required
+            />
+          </label>
+          <button type="submit" className={styles.button}>
+            {copy.find}
+          </button>
+        </form>
+        {email ? (
+          found ? (
+            <ul className={styles.list}>{renderMember(found)}</ul>
+          ) : (
+            <p className={styles.empty}>{copy.notFound}</p>
+          )
+        ) : null}
+        <ul className={styles.list}>
+          {STAFF_ROLE_KEYS.map((role) => (
+            <li key={role} className={styles.note}>
+              <strong>{copy.roleName[role]}</strong> —{' '}
+              {copy.roleDescription[role]}
+            </li>
+          ))}
+          <li className={styles.note}>{copy.adminNote}</li>
+        </ul>
+      </section>
+
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <div>
+            <h2>{copy.staffTitle}</h2>
+            <p className={styles.note}>{copy.staffIntro}</p>
+          </div>
+        </div>
+        {staff.length > 0 ? (
+          <ul className={styles.list}>{staff.map(renderMember)}</ul>
+        ) : (
+          <p className={styles.empty}>{copy.noStaff}</p>
+        )}
+      </section>
+
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <h2>{copy.auditTitle}</h2>
+        </div>
+        {events.length > 0 ? (
+          <ul className={styles.list}>
+            {events.map((event) => (
+              <li className={styles.row} key={event.id}>
+                <span>
+                  <bdi>{event.target.email}</bdi> —{' '}
+                  {isStaffRoleKey(event.roleKey)
+                    ? copy.roleName[event.roleKey]
+                    : event.roleKey}{' '}
+                  {event.action === 'GRANTED' ? copy.granted : copy.revoked}{' '}
+                  {copy.by} <bdi>{event.actor.email}</bdi>
+                </span>
+                <time
+                  className={styles.meta}
+                  dateTime={event.occurredAt.toISOString()}
+                >
+                  {date(event.occurredAt)}
+                </time>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.empty}>{copy.noAudit}</p>
+        )}
+      </section>
+    </CrmShell>
   );
 }
