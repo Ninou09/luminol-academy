@@ -95,6 +95,32 @@ export function ScrollExperience() {
         });
       }
 
+      // Key paragraphs light up word by word in step with the scroll.
+      for (const paragraph of document.querySelectorAll<HTMLElement>(
+        '[data-scrub-text]',
+      )) {
+        const split = SplitText.create(paragraph, {
+          type: 'words',
+          aria: 'auto',
+        });
+        gsap.fromTo(
+          split.words,
+          { opacity: 0.16, filter: 'blur(2px)' },
+          {
+            opacity: 1,
+            filter: 'blur(0px)',
+            ease: 'none',
+            stagger: 0.08,
+            scrollTrigger: {
+              trigger: paragraph,
+              start: 'top 85%',
+              end: 'bottom 45%',
+              scrub: true,
+            },
+          },
+        );
+      }
+
       // Editorial images open like a window and settle into focus.
       for (const figure of document.querySelectorAll<HTMLElement>(
         'main figure:not([data-tilt]):not([data-no-reveal])',
@@ -121,6 +147,44 @@ export function ScrollExperience() {
             { scale: 1, duration: 1.8, ease: 'expo.out', clearProps: 'scale' },
             0,
           );
+      }
+
+      // Portal bands open from a glowing circle; curtain bands part outward.
+      for (const band of document.querySelectorAll<HTMLElement>(
+        '[data-band-reveal="portal"]',
+      )) {
+        gsap.fromTo(
+          band,
+          { clipPath: 'circle(14% at 50% 50%)' },
+          {
+            clipPath: 'circle(78% at 50% 50%)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: band,
+              start: 'top 85%',
+              end: 'center 45%',
+              scrub: 0.6,
+            },
+          },
+        );
+      }
+      for (const band of document.querySelectorAll<HTMLElement>(
+        '[data-band-reveal="curtain"]',
+      )) {
+        gsap.fromTo(
+          band,
+          { clipPath: 'inset(0% 46% 0% 46% round 2rem)' },
+          {
+            clipPath: 'inset(0% 0% 0% 0% round 2rem)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: band,
+              start: 'top 88%',
+              end: 'center 50%',
+              scrub: 0.6,
+            },
+          },
+        );
       }
 
       // Cinematic bands: the camera slowly pushes in while scrolling past.

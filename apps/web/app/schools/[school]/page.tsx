@@ -41,6 +41,9 @@ import {
   serializeJsonLd,
 } from '../../../lib/structured-data';
 import styles from './page.module.css';
+import { GlassIcon, type GlassIconName } from '../../../components/glass-icon';
+import Image from 'next/image';
+import { commissionedScenes } from '../../../lib/academy-media';
 
 type SchoolPageProps = {
   params: Promise<{ school: string }>;
@@ -86,6 +89,12 @@ export async function generateMetadata({
     },
   };
 }
+
+const journeyIcons: GlassIconName[] = [
+  'journey-listen',
+  'journey-clarity',
+  'journey-build',
+];
 
 export default async function SchoolPage({ params }: SchoolPageProps) {
   const { school: slug } = await params;
@@ -216,10 +225,13 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
+            scene={commissionedScenes.schoolHero[school.slug]}
           />
-          {school.slug === 'psychology' ? (
+          {school.slug === 'psychology' || school.slug === 'languages' ? (
             <FloatingArt
-              art="neuronTree"
+              art={
+                school.slug === 'psychology' ? 'neuronTree' : 'languageSchool'
+              }
               locale={locale}
               className={styles.heroArt}
             />
@@ -232,6 +244,16 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           aria-labelledby="school-promise-title"
           data-reveal
         >
+          <Image
+            className={styles.promiseArt}
+            src={`/media/brand/band-${school.slug}.webp`}
+            alt=""
+            width={1914}
+            height={822}
+            sizes="100vw"
+            aria-hidden="true"
+            data-zoom
+          />
           <p id="school-promise-title">{copy.promiseLabel}</p>
           <blockquote>{school.promise}</blockquote>
         </section>
@@ -307,6 +329,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <ol>
             {school.approach.map((step, index) => (
               <li key={step.title} data-reveal>
+                <GlassIcon
+                  name={journeyIcons[index % journeyIcons.length]!}
+                  size="md"
+                  delay={index}
+                  className={styles.journeyIcon}
+                />
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 <div>
                   <h3>{step.title}</h3>

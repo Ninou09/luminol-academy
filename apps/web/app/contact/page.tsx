@@ -21,6 +21,8 @@ import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import { getSchools } from '../../lib/schools';
 import styles from './page.module.css';
+import { NeuralBrain } from '../../components/neural-brain';
+import { GlassIcon, type GlassIconName } from '../../components/glass-icon';
 
 type ContactPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -56,6 +58,12 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
 }
+
+const stepIcons: GlassIconName[] = [
+  'step-recorded',
+  'step-review',
+  'step-reply',
+];
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
   const [locale, params] = await Promise.all([
@@ -110,6 +118,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           aria-labelledby="contact-hero-title"
           data-contact-hero
         >
+          <NeuralBrain className="hero-brain hero-brain--soft" />
           <div className={styles.heroCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.eyebrow}</p>
             <h1 id="contact-hero-title">{copy.heroTitle}</h1>
@@ -119,7 +128,11 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </p>
         </section>
 
-        <ImmersiveBand art="quietLake" locale={locale} />
+        <ImmersiveBand
+          art="contactConversation"
+          locale={locale}
+          reveal="curtain"
+        />
 
         <section
           className={styles.enquirySection}
@@ -133,6 +146,11 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             <ol>
               {copy.steps.map((step, index) => (
                 <li key={step}>
+                  <GlassIcon
+                    name={stepIcons[index % stepIcons.length]!}
+                    size="sm"
+                    delay={index}
+                  />
                   <span>{String(index + 1).padStart(2, '0')}</span>
                   {step}
                 </li>

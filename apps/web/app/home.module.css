@@ -1108,3 +1108,234 @@
     opacity: 0.45;
   }
 }
+
+/* ================= Cosmic theme: the home page floats in the universe ================= */
+.page[data-cosmos] {
+  --color-brand-ink: #e9f5fa;
+  --color-brand-ink-soft: #c4d9e3;
+  --color-brand-muted: #9bb3c3;
+  --color-brand-line: rgb(255 255 255 / 0.12);
+  --color-brand-canvas: #071a2b;
+  --color-brand-cyan-deep: #35b9dd;
+  --color-school-psychology: #5fd0c0;
+  --color-school-languages: #8fb6ec;
+  --color-school-training: #e0b07a;
+  background: transparent;
+  color: var(--color-brand-ink);
+}
+/* Light "paper" islands keep the original light palette (e.g. CMS programme). */
+.page[data-cosmos] [data-programme-spotlight] {
+  --color-brand-ink: #102a43;
+  --color-brand-ink-soft: #243b53;
+  --color-brand-muted: #627d98;
+  --color-brand-line: #d9e2ec;
+  --color-brand-canvas: #fafaf8;
+  --color-brand-cyan-deep: #087397;
+  color: var(--color-brand-ink);
+}
+.page[data-cosmos] .hero {
+  background: transparent;
+}
+.page[data-cosmos] .proof div {
+  border-color: rgb(139 222 239 / 0.18);
+  background: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 0.1),
+    rgb(255 255 255 / 0.02)
+  );
+  box-shadow:
+    0 1.5rem 3.5rem rgb(0 0 0 / 0.35),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+.page[data-cosmos] .proof dt {
+  background: linear-gradient(135deg, #bff3ff, var(--color-brand-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.page[data-cosmos] .approach,
+.page[data-cosmos] .cta {
+  background: linear-gradient(
+    180deg,
+    rgb(4 15 27 / 0.1),
+    rgb(4 15 27 / 0.55) 50%,
+    rgb(4 15 27 / 0.1)
+  );
+}
+.page[data-cosmos] .eyebrow {
+  color: var(--color-brand-cyan-light);
+}
+/* Each school card floats on a faint glass plate. */
+.page[data-cosmos] .schoolDetails {
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 1.5rem;
+  background: linear-gradient(160deg, rgb(7 26 43 / 0.55), rgb(7 26 43 / 0.25));
+  backdrop-filter: blur(10px);
+}
+.page[data-cosmos] .mediaCredits {
+  background: rgb(4 15 27 / 0.7);
+}
+/* Keep the film veil dark and white buttons legible inside the cosmos. */
+.page[data-cosmos] .pathwayFilm {
+  --color-brand-ink: #071a2b;
+}
+.page[data-cosmos] .heroActions a:first-child,
+.page[data-cosmos] .cta > a,
+.page[data-cosmos] .heroActions a:first-child:hover,
+.page[data-cosmos] .cta > a:hover {
+  color: var(--color-brand-night);
+}
+
+/* Commissioned artwork is now transparent: let it float freely in space. */
+.schoolArt {
+  background: transparent;
+  box-shadow: none;
+}
+.schoolArt[data-tilt-active] {
+  box-shadow: none;
+}
+.artImage {
+  object-fit: contain;
+  filter: drop-shadow(0 1.5rem 3rem rgb(0 0 0 / 0.5))
+    drop-shadow(0 0 2rem rgb(139 222 239 / 0.22));
+}
+.artGlow {
+  opacity: 0.35;
+}
+
+/* Brighter cosmos with pearl, gold and white accents. */
+.page[data-cosmos] {
+  --color-brand-ink-soft: #d4e5ee;
+  --color-brand-muted: #b3c8d6;
+  --color-brand-gold: #e8c37a;
+  --color-brand-gold-strong: #f0cf8e;
+}
+.page[data-cosmos] .titleAccent .word {
+  background: linear-gradient(
+    100deg,
+    var(--color-brand-cyan-light) 0%,
+    #ffffff 30%,
+    #f3d48f 50%,
+    #ffffff 68%,
+    var(--color-brand-cyan-light) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.page[data-cosmos] .proof dt {
+  background: linear-gradient(135deg, #ffffff, #f3d48f 55%, #8bdeef);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.page[data-cosmos] .schoolTop span:first-child,
+.page[data-cosmos] .principles li > span {
+  color: #f0cf8e;
+}
+
+.page[data-cosmos] .artNumber {
+  border-color: rgb(243 212 143 / 0.45);
+  background: rgb(7 26 43 / 0.55);
+  color: #f3d48f;
+  box-shadow: 0 0 1.5rem rgb(243 212 143 / 0.2);
+}
+
+/* "Why Luminol exists": a living film in a luminous glass frame. */
+.aboutFilm {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(26rem, 40vw, 38rem);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 2rem;
+  box-shadow:
+    0 2.5rem 5rem -1.5rem rgb(0 0 0 / 0.55),
+    0 0 4rem -1rem rgb(139 222 239 / 0.3);
+  transform: perspective(1200px) rotateY(-6deg) rotateX(2deg);
+  transition: transform 900ms var(--luminol-ease-out);
+}
+.aboutFilm:hover {
+  transform: perspective(1200px) rotateY(0deg) rotateX(0deg);
+}
+.aboutFilm:dir(rtl) {
+  transform: perspective(1200px) rotateY(6deg) rotateX(2deg);
+}
+.aboutFilmGlow {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    125deg,
+    rgb(255 255 255 / 0.18),
+    transparent 30%,
+    transparent 70%,
+    rgb(243 212 143 / 0.16)
+  );
+  pointer-events: none;
+}
+
+/* Approach principles: a glass icon floats at the end of each card. */
+.principles li {
+  position: relative;
+  grid-template-columns: 2.5rem minmax(0, 1fr) 8.25rem;
+  align-items: center;
+}
+.principleIcon {
+  grid-column: 3;
+  grid-row: 1;
+}
+@media (max-width: 680px) {
+  .principles li {
+    grid-template-columns: 2rem minmax(0, 1fr) 4.5rem;
+  }
+  .principleIcon {
+    width: 4.5rem !important;
+    height: 4.5rem !important;
+  }
+}
+.page[data-cosmos] .aboutFilm {
+  --color-brand-ink: #071a2b;
+}
+.principles li > .principleIcon {
+  display: inline-grid;
+  width: 8.25rem;
+  height: 8.25rem;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+@media (max-width: 680px) {
+  .principles li > .principleIcon {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+}
+/* Commissioned transparent vignettes float beside each school artwork. */
+.schoolInset {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.schoolInset img {
+  object-fit: contain;
+  filter: drop-shadow(0 1.25rem 2rem rgb(0 0 0 / 0.5))
+    drop-shadow(0 0 1.5rem rgb(139 222 239 / 0.25));
+}
+.schoolInset figcaption {
+  display: none;
+}
+.schoolInset,
+.schoolInset::before,
+.schoolInset::after {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+/* No photo gradient over transparent vignettes. */
+.schoolInset::after {
+  display: none;
+}

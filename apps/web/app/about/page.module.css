@@ -1,6 +1,6 @@
 .page {
   overflow: clip;
-  background: var(--color-brand-canvas);
+  background: transparent;
   color: var(--color-brand-ink);
 }
 
@@ -83,12 +83,12 @@
   border-radius: clamp(1.3rem, 2.8vw, 2.15rem);
   background: linear-gradient(
     145deg,
-    var(--color-brand-ink),
+    var(--luminol-deep, var(--color-brand-ink)),
     var(--color-brand-ink-soft) 60%,
     color-mix(
       in srgb,
       var(--color-school-languages) 55%,
-      var(--color-brand-ink)
+      var(--luminol-deep, var(--color-brand-ink))
     )
   );
   box-shadow: var(--shadow-editorial);
@@ -114,7 +114,12 @@
   opacity: 0.28;
   background: repeating-conic-gradient(
     from 0deg,
-    color-mix(in srgb, var(--color-brand-surface) 18%, transparent) 0deg 1deg,
+    color-mix(
+        in srgb,
+        var(--luminol-card, var(--color-brand-surface)) 18%,
+        transparent
+      )
+      0deg 1deg,
     transparent 1deg 16deg
   );
   mask-image: radial-gradient(
@@ -221,7 +226,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   border-block: 1px solid var(--color-brand-line);
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
 }
 
 .missionVision article {
@@ -237,11 +242,11 @@
   border-inline-end: 1px solid var(--color-brand-line);
   background: linear-gradient(
     145deg,
-    var(--color-brand-surface),
+    var(--luminol-card, var(--color-brand-surface)),
     color-mix(
       in srgb,
       var(--color-school-psychology-soft) 65%,
-      var(--color-brand-surface)
+      var(--luminol-card, var(--color-brand-surface))
     )
   );
 }
@@ -249,11 +254,11 @@
 .missionVision article:last-child {
   background: linear-gradient(
     145deg,
-    var(--color-brand-surface),
+    var(--luminol-card, var(--color-brand-surface)),
     color-mix(
       in srgb,
       var(--color-school-languages-soft) 65%,
-      var(--color-brand-surface)
+      var(--luminol-card, var(--color-brand-surface))
     )
   );
 }
@@ -309,7 +314,7 @@
   flex-direction: column;
   padding: clamp(1.5rem, 3vw, 2.5rem);
   border-bottom: 1px solid var(--color-brand-line);
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
 }
 
 .valueCard:nth-child(odd) {
@@ -351,7 +356,7 @@
   padding: clamp(1rem, 2vw, 1.5rem);
   border: 1px solid var(--color-brand-line);
   border-radius: var(--luminol-media-radius);
-  background: var(--color-brand-ink);
+  background: var(--luminol-deep, var(--color-brand-ink));
   overflow: hidden;
 }
 
@@ -470,7 +475,7 @@
   align-items: end;
   padding: clamp(4rem, 9vw, 8rem)
     max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
-  background: var(--color-brand-ink-soft);
+  background: var(--luminol-deep-soft, var(--color-brand-ink-soft));
   color: var(--color-brand-surface);
 }
 
@@ -572,4 +577,241 @@
     width: min(16rem, 60%);
     margin: -6rem auto 0;
   }
+}
+
+/* Glass objects for the founding idea, mission, vision and values. */
+.originIcon {
+  display: grid;
+  margin: 0 0 1.5rem;
+}
+.missionVision article [data-glass-icon] {
+  margin-block-end: 1rem;
+}
+.valueCard .valueIcon {
+  margin-block-end: 0.75rem;
+}
+
+/* ================= One human journey: a living 3D orbital system ================= */
+.ecosystemStage {
+  min-height: 46rem;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  padding-top: 20rem;
+  align-items: stretch;
+  perspective: 1200px;
+  border-color: rgb(255 255 255 / 0.14);
+  background:
+    radial-gradient(
+      ellipse at 50% 28%,
+      rgb(139 222 239 / 0.22),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 15% 90%,
+      rgb(63 184 169 / 0.12),
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 85% 90%,
+      rgb(224 176 122 / 0.12),
+      transparent 50%
+    ),
+    rgb(4 15 27 / 0.55);
+}
+.ecosystemStage::before {
+  display: none;
+}
+.orbitSystem {
+  position: absolute;
+  top: 3.5rem;
+  left: 50%;
+  width: min(40rem, 90%);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  transform-style: preserve-3d;
+  transform: rotateX(68deg);
+  pointer-events: none;
+}
+.orbitRing {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border: 1px solid rgb(139 222 239 / 0.35);
+  border-radius: 50%;
+  box-shadow:
+    0 0 1.5rem rgb(139 222 239 / 0.15),
+    inset 0 0 1.5rem rgb(139 222 239 / 0.1);
+}
+.orbitRing:nth-child(1) {
+  width: 46%;
+  height: 46%;
+}
+.orbitRing:nth-child(2) {
+  width: 72%;
+  height: 72%;
+  border-color: rgb(243 212 143 / 0.3);
+}
+.orbitRing:nth-child(3) {
+  width: 98%;
+  height: 98%;
+  border-style: dashed;
+  border-color: rgb(255 255 255 / 0.18);
+}
+/* Bright sparks travel along each ring. */
+.orbitSpark {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 50%;
+}
+.orbitSpark::after {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 0 12px #8bdeef,
+    0 0 30px #8bdeef;
+}
+.orbitSpark:nth-child(4) {
+  width: 46%;
+  height: 46%;
+}
+.orbitSpark:nth-child(5) {
+  width: 72%;
+  height: 72%;
+}
+.orbitSpark:nth-child(5)::after {
+  background: #fff4d6;
+  box-shadow:
+    0 0 12px #f3d48f,
+    0 0 30px #f3d48f;
+}
+.orbitSpark:nth-child(6) {
+  width: 98%;
+  height: 98%;
+}
+.ecosystemCore {
+  top: 10.5rem;
+  width: 11.5rem;
+  border: 1px solid rgb(255 255 255 / 0.4);
+  background:
+    radial-gradient(
+      circle at 32% 28%,
+      rgb(255 255 255 / 0.95),
+      transparent 30%
+    ),
+    radial-gradient(circle at 50% 60%, #8bdeef, #159bc2 55%, #0a4f6e 100%);
+  color: #04202e;
+  box-shadow:
+    0 0 3rem rgb(139 222 239 / 0.55),
+    0 0 8rem rgb(21 155 194 / 0.35),
+    inset -1.5rem -2rem 3rem rgb(4 32 46 / 0.35);
+  font-size: 2.3rem;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 0.6);
+}
+.ecosystemCore small {
+  color: rgb(4 32 46 / 0.75);
+}
+.schoolCard {
+  min-height: 22rem;
+  justify-content: flex-end;
+  overflow: visible;
+  border-color: rgb(255 255 255 / 0.16);
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--school-accent) 22%, transparent),
+    rgb(4 15 27 / 0.6)
+  );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+.schoolCardArt {
+  position: absolute;
+  top: -5.5rem;
+  left: 50%;
+  width: 62%;
+  height: auto;
+  translate: -50% 0;
+  filter: drop-shadow(0 1.5rem 2rem rgb(0 0 0 / 0.5))
+    drop-shadow(
+      0 0 1.5rem color-mix(in srgb, var(--school-accent) 50%, transparent)
+    );
+  transition:
+    translate 700ms var(--luminol-ease-out),
+    scale 700ms var(--luminol-ease-out);
+}
+.schoolCard:hover .schoolCardArt {
+  translate: -50% -0.75rem;
+  scale: 1.06;
+}
+/* A beam of light rises from each school toward the core. */
+.schoolBeam {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  width: 2px;
+  height: 7rem;
+  translate: -50% 0;
+  background: linear-gradient(0deg, var(--school-accent), transparent);
+  opacity: 0.6;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .orbitRing:nth-child(1),
+  .orbitSpark:nth-child(4) {
+    animation: orbit-spin 14s linear infinite;
+  }
+  .orbitRing:nth-child(2),
+  .orbitSpark:nth-child(5) {
+    animation: orbit-spin 22s linear infinite reverse;
+  }
+  .orbitRing:nth-child(3),
+  .orbitSpark:nth-child(6) {
+    animation: orbit-spin 34s linear infinite;
+  }
+  .schoolCardArt {
+    animation: art-levitate 7s ease-in-out infinite alternate;
+  }
+  .schoolCard:nth-of-type(2) .schoolCardArt {
+    animation-delay: -2.5s;
+  }
+  .schoolCard:nth-of-type(3) .schoolCardArt {
+    animation-delay: -5s;
+  }
+}
+@keyframes orbit-spin {
+  to {
+    rotate: 1turn;
+  }
+}
+@keyframes art-levitate {
+  from {
+    translate: -50% -0.4rem;
+  }
+  to {
+    translate: -50% 0.5rem;
+  }
+}
+@media (max-width: 1000px) {
+  .ecosystemStage {
+    grid-template-columns: 1fr;
+    gap: 7rem;
+    padding-top: 22rem;
+  }
+  .schoolCard {
+    min-height: 16rem;
+  }
+  .schoolCardArt {
+    width: 46%;
+  }
+}
+/* The new hero scene already holds figures: the connection art sits at the lower edge. */
+.hero > .heroArt {
+  inset-block-start: auto;
+  inset-block-end: clamp(1rem, 4vw, 3rem);
+  inset-inline-end: calc(min(46%, 44rem) - 5rem);
+  rotate: -5deg;
 }

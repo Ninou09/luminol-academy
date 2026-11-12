@@ -267,33 +267,40 @@
 .megaMark span {
   display: block;
   padding-block-end: 0.1em;
+  /* Liquid metal: silver, white and gold flowing endlessly through the word. */
   background: linear-gradient(
-    100deg,
-    color-mix(in srgb, var(--color-brand-surface) 8%, transparent) 0%,
-    color-mix(in srgb, var(--color-brand-surface) 8%, transparent) 38%,
-    var(--color-brand-cyan-light) 48%,
-    var(--color-brand-surface) 50%,
-    var(--color-brand-cyan-light) 52%,
-    color-mix(in srgb, var(--color-brand-surface) 8%, transparent) 62%,
-    color-mix(in srgb, var(--color-brand-surface) 8%, transparent) 100%
+    105deg,
+    #9aa7b4 0%,
+    #e8eef3 12%,
+    #ffffff 18%,
+    #b7c2cc 26%,
+    #f3d48f 36%,
+    #fff4d6 42%,
+    #c9a24f 50%,
+    #e8eef3 60%,
+    #ffffff 66%,
+    #9aa7b4 76%,
+    #f3d48f 88%,
+    #9aa7b4 100%
   );
-  background-size: 250% 100%;
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 0 1.5rem rgb(243 212 143 / 0.25))
+    drop-shadow(0 0.4rem 1.25rem rgb(0 0 0 / 0.4));
 }
 @media (prefers-reduced-motion: no-preference) {
   .megaMark span {
-    animation: beam 7s ease-in-out infinite;
+    animation: liquid-metal 9s linear infinite;
   }
 }
-@keyframes beam {
-  0% {
-    background-position: 110% 0;
+@keyframes liquid-metal {
+  from {
+    background-position: 0% 0;
   }
-  60%,
-  100% {
-    background-position: -10% 0;
+  to {
+    background-position: 300% 0;
   }
 }
 
@@ -318,4 +325,18 @@
   .header {
     transition: none;
   }
+}
+
+/* Over the home-page cosmos the header becomes dark glass. */
+.header {
+  --color-brand-ink: #e9f5fa;
+  --color-brand-ink-soft: #c4d9e3;
+  --color-brand-line: rgb(255 255 255 / 0.12);
+  --color-brand-canvas: #071a2b;
+  border-bottom-color: rgb(255 255 255 / 0.08);
+  background: rgb(7 26 43 / 0.45);
+  color: var(--color-brand-ink);
+}
+:global(html[data-scrolled]) .header {
+  background: rgb(7 26 43 / 0.78);
 }

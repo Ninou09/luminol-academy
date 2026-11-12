@@ -14,6 +14,7 @@ import { AcademyImage } from '../components/academy-image';
 import { BreathingSpace } from '../components/breathing-space';
 import { CinematicBackdrop } from '../components/cinematic-backdrop';
 import { InkBlot } from '../components/ink-blot';
+import { MindSection } from '../components/mind-section';
 import { CinematicScroll } from '../components/cinematic-scroll';
 import { LuminousBackdrop } from '../components/luminous-backdrop';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
@@ -23,8 +24,8 @@ import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { ThoughtNetwork } from '../components/thought-network';
 import { VelocityMarquee } from '../components/velocity-marquee';
 import {
-  academyMedia,
   brandArtworkCredit,
+  commissionedScenes,
   cinematicCopy,
   schoolArtwork,
 } from '../lib/academy-media';
@@ -33,6 +34,7 @@ import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
+import { GlassIcon, type GlassIconName } from '../components/glass-icon';
 
 const constellationCopy = {
   en: {
@@ -83,6 +85,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const approachIcons: GlassIconName[] = [
+  'journey-listen',
+  'journey-clarity',
+  'journey-build',
+];
+
 export default async function Page() {
   const locale = await getRequestLocale();
   const publicCopy = getPublicCopy(locale);
@@ -112,7 +120,7 @@ export default async function Page() {
       <SiteHeader />
       <CinematicScroll />
       <OrganizationJsonLd description={publicCopy.site.description} />
-      <main id="main-content" tabIndex={-1} className={styles.page}>
+      <main id="main-content" tabIndex={-1} className={styles.page} data-cosmos>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
           <LuminousBackdrop locale={locale} />
           <div className={styles.heroLocation} aria-hidden="true">
@@ -208,7 +216,7 @@ export default async function Page() {
                 {copy.schoolsTitle}
               </h2>
             </div>
-            <p>{copy.schoolsIntro}</p>
+            <p data-scrub-text>{copy.schoolsIntro}</p>
           </div>
           <div className={styles.schoolGrid}>
             {schoolList.map((school, index) => (
@@ -250,6 +258,7 @@ export default async function Page() {
                     school={school.slug}
                     locale={locale}
                     sizes="(max-width: 800px) 45vw, 18vw"
+                    scene={commissionedScenes.inset[school.slug]}
                   />
                 </div>
                 <div className={styles.schoolDetails} data-reveal>
@@ -280,6 +289,8 @@ export default async function Page() {
           </div>
         </section>
 
+        <MindSection locale={locale} />
+
         <section
           id="approach"
           className={styles.approach}
@@ -294,11 +305,17 @@ export default async function Page() {
             <h2 id="home-approach-title" data-split>
               {copy.approachTitle}
             </h2>
-            <p>{copy.approachIntro}</p>
+            <p data-scrub-text>{copy.approachIntro}</p>
           </div>
           <ol className={styles.principles} data-stagger>
-            {copy.principles.map((principle) => (
+            {copy.principles.map((principle, index) => (
               <li key={principle.number}>
+                <GlassIcon
+                  name={approachIcons[index % approachIcons.length]!}
+                  size="md"
+                  delay={index}
+                  className={styles.principleIcon}
+                />
                 <span>{principle.number}</span>
                 <div>
                   <h3>{principle.title}</h3>
@@ -316,20 +333,26 @@ export default async function Page() {
           className={`${styles.section} ${styles.about}`}
           aria-labelledby="home-about-title"
         >
-          <div className={styles.aboutVisualWrap} data-depth="0.08">
-            <AcademyImage
-              className={styles.aboutVisual}
-              school="training"
-              locale={locale}
-              sizes="(max-width: 1000px) 100vw, 40vw"
+          <div
+            className={`${styles.aboutVisualWrap} ${styles.aboutFilm}`}
+            data-depth="0.08"
+          >
+            <CinematicBackdrop
+              pauseLabel={cinematic.pause}
+              playLabel={cinematic.play}
+              src="/media/cinematic/hero-loop.mp4"
+              poster="/media/cinematic/hero-poster.webp"
             />
+            <span className={styles.aboutFilmGlow} aria-hidden="true" />
           </div>
           <div className={styles.aboutCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.aboutEyebrow}</p>
             <h2 id="home-about-title" data-split>
               {copy.aboutTitle}
             </h2>
-            <p className={styles.aboutLede}>{copy.aboutLede}</p>
+            <p className={styles.aboutLede} data-scrub-text>
+              {copy.aboutLede}
+            </p>
             <p>{copy.aboutBody}</p>
             <div className={styles.values}>
               {copy.values.map((value) => (
@@ -430,16 +453,6 @@ export default async function Page() {
           >
             Mixkit · 21595
           </a>
-          {Object.values(academyMedia).map((media) => (
-            <a
-              key={media.sourceUrl}
-              href={media.sourceUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {media.credit}
-            </a>
-          ))}
           <span>{brandArtworkCredit.label[locale]}</span>
         </aside>
       </main>

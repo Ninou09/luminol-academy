@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { useRef, useState, type KeyboardEvent } from 'react';
 
 import { AcademyLogo } from '../../../components/academy-logo';
+import { ImmersiveBand } from '../../../components/psychology-art';
 import styles from './page.module.css';
+import { GlassIcon } from '../../../components/glass-icon';
 
 const topics = [
   {
@@ -126,7 +128,7 @@ export function WorkshopExperience({
   const topic = topics[activeTopic] ?? topics[0];
 
   return (
-    <div className={styles.page} lang="ar" dir="rtl">
+    <div className={styles.page} lang="ar" dir="rtl" data-cosmic-page>
       <a className={styles.skipLink} href="#main-content">
         انتقل إلى المحتوى الرئيسي
       </a>
@@ -257,6 +259,8 @@ export function WorkshopExperience({
           </aside>
         </section>
 
+        <ImmersiveBand art="familyAfterTrauma" locale="ar" priority />
+
         <section
           id="about"
           className={styles.intro}
@@ -352,15 +356,19 @@ export function WorkshopExperience({
           </div>
           <ul>
             <li>
+              <GlassIcon name="ws-step-register" size="md" delay={0} />
               <span>01</span> أفراد الأسرة ومقدّمو الدعم
             </li>
             <li>
+              <GlassIcon name="ws-step-confirm" size="md" delay={1} />
               <span>02</span> المهتمون بالتثقيف النفسي
             </li>
             <li>
+              <GlassIcon name="ws-step-calendar" size="md" delay={2} />
               <span>03</span> طلبة علم النفس والتخصصات القريبة
             </li>
             <li>
+              <GlassIcon name="ws-step-join" size="md" delay={3} />
               <span>04</span> الممارسون في مجالات المساعدة
             </li>
           </ul>

@@ -320,3 +320,19 @@
     display: none;
   }
 }
+
+/* Inside the home cosmos the breathing space becomes a pool of light. */
+:global(main[data-cosmos]) .space {
+  background: radial-gradient(
+    circle at 70% 50%,
+    color-mix(in srgb, var(--color-brand-cyan) 22%, transparent),
+    transparent 55%
+  );
+}
+:global(main[data-cosmos]) .control {
+  background: linear-gradient(135deg, var(--color-brand-cyan), #2fd0c4);
+  color: #04202e;
+}
+:global(main[data-cosmos]) .ring circle:first-child {
+  stroke: rgb(255 255 255 / 0.14);
+}

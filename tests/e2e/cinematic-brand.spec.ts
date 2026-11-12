@@ -67,8 +67,6 @@ test('hero and school artwork retain their source metadata', async ({
     );
     await expect(art.locator('img')).not.toHaveAttribute('alt', '');
   }
-  await expect(page.locator('#about [data-academy-media]')).toHaveAttribute(
-    'data-media-source',
-    'https://unsplash.com/photos/vdXMSiX-n6M',
-  );
+  // "Why Luminol exists" now plays the second academy film.
+  await expect(page.locator('#about video')).toHaveCount(1);
 });

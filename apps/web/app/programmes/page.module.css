@@ -67,8 +67,8 @@
   justify-content: center;
   padding-inline: 1rem;
   border: 1px solid var(--color-brand-ink);
-  background: var(--color-brand-ink);
-  color: var(--color-brand-canvas);
+  background: var(--luminol-deep, var(--color-brand-ink));
+  color: var(--luminol-on-deep, var(--color-brand-canvas));
   font: inherit;
   font-size: 0.78rem;
   font-weight: 800;
@@ -196,8 +196,8 @@
 }
 
 .cardActions .primaryAction {
-  background: var(--color-brand-ink);
-  color: var(--color-brand-canvas);
+  background: var(--luminol-deep, var(--color-brand-ink));
+  color: var(--luminol-on-deep, var(--color-brand-canvas));
 }
 
 .cardActions .secondaryAction {
@@ -306,5 +306,35 @@
     inset: auto;
     width: min(18rem, 70%);
     margin: 0 auto 2rem;
+  }
+}
+
+/* The untangled thread floats in a halo, and stays compact on phones. */
+.heroArt::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 8%;
+  border: 1px solid rgb(139 222 239 / 0.25);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2.5rem rgb(139 222 239 / 0.05),
+    0 0 4rem rgb(139 222 239 / 0.2);
+}
+@media (max-width: 900px) {
+  .hero {
+    overflow: hidden;
+  }
+  .heroArt {
+    position: absolute;
+    inset-block-start: 0.5rem;
+    inset-inline-end: -12%;
+    width: min(58vw, 16rem);
+    margin: 0;
+    opacity: 0.75;
+  }
+  .hero > :not(.heroArt) {
+    position: relative;
+    z-index: 2;
   }
 }

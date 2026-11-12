@@ -29,11 +29,11 @@ test('premium school storytelling preserves landmarks and governed media', async
   await expect(academyMedia).toBeVisible();
   await expect(academyMedia).toHaveAttribute(
     'data-media-source',
-    'https://unsplash.com/photos/LQ1t-8Ms5PY',
+    'luminol-commissioned-3d',
   );
   await expect(
     academyMedia.getByRole('img', {
-      name: 'Two women having a conversation beside a sunlit window',
+      name: 'Two glass figures in armchairs facing each other around a glowing sphere',
     }),
   ).toBeVisible();
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);

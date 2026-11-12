@@ -19,16 +19,26 @@ export function ImmersiveBand({
   locale,
   className,
   priority = false,
+  reveal = 'zoom',
 }: {
   art: ArtworkKey;
   locale: Locale;
   className?: string | undefined;
   priority?: boolean;
+  /** How the band opens while scrolling: a camera push, a portal or a curtain. */
+  reveal?: 'zoom' | 'portal' | 'curtain';
 }) {
   const asset = psychologyArtwork[art];
   return (
     <figure
-      className={classes(styles.band, className)}
+      className={classes(
+        styles.band,
+        reveal === 'portal' && styles.portal,
+        reveal === 'curtain' && styles.curtain,
+        className,
+      )}
+      data-band-reveal={reveal}
+      data-no-reveal
       data-media-source={brandArtworkCredit.source}
       data-media-license={brandArtworkCredit.license}
       data-media-crop="center-center"

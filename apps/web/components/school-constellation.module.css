@@ -285,3 +285,12 @@
 .constellation:not([data-scene='live']) .hint {
   display: none;
 }
+
+/* Let the inner universe show through behind the three schools. */
+:global(main[data-cosmos]) .constellation {
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    rgb(21 155 194 / 0.18),
+    transparent 62%
+  );
+}

@@ -4,7 +4,7 @@
   overflow: hidden;
   width: min(calc(100% - 2 * var(--luminol-page-gutter)), 92rem);
   height: clamp(18rem, 46vw, 40rem);
-  margin: 0 auto clamp(3rem, 7vw, 6rem);
+  margin: clamp(2rem, 5vw, 4rem) auto clamp(3rem, 7vw, 6rem);
   border-radius: clamp(1.25rem, 2.5vw, 2.25rem);
   background: var(--color-brand-night);
   box-shadow: 0 2.5rem 6rem -2rem rgb(7 26 43 / 0.45);
@@ -138,4 +138,34 @@
   to {
     translate: 0 0.6rem;
   }
+}
+
+/* Transparent artwork floats without a card. */
+.floating {
+  background: transparent;
+  box-shadow: none;
+}
+.floatingImage {
+  filter: drop-shadow(0 1.5rem 2.5rem rgb(0 0 0 / 0.5))
+    drop-shadow(0 0 1.75rem rgb(139 222 239 / 0.25));
+}
+
+/* Portal: the scene opens from a glowing circle as you scroll. */
+.portal {
+  height: clamp(22rem, 56vw, 46rem);
+  border-radius: 0;
+  width: 100%;
+  background: transparent;
+  box-shadow: none;
+}
+.portal .bandVeil {
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 40%,
+    rgb(4 15 27 / 0.55) 100%
+  );
+}
+/* Curtain: the scene parts from the centre outward. */
+.curtain {
+  height: clamp(20rem, 48vw, 40rem);
 }

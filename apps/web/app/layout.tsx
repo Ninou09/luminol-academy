@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
 import { HoverPreview } from '../components/hover-preview';
+import { InnerUniverse } from '../components/inner-universe';
 import { LuminousCursor } from '../components/luminous-cursor';
 import { PublicInteractions } from '../components/public-interactions';
 import { PublicMotionController } from '../components/public-motion-controller';
@@ -108,6 +109,7 @@ export default async function RootLayout({
       dir={getLocaleDirection(locale)}
     >
       <body>
+        <InnerUniverse />
         <PageNavigation />
         <PublicMotionController />
         <PublicInteractions />

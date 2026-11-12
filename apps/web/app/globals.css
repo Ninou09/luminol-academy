@@ -86,8 +86,8 @@ a {
   grid-template-columns: minmax(0, 0.9fr) minmax(20rem, 1.1fr);
   gap: clamp(4rem, 10vw, 10rem);
   padding: var(--luminol-section-space) var(--luminol-page-gutter);
-  background: var(--color-brand-ink);
-  color: var(--color-brand-canvas);
+  background: var(--luminol-deep, var(--color-brand-ink));
+  color: var(--luminol-on-deep, var(--color-brand-canvas));
 }
 
 .about {
@@ -104,7 +104,7 @@ footer {
   gap: 2rem;
   align-items: center;
   padding-inline: var(--luminol-page-gutter);
-  background: var(--color-brand-ink);
+  background: var(--luminol-deep, var(--color-brand-ink));
   color: var(--color-brand-line);
   border-top: 1px solid rgb(255 255 255 / 0.14);
 }
@@ -210,7 +210,7 @@ footer p:last-child {
 
 .enquiry-form {
   padding: clamp(1.5rem, 4vw, 3rem);
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   color: var(--color-brand-ink);
 }
 
@@ -449,8 +449,12 @@ html[dir='rtl'] body {
 .luminol-button--primary {
   background: linear-gradient(
     135deg,
-    var(--color-brand-ink),
-    color-mix(in srgb, var(--color-brand-cyan-deep) 70%, var(--color-brand-ink))
+    var(--luminol-deep, var(--color-brand-ink)),
+    color-mix(
+      in srgb,
+      var(--color-brand-cyan-deep) 70%,
+      var(--luminol-deep, var(--color-brand-ink))
+    )
   );
   box-shadow:
     0 0.75rem 1.75rem -0.75rem rgb(7 26 43 / 0.55),
@@ -473,7 +477,11 @@ html[dir='rtl'] body {
 
 .luminol-button--secondary {
   border-color: color-mix(in srgb, var(--color-brand-ink) 35%, transparent);
-  background: color-mix(in srgb, var(--color-brand-surface) 55%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--luminol-card, var(--color-brand-surface)) 55%,
+    transparent
+  );
   backdrop-filter: blur(10px);
 }
 
@@ -482,7 +490,7 @@ html[dir='rtl'] body {
   background: color-mix(
     in srgb,
     var(--color-brand-cyan-light) 22%,
-    var(--color-brand-surface)
+    var(--luminol-card, var(--color-brand-surface))
   );
   color: var(--color-brand-ink);
   box-shadow: 0 0.75rem 2rem -1rem rgb(7 26 43 / 0.4);
@@ -593,5 +601,306 @@ main p a:not(.luminol-button):hover {
   }
   .luminol-button::before {
     display: none;
+  }
+}
+
+/* ---------- Inner universe (home page cosmos) ---------- */
+body {
+  background: linear-gradient(180deg, #0b2440, #081d33 40%, #071a2b);
+}
+
+.inner-universe {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  /* Calm CSS starfield until (or instead of) the WebGL universe. */
+  background:
+    radial-gradient(1px 1px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 72% 34%, #bff3ff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 38% 72%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 82%, #b8b2ff 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 12%, #fff 50%, transparent 51%),
+    radial-gradient(
+      ellipse at 20% 30%,
+      rgb(21 155 194 / 0.18),
+      transparent 55%
+    ),
+    radial-gradient(ellipse at 80% 70%, rgb(91 63 154 / 0.18), transparent 55%),
+    #081d33;
+  background-size:
+    220px 220px,
+    310px 310px,
+    270px 270px,
+    350px 350px,
+    190px 190px,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+}
+
+.inner-universe canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.8s ease;
+}
+
+.inner-universe canvas[data-live] {
+  opacity: 1;
+}
+
+/* ---------- Cosmic theme for every inner page ---------- */
+/* Tokens fall back to the original light palette wherever this is absent. */
+:is(main#main-content:not([data-cosmos]), [data-cosmic-page]) {
+  --luminol-page: transparent;
+  --luminol-deep-soft: rgb(13 40 64 / 0.78);
+  --luminol-accent-mix: 28%;
+  --color-brand-ink: #e9f5fa;
+  --color-brand-ink-soft: #d4e5ee;
+  --color-brand-muted: #b3c8d6;
+  --color-brand-line: rgb(255 255 255 / 0.16);
+  --color-brand-canvas: #071a2b;
+  --color-brand-cyan-deep: #35b9dd;
+  --color-brand-gold: #e8c37a;
+  --color-brand-gold-strong: #f0cf8e;
+  --color-school-psychology: #5fd0c0;
+  --color-school-languages: #8fb6ec;
+  --color-school-training: #e0b07a;
+  --color-school-psychology-soft: rgb(63 184 169 / 0.12);
+  --color-school-languages-soft: rgb(91 143 214 / 0.12);
+  --color-school-training-soft: rgb(208 154 98 / 0.12);
+  --luminol-card: rgb(32 66 98 / 0.42);
+  --luminol-deep: rgb(3 12 22 / 0.72);
+  --luminol-on-deep: #ffffff;
+  --shadow-editorial: 0 1.5rem 4rem rgb(0 0 0 / 0.35);
+  --shadow-elevated: 0 1.25rem 3rem rgb(0 0 0 / 0.35);
+  position: relative;
+  color: var(--color-brand-ink);
+}
+
+/* Cards read as frosted glass floating in the universe. */
+main#main-content:not([data-cosmos]) :is(article, aside, form) {
+  backdrop-filter: blur(6px);
+}
+
+/* Form controls follow the dark glass theme. */
+main#main-content:not([data-cosmos]) :is(input, select, textarea) {
+  border-color: rgb(255 255 255 / 0.18);
+  background: rgb(4 15 27 / 0.55);
+  color: var(--color-brand-ink);
+}
+main#main-content:not([data-cosmos]) :is(input, textarea)::placeholder {
+  color: rgb(201 220 230 / 0.55);
+}
+main#main-content:not([data-cosmos]) select option {
+  background: #071a2b;
+}
+
+/* ---------- Compact 3D neuron brain in inner-page heroes ---------- */
+.hero-brain {
+  position: absolute;
+  z-index: 0;
+  inset-block-start: -2rem;
+  inset-inline-end: -2rem;
+  width: min(48vw, 44rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.8s ease;
+}
+.hero-brain[data-live] {
+  opacity: 1;
+}
+:has(> .hero-brain) {
+  position: relative;
+  isolation: isolate;
+}
+:has(> .hero-brain) > :not(.hero-brain) {
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 800px) {
+  .hero-brain {
+    inset-block-start: auto;
+    inset-block-end: 0;
+    inset-inline-end: -15%;
+    width: 85vw;
+    opacity: 0;
+  }
+  .hero-brain[data-live] {
+    opacity: 0.55;
+  }
+}
+
+/* Buttons on the cosmic theme: luminous primary, dark-glass secondary. */
+:is(main#main-content:not([data-cosmos]), [data-cosmic-page])
+  .luminol-button--primary {
+  background: linear-gradient(135deg, #0a7da3, #159bc2 55%, #2fc4dc);
+  color: #ffffff;
+  box-shadow:
+    0 0.9rem 2rem -0.8rem rgb(21 155 194 / 0.75),
+    inset 0 1px 0 rgb(255 255 255 / 0.25);
+}
+:is(main#main-content:not([data-cosmos]), [data-cosmic-page])
+  .luminol-button.luminol-button--primary:hover {
+  background: linear-gradient(135deg, #159bc2, #2fc4dc 55%, #8bdeef);
+  color: #04202e;
+}
+:is(main#main-content:not([data-cosmos]), [data-cosmic-page])
+  .luminol-button--secondary {
+  border-color: rgb(139 222 239 / 0.35);
+  background: rgb(255 255 255 / 0.05);
+  color: #e9f5fa;
+}
+:is(main#main-content:not([data-cosmos]), [data-cosmic-page])
+  .luminol-button--secondary:hover {
+  border-color: #8bdeef;
+  background: rgb(139 222 239 / 0.14);
+  color: #ffffff;
+}
+.hero-brain--soft {
+  inset-inline-end: -9rem;
+  inset-block-start: -4rem;
+}
+.hero-brain--soft[data-live] {
+  opacity: 0.42;
+}
+
+/* ---------- Brighter, warmer accents on the cosmic theme ---------- */
+:is(main#main-content, [data-cosmic-page]) :is(h1, h2) {
+  color: #ffffff;
+  text-shadow: 0 0 2.5rem rgb(139 222 239 / 0.18);
+}
+/* Glass cards catch a faint pearl edge of light. */
+main#main-content:not([data-cosmos]) :is(article, aside) {
+  border-color: rgb(255 255 255 / 0.16);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 1.5rem 3.5rem -1.5rem rgb(0 0 0 / 0.45);
+}
+
+/* Inner pages: the universe stays present but quieter behind long reading. */
+body:not(:has(main[data-cosmos])) .inner-universe canvas[data-live] {
+  opacity: 0.7;
+}
+
+/* Each page's universe has its own base colour (also the reduced-motion sky). */
+.inner-universe[data-universe='about'] {
+  background-color: #13183a;
+}
+.inner-universe[data-universe='consultations'] {
+  background-color: #052a38;
+}
+.inner-universe[data-universe='contact'] {
+  background-color: #1c1f45;
+}
+.inner-universe[data-universe='programmes'] {
+  background-color: #061a30;
+}
+.inner-universe[data-universe='psychology'] {
+  background-color: #06262e;
+}
+.inner-universe[data-universe='languages'] {
+  background-color: #0e1640;
+}
+.inner-universe[data-universe='training'] {
+  background-color: #1d1a2e;
+}
+.inner-universe[data-universe='workshop'] {
+  background-color: #21182c;
+}
+
+/* ---------- Living glass cards ---------- */
+[data-card-fx] {
+  position: relative;
+  isolation: isolate;
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg)) translateY(0);
+  transform-style: preserve-3d;
+  transition:
+    transform 600ms var(--luminol-ease-out),
+    box-shadow 500ms ease,
+    border-color 500ms ease;
+}
+[data-card-fx][data-tilt-active] {
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg)) translateY(-6px);
+  transition:
+    transform 140ms linear,
+    box-shadow 500ms ease,
+    border-color 500ms ease;
+  border-color: rgb(139 222 239 / 0.4) !important;
+  box-shadow:
+    0 2.5rem 4rem -1.5rem rgb(0 0 0 / 0.55),
+    0 0 2.5rem -0.5rem rgb(139 222 239 / 0.25) !important;
+}
+/* A ribbon of light runs around the border on hover. */
+[data-card-fx]::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--card-angle, 0deg),
+    transparent 0deg,
+    #8bdeef 40deg,
+    #f3d48f 80deg,
+    transparent 130deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms ease;
+}
+[data-card-fx][data-tilt-active]::before {
+  opacity: 1;
+  animation: card-ribbon 3.2s linear infinite;
+}
+/* Soft light follows the pointer across the glass. */
+[data-card-fx]::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    22rem circle at var(--glare-x, 50%) var(--glare-y, 0%),
+    rgb(139 222 239 / 0.14),
+    transparent 60%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+[data-card-fx][data-tilt-active]::after {
+  opacity: 1;
+}
+@property --card-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes card-ribbon {
+  to {
+    --card-angle: 360deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-card-fx],
+  [data-card-fx][data-tilt-active] {
+    transform: none;
+  }
+  [data-card-fx]::before {
+    animation: none !important;
   }
 }

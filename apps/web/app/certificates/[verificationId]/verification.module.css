@@ -46,7 +46,7 @@
   max-width: 920px;
   padding: clamp(2rem, 6vw, 5rem);
   border: 1px solid var(--color-brand-line);
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   box-shadow: var(--shadow-elevated);
 }
 
@@ -66,7 +66,7 @@
   place-items: center;
   margin-bottom: 2.5rem;
   border-radius: 50%;
-  background: var(--color-brand-ink);
+  background: var(--luminol-deep, var(--color-brand-ink));
   color: var(--color-brand-gold);
   font-family: var(--font-display);
   font-size: 2rem;
@@ -216,4 +216,17 @@
   .details > div {
     padding-top: 1.2rem;
   }
+}
+
+/* The glass seal glows behind the monogram. */
+.seal {
+  width: 8.25rem;
+  overflow: visible;
+  background: transparent;
+  color: var(--color-brand-surface);
+  text-shadow: 0 0 1rem rgb(139 222 239 / 0.9);
+}
+.seal [data-glass-icon] {
+  position: absolute;
+  inset: 0;
 }

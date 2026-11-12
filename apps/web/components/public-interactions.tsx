@@ -11,6 +11,12 @@ import { useEffect } from 'react';
  *
  * Only fine pointers with full motion get them; content never depends on them.
  */
+const cardSelector = [
+  'main article:not([data-school-card]):not([data-programme-spotlight])',
+  'main [data-contact-path]',
+  'main [data-programme-card]',
+].join(', ');
+
 export function PublicInteractions() {
   const pathname = usePathname();
 
@@ -49,6 +55,14 @@ export function PublicInteractions() {
         leave();
       });
     };
+
+    // Content cards across the site get the same tactile 3D treatment.
+    for (const card of document.querySelectorAll<HTMLElement>(cardSelector)) {
+      if (!card.hasAttribute('data-tilt')) {
+        card.dataset.tilt = '5';
+        card.dataset.cardFx = '';
+      }
+    }
 
     for (const card of document.querySelectorAll<HTMLElement>('[data-tilt]')) {
       const strength = Number(card.dataset.tilt) || 7;

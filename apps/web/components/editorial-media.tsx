@@ -1,7 +1,6 @@
 import type { SchoolSlug } from '../lib/schools';
 import Image from 'next/image';
 
-import { brandArtwork } from '../lib/academy-media';
 import styles from './editorial-media.module.css';
 
 export type EditorialMediaAsset = {
@@ -54,10 +53,10 @@ export function EditorialMedia({
         <div className={styles.fallback} aria-hidden="true">
           <Image
             className={styles.image}
-            src={brandArtwork.orb.src}
+            src={`/media/brand/programme-${school}.webp`}
             alt=""
-            width={brandArtwork.orb.width}
-            height={brandArtwork.orb.height}
+            width={1600}
+            height={900}
             sizes={sizes}
             priority={priority}
           />

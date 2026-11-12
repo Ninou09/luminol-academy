@@ -166,8 +166,8 @@ export async function SiteFooter() {
           <p>{copy.site.description}</p>
         </div>
       </div>
-      <div className={styles.megaMark} aria-hidden="true">
-        <span data-reveal>Luminol</span>
+      <div className={styles.megaMark} aria-hidden="true" data-reveal>
+        <span>Luminol</span>
       </div>
       <div className={styles.footerBottom}>
         <p>© {new Date().getFullYear()} Luminol Academy</p>

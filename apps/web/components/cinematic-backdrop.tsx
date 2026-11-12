@@ -8,6 +8,9 @@ import styles from './cinematic-backdrop.module.css';
 type CinematicBackdropProps = {
   pauseLabel: string;
   playLabel: string;
+  /** Defaults to the academy library film. */
+  src?: string;
+  poster?: string;
 };
 
 type DataAwareNavigator = Navigator & {
@@ -17,6 +20,8 @@ type DataAwareNavigator = Navigator & {
 export function CinematicBackdrop({
   pauseLabel,
   playLabel,
+  src = '/media/editorial/academy-film.mp4',
+  poster = '/media/editorial/academy-poster.webp',
 }: CinematicBackdropProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const userPaused = useRef(false);
@@ -110,7 +115,7 @@ export function CinematicBackdrop({
     >
       <Image
         className={styles.poster}
-        src="/media/editorial/academy-poster.webp"
+        src={poster}
         alt=""
         fill
         priority
@@ -119,8 +124,8 @@ export function CinematicBackdrop({
       <video
         ref={videoRef}
         className={styles.video}
-        src={canLoadVideo ? '/media/editorial/academy-film.mp4' : undefined}
-        poster="/media/editorial/academy-poster.webp"
+        src={canLoadVideo ? src : undefined}
+        poster={poster}
         muted
         aria-hidden="true"
         preload="none"

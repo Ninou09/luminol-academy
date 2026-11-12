@@ -17,11 +17,11 @@ const portraitQuery = '(max-width: 760px) and (orientation: portrait)';
 
 const desktopFrame: ArtworkFrame = {
   aspect: brandArtwork.heroDesktop.width / brandArtwork.heroDesktop.height,
-  anchor: { x: 0.705, y: 0.425, radius: 0.2 },
+  anchor: { x: 0.7, y: 0.475, radius: 0.233 },
 };
 const portraitFrame: ArtworkFrame = {
   aspect: brandArtwork.heroMobile.width / brandArtwork.heroMobile.height,
-  anchor: { x: 0.497, y: 0.235, radius: 0.31 },
+  anchor: { x: 0.5, y: 0.25, radius: 0.37 },
 };
 
 export function LuminousBackdrop({ locale }: { locale: Locale }) {

@@ -15,6 +15,8 @@ import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
+import { NeuralBrain } from '../../components/neural-brain';
+import { GlassIcon, type GlassIconName } from '../../components/glass-icon';
 
 const CONSULTATION_COPY = {
   en: {
@@ -199,6 +201,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const routeIcons: GlassIconName[] = [
+  'route-therapy',
+  'route-family',
+  'route-learning',
+];
+
 export default async function ConsultationsPage() {
   const locale = await getRequestLocale();
   const copy = CONSULTATION_COPY[locale];
@@ -214,6 +222,7 @@ export default async function ConsultationsPage() {
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="consultation-title">
+          <NeuralBrain className="hero-brain" />
           <div>
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
             <h1 id="consultation-title">{copy.heroTitle as string}</h1>
@@ -235,7 +244,12 @@ export default async function ConsultationsPage() {
           </aside>
         </section>
 
-        <ImmersiveBand art="innerWorld" locale={locale} priority />
+        <ImmersiveBand
+          art="innerWorld"
+          locale={locale}
+          priority
+          reveal="portal"
+        />
 
         <section className={styles.routing} aria-labelledby="routing-title">
           <div className={styles.routingHeader}>
@@ -246,8 +260,14 @@ export default async function ConsultationsPage() {
             <p>{copy.routingBody as string}</p>
           </div>
           <div className={styles.pathGrid}>
-            {paths.map((path) => (
+            {paths.map((path, index) => (
               <article className={styles.pathCard} key={path.number}>
+                <GlassIcon
+                  name={routeIcons[index % routeIcons.length]!}
+                  size="md"
+                  delay={index}
+                  className={styles.pathIcon}
+                />
                 <span>{path.number}</span>
                 <h3>{path.title}</h3>
                 <p>{path.body}</p>
@@ -262,6 +282,11 @@ export default async function ConsultationsPage() {
           data-consultation-founder-authority
         >
           <div className={styles.authorityLead}>
+            <GlassIcon
+              name="experience-30-years"
+              size="lg"
+              className={styles.authorityIcon}
+            />
             <span className={styles.authorityYears} aria-hidden="true">
               30+
             </span>
@@ -297,6 +322,7 @@ export default async function ConsultationsPage() {
           aria-labelledby="consultation-enquiry-title"
         >
           <div className={styles.enquiryContext}>
+            <GlassIcon name="enquiry-message" size="lg" />
             <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
             <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
             <p>{copy.formBody as string}</p>

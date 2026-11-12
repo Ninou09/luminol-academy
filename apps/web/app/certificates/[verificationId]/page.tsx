@@ -11,6 +11,7 @@ import {
 import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
 import styles from './verification.module.css';
+import { GlassIcon } from '../../../components/glass-icon';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,7 +79,7 @@ export default async function CertificateVerificationPage({
           aria-labelledby="certificate-title"
         >
           <div className={styles.seal} aria-hidden="true">
-            L
+            <GlassIcon name="certificate-seal" size="md" />L
           </div>
           <div className={styles.heading}>
             <span>{certificate.issuerNameSnapshot}</span>

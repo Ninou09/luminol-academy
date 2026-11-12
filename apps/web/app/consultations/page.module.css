@@ -1,6 +1,6 @@
 .page {
   overflow: clip;
-  background: var(--color-brand-canvas);
+  background: transparent;
   color: var(--color-brand-ink);
 }
 
@@ -68,7 +68,7 @@
   padding: clamp(1.5rem, 3vw, 2.3rem);
   border: 1px solid var(--color-brand-line);
   border-radius: 1.5rem;
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   box-shadow: var(--shadow-editorial);
 }
 
@@ -122,7 +122,7 @@
   padding: 1.5rem;
   border: 1px solid var(--color-brand-line);
   border-radius: 1.25rem;
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
 }
 
 .pathCard span {
@@ -154,7 +154,7 @@
   padding: clamp(2rem, 5vw, 4rem);
   border: 1px solid var(--color-brand-line);
   border-radius: 1.8rem;
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   box-shadow: var(--shadow-editorial);
 }
 
@@ -214,7 +214,7 @@
   margin-bottom: clamp(4rem, 8vw, 8rem);
   padding: clamp(2rem, 5vw, 4rem);
   border-radius: 1.8rem;
-  background: var(--color-brand-ink);
+  background: var(--luminol-deep, var(--color-brand-ink));
   color: var(--color-brand-surface);
 }
 
@@ -235,7 +235,7 @@
 .formSurface {
   padding: clamp(1.2rem, 3vw, 2rem);
   border-radius: 1.35rem;
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   color: var(--color-brand-ink);
 }
 
@@ -258,4 +258,24 @@
   .authorityLead {
     grid-template-columns: 1fr;
   }
+}
+
+/* Glass route icons and the 30-year growth rings. */
+.pathCard .pathIcon {
+  margin: -0.5rem 0 0.5rem -0.5rem;
+}
+.authorityLead {
+  position: relative;
+}
+.authorityIcon {
+  position: absolute;
+  z-index: 0;
+  inset-block-start: 50%;
+  inset-inline-start: -2rem;
+  translate: 0 -50%;
+  opacity: 0.85;
+}
+.authorityLead > :not(.authorityIcon) {
+  position: relative;
+  z-index: 1;
 }

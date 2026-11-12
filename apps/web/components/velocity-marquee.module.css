@@ -78,3 +78,13 @@
     transform: none !important;
   }
 }
+
+:global(main[data-cosmos]) .band {
+  border-color: rgb(255 255 255 / 0.08);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(21 155 194 / 0.12),
+    transparent
+  );
+}

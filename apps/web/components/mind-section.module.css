@@ -1,0 +1,189 @@
+.mind {
+  --mind-progress: 0;
+  position: relative;
+  height: 280vh;
+  color: #e9f5fa;
+  /* A quiet pocket of deep space so the brain stands alone. */
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgb(3 10 19 / 0.92) 12%,
+      rgb(3 10 19 / 0.92) 88%,
+      transparent
+    ),
+    radial-gradient(ellipse at 62% 50%, rgb(21 155 194 / 0.12), transparent 60%);
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  height: 100svh;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+
+.mind[data-scene='live'] .canvas {
+  opacity: 1;
+}
+
+.intro {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: clamp(6.5rem, 15vh, 9rem);
+  inset-inline-start: max(
+    var(--luminol-page-gutter),
+    calc((100vw - 82rem) / 2)
+  );
+  max-width: min(30rem, 42vw);
+  opacity: calc(1 - max(0, var(--mind-progress) - 0.55) * 3);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: var(--color-brand-cyan-light);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4.6vw, 4.6rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-shadow: 0 0 2.5rem rgb(139 222 239 / 0.35);
+}
+
+.title:dir(rtl),
+.label:dir(rtl) {
+  font-family: var(--font-arabic);
+  letter-spacing: normal;
+  line-height: 1.4;
+}
+
+.body {
+  margin: 1.25rem 0 0;
+  color: rgb(233 245 250 / 0.72);
+  line-height: 1.8;
+}
+
+.labels {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Live: each label floats beside its brain region. */
+.mind[data-scene='live'] .label {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.6rem 1rem 0.6rem 0.75rem;
+  border: 1px solid rgb(139 222 239 / 0.3);
+  border-radius: var(--radius-pill);
+  background: rgb(7 26 43 / 0.55);
+  backdrop-filter: blur(10px);
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.6vw, 1.5rem);
+  opacity: var(--visible, 0);
+  transform: translate(
+      calc(var(--x, -999px) + 1.5rem),
+      calc(var(--y, 0px) - 50%)
+    )
+    scale(calc(0.85 + var(--visible, 0) * 0.15));
+  transform-origin: 0 50%;
+  white-space: nowrap;
+}
+
+.dot {
+  position: relative;
+  width: 0.55rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-brand-cyan-light);
+  box-shadow: 0 0 0.9rem var(--color-brand-cyan-light);
+}
+
+/* A hairline ties each label back to its region. */
+.mind[data-scene='live'] .label::before {
+  content: '';
+  position: absolute;
+  inset-inline-end: 100%;
+  top: 50%;
+  width: 1.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(139 222 239 / 0.7));
+}
+
+/* Static fallback: calm pills under the intro. */
+.mind:not([data-scene='live']) .labels {
+  position: absolute;
+  inset-block-end: 3rem;
+  inset-inline: var(--luminol-page-gutter);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.mind:not([data-scene='live']) .label {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  border: 1px solid rgb(139 222 239 / 0.3);
+  border-radius: var(--radius-pill);
+}
+
+@media (max-width: 760px) {
+  .mind {
+    height: 240vh;
+  }
+  .intro {
+    max-width: none;
+    inset-inline-end: var(--luminol-page-gutter);
+    inset-block-start: 5.5rem;
+  }
+  .body {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mind {
+    height: auto;
+  }
+  .stage {
+    position: relative;
+    min-height: 80svh;
+  }
+}
+
+.mind[data-scene='live'] .label[data-side='before'] {
+  transform: translate(
+      calc(var(--x, -999px) - 100% - 1.5rem),
+      calc(var(--y, 0px) - 50%)
+    )
+    scale(calc(0.85 + var(--visible, 0) * 0.15));
+  transform-origin: 100% 50%;
+}
+.mind[data-scene='live'] .label[data-side='before']::before {
+  inset-inline-end: auto;
+  left: 100%;
+  background: linear-gradient(90deg, rgb(139 222 239 / 0.7), transparent);
+}

@@ -81,7 +81,7 @@
   overflow: hidden;
   border: 1px solid var(--color-brand-line);
   border-radius: var(--luminol-media-radius);
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   box-shadow: var(--shadow-editorial);
 }
 
@@ -95,7 +95,7 @@
 
 .content {
   border-top: 1px solid var(--color-brand-line);
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
 }
 
 .contentInner {
