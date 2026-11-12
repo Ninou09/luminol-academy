@@ -69,6 +69,8 @@ const operationsWorkspaces = [
   'consultations',
   'clients',
   'office-payments',
+  'tasks',
+  'today',
 ] as const;
 export type OperationsWorkspace = (typeof operationsWorkspaces)[number];
 

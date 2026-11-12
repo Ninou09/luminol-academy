@@ -1,6 +1,6 @@
 # Luminol Academy Project Status
 
-_Last updated: 2026-09-11_
+_Last updated: 2026-11-12_
 
 ## Current state
 
@@ -143,6 +143,12 @@ The required repository quality path remains:
 
 Vercel deployments and post-deploy production observations are supplementary evidence gates. A merged repository change is not automatically production-live.
 
+## Milestone 21 — Academy Operations (in review)
+
+Governing issue #562 commits an internal operating system inside the administration app: governed staff roles and Team page, clients and consultation scheduling, an immutable DZD office payments ledger, staff tasks with owner approval requests, and a role-aware Today view. Implementation is in review through stacked pull requests (#563 staff access, #565 clients and consultations, then office payments, tasks and Today). The security dependency update #564 must merge first so the production audit gate passes.
+
+Nothing in Milestone 21 is production-live until its migrations are applied by the production migration workflow and protected admin journeys are verified. See `docs/MILESTONE_21_OPERATIONS.md` for roles, workflows and boundaries.
+
 ## Next product milestone
 
-No Milestone 21 is currently committed. The next numbered milestone should not be invented from momentum alone. Until a concrete product objective is selected, continue non-blocked stabilization and public-experience polish under existing issues while preserving current privacy, authorization, content-governance and operational boundaries.
+No Milestone 22 is committed. The next numbered milestone should not be invented from momentum alone.

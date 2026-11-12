@@ -10,7 +10,8 @@
     "./content-calendar": "./src/content-calendar.ts",
     "./env": "./src/env.ts",
     "./consultations": "./src/consultations.ts",
-    "./office-payments": "./src/office-payments.ts"
+    "./office-payments": "./src/office-payments.ts",
+    "./operations-tasks": "./src/operations-tasks.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",

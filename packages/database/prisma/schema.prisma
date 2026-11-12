@@ -380,6 +380,11 @@ model User {
   officePaymentsVoided   OfficePayment[]      @relation("OfficePaymentVoider")
   officePaymentEvents    OfficePaymentEvent[] @relation("OfficePaymentEventActor")
 
+  operationsTasksAssigned OperationsTask[]      @relation("OperationsTaskAssignee")
+  operationsTasksCreated  OperationsTask[]      @relation("OperationsTaskCreator")
+  operationsTasksDecided  OperationsTask[]      @relation("OperationsTaskDecider")
+  operationsTaskEvents    OperationsTaskEvent[] @relation("OperationsTaskEventActor")
+
   @@index([email])
   @@index([deletedAt])
 }
@@ -1629,6 +1634,7 @@ model Client {
   createdBy                User                      @relation("ClientCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
   appointments             ConsultationAppointment[]
   payments                 OfficePayment[]
+  tasks                    OperationsTask[]
 
   @@index([displayName])
   @@index([phone])
@@ -1747,5 +1753,73 @@ model OfficePaymentEvent {
   actor       User                   @relation("OfficePaymentEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([paymentId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
+enum OperationsTaskKind {
+  TASK
+  APPROVAL
+}
+
+enum OperationsTaskStatus {
+  OPEN
+  DONE
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum OperationsTaskPriority {
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum OperationsTaskEventType {
+  CREATED
+  STATUS_CHANGED
+}
+
+model OperationsTask {
+  id              String                 @id @default(cuid())
+  kind            OperationsTaskKind
+  title           String
+  details         String?
+  assigneeUserId  String?
+  dueOn           DateTime?              @db.Date
+  priority        OperationsTaskPriority @default(NORMAL)
+  status          OperationsTaskStatus   @default(OPEN)
+  decisionNote    String?
+  clientId        String?
+  createdByUserId String
+  decidedByUserId String?
+  closedAt        DateTime?
+  revision        Int                    @default(1)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  assignee        User?                  @relation("OperationsTaskAssignee", fields: [assigneeUserId], references: [id], onDelete: Restrict)
+  createdBy       User                   @relation("OperationsTaskCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  decidedBy       User?                  @relation("OperationsTaskDecider", fields: [decidedByUserId], references: [id], onDelete: Restrict)
+  client          Client?                @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  events          OperationsTaskEvent[]
+
+  @@index([assigneeUserId, status, dueOn])
+  @@index([kind, status, createdAt])
+  @@index([createdByUserId, status])
+  @@index([clientId])
+}
+
+model OperationsTaskEvent {
+  id          String                  @id @default(cuid())
+  taskId      String
+  eventType   OperationsTaskEventType
+  actorUserId String
+  fromStatus  OperationsTaskStatus?
+  toStatus    OperationsTaskStatus
+  occurredAt  DateTime                @default(now())
+  task        OperationsTask          @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  actor       User                    @relation("OperationsTaskEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([taskId, occurredAt])
   @@index([actorUserId, occurredAt])
 }

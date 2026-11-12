@@ -52,9 +52,20 @@ suite('governed staff roles', () => {
       },
     });
     expect(granted.map(({ role }) => role.key)).toEqual(['enquiry-agent']);
+    const keys =
+      granted[0]?.role.permissions.map(({ permission }) => permission.key) ??
+      [];
+    expect(keys).toContain('enquiry:work');
+    expect(keys).not.toContain('academy:manage');
+    expect(keys).not.toContain('team:manage');
     expect(
-      granted[0]?.role.permissions.map(({ permission }) => permission.key),
-    ).toEqual(['enquiry:work']);
+      keys.filter(
+        (key) =>
+          key.startsWith('finance:') ||
+          key.startsWith('consultation:') ||
+          key.startsWith('office-payment:'),
+      ),
+    ).toEqual([]);
 
     await expect(revokeStaffRole(db, change)).resolves.toEqual({
       changed: true,

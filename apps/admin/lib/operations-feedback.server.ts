@@ -2,6 +2,7 @@ import 'server-only';
 
 import { ConsultationError } from '@luminol/database/consultations';
 import { OfficePaymentError } from '@luminol/database/office-payments';
+import { OperationsTaskError } from '@luminol/database/operations-tasks';
 import { redirect } from 'next/navigation';
 import { ZodError } from 'zod';
 
@@ -30,7 +31,8 @@ export async function runOperationsMutation(
   } catch (error) {
     if (
       error instanceof ConsultationError ||
-      error instanceof OfficePaymentError
+      error instanceof OfficePaymentError ||
+      error instanceof OperationsTaskError
     ) {
       code = error.code;
     } else if (error instanceof ZodError) {
