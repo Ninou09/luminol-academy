@@ -42,6 +42,7 @@ function receivedAtFrom(formData: FormData, now: Date) {
 function revalidatePayments() {
   revalidatePath('/office-payments');
   revalidatePath('/consultations');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function recordOfficePaymentAction(formData: FormData) {

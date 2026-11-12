@@ -54,6 +54,12 @@ describe('consultation redirects', () => {
     expect(
       safeOperationsReturnPath('/fr/office-payments?month=2026-11', '/clients'),
     ).toBe('/fr/office-payments?month=2026-11');
+    expect(
+      safeOperationsReturnPath('/ar/crm/leads/clx123_ab-9', '/clients'),
+    ).toBe('/ar/crm/leads/clx123_ab-9');
+    expect(safeOperationsReturnPath('/crm/contacts/../team', '/clients')).toBe(
+      '/clients',
+    );
     for (const unsafe of [
       'https://evil.example/consultations',
       '//evil.example/consultations',

@@ -11,7 +11,8 @@
     "./env": "./src/env.ts",
     "./consultations": "./src/consultations.ts",
     "./office-payments": "./src/office-payments.ts",
-    "./operations-tasks": "./src/operations-tasks.ts"
+    "./operations-tasks": "./src/operations-tasks.ts",
+    "./crm-activities": "./src/crm-activities.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",

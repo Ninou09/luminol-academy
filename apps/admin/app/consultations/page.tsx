@@ -10,7 +10,6 @@ import {
   formatLocalizedCurrency,
   formatLocalizedDate,
   formatLocalizedNumber,
-  getCommonDictionary,
   localizeHref,
 } from '@luminol/localization';
 import {
@@ -25,9 +24,8 @@ import {
 } from '@luminol/validation/consultations';
 import Link from 'next/link';
 
-import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
 import styles from '../../components/operations.module.css';
-import { StaffNavigation } from '../../components/staff-navigation';
+import { CrmShell } from '../../components/crm-shell';
 import { requireConsultationActor } from '../../lib/consultation-actor.server';
 import {
   consultationDurations,
@@ -70,7 +68,6 @@ export default async function ConsultationsPage({
   const { user, actor } = await requireConsultationActor();
   const locale = await getAdminRequestLocale();
   const copy = getConsultationsCopy(locale);
-  const common = getCommonDictionary(locale);
   const params = searchParams ? await searchParams : undefined;
   const today = utcToZonedLocal(new Date()).slice(0, 10);
   const requestedDate =
@@ -193,252 +190,145 @@ export default async function ConsultationsPage({
   );
 
   return (
-    <main
-      className="admin-shell"
-      style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}
-    >
-      <section className="admin-dashboard">
-        <div className="admin-content">
-          <section className="admin-intro">
-            <div>
-              <p className="eyebrow">{copy.eyebrow}</p>
-              <h1>{copy.title}</h1>
-              <p>{copy.intro}</p>
-            </div>
-            <div className={styles.toolbar}>
-              <StaffNavigation
-                locale={locale}
-                roles={user.roles}
-                current="consultations"
+    <CrmShell locale={locale} user={user} current="consultations">
+      <section className="admin-intro">
+        <div>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1>{copy.title}</h1>
+          <p>{copy.intro}</p>
+        </div>
+      </section>
+
+      {feedback ? (
+        <p className={styles.warning} role="alert">
+          {copy.feedback[feedback]}
+        </p>
+      ) : saved ? (
+        <p className={styles.success} role="status">
+          {copy.saved}
+        </p>
+      ) : null}
+
+      <section className="metric-grid" aria-label={copy.title}>
+        {(['REQUESTED', 'CONFIRMED', 'COMPLETED', 'NO_SHOW'] as const).map(
+          (status) => (
+            <article key={status}>
+              <span>{copy.status[status]}</span>
+              <strong>{number(statusCounts[status] ?? 0)}</strong>
+            </article>
+          ),
+        )}
+      </section>
+
+      <section className="admin-panel">
+        <div className="panel-heading">
+          <div>
+            <h2>{copy.weekOf(dayLabel(requestedDate))}</h2>
+            <p className={styles.note}>{copy.hours}</p>
+          </div>
+          <div className={styles.actions}>
+            <Link
+              href={localizeHref(
+                locale,
+                `${basePath}?date=${shiftLocalDate(requestedDate, -7)}`,
+              )}
+            >
+              {copy.previousWeek}
+            </Link>
+            <Link href={localizeHref(locale, basePath)}>{copy.thisWeek}</Link>
+            <Link
+              href={localizeHref(
+                locale,
+                `${basePath}?date=${shiftLocalDate(requestedDate, 7)}`,
+              )}
+            >
+              {copy.nextWeek}
+            </Link>
+            <form className={styles.inline} method="get">
+              <input
+                type="date"
+                name="date"
+                defaultValue={requestedDate}
+                aria-label={copy.dateLabel}
               />
-              <AdminLanguageSwitcher
-                locale={locale}
-                label={common.languageSelectorLabel}
-              />
-            </div>
-          </section>
+              <button type="submit" className={styles.secondaryButton}>
+                {copy.go}
+              </button>
+            </form>
+          </div>
+        </div>
 
-          {feedback ? (
-            <p className={styles.warning} role="alert">
-              {copy.feedback[feedback]}
-            </p>
-          ) : saved ? (
-            <p className={styles.success} role="status">
-              {copy.saved}
-            </p>
-          ) : null}
-
-          <section className="metric-grid" aria-label={copy.title}>
-            {(['REQUESTED', 'CONFIRMED', 'COMPLETED', 'NO_SHOW'] as const).map(
-              (status) => (
-                <article key={status}>
-                  <span>{copy.status[status]}</span>
-                  <strong>{number(statusCounts[status] ?? 0)}</strong>
-                </article>
-              ),
-            )}
-          </section>
-
-          <section className="admin-panel">
-            <div className="panel-heading">
-              <div>
-                <h2>{copy.weekOf(dayLabel(requestedDate))}</h2>
-                <p className={styles.note}>{copy.hours}</p>
-              </div>
-              <div className={styles.actions}>
-                <Link
-                  href={localizeHref(
-                    locale,
-                    `${basePath}?date=${shiftLocalDate(requestedDate, -7)}`,
-                  )}
-                >
-                  {copy.previousWeek}
-                </Link>
-                <Link href={localizeHref(locale, basePath)}>
-                  {copy.thisWeek}
-                </Link>
-                <Link
-                  href={localizeHref(
-                    locale,
-                    `${basePath}?date=${shiftLocalDate(requestedDate, 7)}`,
-                  )}
-                >
-                  {copy.nextWeek}
-                </Link>
-                <form className={styles.inline} method="get">
-                  <input
-                    type="date"
-                    name="date"
-                    defaultValue={requestedDate}
-                    aria-label={copy.dateLabel}
-                  />
-                  <button type="submit" className={styles.secondaryButton}>
-                    {copy.go}
-                  </button>
-                </form>
-              </div>
-            </div>
-
-            {appointments.length === 0 ? (
-              <p className={styles.empty}>{copy.noAppointments}</p>
-            ) : (
-              days
-                .filter((localDate) => byDay.has(localDate))
-                .map((localDate) => (
-                  <section key={localDate} aria-label={dayLabel(localDate)}>
-                    <h3>{dayLabel(localDate)}</h3>
-                    <ul className={styles.list}>
-                      {(byDay.get(localDate) ?? []).map((appointment) => {
-                        const local = utcToZonedLocal(appointment.startsAt);
-                        const transitions =
-                          consultationTransitions[appointment.status];
-                        const upcoming =
-                          appointment.status === 'REQUESTED' ||
-                          appointment.status === 'CONFIRMED';
-                        return (
-                          <li className={styles.row} key={appointment.id}>
-                            <div className={styles.rowBody}>
-                              <h3>
-                                {timeLabel(appointment.startsAt)}–
-                                {timeLabel(appointment.endsAt)} ·{' '}
-                                <bdi>{appointment.client.displayName}</bdi>
-                              </h3>
-                              <p className={styles.meta}>
-                                <span className={styles.chip}>
-                                  {copy.status[appointment.status]}
-                                </span>
-                                <span>{copy.mode[appointment.mode]}</span>
-                                <span>{money(appointment.priceMinor)}</span>
-                                {appointment.payments.length > 0 ? (
-                                  <span className={styles.success}>
-                                    {copy.paid}{' '}
-                                    {money(
-                                      appointment.payments.reduce(
-                                        (sum, { amountMinor }) =>
-                                          sum + amountMinor,
-                                        0,
-                                      ),
-                                    )}
-                                  </span>
-                                ) : null}
-                                {appointment.client.phone ? (
-                                  <bdi>{appointment.client.phone}</bdi>
-                                ) : null}
-                                {actor.scope === 'all' ? (
-                                  <span>
-                                    {copy.consultantLabel}:{' '}
-                                    <bdi>
-                                      {personName(appointment.consultant)}
-                                    </bdi>
-                                  </span>
-                                ) : null}
-                              </p>
-                              {appointment.operationalNote ? (
-                                <p className={styles.note}>
-                                  {appointment.operationalNote}
-                                </p>
-                              ) : null}
-                            </div>
-                            <div className={styles.rowBody}>
-                              {transitions.length > 0 ? (
-                                <div className={styles.actions}>
-                                  {transitions.map((toStatus) => (
-                                    <form
-                                      key={toStatus}
-                                      action={transitionConsultationAction}
-                                    >
-                                      <input
-                                        type="hidden"
-                                        name="appointmentId"
-                                        value={appointment.id}
-                                      />
-                                      <input
-                                        type="hidden"
-                                        name="revision"
-                                        value={appointment.revision}
-                                      />
-                                      <input
-                                        type="hidden"
-                                        name="toStatus"
-                                        value={toStatus}
-                                      />
-                                      <input
-                                        type="hidden"
-                                        name="returnTo"
-                                        value={returnTo}
-                                      />
-                                      <button
-                                        type="submit"
-                                        className={
-                                          toStatus === 'CANCELLED'
-                                            ? styles.dangerButton
-                                            : styles.secondaryButton
-                                        }
-                                      >
-                                        {copy.moveTo[toStatus]}
-                                      </button>
-                                    </form>
-                                  ))}
-                                </div>
-                              ) : null}
-                              {canRecordPayment &&
-                              (appointment.status === 'CONFIRMED' ||
-                                appointment.status === 'COMPLETED') ? (
-                                <Link
-                                  href={`${localizeHref(
-                                    locale,
-                                    `/office-payments?appointment=${appointment.id}`,
-                                  )}#record`}
-                                >
-                                  {copy.recordPayment}
-                                </Link>
-                              ) : null}
-                              {upcoming ? (
-                                <details>
-                                  <summary>{copy.reschedule}</summary>
-                                  <form
-                                    action={rescheduleConsultationAction}
-                                    className={styles.form}
-                                  >
-                                    <input
-                                      type="hidden"
-                                      name="appointmentId"
-                                      value={appointment.id}
-                                    />
-                                    <input
-                                      type="hidden"
-                                      name="revision"
-                                      value={appointment.revision}
-                                    />
-                                    <input
-                                      type="hidden"
-                                      name="returnTo"
-                                      value={returnTo}
-                                    />
-                                    <div className={styles.grid}>
-                                      {dateTimeFields({
-                                        date: local.slice(0, 10),
-                                        time: local.slice(11, 16),
-                                        duration:
-                                          consultationDurationMinutes(
-                                            appointment,
-                                          ),
-                                      })}
-                                    </div>
-                                    <button
-                                      type="submit"
-                                      className={styles.button}
-                                    >
-                                      {copy.saveTime}
-                                    </button>
-                                  </form>
-                                </details>
-                              ) : null}
-                              <details>
-                                <summary>{copy.editNote}</summary>
+        {appointments.length === 0 ? (
+          <p className={styles.empty}>{copy.noAppointments}</p>
+        ) : (
+          days
+            .filter((localDate) => byDay.has(localDate))
+            .map((localDate) => (
+              <section key={localDate} aria-label={dayLabel(localDate)}>
+                <h3>{dayLabel(localDate)}</h3>
+                <ul className={styles.list}>
+                  {(byDay.get(localDate) ?? []).map((appointment) => {
+                    const local = utcToZonedLocal(appointment.startsAt);
+                    const transitions =
+                      consultationTransitions[appointment.status];
+                    const upcoming =
+                      appointment.status === 'REQUESTED' ||
+                      appointment.status === 'CONFIRMED';
+                    return (
+                      <li className={styles.row} key={appointment.id}>
+                        <div className={styles.rowBody}>
+                          <h3>
+                            {timeLabel(appointment.startsAt)}–
+                            {timeLabel(appointment.endsAt)} ·{' '}
+                            <Link
+                              href={localizeHref(
+                                locale,
+                                `/crm/contacts/${appointment.client.id}`,
+                              )}
+                            >
+                              <bdi>{appointment.client.displayName}</bdi>
+                            </Link>
+                          </h3>
+                          <p className={styles.meta}>
+                            <span className={styles.chip}>
+                              {copy.status[appointment.status]}
+                            </span>
+                            <span>{copy.mode[appointment.mode]}</span>
+                            <span>{money(appointment.priceMinor)}</span>
+                            {appointment.payments.length > 0 ? (
+                              <span className={styles.success}>
+                                {copy.paid}{' '}
+                                {money(
+                                  appointment.payments.reduce(
+                                    (sum, { amountMinor }) => sum + amountMinor,
+                                    0,
+                                  ),
+                                )}
+                              </span>
+                            ) : null}
+                            {appointment.client.phone ? (
+                              <bdi>{appointment.client.phone}</bdi>
+                            ) : null}
+                            {actor.scope === 'all' ? (
+                              <span>
+                                {copy.consultantLabel}:{' '}
+                                <bdi>{personName(appointment.consultant)}</bdi>
+                              </span>
+                            ) : null}
+                          </p>
+                          {appointment.operationalNote ? (
+                            <p className={styles.note}>
+                              {appointment.operationalNote}
+                            </p>
+                          ) : null}
+                        </div>
+                        <div className={styles.rowBody}>
+                          {transitions.length > 0 ? (
+                            <div className={styles.actions}>
+                              {transitions.map((toStatus) => (
                                 <form
-                                  action={updateConsultationNoteAction}
-                                  className={styles.form}
+                                  key={toStatus}
+                                  action={transitionConsultationAction}
                                 >
                                   <input
                                     type="hidden"
@@ -452,146 +342,229 @@ export default async function ConsultationsPage({
                                   />
                                   <input
                                     type="hidden"
+                                    name="toStatus"
+                                    value={toStatus}
+                                  />
+                                  <input
+                                    type="hidden"
                                     name="returnTo"
                                     value={returnTo}
                                   />
-                                  <label className={styles.field}>
-                                    <span>{copy.noteLabel}</span>
-                                    <textarea
-                                      name="operationalNote"
-                                      rows={2}
-                                      maxLength={500}
-                                      defaultValue={
-                                        appointment.operationalNote ?? ''
-                                      }
-                                    />
-                                  </label>
                                   <button
                                     type="submit"
-                                    className={styles.button}
+                                    className={
+                                      toStatus === 'CANCELLED'
+                                        ? styles.dangerButton
+                                        : styles.secondaryButton
+                                    }
                                   >
-                                    {copy.saveNote}
+                                    {copy.moveTo[toStatus]}
                                   </button>
                                 </form>
-                              </details>
+                              ))}
                             </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </section>
-                ))
-            )}
-          </section>
-
-          <section className="admin-panel" id="book">
-            <div className="panel-heading">
-              <div>
-                <h2>{copy.createTitle}</h2>
-                <p className={styles.note}>{copy.createIntro}</p>
-                <p className={styles.note}>{copy.boundary}</p>
-              </div>
-              <Link href={localizeHref(locale, '/clients')}>
-                {copy.manageClients}
-              </Link>
-            </div>
-            {clients.length === 0 ? (
-              <p className={styles.empty}>{copy.noClients}</p>
-            ) : null}
-            {actor.scope === 'all' && consultants.length === 0 ? (
-              <p className={styles.empty}>{copy.noConsultants}</p>
-            ) : null}
-            {canBook ? (
-              <form action={createConsultationAction} className={styles.form}>
-                <input type="hidden" name="returnTo" value={returnTo} />
-                <div className={styles.grid}>
-                  <label className={styles.field}>
-                    <span>{copy.clientLabel}</span>
-                    <select
-                      name="clientId"
-                      defaultValue={preselectedClient}
-                      required
-                    >
-                      <option value="" disabled>
-                        —
-                      </option>
-                      {clients.map((client) => (
-                        <option key={client.id} value={client.id}>
-                          {client.displayName}
-                          {client.phone ? ` · ${client.phone}` : ''}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  {actor.scope === 'all' ? (
-                    <label className={styles.field}>
-                      <span>{copy.consultantLabel}</span>
-                      <select name="consultantUserId" required>
-                        {consultants.map((consultant) => (
-                          <option key={consultant.id} value={consultant.id}>
-                            {personName(consultant)}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  ) : null}
-                  {dateTimeFields({
-                    date: requestedDate,
-                    time: '10:00',
-                    duration: 60,
+                          ) : null}
+                          {canRecordPayment &&
+                          (appointment.status === 'CONFIRMED' ||
+                            appointment.status === 'COMPLETED') ? (
+                            <Link
+                              href={`${localizeHref(
+                                locale,
+                                `/office-payments?appointment=${appointment.id}`,
+                              )}#record`}
+                            >
+                              {copy.recordPayment}
+                            </Link>
+                          ) : null}
+                          {upcoming ? (
+                            <details>
+                              <summary>{copy.reschedule}</summary>
+                              <form
+                                action={rescheduleConsultationAction}
+                                className={styles.form}
+                              >
+                                <input
+                                  type="hidden"
+                                  name="appointmentId"
+                                  value={appointment.id}
+                                />
+                                <input
+                                  type="hidden"
+                                  name="revision"
+                                  value={appointment.revision}
+                                />
+                                <input
+                                  type="hidden"
+                                  name="returnTo"
+                                  value={returnTo}
+                                />
+                                <div className={styles.grid}>
+                                  {dateTimeFields({
+                                    date: local.slice(0, 10),
+                                    time: local.slice(11, 16),
+                                    duration:
+                                      consultationDurationMinutes(appointment),
+                                  })}
+                                </div>
+                                <button type="submit" className={styles.button}>
+                                  {copy.saveTime}
+                                </button>
+                              </form>
+                            </details>
+                          ) : null}
+                          <details>
+                            <summary>{copy.editNote}</summary>
+                            <form
+                              action={updateConsultationNoteAction}
+                              className={styles.form}
+                            >
+                              <input
+                                type="hidden"
+                                name="appointmentId"
+                                value={appointment.id}
+                              />
+                              <input
+                                type="hidden"
+                                name="revision"
+                                value={appointment.revision}
+                              />
+                              <input
+                                type="hidden"
+                                name="returnTo"
+                                value={returnTo}
+                              />
+                              <label className={styles.field}>
+                                <span>{copy.noteLabel}</span>
+                                <textarea
+                                  name="operationalNote"
+                                  rows={2}
+                                  maxLength={500}
+                                  defaultValue={
+                                    appointment.operationalNote ?? ''
+                                  }
+                                />
+                              </label>
+                              <button type="submit" className={styles.button}>
+                                {copy.saveNote}
+                              </button>
+                            </form>
+                          </details>
+                        </div>
+                      </li>
+                    );
                   })}
-                  <label className={styles.field}>
-                    <span>{copy.modeLabel}</span>
-                    <select name="mode" defaultValue="ONSITE">
-                      {consultationModes.map((mode) => (
-                        <option key={mode} value={mode}>
-                          {copy.mode[mode]}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className={styles.field}>
-                    <span>{copy.initialStatusLabel}</span>
-                    <select name="initialStatus" defaultValue="CONFIRMED">
-                      <option value="CONFIRMED">{copy.status.CONFIRMED}</option>
-                      <option value="REQUESTED">{copy.status.REQUESTED}</option>
-                    </select>
-                  </label>
-                  <label className={styles.field}>
-                    <span>{copy.priceLabel}</span>
-                    <input
-                      type="number"
-                      name="priceDinars"
-                      min={0}
-                      max={1000000}
-                      step={1}
-                      inputMode="numeric"
-                      defaultValue={
-                        lastPrice ? minorToDinars(lastPrice.priceMinor) : ''
-                      }
-                      required
-                    />
-                  </label>
-                  <label className={`${styles.field} ${styles.wide}`}>
-                    <span>{copy.noteLabel}</span>
-                    <textarea
-                      name="operationalNote"
-                      rows={2}
-                      maxLength={500}
-                      placeholder={copy.noteHelp}
-                    />
-                  </label>
-                </div>
-                <div>
-                  <button type="submit" className={styles.button}>
-                    {copy.book}
-                  </button>
-                </div>
-              </form>
-            ) : null}
-          </section>
-        </div>
+                </ul>
+              </section>
+            ))
+        )}
       </section>
-    </main>
+
+      <section className="admin-panel" id="book">
+        <div className="panel-heading">
+          <div>
+            <h2>{copy.createTitle}</h2>
+            <p className={styles.note}>{copy.createIntro}</p>
+            <p className={styles.note}>{copy.boundary}</p>
+          </div>
+          <Link href={localizeHref(locale, '/clients')}>
+            {copy.manageClients}
+          </Link>
+        </div>
+        {clients.length === 0 ? (
+          <p className={styles.empty}>{copy.noClients}</p>
+        ) : null}
+        {actor.scope === 'all' && consultants.length === 0 ? (
+          <p className={styles.empty}>{copy.noConsultants}</p>
+        ) : null}
+        {canBook ? (
+          <form action={createConsultationAction} className={styles.form}>
+            <input type="hidden" name="returnTo" value={returnTo} />
+            <div className={styles.grid}>
+              <label className={styles.field}>
+                <span>{copy.clientLabel}</span>
+                <select
+                  name="clientId"
+                  defaultValue={preselectedClient}
+                  required
+                >
+                  <option value="" disabled>
+                    —
+                  </option>
+                  {clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.displayName}
+                      {client.phone ? ` · ${client.phone}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {actor.scope === 'all' ? (
+                <label className={styles.field}>
+                  <span>{copy.consultantLabel}</span>
+                  <select name="consultantUserId" required>
+                    {consultants.map((consultant) => (
+                      <option key={consultant.id} value={consultant.id}>
+                        {personName(consultant)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ) : null}
+              {dateTimeFields({
+                date: requestedDate,
+                time: '10:00',
+                duration: 60,
+              })}
+              <label className={styles.field}>
+                <span>{copy.modeLabel}</span>
+                <select name="mode" defaultValue="ONSITE">
+                  {consultationModes.map((mode) => (
+                    <option key={mode} value={mode}>
+                      {copy.mode[mode]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className={styles.field}>
+                <span>{copy.initialStatusLabel}</span>
+                <select name="initialStatus" defaultValue="CONFIRMED">
+                  <option value="CONFIRMED">{copy.status.CONFIRMED}</option>
+                  <option value="REQUESTED">{copy.status.REQUESTED}</option>
+                </select>
+              </label>
+              <label className={styles.field}>
+                <span>{copy.priceLabel}</span>
+                <input
+                  type="number"
+                  name="priceDinars"
+                  min={0}
+                  max={1000000}
+                  step={1}
+                  inputMode="numeric"
+                  defaultValue={
+                    lastPrice ? minorToDinars(lastPrice.priceMinor) : ''
+                  }
+                  required
+                />
+              </label>
+              <label className={`${styles.field} ${styles.wide}`}>
+                <span>{copy.noteLabel}</span>
+                <textarea
+                  name="operationalNote"
+                  rows={2}
+                  maxLength={500}
+                  placeholder={copy.noteHelp}
+                />
+              </label>
+            </div>
+            <div>
+              <button type="submit" className={styles.button}>
+                {copy.book}
+              </button>
+            </div>
+          </form>
+        ) : null}
+      </section>
+    </CrmShell>
   );
 }

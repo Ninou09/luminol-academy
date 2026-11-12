@@ -33,6 +33,7 @@ function clientFields(formData: FormData) {
 function revalidateClients() {
   revalidatePath('/clients');
   revalidatePath('/consultations');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function createClientAction(formData: FormData) {

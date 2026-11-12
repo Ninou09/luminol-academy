@@ -385,6 +385,8 @@ model User {
   operationsTasksDecided  OperationsTask[]      @relation("OperationsTaskDecider")
   operationsTaskEvents    OperationsTaskEvent[] @relation("OperationsTaskEventActor")
 
+  crmActivities CrmActivity[] @relation("CrmActivityActor")
+
   @@index([email])
   @@index([deletedAt])
 }
@@ -1475,6 +1477,7 @@ model Enquiry {
   outcomeEvents          EnquiryOutcomeEvent[]
 
   client                 Client?
+  activities             CrmActivity[]
 
   @@index([status, createdAt])
   @@index([ownerUserId, status, createdAt])
@@ -1635,6 +1638,7 @@ model Client {
   appointments             ConsultationAppointment[]
   payments                 OfficePayment[]
   tasks                    OperationsTask[]
+  activities               CrmActivity[]
 
   @@index([displayName])
   @@index([phone])
@@ -1822,4 +1826,47 @@ model OperationsTaskEvent {
 
   @@index([taskId, occurredAt])
   @@index([actorUserId, occurredAt])
+}
+
+enum CrmActivityType {
+  CALL
+  WHATSAPP
+  EMAIL
+  MEETING
+  NOTE
+}
+
+enum CrmActivityDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum CrmActivityOutcome {
+  REACHED
+  NO_ANSWER
+  LEFT_MESSAGE
+  BOOKED
+  NOT_INTERESTED
+  OTHER
+}
+
+model CrmActivity {
+  id          String                @id @default(cuid())
+  type        CrmActivityType
+  direction   CrmActivityDirection?
+  outcome     CrmActivityOutcome?
+  summary     String
+  occurredAt  DateTime
+  enquiryId   String?
+  clientId    String?
+  actorUserId String
+  createdAt   DateTime              @default(now())
+  enquiry     Enquiry?              @relation(fields: [enquiryId], references: [id], onDelete: Restrict)
+  client      Client?               @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  actor       User                  @relation("CrmActivityActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([enquiryId, occurredAt])
+  @@index([clientId, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([occurredAt])
 }
