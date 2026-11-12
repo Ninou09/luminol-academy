@@ -180,4 +180,5 @@ export * from './social-publishing-attempts';
 export * from './social-publishing-delivery';
 export * from './social-publishing-dispatch';
 export * from './social-publishing-meta-provider';
+export * from './staff-roles';
 export * from '../generated/prisma/client';

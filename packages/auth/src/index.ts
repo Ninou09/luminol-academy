@@ -5,9 +5,9 @@ import { db } from '@luminol/database';
 import type { PermissionKey } from '@luminol/types';
 import { Webhook } from 'svix';
 import { z } from 'zod';
-import { hasPlatformPermission } from './authorization';
+import { hasPermission, hasPlatformPermission } from './authorization';
 
-export { hasPlatformPermission } from './authorization';
+export { hasPermission, hasPlatformPermission } from './authorization';
 
 export { ClerkProvider, SignIn, SignUp, UserButton } from '@clerk/nextjs';
 
@@ -69,13 +69,7 @@ export async function requireUser() {
 
 export async function requirePermission(permission: PermissionKey) {
   const user = await requireUser();
-  const allowed = user.roles.some(({ role }: RoleAssignment) =>
-    role.permissions.some(
-      ({ permission: assigned }: PermissionAssignment) =>
-        assigned.key === permission,
-    ),
-  );
-  if (!allowed) throw new AuthorizationError();
+  if (!hasPermission(user.roles, permission)) throw new AuthorizationError();
   return user;
 }
 
