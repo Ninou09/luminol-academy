@@ -22,7 +22,9 @@ const english: StaffNavigationCopy = {
     'You only see the records your role allows. Nothing here sends messages automatically.',
   destination: {
     overview: 'Overview',
+    dashboard: 'CRM dashboard',
     today: 'Today',
+    pipeline: 'Pipeline',
     consultations: 'Consultations',
     clients: 'Clients',
     payments: 'Payments',
@@ -42,7 +44,9 @@ const french: StaffNavigationCopy = {
     'Vous ne voyez que ce que votre rôle autorise. Rien n’est envoyé automatiquement.',
   destination: {
     overview: 'Vue d’ensemble',
+    dashboard: 'Tableau CRM',
     today: 'Aujourd’hui',
+    pipeline: 'Pipeline',
     consultations: 'Consultations',
     clients: 'Clients',
     payments: 'Encaissements',
@@ -61,7 +65,9 @@ const arabic: StaffNavigationCopy = {
   shellNote: 'ترى فقط السجلات التي يسمح بها دورك. لا يُرسل أي شيء تلقائيًا.',
   destination: {
     overview: 'نظرة عامة',
+    dashboard: 'لوحة المؤشرات',
     today: 'اليوم',
+    pipeline: 'مسار العملاء',
     consultations: 'الاستشارات',
     clients: 'العملاء',
     payments: 'المدفوعات',

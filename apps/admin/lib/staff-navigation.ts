@@ -2,7 +2,9 @@ import type { PermissionKey } from '@luminol/types';
 
 export const staffDestinations = [
   { key: 'overview', href: '/', permissions: ['academy:manage'] },
+  { key: 'dashboard', href: '/crm', permissions: ['academy:manage'] },
   { key: 'today', href: '/today', permissions: ['task:work'] },
+  { key: 'pipeline', href: '/crm/pipeline', permissions: ['enquiry:work'] },
   {
     key: 'consultations',
     href: '/consultations',
@@ -44,7 +46,7 @@ export function getStaffDestinations(can: PermissionCheck) {
  */
 export function resolveStaffLanding(can: PermissionCheck): string | null {
   const destination = getStaffDestinations(can).find(
-    ({ key }) => key !== 'overview',
+    ({ key }) => key !== 'overview' && key !== 'dashboard',
   );
   return destination?.href ?? null;
 }

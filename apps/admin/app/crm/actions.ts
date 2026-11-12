@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { safeOperationsReturnPath } from '../../lib/consultation-scope';
 import { requireCrmActor } from '../../lib/crm-actor.server';
 import { runOperationsMutation } from '../../lib/operations-feedback.server';
+import { transitionEnquiryStatus } from '../enquiries/actions';
 
 function field(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -51,4 +52,34 @@ export async function logCrmActivityAction(formData: FormData) {
     });
     revalidatePath('/crm', 'layout');
   });
+}
+
+export type MoveLeadStageResult = { ok: true } | { ok: false };
+
+/**
+ * Moves a lead between pipeline stages through the governed enquiry
+ * transition (permission, allowed-transition and audit checks included).
+ */
+export async function moveLeadStageAction(input: {
+  enquiryId: string;
+  toStatus: string;
+}): Promise<MoveLeadStageResult> {
+  const parsed = z
+    .object({
+      enquiryId: z.string().trim().min(1).max(128),
+      toStatus: z.string().trim().min(1).max(32),
+    })
+    .safeParse(input);
+  if (!parsed.success) return { ok: false };
+
+  const formData = new FormData();
+  formData.set('enquiryId', parsed.data.enquiryId);
+  formData.set('toStatus', parsed.data.toStatus);
+  try {
+    await transitionEnquiryStatus(formData);
+  } catch {
+    return { ok: false };
+  }
+  revalidatePath('/crm', 'layout');
+  return { ok: true };
 }
