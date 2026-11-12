@@ -1,10 +1,9 @@
 import 'server-only';
 
 import { ConsultationError } from '@luminol/database/consultations';
+import { OfficePaymentError } from '@luminol/database/office-payments';
 import { redirect } from 'next/navigation';
 import { ZodError } from 'zod';
-
-import type { ConsultationFeedbackCode } from './consultation-scope';
 
 function withParams(path: string, params: Record<string, string>) {
   const [base, query = ''] = path.split('?') as [string, string?];
@@ -16,22 +15,29 @@ function withParams(path: string, params: Record<string, string>) {
 }
 
 /**
- * Runs a consultation mutation and returns the user to `returnTo` with a
+ * Runs an operations mutation and returns the user to `returnTo` with a
  * bounded feedback code instead of an unhandled error page. Unexpected
  * failures still throw.
  */
-export async function runConsultationMutation(
+export async function runOperationsMutation(
   returnTo: string,
   mutation: () => Promise<unknown>,
 ): Promise<never> {
-  let code: ConsultationFeedbackCode | 'saved';
+  let code: string;
   try {
     await mutation();
     code = 'saved';
   } catch (error) {
-    if (error instanceof ConsultationError) code = error.code;
-    else if (error instanceof ZodError) code = 'invalid';
-    else throw error;
+    if (
+      error instanceof ConsultationError ||
+      error instanceof OfficePaymentError
+    ) {
+      code = error.code;
+    } else if (error instanceof ZodError) {
+      code = 'invalid';
+    } else {
+      throw error;
+    }
   }
   redirect(
     withParams(returnTo, code === 'saved' ? { saved: '1' } : { error: code }),

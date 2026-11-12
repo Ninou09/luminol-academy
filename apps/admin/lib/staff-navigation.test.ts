@@ -19,6 +19,11 @@ describe('staff navigation', () => {
         ),
       ).toEqual(['consultations', 'clients']);
     }
+    expect(
+      getStaffDestinations((granted) =>
+        ['consultation:deliver', 'office-payment:record'].includes(granted),
+      ).map(({ key }) => key),
+    ).toEqual(['consultations', 'clients', 'payments']);
   });
 
   it('shows only destinations the persisted permissions allow', () => {

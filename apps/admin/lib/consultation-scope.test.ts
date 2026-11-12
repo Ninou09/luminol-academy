@@ -4,7 +4,7 @@ import {
   consultationStartTimes,
   parseConsultationFeedback,
   resolveConsultationScope,
-  safeConsultationReturnPath,
+  safeOperationsReturnPath,
   shiftLocalDate,
 } from './consultation-scope';
 
@@ -43,22 +43,26 @@ describe('consultation scope', () => {
 describe('consultation redirects', () => {
   it('keeps redirects inside the consultation workspaces', () => {
     expect(
-      safeConsultationReturnPath(
+      safeOperationsReturnPath(
         '/ar/consultations?date=2026-11-14',
         '/consultations',
       ),
     ).toBe('/ar/consultations?date=2026-11-14');
-    expect(safeConsultationReturnPath('/clients?q=Sara', '/clients')).toBe(
+    expect(safeOperationsReturnPath('/clients?q=Sara', '/clients')).toBe(
       '/clients?q=Sara',
     );
+    expect(
+      safeOperationsReturnPath('/fr/office-payments?month=2026-11', '/clients'),
+    ).toBe('/fr/office-payments?month=2026-11');
     for (const unsafe of [
       'https://evil.example/consultations',
       '//evil.example/consultations',
       '/team',
+      '/office-paymentsx',
       '/consultations#x',
       null,
     ]) {
-      expect(safeConsultationReturnPath(unsafe, '/consultations')).toBe(
+      expect(safeOperationsReturnPath(unsafe, '/consultations')).toBe(
         '/consultations',
       );
     }

@@ -376,6 +376,10 @@ model User {
   consultationsCreated      ConsultationAppointment[]      @relation("ConsultationCreator")
   consultationEvents        ConsultationAppointmentEvent[] @relation("ConsultationEventActor")
 
+  officePaymentsRecorded OfficePayment[]      @relation("OfficePaymentRecorder")
+  officePaymentsVoided   OfficePayment[]      @relation("OfficePaymentVoider")
+  officePaymentEvents    OfficePaymentEvent[] @relation("OfficePaymentEventActor")
+
   @@index([email])
   @@index([deletedAt])
 }
@@ -1624,6 +1628,7 @@ model Client {
   sourceEnquiry            Enquiry?                  @relation(fields: [sourceEnquiryId], references: [id], onDelete: SetNull)
   createdBy                User                      @relation("ClientCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
   appointments             ConsultationAppointment[]
+  payments                 OfficePayment[]
 
   @@index([displayName])
   @@index([phone])
@@ -1650,6 +1655,7 @@ model ConsultationAppointment {
   consultant       User                           @relation("ConsultationConsultant", fields: [consultantUserId], references: [id], onDelete: Restrict)
   createdBy        User                           @relation("ConsultationCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
   events           ConsultationAppointmentEvent[]
+  payments         OfficePayment[]
 
   @@index([consultantUserId, startsAt])
   @@index([status, startsAt])
@@ -1672,5 +1678,74 @@ model ConsultationAppointmentEvent {
   actor         User                    @relation("ConsultationEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
 
   @@index([appointmentId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
+enum OfficePaymentMethod {
+  CASH
+  BARIDIMOB
+  CCP
+  BANK_TRANSFER
+}
+
+enum OfficePaymentPurpose {
+  CONSULTATION
+  PROGRAMME
+  OTHER
+}
+
+enum OfficePaymentStatus {
+  RECORDED
+  VOIDED
+}
+
+enum OfficePaymentEventType {
+  RECORDED
+  VOIDED
+}
+
+model OfficePayment {
+  id                String                   @id @default(cuid())
+  receiptNumber     String                   @unique
+  payerName         String
+  clientId          String?
+  appointmentId     String?
+  purpose           OfficePaymentPurpose
+  description       String
+  amountMinor       Int
+  currency          String                   @default("DZD") @db.Char(3)
+  method            OfficePaymentMethod
+  externalReference String?
+  receivedAt        DateTime
+  status            OfficePaymentStatus      @default(RECORDED)
+  recordedByUserId  String
+  voidedByUserId    String?
+  voidedAt          DateTime?
+  voidReason        String?
+  createdAt         DateTime                 @default(now())
+  client            Client?                  @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  appointment       ConsultationAppointment? @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+  recordedBy        User                     @relation("OfficePaymentRecorder", fields: [recordedByUserId], references: [id], onDelete: Restrict)
+  voidedBy          User?                    @relation("OfficePaymentVoider", fields: [voidedByUserId], references: [id], onDelete: Restrict)
+  events            OfficePaymentEvent[]
+
+  @@index([receivedAt])
+  @@index([status, receivedAt])
+  @@index([clientId, receivedAt])
+  @@index([appointmentId])
+  @@index([recordedByUserId, receivedAt])
+}
+
+model OfficePaymentEvent {
+  id          String                 @id @default(cuid())
+  paymentId   String
+  eventType   OfficePaymentEventType
+  actorUserId String
+  reason      String?
+  occurredAt  DateTime               @default(now())
+  payment     OfficePayment          @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  actor       User                   @relation("OfficePaymentEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([paymentId, occurredAt])
   @@index([actorUserId, occurredAt])
 }

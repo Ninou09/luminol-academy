@@ -9,7 +9,8 @@
     "./ai-provider": "./src/ai-provider.ts",
     "./content-calendar": "./src/content-calendar.ts",
     "./env": "./src/env.ts",
-    "./consultations": "./src/consultations.ts"
+    "./consultations": "./src/consultations.ts",
+    "./office-payments": "./src/office-payments.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",

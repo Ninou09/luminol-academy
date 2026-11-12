@@ -12,6 +12,11 @@ export const staffDestinations = [
     href: '/clients',
     permissions: ['consultation:manage', 'consultation:deliver'],
   },
+  {
+    key: 'payments',
+    href: '/office-payments',
+    permissions: ['office-payment:record'],
+  },
   { key: 'enquiries', href: '/enquiries', permissions: ['enquiry:work'] },
   { key: 'team', href: '/team', permissions: ['team:manage'] },
 ] as const satisfies readonly {

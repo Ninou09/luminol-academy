@@ -175,6 +175,7 @@ export * from './content-calendar';
 export * from './enquiry-follow-up';
 export * from './instructor-cohorts';
 export * from './learning-analytics';
+export * from './office-payments';
 export * from './professional-analytics';
 export * from './professional-submissions';
 export * from './social-publishing-attempts';

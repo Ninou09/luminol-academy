@@ -9,8 +9,8 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { requireConsultationActor } from '../../lib/consultation-actor.server';
-import { runConsultationMutation } from '../../lib/consultation-feedback.server';
-import { safeConsultationReturnPath } from '../../lib/consultation-scope';
+import { runOperationsMutation } from '../../lib/operations-feedback.server';
+import { safeOperationsReturnPath } from '../../lib/consultation-scope';
 
 const identifierSchema = z.string().trim().min(1).max(128);
 
@@ -37,12 +37,12 @@ function revalidateClients() {
 
 export async function createClientAction(formData: FormData) {
   const { actor } = await requireConsultationActor();
-  const returnTo = safeConsultationReturnPath(
+  const returnTo = safeOperationsReturnPath(
     field(formData, 'returnTo'),
     '/clients',
   );
 
-  await runConsultationMutation(returnTo, async () => {
+  await runOperationsMutation(returnTo, async () => {
     const sourceEnquiryId = field(formData, 'sourceEnquiryId')?.trim();
     await createClientRecord(db, {
       actor,
@@ -57,12 +57,12 @@ export async function createClientAction(formData: FormData) {
 
 export async function updateClientAction(formData: FormData) {
   const { actor } = await requireConsultationActor();
-  const returnTo = safeConsultationReturnPath(
+  const returnTo = safeOperationsReturnPath(
     field(formData, 'returnTo'),
     '/clients',
   );
 
-  await runConsultationMutation(returnTo, async () => {
+  await runOperationsMutation(returnTo, async () => {
     await updateClientRecord(db, {
       actor,
       clientId: identifierSchema.parse(field(formData, 'clientId')),

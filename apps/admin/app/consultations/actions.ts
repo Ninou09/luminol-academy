@@ -17,8 +17,8 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { requireConsultationActor } from '../../lib/consultation-actor.server';
-import { runConsultationMutation } from '../../lib/consultation-feedback.server';
-import { safeConsultationReturnPath } from '../../lib/consultation-scope';
+import { runOperationsMutation } from '../../lib/operations-feedback.server';
+import { safeOperationsReturnPath } from '../../lib/consultation-scope';
 
 const identifierSchema = z.string().trim().min(1).max(128);
 const timeSchema = z.string().regex(/^\d{2}:\d{2}$/);
@@ -31,7 +31,7 @@ function field(formData: FormData, name: string) {
 }
 
 function returnPath(formData: FormData) {
-  return safeConsultationReturnPath(
+  return safeOperationsReturnPath(
     field(formData, 'returnTo'),
     '/consultations',
   );
@@ -52,7 +52,7 @@ export async function createConsultationAction(formData: FormData) {
   const { actor } = await requireConsultationActor();
   const returnTo = returnPath(formData);
 
-  await runConsultationMutation(returnTo, async () => {
+  await runOperationsMutation(returnTo, async () => {
     const consultantUserId =
       actor.scope === 'own'
         ? actor.userId
@@ -80,7 +80,7 @@ export async function rescheduleConsultationAction(formData: FormData) {
   const { actor } = await requireConsultationActor();
   const returnTo = returnPath(formData);
 
-  await runConsultationMutation(returnTo, async () => {
+  await runOperationsMutation(returnTo, async () => {
     await rescheduleConsultationAppointment(db, {
       actor,
       appointmentId: identifierSchema.parse(field(formData, 'appointmentId')),
@@ -96,7 +96,7 @@ export async function transitionConsultationAction(formData: FormData) {
   const { actor } = await requireConsultationActor();
   const returnTo = returnPath(formData);
 
-  await runConsultationMutation(returnTo, async () => {
+  await runOperationsMutation(returnTo, async () => {
     await transitionConsultationAppointment(db, {
       actor,
       appointmentId: identifierSchema.parse(field(formData, 'appointmentId')),
@@ -111,7 +111,7 @@ export async function updateConsultationNoteAction(formData: FormData) {
   const { actor } = await requireConsultationActor();
   const returnTo = returnPath(formData);
 
-  await runConsultationMutation(returnTo, async () => {
+  await runOperationsMutation(returnTo, async () => {
     await updateConsultationNote(db, {
       actor,
       appointmentId: identifierSchema.parse(field(formData, 'appointmentId')),

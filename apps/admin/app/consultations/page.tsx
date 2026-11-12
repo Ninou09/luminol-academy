@@ -1,3 +1,4 @@
+import { hasPermission } from '@luminol/auth';
 import { db } from '@luminol/database';
 import {
   appointmentScopeWhere,
@@ -98,6 +99,10 @@ export default async function ConsultationsPage({
         consultant: {
           select: { email: true, firstName: true, lastName: true },
         },
+        payments: {
+          where: { status: 'RECORDED' },
+          select: { amountMinor: true },
+        },
       },
     }),
     db.client.findMany({
@@ -146,6 +151,7 @@ export default async function ConsultationsPage({
     counts[appointment.status] = (counts[appointment.status] ?? 0) + 1;
     return counts;
   }, {});
+  const canRecordPayment = hasPermission(user.roles, 'office-payment:record');
   const canBook =
     clients.length > 0 && (actor.scope === 'own' || consultants.length > 0);
 
@@ -303,6 +309,18 @@ export default async function ConsultationsPage({
                                 </span>
                                 <span>{copy.mode[appointment.mode]}</span>
                                 <span>{money(appointment.priceMinor)}</span>
+                                {appointment.payments.length > 0 ? (
+                                  <span className={styles.success}>
+                                    {copy.paid}{' '}
+                                    {money(
+                                      appointment.payments.reduce(
+                                        (sum, { amountMinor }) =>
+                                          sum + amountMinor,
+                                        0,
+                                      ),
+                                    )}
+                                  </span>
+                                ) : null}
                                 {appointment.client.phone ? (
                                   <bdi>{appointment.client.phone}</bdi>
                                 ) : null}
@@ -362,6 +380,18 @@ export default async function ConsultationsPage({
                                     </form>
                                   ))}
                                 </div>
+                              ) : null}
+                              {canRecordPayment &&
+                              (appointment.status === 'CONFIRMED' ||
+                                appointment.status === 'COMPLETED') ? (
+                                <Link
+                                  href={`${localizeHref(
+                                    locale,
+                                    `/office-payments?appointment=${appointment.id}`,
+                                  )}#record`}
+                                >
+                                  {copy.recordPayment}
+                                </Link>
                               ) : null}
                               {upcoming ? (
                                 <details>
