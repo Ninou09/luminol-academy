@@ -371,6 +371,11 @@ model User {
   staffRoleEventsActed    StaffRoleAuditEvent[] @relation("StaffRoleAuditActor")
   staffRoleEventsReceived StaffRoleAuditEvent[] @relation("StaffRoleAuditTarget")
 
+  clientsCreated            Client[]                       @relation("ClientCreator")
+  consultationsDelivered    ConsultationAppointment[]      @relation("ConsultationConsultant")
+  consultationsCreated      ConsultationAppointment[]      @relation("ConsultationCreator")
+  consultationEvents        ConsultationAppointmentEvent[] @relation("ConsultationEventActor")
+
   @@index([email])
   @@index([deletedAt])
 }
@@ -1460,6 +1465,8 @@ model Enquiry {
   followUpEvents         EnquiryFollowUpEvent[]
   outcomeEvents          EnquiryOutcomeEvent[]
 
+  client                 Client?
+
   @@index([status, createdAt])
   @@index([ownerUserId, status, createdAt])
   @@index([nextFollowUpAt, status])
@@ -1578,4 +1585,92 @@ model StaffRoleAuditEvent {
   @@index([targetUserId, occurredAt])
   @@index([actorUserId, occurredAt])
   @@index([occurredAt])
+}
+
+enum ConsultationMode {
+  ONSITE
+  ONLINE
+}
+
+enum ConsultationStatus {
+  REQUESTED
+  CONFIRMED
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+enum ConsultationEventType {
+  CREATED
+  RESCHEDULED
+  STATUS_CHANGED
+  NOTE_UPDATED
+}
+
+model Client {
+  id                       String                    @id @default(cuid())
+  displayName              String
+  phone                    String?
+  email                    String?
+  preferredLocale          String                    @default("ar")
+  contactConsent           Boolean                   @default(false)
+  contactConsentRecordedAt DateTime?
+  sourceEnquiryId          String?                   @unique
+  operationalNote          String?
+  createdByUserId          String
+  archivedAt               DateTime?
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  sourceEnquiry            Enquiry?                  @relation(fields: [sourceEnquiryId], references: [id], onDelete: SetNull)
+  createdBy                User                      @relation("ClientCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  appointments             ConsultationAppointment[]
+
+  @@index([displayName])
+  @@index([phone])
+  @@index([createdByUserId, createdAt])
+  @@index([archivedAt])
+}
+
+model ConsultationAppointment {
+  id               String                         @id @default(cuid())
+  clientId         String
+  consultantUserId String
+  startsAt         DateTime
+  endsAt           DateTime
+  mode             ConsultationMode
+  status           ConsultationStatus             @default(CONFIRMED)
+  priceMinor       Int
+  currency         String                         @default("DZD") @db.Char(3)
+  operationalNote  String?
+  revision         Int                            @default(1)
+  createdByUserId  String
+  createdAt        DateTime                       @default(now())
+  updatedAt        DateTime                       @updatedAt
+  client           Client                         @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  consultant       User                           @relation("ConsultationConsultant", fields: [consultantUserId], references: [id], onDelete: Restrict)
+  createdBy        User                           @relation("ConsultationCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  events           ConsultationAppointmentEvent[]
+
+  @@index([consultantUserId, startsAt])
+  @@index([status, startsAt])
+  @@index([clientId, startsAt])
+}
+
+model ConsultationAppointmentEvent {
+  id            String                  @id @default(cuid())
+  appointmentId String
+  eventType     ConsultationEventType
+  actorUserId   String
+  fromStatus    ConsultationStatus?
+  toStatus      ConsultationStatus
+  fromStartsAt  DateTime?
+  toStartsAt    DateTime
+  fromRevision  Int?
+  toRevision    Int
+  occurredAt    DateTime                @default(now())
+  appointment   ConsultationAppointment @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+  actor         User                    @relation("ConsultationEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([appointmentId, occurredAt])
+  @@index([actorUserId, occurredAt])
 }

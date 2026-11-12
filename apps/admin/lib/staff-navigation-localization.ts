@@ -11,6 +11,8 @@ const english: StaffNavigationCopy = {
   aria: 'Staff workspace',
   destination: {
     overview: 'Overview',
+    consultations: 'Consultations',
+    clients: 'Clients',
     enquiries: 'Enquiries',
     team: 'Team',
   },
@@ -20,6 +22,8 @@ const french: StaffNavigationCopy = {
   aria: 'Espace équipe',
   destination: {
     overview: 'Vue d’ensemble',
+    consultations: 'Consultations',
+    clients: 'Clients',
     enquiries: 'Demandes',
     team: 'Équipe',
   },
@@ -29,6 +33,8 @@ const arabic: StaffNavigationCopy = {
   aria: 'مساحة الفريق',
   destination: {
     overview: 'نظرة عامة',
+    consultations: 'الاستشارات',
+    clients: 'العملاء',
     enquiries: 'الطلبات',
     team: 'الفريق',
   },
