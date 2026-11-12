@@ -30,7 +30,10 @@ describe('staff navigation', () => {
     const enquiryAgent = getStaffDestinations(
       (permission) => permission === 'enquiry:work',
     );
-    expect(enquiryAgent.map(({ key }) => key)).toEqual(['enquiries']);
+    expect(enquiryAgent.map(({ key }) => key)).toEqual([
+      'pipeline',
+      'enquiries',
+    ]);
   });
 
   it('keeps the owner on the overview and lands staff on their first workspace', () => {
@@ -47,7 +50,7 @@ describe('staff navigation', () => {
     ).toBe('/consultations');
     expect(
       resolveStaffLanding((permission) => permission === 'enquiry:work'),
-    ).toBe('/enquiries');
+    ).toBe('/crm/pipeline');
     expect(
       resolveStaffLanding((permission) => permission === 'team:manage'),
     ).toBe('/team');
