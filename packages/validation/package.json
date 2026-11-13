@@ -12,7 +12,8 @@
     "./consultations": "./src/consultations.ts",
     "./office-payments": "./src/office-payments.ts",
     "./operations-tasks": "./src/operations-tasks.ts",
-    "./crm-activities": "./src/crm-activities.ts"
+    "./crm-activities": "./src/crm-activities.ts",
+    "./crm-sections": "./src/crm-sections.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",

@@ -75,7 +75,7 @@ const operationsWorkspaces = [
 export type OperationsWorkspace = (typeof operationsWorkspaces)[number];
 
 const returnPathPattern = new RegExp(
-  `^/(?:(?:ar|fr|en)/)?(?:${operationsWorkspaces.join('|')}|crm(?:/(?:leads|contacts)/[A-Za-z0-9_-]{1,128})?)(?:\\?[A-Za-z0-9=&%._:+-]*)?$`,
+  `^/(?:(?:ar|fr|en)/)?(?:${operationsWorkspaces.join('|')}|crm(?:/(?:leads|contacts|sections)/[A-Za-z0-9_-]{1,128})?)(?:\\?[A-Za-z0-9=&%._:+-]*)?$`,
 );
 
 /** Accepts only internal operations workspace paths for redirects. */

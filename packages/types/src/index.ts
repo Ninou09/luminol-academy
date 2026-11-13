@@ -31,5 +31,6 @@ export const permissions = [
   'task:work',
   'task:manage',
   'approval:decide',
+  'offer:manage',
 ] as const;
 export type PermissionKey = (typeof permissions)[number];

@@ -57,6 +57,9 @@ describe('consultation redirects', () => {
     expect(
       safeOperationsReturnPath('/ar/crm/leads/clx123_ab-9', '/clients'),
     ).toBe('/ar/crm/leads/clx123_ab-9');
+    expect(
+      safeOperationsReturnPath('/fr/crm/sections/languages', '/clients'),
+    ).toBe('/fr/crm/sections/languages');
     expect(safeOperationsReturnPath('/crm/contacts/../team', '/clients')).toBe(
       '/clients',
     );

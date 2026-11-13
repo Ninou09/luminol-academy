@@ -5,6 +5,7 @@ export type CrmTimelineKind =
   | 'follow-up'
   | 'outcome'
   | 'activity'
+  | 'deal'
   | 'appointment'
   | 'payment'
   | 'task'
