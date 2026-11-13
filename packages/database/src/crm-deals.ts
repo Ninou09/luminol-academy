@@ -314,6 +314,43 @@ export async function moveCrmDeal(
   });
 }
 
+type QuickLead = ReturnType<typeof crmQuickLeadSchema.parse>;
+
+async function insertQuickLead(
+  tx: Prisma.TransactionClient,
+  actorUserId: string,
+  lead: QuickLead,
+  locale: string,
+) {
+  const created = await tx.enquiry.create({
+    data: {
+      name: lead.name,
+      email: lead.email,
+      phone: lead.phone ?? null,
+      preferredContact: crmQuickLeadPreferredContact(lead),
+      timingPreference: lead.timingPreference ?? null,
+      school: lead.school,
+      message: lead.note,
+      locale,
+      consent: lead.consent === 'yes',
+      source: lead.source,
+      ownerUserId: actorUserId,
+    },
+    select: { id: true },
+  });
+  await tx.enquiryOwnershipEvent.create({
+    data: {
+      enquiryId: created.id,
+      actorUserId,
+      fromOwnerUserId: null,
+      toOwnerUserId: actorUserId,
+    },
+  });
+  return created;
+}
+
+const quickLeadLocaleSchema = z.enum(['ar', 'fr', 'en']).catch('ar');
+
 /**
  * Records a lead met in person, by phone, WhatsApp or Facebook. It is a
  * normal enquiry with its source and an explicit consent answer; nothing is
@@ -328,36 +365,204 @@ export async function createQuickCrmLead(
   }
   const actorUserId = requireIdentifier(input.actor.userId, 'Actor');
   const lead = crmQuickLeadSchema.parse(input.lead);
-  const locale = z
-    .enum(['ar', 'fr', 'en'])
-    .catch('ar')
-    .parse(input.locale ?? 'ar');
+  const locale = quickLeadLocaleSchema.parse(input.locale ?? 'ar');
+
+  return client.$transaction((tx) =>
+    insertQuickLead(tx, actorUserId, lead, locale),
+  );
+}
+
+/**
+ * Registers someone for an event or free session: a quick lead plus an
+ * Events opportunity on that offer, refused once the offer is full.
+ */
+export async function registerCrmEventAttendee(
+  client: PrismaClient,
+  input: { actor: CrmActor; offerId: string; lead: unknown; locale?: string },
+) {
+  if (!input.actor.canWorkEnquiries) {
+    throw new CrmError('forbidden', 'Your role cannot work leads');
+  }
+  const actorUserId = requireIdentifier(input.actor.userId, 'Actor');
+  const offerId = requireIdentifier(input.offerId, 'Offer');
+  const lead = crmQuickLeadSchema.parse(input.lead);
+  const locale = quickLeadLocaleSchema.parse(input.locale ?? 'ar');
+  const stage = getCrmInitialStage('EVENTS');
 
   return client.$transaction(async (tx) => {
-    const created = await tx.enquiry.create({
-      data: {
-        name: lead.name,
-        email: lead.email,
-        phone: lead.phone ?? null,
-        preferredContact: crmQuickLeadPreferredContact(lead),
-        timingPreference: lead.timingPreference ?? null,
-        school: lead.school,
-        message: lead.note,
-        locale,
-        consent: lead.consent === 'yes',
-        source: lead.source,
-        ownerUserId: actorUserId,
+    const offer = await tx.crmOffer.findUnique({
+      where: { id: offerId },
+      select: {
+        section: true,
+        status: true,
+        capacity: true,
+        _count: {
+          select: { deals: { where: { state: { in: ['OPEN', 'WON'] } } } },
+        },
       },
-      select: { id: true },
     });
-    await tx.enquiryOwnershipEvent.create({
+    if (
+      !offer ||
+      offer.section !== 'EVENTS' ||
+      !crmBookableOfferStatuses.includes(offer.status) ||
+      (offer.capacity !== null && offer._count.deals >= offer.capacity)
+    ) {
+      throw new CrmError(
+        'offer-unavailable',
+        'This event is not open for registration',
+      );
+    }
+    const created = await insertQuickLead(tx, actorUserId, lead, locale);
+    const deal = await tx.crmDeal.create({
       data: {
+        section: 'EVENTS',
+        stage,
         enquiryId: created.id,
-        actorUserId,
-        fromOwnerUserId: null,
-        toOwnerUserId: actorUserId,
+        offerId,
+        ownerUserId: actorUserId,
+        createdByUserId: actorUserId,
       },
     });
-    return created;
+    await tx.crmDealEvent.create({
+      data: { dealId: deal.id, type: 'CREATED', toStage: stage, actorUserId },
+    });
+    return deal;
   });
+}
+
+const convertibleEventStages: readonly string[] = ['ATTENDED', 'FOLLOWED_UP'];
+
+/**
+ * Turns an event attendee into an opportunity in a paid section and closes
+ * the event opportunity as converted, in one transaction.
+ */
+export async function convertCrmEventDeal(
+  client: PrismaClient,
+  input: {
+    actor: CrmActor;
+    dealId: string;
+    section: string;
+    offerId?: string | null;
+    now?: Date;
+  },
+) {
+  const actorUserId = requireIdentifier(input.actor.userId, 'Actor');
+  const dealId = requireIdentifier(input.dealId, 'Opportunity');
+  const scope = crmDealWhere(input.actor);
+  if (!scope) {
+    throw new CrmError('forbidden', 'Your role cannot work opportunities');
+  }
+  const now = input.now ?? new Date();
+
+  try {
+    return await client.$transaction(async (tx) => {
+      const eventDeal = await tx.crmDeal.findFirst({
+        where: { AND: [{ id: dealId }, scope] },
+        select: {
+          id: true,
+          section: true,
+          stage: true,
+          state: true,
+          revision: true,
+          enquiryId: true,
+          clientId: true,
+        },
+      });
+      if (!eventDeal) {
+        throw new CrmError('not-found', 'Opportunity was not found');
+      }
+      if (
+        eventDeal.section !== 'EVENTS' ||
+        eventDeal.state !== 'OPEN' ||
+        !convertibleEventStages.includes(eventDeal.stage)
+      ) {
+        throw new CrmError(
+          'stage-invalid',
+          'Only attendees can be converted to a paid offer',
+        );
+      }
+      const target = crmDealInputSchema.parse({
+        section: input.section,
+        enquiryId: eventDeal.enquiryId ?? '',
+        clientId: eventDeal.clientId ?? '',
+        offerId: input.offerId ?? '',
+        valueDinars: '',
+        expectedCloseOn: '',
+      });
+      if (target.section === 'EVENTS') {
+        throw new CrmError('stage-invalid', 'Choose a paid section');
+      }
+      if (target.offerId) {
+        const offer = await tx.crmOffer.findUnique({
+          where: { id: target.offerId },
+          select: { section: true, status: true },
+        });
+        if (
+          !offer ||
+          offer.section !== target.section ||
+          !crmBookableOfferStatuses.includes(offer.status)
+        ) {
+          throw new CrmError(
+            'offer-unavailable',
+            'This offer is not open in this section',
+          );
+        }
+      }
+      const stage = getCrmInitialStage(target.section);
+      const created = await tx.crmDeal.create({
+        data: {
+          section: target.section,
+          stage,
+          enquiryId: target.enquiryId,
+          clientId: target.clientId,
+          offerId: target.offerId,
+          ownerUserId: actorUserId,
+          createdByUserId: actorUserId,
+        },
+      });
+      await tx.crmDealEvent.create({
+        data: {
+          dealId: created.id,
+          type: 'CREATED',
+          toStage: stage,
+          actorUserId,
+          occurredAt: now,
+        },
+      });
+      const closed = await tx.crmDeal.updateMany({
+        where: { id: eventDeal.id, revision: eventDeal.revision },
+        data: {
+          stage: 'CONVERTED',
+          state: 'WON',
+          closedAt: now,
+          revision: { increment: 1 },
+        },
+      });
+      if (closed.count === 0) {
+        throw new CrmError(
+          'conflict',
+          'The opportunity changed; reload and retry',
+        );
+      }
+      await tx.crmDealEvent.create({
+        data: {
+          dealId: eventDeal.id,
+          type: 'STAGE_CHANGED',
+          fromStage: eventDeal.stage,
+          toStage: 'CONVERTED',
+          actorUserId,
+          occurredAt: now,
+        },
+      });
+      return created;
+    });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      throw new CrmError(
+        'duplicate-open',
+        'This person already has an open opportunity in this section',
+      );
+    }
+    throw error;
+  }
 }
