@@ -60,6 +60,9 @@ describe('consultation redirects', () => {
     expect(
       safeOperationsReturnPath('/fr/crm/sections/languages', '/clients'),
     ).toBe('/fr/crm/sections/languages');
+    expect(safeOperationsReturnPath('/ar/approvals', '/tasks')).toBe(
+      '/ar/approvals',
+    );
     expect(safeOperationsReturnPath('/crm/contacts/../team', '/clients')).toBe(
       '/clients',
     );

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   getStaffDestinations,
+  getStaffSidebar,
   resolveStaffLanding,
   staffDestinations,
 } from './staff-navigation';
@@ -55,6 +56,30 @@ describe('staff navigation', () => {
     expect(
       resolveStaffLanding((permission) => permission === 'team:manage'),
     ).toBe('/team');
+  });
+
+  it('lists the sidebar in the operations order with owner views last', () => {
+    expect(getStaffSidebar(() => true).map(({ key }) => key)).toEqual([
+      'today',
+      'pipeline',
+      'clients',
+      'consultations',
+      'sections',
+      'payments',
+      'calendar',
+      'approvals',
+      'tasks',
+      'activity',
+      'enquiries',
+      'dashboard',
+      'team',
+      'overview',
+    ]);
+    expect(
+      getStaffSidebar((permission) => permission === 'task:work').map(
+        ({ key }) => key,
+      ),
+    ).toEqual(['today', 'approvals', 'tasks']);
   });
 
   it('fails closed for accounts without administration capability', () => {

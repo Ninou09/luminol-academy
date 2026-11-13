@@ -4,10 +4,12 @@ import { db } from '@luminol/database';
 import { CrmError } from '@luminol/database/crm';
 import {
   changeCrmOfferStatus,
+  convertCrmEventDeal,
   createCrmDeal,
   createCrmOffer,
   createQuickCrmLead,
   moveCrmDeal,
+  registerCrmEventAttendee,
 } from '@luminol/database/crm-deals';
 import { localizeHref } from '@luminol/localization';
 import { revalidatePath } from 'next/cache';
@@ -166,4 +168,74 @@ export async function quickAddLeadAction(formData: FormData) {
   }
   revalidatePath('/crm', 'layout');
   redirect(`${localizeHref(locale, `/crm/leads/${leadId}`)}?saved=1`);
+}
+
+/** Form version of a stage move, used by the event roster check-in. */
+export async function moveCrmDealFormAction(formData: FormData) {
+  const { actor } = await requireCrmActor();
+  const returnTo = safeOperationsReturnPath(
+    field(formData, 'returnTo'),
+    '/clients',
+  );
+
+  await runOperationsMutation(returnTo, async () => {
+    await moveCrmDeal(db, {
+      actor,
+      dealId: z.string().parse(field(formData, 'dealId')),
+      toStage: z.string().parse(field(formData, 'toStage')),
+      reason: field(formData, 'reason') ?? null,
+      expectedRevision: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .parse(field(formData, 'revision')),
+    });
+    revalidatePath('/crm', 'layout');
+  });
+}
+
+export async function registerEventAttendeeAction(formData: FormData) {
+  const { actor } = await requireCrmActor();
+  const locale = await getAdminRequestLocale();
+  const returnTo = safeOperationsReturnPath(
+    field(formData, 'returnTo'),
+    '/clients',
+  );
+
+  await runOperationsMutation(returnTo, async () => {
+    await registerCrmEventAttendee(db, {
+      actor,
+      locale,
+      offerId: z.string().parse(field(formData, 'offerId')),
+      lead: fields(formData, [
+        'name',
+        'phone',
+        'email',
+        'source',
+        'school',
+        'timingPreference',
+        'note',
+        'consent',
+      ]),
+    });
+    revalidatePath('/crm', 'layout');
+  });
+}
+
+export async function convertEventDealAction(formData: FormData) {
+  const { actor } = await requireCrmActor();
+  const returnTo = safeOperationsReturnPath(
+    field(formData, 'returnTo'),
+    '/clients',
+  );
+
+  await runOperationsMutation(returnTo, async () => {
+    await convertCrmEventDeal(db, {
+      actor,
+      dealId: z.string().parse(field(formData, 'dealId')),
+      section: z.string().parse(field(formData, 'section')),
+      offerId: field(formData, 'offerId') || null,
+    });
+    revalidatePath('/crm', 'layout');
+  });
 }

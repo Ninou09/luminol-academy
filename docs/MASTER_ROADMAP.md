@@ -189,6 +189,14 @@ Objective selected by the owner: one internal operating system for daily academy
 
 Boundaries: no clinical or assessment data; consultants see only their own appointments and clients; enquiry agents never see consultations or payments; nothing in this milestone sends messages, publishes, schedules outreach or spends money; no bulk export of client or payment data.
 
+## Milestone 22 — CRM workspace
+
+Status: Production-live on 2026-11-13 under governing issue #568 (PRs #569, #570). CRM shell and scoped search, 360° lead and contact profiles, append-only CRM activities, the lead pipeline board and the owner CRM dashboard.
+
+## Milestone 23 — CRM section workspaces
+
+Status: Committed on 2026-11-13 under governing issue #572. Slice A (#573) is production-live: section pipelines, offers, opportunities with append-only history, quick-add leads and lead priority. Slice B adds the operations dashboard (Today), the regrouped sidebar with badges, Approvals and Activity log pages, the editorial calendar inside the CRM shell, event rosters (registration, check-in, consented follow-up, conversion) and per-offer section insights. Operator guide: `docs/MILESTONE_23_OPERATIONS.md`.
+
 ## Next product milestone
 
-No Milestone 22 is committed. Open new numbered product work only after a concrete product objective is selected and its authorization, privacy, data-governance, testing, and operational boundaries are written down.
+No Milestone 24 is committed. Open new numbered product work only after a concrete product objective is selected and its authorization, privacy, data-governance, testing, and operational boundaries are written down.

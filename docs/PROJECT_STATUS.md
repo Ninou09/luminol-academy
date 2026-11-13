@@ -149,6 +149,14 @@ Governing issue #562 commits an internal operating system inside the administrat
 
 Nothing in Milestone 21 is production-live until its migrations are applied by the production migration workflow and protected admin journeys are verified. See `docs/MILESTONE_21_OPERATIONS.md` for roles, workflows and boundaries.
 
+## Milestone 22 — CRM workspace (production-live)
+
+Governing issue #568; PRs #569 and #570 merged and the `m22_crm_activities` migration applied in production on 2026-11-13.
+
+## Milestone 23 — CRM section workspaces
+
+Governing issue #572. Slice A (#573) merged; migration `20261114090000_m23_offers_deals` applied in production on 2026-11-13 and admin, web and portal deployments succeeded. Slice B (daily operations dashboard, sidebar, approvals, activity log, event rosters, section insights) is in review and needs no migration. Authenticated admin journeys have not been browser-verified. See `docs/MILESTONE_23_OPERATIONS.md`.
+
 ## Next product milestone
 
-No Milestone 22 is committed. The next numbered milestone should not be invented from momentum alone.
+No Milestone 24 is committed. The next numbered milestone should not be invented from momentum alone.

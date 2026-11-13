@@ -10,6 +10,9 @@ export type StaffNavigationCopy = {
   search: string;
   shellNote: string;
   destination: Record<StaffDestinationKey, string>;
+  subtitle: string;
+  footer: (date: string) => string;
+  waiting: (count: string) => string;
 };
 
 const english: StaffNavigationCopy = {
@@ -22,17 +25,23 @@ const english: StaffNavigationCopy = {
     'You only see the records your role allows. Nothing here sends messages automatically.',
   destination: {
     overview: 'Overview',
-    dashboard: 'CRM dashboard',
+    dashboard: 'Insights',
     today: 'Today',
-    pipeline: 'Pipeline',
+    pipeline: 'Leads',
     consultations: 'Consultations',
-    clients: 'Clients',
+    clients: 'Contacts',
     sections: 'Sections',
     payments: 'Payments',
-    enquiries: 'Enquiries',
+    enquiries: 'Enquiry desk',
     tasks: 'Tasks',
     team: 'Team',
+    calendar: 'Editorial calendar',
+    approvals: 'Approvals',
+    activity: 'Activity log',
   },
+  subtitle: 'Operations dashboard',
+  footer: (date) => `Blida · ${date} · Currency: DA`,
+  waiting: (count) => `${count} waiting`,
 };
 
 const french: StaffNavigationCopy = {
@@ -45,17 +54,23 @@ const french: StaffNavigationCopy = {
     'Vous ne voyez que ce que votre rôle autorise. Rien n’est envoyé automatiquement.',
   destination: {
     overview: 'Vue d’ensemble',
-    dashboard: 'Tableau CRM',
+    dashboard: 'Analyses',
     today: 'Aujourd’hui',
-    pipeline: 'Pipeline',
+    pipeline: 'Prospects',
     consultations: 'Consultations',
-    clients: 'Clients',
+    clients: 'Contacts',
     sections: 'Sections',
     payments: 'Encaissements',
-    enquiries: 'Demandes',
+    enquiries: 'Bureau des demandes',
     tasks: 'Tâches',
     team: 'Équipe',
+    calendar: 'Calendrier éditorial',
+    approvals: 'Validations',
+    activity: 'Journal d’activité',
   },
+  subtitle: 'Tableau de bord opérationnel',
+  footer: (date) => `Blida · ${date} · Devise : DA`,
+  waiting: (count) => `${count} en attente`,
 };
 
 const arabic: StaffNavigationCopy = {
@@ -67,17 +82,23 @@ const arabic: StaffNavigationCopy = {
   shellNote: 'ترى فقط السجلات التي يسمح بها دورك. لا يُرسل أي شيء تلقائيًا.',
   destination: {
     overview: 'نظرة عامة',
-    dashboard: 'لوحة المؤشرات',
+    dashboard: 'المؤشرات',
     today: 'اليوم',
-    pipeline: 'مسار العملاء',
+    pipeline: 'العملاء المحتملون',
     consultations: 'الاستشارات',
-    clients: 'العملاء',
+    clients: 'جهات الاتصال',
     sections: 'الأقسام',
     payments: 'المدفوعات',
-    enquiries: 'الطلبات',
+    enquiries: 'مكتب الطلبات',
     tasks: 'المهام',
     team: 'الفريق',
+    calendar: 'التقويم التحريري',
+    approvals: 'الموافقات',
+    activity: 'سجل النشاط',
   },
+  subtitle: 'لوحة التشغيل',
+  footer: (date) => `البليدة · ${date} · العملة: دج`,
+  waiting: (count) => `${count} في الانتظار`,
 };
 
 const copies: Record<Locale, StaffNavigationCopy> = {

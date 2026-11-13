@@ -68,7 +68,7 @@ export default async function SectionPage({
   const since90 = new Date(now.getTime() - 90 * DAY_MS);
   const inSection = { AND: [{ section }, scope] };
 
-  const [deals, openValue, won30, closed90, offers, trainers] =
+  const [deals, openValue, won30, closed90, offers, trainers, byOffer] =
     await Promise.all([
       db.crmDeal.findMany({
         where: {
@@ -129,7 +129,57 @@ export default async function SectionPage({
             select: { id: true, email: true, firstName: true, lastName: true },
           })
         : Promise.resolve([]),
+      db.crmDeal.groupBy({
+        by: ['offerId', 'state'],
+        where: { AND: [inSection, { createdAt: { gte: since90 } }] },
+        _count: { _all: true },
+        _sum: { valueMinor: true },
+      }),
     ]);
+  const offerIds = [
+    ...new Set(
+      byOffer
+        .map(({ offerId }) => offerId)
+        .filter((value): value is string => Boolean(value)),
+    ),
+  ];
+  const offerTitles = new Map(
+    (offerIds.length
+      ? await db.crmOffer.findMany({
+          where: { id: { in: offerIds } },
+          select: { id: true, title: true },
+        })
+      : []
+    ).map(({ id, title }) => [id, title]),
+  );
+  const offerRows = [
+    ...byOffer
+      .reduce((groups, row) => {
+        const key = row.offerId ?? '';
+        const group = groups.get(key) ?? {
+          total: 0,
+          won: 0,
+          lost: 0,
+          wonMinor: 0,
+        };
+        group.total += row._count._all;
+        if (row.state === 'WON') {
+          group.won += row._count._all;
+          group.wonMinor += row._sum.valueMinor ?? 0;
+        }
+        if (row.state === 'LOST') group.lost += row._count._all;
+        groups.set(key, group);
+        return groups;
+      }, new Map<string, { total: number; won: number; lost: number; wonMinor: number }>())
+      .entries(),
+  ]
+    .map(([offerId, group]) => ({
+      offerId,
+      title: offerId ? (offerTitles.get(offerId) ?? offerId) : null,
+      ...group,
+      conversion: percent(group.won, group.won + group.lost),
+    }))
+    .sort((left, right) => right.total - left.total);
 
   const number = (value: number) => formatLocalizedNumber(value, locale);
   const money = (minor: number | null) =>
@@ -173,7 +223,12 @@ export default async function SectionPage({
     .join('|');
 
   return (
-    <CrmShell locale={locale} user={user} current="sections">
+    <CrmShell
+      locale={locale}
+      user={user}
+      current="sections"
+      currentSection={section}
+    >
       <section className="admin-intro">
         <div>
           <p className="eyebrow">{copy.eyebrow}</p>
@@ -257,6 +312,45 @@ export default async function SectionPage({
 
       <section className="admin-panel">
         <div className="panel-heading">
+          <div>
+            <h2>{copy.byOffer}</h2>
+            <p className={styles.note}>{copy.byOfferIntro}</p>
+          </div>
+        </div>
+        {offerRows.length === 0 ? (
+          <p className={styles.empty}>{copy.noOpportunities}</p>
+        ) : (
+          <table className="crm-table">
+            <thead>
+              <tr>
+                <th scope="col">{copy.opportunityOffer}</th>
+                <th scope="col">{copy.colOpportunities}</th>
+                <th scope="col">{copy.colWon}</th>
+                <th scope="col">{copy.colConversion}</th>
+                <th scope="col">{copy.colWonValue}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {offerRows.map((row) => (
+                <tr key={row.offerId || 'none'}>
+                  <td>{row.title ? <bdi>{row.title}</bdi> : copy.noOffer}</td>
+                  <td>{number(row.total)}</td>
+                  <td>{number(row.won)}</td>
+                  <td>
+                    {row.conversion === null
+                      ? copy.notSet
+                      : `${number(row.conversion)}%`}
+                  </td>
+                  <td>{money(row.wonMinor)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+
+      <section className="admin-panel">
+        <div className="panel-heading">
           <h2>{copy.offers}</h2>
         </div>
         {offers.length === 0 ? (
@@ -281,7 +375,15 @@ export default async function SectionPage({
                 return (
                   <tr key={offer.id}>
                     <td>
-                      <bdi>{offer.title}</bdi>
+                      {section === 'EVENTS' ? (
+                        <Link
+                          href={localizeHref(locale, `/crm/events/${offer.id}`)}
+                        >
+                          <bdi>{offer.title}</bdi> · {copy.openRoster}
+                        </Link>
+                      ) : (
+                        <bdi>{offer.title}</bdi>
+                      )}
                       <br />
                       <span className={styles.meta}>
                         {copy.offerKind[offer.kind]}

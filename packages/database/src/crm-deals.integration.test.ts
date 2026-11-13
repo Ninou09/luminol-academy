@@ -4,11 +4,13 @@ import { createClientRecord } from './consultations';
 import { CrmError, type CrmActor } from './crm';
 import {
   changeCrmOfferStatus,
+  convertCrmEventDeal,
   createCrmDeal,
   createCrmOffer,
   createQuickCrmLead,
   crmDealWhere,
   moveCrmDeal,
+  registerCrmEventAttendee,
 } from './crm-deals';
 import { db } from './index';
 
@@ -310,5 +312,85 @@ suite('CRM offers, opportunities and quick-add leads', () => {
       ownerUserId: agentId,
     });
     expect(lead.ownershipEvents).toHaveLength(1);
+  });
+  test('registers event attendees within capacity and converts them', async () => {
+    const event = await createCrmOffer(db, {
+      actorUserId: ownerId,
+      canManageOffers: true,
+      offer: {
+        section: 'EVENTS',
+        kind: 'FREE_SESSION',
+        title: `Free session ${suffix}`,
+        priceDinars: '',
+        startsOn: '2026-12-05',
+        endsOn: '',
+        capacity: '1',
+        trainerUserId: '',
+      },
+    });
+    const attendee = {
+      name: `Attendee ${suffix}`,
+      phone: '0550 98 76 54',
+      email: '',
+      source: 'facebook',
+      school: 'GENERAL',
+      timingPreference: '',
+      note: '',
+      consent: 'yes',
+    };
+    const registration = await registerCrmEventAttendee(db, {
+      actor: agent,
+      offerId: event.id,
+      lead: attendee,
+    });
+    expect(registration).toMatchObject({
+      section: 'EVENTS',
+      stage: 'REGISTERED',
+    });
+    await expectCrmError(
+      registerCrmEventAttendee(db, {
+        actor: agent,
+        offerId: event.id,
+        lead: { ...attendee, name: `Second ${suffix}` },
+      }),
+      'offer-unavailable',
+    );
+
+    await expectCrmError(
+      convertCrmEventDeal(db, {
+        actor: agent,
+        dealId: registration.id,
+        section: 'LANGUAGES',
+      }),
+      'stage-invalid',
+    );
+    await moveCrmDeal(db, {
+      actor: agent,
+      dealId: registration.id,
+      toStage: 'ATTENDED',
+    });
+    await expectCrmError(
+      convertCrmEventDeal(db, {
+        actor: agent,
+        dealId: registration.id,
+        section: 'EVENTS',
+      }),
+      'stage-invalid',
+    );
+    const converted = await convertCrmEventDeal(db, {
+      actor: agent,
+      dealId: registration.id,
+      section: 'LANGUAGES',
+    });
+    expect(converted).toMatchObject({
+      section: 'LANGUAGES',
+      stage: 'NEW',
+      enquiryId: registration.enquiryId,
+    });
+    const closed = await db.crmDeal.findUniqueOrThrow({
+      where: { id: registration.id },
+    });
+    expect(closed).toMatchObject({ stage: 'CONVERTED', state: 'WON' });
+    expect(closed.closedAt).not.toBeNull();
   });
 });

@@ -80,6 +80,27 @@ export type CrmSectionsCopy = {
   score: string;
   scoreBand: Record<CrmLeadScoreBand, string>;
   scoreReason: Record<CrmLeadScoreReason, string>;
+  openRoster: string;
+  rosterIntro: string;
+  registerTitle: string;
+  rosterRegistered: string;
+  rosterFollowUp: string;
+  rosterClosed: string;
+  rosterEmpty: string;
+  markConfirmed: string;
+  markAttended: string;
+  markNoShow: string;
+  markFollowedUp: string;
+  convertTo: string;
+  convert: string;
+  doNotContact: string;
+  eventFull: string;
+  byOffer: string;
+  byOfferIntro: string;
+  colOpportunities: string;
+  colWon: string;
+  colConversion: string;
+  colWonValue: string;
 };
 
 const english: CrmSectionsCopy = {
@@ -224,6 +245,29 @@ const english: CrmSectionsCopy = {
     'recent-activity': 'recent activity',
     'waiting-contact': 'waiting for first contact',
   },
+  openRoster: 'Roster',
+  rosterIntro:
+    'Register people, check them in on the day, then follow up only with those who agreed to be contacted. Nothing is sent automatically.',
+  registerTitle: 'Register someone',
+  rosterRegistered: 'Registered',
+  rosterFollowUp: 'Attended — follow up',
+  rosterClosed: 'Closed',
+  rosterEmpty: 'Nobody here yet.',
+  markConfirmed: 'Confirmed',
+  markAttended: 'Attended',
+  markNoShow: 'No-show',
+  markFollowedUp: 'Followed up',
+  convertTo: 'Convert to',
+  convert: 'Convert',
+  doNotContact: 'No consent — do not contact',
+  eventFull: 'This event is full.',
+  byOffer: 'By offer · last 90 days',
+  byOfferIntro:
+    'Opportunities opened in the last 90 days, grouped by offer. Won value adds only amounts staff entered.',
+  colOpportunities: 'Opportunities',
+  colWon: 'Won',
+  colConversion: 'Conversion',
+  colWonValue: 'Won value',
 };
 
 const french: CrmSectionsCopy = {
@@ -370,6 +414,29 @@ const french: CrmSectionsCopy = {
     'recent-activity': 'activité récente',
     'waiting-contact': 'attend un premier contact',
   },
+  openRoster: 'Liste',
+  rosterIntro:
+    'Inscrivez les personnes, pointez leur présence le jour J, puis relancez uniquement celles qui ont accepté d’être contactées. Rien n’est envoyé automatiquement.',
+  registerTitle: 'Inscrire quelqu’un',
+  rosterRegistered: 'Inscrits',
+  rosterFollowUp: 'Présents — à relancer',
+  rosterClosed: 'Clôturés',
+  rosterEmpty: 'Personne pour l’instant.',
+  markConfirmed: 'Confirmé',
+  markAttended: 'Présent',
+  markNoShow: 'Absent',
+  markFollowedUp: 'Relancé',
+  convertTo: 'Convertir vers',
+  convert: 'Convertir',
+  doNotContact: 'Sans consentement — ne pas contacter',
+  eventFull: 'Cet événement est complet.',
+  byOffer: 'Par offre · 90 derniers jours',
+  byOfferIntro:
+    'Opportunités ouvertes ces 90 derniers jours, par offre. La valeur gagnée additionne seulement les montants saisis.',
+  colOpportunities: 'Opportunités',
+  colWon: 'Gagnées',
+  colConversion: 'Conversion',
+  colWonValue: 'Valeur gagnée',
 };
 
 const arabic: CrmSectionsCopy = {
@@ -512,6 +579,29 @@ const arabic: CrmSectionsCopy = {
     'recent-activity': 'نشاط حديث',
     'waiting-contact': 'ينتظر أول تواصل',
   },
+  openRoster: 'القائمة',
+  rosterIntro:
+    'سجّل المشاركين، وأكّد حضورهم يوم الفعالية، ثم تابع فقط من وافق على التواصل. لا يُرسل أي شيء تلقائيًا.',
+  registerTitle: 'تسجيل مشارك',
+  rosterRegistered: 'المسجّلون',
+  rosterFollowUp: 'الحاضرون — للمتابعة',
+  rosterClosed: 'المغلقة',
+  rosterEmpty: 'لا أحد بعد.',
+  markConfirmed: 'مؤكَّد',
+  markAttended: 'حضر',
+  markNoShow: 'لم يحضر',
+  markFollowedUp: 'تمت المتابعة',
+  convertTo: 'تحويل إلى',
+  convert: 'تحويل',
+  doNotContact: 'دون موافقة — لا تتواصل',
+  eventFull: 'هذه الفعالية مكتملة.',
+  byOffer: 'حسب العرض · آخر 90 يومًا',
+  byOfferIntro:
+    'الفرص المفتوحة خلال 90 يومًا الأخيرة مجمّعة حسب العرض. القيمة المكسوبة تجمع فقط المبالغ التي أدخلها الفريق.',
+  colOpportunities: 'الفرص',
+  colWon: 'المكسوبة',
+  colConversion: 'نسبة التحويل',
+  colWonValue: 'القيمة المكسوبة',
 };
 
 const copies: Record<Locale, CrmSectionsCopy> = {

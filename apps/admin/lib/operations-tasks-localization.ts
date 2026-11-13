@@ -77,6 +77,16 @@ export type TodayCopy = {
   myRequestsTitle: string;
   noApprovals: string;
   openWorkspace: string;
+  kpiNewLeads: string;
+  kpiConsultations: string;
+  kpiDecisions: string;
+  kpiMonthRevenue: string;
+  kpiReceivedToday: (amount: string) => string;
+  upcomingTitle: string;
+  noUpcoming: string;
+  upcomingFill: (taken: string, capacity: string) => string;
+  rulesTitle: string;
+  rules: readonly string[];
 };
 
 const english: OperationsTasksCopy = {
@@ -262,12 +272,27 @@ const englishToday: TodayCopy = {
   followUpsTitle: 'Follow-ups due',
   followUpsIntro: 'Consented enquiries whose follow-up date has arrived.',
   noFollowUps: 'No follow-ups due.',
-  tasksTitle: 'Tasks due',
-  noTasks: 'No tasks due.',
+  tasksTitle: 'Upcoming tasks',
+  noTasks: 'No tasks in the next 7 days.',
   approvalsTitle: 'Waiting for your decision',
   myRequestsTitle: 'Your pending requests',
   noApprovals: 'Nothing pending.',
   openWorkspace: 'Open',
+  kpiNewLeads: 'New leads to contact',
+  kpiConsultations: 'Consultations in the next 7 days',
+  kpiDecisions: 'Decisions waiting',
+  kpiMonthRevenue: 'Received this month',
+  kpiReceivedToday: (amount) => `Today ${amount}`,
+  upcomingTitle: 'Upcoming programmes and events',
+  noUpcoming: 'No dated offers coming up.',
+  upcomingFill: (taken, capacity) => `${taken} / ${capacity} places`,
+  rulesTitle: 'Standing rules',
+  rules: [
+    'Nothing is published, messaged, scheduled or paid without the owner’s approval; approving records the decision only.',
+    'Contact only people who agreed to be contacted.',
+    'Notes stay operational — never clinical or personal details.',
+    'Prices are shown only once confirmed; nothing is invented.',
+  ],
 };
 
 const frenchToday: TodayCopy = {
@@ -283,12 +308,27 @@ const frenchToday: TodayCopy = {
   followUpsIntro:
     'Demandes avec consentement dont la date de relance est arrivée.',
   noFollowUps: 'Aucune relance due.',
-  tasksTitle: 'Tâches à faire',
-  noTasks: 'Aucune tâche à faire.',
+  tasksTitle: 'Tâches proches',
+  noTasks: 'Aucune tâche dans les 7 prochains jours.',
   approvalsTitle: 'En attente de votre décision',
   myRequestsTitle: 'Vos demandes en attente',
   noApprovals: 'Rien en attente.',
   openWorkspace: 'Ouvrir',
+  kpiNewLeads: 'Nouveaux prospects à contacter',
+  kpiConsultations: 'Consultations sous 7 jours',
+  kpiDecisions: 'Décisions en attente',
+  kpiMonthRevenue: 'Encaissé ce mois',
+  kpiReceivedToday: (amount) => `Aujourd’hui ${amount}`,
+  upcomingTitle: 'Programmes et événements à venir',
+  noUpcoming: 'Aucune offre datée à venir.',
+  upcomingFill: (taken, capacity) => `${taken} / ${capacity} places`,
+  rulesTitle: 'Règles permanentes',
+  rules: [
+    'Aucune publication, message, planification ou dépense sans l’accord de la direction ; approuver enregistre seulement la décision.',
+    'Contacter uniquement les personnes qui l’ont accepté.',
+    'Les notes restent opérationnelles — jamais d’informations cliniques ou personnelles.',
+    'Les prix ne s’affichent qu’une fois confirmés ; rien n’est inventé.',
+  ],
 };
 
 const arabicToday: TodayCopy = {
@@ -302,12 +342,27 @@ const arabicToday: TodayCopy = {
   followUpsTitle: 'متابعات مستحقة',
   followUpsIntro: 'طلبات بموافقة على الاتصال حلّ تاريخ متابعتها.',
   noFollowUps: 'لا متابعات مستحقة.',
-  tasksTitle: 'مهام مستحقة',
-  noTasks: 'لا مهام مستحقة.',
+  tasksTitle: 'مهام قريبة',
+  noTasks: 'لا مهام خلال 7 أيام.',
   approvalsTitle: 'بانتظار قرارك',
   myRequestsTitle: 'طلباتك المعلّقة',
   noApprovals: 'لا شيء معلّق.',
   openWorkspace: 'فتح',
+  kpiNewLeads: 'عملاء جدد للتواصل',
+  kpiConsultations: 'استشارات خلال 7 أيام',
+  kpiDecisions: 'قرارات معلّقة',
+  kpiMonthRevenue: 'المستلم هذا الشهر',
+  kpiReceivedToday: (amount) => `اليوم ${amount}`,
+  upcomingTitle: 'البرامج والفعاليات القادمة',
+  noUpcoming: 'لا عروض مؤرّخة قادمة.',
+  upcomingFill: (taken, capacity) => `${taken} / ${capacity} مقاعد`,
+  rulesTitle: 'قواعد دائمة',
+  rules: [
+    'لا نشر ولا رسائل ولا جدولة ولا إنفاق دون موافقة الإدارة؛ والموافقة تسجّل القرار فقط.',
+    'التواصل فقط مع من وافق على ذلك.',
+    'الملاحظات تشغيلية فقط — دون معلومات سريرية أو شخصية.',
+    'لا تظهر الأسعار إلا بعد تأكيدها؛ لا شيء مختلق.',
+  ],
 };
 
 const taskCopies: Record<Locale, OperationsTasksCopy> = {

@@ -56,7 +56,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
     decidedBy: personSelect,
   } as const;
 
-  const [openTasks, approvals, closed, assignees] = await Promise.all([
+  const [openTasks, closed, assignees] = await Promise.all([
     db.operationsTask.findMany({
       where: { ...scope, kind: 'TASK', status: 'OPEN' },
       orderBy: [
@@ -67,13 +67,7 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
       include,
     }),
     db.operationsTask.findMany({
-      where: { ...scope, kind: 'APPROVAL', status: 'OPEN' },
-      orderBy: { createdAt: 'asc' },
-      take: 100,
-      include,
-    }),
-    db.operationsTask.findMany({
-      where: { ...scope, status: { not: 'OPEN' } },
+      where: { ...scope, kind: 'TASK', status: { not: 'OPEN' } },
       orderBy: { updatedAt: 'desc' },
       take: 25,
       include,
@@ -102,22 +96,6 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
           {copy.saved}
         </p>
       ) : null}
-
-      <section className="admin-panel">
-        <div className="panel-heading">
-          <h2>{copy.approvalsTitle}</h2>
-        </div>
-        <p className={styles.note}>{copy.approvalBoundary}</p>
-        {approvals.length === 0 ? (
-          <p className={styles.empty}>{copy.noApprovals}</p>
-        ) : (
-          <ul className={styles.list}>
-            {approvals.map((task) => (
-              <OperationsTaskItem key={task.id} task={task} {...itemProps} />
-            ))}
-          </ul>
-        )}
-      </section>
 
       <section className="admin-panel">
         <div className="panel-heading">
@@ -186,38 +164,6 @@ export default async function TasksPage({ searchParams }: TasksPageProps) {
           <div>
             <button type="submit" className={styles.button}>
               {copy.createTask}
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <section className="admin-panel">
-        <div className="panel-heading">
-          <div>
-            <h2>{copy.requestApprovalTitle}</h2>
-            <p className={styles.note}>{copy.requestApprovalIntro}</p>
-          </div>
-        </div>
-        <form action={createOperationsTaskAction} className={styles.form}>
-          <input type="hidden" name="kind" value="APPROVAL" />
-          <input type="hidden" name="returnTo" value={returnTo} />
-          <label className={styles.field}>
-            <span>{copy.titleLabel}</span>
-            <input
-              type="text"
-              name="title"
-              minLength={3}
-              maxLength={160}
-              required
-            />
-          </label>
-          <label className={styles.field}>
-            <span>{copy.detailsLabel}</span>
-            <textarea name="details" rows={4} maxLength={1000} required />
-          </label>
-          <div>
-            <button type="submit" className={styles.button}>
-              {copy.requestApproval}
             </button>
           </div>
         </form>
