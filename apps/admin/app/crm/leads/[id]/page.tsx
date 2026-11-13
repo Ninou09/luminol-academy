@@ -1,16 +1,29 @@
 import { hasPermission } from '@luminol/auth';
 import { db } from '@luminol/database';
-import { formatLocalizedDate, localizeHref } from '@luminol/localization';
+import {
+  formatLocalizedCurrency,
+  formatLocalizedDate,
+  localizeHref,
+} from '@luminol/localization';
 import { utcToZonedLocal } from '@luminol/validation/consultations';
+import {
+  crmBookableOfferStatuses,
+  crmSectionForSchool,
+  scoreCrmLead,
+  type CrmSectionValue,
+} from '@luminol/validation/crm-sections';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { CrmActivityForm } from '../../../../components/crm-activity-form';
+import { CrmOpportunities } from '../../../../components/crm-opportunities';
 import { CrmShell } from '../../../../components/crm-shell';
 import styles from '../../../../components/operations.module.css';
 import { getAdminEnumLabel } from '../../../../lib/admin-localization';
 import { requireCrmActor } from '../../../../lib/crm-actor.server';
+import { crmDealTimelineItems } from '../../../../lib/crm-deal-timeline';
 import { getCrmCopy, parseCrmFeedback } from '../../../../lib/crm-localization';
+import { getCrmSectionsCopy } from '../../../../lib/crm-sections-localization';
 import {
   buildCrmTimeline,
   personLabel,
@@ -52,6 +65,7 @@ export default async function LeadPage({
   if (id.length > 128) notFound();
   const locale = await getAdminRequestLocale();
   const copy = getCrmCopy(locale);
+  const sectionsCopy = getCrmSectionsCopy(locale);
   const query = searchParams ? await searchParams : undefined;
   const feedback = parseCrmFeedback(query?.error);
   const saved = query?.saved === '1';
@@ -89,9 +103,37 @@ export default async function LeadPage({
         take: 100,
         include: { actor: person },
       },
+      deals: {
+        orderBy: { createdAt: 'desc' },
+        take: 20,
+        include: {
+          offer: { select: { title: true } },
+          events: {
+            orderBy: { occurredAt: 'desc' },
+            take: 50,
+            include: { actor: person },
+          },
+        },
+      },
     },
   });
   if (!lead) notFound();
+  const bookableOffers = await db.crmOffer.findMany({
+    where: { status: { in: [...crmBookableOfferStatuses] } },
+    orderBy: [{ section: 'asc' }, { startsOn: 'asc' }],
+    take: 200,
+    select: { id: true, section: true, title: true },
+  });
+  const score = scoreCrmLead({
+    consent: lead.consent,
+    phone: lead.phone,
+    timingPreference: lead.timingPreference,
+    hasProgramme: Boolean(lead.programmeSlug),
+    contacted: lead.status !== 'NEW',
+    createdAt: lead.createdAt,
+    lastActivityAt: lead.activities[0]?.occurredAt ?? null,
+    now: new Date(),
+  });
 
   const ownerIds = [
     ...new Set(
@@ -189,6 +231,7 @@ export default async function LeadPage({
       actor: personLabel(activity.actor),
       tone: activity.outcome === 'BOOKED' ? 'success' : 'default',
     })),
+    crmDealTimelineItems(lead.deals, sectionsCopy),
   );
 
   const facts: [string, string | null][] = [
@@ -212,6 +255,15 @@ export default async function LeadPage({
     [copy.source, lead.utmSource ?? lead.source],
     [copy.campaign, lead.utmCampaign],
     [copy.received, dateTime(lead.createdAt)],
+    [
+      sectionsCopy.score,
+      [
+        `${sectionsCopy.scoreBand[score.band]} (${score.score}/100)`,
+        score.reasons
+          .map((reason) => sectionsCopy.scoreReason[reason])
+          .join(locale === 'ar' ? '، ' : ', '),
+      ].join(' · '),
+    ],
   ];
 
   return (
@@ -228,6 +280,9 @@ export default async function LeadPage({
             <span className={styles.chip}>{label(lead.status)}</span>
             <span className={lead.consent ? styles.success : styles.warning}>
               {lead.consent ? copy.consentYes : copy.consentNo}
+            </span>
+            <span className="crm-score" data-band={score.band}>
+              {sectionsCopy.score}: {sectionsCopy.scoreBand[score.band]}
             </span>
             <span>
               {copy.owner}:{' '}
@@ -283,6 +338,30 @@ export default async function LeadPage({
               todayIso={todayIso}
             />
           </section>
+
+          <CrmOpportunities
+            locale={locale}
+            copy={sectionsCopy}
+            deals={lead.deals.map((deal) => ({
+              id: deal.id,
+              section: deal.section as CrmSectionValue,
+              stage: deal.stage,
+              state: deal.state,
+              offer: deal.offer?.title ?? null,
+              value:
+                deal.valueMinor === null
+                  ? null
+                  : formatLocalizedCurrency(deal.valueMinor, 'DZD', locale),
+              lostReason: deal.lostReason,
+            }))}
+            offers={bookableOffers.map((offer) => ({
+              ...offer,
+              section: offer.section as CrmSectionValue,
+            }))}
+            subject={{ enquiryId: lead.id }}
+            defaultSection={crmSectionForSchool(lead.school)}
+            returnTo={returnTo}
+          />
 
           <section className="admin-panel">
             <div className="panel-heading">

@@ -28,7 +28,13 @@ export type CrmErrorCode =
   | 'forbidden'
   | 'consent-required'
   | 'direction-required'
-  | 'occurred-at';
+  | 'occurred-at'
+  | 'stage-invalid'
+  | 'stage-closed'
+  | 'reason-required'
+  | 'offer-unavailable'
+  | 'duplicate-open'
+  | 'conflict';
 
 export class CrmError extends Error {
   constructor(

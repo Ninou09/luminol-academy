@@ -10,6 +10,7 @@ import {
   zonedDayRange,
 } from '@luminol/validation/consultations';
 import { enquirySchoolSchema } from '@luminol/validation';
+import { scoreCrmLead } from '@luminol/validation/crm-sections';
 import Link from 'next/link';
 
 import { CrmShell } from '../../../components/crm-shell';
@@ -17,6 +18,7 @@ import styles from '../../../components/operations.module.css';
 import { getAdminEnumLabel } from '../../../lib/admin-localization';
 import { getCrmPipelineCopy } from '../../../lib/crm-insights-localization';
 import { leadSourceKey } from '../../../lib/crm-metrics';
+import { getCrmSectionsCopy } from '../../../lib/crm-sections-localization';
 import { personLabel } from '../../../lib/crm-timeline';
 import { getEnquiryTransitions } from '../../../lib/operations';
 import { getAdminRequestLocale } from '../../../lib/request-locale';
@@ -39,6 +41,7 @@ export default async function PipelinePage({
   const user = await requirePermission('enquiry:work');
   const locale = await getAdminRequestLocale();
   const copy = getCrmPipelineCopy(locale);
+  const sectionsCopy = getCrmSectionsCopy(locale);
   const params = searchParams ? await searchParams : {};
   const owner = single(params.owner);
   const ownerFilter = owner === 'mine' || owner === 'none' ? owner : 'all';
@@ -96,6 +99,14 @@ export default async function PipelinePage({
       source: true,
       utmSource: true,
       createdAt: true,
+      phone: true,
+      timingPreference: true,
+      programmeSlug: true,
+      activities: {
+        orderBy: { occurredAt: 'desc' },
+        take: 1,
+        select: { occurredAt: true },
+      },
       owner: { select: { email: true, firstName: true, lastName: true } },
     },
   });
@@ -111,25 +122,41 @@ export default async function PipelinePage({
       month: 'short',
       timeZone: 'UTC',
     });
-  const cards: PipelineCard[] = filtered.map((lead) => ({
-    id: lead.id,
-    name: lead.name,
-    href: localizeHref(locale, `/crm/leads/${lead.id}`),
-    status: lead.status,
-    school: label(lead.school),
-    programme: lead.programmeTitleSnapshot,
-    owner: personLabel(lead.owner),
-    followUp: lead.nextFollowUpAt
-      ? [date(lead.nextFollowUpAt), lead.nextAction].filter(Boolean).join(' · ')
-      : null,
-    overdue:
-      lead.status !== 'CLOSED' &&
-      lead.status !== 'SPAM' &&
-      Boolean(lead.nextFollowUpAt && lead.nextFollowUpAt < todayStart),
-    consent: lead.consent,
-    source: leadSourceKey(lead),
-    received: date(lead.createdAt),
-  }));
+  const now = new Date();
+  const cards: PipelineCard[] = filtered.map((lead) => {
+    const { band } = scoreCrmLead({
+      consent: lead.consent,
+      phone: lead.phone,
+      timingPreference: lead.timingPreference,
+      hasProgramme: Boolean(lead.programmeSlug),
+      contacted: lead.status !== 'NEW',
+      createdAt: lead.createdAt,
+      lastActivityAt: lead.activities[0]?.occurredAt ?? null,
+      now,
+    });
+    return {
+      id: lead.id,
+      name: lead.name,
+      href: localizeHref(locale, `/crm/leads/${lead.id}`),
+      status: lead.status,
+      school: label(lead.school),
+      programme: lead.programmeTitleSnapshot,
+      owner: personLabel(lead.owner),
+      followUp: lead.nextFollowUpAt
+        ? [date(lead.nextFollowUpAt), lead.nextAction]
+            .filter(Boolean)
+            .join(' · ')
+        : null,
+      overdue:
+        lead.status !== 'CLOSED' &&
+        lead.status !== 'SPAM' &&
+        Boolean(lead.nextFollowUpAt && lead.nextFollowUpAt < todayStart),
+      consent: lead.consent,
+      source: leadSourceKey(lead),
+      received: date(lead.createdAt),
+      priority: { band, label: sectionsCopy.scoreBand[band] },
+    };
+  });
   const transitions = Object.fromEntries(
     stages.map((stage) => [
       stage,
@@ -150,6 +177,11 @@ export default async function PipelinePage({
           <p className="eyebrow">{copy.eyebrow}</p>
           <h1>{copy.title}</h1>
           <p>{copy.intro}</p>
+        </div>
+        <div className={styles.actions}>
+          <Link href={localizeHref(locale, '/crm/leads/new')}>
+            {sectionsCopy.quickAdd}
+          </Link>
         </div>
       </section>
 

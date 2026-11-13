@@ -12,7 +12,8 @@
     "./consultations": "./src/consultations.ts",
     "./office-payments": "./src/office-payments.ts",
     "./operations-tasks": "./src/operations-tasks.ts",
-    "./crm": "./src/crm.ts"
+    "./crm": "./src/crm.ts",
+    "./crm-deals": "./src/crm-deals.ts"
   },
   "scripts": {
     "generate": "prisma generate",

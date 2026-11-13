@@ -16,6 +16,15 @@ export const staffDestinations = [
     permissions: ['consultation:manage', 'consultation:deliver'],
   },
   {
+    key: 'sections',
+    href: '/crm/sections/psychology',
+    permissions: [
+      'enquiry:work',
+      'consultation:manage',
+      'consultation:deliver',
+    ],
+  },
+  {
     key: 'payments',
     href: '/office-payments',
     permissions: ['office-payment:record'],

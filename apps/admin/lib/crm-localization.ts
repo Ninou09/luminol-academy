@@ -11,6 +11,12 @@ export const crmFeedbackCodes = [
   'consent-required',
   'direction-required',
   'occurred-at',
+  'stage-invalid',
+  'stage-closed',
+  'reason-required',
+  'offer-unavailable',
+  'duplicate-open',
+  'conflict',
   'invalid',
 ] as const;
 export type CrmFeedbackCode = (typeof crmFeedbackCodes)[number];
@@ -221,6 +227,13 @@ const english: CrmCopy = {
     OTHER: 'Other',
   },
   feedback: {
+    'stage-invalid': 'That stage change is not allowed.',
+    'stage-closed': 'This opportunity is already won or lost.',
+    'reason-required': 'Give a short reason for closing this opportunity.',
+    'offer-unavailable': 'That offer is not open in this section.',
+    'duplicate-open':
+      'This person already has an open opportunity in this section.',
+    conflict: 'Someone changed this record meanwhile. Reload and retry.',
     'not-found': 'That record is not available in your workspace.',
     forbidden: 'Your role cannot make this change.',
     'consent-required':
@@ -339,6 +352,13 @@ const french: CrmCopy = {
     OTHER: 'Autre',
   },
   feedback: {
+    'stage-invalid': 'Ce changement d’étape n’est pas autorisé.',
+    'stage-closed': 'Cette opportunité est déjà gagnée ou perdue.',
+    'reason-required': 'Indiquez brièvement pourquoi l’opportunité est close.',
+    'offer-unavailable': 'Cette offre n’est pas ouverte dans cette section.',
+    'duplicate-open':
+      'Cette personne a déjà une opportunité ouverte dans cette section.',
+    conflict: 'L’élément a été modifié entre-temps. Rechargez et réessayez.',
     'not-found': 'Cet élément n’est pas disponible dans votre espace.',
     forbidden: 'Votre rôle ne permet pas cette modification.',
     'consent-required':
@@ -455,6 +475,12 @@ const arabic: CrmCopy = {
     OTHER: 'أخرى',
   },
   feedback: {
+    'stage-invalid': 'هذا الانتقال بين المراحل غير مسموح.',
+    'stage-closed': 'هذه الفرصة مغلقة بالفعل (مكسوبة أو خاسرة).',
+    'reason-required': 'اكتب سببًا مختصرًا لإغلاق هذه الفرصة.',
+    'offer-unavailable': 'هذا العرض غير مفتوح في هذا القسم.',
+    'duplicate-open': 'لدى هذا الشخص فرصة مفتوحة في هذا القسم بالفعل.',
+    conflict: 'تم تعديل هذا السجل في الأثناء. أعد التحميل وحاول مجددًا.',
     'not-found': 'هذا العنصر غير متاح في مساحة عملك.',
     forbidden: 'دورك لا يسمح بهذا التعديل.',
     'consent-required':

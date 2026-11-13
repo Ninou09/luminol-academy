@@ -9,15 +9,22 @@ import {
   CONSULTATION_TIMEZONE,
   utcToZonedLocal,
 } from '@luminol/validation/consultations';
+import {
+  crmBookableOfferStatuses,
+  type CrmSectionValue,
+} from '@luminol/validation/crm-sections';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { CrmActivityForm } from '../../../../components/crm-activity-form';
+import { CrmOpportunities } from '../../../../components/crm-opportunities';
 import { CrmShell } from '../../../../components/crm-shell';
 import styles from '../../../../components/operations.module.css';
 import { getConsultationsCopy } from '../../../../lib/consultations-localization';
 import { requireCrmActor } from '../../../../lib/crm-actor.server';
+import { crmDealTimelineItems } from '../../../../lib/crm-deal-timeline';
 import { getCrmCopy, parseCrmFeedback } from '../../../../lib/crm-localization';
+import { getCrmSectionsCopy } from '../../../../lib/crm-sections-localization';
 import {
   buildCrmTimeline,
   personLabel,
@@ -51,6 +58,7 @@ export default async function ContactPage({
   if (id.length > 128) notFound();
   const locale = await getAdminRequestLocale();
   const copy = getCrmCopy(locale);
+  const sectionsCopy = getCrmSectionsCopy(locale);
   const consultationCopy = getConsultationsCopy(locale);
   const paymentCopy = getOfficePaymentsCopy(locale);
   const taskCopy = getOperationsTasksCopy(locale);
@@ -99,9 +107,27 @@ export default async function ContactPage({
         take: 100,
         include: { actor: person },
       },
+      deals: {
+        orderBy: { createdAt: 'desc' },
+        take: 20,
+        include: {
+          offer: { select: { title: true } },
+          events: {
+            orderBy: { occurredAt: 'desc' },
+            take: 50,
+            include: { actor: person },
+          },
+        },
+      },
     },
   });
   if (!contact) notFound();
+  const bookableOffers = await db.crmOffer.findMany({
+    where: { status: { in: [...crmBookableOfferStatuses] } },
+    orderBy: [{ section: 'asc' }, { startsOn: 'asc' }],
+    take: 200,
+    select: { id: true, section: true, title: true },
+  });
 
   const money = (minor: number) =>
     formatLocalizedCurrency(minor, 'DZD', locale);
@@ -174,6 +200,7 @@ export default async function ContactPage({
       detail: activity.summary,
       actor: personLabel(activity.actor),
     })),
+    crmDealTimelineItems(contact.deals, sectionsCopy),
   );
 
   return (
@@ -257,6 +284,27 @@ export default async function ContactPage({
               todayIso={todayIso}
             />
           </section>
+
+          <CrmOpportunities
+            locale={locale}
+            copy={sectionsCopy}
+            deals={contact.deals.map((deal) => ({
+              id: deal.id,
+              section: deal.section as CrmSectionValue,
+              stage: deal.stage,
+              state: deal.state,
+              offer: deal.offer?.title ?? null,
+              value: deal.valueMinor === null ? null : money(deal.valueMinor),
+              lostReason: deal.lostReason,
+            }))}
+            offers={bookableOffers.map((offer) => ({
+              ...offer,
+              section: offer.section as CrmSectionValue,
+            }))}
+            subject={{ clientId: contact.id }}
+            defaultSection="PSYCHOLOGY"
+            returnTo={returnTo}
+          />
 
           <section className="admin-panel">
             <div className="panel-heading">

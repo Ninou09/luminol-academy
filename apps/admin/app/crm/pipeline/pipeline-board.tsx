@@ -19,6 +19,7 @@ export type PipelineCard = {
   consent: boolean;
   source: string;
   received: string;
+  priority: { band: 'hot' | 'warm' | 'cold'; label: string };
 };
 
 export type PipelineColumn = {
@@ -173,6 +174,12 @@ export function PipelineBoard({
                           ) : null}
                         </p>
                         <p className="crm-card-meta">
+                          <span
+                            className="crm-score"
+                            data-band={card.priority.band}
+                          >
+                            {card.priority.label}
+                          </span>
                           <span>
                             {card.owner ? (
                               <bdi>{card.owner}</bdi>

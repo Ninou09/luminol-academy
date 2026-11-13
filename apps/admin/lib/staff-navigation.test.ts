@@ -17,13 +17,13 @@ describe('staff navigation', () => {
         getStaffDestinations((granted) => granted === permission).map(
           ({ key }) => key,
         ),
-      ).toEqual(['consultations', 'clients']);
+      ).toEqual(['consultations', 'clients', 'sections']);
     }
     expect(
       getStaffDestinations((granted) =>
         ['consultation:deliver', 'office-payment:record'].includes(granted),
       ).map(({ key }) => key),
-    ).toEqual(['consultations', 'clients', 'payments']);
+    ).toEqual(['consultations', 'clients', 'sections', 'payments']);
   });
 
   it('shows only destinations the persisted permissions allow', () => {
@@ -32,6 +32,7 @@ describe('staff navigation', () => {
     );
     expect(enquiryAgent.map(({ key }) => key)).toEqual([
       'pipeline',
+      'sections',
       'enquiries',
     ]);
   });
