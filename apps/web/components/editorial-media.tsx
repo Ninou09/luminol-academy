@@ -6,7 +6,8 @@ import styles from './editorial-media.module.css';
 export type EditorialMediaAsset = {
   src: string;
   alt: string;
-  source: 'sanity';
+  /** 'illustrative' marks commissioned photography. */
+  source: 'sanity' | 'illustrative';
 };
 
 type EditorialMediaProps = {
@@ -49,7 +50,8 @@ export function EditorialMedia({
           sizes={sizes}
           priority={priority}
         />
-      ) : (
+      ) : null}
+      {asset ? null : (
         <div className={styles.fallback} aria-hidden="true">
           <Image
             className={styles.image}

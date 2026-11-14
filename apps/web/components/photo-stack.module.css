@@ -1,0 +1,144 @@
+.stack {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 0.92;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  isolation: isolate;
+}
+.stack > * {
+  transform-style: preserve-3d;
+}
+.halo {
+  position: absolute;
+  z-index: 0;
+  inset: 12% 8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgb(139 222 239 / 0.35),
+    rgb(243 212 143 / 0.12) 45%,
+    transparent 70%
+  );
+  filter: blur(2.5rem);
+}
+.layer {
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  border-radius: clamp(1rem, 2vw, 1.75rem);
+  background: var(--color-brand-night);
+  box-shadow:
+    0 2.5rem 5rem -1.5rem rgb(0 0 0 / 0.65),
+    0 0 0 1px rgb(255 255 255 / 0.04);
+  transition: transform 900ms var(--luminol-ease-out);
+}
+.layer img {
+  object-fit: cover;
+}
+.main {
+  z-index: 2;
+  inset: 6% 14% 10% 6%;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
+    translateZ(40px);
+}
+.back {
+  z-index: 1;
+  inset: 0 0 34% 46%;
+  opacity: 0.85;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
+    translateZ(-60px) rotate(5deg);
+}
+.front {
+  z-index: 3;
+  inset: 58% 0 0 58%;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
+    translateZ(110px) rotate(-5deg);
+}
+.stack[data-tilt-active] .layer {
+  transition: transform 140ms linear;
+}
+.glare {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--glare-x, 30%) var(--glare-y, 20%),
+    rgb(255 255 255 / 0.3),
+    transparent 45%
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.spark {
+  position: absolute;
+  z-index: 4;
+  width: 0.6rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 1rem 0.3rem rgb(139 222 239 / 0.8),
+    0 0 2.5rem 0.6rem rgb(243 212 143 / 0.35);
+  pointer-events: none;
+}
+.sparkOne {
+  inset-block-start: 4%;
+  inset-inline-start: 4%;
+}
+.sparkTwo {
+  inset-block-end: 6%;
+  inset-inline-start: 46%;
+  width: 0.4rem;
+}
+.stack:dir(rtl) .main {
+  inset: 6% 6% 10% 14%;
+}
+.stack:dir(rtl) .back {
+  inset: 0 46% 34% 0;
+}
+.stack:dir(rtl) .front {
+  inset: 58% 58% 0 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .main {
+    animation: stack-float 9s ease-in-out infinite alternate;
+  }
+  .front {
+    animation: stack-float 7s -2s ease-in-out infinite alternate;
+  }
+  .spark {
+    animation: spark-pulse 3.5s ease-in-out infinite;
+  }
+  .sparkTwo {
+    animation-delay: -1.7s;
+  }
+}
+@keyframes stack-float {
+  to {
+    translate: 0 -0.8rem;
+  }
+}
+@keyframes spark-pulse {
+  50% {
+    opacity: 0.35;
+    scale: 0.6;
+  }
+}
+@media (max-width: 760px) {
+  .stack {
+    aspect-ratio: 1 / 0.95;
+  }
+
+}
+
+/* Two-photo version: a main photo with a softer one behind it. */
+.stack:not(:has(.front)) .main {
+  inset: 8% 10% 6% 4%;
+}
+.stack:not(:has(.front)) .back {
+  inset: 0 0 30% 40%;
+  opacity: 0.7;
+  filter: saturate(0.85) brightness(0.8);
+}

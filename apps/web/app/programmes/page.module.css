@@ -338,3 +338,342 @@
     z-index: 2;
   }
 }
+
+.catalogBand {
+  margin-block: clamp(2rem, 5vw, 4rem);
+}
+
+/* ─── Programmes redesign: search lives in the hero beside a 3D photo
+   stack; the three schools become glowing filter tiles. ─── */
+.page,
+main:has(> .hero .heroStack) {
+  overflow: clip;
+}
+.hero:has(.heroStack) {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 84rem);
+  min-height: clamp(36rem, 80svh, 52rem);
+  margin-inline: auto;
+  padding-block: clamp(3rem, 7vw, 6rem) clamp(2rem, 4vw, 3rem);
+}
+.hero:has(.heroStack) > * {
+  max-width: none;
+}
+.heroCopy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+.heroCopy h1 {
+  max-width: 15ch;
+  text-wrap: balance;
+}
+.heroCopy > p:not(:global(.eyebrow)) {
+  max-width: 38rem;
+  margin: 0;
+  color: rgb(212 229 238 / 0.85);
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  line-height: 1.8;
+}
+.heroStack {
+  justify-self: end;
+  width: min(100%, 36rem);
+}
+
+/* The search becomes a floating glass command bar. */
+.heroCopy .filters {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.75rem;
+  margin: 2rem 0 0;
+  padding: clamp(1rem, 2vw, 1.4rem);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 1.5rem;
+  background: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 0.1),
+    rgb(255 255 255 / 0.03)
+  );
+  box-shadow:
+    0 2rem 4rem -1.5rem rgb(0 0 0 / 0.6),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+  backdrop-filter: blur(18px);
+}
+.heroCopy .queryField {
+  grid-column: 1 / -1;
+}
+.heroCopy .filters label span {
+  color: rgb(212 229 238 / 0.75);
+}
+.heroCopy .filters input,
+.heroCopy .filters select {
+  min-height: 3.25rem;
+  border-color: rgb(255 255 255 / 0.18);
+  border-radius: 0.9rem;
+  background: rgb(4 15 27 / 0.5);
+  color: #fff;
+  transition:
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+.heroCopy .filters input {
+  min-height: 3.75rem;
+  padding-inline-start: 2.9rem;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%238bdeef' stroke-width='2'%3E%3Ccircle cx='9' cy='9' r='6'/%3E%3Cpath d='m14 14 4 4'/%3E%3C/svg%3E")
+      1rem 50% / 1.2rem no-repeat,
+    rgb(4 15 27 / 0.5);
+  font-size: 1.05rem;
+}
+.heroCopy .filters input:dir(rtl) {
+  padding-inline-start: 2.9rem;
+  background-position:
+    calc(100% - 1rem) 50%,
+    0 0;
+}
+.heroCopy .filters input:focus,
+.heroCopy .filters select:focus {
+  border-color: #8bdeef;
+  box-shadow: 0 0 0 4px rgb(139 222 239 / 0.18);
+  outline: none;
+}
+.heroCopy .filterActions {
+  grid-column: 1 / -1;
+}
+.heroCopy .filterActions button {
+  flex: 1;
+  min-height: 3.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f3d48f, #ffffff 55%, #8bdeef);
+  color: var(--color-brand-night);
+  font-weight: 800;
+  cursor: pointer;
+}
+.heroCopy .filterActions a {
+  min-height: 3.25rem;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 1.4rem;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: 999px;
+  color: #fff;
+}
+
+/* School tiles. */
+.schoolTiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 84rem);
+  margin: 0 auto clamp(3rem, 6vw, 5rem);
+}
+.schoolTile {
+  --tile-accent: #8bdeef;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  align-content: end;
+  gap: 0.5rem;
+  min-height: 15rem;
+  padding: 1.5rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 1.5rem;
+  background: linear-gradient(
+    160deg,
+    rgb(7 26 43 / 0.75),
+    color-mix(in srgb, var(--tile-accent) 16%, rgb(7 26 43 / 0.6))
+  );
+  color: #fff;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+  transition:
+    border-color 400ms ease,
+    box-shadow 500ms ease,
+    transform 700ms var(--luminol-ease-out);
+}
+.schoolTile[data-tilt-active] {
+  transition:
+    border-color 400ms ease,
+    box-shadow 500ms ease,
+    transform 120ms linear;
+}
+.schoolTile::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: auto -20% -60% 30%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--tile-accent), transparent 65%);
+  opacity: 0.25;
+  transition: opacity 500ms ease;
+}
+.schoolTile:hover,
+.schoolTile[aria-current='true'] {
+  border-color: color-mix(in srgb, var(--tile-accent) 70%, transparent);
+  box-shadow:
+    0 2rem 4rem -1.5rem rgb(0 0 0 / 0.6),
+    0 0 3rem -1rem var(--tile-accent);
+}
+.schoolTile:hover::after,
+.schoolTile[aria-current='true']::after {
+  opacity: 0.5;
+}
+.schoolTile strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+.tileNumber {
+  color: #f0cf8e;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+.tilePromise {
+  max-width: 26ch;
+  color: rgb(212 229 238 / 0.8);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.tileArt {
+  position: absolute;
+  z-index: -1;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
+  width: 8.5rem;
+  height: auto;
+  filter: drop-shadow(0 1rem 1.5rem rgb(0 0 0 / 0.5));
+  transition:
+    translate 700ms var(--luminol-ease-out),
+    rotate 700ms var(--luminol-ease-out);
+}
+.schoolTile:hover .tileArt {
+  translate: 0 -0.6rem;
+  rotate: -6deg;
+}
+.psychology {
+  --tile-accent: var(--color-school-psychology, #4fd1c5);
+}
+.languages {
+  --tile-accent: var(--color-school-languages, #7aa2ff);
+}
+.training {
+  --tile-accent: var(--color-school-training, #f0cf8e);
+}
+
+/* Results: cards lift with a soft glow. */
+.card {
+  transition:
+    transform 600ms var(--luminol-ease-out),
+    box-shadow 600ms ease,
+    border-color 400ms ease;
+}
+.card:hover {
+  transform: translateY(-0.5rem);
+  border-color: rgb(139 222 239 / 0.35);
+  box-shadow: 0 2rem 4rem -1.5rem rgb(0 0 0 / 0.6);
+}
+.card .image {
+  transition: scale 1.2s var(--luminol-ease-out);
+}
+.card:hover .image {
+  scale: 1.05;
+}
+
+/* Unavailable / empty state: a calm glowing card with two next steps. */
+.unavailable {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2rem, 5vw, 4rem);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 1.75rem;
+  background: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 0.08),
+    rgb(255 255 255 / 0.015)
+  );
+  text-align: center;
+}
+.unavailable p {
+  margin-inline: auto;
+}
+.emptyOrb {
+  display: block;
+  width: 4.5rem;
+  aspect-ratio: 1;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #8bdeef 40%, #0b3a55 75%);
+  box-shadow: 0 0 3rem rgb(139 222 239 / 0.6);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .emptyOrb {
+    animation: orb-breathe 5s ease-in-out infinite alternate;
+  }
+}
+@keyframes orb-breathe {
+  to {
+    scale: 1.15;
+    box-shadow: 0 0 5rem rgb(243 212 143 / 0.6);
+  }
+}
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-block-start: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .hero:has(.heroStack) {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .heroStack {
+    justify-self: center;
+    order: -1;
+    width: min(100%, 30rem);
+  }
+  .schoolTiles {
+    grid-template-columns: 1fr;
+  }
+  .schoolTile {
+    min-height: 11rem;
+  }
+}
+@media (max-width: 560px) {
+  .heroCopy .filters {
+    grid-template-columns: 1fr;
+  }
+}
+.emptyActions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding-inline: 1.4rem;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: 999px;
+  color: #fff;
+  text-decoration: none;
+  transition:
+    border-color 300ms ease,
+    color 300ms ease;
+}
+.emptyActions a:last-child {
+  border-color: transparent;
+  background: linear-gradient(135deg, #f3d48f, #ffffff 55%, #8bdeef);
+  color: var(--color-brand-night);
+}
+.emptyActions a:first-child:hover {
+  border-color: #f3d48f;
+  color: #f3d48f;
+}

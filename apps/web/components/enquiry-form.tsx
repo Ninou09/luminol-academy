@@ -1,8 +1,8 @@
 'use client';
 
-import type { Locale } from '@luminol/localization';
+import { localizeHref, type Locale } from '@luminol/localization';
 import { Button } from '@luminol/ui';
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 import {
   getCurrentEnquiryAttribution,
@@ -13,6 +13,7 @@ import {
   getProgrammeSlugFromPathname,
   type PublicEnquirySchool,
 } from '../lib/programme-enquiry';
+import { privacyPolicy } from '../lib/privacy-policy';
 import type { getPublicCopy } from '../lib/public-localization';
 
 type FormCopy = ReturnType<typeof getPublicCopy>['form'];
@@ -29,14 +30,24 @@ type EnquiryFormProps = {
   copy: FormCopy;
   initialSchool?: PublicEnquirySchool | undefined;
   initialMessage?: string | undefined;
+  /** The surrounding section already has its own heading. */
+  embedded?: boolean;
   initialProgrammeSlug?: string | undefined;
 };
+
+type WindowWithExtras = Window & {
+  va?: (event: 'event', payload: { name: string }) => void;
+  turnstile?: { reset: () => void };
+};
+
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim();
 
 export function EnquiryForm({
   locale,
   copy,
   initialSchool = 'GENERAL',
   initialMessage = '',
+  embedded = false,
   initialProgrammeSlug,
 }: EnquiryFormProps) {
   const qualification = getEnquiryQualificationCopy(locale);
@@ -47,6 +58,18 @@ export function EnquiryForm({
     message: '',
   });
   const submissionLock = useRef(false);
+
+  // Load the Cloudflare bot check only when Luminol has configured it.
+  useEffect(() => {
+    if (!turnstileSiteKey) return;
+    if (document.querySelector('script[data-turnstile]')) return;
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.async = true;
+    script.defer = true;
+    script.dataset.turnstile = 'true';
+    document.head.append(script);
+  }, []);
   const isSubmitting = submission.status === 'submitting';
   const requiresEmail = preferredContact === 'EMAIL';
 
@@ -72,11 +95,17 @@ export function EnquiryForm({
       initialProgrammeSlug ?? referredProgrammeSlug ?? undefined;
 
     setSubmission({ status: 'submitting', message: copy.sending });
+    const turnstileToken = formData.get('cf-turnstile-response');
 
     try {
       const response = await fetch('/api/enquiries', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: {
+          'content-type': 'application/json',
+          ...(typeof turnstileToken === 'string' && turnstileToken
+            ? { 'x-turnstile-token': turnstileToken }
+            : {}),
+        },
         body: JSON.stringify({
           name: formData.get('name'),
           email: formData.get('email') ?? '',
@@ -99,18 +128,22 @@ export function EnquiryForm({
       if (!response.ok || !payload.submitted) throw new Error(copy.error);
 
       form.reset();
+      (window as WindowWithExtras).va?.('event', { name: 'Enquiry submitted' });
       setPreferredContact('WHATSAPP');
       setSubmission({ status: 'success', message: copy.success });
     } catch {
       setSubmission({ status: 'error', message: copy.error });
     } finally {
+      (window as WindowWithExtras).turnstile?.reset();
       submissionLock.current = false;
     }
   }
 
   return (
     <form
-      className="enquiry-form"
+      className={
+        embedded ? 'enquiry-form enquiry-form--embedded' : 'enquiry-form'
+      }
       aria-busy={isSubmitting}
       aria-labelledby="enquiry-form-title"
       onSubmit={submitEnquiry}
@@ -256,9 +289,23 @@ export function EnquiryForm({
         <input autoComplete="off" name="website" tabIndex={-1} type="text" />
       </label>
 
+      {turnstileSiteKey ? (
+        <div
+          className="cf-turnstile"
+          data-sitekey={turnstileSiteKey}
+          data-theme="dark"
+          data-language={locale}
+        />
+      ) : null}
+
       <label className="consent-field">
         <input name="consent" required type="checkbox" />
-        <span>{copy.consent}</span>
+        <span>
+          {copy.consent}{' '}
+          <a href={localizeHref(locale, '/privacy')} target="_blank" rel="noopener">
+            {privacyPolicy[locale].linkLabel}
+          </a>
+        </span>
       </label>
 
       <div className="form-actions">

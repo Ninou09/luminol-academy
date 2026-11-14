@@ -777,9 +777,11 @@ export function createInnerUniverse(
   } catch {
     return null;
   }
-  const pixelRatio = Math.min(
+  // Large or high-density screens cost the most: cap the density by area.
+  const screenArea = window.innerWidth * window.innerHeight;
+  let pixelRatio = Math.min(
     window.devicePixelRatio || 1,
-    options.mobile ? 1.25 : 1.6,
+    options.mobile ? 1.25 : screenArea > 2_400_000 ? 1.25 : 1.6,
   );
   renderer.setPixelRatio(pixelRatio);
   renderer.setClearColor(new Color(theme.clear), 1);
@@ -895,13 +897,44 @@ export function createInnerUniverse(
 
   let width = 1;
   let height = 1;
+  // Portrait screens see a narrow slice of space; widen the lens for them.
+  let baseFov = 62;
   const resize = () => {
-    width = Math.max(1, window.innerWidth);
-    height = Math.max(1, window.innerHeight);
+    const nextWidth = Math.max(1, window.innerWidth);
+    const nextHeight = Math.max(1, window.innerHeight);
+    // Phone address bars change the height while scrolling: ignore those
+    // small jumps so the universe does not stutter.
+    if (
+      options.mobile &&
+      nextWidth === width &&
+      Math.abs(nextHeight - height) < 160
+    ) {
+      return;
+    }
+    width = nextWidth;
+    height = nextHeight;
     renderer.setSize(width, height, false);
     cinema?.setSize(width, height, pixelRatio);
     camera.aspect = width / height;
+    baseFov = camera.aspect < 0.75 ? 76 : camera.aspect < 1.15 ? 69 : 62;
     camera.updateProjectionMatrix();
+  };
+  // Adaptive quality: if frames run slow for a while, lower the density.
+  let slowFrames = 0;
+  let sampledFrames = 0;
+  const adaptQuality = (delta: number) => {
+    if (pixelRatio <= 0.85) return;
+    sampledFrames++;
+    if (delta > 0.034) slowFrames++;
+    if (sampledFrames < 90) return;
+    if (slowFrames > 45) {
+      pixelRatio = Math.max(0.85, pixelRatio - 0.25);
+      renderer.setPixelRatio(pixelRatio);
+      renderer.setSize(width, height, false);
+      cinema?.setSize(width, height, pixelRatio);
+    }
+    slowFrames = 0;
+    sampledFrames = 0;
   };
   window.addEventListener('resize', resize, { passive: true });
   resize();
@@ -962,7 +995,7 @@ export function createInnerUniverse(
       camera.position.y = -pointer.y * 1.6 + Math.cos(eased * 5) * 2;
       camera.rotation.set(0, 0, Math.sin(eased * 4) * 0.06 + pointer.x * -0.03);
     }
-    camera.fov = 62 + warp * 14;
+    camera.fov = baseFov + warp * 14;
     camera.updateProjectionMatrix();
 
     const starUniforms = (stars.material as ShaderMaterial).uniforms;
@@ -1007,6 +1040,7 @@ export function createInnerUniverse(
       flow.points.rotation.y = time * 0.02;
       flow.update(time, lastTime ? time - lastTime : 0.016);
     }
+    if (lastTime) adaptQuality(time - lastTime);
     lastTime = time;
 
     if (cinema) cinema.render(time);

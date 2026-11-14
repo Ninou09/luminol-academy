@@ -23,6 +23,28 @@ describe('Organization structured data', () => {
       name: 'Luminol Academy',
       url: 'https://academy.example.com',
       description: 'Public description',
+      // Official contacts, profiles and hours confirmed by Luminol.
+      telephone: '+213777077197',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'شارع الزيات، فيلا رقم 2',
+        addressLocality: 'Blida',
+        postalCode: '09000',
+        addressCountry: 'DZ',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 36.487462285152,
+        longitude: 2.8340435028076,
+      },
+      hasMap:
+        'https://www.google.com/maps/search/?api=1&query=36.487462285152%2C2.8340435028076',
+      email: 'luminolacademy09@gmail.com',
+      sameAs: [
+        'https://www.instagram.com/luminol_academy_psy/',
+        'https://www.facebook.com/luminol.academy',
+      ],
+      openingHours: 'Su,Mo,Tu,We,Th 08:00-17:00',
     });
   });
 

@@ -61,21 +61,21 @@ export const cinematicCopy: Record<
     play: 'Play background video',
     discover: 'Discover the academy',
     location: 'Algeria · Worldwide',
-    credits: 'Illustrative photography & film',
+    credits: 'Photo & video credits',
   },
   fr: {
     pause: 'Mettre la vidéo en pause',
     play: 'Lire la vidéo d’arrière-plan',
     discover: 'Découvrir l’académie',
     location: 'Algérie · International',
-    credits: 'Photographies et film d’illustration',
+    credits: 'Crédits photo et vidéo',
   },
   ar: {
     pause: 'إيقاف فيديو الخلفية مؤقتاً',
     play: 'تشغيل فيديو الخلفية',
     discover: 'اكتشف الأكاديمية',
     location: 'الجزائر · حول العالم',
-    credits: 'صور وفيلم توضيحي — المصادر والحقوق',
+    credits: 'مصادر الصور والفيديو',
   },
 };
 

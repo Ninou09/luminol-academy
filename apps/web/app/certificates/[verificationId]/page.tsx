@@ -12,6 +12,8 @@ import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
 import styles from './verification.module.css';
 import { GlassIcon } from '../../../components/glass-icon';
+import { PhotoBand } from '../../../components/live-photo';
+import { peoplePhotos } from '../../../lib/people-photos';
 
 export const dynamic = 'force-dynamic';
 
@@ -73,6 +75,15 @@ export default async function CertificateVerificationPage({
           </h1>
           <p>{copy.registryBody}</p>
         </section>
+
+        {valid ? (
+          <PhotoBand
+            photo={peoplePhotos.certificatePhoto}
+            locale={locale}
+            reveal="curtain"
+            className={styles.photoBand}
+          />
+        ) : null}
 
         <section
           className={styles.certificate}

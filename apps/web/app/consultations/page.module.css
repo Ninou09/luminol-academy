@@ -279,3 +279,182 @@
   position: relative;
   z-index: 1;
 }
+
+/* Illustrative photography: supervision beside the founder story, a calm
+   session beside the enquiry form. */
+.authorityPhoto {
+  width: min(16rem, 70%);
+  margin-block-end: 1.5rem;
+  aspect-ratio: 4 / 4.6;
+}
+.enquiryPhoto {
+  width: min(20rem, 100%);
+  margin-block-start: 2rem;
+}
+
+/* The shared .enquiry-form card provides the surface. */
+.formSurface {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.authorityPhoto {
+  margin-block: 2rem 0;
+}
+/* "30+" sits beside the growth-rings art, above the heading. */
+.authorityLead {
+  grid-template-columns: 1fr;
+  padding-block-start: clamp(9rem, 16vw, 13rem);
+}
+.authorityYears {
+  position: absolute;
+  inset-block-start: clamp(2rem, 4vw, 3rem);
+  inset-inline-start: clamp(11rem, 18vw, 15rem);
+}
+.authorityIcon {
+  inset-block-start: 0;
+  translate: 0 0;
+  inset-inline-start: -1rem;
+}
+@media (max-width: 760px) {
+  .authorityPhoto,
+  .enquiryPhoto {
+    width: 100%;
+    aspect-ratio: 4 / 3.6;
+  }
+}
+.enquiryContext h2 {
+  margin-block-end: 1.25rem;
+  line-height: 1.08;
+}
+
+/* ─── Consultations v2: a living photo stack beside the promise,
+   photo pathway cards and no decorative stickers. ─── */
+.page .hero {
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  align-items: center;
+  min-height: clamp(36rem, 82svh, 54rem);
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+.page .hero h1 {
+  font-size: clamp(2.8rem, 5.6vw, 5.6rem);
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.heroCopy {
+  min-width: 0;
+}
+.page .heroAside {
+  margin-top: 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.page .heroAside > p:first-child {
+  max-width: 36rem;
+  color: rgb(212 229 238 / 0.8);
+}
+.hoursChip {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.25rem !important;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.05);
+  color: rgb(212 229 238 / 0.9) !important;
+  font-size: 0.82rem;
+}
+.hoursChip span {
+  width: 0.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #6ee7a8;
+  box-shadow: 0 0 0.75rem #6ee7a8;
+}
+.heroStack {
+  justify-self: end;
+  width: min(100%, 36rem);
+}
+.page .pathCard {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border-color: rgb(255 255 255 / 0.12);
+  border-radius: 1.5rem;
+  background: linear-gradient(180deg, rgb(7 26 43 / 0.85), rgb(7 26 43 / 0.65));
+  transition:
+    translate 600ms var(--luminol-ease-out),
+    box-shadow 600ms ease,
+    border-color 400ms ease;
+}
+.page .pathCard:hover {
+  translate: 0 -0.5rem;
+  border-color: rgb(243 212 143 / 0.4);
+  box-shadow: 0 2rem 4rem -1.5rem rgb(0 0 0 / 0.6);
+}
+.pathPhoto {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+.pathPhoto img {
+  object-fit: cover;
+  transition: scale 1.2s var(--luminol-ease-out);
+}
+.pathPhoto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgb(7 26 43 / 0.9));
+}
+.pathCard:hover .pathPhoto img {
+  scale: 1.06;
+}
+.pathBody {
+  position: relative;
+  margin-top: -1.5rem;
+  padding: 0 1.5rem 1.6rem;
+}
+.pathBody span {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: #f3d48f;
+  color: #061321 !important;
+}
+@media (max-width: 900px) {
+  .page .hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .heroStack {
+    justify-self: center;
+    width: min(100%, 32rem);
+  }
+  .page .pathGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.directLine {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin-top: 0.75rem !important;
+  font-size: 0.9rem;
+}
+.directLine a {
+  color: #8bdeef;
+  font-weight: 700;
+  text-decoration: none;
+}
+.directLine a:hover {
+  color: #f3d48f;
+}

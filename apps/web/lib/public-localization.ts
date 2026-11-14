@@ -52,6 +52,7 @@ type PublicCopy = {
     pathwayEyebrow: string;
     pathwayTitle: string;
     pathwayPsychology: string;
+    bookConsultation: string;
     pathwayLanguages: string;
     pathwayTraining: string;
     ctaEyebrow: string;
@@ -225,12 +226,12 @@ export const PUBLIC_COPY = {
       heroTitle: 'Grow with clarity.',
       heroAccent: 'Learn with purpose.',
       heroLede:
-        'Explore Luminol’s published training programmes or request a psychology consultation. Programme details explain who each course is for and how to enquire about the next cohort.',
+        'Request a psychology consultation or join a training programme. Luminol helps you choose the right next step — in Arabic, French or English.',
       exploreSchools: 'Explore training programmes',
       discoverLuminol: 'Discover Luminol',
       strengthsAria: 'Luminol platform strengths',
       connectedSchools: 'Connected schools',
-      humanJourney: 'Human journey',
+      humanJourney: 'Years of founder field experience',
       multilingualFoundation: 'Trilingual foundation',
       mind: 'Mind',
       understand: 'Understand',
@@ -276,12 +277,13 @@ export const PUBLIC_COPY = {
       pathwayEyebrow: 'Your next chapter',
       pathwayTitle: 'Begin with the growth that matters now.',
       pathwayPsychology: 'Strengthen your wellbeing',
+      bookConsultation: 'Request a consultation',
       pathwayLanguages: 'Find your confident voice',
       pathwayTraining: 'Advance your professional path',
       ctaEyebrow: 'Start your Luminol journey',
       ctaTitle: 'Ready to grow with purpose?',
       ctaBody:
-        'Tell us where you want to go. We will help you find the right program and next step.',
+        'Tell us where you want to go. We will help you find the right programme and next step.',
       startConversation: 'Start a conversation',
     },
     about: {
@@ -359,7 +361,7 @@ export const PUBLIC_COPY = {
       eyebrow: 'Contact Luminol',
       heroTitle: 'Your next step starts with a conversation.',
       heroBody:
-        'Whether you already know what you need or want help choosing, share your goal and Luminol will guide you toward the right school and program.',
+        'Whether you already know what you need or want help choosing, share your goal and Luminol will guide you toward the right school and programme.',
       exploreEyebrow: 'Explore before you enquire',
       pathDescriptions: {
         psychology: 'Wellbeing, family guidance, coaching and workshops.',
@@ -383,7 +385,7 @@ export const PUBLIC_COPY = {
       eyebrow: 'Search & discovery',
       heroTitle: 'Find the Luminol programme that fits your next step.',
       heroBody:
-        'Search the currently published programme catalogue, then narrow it by school or delivery language. Every filter stays in the URL so the result can be bookmarked or shared.',
+        'Search the currently published programme catalogue, then narrow it by school or delivery language.',
       searchLabel: 'Search programmes',
       searchPlaceholder: 'Try leadership, English or stress',
       schoolLabel: 'School',
@@ -394,7 +396,7 @@ export const PUBLIC_COPY = {
       clear: 'Clear',
       unavailableTitle: 'Programme discovery is temporarily unavailable.',
       unavailableBody:
-        'The public catalogue could not be verified from the governed CMS source. You can still explore each Luminol school or contact the academy for current programme information.',
+        'The catalogue is being updated right now. You can still explore each Luminol school or contact the academy for current programme information.',
       exploreSchools: 'Explore the three schools',
       emptyTitle: 'No published programmes match these filters.',
       emptyBody: 'Try a broader topic, another school or a different language.',
@@ -410,19 +412,19 @@ export const PUBLIC_COPY = {
     },
     schoolPage: {
       schoolsLabel: 'Luminol schools',
-      explorePrograms: 'Explore programs',
+      explorePrograms: 'Explore programmes',
       startJourney: 'Start your journey',
       promiseLabel: 'Our promise',
-      programsEyebrow: 'Programs and support',
+      programsEyebrow: 'Programmes and support',
       programsTitle: 'Choose the pathway that fits your next step.',
       programsBody:
-        'Each program is shaped around a clear purpose, thoughtful progression and an experience that respects the person behind the goal.',
-      askProgram: 'Ask about this program',
+        'Each programme is shaped around a clear purpose, thoughtful progression and an experience that respects the person behind the goal.',
+      askProgram: 'Ask about this programme',
       journeyEyebrow: 'How the journey works',
       journeyTitle: 'A clear path from intention to meaningful progress.',
       audienceEyebrow: 'Designed around people',
       audienceTitle: 'Who this school supports',
-      noteAria: 'Program note',
+      noteAria: 'Programme note',
       important: 'Important',
       relatedEyebrow: 'Continue exploring Luminol',
       relatedTitle: 'Growth connects across every school.',
@@ -431,7 +433,7 @@ export const PUBLIC_COPY = {
       ctaEyebrow: 'Your next step',
       ctaTitle: "Let's find the right path forward.",
       ctaBody:
-        'Begin with your goal. Luminol will help you identify the program and learning experience that fits.',
+        'Begin with your goal. Luminol will help you identify the programme and learning experience that fits.',
     },
     form: {
       sending: 'Sending your enquiry…',
@@ -501,12 +503,12 @@ export const PUBLIC_COPY = {
       heroTitle: 'Grandissez avec clarté.',
       heroAccent: 'Apprenez avec intention.',
       heroLede:
-        'Explorez les formations publiées ou demandez une consultation en psychologie. Chaque programme présente ses objectifs, son public et la démarche pour se renseigner sur la prochaine cohorte.',
+        'Demandez une consultation en psychologie ou rejoignez une formation. Luminol vous aide à choisir la bonne prochaine étape — en arabe, en français ou en anglais.',
       exploreSchools: 'Explorer les formations',
       discoverLuminol: 'Découvrir Luminol',
       strengthsAria: 'Forces de la plateforme Luminol',
       connectedSchools: 'Écoles complémentaires',
-      humanJourney: 'Parcours humain',
+      humanJourney: 'Ans d’expérience terrain de la fondatrice',
       multilingualFoundation: 'Fondation trilingue',
       mind: 'Esprit',
       understand: 'Comprendre',
@@ -554,6 +556,7 @@ export const PUBLIC_COPY = {
       pathwayEyebrow: 'Votre prochain chapitre',
       pathwayTitle: 'Commencez par l’évolution qui compte maintenant.',
       pathwayPsychology: 'Renforcer votre bien-être',
+      bookConsultation: 'Demander une consultation',
       pathwayLanguages: 'Trouver une voix confiante',
       pathwayTraining: 'Faire avancer votre parcours professionnel',
       ctaEyebrow: 'Commencez votre parcours Luminol',
@@ -666,7 +669,7 @@ export const PUBLIC_COPY = {
       eyebrow: 'Recherche & découverte',
       heroTitle: 'Trouvez le programme Luminol adapté à votre prochaine étape.',
       heroBody:
-        'Recherchez dans le catalogue publié puis affinez par école ou langue d’enseignement. Chaque filtre reste dans l’URL afin que le résultat puisse être enregistré ou partagé.',
+        'Recherchez dans le catalogue publié puis affinez par école ou langue d’enseignement.',
       searchLabel: 'Rechercher un programme',
       searchPlaceholder: 'Ex. leadership, anglais ou stress',
       schoolLabel: 'École',
@@ -678,7 +681,7 @@ export const PUBLIC_COPY = {
       unavailableTitle:
         'La découverte des programmes est momentanément indisponible.',
       unavailableBody:
-        'Le catalogue public n’a pas pu être vérifié depuis la source CMS gouvernée. Vous pouvez toujours explorer chaque école Luminol ou contacter l’académie pour connaître les programmes actuels.',
+        'Le catalogue est en cours de mise à jour. Vous pouvez toujours explorer chaque école Luminol ou contacter l’académie pour connaître les programmes actuels.',
       exploreSchools: 'Explorer les trois écoles',
       emptyTitle: 'Aucun programme publié ne correspond à ces filtres.',
       emptyBody:
@@ -786,12 +789,12 @@ export const PUBLIC_COPY = {
       heroTitle: 'تقدّم بوضوح.',
       heroAccent: 'وتعلّم بهدف.',
       heroLede:
-        'استكشف البرامج التدريبية المنشورة أو اطلب استشارة نفسية. تعرّف على أهداف كل برنامج والفئة المستهدفة، واستفسر عن الفوج القادم.',
+        'اطلب استشارة نفسية أو انضم إلى برنامج تدريبي. تساعدك لومينول على اختيار خطوتك التالية المناسبة — بالعربية أو الفرنسية أو الإنجليزية.',
       exploreSchools: 'استكشف البرامج التدريبية',
       discoverLuminol: 'اكتشف لومينول',
       strengthsAria: 'نقاط قوة منصة لومينول',
       connectedSchools: 'مدارس مترابطة',
-      humanJourney: 'رحلة إنسانية',
+      humanJourney: 'سنة من الخبرة الميدانية للمؤسسة',
       multilingualFoundation: 'أساس بثلاث لغات',
       mind: 'العقل',
       understand: 'افهم',
@@ -837,6 +840,7 @@ export const PUBLIC_COPY = {
       pathwayEyebrow: 'فصلك القادم',
       pathwayTitle: 'ابدأ بالنمو الذي يهمك الآن.',
       pathwayPsychology: 'عزّز توازنك النفسي',
+      bookConsultation: 'اطلب استشارة',
       pathwayLanguages: 'ابنِ صوتًا واثقًا',
       pathwayTraining: 'طوّر مسارك المهني',
       ctaEyebrow: 'ابدأ رحلتك مع لومينول',
@@ -941,7 +945,7 @@ export const PUBLIC_COPY = {
       eyebrow: 'البحث والاستكشاف',
       heroTitle: 'اعثر على برنامج لومينول المناسب لخطوتك القادمة.',
       heroBody:
-        'ابحث في دليل البرامج المنشورة ثم حدّد النتائج حسب المدرسة أو لغة التقديم. تبقى الفلاتر في الرابط حتى يمكنك حفظ النتيجة أو مشاركتها.',
+        'ابحث في دليل البرامج المنشورة ثم حدّد النتائج حسب المدرسة أو لغة التقديم.',
       searchLabel: 'ابحث في البرامج',
       searchPlaceholder: 'مثال: قيادة، إنجليزية أو ضغط نفسي',
       schoolLabel: 'المدرسة',
@@ -952,7 +956,7 @@ export const PUBLIC_COPY = {
       clear: 'مسح',
       unavailableTitle: 'استكشاف البرامج غير متاح مؤقتًا.',
       unavailableBody:
-        'تعذّر التحقق من الدليل العام عبر مصدر المحتوى المعتمد. لا يزال بإمكانك استكشاف مدارس لومينول أو التواصل مع الأكاديمية لمعرفة البرامج الحالية.',
+        'يجري تحديث دليل البرامج حاليًا. لا يزال بإمكانك استكشاف مدارس لومينول أو التواصل مع الأكاديمية لمعرفة البرامج الحالية.',
       exploreSchools: 'استكشف المدارس الثلاث',
       emptyTitle: 'لا توجد برامج منشورة تطابق هذه الفلاتر.',
       emptyBody: 'جرّب موضوعًا أوسع أو مدرسة أخرى أو لغة مختلفة.',

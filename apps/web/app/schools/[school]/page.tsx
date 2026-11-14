@@ -3,6 +3,7 @@ import {
   getOpenGraphLocale,
   localizeHref,
   localizePathname,
+  type Locale,
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
@@ -14,7 +15,6 @@ import {
   EditorialMedia,
   type EditorialMediaAsset,
 } from '../../../components/editorial-media';
-import { FloatingArt } from '../../../components/psychology-art';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import {
   isProgrammeWaitlist,
@@ -43,7 +43,12 @@ import {
 import styles from './page.module.css';
 import { GlassIcon, type GlassIconName } from '../../../components/glass-icon';
 import Image from 'next/image';
-import { commissionedScenes } from '../../../lib/academy-media';
+import { PhotoCard } from '../../../components/live-photo';
+import {
+  momentPhotos,
+  peoplePhotos,
+  programmePhotos,
+} from '../../../lib/people-photos';
 
 type SchoolPageProps = {
   params: Promise<{ school: string }>;
@@ -95,6 +100,34 @@ const journeyIcons: GlassIconName[] = [
   'journey-clarity',
   'journey-build',
 ];
+
+const promisePhotos = {
+  psychology: momentPhotos.mediterraneanCalm,
+  languages: momentPhotos.onlineCourseFlatlay,
+  training: momentPhotos.publicSpeakingStage,
+} as const;
+
+const schoolHeroPhotos = {
+  psychology: peoplePhotos.therapyFamily,
+  languages: peoplePhotos.languagesClass,
+  training: peoplePhotos.trainingWorkshop,
+} as const;
+
+/** Each default programme card gets its own living photograph. */
+function programmeFallbackAsset(
+  school: 'psychology' | 'languages' | 'training',
+  index: number,
+  locale: Locale,
+): EditorialMediaAsset | null {
+  const photo = programmePhotos[school][index];
+  return photo
+    ? {
+        src: photo.src,
+        alt: photo.alt[locale],
+        source: 'illustrative',
+      }
+    : null;
+}
 
 export default async function SchoolPage({ params }: SchoolPageProps) {
   const { school: slug } = await params;
@@ -225,17 +258,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
-            scene={commissionedScenes.schoolHero[school.slug]}
+            scene={schoolHeroPhotos[school.slug]}
+            sceneKind="photo"
           />
-          {school.slug === 'psychology' || school.slug === 'languages' ? (
-            <FloatingArt
-              art={
-                school.slug === 'psychology' ? 'neuronTree' : 'languageSchool'
-              }
-              locale={locale}
-              className={styles.heroArt}
-            />
-          ) : null}
         </section>
 
         <section
@@ -245,11 +270,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           data-reveal
         >
           <Image
-            className={styles.promiseArt}
-            src={`/media/brand/band-${school.slug}.webp`}
+            className={`${styles.promiseArt} ${styles.promisePhoto}`}
+            src={promisePhotos[school.slug].src}
             alt=""
-            width={1914}
-            height={822}
+            width={promisePhotos[school.slug].width}
+            height={promisePhotos[school.slug].height}
             sizes="100vw"
             aria-hidden="true"
             data-zoom
@@ -285,7 +310,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 <EditorialMedia
                   className={styles.programMedia}
                   school={school.slug}
-                  asset={program.image}
+                  asset={
+                    program.image ??
+                    programmeFallbackAsset(school.slug, index, locale)
+                  }
                 />
                 <h3 id={`school-programme-${index + 1}-title`} dir="auto">
                   {program.slug ? (
@@ -352,6 +380,14 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <div data-reveal>
             <p className={styles.eyebrow}>{copy.audienceEyebrow}</p>
             <h2 id="school-audience-title">{copy.audienceTitle}</h2>
+            {school.slug === 'psychology' ? (
+              <PhotoCard
+                photo={momentPhotos.fatherTeenWalk}
+                locale={locale}
+                className={styles.audiencePhoto}
+                sizes="(max-width: 900px) 100vw, 36vw"
+              />
+            ) : null}
           </div>
           <ul>
             {school.audiences.map((audience) => (

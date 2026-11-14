@@ -326,10 +326,41 @@ export function ScrollExperience() {
     return () => mm.revert();
   }, [pathname]);
 
-  // Smooth scroller restarts at the top of every new page.
+  // Smooth scroller restarts at the top of every new page. Leftover wheel
+  // momentum and ScrollTrigger refreshes (pin spacers from the old page)
+  // must not pull the new page down, so the reset is repeated until the
+  // visitor scrolls on their own.
   useEffect(() => {
-    if (!window.location.hash)
-      window.__luminolLenis?.scrollTo(0, { immediate: true });
+    if (window.location.hash) return;
+    const lenis = window.__luminolLenis;
+    const toTop = () => {
+      lenis?.scrollTo(0, { immediate: true, force: true });
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    };
+    toTop();
+    lenis?.start();
+    let userMoved = false;
+    const startedAt = performance.now();
+    const markUser = () => {
+      userMoved = true;
+    };
+    const onRefresh = () => {
+      if (!userMoved && performance.now() - startedAt < 2000) toTop();
+    };
+    const frame = requestAnimationFrame(() => {
+      if (!userMoved) toTop();
+    });
+    ScrollTrigger.addEventListener('refresh', onRefresh);
+    window.addEventListener('wheel', markUser, { passive: true, once: true });
+    window.addEventListener('touchstart', markUser, { passive: true, once: true });
+    window.addEventListener('keydown', markUser, { once: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      ScrollTrigger.removeEventListener('refresh', onRefresh);
+      window.removeEventListener('wheel', markUser);
+      window.removeEventListener('touchstart', markUser);
+      window.removeEventListener('keydown', markUser);
+    };
   }, [pathname]);
 
   return null;

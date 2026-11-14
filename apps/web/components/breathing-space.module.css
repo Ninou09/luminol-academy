@@ -336,3 +336,63 @@
 :global(main[data-cosmos]) .ring circle:first-child {
   stroke: rgb(255 255 255 / 0.14);
 }
+
+/* A person breathing calmly: the photo slowly expands on the inhale and
+   settles on the exhale, in time with the light. */
+.photo {
+  z-index: -2;
+  object-fit: cover;
+  object-position: 30% 35%;
+  opacity: 0.55;
+  scale: 1.02;
+  /* Mirror so the person sits on the open side, away from the text. */
+  transform: scaleX(-1);
+  transition:
+    scale 4s ease-in-out,
+    opacity 4s ease-in-out,
+    filter 4s ease-in-out;
+  filter: saturate(0.95) brightness(0.85);
+}
+.space[data-breathing='inhale'] .photo {
+  scale: 1.09;
+  opacity: 0.7;
+  filter: saturate(1.05) brightness(1);
+}
+.space[data-breathing='hold'] .photo {
+  scale: 1.09;
+  opacity: 0.7;
+}
+.photoVeil {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(4 15 27 / 0.9) 0%,
+      rgb(4 15 27 / 0.6) 45%,
+      rgb(4 15 27 / 0.2) 100%
+    ),
+    linear-gradient(180deg, rgb(4 15 27 / 0.6), transparent 25%, transparent 75%, rgb(4 15 27 / 0.7));
+  pointer-events: none;
+}
+.space:dir(rtl) .photoVeil {
+  scale: -1 1;
+}
+.space:dir(rtl) .photo {
+  transform: none;
+}
+@media (max-width: 760px) {
+  .photo {
+    object-position: 35% 30%;
+    opacity: 0.4;
+  }
+  .photoVeil {
+    background: linear-gradient(180deg, rgb(4 15 27 / 0.55), rgb(4 15 27 / 0.85));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo {
+    transition: none;
+  }
+}

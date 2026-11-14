@@ -904,3 +904,142 @@ body:not(:has(main[data-cosmos])) .inner-universe canvas[data-live] {
     animation: none !important;
   }
 }
+
+/* ---------- One enquiry form, one look, on every page ---------- */
+.enquiry-form {
+  display: grid;
+  gap: 2rem;
+  padding: clamp(1.5rem, 4vw, 3.25rem);
+  background: transparent;
+}
+.enquiry-form .form-heading {
+  max-width: 42rem;
+}
+.enquiry-form .form-heading h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+.enquiry-form .form-heading > p:last-child {
+  color: var(--color-brand-muted);
+  line-height: 1.75;
+}
+.enquiry-form .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.enquiry-form .form-grid label {
+  display: grid;
+  gap: 0.55rem;
+}
+.enquiry-form .form-grid label > span,
+.enquiry-form .consent-field {
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.enquiry-form .form-grid input,
+.enquiry-form .form-grid select,
+.enquiry-form .form-grid textarea {
+  width: 100%;
+  border: 1px solid var(--color-brand-line);
+  border-radius: 0.75rem;
+  background: var(--luminol-card, var(--color-brand-surface));
+  color: var(--color-brand-ink);
+}
+.enquiry-form .form-grid input,
+.enquiry-form .form-grid select {
+  min-height: 3.25rem;
+  padding-inline: 0.9rem;
+}
+.enquiry-form .form-grid textarea {
+  min-height: 6rem;
+  padding: 0.9rem;
+  resize: vertical;
+}
+.enquiry-form .message-field {
+  grid-column: 1 / -1;
+}
+.enquiry-form .consent-field {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  color: var(--color-brand-ink-soft);
+  line-height: 1.6;
+}
+.enquiry-form .consent-field input {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.15rem;
+  accent-color: var(--color-brand-ink);
+}
+.enquiry-form .form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+.enquiry-form .form-status {
+  margin: 0;
+  color: var(--color-brand-muted);
+  font-size: 0.8rem;
+}
+.enquiry-form .form-grid {
+  grid-template-columns: 1fr;
+}
+.enquiry-form .message-field {
+  grid-column: auto;
+}
+.enquiry-form {
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: var(--luminol-media-radius);
+  background:
+    linear-gradient(160deg, rgb(32 66 98 / 0.55), rgb(4 15 27 / 0.7)),
+    url('/media/people/design-notebook-flatlay.webp') center / cover;
+  box-shadow:
+    0 2rem 5rem -1.5rem rgb(0 0 0 / 0.55),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+  backdrop-filter: blur(10px);
+}
+/* The pre-filled request reads as a topic tag, not a second paragraph. */
+.enquiry-form > .enquiry-context {
+  justify-self: start;
+  margin: 0;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgb(139 222 239 / 0.35);
+  border-radius: var(--radius-pill);
+  background: rgb(139 222 239 / 0.1);
+  color: var(--color-brand-cyan-light);
+  font-size: 0.85rem;
+}
+/* Inside a section that already has its own title, the form title steps back. */
+.enquiry-form--embedded .form-heading .eyebrow {
+  font-size: 0.62rem;
+  opacity: 0.85;
+}
+.enquiry-form--embedded .form-heading h2 {
+  font-size: clamp(1.4rem, 2vw, 1.8rem) !important;
+  letter-spacing: -0.01em;
+}
+
+/* Embedded forms sit under a page heading of their own: keep the form's
+   eyebrow and title for assistive tech only, so nothing reads twice. */
+.enquiry-form--embedded .form-heading :is(.eyebrow, h2) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.enquiry-form--embedded .form-heading {
+  position: relative;
+}
+.enquiry-form .consent-field a {
+  color: var(--color-brand-cyan-light, #8bdeef);
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+}

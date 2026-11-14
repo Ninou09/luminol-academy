@@ -205,3 +205,51 @@
     font-size: clamp(5rem, 26vw, 7rem);
   }
 }
+
+/* A traveller finding his way: the 404 card becomes a living photo. */
+.visualPhoto {
+  z-index: 0;
+  object-fit: cover;
+  object-position: 60% 40%;
+}
+.visual::after {
+  z-index: 1;
+}
+.visual > :not(.visualPhoto) {
+  position: relative;
+  z-index: 2;
+}
+.visual:has(.visualPhoto) {
+  background: var(--color-brand-night);
+}
+.visual:has(.visualPhoto)::before {
+  z-index: 1;
+  inset: 0;
+  width: auto;
+  translate: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: linear-gradient(
+    180deg,
+    rgb(4 15 27 / 0.15) 30%,
+    rgb(4 15 27 / 0.85)
+  );
+}
+/* Keep the face clear: the 404 numerals move to the top corner. */
+.visual:has(.visualPhoto) .orbit {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: clamp(1rem, 3vw, 1.75rem);
+  inset-inline-end: clamp(1.25rem, 3vw, 2rem);
+  font-size: clamp(3.5rem, 6vw, 5.5rem);
+  text-shadow: 0 0.5rem 2rem rgb(0 0 0 / 0.5);
+}
+.visual .visualPhoto {
+  object-position: 22% 40%;
+}
+.visual:has(.visualPhoto) > .note {
+  position: absolute;
+  z-index: 3;
+  border-top-color: rgb(255 255 255 / 0.25);
+}

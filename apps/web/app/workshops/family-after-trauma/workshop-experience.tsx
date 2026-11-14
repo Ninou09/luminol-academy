@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { useRef, useState, type KeyboardEvent } from 'react';
 
 import { AcademyLogo } from '../../../components/academy-logo';
-import { ImmersiveBand } from '../../../components/psychology-art';
 import styles from './page.module.css';
 import { GlassIcon } from '../../../components/glass-icon';
+import { PhotoBand } from '../../../components/live-photo';
+import { momentPhotos, peoplePhotos } from '../../../lib/people-photos';
 
 const topics = [
   {
@@ -234,7 +235,6 @@ export function WorkshopExperience({
                 preload
               />
               <div className={styles.eventImageCaption}>
-                <span>صورة توضيحية</span>
                 <strong>الفهم يبدأ بالإنصات</strong>
               </div>
             </div>
@@ -259,7 +259,7 @@ export function WorkshopExperience({
           </aside>
         </section>
 
-        <ImmersiveBand art="familyAfterTrauma" locale="ar" priority />
+        <PhotoBand photo={peoplePhotos.workshopParents} locale="ar" priority />
 
         <section
           id="about"
@@ -343,6 +343,12 @@ export function WorkshopExperience({
           </div>
         </section>
 
+        <PhotoBand
+          photo={momentPhotos.artTherapyHands}
+          locale="ar"
+          reveal="portal"
+        />
+
         <section className={styles.audience} aria-labelledby="audience-title">
           <div className={styles.audienceCopy}>
             <p className={styles.sectionLabel}>لمن هذا اللقاء؟</p>
@@ -413,6 +419,12 @@ export function WorkshopExperience({
             </div>
           </div>
         </section>
+
+        <PhotoBand
+          photo={peoplePhotos.workshopHomeSupport}
+          locale="ar"
+          reveal="curtain"
+        />
 
         <section className={styles.joining} aria-labelledby="joining-title">
           <div className={styles.sectionHeading}>

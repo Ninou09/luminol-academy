@@ -714,3 +714,28 @@
     height: 4.5rem !important;
   }
 }
+
+/* Living programme photos: taller frames, no dead space on phones. */
+.programMedia[data-media-source='illustrative'] {
+  aspect-ratio: 16 / 11;
+}
+@media (max-width: 760px) {
+  .programCard {
+    min-height: 0;
+  }
+  .programMedia[data-media-source='illustrative'] {
+    aspect-ratio: 4 / 3;
+  }
+  .programCard > a {
+    margin-top: 0.5rem;
+  }
+}
+.promisePhoto {
+  opacity: 1;
+  filter: saturate(1.05);
+}
+.audiencePhoto {
+  width: min(100%, 26rem);
+  margin-top: 2rem;
+  aspect-ratio: 4 / 3.2;
+}

@@ -8,7 +8,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { EnquiryForm } from '../../components/enquiry-form';
-import { ImmersiveBand } from '../../components/psychology-art';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPsychologyContactPathDescription } from '../../lib/contact-paths';
 import { getProgrammeEnquiryDefaults } from '../../lib/programme-enquiry';
@@ -21,8 +20,24 @@ import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import { getSchools } from '../../lib/schools';
 import styles from './page.module.css';
-import { NeuralBrain } from '../../components/neural-brain';
 import { GlassIcon, type GlassIconName } from '../../components/glass-icon';
+import { FaqSection } from '../../components/faq-section';
+import { PhotoStack } from '../../components/photo-stack';
+import { AddressCard } from '../../components/address-card';
+import { ContactCards } from '../../components/contact-cards';
+import { SocialIcons } from '../../components/social-icons';
+import {
+  channelCopy,
+  contactLabels,
+  followCopy,
+  getBookingHref,
+  openingHours,
+  getWhatsAppHref,
+} from '../../lib/contact-channels';
+import { contactFaq } from '../../lib/faq';
+import { pathPhotos, peoplePhotos } from '../../lib/people-photos';
+import { privacyPolicy } from '../../lib/privacy-policy';
+import Image from 'next/image';
 
 type ContactPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -109,6 +124,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     },
   ] as const;
 
+  const channels = channelCopy[locale];
+  const whatsappHref = getWhatsAppHref(channels.whatsappMessage);
+  const bookingHref = getBookingHref();
+
   return (
     <>
       <SiteHeader />
@@ -118,23 +137,59 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           aria-labelledby="contact-hero-title"
           data-contact-hero
         >
-          <NeuralBrain className="hero-brain hero-brain--soft" />
           <div className={styles.heroCopy} data-reveal>
-            <p className={styles.eyebrow}>{copy.eyebrow}</p>
+            <p className={styles.eyebrow}>
+              <span className={styles.pulse} aria-hidden="true" />
+              {copy.eyebrow}
+            </p>
             <h1 id="contact-hero-title">{copy.heroTitle}</h1>
+            <p className={styles.heroBody}>{copy.heroBody}</p>
+            <div className={styles.heroActions}>
+              <a
+                className={styles.primaryChip}
+                href="#contact-form"
+                data-magnetic
+              >
+                {channels.write} <span aria-hidden="true">↓</span>
+              </a>
+              {bookingHref ? (
+                <a
+                  className={styles.chip}
+                  href={bookingHref}
+                  target="_blank"
+                  rel="noopener"
+                  data-magnetic
+                >
+                  {channels.book} <span aria-hidden="true">↗</span>
+                </a>
+              ) : null}
+              {whatsappHref ? (
+                <a
+                  className={styles.chip}
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={channels.whatsappAria}
+                  data-magnetic
+                >
+                  {channels.whatsapp} <span aria-hidden="true">↗</span>
+                </a>
+              ) : null}
+            </div>
           </div>
-          <p className={styles.heroBody} data-reveal>
-            {copy.heroBody}
-          </p>
+          <PhotoStack
+            className={styles.heroStack}
+            locale={locale}
+            priority
+            photos={[
+              peoplePhotos.contactsNextStep,
+              peoplePhotos.designTherapyRoom,
+            ]}
+          />
         </section>
 
-        <ImmersiveBand
-          art="contactConversation"
-          locale={locale}
-          reveal="curtain"
-        />
-
         <section
+          id="contact-form"
           className={styles.enquirySection}
           aria-labelledby="contact-next-title"
         >
@@ -143,7 +198,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               {copy.nextEyebrow}
             </p>
             <h2 id="contact-next-title">{copy.nextTitle}</h2>
-            <ol>
+            <ol className={styles.timeline}>
               {copy.steps.map((step, index) => (
                 <li key={step}>
                   <GlassIcon
@@ -156,7 +211,12 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                 </li>
               ))}
             </ol>
-            <p className={styles.privacyNote}>{copy.privacyNote}</p>
+            <p className={styles.privacyNote}>
+              {copy.privacyNote}{' '}
+              <Link href={localizeHref(locale, '/privacy')}>
+                {privacyPolicy[locale].linkLabel}
+              </Link>
+            </p>
           </div>
           <div className={styles.formSurface} data-contact-form data-reveal>
             <EnquiryForm
@@ -168,35 +228,70 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             />
           </div>
         </section>
-        <section
-          className={styles.section}
-          aria-labelledby="contact-paths-title"
-        >
-          <div className={styles.pathsHeading} data-reveal>
-            <h2 className={styles.eyebrow} id="contact-paths-title">
-              {copy.exploreEyebrow}
-            </h2>
-          </div>
-          <div className={styles.pathGrid}>
-            {contactPaths.map((path) => (
-              <Link
-                className={`${styles.pathCard} ${path.tone}`}
-                href={path.href}
-                key={path.school.slug}
-                aria-labelledby={`contact-path-${path.school.slug}-title`}
-                data-contact-path={path.school.slug}
-                data-reveal
-              >
-                <span>{path.number}</span>
-                <h3 id={`contact-path-${path.school.slug}-title`}>
-                  {path.school.name}
-                </h3>
-                <p>{path.description}</p>
-                <b aria-hidden="true">↗</b>
-              </Link>
-            ))}
+
+        <section className={styles.explore} aria-labelledby="contact-paths-title">
+          <div className={styles.exploreInner}>
+            <div className={styles.pathsHeading} data-reveal>
+              <h2 className={styles.eyebrow} id="contact-paths-title">
+                {copy.exploreEyebrow}
+              </h2>
+            </div>
+            <div className={styles.pathGrid} data-stagger>
+              {contactPaths.map((path) => (
+                <Link
+                  className={`${styles.pathCard} ${path.tone}`}
+                  href={path.href}
+                  key={path.school.slug}
+                  aria-labelledby={`contact-path-${path.school.slug}-title`}
+                  data-contact-path={path.school.slug}
+                >
+                  <span className={styles.pathPhoto}>
+                    <Image
+                      src={pathPhotos[path.school.slug].src}
+                      alt={pathPhotos[path.school.slug].alt[locale]}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 30vw"
+                    />
+                  </span>
+                  <span className={styles.pathBody}>
+                    <span className={styles.pathNumber}>{path.number}</span>
+                    <h3 id={`contact-path-${path.school.slug}-title`}>
+                      {path.school.name}
+                    </h3>
+                    <p>{path.description}</p>
+                    <b aria-hidden="true">→</b>
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
+
+        <section className={styles.direct} aria-labelledby="contact-direct-title">
+          <div className={styles.directHeading} data-reveal>
+            <h2 id="contact-direct-title">{contactLabels[locale].title}</h2>
+          </div>
+          <ContactCards locale={locale} />
+          <AddressCard locale={locale} />
+          <div className={styles.hoursBand}>
+            <div>
+              <p className={styles.eyebrow}>{openingHours.title[locale]}</p>
+              <p className={styles.hoursValue}>
+                <time>{openingHours.label[locale]}</time>
+              </p>
+              <p className={styles.hoursNote}>{openingHours.note[locale]}</p>
+            </div>
+            <div className={styles.hoursSocial}>
+              <p>{followCopy[locale]}</p>
+              <SocialIcons
+                className={styles.socials}
+                label={followCopy[locale]}
+              />
+            </div>
+          </div>
+        </section>
+
+        <FaqSection copy={contactFaq[locale]} id="contact-faq" />
       </main>
       <SiteFooter />
     </>

@@ -232,7 +232,6 @@
   display: grid;
   gap: 2rem;
   padding: clamp(1.5rem, 4vw, 3.25rem);
-  background: transparent;
 }
 
 .formSurface :global(.form-heading) {
@@ -379,4 +378,470 @@
 .enquiryContext li {
   grid-template-columns: 4.5rem 2.5rem 1fr;
   align-items: center;
+}
+
+.notebookArt {
+  display: block;
+  width: min(15rem, 70%);
+  height: auto;
+  margin-block-start: 2rem;
+  filter: drop-shadow(0 1.5rem 2rem rgb(0 0 0 / 0.45));
+  rotate: -4deg;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .notebookArt {
+    animation: notebook-float 7s ease-in-out infinite alternate;
+  }
+}
+@keyframes notebook-float {
+  to {
+    translate: 0 -0.6rem;
+    rotate: -1deg;
+  }
+}
+
+/* The shared .enquiry-form card provides the surface. */
+.formSurface {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* "What happens next": the person writing to us, with the notebook
+   floating over the corner like a pinned note. */
+.nextVisual {
+  position: relative;
+  margin-block-start: 2rem;
+  max-width: 30rem;
+}
+.nextPhoto {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+}
+.nextVisual .notebookArt {
+  position: absolute;
+  z-index: 5;
+  inset-block-end: -2.5rem;
+  inset-inline-end: -1.5rem;
+  width: clamp(7rem, 34%, 10rem);
+  margin: 0;
+  border: 4px solid rgb(255 255 255 / 0.9);
+  border-radius: 0.75rem;
+}
+@media (max-width: 760px) {
+  .nextVisual {
+    max-width: none;
+    margin-block-end: 2rem;
+  }
+  .nextVisual .notebookArt {
+    inset-inline-end: 0.5rem;
+  }
+}
+
+/* ─── Contact redesign: a living 3D photo stack in the hero, a glowing
+   timeline beside the form, and the school paths floating over a desk. ─── */
+.page .hero {
+  min-height: clamp(36rem, 82svh, 54rem);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 84rem);
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+.page .hero h1 {
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.page .heroBody {
+  margin-block-start: 1.75rem;
+}
+.page .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.pulse {
+  position: relative;
+  width: 0.55rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #f0cf8e;
+  box-shadow: 0 0 0.9rem #f0cf8e;
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block-start: 2.25rem;
+}
+.primaryChip,
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0 1.6rem;
+  border-radius: 999px;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    background 300ms ease,
+    box-shadow 400ms ease,
+    color 300ms ease;
+}
+.primaryChip {
+  background: linear-gradient(135deg, #f3d48f, #ffffff 55%, #8bdeef);
+  color: var(--color-brand-night);
+  box-shadow: 0 0.75rem 2.5rem -0.5rem rgb(243 212 143 / 0.55);
+}
+.primaryChip:hover {
+  box-shadow: 0 1rem 3rem -0.25rem rgb(139 222 239 / 0.7);
+}
+.chip {
+  border: 1px solid rgb(255 255 255 / 0.3);
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+.chip:hover {
+  border-color: #f3d48f;
+  color: #f3d48f;
+}
+.heroStack {
+  max-width: 38rem;
+  justify-self: end;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid #f0cf8e;
+    animation: contact-ping 2.4s ease-out infinite;
+  }
+}
+@keyframes contact-ping {
+  to {
+    scale: 3.2;
+    opacity: 0;
+  }
+}
+
+/* Timeline: a line of light connects the three steps. */
+.timeline {
+  position: relative;
+}
+.page .timeline {
+  border-top: 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset-block: 2.5rem;
+  inset-inline-start: 2.25rem;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgb(139 222 239 / 0.1),
+    rgb(139 222 239 / 0.8),
+    rgb(243 212 143 / 0.8),
+    rgb(243 212 143 / 0.1)
+  );
+  background-size: 100% 200%;
+  border-radius: 2px;
+}
+.page .timeline li {
+  position: relative;
+  z-index: 1;
+  border-bottom: 0;
+  margin-block: 0.4rem;
+  padding: 1rem 1rem 1rem 0;
+  border-radius: 1rem;
+  transition: background 400ms ease;
+}
+.page .timeline li:hover {
+  background: rgb(255 255 255 / 0.04);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .timeline::before {
+    animation: timeline-flow 4s linear infinite;
+  }
+}
+@keyframes timeline-flow {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 200%;
+  }
+}
+.privacyNote a {
+  color: #8bdeef;
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+}
+
+/* Explore: glass school cards floating over a desk photograph. */
+.explore {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(5rem, 11vw, 9rem);
+}
+.exploreImage {
+  z-index: -2;
+  object-fit: cover;
+  scale: 1.05;
+}
+.exploreVeil {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgb(4 15 27 / 0.92), rgb(4 15 27 / 0.55) 40%, rgb(4 15 27 / 0.92)),
+    radial-gradient(circle at 50% 40%, transparent, rgb(4 15 27 / 0.6));
+}
+.exploreInner {
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
+  margin-inline: auto;
+}
+.page .pathCard {
+  position: relative;
+  overflow: hidden;
+  min-height: 22rem;
+  border-color: rgb(255 255 255 / 0.16);
+  background: linear-gradient(
+    160deg,
+    rgb(7 26 43 / 0.72),
+    color-mix(in srgb, var(--path-accent) 18%, rgb(7 26 43 / 0.55))
+  );
+  backdrop-filter: blur(14px);
+  color: #fff;
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+}
+.page .pathCard:hover {
+  border-color: color-mix(in srgb, var(--path-accent) 60%, transparent);
+  box-shadow: 0 2rem 4rem -1rem rgb(0 0 0 / 0.6),
+    0 0 3rem -1rem var(--path-accent);
+}
+.page .pathCard p {
+  color: rgb(212 229 238 / 0.85);
+}
+.pathArt {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-end: 0.75rem;
+  width: 7.5rem;
+  height: auto;
+  filter: drop-shadow(0 1rem 1.5rem rgb(0 0 0 / 0.5));
+  transition:
+    translate 600ms var(--luminol-ease-out),
+    rotate 600ms var(--luminol-ease-out);
+}
+.pathCard:hover .pathArt {
+  translate: 0 -0.5rem;
+  rotate: -6deg;
+}
+
+@media (max-width: 900px) {
+  .page .hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding-block-start: 2rem;
+  }
+  .heroStack {
+    justify-self: center;
+    width: min(100%, 34rem);
+  }
+  .page .pathGrid {
+    grid-template-columns: 1fr;
+  }
+  .page .pathCard {
+    min-height: 15rem;
+  }
+}
+@media (max-width: 560px) {
+  .heroActions > a {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}
+
+/* ─── Explore v3: living photo cards, no stickers, no busy background. ─── */
+.explore {
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+.page .pathCard {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  padding: 0;
+  border-radius: 1.5rem;
+  transform: none;
+  background: linear-gradient(
+    180deg,
+    rgb(7 26 43 / 0.85),
+    color-mix(in srgb, var(--path-accent) 14%, rgb(7 26 43 / 0.9))
+  );
+  transition:
+    translate 600ms var(--luminol-ease-out),
+    box-shadow 600ms ease,
+    border-color 400ms ease;
+}
+.page .pathCard:hover {
+  translate: 0 -0.5rem;
+}
+.pathPhoto {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+.pathPhoto img {
+  object-fit: cover;
+  transition: scale 1.2s var(--luminol-ease-out);
+}
+.pathPhoto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgb(7 26 43 / 0.9));
+}
+.pathCard:hover .pathPhoto img {
+  scale: 1.06;
+}
+.pathBody {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0 clamp(1.25rem, 2.4vw, 1.75rem) clamp(1.25rem, 2.4vw, 1.75rem);
+  margin-top: -1.5rem;
+}
+.pathNumber {
+  width: fit-content;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--path-accent);
+  color: #061321 !important;
+  font-size: 0.7rem !important;
+}
+.page .pathCard h3 {
+  margin: 0.9rem 0 0.6rem;
+  font-size: clamp(1.8rem, 2.6vw, 2.5rem);
+}
+.page .pathCard p {
+  margin: 0 0 1rem;
+}
+.page .pathCard b {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  aspect-ratio: 1;
+  margin-top: auto;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: 50%;
+  color: #fff;
+  transition:
+    background 300ms ease,
+    color 300ms ease;
+}
+.page .pathCard:hover b {
+  background: var(--path-accent);
+  color: #061321;
+}
+.page .pathCard:dir(rtl) b {
+  scale: -1 1;
+}
+
+/* Opening hours and socials. */
+.hoursBand {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  justify-content: space-between;
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
+  margin: 0 auto clamp(1rem, 3vw, 2rem);
+  padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.5rem, 3.5vw, 2.75rem);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 1.75rem;
+  background:
+    radial-gradient(80% 140% at 0% 0%, rgb(243 212 143 / 0.12), transparent 60%),
+    rgb(7 26 43 / 0.6);
+  backdrop-filter: blur(12px);
+  color: #fff;
+}
+.hoursValue {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  line-height: 1.1;
+}
+.hoursNote {
+  margin: 0.4rem 0 0;
+  color: rgb(212 229 238 / 0.65);
+  font-size: 0.85rem;
+}
+.hoursSocial {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.hoursSocial > p {
+  margin: 0;
+  color: rgb(212 229 238 / 0.8);
+  font-weight: 700;
+}
+.socials {
+  display: flex;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.socials a {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 50%;
+  color: #fff;
+  transition:
+    background 300ms ease,
+    color 300ms ease,
+    translate 300ms var(--luminol-ease-out);
+}
+.socials a:hover {
+  background: #f3d48f;
+  color: #061321;
+  translate: 0 -0.2rem;
+}
+.socials svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+/* Direct channels: phone, WhatsApp, email, then hours and socials. */
+.direct {
+  display: grid;
+  gap: 1rem;
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 82rem);
+  margin: 0 auto clamp(1rem, 3vw, 2rem);
+}
+.directHeading h2 {
+  margin: 0 0 0.5rem;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.6vw, 3.2rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.direct .hoursBand {
+  width: 100%;
+  margin: 0;
 }

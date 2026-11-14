@@ -5,6 +5,14 @@ import {
 } from '@luminol/localization';
 import Link from 'next/link';
 
+import {
+  followCopy,
+  officialAddress,
+  officialContacts,
+  openingHours,
+} from '../lib/contact-channels';
+import { privacyPolicy } from '../lib/privacy-policy';
+import { SocialIcons } from './social-icons';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { CurrentPageLink } from './current-page-link';
@@ -119,59 +127,96 @@ export async function SiteFooter() {
           >
             <Wordmark className={styles.footerWordmark ?? ''} />
           </CurrentPageLink>
-          <p>{copy.site.footerDisciplines}</p>
-        </div>
-        <div className={styles.footerColumn}>
-          <span>{copy.site.nav.primaryAria}</span>
-          <nav
-            className={styles.footerNav}
-            aria-label={footerNavigationLabel[locale]}
-          >
-            <CurrentPageLink
-              href={localizeHref(locale, '/#schools')}
-              activePathname="/schools"
-              matchDescendants
-            >
-              {copy.site.nav.schools}
-            </CurrentPageLink>
-            <CurrentPageLink
-              href={localizeHref(locale, '/programmes')}
-              activePathname="/programmes"
-              matchDescendants
-            >
-              {copy.site.nav.programmes}
-            </CurrentPageLink>
-            <CurrentPageLink
-              href={localizeHref(locale, '/consultations')}
-              activePathname="/consultations"
-            >
-              {consultationsLabel[locale]}
-            </CurrentPageLink>
-            <CurrentPageLink
-              href={localizeHref(locale, '/about')}
-              activePathname="/about"
-            >
-              {copy.site.nav.about}
-            </CurrentPageLink>
-            <CurrentPageLink
-              href={localizeHref(locale, '/contact')}
-              activePathname="/contact"
-            >
-              {copy.site.nav.contact}
-            </CurrentPageLink>
-          </nav>
-        </div>
-        <div className={styles.footerColumn}>
-          <span>Luminol Academy</span>
           <p>{copy.site.description}</p>
+          <SocialIcons
+            className={styles.socials}
+            label={followCopy[locale]}
+          />
+        </div>
+        <nav
+          className={styles.footerNav}
+          aria-label={footerNavigationLabel[locale]}
+        >
+          <CurrentPageLink
+            href={localizeHref(locale, '/#schools')}
+            activePathname="/schools"
+            matchDescendants
+          >
+            {copy.site.nav.schools}
+          </CurrentPageLink>
+          <CurrentPageLink
+            href={localizeHref(locale, '/programmes')}
+            activePathname="/programmes"
+            matchDescendants
+          >
+            {copy.site.nav.programmes}
+          </CurrentPageLink>
+          <CurrentPageLink
+            href={localizeHref(locale, '/consultations')}
+            activePathname="/consultations"
+          >
+            {consultationsLabel[locale]}
+          </CurrentPageLink>
+          <CurrentPageLink
+            href={localizeHref(locale, '/about')}
+            activePathname="/about"
+          >
+            {copy.site.nav.about}
+          </CurrentPageLink>
+          <CurrentPageLink
+            href={localizeHref(locale, '/contact')}
+            activePathname="/contact"
+          >
+            {copy.site.nav.contact}
+          </CurrentPageLink>
+        </nav>
+        <div className={styles.footerHours}>
+          <span>{openingHours.title[locale]}</span>
+          <p>
+            <time>{openingHours.label[locale]}</time>
+          </p>
+          <small>{openingHours.note[locale]}</small>
+          <ul className={styles.footerContacts}>
+            <li>
+              <a href={`tel:${officialContacts.phone}`} dir="ltr">
+                {officialContacts.phoneDisplay}
+              </a>
+            </li>
+            <li>
+              <a
+                href={officialAddress.directionsHref}
+                target="_blank"
+                rel="noopener"
+              >
+                {officialAddress.street[locale]},{' '}
+                {officialAddress.city[locale]}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${officialContacts.email}`}>
+                {officialContacts.email}
+              </a>
+            </li>
+          </ul>
+          <Link
+            className={styles.footerCta}
+            href={localizeHref(locale, '/contact')}
+          >
+            {copy.site.nav.contact} <span aria-hidden="true">↗</span>
+          </Link>
         </div>
       </div>
-      <div className={styles.megaMark} aria-hidden="true" data-reveal>
+      <div className={styles.megaMark} aria-hidden="true">
         <span>Luminol</span>
       </div>
       <div className={styles.footerBottom}>
-        <p>© {new Date().getFullYear()} Luminol Academy</p>
-        <p>Luminol · {copy.site.footerDisciplines}</p>
+        <p>
+          © {new Date().getFullYear()} Luminol Academy ·{' '}
+          <Link href={localizeHref(locale, '/privacy')}>
+            {privacyPolicy[locale].linkLabel}
+          </Link>
+        </p>
+        <p>{copy.site.footerDisciplines}</p>
       </div>
     </footer>
   );

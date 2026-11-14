@@ -4,6 +4,8 @@ import { after } from 'next/server';
 
 import { dispatchEnquiryCommunications } from '../../../lib/enquiry-communications.server';
 import { getPublicProgrammeBySlug } from '../../../lib/programme-detail';
+import { sendTelegramEnquiryAlert } from '../../../lib/telegram-notify.server';
+import { verifyTurnstileToken } from '../../../lib/turnstile.server';
 
 const MAX_BODY_SIZE = 20_000;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1_000;
@@ -112,6 +114,17 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
+  const humanCheck = await verifyTurnstileToken(
+    request.headers.get('x-turnstile-token'),
+    getClientAddress(request),
+  );
+  if (!humanCheck) {
+    return jsonResponse(
+      { error: 'Please confirm the security check and try again.' },
+      400,
+    );
+  }
+
   let body: unknown;
   try {
     const rawBody = await request.text();
@@ -181,6 +194,21 @@ export async function POST(request: Request): Promise<Response> {
         locale: result.data.locale,
         message: result.data.message,
       });
+      const telegram = await sendTelegramEnquiryAlert({
+        id: enquiry.id,
+        name: result.data.name,
+        preferredContact: result.data.preferredContact,
+        phone: result.data.phone || null,
+        email: result.data.email,
+        school: result.data.school,
+        programmeTitle: programme?.title ?? null,
+        locale: result.data.locale,
+      });
+      if (telegram === 'failed') {
+        console.error('Enquiry Telegram alert failed', {
+          enquiryId: enquiry.id,
+        });
+      }
       if (communication.failures > 0) {
         console.error('Enquiry communication dispatch incomplete', {
           enquiryId: enquiry.id,

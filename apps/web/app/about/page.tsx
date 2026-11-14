@@ -11,15 +11,14 @@ import Link from 'next/link';
 
 import { AcademyImage } from '../../components/academy-image';
 import { FounderJsonLd } from '../../components/founder-json-ld';
-import { FloatingArt } from '../../components/psychology-art';
+import { PhotoMosaic } from '../../components/photo-mosaic';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
-import { GlassIcon, type GlassIconName } from '../../components/glass-icon';
 import Image from 'next/image';
-import { commissionedScenes } from '../../lib/academy-media';
+import { aboutPhotos, peoplePhotos } from '../../lib/people-photos';
 
 const founderNameByLocale = {
   en: 'Kheddaoui Fettouma',
@@ -43,7 +42,7 @@ const founderAuthorityByLocale = {
         number: '01',
         title: 'A recognizable founder voice',
         description:
-          'The founder remains a visible trust anchor while Luminol develops institutional authority through its wider expert team.',
+          'You always know who stands behind the psychology division — and the wider expert team carries the same standards into every programme.',
       },
     ],
     action: 'Start a psychology enquiry',
@@ -63,7 +62,7 @@ const founderAuthorityByLocale = {
         number: '01',
         title: 'Une voix fondatrice identifiable',
         description:
-          'La fondatrice reste un repère de confiance visible tandis que Luminol développe aussi l’autorité de son équipe d’experts.',
+          'Vous savez toujours qui se tient derrière le pôle psychologie — et l’équipe d’experts porte les mêmes exigences dans chaque programme.',
       },
     ],
     action: 'Commencer une demande en psychologie',
@@ -83,7 +82,7 @@ const founderAuthorityByLocale = {
         number: '01',
         title: 'صوت مؤسس واضح ومعروف',
         description:
-          'تبقى المؤسسة ركناً أساسياً للثقة، مع بناء سلطة مؤسساتية أوسع من خلال بقية فريق الخبراء في لومينول.',
+          'تعرف دائمًا من يقف وراء قسم علم النفس، ويحمل فريق الخبراء المعايير نفسها إلى كل برنامج.',
       },
     ],
     action: 'ابدأ طلباً في علم النفس',
@@ -134,12 +133,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const valueIcons: GlassIconName[] = [
-  'value-depth',
-  'value-warmth',
-  'value-progress',
-  'value-connected',
-];
+const galleryLabel = {
+  en: 'Moments at Luminol',
+  fr: 'Moments chez Luminol',
+  ar: 'لحظات في لومينول',
+} as const satisfies Record<Locale, string>;
 
 export default async function AboutPage() {
   const locale = await getRequestLocale();
@@ -195,12 +193,8 @@ export default async function AboutPage() {
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
-            scene={commissionedScenes.aboutHero}
-          />
-          <FloatingArt
-            art="humanConnection"
-            locale={locale}
-            className={styles.heroArt}
+            scene={peoplePhotos.liveCommunity}
+            sceneKind="photo"
           />
         </section>
 
@@ -213,16 +207,24 @@ export default async function AboutPage() {
             <h2 id="about-origin-title">{copy.originTitle}</h2>
           </div>
           <div className={styles.originCopy} data-reveal>
-            <GlassIcon
-              name="about-founding-idea"
-              size="lg"
-              className={styles.originIcon}
-            />
             <p className={styles.originLede}>{copy.originLede}</p>
             <p>{copy.originBodyOne}</p>
             <p>{copy.originBodyTwo}</p>
           </div>
         </section>
+
+        <PhotoMosaic
+          label={galleryLabel[locale]}
+          locale={locale}
+          photos={[
+            peoplePhotos.academyRoleplay,
+            aboutPhotos.listening,
+            aboutPhotos.graduate,
+            aboutPhotos.family,
+            aboutPhotos.online,
+            aboutPhotos.event,
+          ]}
+        />
 
         <section
           className={styles.section}
@@ -258,13 +260,27 @@ export default async function AboutPage() {
 
         <section className={styles.missionVision}>
           <article aria-labelledby="about-mission-title" data-reveal>
-            <GlassIcon name="about-mission" size="md" />
+            <Image
+              className={styles.missionPhoto}
+              src={aboutPhotos.audience.src}
+              alt=""
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+              aria-hidden="true"
+            />
             <span>{copy.missionLabel}</span>
             <h2 id="about-mission-title">{copy.missionTitle}</h2>
             <p>{copy.missionBody}</p>
           </article>
           <article aria-labelledby="about-vision-title" data-reveal>
-            <GlassIcon name="about-vision" size="md" delay={1.5} />
+            <Image
+              className={styles.missionPhoto}
+              src={peoplePhotos.liveGenerations.src}
+              alt=""
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+              aria-hidden="true"
+            />
             <span>{copy.visionLabel}</span>
             <h2 id="about-vision-title">{copy.visionTitle}</h2>
             <p>{copy.visionBody}</p>
@@ -280,7 +296,7 @@ export default async function AboutPage() {
             <p>{copy.valuesBody}</p>
           </div>
           <div className={styles.valueGrid}>
-            {copy.values.map((value, index) => {
+            {copy.values.map((value) => {
               const valueTitleId = `about-value-${value.number}-title`;
 
               return (
@@ -291,12 +307,6 @@ export default async function AboutPage() {
                   data-value-card
                   data-reveal
                 >
-                  <GlassIcon
-                    name={valueIcons[index % valueIcons.length]!}
-                    size="sm"
-                    delay={index * 0.8}
-                    className={styles.valueIcon}
-                  />
                   <span>{value.number}</span>
                   <h3 id={valueTitleId}>{value.title}</h3>
                   <p>{value.description}</p>
@@ -305,6 +315,7 @@ export default async function AboutPage() {
             })}
           </div>
         </section>
+
 
         <section
           className={`${styles.section} ${styles.ecosystem}`}

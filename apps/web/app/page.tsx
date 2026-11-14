@@ -10,7 +10,6 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { AcademyImage } from '../components/academy-image';
 import { BreathingSpace } from '../components/breathing-space';
 import { CinematicBackdrop } from '../components/cinematic-backdrop';
 import { InkBlot } from '../components/ink-blot';
@@ -25,7 +24,6 @@ import { ThoughtNetwork } from '../components/thought-network';
 import { VelocityMarquee } from '../components/velocity-marquee';
 import {
   brandArtworkCredit,
-  commissionedScenes,
   cinematicCopy,
   schoolArtwork,
 } from '../lib/academy-media';
@@ -35,6 +33,12 @@ import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
 import { GlassIcon, type GlassIconName } from '../components/glass-icon';
+import { PhotoBand } from '../components/live-photo';
+import {
+  homeSchoolPhotos,
+  illustrativePhotoCredit,
+  peoplePhotos,
+} from '../lib/people-photos';
 
 const constellationCopy = {
   en: {
@@ -164,7 +168,7 @@ export default async function Page() {
                 variant="secondary"
                 data-magnetic
               >
-                {copy.pathwayPsychology} <span aria-hidden="true">→</span>
+                {copy.bookConsultation} <span aria-hidden="true">→</span>
               </ButtonLink>
             </div>
           </div>
@@ -178,11 +182,11 @@ export default async function Page() {
           data-stagger
         >
           <div>
-            <dt>3</dt>
+            <dt data-count="3">3</dt>
             <dd>{copy.connectedSchools}</dd>
           </div>
           <div>
-            <dt>1</dt>
+            <dt data-count="30">30+</dt>
             <dd>{copy.humanJourney}</dd>
           </div>
           <div>
@@ -199,7 +203,6 @@ export default async function Page() {
             slug: school.slug,
             number: school.number,
             name: school.name,
-            promise: school.promise,
             href: `#${school.slug}`,
           }))}
         />
@@ -233,33 +236,37 @@ export default async function Page() {
                 >
                   <figure
                     className={styles.schoolArt}
-                    data-tilt="9"
+                    data-tilt="7"
                     data-academy-media={school.slug}
-                    data-media-source={brandArtworkCredit.source}
-                    data-media-license={brandArtworkCredit.license}
+                    data-media-source={illustrativePhotoCredit.source}
+                    data-media-license={illustrativePhotoCredit.license}
                     data-media-crop="center-center"
                   >
-                    <span className={styles.artGlow} aria-hidden="true" />
+                    <Image
+                      className={styles.schoolPhoto}
+                      src={homeSchoolPhotos[school.slug].src}
+                      alt={homeSchoolPhotos[school.slug].alt[locale]}
+                      fill
+                      sizes="(max-width: 800px) 100vw, 45vw"
+                    />
+                    <span className={styles.schoolPhotoVeil} aria-hidden="true" />
+                    <span className={styles.artGlare} aria-hidden="true" />
+                  </figure>
+                  <span
+                    className={styles.schoolEmblem}
+                    aria-hidden="true"
+                    data-depth="0.28"
+                  >
+                    <span className={styles.artGlow} />
                     <Image
                       className={styles.artImage}
                       src={schoolArtwork[school.slug].src}
-                      alt={schoolArtwork[school.slug].alt[locale]}
+                      alt=""
                       width={schoolArtwork[school.slug].width}
                       height={schoolArtwork[school.slug].height}
-                      sizes="(max-width: 800px) 100vw, 45vw"
+                      sizes="(max-width: 800px) 40vw, 16vw"
                     />
-                    <span className={styles.artGlare} aria-hidden="true" />
-                    <span className={styles.artNumber} aria-hidden="true">
-                      {school.number}
-                    </span>
-                  </figure>
-                  <AcademyImage
-                    className={styles.schoolInset}
-                    school={school.slug}
-                    locale={locale}
-                    sizes="(max-width: 800px) 45vw, 18vw"
-                    scene={commissionedScenes.inset[school.slug]}
-                  />
+                  </span>
                 </div>
                 <div className={styles.schoolDetails} data-reveal>
                   <div className={styles.schoolTop}>
@@ -268,9 +275,6 @@ export default async function Page() {
                   </div>
                   <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
                   <p className={styles.schoolPromise}>{school.promise}</p>
-                  <p className={styles.schoolDescription}>
-                    {school.introduction}
-                  </p>
                   <ul aria-label={`${school.name} — ${copy.focusAreas}`}>
                     {school.programs.slice(0, 3).map((program) => (
                       <li key={program.title}>{program.title}</li>
@@ -326,6 +330,12 @@ export default async function Page() {
           </ol>
         </section>
 
+        <PhotoBand
+          photo={peoplePhotos.academyLecture}
+          locale={locale}
+          reveal="portal"
+        />
+
         <BreathingSpace locale={locale} />
 
         <section
@@ -363,7 +373,9 @@ export default async function Page() {
         </section>
 
         <VelocityMarquee
-          words={[...schoolList.map((school) => school.name), ...copy.values]}
+          words={schoolList.flatMap((school) =>
+            school.eyebrow.split('·').map((word) => word.trim()),
+          )}
         />
 
         <section
@@ -387,7 +399,6 @@ export default async function Page() {
           >
             <Link
               href={localizeHref(locale, '/consultations')}
-              data-preview-src={schoolArtwork.psychology.src}
             >
               <span>01</span>
               {copy.pathwayPsychology}
@@ -395,7 +406,6 @@ export default async function Page() {
             </Link>
             <Link
               href={localizeHref(locale, '/schools/languages')}
-              data-preview-src={schoolArtwork.languages.src}
             >
               <span>02</span>
               {copy.pathwayLanguages}
@@ -403,7 +413,6 @@ export default async function Page() {
             </Link>
             <Link
               href={localizeHref(locale, '/schools/training')}
-              data-preview-src={schoolArtwork.training.src}
             >
               <span>03</span>
               {copy.pathwayTraining}

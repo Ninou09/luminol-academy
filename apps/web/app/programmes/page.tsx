@@ -1,7 +1,6 @@
 import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
 import {
   buildLanguageAlternates,
-  getAttendanceCertificateCopy,
   getOpenGraphLocale,
   localizeHref,
   localizePathname,
@@ -10,7 +9,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { FloatingArt } from '../../components/psychology-art';
+import { PhotoStack } from '../../components/photo-stack';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { buildProgrammeContactHref } from '../../lib/programme-contact';
 import {
@@ -40,6 +39,7 @@ import {
   serializeJsonLd,
 } from '../../lib/structured-data';
 import styles from './page.module.css';
+import { peoplePhotos } from '../../lib/people-photos';
 
 type ProgrammesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -126,88 +126,125 @@ export default async function ProgrammesPage({
       <SiteHeader />
       <main id="main-content" tabIndex={-1}>
         <section
-          className={`section-shell ${styles.hero}`}
+          className={styles.hero}
           aria-labelledby="programmes-hero-title"
         >
-          <FloatingArt
-            art="untangledKnot"
+          <div className={styles.heroCopy}>
+            <p className="eyebrow">{copy.eyebrow}</p>
+            <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
+            <p>{copy.heroBody}</p>
+            <form
+              className={styles.filters}
+              action={localizeHref(locale, '/programmes')}
+              method="get"
+              role="search"
+              aria-label={copy.searchLabel}
+            >
+              <label className={styles.queryField} htmlFor="programme-query">
+                <span>{copy.searchLabel}</span>
+                <input
+                  id="programme-query"
+                  name="q"
+                  type="search"
+                  dir="auto"
+                  defaultValue={filters.query}
+                  maxLength={100}
+                  placeholder={copy.searchPlaceholder}
+                />
+              </label>
+
+              <label htmlFor="programme-school">
+                <span>{copy.schoolLabel}</span>
+                <select
+                  id="programme-school"
+                  name="school"
+                  defaultValue={filters.school ?? ''}
+                >
+                  <option value="">{copy.allSchools}</option>
+                  {Object.values(schools).map((school) => (
+                    <option key={school.slug} value={school.slug}>
+                      {school.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label htmlFor="programme-language">
+                <span>{copy.languageLabel}</span>
+                <select
+                  id="programme-language"
+                  name="language"
+                  defaultValue={filters.language ?? ''}
+                >
+                  <option value="">{copy.allLanguages}</option>
+                  {Object.entries(copy.languageNames).map(([code, label]) => (
+                    <option key={code} value={code}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className={styles.filterActions}>
+                <button type="submit">{copy.apply}</button>
+                <Link href={localizeHref(locale, '/programmes')}>
+                  {copy.clear}
+                </Link>
+              </div>
+            </form>
+          </div>
+          <PhotoStack
+            className={styles.heroStack}
             locale={locale}
-            className={styles.heroArt}
+            priority
+            photos={[
+              peoplePhotos.programCatalog,
+              peoplePhotos.designBookshelf,
+              peoplePhotos.academyActWorkshop,
+            ]}
           />
-          <p className="eyebrow">{copy.eyebrow}</p>
-          <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
-          <p>{copy.heroBody}</p>
-          <p>{getAttendanceCertificateCopy(locale).scope}</p>
         </section>
 
-        <section className={`section-shell ${styles.discovery}`}>
-          <form
-            className={styles.filters}
-            action={localizeHref(locale, '/programmes')}
-            method="get"
-            role="search"
-            aria-label={copy.searchLabel}
-          >
-            <label className={styles.queryField} htmlFor="programme-query">
-              <span>{copy.searchLabel}</span>
-              <input
-                id="programme-query"
-                name="q"
-                type="search"
-                dir="auto"
-                defaultValue={filters.query}
-                maxLength={100}
-                placeholder={copy.searchPlaceholder}
-              />
-            </label>
-
-            <label htmlFor="programme-school">
-              <span>{copy.schoolLabel}</span>
-              <select
-                id="programme-school"
-                name="school"
-                defaultValue={filters.school ?? ''}
+        <nav className={styles.schoolTiles} aria-label={copy.schoolLabel}>
+          {Object.values(schools).map((school) => {
+            const active = filters.school === school.slug;
+            return (
+              <Link
+                key={school.slug}
+                className={`${styles.schoolTile} ${styles[school.slug] ?? ''}`}
+                href={localizeHref(
+                  locale,
+                  active ? '/programmes' : `/programmes?school=${school.slug}`,
+                )}
+                aria-current={active ? 'true' : undefined}
+                data-tilt="6"
               >
-                <option value="">{copy.allSchools}</option>
-                {Object.values(schools).map((school) => (
-                  <option key={school.slug} value={school.slug}>
-                    {school.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label htmlFor="programme-language">
-              <span>{copy.languageLabel}</span>
-              <select
-                id="programme-language"
-                name="language"
-                defaultValue={filters.language ?? ''}
-              >
-                <option value="">{copy.allLanguages}</option>
-                {Object.entries(copy.languageNames).map(([code, label]) => (
-                  <option key={code} value={code}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <div className={styles.filterActions}>
-              <button type="submit">{copy.apply}</button>
-              <Link href={localizeHref(locale, '/programmes')}>
-                {copy.clear}
+                <span className={styles.tileNumber}>{school.number}</span>
+                <strong>{school.name}</strong>
+                <span className={styles.tilePromise}>{school.promise}</span>
               </Link>
-            </div>
-          </form>
+            );
+          })}
+        </nav>
+
+        <section className={`section-shell ${styles.discovery}`}>
 
           {programmes === null ? (
-            <div className={styles.emptyState} role="status">
+            <div
+              className={`${styles.emptyState} ${styles.unavailable}`}
+              role="status"
+            >
+              <span className={styles.emptyOrb} aria-hidden="true" />
               <h2>{copy.unavailableTitle}</h2>
               <p>{copy.unavailableBody}</p>
-              <Link href={localizeHref(locale, '/#schools')}>
-                {copy.exploreSchools}
-              </Link>
+              <div className={styles.emptyActions}>
+                <Link href={localizeHref(locale, '/#schools')}>
+                  {copy.exploreSchools}
+                </Link>
+                <Link href={localizeHref(locale, '/contact')}>
+                  {copy.askLuminol} <span aria-hidden="true">→</span>
+                </Link>
+              </div>
             </div>
           ) : programmes.length === 0 ? (
             <div className={styles.emptyState} aria-live="polite">

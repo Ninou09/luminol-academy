@@ -815,3 +815,88 @@
   inset-inline-end: calc(min(46%, 44rem) - 5rem);
   rotate: -5deg;
 }
+
+/* The orbit core already reads "Luminol · One human journey"; keep the
+   section heading for screen readers only so the words are not shown twice. */
+.ecosystemHeading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.ecosystem {
+  position: relative;
+}
+
+/* ─── About v2 ─── */
+/* Hero photo: a tall arched window onto the community, with a soft halo. */
+.page .heroVisual {
+  min-height: clamp(30rem, 48vw, 42rem);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: clamp(10rem, 22vw, 18rem) clamp(10rem, 22vw, 18rem)
+    clamp(1.5rem, 3vw, 2.25rem) clamp(1.5rem, 3vw, 2.25rem);
+  box-shadow:
+    0 3rem 6rem -2rem rgb(0 0 0 / 0.65),
+    0 0 5rem -1.5rem rgb(139 222 239 / 0.35);
+}
+.page .heroVisual img {
+  object-fit: cover;
+}
+/* Mission & vision: two photo panels with the words over them. */
+.page .missionVision {
+  gap: clamp(0.75rem, 1.5vw, 1rem);
+  width: min(calc(100% - (2 * var(--luminol-page-gutter))), 84rem);
+  margin: clamp(2rem, 5vw, 4rem) auto;
+  border: 0;
+  background: transparent;
+}
+.page .missionVision article {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: clamp(24rem, 38vw, 32rem);
+  padding: clamp(1.75rem, 4vw, 3rem);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: clamp(1.25rem, 2.5vw, 2rem);
+  background: #061321;
+  color: #fff;
+}
+.missionPhoto {
+  z-index: -2;
+  object-fit: cover;
+  transition: scale 1.6s var(--luminol-ease-out);
+}
+.page .missionVision article::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(4 15 27 / 0.35) 0%,
+    rgb(4 15 27 / 0.78) 40%,
+    rgb(4 15 27 / 0.97) 100%
+  );
+}
+.page .missionVision article:hover .missionPhoto {
+  scale: 1.06;
+}
+.page .missionVision article p {
+  color: rgb(212 229 238 / 0.88);
+}
+.page .missionVision article > span {
+  color: #f0cf8e;
+}
+@media (max-width: 900px) {
+  .page .missionVision {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* The orbit cards rely on light, not on floating glass stickers. */
+.schoolCardArt {
+  display: none !important;
+}

@@ -1,0 +1,161 @@
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 1.75rem;
+  background: rgb(7 26 43 / 0.7);
+  backdrop-filter: blur(12px);
+  color: #fff;
+}
+.map {
+  position: relative;
+  min-height: 17rem;
+  background:
+    radial-gradient(circle at 50% 50%, rgb(139 222 239 / 0.12), transparent 70%),
+    #06182a;
+}
+.map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.blocks path {
+  fill: rgb(139 222 239 / 0.06);
+  stroke: rgb(139 222 239 / 0.12);
+}
+.roads path {
+  fill: none;
+  stroke: rgb(212 229 238 / 0.22);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.route {
+  fill: none;
+  stroke: #f3d48f;
+  stroke-width: 3;
+  stroke-dasharray: 8 8;
+  stroke-linecap: round;
+}
+.pin path {
+  fill: #f3d48f;
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.5));
+}
+.ping {
+  fill: none;
+  stroke: #f3d48f;
+  stroke-width: 2;
+  transform-origin: 300px 170px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .route {
+    animation: route-flow 1.6s linear infinite;
+  }
+  .ping {
+    animation: pin-ping 2.4s ease-out infinite;
+  }
+  .pin path {
+    animation: pin-bob 3s ease-in-out infinite;
+  }
+}
+@keyframes route-flow {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+@keyframes pin-ping {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(5);
+  }
+}
+@keyframes pin-bob {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.cityTag {
+  position: absolute;
+  inset-block-end: 1rem;
+  inset-inline-start: 1rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  background: rgb(4 15 27 / 0.75);
+  color: #f3d48f;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+.eyebrow {
+  margin: 0;
+  color: #f0cf8e;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.body h3 {
+  margin: 0.6rem 0 0.9rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+.body address {
+  color: rgb(212 229 238 / 0.88);
+  font-style: normal;
+  line-height: 1.7;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+}
+.actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.9rem;
+  padding: 0 1.2rem;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    border-color 300ms ease,
+    color 300ms ease;
+}
+.actions a:hover {
+  border-color: #f3d48f;
+  color: #f3d48f;
+}
+.actions .primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #f3d48f, #ffffff 55%, #8bdeef);
+  color: #061321;
+}
+.actions .primary:hover {
+  color: #061321;
+}
+@media (max-width: 860px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+  .map {
+    min-height: 13rem;
+  }
+}

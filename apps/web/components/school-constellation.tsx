@@ -9,7 +9,6 @@ export type ConstellationSchool = {
   slug: string;
   number: string;
   name: string;
-  promise: string;
   href: string;
 };
 
@@ -179,7 +178,6 @@ export function SchoolConstellation({
               <a href={school.href}>
                 <span className={styles.labelNumber}>{school.number}</span>
                 <strong>{school.name}</strong>
-                <span className={styles.labelPromise}>{school.promise}</span>
               </a>
             </li>
           ))}

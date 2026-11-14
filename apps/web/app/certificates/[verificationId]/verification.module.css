@@ -230,3 +230,7 @@
   position: absolute;
   inset: 0;
 }
+
+.photoBand {
+  margin-block: clamp(1.5rem, 4vw, 3rem);
+}

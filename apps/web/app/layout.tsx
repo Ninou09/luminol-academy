@@ -3,7 +3,7 @@ import { getLocaleDirection, getOpenGraphLocale } from '@luminol/localization';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
-import { HoverPreview } from '../components/hover-preview';
+import { CountUp } from '../components/count-up';
 import { InnerUniverse } from '../components/inner-universe';
 import { LuminousCursor } from '../components/luminous-cursor';
 import { PublicInteractions } from '../components/public-interactions';
@@ -11,6 +11,8 @@ import { PublicMotionController } from '../components/public-motion-controller';
 import { PageNavigation } from '../components/page-navigation';
 import { ScrollExperience } from '../components/scroll-experience';
 import { SiteChrome } from '../components/site-chrome';
+import { SiteDock } from '../components/site-dock';
+import { channelCopy, getWhatsAppHref } from '../lib/contact-channels';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { resolvePublicSiteUrl } from '../lib/site-url';
@@ -96,6 +98,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const backToTopLabel = {
+  en: 'Back to top',
+  fr: 'Retour en haut',
+  ar: 'العودة إلى الأعلى',
+} as const;
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -115,9 +123,27 @@ export default async function RootLayout({
         <PublicInteractions />
         <ScrollExperience />
         <LuminousCursor />
-        <HoverPreview />
         <SiteChrome />
+        <CountUp />
         {children}
+        <SiteDock
+          whatsappHref={getWhatsAppHref(channelCopy[locale].whatsappMessage)}
+          whatsappLabel={channelCopy[locale].whatsappAria}
+          topLabel={backToTopLabel[locale]}
+        />
+        {process.env.VERCEL === '1' &&
+        process.env.NEXT_PUBLIC_DISABLE_ANALYTICS !== '1' ? (
+          <>
+            {/* Vercel Web Analytics: cookie-free, aggregated page views. */}
+            <script
+              dangerouslySetInnerHTML={{
+                __html:
+                  'window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};',
+              }}
+            />
+            <script defer src="/_vercel/insights/script.js" />
+          </>
+        ) : null}
       </body>
     </html>
   );

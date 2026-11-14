@@ -28,6 +28,17 @@ function themeFor(pathname: string): UniverseThemeName {
  * colours, objects and camera movement; scrolling moves through it and fast
  * scrolling briefly stretches space. Reduced motion keeps a CSS starfield.
  */
+/** Phones, touch tablets and low-power devices get the lighter universe. */
+function lightweightDevice() {
+  const nav = navigator as Navigator & { deviceMemory?: number };
+  return (
+    window.matchMedia('(max-width: 760px)').matches ||
+    window.matchMedia('(max-width: 1180px) and (pointer: coarse)').matches ||
+    (nav.hardwareConcurrency ?? 8) <= 4 ||
+    (nav.deviceMemory ?? 8) <= 4
+  );
+}
+
 export function InnerUniverse() {
   const pathname = usePathname();
   const theme = themeFor(pathname);
@@ -73,7 +84,7 @@ export function InnerUniverse() {
         await import('./inner-universe-scene');
       if (disposed) return;
       universe = createInnerUniverse(canvas, {
-        mobile: window.matchMedia('(max-width: 760px)').matches,
+        mobile: lightweightDevice(),
         theme: universeThemes[theme],
       });
       if (!universe) return;
@@ -83,6 +94,18 @@ export function InnerUniverse() {
     };
     const idle = window.setTimeout(() => void boot(), 300);
 
+    // On phones, tilting the device gently moves the camera instead.
+    const onTilt = (event: DeviceOrientationEvent) => {
+      if (event.gamma == null || event.beta == null) return;
+      universe?.setPointer(
+        Math.max(-1, Math.min(1, event.gamma / 30)),
+        Math.max(-1, Math.min(1, (event.beta - 45) / 30)),
+      );
+    };
+    const touch = window.matchMedia('(pointer: coarse)').matches;
+    if (touch) {
+      window.addEventListener('deviceorientation', onTilt, { passive: true });
+    }
     window.addEventListener('pointermove', onPointer, { passive: true });
     document.addEventListener('visibilitychange', onVisibility);
     return () => {
@@ -90,6 +113,7 @@ export function InnerUniverse() {
       window.clearTimeout(idle);
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', onPointer);
+      window.removeEventListener('deviceorientation', onTilt);
       document.removeEventListener('visibilitychange', onVisibility);
       // Fade the old universe out while the next one fades in.
       delete canvas.dataset.live;

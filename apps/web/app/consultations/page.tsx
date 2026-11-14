@@ -6,17 +6,30 @@ import {
   type Locale,
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
+
+import {
+  channelCopy,
+  getBookingHref,
+  officialContacts,
+  openingHours,
+} from '../../lib/contact-channels';
 import type { Metadata } from 'next';
 
 import { EnquiryForm } from '../../components/enquiry-form';
-import { ImmersiveBand } from '../../components/psychology-art';
+import Image from 'next/image';
+
+import { PhotoStack } from '../../components/photo-stack';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
-import { NeuralBrain } from '../../components/neural-brain';
-import { GlassIcon, type GlassIconName } from '../../components/glass-icon';
+import { GlassIcon } from '../../components/glass-icon';
+import { PhotoCard } from '../../components/live-photo';
+import {
+  consultationPhotos,
+  peoplePhotos,
+} from '../../lib/people-photos';
 
 const CONSULTATION_COPY = {
   en: {
@@ -58,7 +71,7 @@ const CONSULTATION_COPY = {
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Founder · expert therapist',
     authorityBody:
-      'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 30 years of field experience. Her experience is a visible trust anchor for the psychology division while the wider team supports each enquiry and next step.',
+      'Founder Kheddaoui Fettouma, an expert therapist, guides Luminol Psychology. Her field experience shapes how the team listens to each enquiry and chooses the right next step with you.',
     authorityAction: 'Meet the founder',
     formEyebrow: 'Tell us what you need',
     formTitle: 'Start with a short, structured enquiry.',
@@ -109,7 +122,7 @@ const CONSULTATION_COPY = {
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Fondatrice · thérapeute experte',
     authorityBody:
-      'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 30 ans d’expérience de terrain. Son expérience constitue un repère de confiance visible pour le pôle psychologie, tandis que l’équipe accompagne chaque demande et sa prochaine étape.',
+      'La fondatrice Kheddaoui Fettouma, thérapeute experte, guide Luminol Psychologie. Son expérience de terrain façonne la manière dont l’équipe écoute chaque demande et choisit avec vous la bonne prochaine étape.',
     authorityAction: 'Découvrir la fondatrice',
     formEyebrow: 'Expliquez-nous votre besoin',
     formTitle: 'Commencez par une demande courte et structurée.',
@@ -158,7 +171,7 @@ const CONSULTATION_COPY = {
     authorityName: 'خداوي فطومة',
     authorityRole: 'المؤسسة · معالجة خبيرة',
     authorityBody:
-      'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 30 سنة من الخبرة الميدانية. تمثل خبرتها مرجعاً واضحاً للثقة في قسم علم النفس، بينما يرافق الفريق كل طلب نحو الخطوة التالية المناسبة.',
+      'توجّه المؤسسة خداوي فطومة، المعالجة الخبيرة، قسم لومينول لعلم النفس. تصوغ خبرتها الميدانية طريقة إصغاء الفريق لكل طلب واختيار الخطوة التالية المناسبة معك.',
     authorityAction: 'تعرّف على المؤسسة',
     formEyebrow: 'أخبرنا بما تحتاجه',
     formTitle: 'ابدأ بطلب قصير ومنظم.',
@@ -201,15 +214,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const routeIcons: GlassIconName[] = [
-  'route-therapy',
-  'route-family',
-  'route-learning',
-];
+const routePhotos = [
+  peoplePhotos.therapySession,
+  consultationPhotos.family,
+  consultationPhotos.learning,
+] as const;
 
 export default async function ConsultationsPage() {
   const locale = await getRequestLocale();
   const copy = CONSULTATION_COPY[locale];
+  const bookingHref = getBookingHref();
   const publicCopy = getPublicCopy(locale);
   const paths = copy.paths as readonly {
     number: string;
@@ -222,13 +236,11 @@ export default async function ConsultationsPage() {
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="consultation-title">
-          <NeuralBrain className="hero-brain" />
-          <div>
+          <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
             <h1 id="consultation-title">{copy.heroTitle as string}</h1>
             <p className={styles.lede}>{copy.heroBody as string}</p>
-          </div>
-          <aside className={styles.heroAside}>
+          <div className={styles.heroAside}>
             <p>{copy.aside as string}</p>
             <div className={styles.heroActions}>
               <ButtonLink href="#consultation-enquiry">
@@ -240,16 +252,40 @@ export default async function ConsultationsPage() {
               >
                 {copy.secondaryAction as string}
               </ButtonLink>
+              {bookingHref ? (
+                <ButtonLink
+                  href={bookingHref}
+                  variant="secondary"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  {channelCopy[locale].book} ↗
+                </ButtonLink>
+              ) : null}
             </div>
-          </aside>
+            <p className={styles.hoursChip}>
+              <span aria-hidden="true" />
+              {openingHours.title[locale]} ·{' '}
+              <time>{openingHours.label[locale]}</time>
+            </p>
+            <p className={styles.directLine}>
+              <a href={`tel:${officialContacts.phone}`} dir="ltr">
+                {officialContacts.phoneDisplay}
+              </a>
+              <span aria-hidden="true">·</span>
+              <a href={`mailto:${officialContacts.email}`}>
+                {officialContacts.email}
+              </a>
+            </p>
+          </div>
+          </div>
+          <PhotoStack
+            className={styles.heroStack}
+            locale={locale}
+            priority
+            photos={[consultationPhotos.firstMeeting, consultationPhotos.online]}
+          />
         </section>
-
-        <ImmersiveBand
-          art="innerWorld"
-          locale={locale}
-          priority
-          reveal="portal"
-        />
 
         <section className={styles.routing} aria-labelledby="routing-title">
           <div className={styles.routingHeader}>
@@ -262,15 +298,19 @@ export default async function ConsultationsPage() {
           <div className={styles.pathGrid}>
             {paths.map((path, index) => (
               <article className={styles.pathCard} key={path.number}>
-                <GlassIcon
-                  name={routeIcons[index % routeIcons.length]!}
-                  size="md"
-                  delay={index}
-                  className={styles.pathIcon}
-                />
-                <span>{path.number}</span>
-                <h3>{path.title}</h3>
-                <p>{path.body}</p>
+                <div className={styles.pathPhoto}>
+                  <Image
+                    src={routePhotos[index % routePhotos.length]!.src}
+                    alt={routePhotos[index % routePhotos.length]!.alt[locale]}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 30vw"
+                  />
+                </div>
+                <div className={styles.pathBody}>
+                  <span>{path.number}</span>
+                  <h3>{path.title}</h3>
+                  <p>{path.body}</p>
+                </div>
               </article>
             ))}
           </div>
@@ -287,7 +327,11 @@ export default async function ConsultationsPage() {
               size="lg"
               className={styles.authorityIcon}
             />
-            <span className={styles.authorityYears} aria-hidden="true">
+            <span
+              className={styles.authorityYears}
+              aria-hidden="true"
+              data-count="30"
+            >
               30+
             </span>
             <div>
@@ -313,6 +357,12 @@ export default async function ConsultationsPage() {
             >
               {copy.authorityAction as string}
             </ButtonLink>
+            <PhotoCard
+              photo={peoplePhotos.academySupervision}
+              locale={locale}
+              className={styles.authorityPhoto}
+              sizes="(max-width: 900px) 70vw, 22vw"
+            />
           </div>
         </section>
 
@@ -327,12 +377,19 @@ export default async function ConsultationsPage() {
             <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
             <p>{copy.formBody as string}</p>
             <p className={styles.safetyNote}>{copy.safety as string}</p>
+            <PhotoCard
+              photo={consultationPhotos.journal}
+              locale={locale}
+              className={styles.enquiryPhoto}
+              sizes="(max-width: 900px) 80vw, 26vw"
+            />
           </div>
           <div className={styles.formSurface}>
             <EnquiryForm
               locale={locale}
               copy={publicCopy.form}
               initialSchool="PSYCHOLOGY"
+              embedded
               initialMessage={copy.initialMessage as string}
             />
           </div>

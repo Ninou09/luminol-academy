@@ -1339,3 +1339,246 @@
 .schoolInset::after {
   display: none;
 }
+/* Final call to action: a moment of relief behind the invitation. */
+.page[data-cosmos] .cta {
+  background:
+    linear-gradient(
+      90deg,
+      rgb(4 15 27 / 0.92) 0%,
+      rgb(4 15 27 / 0.7) 45%,
+      rgb(4 15 27 / 0.25) 100%
+    ),
+    url('/media/people/live-relief.webp') center 35% / cover no-repeat;
+}
+.page[data-cosmos] .cta:dir(rtl) {
+  background:
+    linear-gradient(
+      270deg,
+      rgb(4 15 27 / 0.92) 0%,
+      rgb(4 15 27 / 0.7) 45%,
+      rgb(4 15 27 / 0.25) 100%
+    ),
+    url('/media/people/live-relief.webp') center 35% / cover no-repeat;
+}
+
+/* The relief photo carries the final section; the inkblot rests elsewhere. */
+.page[data-cosmos] .cta .inkBlot {
+  display: none;
+}
+
+/* ── Our schools: a living photo with the school's glass emblem floating
+   in front of it (one staircase only, no repeated artwork). ── */
+.page .schoolArt {
+  overflow: hidden;
+  aspect-ratio: 4 / 4.6;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: clamp(1.25rem, 2.4vw, 2rem);
+  background: var(--color-brand-night);
+  box-shadow:
+    0 2.5rem 5rem -1.5rem rgb(0 0 0 / 0.6),
+    0 0 4rem -1.5rem color-mix(in srgb, var(--school-accent) 60%, transparent);
+}
+.page .schoolArt[data-tilt-active] {
+  box-shadow:
+    0 3rem 6rem -1.5rem rgb(0 0 0 / 0.65),
+    0 0 5rem -1rem color-mix(in srgb, var(--school-accent) 70%, transparent);
+}
+.schoolPhoto {
+  object-fit: cover;
+  transition:
+    scale 1.4s var(--luminol-ease-out),
+    filter 1.4s var(--luminol-ease-out);
+  filter: saturate(1.04) contrast(1.03);
+}
+.schoolCard:nth-child(1) .schoolPhoto {
+  object-position: 45% 50%;
+}
+.schoolCard:nth-child(2) .schoolPhoto {
+  object-position: 55% 50%;
+}
+.schoolCard:nth-child(3) .schoolPhoto {
+  object-position: 38% 40%;
+}
+.schoolArt:hover .schoolPhoto {
+  scale: 1.05;
+}
+.schoolPhotoVeil {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 50%, rgb(4 15 27 / 0.6)),
+    radial-gradient(
+      120% 80% at 100% 100%,
+      color-mix(in srgb, var(--school-accent) 35%, transparent),
+      transparent 60%
+    );
+  mix-blend-mode: normal;
+  pointer-events: none;
+}
+.schoolEmblem {
+  position: absolute;
+  z-index: 4;
+  inset-block-end: -3rem;
+  inset-inline-end: -2.5rem;
+  display: block;
+  width: clamp(10rem, 20vw, 17rem);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+.schoolCard:nth-child(even) .schoolEmblem {
+  inset-inline-end: auto;
+  inset-inline-start: -2.5rem;
+}
+.schoolEmblem .artImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.schoolEmblem .artGlow {
+  inset: 20%;
+  opacity: 0.55;
+}
+@media (max-width: 800px) {
+  .page .schoolArt {
+    aspect-ratio: 4 / 3.4;
+  }
+  .schoolEmblem {
+    width: 38vw;
+    max-width: 12rem;
+    inset-block-end: -2.25rem;
+    inset-inline-end: -0.5rem;
+  }
+  .schoolCard:nth-child(even) .schoolEmblem {
+    inset-inline-start: -0.5rem;
+  }
+  .schoolArtWrap {
+    margin-block-end: 1.5rem;
+  }
+}
+
+/* ── Proof strip: a real face beside each number. ── */
+.proof div::before {
+  content: '';
+  flex-shrink: 0;
+  width: clamp(3rem, 4.2vw, 4rem);
+  aspect-ratio: 1;
+  border: 2px solid rgb(243 212 143 / 0.55);
+  border-radius: 50%;
+  background: center / cover no-repeat;
+  box-shadow:
+    0 0 0 4px rgb(139 222 239 / 0.12),
+    0 0.75rem 1.5rem rgb(0 0 0 / 0.35);
+}
+.proof div:nth-child(1)::before {
+  background-image: url('/media/people/faces/teen-support.webp');
+}
+.proof div:nth-child(2)::before {
+  background-image: url('/media/people/faces/first-call.webp');
+}
+.proof div:nth-child(3)::before {
+  background-image: url('/media/people/faces/couple-talk.webp');
+}
+@media (max-width: 800px) and (min-width: 681px) {
+  .proof div {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 0.85rem;
+  }
+  .proof div::before {
+    grid-row: span 2;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .proof div::before {
+    animation: face-breathe 6s ease-in-out infinite alternate;
+  }
+  .proof div:nth-child(2)::before {
+    animation-delay: -2s;
+  }
+  .proof div:nth-child(3)::before {
+    animation-delay: -4s;
+  }
+}
+@keyframes face-breathe {
+  from {
+    box-shadow:
+      0 0 0 4px rgb(139 222 239 / 0.1),
+      0 0.75rem 1.5rem rgb(0 0 0 / 0.35);
+  }
+  to {
+    box-shadow:
+      0 0 0 7px rgb(243 212 143 / 0.16),
+      0 0.75rem 1.5rem rgb(0 0 0 / 0.35);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .schoolPhoto {
+    animation: photo-breathe 18s ease-in-out infinite alternate;
+  }
+  .schoolCard:nth-child(2) .schoolPhoto {
+    animation-delay: -6s;
+  }
+  .schoolCard:nth-child(3) .schoolPhoto {
+    animation-delay: -12s;
+  }
+}
+@keyframes photo-breathe {
+  from {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.09) translate3d(-1.2%, -1%, 0);
+  }
+}
+
+/* "Your next chapter": a quiet, minimalist hover — a hairline of light
+   draws across the row and the arrow fills; no floating image. */
+.page .pathwayLinks a::before {
+  inset: auto 0 -1px;
+  height: 1px;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #f3d48f 20%,
+    var(--color-brand-cyan-light) 80%,
+    transparent
+  );
+  opacity: 1;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 900ms var(--luminol-ease-out);
+}
+.page .pathwayLinks a:dir(rtl)::before {
+  scale: 1 1;
+  transform-origin: right center;
+}
+.page .pathwayLinks a:is(:hover, :focus-visible)::before {
+  transform: scaleX(1);
+}
+.page .pathwayLinks a:hover {
+  padding-inline-start: 1.6rem;
+  color: #ffffff;
+}
+.page .pathwayLinks b {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 255 255 / 0.3);
+  border-radius: 50%;
+  transition:
+    rotate 500ms var(--luminol-ease-out),
+    background 400ms ease,
+    color 400ms ease,
+    border-color 400ms ease;
+}
+.page .pathwayLinks a:hover b {
+  border-color: transparent;
+  background: #f3d48f;
+  color: var(--color-brand-night);
+}
+.page .pathwayLinks a:hover span {
+  color: #f3d48f;
+}

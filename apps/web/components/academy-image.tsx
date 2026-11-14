@@ -7,6 +7,7 @@ import {
   type AcademySchool,
   type CommissionedScene,
 } from '../lib/academy-media';
+import { illustrativePhotoCredit } from '../lib/people-photos';
 import styles from './academy-image.module.css';
 
 type AcademyImageProps = {
@@ -20,6 +21,8 @@ type AcademyImageProps = {
    * photograph. Provenance and credit switch to the commissioned artwork.
    */
   scene?: CommissionedScene | undefined;
+  /** 'photo' marks the scene as commissioned photography (no visible credit). */
+  sceneKind?: 'artwork' | 'photo';
 };
 
 export function AcademyImage({
@@ -29,14 +32,17 @@ export function AcademyImage({
   priority = false,
   sizes = '(max-width: 900px) 100vw, 50vw',
   scene,
+  sceneKind = 'artwork',
 }: AcademyImageProps) {
   if (scene) {
+    const credit =
+      sceneKind === 'photo' ? illustrativePhotoCredit : brandArtworkCredit;
     return (
       <figure
         className={`${styles.frame} ${className ?? ''}`}
         data-academy-media={school}
-        data-media-source={brandArtworkCredit.source}
-        data-media-license={brandArtworkCredit.license}
+        data-media-source={credit.source}
+        data-media-license={credit.license}
         data-media-crop="center-center"
       >
         <Image
@@ -47,9 +53,11 @@ export function AcademyImage({
           priority={priority}
           sizes={sizes}
         />
-        <figcaption className={styles.credit}>
-          <span>{brandArtworkCredit.label[locale]}</span>
-        </figcaption>
+        {sceneKind === 'photo' ? null : (
+          <figcaption className={styles.credit}>
+            <span>{brandArtworkCredit.label[locale]}</span>
+          </figcaption>
+        )}
       </figure>
     );
   }

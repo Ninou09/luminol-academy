@@ -1,7 +1,10 @@
 'use client';
 
 import type { Locale } from '@luminol/localization';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+
+import { peoplePhotos } from '../lib/people-photos';
 
 import styles from './breathing-space.module.css';
 
@@ -118,6 +121,15 @@ export function BreathingSpace({ locale }: { locale: Locale }) {
       aria-labelledby="breathing-title"
       data-breathing={running ? (phase ?? 'inhale') : 'idle'}
     >
+      <Image
+        className={styles.photo}
+        src={peoplePhotos.homeBreathe.src}
+        alt=""
+        fill
+        sizes="100vw"
+        aria-hidden="true"
+      />
+      <span className={styles.photoVeil} aria-hidden="true" />
       <div className={styles.copy}>
         <p className={styles.eyebrow}>{text.eyebrow}</p>
         <h2 id="breathing-title" className={styles.title} data-split>
