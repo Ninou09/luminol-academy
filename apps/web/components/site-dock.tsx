@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { setCalmMode, useCalmMode } from '../lib/calm-mode';
 import styles from './site-dock.module.css';
 
 /**
@@ -14,11 +15,14 @@ export function SiteDock({
   whatsappHref,
   whatsappLabel,
   topLabel,
+  calmLabels,
 }: {
   whatsappHref: string | null;
   whatsappLabel: string;
   topLabel: string;
+  calmLabels: { on: string; off: string };
 }) {
+  const calm = useCalmMode();
   const pathname = usePathname();
   const ringRef = useRef<SVGCircleElement>(null);
   const [visible, setVisible] = useState(false);
@@ -78,6 +82,28 @@ export function SiteDock({
           </svg>
         </a>
       ) : null}
+      <button
+        type="button"
+        className={styles.calm}
+        aria-pressed={calm}
+        aria-label={calm ? calmLabels.off : calmLabels.on}
+        title={calm ? calmLabels.off : calmLabels.on}
+        onClick={() => setCalmMode(!calm)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          {calm ? (
+            <path
+              fill="currentColor"
+              d="M12 2l1.8 5.6H20l-5 3.6 1.9 5.8L12 13.4 7.1 17l1.9-5.8-5-3.6h6.2Z"
+            />
+          ) : (
+            <path
+              fill="currentColor"
+              d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"
+            />
+          )}
+        </svg>
+      </button>
       <button
         type="button"
         className={styles.top}

@@ -458,3 +458,113 @@
 .directLine a:hover {
   color: #f3d48f;
 }
+
+
+/* ─── Founder block v2: photo with a 30+ badge beside a tight story. ─── */
+.authorityV2 {
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr) !important;
+  gap: clamp(1.5rem, 4vw, 3.5rem) !important;
+  align-items: center !important;
+  padding: clamp(1.25rem, 3vw, 2rem) !important;
+  min-height: 0 !important;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
+  background:
+    radial-gradient(70% 90% at 100% 0%, rgb(243 212 143 / 0.1), transparent 60%),
+    radial-gradient(60% 80% at 0% 100%, rgb(139 222 239 / 0.1), transparent 60%),
+    rgb(7 26 43 / 0.7) !important;
+}
+.authorityVisual {
+  position: relative;
+  min-width: 0;
+}
+.authorityPhotoLarge {
+  width: 100%;
+  aspect-ratio: 4 / 3.4;
+}
+.yearsBadge {
+  position: absolute;
+  z-index: 6;
+  inset-block-end: clamp(-1rem, -1.5vw, -0.5rem);
+  inset-inline-end: clamp(-1rem, -1.5vw, -0.5rem);
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  padding: 1rem 1.25rem 0.9rem;
+  border: 1px solid rgb(243 212 143 / 0.45);
+  border-radius: 1.25rem;
+  background: rgb(4 15 27 / 0.82);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 1.5rem 3rem -1rem rgb(0 0 0 / 0.6),
+    0 0 2.5rem -0.5rem rgb(243 212 143 / 0.35);
+}
+.yearsBadge span {
+  background: linear-gradient(135deg, #ffffff, #f3d48f 60%, #8bdeef);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 1;
+}
+.yearsBadge small {
+  max-width: 9rem;
+  color: rgb(212 229 238 / 0.75);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.authorityText {
+  min-width: 0;
+  padding-block: clamp(0.5rem, 2vw, 1.5rem);
+}
+.authorityText h2 {
+  margin: 0.5rem 0 1.5rem;
+  font-size: clamp(2rem, 3.6vw, 3.4rem) !important;
+  line-height: 1.04 !important;
+  text-wrap: balance;
+}
+.signature {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.04);
+}
+.signatureMark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f3d48f, #8bdeef);
+  color: #061321;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.signature p {
+  margin: 0 !important;
+}
+.authorityBodyText {
+  margin: 1.25rem 0 1.5rem;
+  color: rgb(212 229 238 / 0.85);
+  line-height: 1.8;
+}
+@media (max-width: 900px) {
+  .authorityV2 {
+    grid-template-columns: 1fr !important;
+  }
+  .yearsBadge {
+    inset-inline-end: 0.75rem;
+    inset-block-end: 0.75rem;
+  }
+}

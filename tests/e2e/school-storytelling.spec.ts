@@ -159,8 +159,8 @@ test('localized school pages publish matching breadcrumb structured data', async
     const firstUrl = new URL(jsonLd.itemListElement[0]!.item);
     const currentUrl = new URL(jsonLd.itemListElement[1]!.item);
 
-    expect(firstUrl.pathname).toBe(`/${expectedLocale}`);
-    expect(firstUrl.hash).toBe('#schools');
+    expect(firstUrl.pathname).toBe(`/${expectedLocale}/schools`);
+    expect(firstUrl.hash).toBe('');
     expect(currentUrl.pathname).toBe(route);
     expect(currentUrl.origin).toBe(firstUrl.origin);
 

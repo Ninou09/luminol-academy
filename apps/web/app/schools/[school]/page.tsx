@@ -140,7 +140,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     {
       name: copy.schoolsLabel,
-      href: localizeHref(locale, '/#schools'),
+      href: localizeHref(locale, '/schools'),
     },
     {
       name: school.name,
@@ -225,7 +225,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <div className={styles.heroCopy} data-reveal>
             <nav className={styles.breadcrumb} aria-label={copy.schoolsLabel}>
               <Link
-                href={localizeHref(locale, '/#schools')}
+                href={localizeHref(locale, '/schools')}
                 style={{ color: 'inherit', textDecoration: 'none' }}
               >
                 {copy.schoolsLabel}

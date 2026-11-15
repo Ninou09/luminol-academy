@@ -635,3 +635,32 @@
 .footerContacts a:hover {
   color: #f3d48f;
 }
+/* Wordmark v3: the whole word is visible, just smaller and tighter. */
+.megaMark {
+  height: auto;
+  margin-block: clamp(1rem, 3vw, 2rem) 0.75rem;
+  font-size: clamp(4rem, 13vw, 11rem);
+  line-height: 1;
+  overflow: visible;
+  mask-image: none;
+}
+.megaMark span {
+  padding-block: 0.02em 0.12em;
+}
+/* Phones: the burger menu replaces the scrolling nav row. */
+@media (max-width: 900px) {
+  .nav {
+    display: none !important;
+  }
+  .headerInner {
+    grid-template-columns: 1fr auto;
+    padding-block: 0.5rem;
+    border-radius: 999px;
+  }
+  .actions {
+    grid-column: 2;
+  }
+}
+:global(html[data-menu-open]) .header {
+  translate: 0 0 !important;
+}

@@ -238,7 +238,7 @@ export default async function ProgrammesPage({
               <h2>{copy.unavailableTitle}</h2>
               <p>{copy.unavailableBody}</p>
               <div className={styles.emptyActions}>
-                <Link href={localizeHref(locale, '/#schools')}>
+                <Link href={localizeHref(locale, '/schools')}>
                   {copy.exploreSchools}
                 </Link>
                 <Link href={localizeHref(locale, '/contact')}>

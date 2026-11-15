@@ -1,0 +1,200 @@
+.page {
+  color: #f4f8fb;
+  overflow: clip;
+}
+.eyebrow {
+  margin: 0;
+  color: #f0cf8e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.hero {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 60rem);
+  margin-inline: auto;
+  padding-block: clamp(6rem, 12vw, 9rem) clamp(2.5rem, 5vw, 4rem);
+  text-align: center;
+}
+.hero h1 {
+  margin: 1rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 6.5vw, 6rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.lede {
+  max-width: 42rem;
+  margin: 1.5rem auto 0;
+  color: rgb(212 229 238 / 0.85);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.8;
+}
+
+/* Three tall cards that expand on hover like doors to each school. */
+.cards {
+  display: flex;
+  gap: 1rem;
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 84rem);
+  min-height: clamp(30rem, 48vw, 38rem);
+  margin: 0 auto;
+}
+.card {
+  --accent: #8bdeef;
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: clamp(1.25rem, 2.5vw, 2rem);
+  color: #fff;
+  text-decoration: none;
+  transition:
+    flex 800ms var(--luminol-ease-out),
+    border-color 400ms ease,
+    box-shadow 600ms ease;
+}
+.card:hover,
+.card:focus-visible {
+  flex: 1.6;
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: 0 2.5rem 5rem -2rem rgb(0 0 0 / 0.7),
+    0 0 3rem -1rem var(--accent);
+}
+.card:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+.psychology {
+  --accent: var(--color-school-psychology, #4fd1c5);
+}
+.languages {
+  --accent: var(--color-school-languages, #7aa2ff);
+}
+.training {
+  --accent: #f3d48f;
+}
+.cardPhoto {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+}
+.cardPhoto img {
+  object-fit: cover;
+  transition: scale 1.4s var(--luminol-ease-out);
+}
+.card:hover .cardPhoto img {
+  scale: 1.06;
+}
+.card::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(4 15 27 / 0.1) 20%,
+    rgb(4 15 27 / 0.7) 55%,
+    rgb(4 15 27 / 0.96)
+  );
+}
+.cardBody {
+  display: grid;
+  gap: 0.6rem;
+  width: 100%;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+.number {
+  width: fit-content;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #061321;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.cardBody h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-weight: 500;
+  line-height: 1.02;
+}
+.promise {
+  color: rgb(212 229 238 / 0.9);
+  line-height: 1.6;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.tags span {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 999px;
+  background: rgb(4 15 27 / 0.4);
+  font-size: 0.75rem;
+}
+.go {
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #061321;
+  transition: rotate 500ms var(--luminol-ease-out);
+}
+.card:hover .go {
+  rotate: -45deg;
+}
+.card:dir(rtl) .go {
+  scale: -1 1;
+}
+
+/* Quiz */
+.quizSection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: center;
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 84rem);
+  margin: 0 auto;
+  padding-block: clamp(4rem, 9vw, 7rem);
+  scroll-margin-top: 6rem;
+}
+.quizIntro h2 {
+  margin: 0.9rem 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.4vw, 4rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+.quizIntro > p:last-child {
+  margin: 0;
+  color: rgb(212 229 238 / 0.8);
+  line-height: 1.8;
+}
+
+@media (max-width: 900px) {
+  .cards {
+    flex-direction: column;
+    min-height: 0;
+  }
+  .card {
+    min-height: 22rem;
+  }
+  .card:hover {
+    flex: 1;
+  }
+  .quizSection {
+    grid-template-columns: 1fr;
+  }
+}

@@ -317,52 +317,51 @@ export default async function ConsultationsPage() {
         </section>
 
         <section
-          className={styles.authority}
+          className={`${styles.authority} ${styles.authorityV2}`}
           aria-labelledby="consultation-authority-title"
           data-consultation-founder-authority
         >
-          <div className={styles.authorityLead}>
-            <GlassIcon
-              name="experience-30-years"
-              size="lg"
-              className={styles.authorityIcon}
+          <div className={styles.authorityVisual}>
+            <PhotoCard
+              photo={peoplePhotos.academySupervision}
+              locale={locale}
+              className={styles.authorityPhotoLarge}
+              sizes="(max-width: 900px) 100vw, 40vw"
             />
-            <span
-              className={styles.authorityYears}
-              aria-hidden="true"
-              data-count="30"
-            >
-              30+
-            </span>
-            <div>
-              <p className={styles.eyebrow}>
-                {copy.authorityEyebrow as string}
-              </p>
-              <h2 id="consultation-authority-title">
-                {copy.authorityTitle as string}
-              </h2>
+            <div className={styles.yearsBadge} aria-hidden="true">
+              <span data-count="30">30+</span>
+              <small>{copy.authorityEyebrow as string}</small>
             </div>
           </div>
-          <div className={styles.authorityCopy}>
-            <p className={styles.authorityName}>
-              {copy.authorityName as string}
+          <div className={styles.authorityText}>
+            <p className={styles.eyebrow}>
+              {copy.authorityEyebrow as string}
             </p>
-            <p className={styles.authorityRole}>
-              {copy.authorityRole as string}
+            <h2 id="consultation-authority-title">
+              {copy.authorityTitle as string}
+            </h2>
+            <div className={styles.signature}>
+              <span className={styles.signatureMark} aria-hidden="true">
+                KF
+              </span>
+              <div>
+                <p className={styles.authorityName}>
+                  {copy.authorityName as string}
+                </p>
+                <p className={styles.authorityRole}>
+                  {copy.authorityRole as string}
+                </p>
+              </div>
+            </div>
+            <p className={styles.authorityBodyText}>
+              {copy.authorityBody as string}
             </p>
-            <p>{copy.authorityBody as string}</p>
             <ButtonLink
               href={localizeHref(locale, '/about')}
               variant="secondary"
             >
               {copy.authorityAction as string}
             </ButtonLink>
-            <PhotoCard
-              photo={peoplePhotos.academySupervision}
-              locale={locale}
-              className={styles.authorityPhoto}
-              sizes="(max-width: 900px) 70vw, 22vw"
-            />
           </div>
         </section>
 

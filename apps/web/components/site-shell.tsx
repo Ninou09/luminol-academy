@@ -17,6 +17,7 @@ import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { CurrentPageLink } from './current-page-link';
 import { LanguageSwitcher } from './language-switcher';
+import { MobileMenu } from './mobile-menu';
 import { AcademyLogo as Wordmark } from './academy-logo';
 import styles from './site-shell.module.css';
 
@@ -31,6 +32,12 @@ const footerNavigationLabel = {
   fr: 'Navigation du pied de page',
   en: 'Footer navigation',
 } as const satisfies Record<Locale, string>;
+
+const menuLabels = {
+  ar: { open: 'القائمة', close: 'إغلاق القائمة', home: 'الرئيسية' },
+  fr: { open: 'Menu', close: 'Fermer le menu', home: 'Accueil' },
+  en: { open: 'Menu', close: 'Close menu', home: 'Home' },
+} as const satisfies Record<Locale, { open: string; close: string; home: string }>;
 
 const consultationsLabel = {
   ar: 'الاستشارات النفسية',
@@ -60,7 +67,7 @@ export async function SiteHeader() {
           </CurrentPageLink>
           <nav className={styles.nav} aria-label={copy.site.nav.primaryAria}>
             <CurrentPageLink
-              href={localizeHref(locale, '/#schools')}
+              href={localizeHref(locale, '/schools')}
               activePathname="/schools"
               matchDescendants
             >
@@ -79,9 +86,12 @@ export async function SiteHeader() {
             >
               {consultationsLabel[locale]}
             </CurrentPageLink>
-            <Link href={localizeHref(locale, '/#approach')}>
+            <CurrentPageLink
+              href={localizeHref(locale, '/approach')}
+              activePathname="/approach"
+            >
               {copy.site.nav.approach}
-            </Link>
+            </CurrentPageLink>
             <CurrentPageLink
               href={localizeHref(locale, '/about')}
               activePathname="/about"
@@ -93,6 +103,31 @@ export async function SiteHeader() {
             <LanguageSwitcher
               locale={locale}
               label={common.languageSelectorLabel}
+            />
+            <MobileMenu
+              openLabel={menuLabels[locale].open}
+              closeLabel={menuLabels[locale].close}
+              hours={`${openingHours.title[locale]} · ${openingHours.label[locale]}`}
+              contacts={[
+                { href: localizeHref(locale, '/contact'), label: copy.site.nav.contact },
+                {
+                  href: `tel:${officialContacts.phone}`,
+                  label: officialContacts.phoneDisplay,
+                },
+                {
+                  href: `https://wa.me/${officialContacts.whatsapp.replace(/\D/g, '')}`,
+                  label: 'WhatsApp',
+                  external: true,
+                },
+              ]}
+              links={[
+                { href: localizeHref(locale, '/'), label: menuLabels[locale].home, match: '/' },
+                { href: localizeHref(locale, '/schools'), label: copy.site.nav.schools, match: '/schools' },
+                { href: localizeHref(locale, '/programmes'), label: copy.site.nav.programmes, match: '/programmes' },
+                { href: localizeHref(locale, '/consultations'), label: consultationsLabel[locale], match: '/consultations' },
+                { href: localizeHref(locale, '/approach'), label: copy.site.nav.approach, match: '/approach' },
+                { href: localizeHref(locale, '/about'), label: copy.site.nav.about, match: '/about' },
+              ]}
             />
             <CurrentPageLink
               className={styles.contactLink}
@@ -138,7 +173,7 @@ export async function SiteFooter() {
           aria-label={footerNavigationLabel[locale]}
         >
           <CurrentPageLink
-            href={localizeHref(locale, '/#schools')}
+            href={localizeHref(locale, '/schools')}
             activePathname="/schools"
             matchDescendants
           >

@@ -108,3 +108,29 @@
   stroke-dasharray: 132;
   stroke-dashoffset: calc(132 * (1 - var(--progress)));
 }
+
+.calm {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 50%;
+  background: rgb(4 15 27 / 0.7);
+  color: #f3d48f;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: background 300ms ease;
+}
+.calm:hover {
+  background: rgb(243 212 143 / 0.15);
+}
+.calm:focus-visible {
+  outline: 3px solid #8bdeef;
+  outline-offset: 3px;
+}
+.calm svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}

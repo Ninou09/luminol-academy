@@ -98,6 +98,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const calmLabels = {
+  en: { on: 'Calm mode: turn off 3D effects', off: 'Turn 3D effects back on' },
+  fr: { on: 'Mode calme : couper les effets 3D', off: 'Réactiver les effets 3D' },
+  ar: { on: 'الوضع الهادئ: إيقاف المؤثرات ثلاثية الأبعاد', off: 'إعادة تشغيل المؤثرات ثلاثية الأبعاد' },
+} as const;
+
 const backToTopLabel = {
   en: 'Back to top',
   fr: 'Retour en haut',
@@ -130,6 +136,7 @@ export default async function RootLayout({
           whatsappHref={getWhatsAppHref(channelCopy[locale].whatsappMessage)}
           whatsappLabel={channelCopy[locale].whatsappAria}
           topLabel={backToTopLabel[locale]}
+          calmLabels={calmLabels[locale]}
         />
         {process.env.VERCEL === '1' &&
         process.env.NEXT_PUBLIC_DISABLE_ANALYTICS !== '1' ? (

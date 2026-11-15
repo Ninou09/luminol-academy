@@ -1,6 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+
+import { useCalmMode } from '../lib/calm-mode';
 import { useEffect, useRef } from 'react';
 
 import type {
@@ -42,12 +44,14 @@ function lightweightDevice() {
 export function InnerUniverse() {
   const pathname = usePathname();
   const theme = themeFor(pathname);
+  const calm = useCalmMode();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const host = canvasRef.current?.parentElement;
     if (!host) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (calm) return;
 
     let universe: Universe | null = null;
     let disposed = false;
@@ -123,10 +127,15 @@ export function InnerUniverse() {
         canvas.remove();
       }, 900);
     };
-  }, [theme]);
+  }, [theme, calm]);
 
   return (
-    <div className="inner-universe" aria-hidden="true" data-universe={theme}>
+    <div
+      className="inner-universe"
+      aria-hidden="true"
+      data-universe={theme}
+      data-calm={calm || undefined}
+    >
       <canvas ref={canvasRef} hidden />
     </div>
   );

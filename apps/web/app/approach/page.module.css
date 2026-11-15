@@ -1,0 +1,458 @@
+.page {
+  color: #f4f8fb;
+  overflow: clip;
+}
+.eyebrow {
+  margin: 0;
+  color: #f0cf8e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Hero */
+.hero {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 62rem);
+  margin-inline: auto;
+  padding-block: clamp(6rem, 13vw, 10rem) clamp(3rem, 6vw, 5rem);
+  text-align: center;
+}
+.hero h1 {
+  margin: 1.1rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 6.5vw, 6rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.lede {
+  max-width: 42rem;
+  margin: 1.6rem auto 0;
+  color: rgb(212 229 238 / 0.85);
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  line-height: 1.8;
+}
+.hint {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2.5rem 0 0;
+  color: rgb(212 229 238 / 0.6);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.hint span {
+  width: 1px;
+  height: 3.5rem;
+  background: linear-gradient(180deg, #f3d48f, transparent);
+}
+
+/* Journey: a vertical line of light connects five steps. */
+.journey {
+  --rail: clamp(1.75rem, 5vw, 4rem);
+  position: relative;
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 76rem);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  view-timeline-name: --journey;
+}
+.journey::before,
+.journey::after {
+  content: '';
+  position: absolute;
+  inset-block: 2rem;
+  inset-inline-start: var(--rail);
+  width: 2px;
+  border-radius: 2px;
+  translate: -50% 0;
+}
+.journey::before {
+  background: rgb(255 255 255 / 0.1);
+}
+.journey::after {
+  background: linear-gradient(180deg, #8bdeef, #f3d48f);
+  box-shadow: 0 0 1.25rem rgb(139 222 239 / 0.6);
+  transform-origin: top;
+}
+.journey:dir(rtl)::before,
+.journey:dir(rtl)::after {
+  translate: 50% 0;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .journey::after {
+      animation: rail-fill linear both;
+      animation-timeline: --journey;
+      animation-range: entry 20% exit 60%;
+    }
+  }
+}
+@keyframes rail-fill {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(var(--rail) * 2) minmax(0, 1fr);
+  align-items: center;
+  padding-block: clamp(1rem, 3vw, 2rem);
+}
+.node {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: clamp(2.75rem, 5vw, 3.5rem);
+  aspect-ratio: 1;
+  justify-self: center;
+  border: 1px solid rgb(243 212 143 / 0.5);
+  border-radius: 50%;
+  background: #061321;
+  color: #f3d48f;
+  font-size: 0.8rem;
+  font-weight: 800;
+  box-shadow: 0 0 0 0.5rem rgb(6 19 33 / 0.9);
+}
+.stepCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: clamp(1.25rem, 2.5vw, 2rem);
+  background: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 0.07),
+    rgb(255 255 255 / 0.015)
+  );
+  backdrop-filter: blur(12px);
+}
+.step:nth-child(even) .stepText {
+  order: 2;
+}
+.stepLabel {
+  margin: 0;
+  color: #8bdeef;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.stepText h2 {
+  margin: 0.6rem 0 0.9rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+}
+.stepText > p:not(.stepLabel) {
+  margin: 0;
+  color: rgb(212 229 238 / 0.85);
+  line-height: 1.8;
+}
+.stepText ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.stepText li {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.04);
+  color: #fff;
+  font-size: 0.8rem;
+}
+.stepVisual {
+  position: relative;
+  min-height: clamp(13rem, 22vw, 18rem);
+  overflow: hidden;
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  background:
+    radial-gradient(circle at 50% 50%, rgb(139 222 239 / 0.14), transparent 65%),
+    #061321;
+}
+.stepPhoto {
+  object-fit: cover;
+}
+
+/* Step reveals as it enters the viewport. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stepCard {
+      animation: step-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+    .node {
+      animation: node-light linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 45%;
+    }
+  }
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(2.5rem) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes node-light {
+  from {
+    background: #061321;
+    color: #f3d48f;
+  }
+  to {
+    background: #f3d48f;
+    color: #061321;
+    box-shadow:
+      0 0 0 0.5rem rgb(6 19 33 / 0.9),
+      0 0 2rem rgb(243 212 143 / 0.6);
+  }
+}
+
+/* Luminous glyphs: each step is drawn with light. */
+.glyph {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.glyph span {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+/* 01 share: a message sent as expanding waves. */
+.glyph_share span {
+  width: 3rem;
+  aspect-ratio: 1;
+  border: 1px solid rgb(139 222 239 / 0.7);
+}
+.glyph_share span:first-child {
+  background: radial-gradient(circle, #fff, #8bdeef 60%);
+  border: 0;
+  box-shadow: 0 0 2rem #8bdeef;
+}
+/* 02 listen: concentric rings that breathe. */
+.glyph_listen span {
+  border: 1px solid rgb(243 212 143 / 0.55);
+}
+.glyph_listen span:nth-child(1) {
+  width: 2rem;
+  aspect-ratio: 1;
+  background: #f3d48f;
+  box-shadow: 0 0 2rem #f3d48f;
+}
+.glyph_listen span:nth-child(2) {
+  width: 5rem;
+  aspect-ratio: 1;
+}
+.glyph_listen span:nth-child(3) {
+  width: 8rem;
+  aspect-ratio: 1;
+}
+.glyph_listen span:nth-child(4) {
+  width: 11rem;
+  aspect-ratio: 1;
+  opacity: 0.6;
+}
+.glyph_listen span:nth-child(5) {
+  width: 14rem;
+  aspect-ratio: 1;
+  opacity: 0.3;
+}
+/* 03 pathway: three paths branch from one point, one glows. */
+.glyph_pathway span {
+  width: 0.9rem;
+  aspect-ratio: 1;
+  background: #8bdeef;
+  box-shadow: 0 0 1rem #8bdeef;
+}
+.glyph_pathway span:nth-child(1) {
+  inset-inline-start: 22%;
+}
+.glyph_pathway span:nth-child(2) {
+  inset-block-start: 25%;
+  inset-inline-start: 72%;
+}
+.glyph_pathway span:nth-child(3) {
+  inset-inline-start: 78%;
+  background: #f3d48f;
+  box-shadow: 0 0 1.5rem #f3d48f;
+  width: 1.3rem;
+}
+.glyph_pathway span:nth-child(4) {
+  inset-block-start: 75%;
+  inset-inline-start: 72%;
+}
+.glyph_pathway span:nth-child(5) {
+  inset-inline-start: 50%;
+  width: 56%;
+  height: 2px;
+  aspect-ratio: auto;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #8bdeef, #f3d48f);
+  box-shadow: none;
+}
+/* 04 practice: rising bars of light. */
+.glyph_practice span {
+  inset-block-start: auto;
+  inset-block-end: 22%;
+  width: 1.4rem;
+  border-radius: 0.6rem;
+  translate: -50% 0;
+  background: linear-gradient(180deg, #f3d48f, rgb(139 222 239 / 0.3));
+}
+.glyph_practice span:nth-child(1) {
+  inset-inline-start: 30%;
+  height: 22%;
+}
+.glyph_practice span:nth-child(2) {
+  inset-inline-start: 40%;
+  height: 34%;
+}
+.glyph_practice span:nth-child(3) {
+  inset-inline-start: 50%;
+  height: 46%;
+}
+.glyph_practice span:nth-child(4) {
+  inset-inline-start: 60%;
+  height: 58%;
+}
+.glyph_practice span:nth-child(5) {
+  inset-inline-start: 70%;
+  height: 70%;
+  box-shadow: 0 0 2rem rgb(243 212 143 / 0.5);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .glyph_share span:not(:first-child) {
+    animation: wave 3.2s ease-out infinite;
+  }
+  .glyph_share span:nth-child(3) {
+    animation-delay: 0.8s;
+  }
+  .glyph_share span:nth-child(4) {
+    animation-delay: 1.6s;
+  }
+  .glyph_share span:nth-child(5) {
+    animation-delay: 2.4s;
+  }
+  .glyph_listen span {
+    animation: breathe 5s ease-in-out infinite;
+  }
+  .glyph_listen span:nth-child(odd) {
+    animation-delay: -2.5s;
+  }
+  .glyph_pathway span:nth-child(3) {
+    animation: path-glow 2.4s ease-in-out infinite;
+  }
+  .glyph_practice span {
+    animation: grow 3s ease-in-out infinite alternate;
+  }
+  .glyph_practice span:nth-child(2) {
+    animation-delay: -0.6s;
+  }
+  .glyph_practice span:nth-child(3) {
+    animation-delay: -1.2s;
+  }
+  .glyph_practice span:nth-child(4) {
+    animation-delay: -1.8s;
+  }
+  .glyph_practice span:nth-child(5) {
+    animation-delay: -2.4s;
+  }
+}
+@keyframes wave {
+  from {
+    opacity: 0.9;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 5;
+  }
+}
+@keyframes breathe {
+  50% {
+    scale: 1.08;
+    opacity: 0.55;
+  }
+}
+@keyframes path-glow {
+  50% {
+    scale: 1.6;
+  }
+}
+@keyframes grow {
+  to {
+    scale: 1 1.15;
+  }
+}
+
+/* Closing invitation */
+.cta {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 60rem);
+  margin: clamp(3rem, 7vw, 6rem) auto clamp(4rem, 8vw, 6rem);
+  padding: clamp(2rem, 5vw, 3.5rem);
+  border: 1px solid rgb(243 212 143 / 0.3);
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
+  background:
+    radial-gradient(80% 120% at 50% 0%, rgb(243 212 143 / 0.12), transparent 60%),
+    rgb(7 26 43 / 0.7);
+  text-align: center;
+}
+.cta h2 {
+  margin: 0.8rem 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-weight: 500;
+  line-height: 1.05;
+}
+.cta > p:not(.eyebrow) {
+  max-width: 34rem;
+  margin: 0 auto;
+  color: rgb(212 229 238 / 0.85);
+  line-height: 1.8;
+}
+.ctaActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 860px) {
+  .stepCard {
+    grid-template-columns: 1fr;
+  }
+  .step:nth-child(even) .stepText {
+    order: 0;
+  }
+  .stepVisual {
+    min-height: 11rem;
+  }
+}
