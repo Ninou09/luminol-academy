@@ -133,13 +133,13 @@ export const socialLinks = [
   },
 ] as const;
 
-/** Opening hours: Sunday to Thursday, 08:00–17:00 (Algeria time). */
+/** Opening hours from the academy CRM: 08:00–17:00 every day except Friday. */
 export const openingHours = {
-  schema: 'Su,Mo,Tu,We,Th 08:00-17:00',
+  schema: 'Sa,Su,Mo,Tu,We,Th 08:00-17:00',
   label: {
-    en: 'Sunday – Thursday · 8:00 – 17:00',
-    fr: 'Du dimanche au jeudi · 8 h – 17 h',
-    ar: 'من الأحد إلى الخميس · 8:00 – 17:00',
+    en: 'Saturday – Thursday · 8:00 – 17:00',
+    fr: 'Du samedi au jeudi · 8 h – 17 h',
+    ar: 'من السبت إلى الخميس · 8:00 – 17:00',
   },
   title: {
     en: 'Opening hours',
@@ -147,9 +147,9 @@ export const openingHours = {
     ar: 'أوقات العمل',
   },
   note: {
-    en: 'Algeria time (GMT+1).',
-    fr: 'Heure d’Algérie (GMT+1).',
-    ar: 'بتوقيت الجزائر (GMT+1).',
+    en: 'Closed on Friday · Algeria time (GMT+1).',
+    fr: 'Fermé le vendredi · heure d’Algérie (GMT+1).',
+    ar: 'مغلق يوم الجمعة · بتوقيت الجزائر (GMT+1).',
   },
 } as const satisfies {
   schema: string;

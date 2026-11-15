@@ -549,3 +549,58 @@ export const momentPhotos = {
     'شاب يتحدث بثقة على منصة صغيرة تحت ضوء كاشف',
   ),
 } as const satisfies Record<string, PeoplePhoto>;
+
+/** "Our approach" steps 1–4 and the ACT programme page. */
+export const approachPhotos = {
+  share: photo(
+    'approach-01-share-goal',
+    1600,
+    900,
+    'Hands typing a message on a phone beside a glass of mint tea',
+    'Des mains écrivent un message sur un téléphone à côté d’un thé à la menthe',
+    'يدان تكتبان رسالة على الهاتف بجانب كأس شاي بالنعناع',
+  ),
+  listen: photo(
+    'approach-02-team-listens',
+    1600,
+    900,
+    'A team member listens on the phone and takes notes at the academy reception',
+    'Une membre de l’équipe écoute au téléphone et prend des notes à l’accueil',
+    'موظفة تصغي على الهاتف وتدوّن ملاحظات في استقبال الأكاديمية',
+  ),
+  pathway: photo(
+    'approach-03-clear-path',
+    1600,
+    900,
+    'A hand chooses one of three coloured folders on a wooden table',
+    'Une main choisit l’un de trois dossiers colorés sur une table en bois',
+    'يد تختار أحد ثلاثة ملفات ملوّنة على طاولة خشبية',
+  ),
+  practice: photo(
+    'approach-04-practical-learning',
+    1600,
+    900,
+    'Adults practise a role-play exercise in pairs during a training session',
+    'Des adultes s’exercent en binôme à un jeu de rôle pendant une formation',
+    'بالغون يتدربون على تمرين لعب أدوار في أزواج خلال جلسة تدريبية',
+  ),
+} as const satisfies Record<string, PeoplePhoto>;
+
+export const actPhotos = {
+  cover: photo(
+    'act-cover',
+    1600,
+    900,
+    'A small group practises a mindfulness exercise with eyes closed in a bright room',
+    'Un petit groupe pratique un exercice de pleine conscience, les yeux fermés, dans une salle lumineuse',
+    'مجموعة صغيرة تمارس تمرين يقظة ذهنية مغمضة العينين في قاعة مضيئة',
+  ),
+  values: photo(
+    'act-values',
+    1600,
+    900,
+    'A woman rests her hand on a notebook with a hand-drawn compass',
+    'Une femme pose la main sur un carnet où est dessinée une boussole',
+    'امرأة تضع يدها على دفتر رُسمت فيه بوصلة',
+  ),
+} as const satisfies Record<string, PeoplePhoto>;

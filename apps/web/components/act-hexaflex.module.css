@@ -193,3 +193,20 @@
     font-size: 0.72rem;
   }
 }
+
+.valuesPhoto {
+  margin: 1.75rem 0 0;
+  overflow: hidden;
+  border: 1px solid rgb(243 212 143 / 0.3);
+  border-radius: 1.5rem;
+  box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.6);
+}
+.valuesPhoto img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: scale 1.2s var(--luminol-ease-out, ease);
+}
+.valuesPhoto:hover img {
+  scale: 1.04;
+}

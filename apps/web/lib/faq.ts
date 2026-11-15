@@ -43,7 +43,7 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       {
         question: 'When is the team available?',
         answer:
-          'The Luminol team works from Sunday to Thursday, 8:00 to 17:00 (Algeria time). You can send the form at any time; you can also follow Luminol on Instagram and Facebook.',
+          'The Luminol team works every day except Friday, from 8:00 to 17:00 (Algeria time). You can send the form at any time; you can also follow Luminol on Instagram and Facebook.',
       },
       {
         question: 'In which languages can I contact Luminol?',
@@ -90,7 +90,7 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       {
         question: 'Quand l’équipe est-elle disponible ?',
         answer:
-          'L’équipe Luminol travaille du dimanche au jeudi, de 8 h à 17 h (heure d’Algérie). Vous pouvez envoyer le formulaire à tout moment et suivre Luminol sur Instagram et Facebook.',
+          'L’équipe Luminol travaille tous les jours sauf le vendredi, de 8 h à 17 h (heure d’Algérie). Vous pouvez envoyer le formulaire à tout moment et suivre Luminol sur Instagram et Facebook.',
       },
       {
         question: 'Dans quelles langues puis-je contacter Luminol ?',
@@ -137,7 +137,7 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       {
         question: 'متى يكون الفريق متاحًا؟',
         answer:
-          'يعمل فريق لومينول من الأحد إلى الخميس، من الساعة 8:00 إلى 17:00 بتوقيت الجزائر. يمكنك إرسال الاستمارة في أي وقت، كما يمكنك متابعة لومينول على إنستغرام وفيسبوك.',
+          'يعمل فريق لومينول كل يوم ما عدا الجمعة، من الساعة 8:00 إلى 17:00 بتوقيت الجزائر. يمكنك إرسال الاستمارة في أي وقت، كما يمكنك متابعة لومينول على إنستغرام وفيسبوك.',
       },
       {
         question: 'بأي لغات يمكنني التواصل مع لومينول؟',

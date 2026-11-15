@@ -456,3 +456,37 @@
     min-height: 11rem;
   }
 }
+
+/* Photos lead each step; the luminous glyph glows softly in a corner. */
+.stepVisual .glyph {
+  inset: auto;
+  inset-block-end: 0.75rem;
+  inset-inline-end: 0.75rem;
+  width: 5.5rem;
+  height: 5.5rem;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 50%;
+  background: rgb(4 15 27 / 0.72);
+  backdrop-filter: blur(8px);
+  scale: 0.85;
+}
+.stepVisual .glyph span {
+  scale: 0.38;
+}
+.stepVisual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgb(4 15 27 / 0.45));
+  pointer-events: none;
+}
+.stepVisual .glyph {
+  z-index: 2;
+}
+.stepPhoto {
+  transition: scale 1.4s var(--luminol-ease-out, ease);
+}
+.stepCard:hover .stepPhoto {
+  scale: 1.05;
+}

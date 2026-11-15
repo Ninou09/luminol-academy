@@ -44,7 +44,7 @@ describe('Organization structured data', () => {
         'https://www.instagram.com/luminol_academy_psy/',
         'https://www.facebook.com/luminol.academy',
       ],
-      openingHours: 'Su,Mo,Tu,We,Th 08:00-17:00',
+      openingHours: 'Sa,Su,Mo,Tu,We,Th 08:00-17:00',
     });
   });
 

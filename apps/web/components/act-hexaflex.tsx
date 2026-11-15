@@ -1,5 +1,8 @@
 import type { Locale } from '@luminol/localization';
 
+import Image from 'next/image';
+
+import { actPhotos } from '../lib/people-photos';
 import styles from './act-hexaflex.module.css';
 
 const copy: Record<
@@ -67,6 +70,15 @@ export function ActHexaflex({ locale }: { locale: Locale }) {
           {text.title}
         </h2>
         <p>{text.body}</p>
+        <figure className={styles.valuesPhoto}>
+          <Image
+            src={actPhotos.values.src}
+            alt={actPhotos.values.alt[locale]}
+            width={actPhotos.values.width}
+            height={actPhotos.values.height}
+            sizes="(max-width: 860px) 100vw, 36vw"
+          />
+        </figure>
       </div>
       <div className={styles.diagram}>
         <svg className={styles.lines} viewBox="0 0 400 400" aria-hidden="true">

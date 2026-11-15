@@ -441,3 +441,15 @@
   inset-inline-start: 1rem;
   inset-block-start: 1.05rem;
 }
+
+.coverPhoto {
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: clamp(1.25rem, 2.5vw, 2rem);
+  box-shadow: 0 2rem 4rem -1.5rem rgb(0 0 0 / 0.6);
+}
+.coverPhoto img {
+  display: block;
+  width: 100%;
+  height: auto;
+}

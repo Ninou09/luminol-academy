@@ -10,7 +10,11 @@ import Image from 'next/image';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { approachCopy } from '../../lib/approach';
-import { peoplePhotos } from '../../lib/people-photos';
+import {
+  approachPhotos,
+  peoplePhotos,
+  type PeoplePhoto,
+} from '../../lib/people-photos';
 import { getRequestLocale } from '../../lib/request-locale';
 import styles from './page.module.css';
 
@@ -35,6 +39,13 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
 }
+
+const stepPhotos: Record<string, PeoplePhoto | undefined> = {
+  share: approachPhotos.share,
+  listen: approachPhotos.listen,
+  pathway: approachPhotos.pathway,
+  practice: approachPhotos.practice,
+};
 
 /** A small luminous drawing for each step, made of light, not stickers. */
 function StepGlyph({ kind }: { kind: string }) {
@@ -89,17 +100,17 @@ export default async function ApproachPage() {
                   </ul>
                 </div>
                 <div className={styles.stepVisual}>
-                  {step.key === 'progress' ? (
-                    <Image
-                      className={styles.stepPhoto}
-                      src={peoplePhotos.certificatePhoto.src}
-                      alt={peoplePhotos.certificatePhoto.alt[locale]}
-                      fill
-                      sizes="(max-width: 900px) 100vw, 40vw"
-                    />
-                  ) : (
-                    <StepGlyph kind={step.key} />
-                  )}
+                  <Image
+                    className={styles.stepPhoto}
+                    src={stepPhotos[step.key]?.src ?? peoplePhotos.certificatePhoto.src}
+                    alt={
+                      stepPhotos[step.key]?.alt[locale] ??
+                      peoplePhotos.certificatePhoto.alt[locale]
+                    }
+                    fill
+                    sizes="(max-width: 900px) 100vw, 40vw"
+                  />
+                  <StepGlyph kind={step.key} />
                 </div>
               </div>
             </li>
