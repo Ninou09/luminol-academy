@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 import { AcademyImage } from '../../components/academy-image';
 import { FounderJsonLd } from '../../components/founder-json-ld';
+import { TeamSection } from '../../components/events-section';
 import { PhotoMosaic } from '../../components/photo-mosaic';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
@@ -257,6 +258,8 @@ export default async function AboutPage() {
             </ButtonLink>
           </div>
         </section>
+
+        <TeamSection locale={locale} />
 
         <section className={styles.missionVision}>
           <article aria-labelledby="about-mission-title" data-reveal>

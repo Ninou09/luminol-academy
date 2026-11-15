@@ -18,6 +18,7 @@ import { getRequestLocale } from '../lib/request-locale';
 import { CurrentPageLink } from './current-page-link';
 import { LanguageSwitcher } from './language-switcher';
 import { MobileMenu } from './mobile-menu';
+import { NewsletterSignup } from './newsletter-signup';
 import { AcademyLogo as Wordmark } from './academy-logo';
 import styles from './site-shell.module.css';
 
@@ -38,6 +39,12 @@ const menuLabels = {
   fr: { open: 'Menu', close: 'Fermer le menu', home: 'Accueil' },
   en: { open: 'Menu', close: 'Close menu', home: 'Home' },
 } as const satisfies Record<Locale, { open: string; close: string; home: string }>;
+
+const libraryLabel = {
+  ar: 'المكتبة النفسية',
+  fr: 'Bibliothèque psy',
+  en: 'Psychology library',
+} as const satisfies Record<Locale, string>;
 
 const consultationsLabel = {
   ar: 'الاستشارات النفسية',
@@ -153,6 +160,10 @@ export async function SiteFooter() {
 
   return (
     <footer className={styles.footer}>
+      <NewsletterSignup
+        locale={locale}
+        privacyHref={localizeHref(locale, '/privacy')}
+      />
       <div className={styles.footerMain}>
         <div className={styles.footerBrand}>
           <CurrentPageLink
@@ -204,6 +215,7 @@ export async function SiteFooter() {
           >
             {copy.site.nav.contact}
           </CurrentPageLink>
+          <Link href="/psy-library">{libraryLabel[locale]}</Link>
         </nav>
         <div className={styles.footerHours}>
           <span>{openingHours.title[locale]}</span>

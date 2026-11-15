@@ -163,3 +163,100 @@
     width: 100%;
   }
 }
+
+/* ─── Spotlight v2: a dark glass "featured programme" ticket that reads
+   correctly over the cosmos (the title used to vanish on white). ─── */
+.feature {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgb(243 212 143 / 0.28);
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
+  background:
+    radial-gradient(70% 120% at 100% 0%, rgb(139 222 239 / 0.16), transparent 60%),
+    radial-gradient(60% 100% at 0% 100%, rgb(243 212 143 / 0.12), transparent 60%),
+    rgb(7 26 43 / 0.82);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 2.5rem 5rem -2rem rgb(0 0 0 / 0.7);
+  color: #f4f8fb;
+}
+.feature::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.06) 45%,
+    transparent 60%
+  );
+  background-size: 250% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .feature::before {
+    animation: ticket-sheen 7s ease-in-out infinite;
+  }
+}
+@keyframes ticket-sheen {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+.feature .status {
+  border-color: transparent;
+  background: linear-gradient(135deg, #f3d48f, #fff4d6);
+  color: #061321;
+}
+.feature .meta span {
+  color: #8bdeef;
+  font-weight: 700;
+}
+.feature .title {
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.6vw, 3.4rem);
+  font-weight: 500;
+  line-height: 1.08;
+}
+.feature .summary {
+  color: rgb(212 229 238 / 0.88);
+}
+.feature .details li {
+  border-color: rgb(255 255 255 / 0.18);
+  background: rgb(255 255 255 / 0.05);
+  color: #fff;
+}
+.feature .primaryAction {
+  border-color: transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f3d48f, #ffffff 55%, #8bdeef);
+  color: #061321;
+}
+.feature .primaryAction:hover {
+  background: linear-gradient(135deg, #8bdeef, #ffffff 45%, #f3d48f);
+}
+.feature .secondaryAction {
+  border-color: rgb(255 255 255 / 0.3);
+  border-radius: 999px;
+  color: #fff;
+}
+.feature .secondaryAction:hover {
+  border-color: #f3d48f;
+  background: transparent;
+  color: #f3d48f;
+}
+.feature .certificate {
+  border-top-color: rgb(255 255 255 / 0.12);
+  color: rgb(212 229 238 / 0.7);
+}
+.feature .certificate strong {
+  color: #f0cf8e;
+}
+.feature .visual {
+  border-radius: 1.5rem;
+  box-shadow: 0 0 4rem -1rem rgb(139 222 239 / 0.45);
+}

@@ -69,6 +69,14 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         ],
       },
       {
+        id: 'newsletter',
+        title: 'Newsletter',
+        body: [
+          'If you subscribe to the newsletter we keep your name, email address and main interest, together with your consent, to send you news about sessions, programmes and the academy.',
+          'Every email lets you unsubscribe, and you can also ask the team to remove you at any time.',
+        ],
+      },
+      {
         id: 'retention',
         title: 'How long we keep it',
         body: [
@@ -139,6 +147,14 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         ],
       },
       {
+        id: 'newsletter',
+        title: 'Newsletter',
+        body: [
+          'Si vous vous abonnez à la newsletter, nous conservons votre nom, votre adresse e-mail et votre centre d’intérêt principal, avec votre consentement, pour vous envoyer des nouvelles sur les séances, les programmes et l’académie.',
+          'Chaque e-mail permet de se désabonner, et vous pouvez aussi demander à l’équipe de vous retirer à tout moment.',
+        ],
+      },
+      {
         id: 'retention',
         title: 'Durée de conservation',
         body: [
@@ -206,6 +222,14 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         body: [
           'يستخدم الموقع ملف تعريف ارتباط وظيفيًا واحدًا لتذكّر لغتك (العربية أو الفرنسية أو الإنجليزية)، ولا يستخدم ملفات إعلانية أو تتبعية.',
           'تُقاس الزيارات بأداة تحترم الخصوصية تعمل دون ملفات تعريف الارتباط ولا تقدّم للفريق إلا أرقامًا إجمالية، مثل عدد زيارات صفحة ما.',
+        ],
+      },
+      {
+        id: 'newsletter',
+        title: 'النشرة البريدية',
+        body: [
+          'إذا اشتركت في النشرة البريدية نحتفظ باسمك وبريدك الإلكتروني ومجال اهتمامك الرئيسي مع موافقتك، لنرسل إليك أخبار اللقاءات والبرامج والأكاديمية.',
+          'يتيح لك كل بريد إلغاء الاشتراك، ويمكنك أيضًا أن تطلب من الفريق حذفك في أي وقت.',
         ],
       },
       {

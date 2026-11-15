@@ -32,7 +32,7 @@ import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
-import { GlassIcon, type GlassIconName } from '../components/glass-icon';
+import { EventsSection } from '../components/events-section';
 import { PhotoBand } from '../components/live-photo';
 import {
   homeSchoolPhotos,
@@ -89,11 +89,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const approachIcons: GlassIconName[] = [
-  'journey-listen',
-  'journey-clarity',
-  'journey-build',
-];
 
 export default async function Page() {
   const locale = await getRequestLocale();
@@ -311,24 +306,17 @@ export default async function Page() {
             </h2>
             <p data-scrub-text>{copy.approachIntro}</p>
           </div>
-          <ol className={styles.principles} data-stagger>
-            {copy.principles.map((principle, index) => (
-              <li key={principle.number}>
-                <GlassIcon
-                  name={approachIcons[index % approachIcons.length]!}
-                  size="md"
-                  delay={index}
-                  className={styles.principleIcon}
-                />
-                <span>{principle.number}</span>
-                <div>
-                  <h3>{principle.title}</h3>
-                  <p>{principle.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <div className={styles.approachLink} data-reveal>
+            <Link
+              className={styles.textLink}
+              href={localizeHref(locale, '/approach')}
+            >
+              {copy.approachEyebrow} <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </section>
+
+        <EventsSection locale={locale} />
 
         <PhotoBand
           photo={peoplePhotos.academyLecture}

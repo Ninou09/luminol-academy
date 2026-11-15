@@ -11,6 +11,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { ActHexaflex } from '../../../components/act-hexaflex';
 import { ProgrammeEnquiryCard } from '../../../components/programme-enquiry-card';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { buildProgrammeContactHref } from '../../../lib/programme-contact';
@@ -333,6 +334,10 @@ export default async function ProgrammeDetailPage({
           </div>
         </section>
 
+        {programme.slug.current.startsWith('acceptance-commitment-therapy') ? (
+          <ActHexaflex locale={locale} />
+        ) : null}
+
         <section className={styles.content}>
           <div className={styles.contentInner}>
             {bodyParagraphs.length > 0 ? (
@@ -401,7 +406,11 @@ export default async function ProgrammeDetailPage({
               aria-labelledby="programme-facts-title"
               data-programme-detail-region="facts"
             >
-              <h2 id="programme-facts-title" className={styles.sectionLabel}>
+              <h2
+                id="programme-facts-title"
+                className={styles.sectionLabel}
+                data-no-split
+              >
                 {copy.facts}
               </h2>
               <dl>
