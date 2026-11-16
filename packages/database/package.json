@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",
-    "@types/node": "^20.19.43",
+    "@types/node": "^26.6.6",
     "@types/pg": "^8.23.1",
     "eslint": "^10.9.1",
     "prisma": "7.10.0",
