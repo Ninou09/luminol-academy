@@ -29,11 +29,11 @@ test('premium school storytelling preserves landmarks and governed media', async
   await expect(academyMedia).toBeVisible();
   await expect(academyMedia).toHaveAttribute(
     'data-media-source',
-    'https://unsplash.com/photos/LQ1t-8Ms5PY',
+    '/media/academy/manifest.json',
   );
   await expect(
     academyMedia.getByRole('img', {
-      name: 'Two women having a conversation beside a sunlit window',
+      name: 'A quiet room prepared for a supportive conversation',
     }),
   ).toBeVisible();
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);
@@ -59,22 +59,26 @@ test('premium school storytelling preserves landmarks and governed media', async
     await firstProgrammeCard.getByRole('heading', { level: 3 }).innerText()
   ).trim();
   const contactActionLabel = await firstProgrammeCard
-    .locator('a[href="/en/contact"]')
+    .locator('a[href^="/en/contact"]')
     .getAttribute('aria-label');
   expect(contactActionLabel).toContain(firstProgrammeTitle);
 
-  const mediaSources = await page
-    .locator('[data-programme-card] [data-media-source]')
-    .evaluateAll((elements) =>
-      elements.map((element) => element.getAttribute('data-media-source')),
+  const programmeMedia = page.locator(
+    '[data-programme-card] [data-programme-media]',
+  );
+  await expect(programmeMedia).toHaveCount(await programmeCards.count());
+  for (const media of await programmeMedia.all()) {
+    await expect(media).toHaveAttribute(
+      'data-programme-media',
+      /^(stock|illustration|sanity)$/,
     );
-
-  expect(mediaSources.length).toBeGreaterThan(0);
-  expect(
-    mediaSources.every(
-      (source) => source === 'governed-fallback' || source === 'sanity',
-    ),
-  ).toBeTruthy();
+    await expect(media).toHaveAttribute(
+      'data-programme-media-source',
+      /^(https:\/\/|\/media\/)/,
+    );
+    await expect(media).toHaveAttribute('data-programme-media-crop', /\S+/);
+    await expect(media.getByRole('img')).toHaveAttribute('alt', /\S+/);
+  }
 });
 
 test('school reduced motion keeps the editorial image in place', async ({
@@ -128,7 +132,7 @@ test('Arabic school primary CTA keeps readable foreground contrast', async ({
     };
   });
 
-  expect(colors.foreground).toBe('rgb(250, 250, 248)');
+  expect(colors.foreground).toBe('rgb(251, 250, 246)');
   expect(colors.foreground).not.toBe(colors.background);
 });
 

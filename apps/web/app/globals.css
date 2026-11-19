@@ -3,6 +3,12 @@
 @source '../../../packages/ui/src';
 
 :root {
+  --color-brand-mist: #edf0ee;
+  --color-brand-cyan-pale: #dbeef0;
+  --color-brand-canvas: #fbfaf6;
+  --color-brand-muted: #536674;
+  --color-brand-gold-strong: #087397;
+  --color-brand-gold: #8bdeef;
   --color-brand-cyan: #159bc2;
   --color-brand-cyan-light: #8bdeef;
   --color-brand-cyan-deep: #087397;

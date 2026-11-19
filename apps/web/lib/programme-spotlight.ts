@@ -1,6 +1,7 @@
 import { localizeHref, type Locale } from '@luminol/localization';
 
 import { buildProgrammeContactHref } from './programme-contact';
+import { resolveProgrammeMedia } from './programme-media';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
@@ -10,10 +11,7 @@ import {
   localizeProgrammeWaitlistLabel,
 } from './programme-presentation';
 import { getPublicCopy } from './public-localization';
-import {
-  buildSanityProgrammeImageUrl,
-  type PublicCmsProgramme,
-} from './sanity';
+import type { PublicCmsProgramme } from './sanity';
 
 export function selectSpotlightProgramme(
   programmes: readonly PublicCmsProgramme[] | null,
@@ -35,16 +33,7 @@ export function getProgrammeSpotlightPresentation(
   const delivery = isWaitlist
     ? null
     : localizeProgrammeDelivery(locale, programme.delivery);
-  // Suppress last-cohort logistics and imagery for waitlists. The Sanity read
-  // boundary has already restricted image data to publication-approved assets.
-  const asset =
-    !isWaitlist && programme.image
-      ? {
-          src: buildSanityProgrammeImageUrl(programme.image),
-          alt: programme.image.alt,
-          source: 'sanity' as const,
-        }
-      : null;
+  const asset = resolveProgrammeMedia(programme, locale);
   return {
     isWaitlist,
     asset,

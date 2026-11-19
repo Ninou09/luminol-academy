@@ -7,9 +7,10 @@ import {
   localizePathname,
 } from '@luminol/localization';
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 
+import { AcademyImage } from '../../components/academy-image';
+import { ProgrammeMedia } from '../../components/programme-media';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { buildProgrammeContactHref } from '../../lib/programme-contact';
 import {
@@ -29,10 +30,7 @@ import {
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
-import {
-  buildSanityProgrammeImageUrl,
-  getPublicProgrammes,
-} from '../../lib/sanity';
+import { getPublicProgrammes } from '../../lib/sanity';
 import { getSchools } from '../../lib/schools';
 import {
   buildProgrammeListJsonLd,
@@ -128,14 +126,51 @@ export default async function ProgrammesPage({
           className={`section-shell ${styles.hero}`}
           aria-labelledby="programmes-hero-title"
         >
-          <p className="eyebrow">{copy.eyebrow}</p>
-          <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
-          <p>{copy.heroBody}</p>
-          <p>{getAttendanceCertificateCopy(locale).scope}</p>
+          <div className={styles.heroCopy}>
+            <p className="eyebrow">{copy.eyebrow}</p>
+            <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
+            <p>{copy.heroBody}</p>
+            <p>{getAttendanceCertificateCopy(locale).scope}</p>
+          </div>
+          <AcademyImage
+            asset="detail"
+            locale={locale}
+            priority
+            className={styles.heroPhoto}
+            sizes="(max-width: 700px) 100vw, 40vw"
+          />
         </section>
 
         <section className={`section-shell ${styles.discovery}`}>
+          <nav
+            className={styles.schoolTabs}
+            aria-label={copy.schoolLabel}
+            data-programme-pathways
+          >
+            {[
+              { slug: '', name: copy.allSchools },
+              ...Object.values(schools),
+            ].map((school) => {
+              const query = new URLSearchParams();
+              if (filters.query) query.set('q', filters.query);
+              if (filters.language) query.set('language', filters.language);
+              if (school.slug) query.set('school', school.slug);
+              return (
+                <Link
+                  key={school.slug}
+                  href={`${localizeHref(locale, '/programmes')}${query.size ? `?${query}` : ''}`}
+                  aria-current={
+                    (filters.school ?? '') === school.slug ? 'true' : undefined
+                  }
+                >
+                  {school.name}
+                  <span aria-hidden="true">↗</span>
+                </Link>
+              );
+            })}
+          </nav>
           <form
+            key={`${filters.query}:${filters.school ?? ''}:${filters.language ?? ''}`}
             className={styles.filters}
             action={localizeHref(locale, '/programmes')}
             method="get"
@@ -262,16 +297,11 @@ export default async function ProgrammesPage({
                       aria-labelledby={titleId}
                       data-programme-card
                     >
-                      {!isWaitlist && programme.image ? (
-                        <Image
-                          className={styles.image}
-                          src={buildSanityProgrammeImageUrl(programme.image)}
-                          alt={programme.image.alt}
-                          width={1200}
-                          height={675}
-                          sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                        />
-                      ) : null}
+                      <ProgrammeMedia
+                        className={styles.image}
+                        programme={programme}
+                        locale={locale}
+                      />
 
                       <div className={styles.cardBody}>
                         <div className={styles.meta}>

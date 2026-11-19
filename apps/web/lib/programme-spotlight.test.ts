@@ -29,7 +29,10 @@ describe('homepage programme spotlight presentation', () => {
         `/${locale}/contact?programme=test-programme`,
       );
       expect(view.isWaitlist).toBe(false);
-      expect(view.asset).toBeNull();
+      expect(view.asset).toMatchObject({
+        kind: 'stock',
+        asset: 'consultation',
+      });
     },
   );
   it('shows only published languages and delivery', () => {
@@ -47,7 +50,7 @@ describe('homepage programme spotlight presentation', () => {
     ).toEqual([]);
   });
   it.each(['ar', 'fr', 'en'] as const)(
-    'suppresses stale waitlist logistics and images in %s',
+    'replaces stale waitlist imagery with an evergreen topic image in %s',
     (locale) => {
       const view = getProgrammeSpotlightPresentation(locale, {
         ...programme,
@@ -59,7 +62,8 @@ describe('homepage programme spotlight presentation', () => {
         },
       });
       expect(view.isWaitlist).toBe(true);
-      expect(view.asset).toBeNull();
+      expect(view.asset).toMatchObject({ kind: 'stock', asset: 'reflection' });
+      expect(view.asset.src).not.toContain('old-cohort');
       expect(view.details).toEqual([]);
       expect(view.contactHref).toContain(
         'programme=acceptance-commitment-therapy-act',

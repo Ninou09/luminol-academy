@@ -48,12 +48,18 @@ for (const scenario of [
       page.getByRole('banner'),
       page.getByRole('contentinfo'),
     ]) {
-      await expect(
-        landmark.locator(`a[href="${scenario.currentHref}"]:not([hreflang])`),
-      ).toHaveAttribute('aria-current', 'page');
-      await expect(
-        landmark.locator(`a[href="${scenario.inactiveHref}"]:not([hreflang])`),
-      ).not.toHaveAttribute('aria-current');
+      const currentLinks = landmark.locator(
+        `a[href="${scenario.currentHref}"]:not([hreflang])`,
+      );
+      expect(await currentLinks.count()).toBeGreaterThan(0);
+      for (const link of await currentLinks.all()) {
+        await expect(link).toHaveAttribute('aria-current', 'page');
+      }
+      for (const link of await landmark
+        .locator(`a[href="${scenario.inactiveHref}"]:not([hreflang])`)
+        .all()) {
+        await expect(link).not.toHaveAttribute('aria-current');
+      }
     }
   });
 }

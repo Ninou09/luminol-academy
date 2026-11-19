@@ -12,7 +12,7 @@ import {
 import { getPublicCopy } from '../lib/public-localization';
 import { getPublicProgrammes, type PublicCmsProgramme } from '../lib/sanity';
 import { getSchools } from '../lib/schools';
-import { EditorialMedia } from './editorial-media';
+import { ProgrammeMedia } from './programme-media';
 import styles from './published-programme-spotlight.module.css';
 
 export function ProgrammeSpotlight({
@@ -25,7 +25,7 @@ export function ProgrammeSpotlight({
   const copy = getPublicCopy(locale).programmes;
   const certificate = getAttendanceCertificateCopy(locale);
   const presentation = getProgrammeSpotlightPresentation(locale, programme);
-  const { isWaitlist, asset, enquiryAction } = presentation;
+  const { isWaitlist, enquiryAction } = presentation;
 
   return (
     <section
@@ -79,11 +79,11 @@ export function ProgrammeSpotlight({
         </p>
       </div>
       <div className={styles.visual} data-spotlight-visual>
-        <EditorialMedia
-          school={programme.school}
-          asset={asset}
+        <ProgrammeMedia
+          programme={programme}
+          locale={locale}
           className={styles.media}
-          sizes="(max-width: 680px) calc(100vw - 2.5rem), 30vw"
+          sizes="(max-width: 850px) 100vw, 46vw"
         />
       </div>
     </section>

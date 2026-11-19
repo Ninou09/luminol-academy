@@ -1,67 +1,68 @@
 import { expect, test } from '@playwright/test';
 
-test('mobile header keeps primary navigation, contact access and locale URL state', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 320, height: 812 });
-  await page.goto('/fr/programmes?q=english&school=languages#catalogue');
-
-  const primaryNav = page.getByRole('navigation', {
-    name: 'Navigation principale',
+for (const locale of ['fr', 'ar'] as const) {
+  test(`${locale} mobile menu supports keyboard access and preserves locale URL state`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 812 });
+    await page.goto(
+      `/${locale}/programmes?q=english&school=languages#catalogue`,
+    );
+    const toggle = page.getByRole('button', {
+      name: locale === 'ar' ? 'القائمة' : 'Menu',
+      exact: true,
+    });
+    await toggle.click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('body')).toHaveCSS('overflow', 'hidden');
+    const nav = dialog.getByRole('navigation');
+    await expect(nav).toHaveCSS('direction', locale === 'ar' ? 'rtl' : 'ltr');
+    await expect(nav.getByRole('link')).toHaveCount(5);
+    for (const link of await nav.getByRole('link').all()) {
+      await link.focus();
+      await expect(link).toBeFocused();
+    }
+    await expect(nav.locator(`a[href="/${locale}/contact"]`)).toBeVisible();
+    await expect(
+      nav.locator(`a[href="/${locale}/consultations"]`),
+    ).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible();
+    await expect(toggle).toBeFocused();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden');
+    const targetLocale = locale === 'ar' ? 'fr' : 'ar';
+    await expect(
+      page.locator(`.locale-switcher a[lang="${targetLocale}"]`),
+    ).toHaveAttribute(
+      'href',
+      `/${targetLocale}/programmes?q=english&school=languages#catalogue`,
+    );
+    const overflow = await page.evaluate(() => {
+      const width = document.documentElement.clientWidth;
+      return {
+        extra: document.documentElement.scrollWidth - width,
+        elements: Array.from(document.body.querySelectorAll('*'))
+          .filter(
+            (element) => element.getBoundingClientRect().right > width + 1,
+          )
+          .slice(0, 12)
+          .map((element) => ({
+            tag: element.tagName,
+            className: String(element.className).slice(0, 80),
+            text: (element.textContent ?? '').trim().slice(0, 60),
+            right: Math.round(element.getBoundingClientRect().right),
+          })),
+      };
+    });
+    expect(
+      overflow.extra,
+      JSON.stringify(overflow.elements),
+    ).toBeLessThanOrEqual(1);
   });
-  await expect(primaryNav).toBeVisible();
-  await expect(primaryNav).toHaveCSS('overflow-x', 'auto');
-
-  const primaryLinks = primaryNav.getByRole('link');
-  await expect(primaryLinks).toHaveCount(5);
-  for (let index = 0; index < (await primaryLinks.count()); index += 1) {
-    await primaryLinks.nth(index).focus();
-    await expect(primaryLinks.nth(index)).toBeFocused();
-  }
-  await expect(primaryNav.locator('a[href="/fr/consultations"]')).toBeVisible();
-
-  await expect(
-    page.getByRole('navigation', { name: 'Navigation du pied de page' }),
-  ).toBeVisible();
-  await expect(page.locator('.site-header-actions > a')).toBeVisible();
-
-  const arabicLocaleLink = page.locator('.locale-switcher a[lang="ar"]');
-  await expect(arabicLocaleLink).toHaveAttribute(
-    'href',
-    '/ar/programmes?q=english&school=languages#catalogue',
-  );
-
-  const horizontalOverflow = await page.evaluate(
-    () =>
-      document.documentElement.scrollWidth -
-      document.documentElement.clientWidth,
-  );
-  expect(horizontalOverflow).toBeLessThanOrEqual(1);
-});
-
-test('Arabic mobile primary navigation remains RTL and page-safe', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 320, height: 812 });
-  await page.goto('/ar');
-
-  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-  const primaryNav = page.getByRole('navigation', { name: 'التنقل الرئيسي' });
-  await expect(primaryNav).toBeVisible();
-  await expect(primaryNav).toHaveCSS('direction', 'rtl');
-  await expect(primaryNav.getByRole('link')).toHaveCount(5);
-  await expect(primaryNav.locator('a[href="/ar/consultations"]')).toBeVisible();
-  await expect(
-    page.getByRole('navigation', { name: 'التنقل في تذييل الصفحة' }),
-  ).toBeVisible();
-
-  const horizontalOverflow = await page.evaluate(
-    () =>
-      document.documentElement.scrollWidth -
-      document.documentElement.clientWidth,
-  );
-  expect(horizontalOverflow).toBeLessThanOrEqual(1);
-});
+}
 
 test('localized home metadata does not duplicate the academy brand', async ({
   page,

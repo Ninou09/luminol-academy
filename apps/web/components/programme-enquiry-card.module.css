@@ -9,6 +9,30 @@
   box-shadow: var(--shadow-editorial);
   overflow-wrap: anywhere;
 }
+.intro,
+.details {
+  min-width: 0;
+}
+.wide {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  border-radius: 0;
+  box-shadow: none;
+}
+.wide .certificate {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.wide .status {
+  margin-bottom: 0.8rem;
+}
+.wide .guidance {
+  margin-top: 0.75rem;
+}
 .status {
   width: fit-content;
   margin: 0 0 1.25rem;
@@ -92,5 +116,11 @@
 @media (max-width: 640px) {
   .card {
     box-shadow: none;
+  }
+}
+@media (max-width: 760px) {
+  .wide {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
   }
 }

@@ -370,3 +370,179 @@
     grid-column: auto;
   }
 }
+
+.hero {
+  padding-block: 4rem;
+  min-height: 0;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+.hero::before {
+  display: none;
+}
+.hero h1 {
+  font-size: clamp(3.4rem, 5.5vw, 6rem);
+  line-height: 1.04;
+}
+.heroBody {
+  margin-top: 1.75rem;
+  font-size: 1rem;
+  line-height: 1.9;
+}
+.heroPhoto {
+  height: 28rem;
+}
+.pathCard {
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--color-brand-surface);
+}
+@media (max-width: 700px) {
+  .hero {
+    padding-block: 3rem;
+  }
+  .heroPhoto {
+    height: 21rem;
+  }
+}
+
+.enquiryJump {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  gap: 2rem;
+  padding: 0.75rem 1.25rem;
+  margin-top: 1.5rem;
+  background: var(--color-brand-ink);
+  color: var(--color-brand-surface);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.enquiryJump:hover {
+  background: var(--color-brand-cyan-deep);
+}
+.pathCard {
+  min-height: 15rem;
+  border: 0;
+  border-top: 3px solid var(--path-accent);
+  background: color-mix(
+    in srgb,
+    var(--path-accent) 8%,
+    var(--color-brand-canvas)
+  );
+}
+.pathCard h3 {
+  font-size: clamp(2rem, 2.8vw, 3rem);
+  line-height: 1.15;
+  margin-top: 2rem;
+}
+.pathCard b {
+  font-size: 1.5rem;
+}
+.heroPhoto {
+  height: auto;
+  aspect-ratio: 4 / 3;
+}
+.page:dir(rtl) :is(h1, h2, h3) {
+  font-family: var(--font-arabic);
+  letter-spacing: normal;
+  line-height: 1.5;
+}
+.page:dir(rtl) h1 {
+  font-size: clamp(2.3rem, 4vw, 4.2rem);
+}
+.page:dir(rtl) .pathCard h3 {
+  font-size: 1.7rem;
+}
+.formSurface {
+  border-radius: 0.35rem;
+}
+@media (max-width: 1000px) {
+  .pathGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .pathCard {
+    padding: 1.25rem;
+  }
+}
+@media (max-width: 700px) {
+  .hero {
+    padding-block: 2.5rem;
+    gap: 2rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.7rem, 10vw, 3.8rem);
+  }
+  .heroPhoto {
+    aspect-ratio: 3 / 2;
+  }
+  .pathGrid {
+    grid-template-columns: 1fr;
+  }
+  .pathCard {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    gap: 0.7rem;
+    align-items: start;
+  }
+  .pathCard h3 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  .pathCard p {
+    grid-column: 2;
+    margin: 0;
+    font-size: 0.86rem;
+  }
+  .pathCard b {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pathCard:hover {
+    transform: none;
+  }
+}
+@media (max-width: 1000px) {
+  .pathGrid {
+    grid-template-columns: 1fr;
+  }
+  .pathCard {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    gap: 0.7rem;
+    align-items: start;
+  }
+  .pathCard h3 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  .pathCard p {
+    grid-column: 2;
+    margin: 0;
+    font-size: 0.86rem;
+  }
+  .pathCard b {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}
+@media (max-width: 480px) {
+  .pathCard {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .pathCard h3 {
+    grid-column: 1 / -1;
+    font-size: 1.9rem;
+  }
+  .pathCard p {
+    grid-column: 1 / -1;
+  }
+  .pathCard b {
+    grid-column: 2;
+  }
+}

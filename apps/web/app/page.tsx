@@ -4,21 +4,24 @@ import {
   localizeHref,
   localizePathname,
 } from '@luminol/localization';
-import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-import { AcademyImage } from '../components/academy-image';
 import { CinematicBackdrop } from '../components/cinematic-backdrop';
 import { CinematicScroll } from '../components/cinematic-scroll';
+import { EnquiryForm } from '../components/enquiry-form';
+import { LearningFilm } from '../components/learning-film';
+import { StockImage } from '../components/stock-image';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
+import { ProvidedFrenchImage } from '../components/provided-image';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
-import { academyMedia, cinematicCopy } from '../lib/academy-media';
+import { experienceCopy } from '../lib/experience-copy';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import { getSchools } from '../lib/schools';
+import { academyTestimonials, testimonialCopy } from '../lib/testimonials';
 import styles from './home.module.css';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -52,14 +55,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Page() {
   const locale = await getRequestLocale();
   const publicCopy = getPublicCopy(locale);
-  const copy = publicCopy.home;
-  const schoolList = Object.values(getSchools(locale));
-  const schoolTone = {
-    psychology: styles.psychology ?? '',
-    languages: styles.languages ?? '',
-    training: styles.training ?? '',
-  };
-  const cinematic = cinematicCopy[locale];
+  const copy = experienceCopy[locale];
+  const schools = Object.values(getSchools(locale));
+  const voices = testimonialCopy[locale];
 
   return (
     <>
@@ -69,106 +67,162 @@ export default async function Page() {
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
           <CinematicBackdrop
-            pauseLabel={cinematic.pause}
-            playLabel={cinematic.play}
+            pauseLabel={copy.pauseFilm}
+            playLabel={copy.playFilm}
           />
-          <div className={styles.heroLocation} aria-hidden="true">
-            <span>Luminol Academy</span>
-            <span>{cinematic.location}</span>
-          </div>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>{copy.heroEyebrow}</p>
-            <h1 id="hero-title" className={styles.heroTitle}>
-              {copy.heroTitle} <span>{copy.heroAccent}</span>
+            <p className={styles.welcome}>{copy.welcome}</p>
+            <h1 id="hero-title">
+              {copy.title} <em>{copy.accent}</em>
             </h1>
-          </div>
-          <div className={styles.heroSummary}>
-            <p className={styles.heroLede}>{copy.heroLede}</p>
+            <p className={styles.heroLede}>{copy.intro}</p>
             <div className={styles.heroActions}>
-              <ButtonLink href={localizeHref(locale, '/programmes')} size="lg">
-                {copy.exploreSchools} <span aria-hidden="true">↘</span>
-              </ButtonLink>
-              <ButtonLink
-                href={localizeHref(locale, '/consultations')}
-                size="lg"
-                variant="secondary"
+              <Link
+                className={styles.whiteButton}
+                href={localizeHref(locale, '/programmes')}
               >
-                {copy.pathwayPsychology} <span aria-hidden="true">→</span>
-              </ButtonLink>
+                {copy.explore}
+                <span aria-hidden="true">↗</span>
+              </Link>
+              <Link
+                className={styles.ghostButton}
+                href={localizeHref(
+                  locale,
+                  '/consultations#consultation-enquiry',
+                )}
+              >
+                {copy.consultation}
+                <span aria-hidden="true">↗</span>
+              </Link>
             </div>
           </div>
-          <a className={styles.scrollCue} href="#schools">
-            {cinematic.discover} <span aria-hidden="true">↓</span>
-          </a>
+          <div className={styles.heroBottom}>
+            <span>{copy.location}</span>
+            <a href="#spirit">
+              {copy.scroll}
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
         </section>
-        <dl className={styles.proof} aria-label={copy.strengthsAria}>
-          <div>
-            <dt>3</dt>
-            <dd>{copy.connectedSchools}</dd>
-          </div>
-          <div>
-            <dt>1</dt>
-            <dd>{copy.humanJourney}</dd>
-          </div>
-          <div>
-            <dt>AR · FR · EN</dt>
-            <dd>{copy.multilingualFoundation}</dd>
-          </div>
-        </dl>
 
-        <PublishedProgrammeSpotlight locale={locale} />
+        <nav className={styles.schoolRail} aria-label={copy.schools}>
+          {schools.map((school) => (
+            <Link
+              key={school.slug}
+              href={localizeHref(locale, `/schools/${school.slug}`)}
+            >
+              <span>{school.number}</span>
+              <strong>{school.name}</strong>
+              <b aria-hidden="true">↗</b>
+            </Link>
+          ))}
+        </nav>
+
+        <section
+          id="spirit"
+          className={`${styles.section} ${styles.spirit}`}
+          aria-labelledby="spirit-title"
+        >
+          <div className={styles.spiritImages} data-depth-scene>
+            <StockImage
+              asset="libraryReading"
+              locale={locale}
+              className={styles.spiritPortrait}
+              sizes="(max-width: 700px) 65vw, 32vw"
+            />
+            <StockImage
+              asset="libraryBooks"
+              locale={locale}
+              className={styles.spiritDetail}
+              sizes="(max-width: 700px) 50vw, 22vw"
+            />
+            <span className={styles.imageStamp} aria-hidden="true">
+              Luminol
+            </span>
+          </div>
+          <div className={styles.spiritCopy} data-reveal>
+            <p className={styles.eyebrow}>{copy.communityLabel}</p>
+            <h2 id="spirit-title">{copy.communityTitle}</h2>
+            <p>{copy.communityBody}</p>
+            <Link
+              className={styles.textLink}
+              href={localizeHref(locale, '/about')}
+            >
+              {copy.about}
+              <span aria-hidden="true">↗</span>
+            </Link>
+            <div className={styles.facts}>
+              <div className={styles.founderStat}>
+                <strong dir="ltr">
+                  30<span>+</span>
+                </strong>
+                <p>{copy.founder}</p>
+              </div>
+              <div className={styles.founderStat}>
+                <strong dir="ltr">0{schools.length}</strong>
+                <p>{copy.schools}</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section
           id="schools"
-          className={styles.section}
-          aria-labelledby="home-schools-title"
+          className={styles.schools}
+          aria-labelledby="schools-title"
         >
           <div className={styles.sectionHeading} data-reveal>
             <div>
-              <p className={styles.eyebrow}>{copy.schoolsEyebrow}</p>
-              <h2 id="home-schools-title">{copy.schoolsTitle}</h2>
+              <p className={styles.eyebrow}>{copy.schools}</p>
+              <h2 id="schools-title">{copy.schoolTitle}</h2>
             </div>
-            <p>{copy.schoolsIntro}</p>
+            <p>{copy.schoolBody}</p>
           </div>
           <div className={styles.schoolGrid}>
-            {schoolList.map((school) => (
+            {schools.map((school) => (
               <article
-                className={`${styles.schoolCard} ${schoolTone[school.slug]}`}
-                id={school.slug}
                 key={school.slug}
-                aria-labelledby={`home-school-${school.slug}-title`}
+                className={styles.schoolCard}
+                data-school={school.slug}
                 data-school-card
-                data-reveal
+                aria-labelledby={`school-${school.slug}-title`}
               >
-                <AcademyImage
-                  className={styles.schoolPhoto}
-                  school={school.slug}
-                  locale={locale}
-                  sizes="(max-width: 800px) 100vw, 55vw"
-                />
-                <div className={styles.schoolDetails}>
-                  <div className={styles.schoolTop}>
-                    <span>{school.number}</span>
-                    <span aria-hidden="true">Luminol Academy</span>
+                <Link
+                  href={localizeHref(locale, `/schools/${school.slug}`)}
+                  aria-label={`${publicCopy.home.discoverSchool}: ${school.name}`}
+                >
+                  <div className={styles.schoolPhoto}>
+                    {school.slug === 'psychology' ? (
+                      <StockImage
+                        asset="psychologyConversation"
+                        locale={locale}
+                        sizes="(max-width: 700px) 100vw, 34vw"
+                      />
+                    ) : school.slug === 'languages' ? (
+                      <ProvidedFrenchImage locale={locale} />
+                    ) : (
+                      <StockImage
+                        asset="professionalWorkshop"
+                        locale={locale}
+                        sizes="(max-width: 700px) 100vw, 34vw"
+                      />
+                    )}
+                    <span className={styles.schoolNumber}>{school.number}</span>
                   </div>
-                  <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
-                  <p className={styles.schoolPromise}>{school.promise}</p>
-                  <p className={styles.schoolDescription}>
-                    {school.introduction}
-                  </p>
-                  <ul aria-label={`${school.name} — ${copy.focusAreas}`}>
-                    {school.programs.slice(0, 3).map((program) => (
-                      <li key={program.title}>{program.title}</li>
-                    ))}
-                  </ul>
-                  <Link
-                    className={styles.textLink}
-                    href={localizeHref(locale, `/schools/${school.slug}`)}
-                    aria-label={`${copy.discoverSchool}: ${school.name}`}
-                  >
-                    {copy.discoverSchool} <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
+                  <div className={styles.schoolContent}>
+                    <h3 id={`school-${school.slug}-title`}>{school.name}</h3>
+                    <p>{school.promise}</p>
+                    <ul className={styles.schoolTopics}>
+                      {school.programs.slice(0, 3).map((programme) => (
+                        <li key={programme.title}>{programme.title}</li>
+                      ))}
+                    </ul>
+                    <span className={styles.schoolAction}>
+                      {publicCopy.home.discoverSchool}
+                      <b aria-hidden="true">↗</b>
+                    </span>
+                  </div>
+                </Link>
               </article>
             ))}
           </div>
@@ -176,128 +230,159 @@ export default async function Page() {
 
         <section
           id="approach"
-          className={styles.approach}
-          aria-labelledby="home-approach-title"
+          className={styles.journey}
+          aria-labelledby="journey-title"
         >
-          <div className={styles.approachIntro} data-reveal>
-            <p className={`${styles.eyebrow} ${styles.light}`}>
-              {copy.approachEyebrow}
-            </p>
-            <h2 id="home-approach-title">{copy.approachTitle}</h2>
-            <p>{copy.approachIntro}</p>
+          <div className={styles.journeyHeading} data-reveal>
+            <p className={styles.eyebrow}>{copy.journeyLabel}</p>
+            <h2 id="journey-title">{copy.journeyTitle}</h2>
+            <p>{copy.journeyIntro}</p>
           </div>
-          <ol className={styles.principles}>
-            {copy.principles.map((principle) => (
-              <li key={principle.number} data-reveal>
-                <span>{principle.number}</span>
-                <div>
-                  <h3>{principle.title}</h3>
-                  <p>{principle.text}</p>
+          <div className={styles.chapters}>
+            {copy.chapters.map((chapter, index) => (
+              <article
+                className={styles.chapter}
+                key={chapter.word}
+                data-depth-scene
+              >
+                <div className={styles.chapterCopy}>
+                  <p className={styles.eyebrow}>{chapter.label}</p>
+                  <h3>{chapter.word}</h3>
+                  <p>{chapter.body}</p>
+                  <Link
+                    className={styles.textLink}
+                    href={localizeHref(
+                      locale,
+                      `/schools/${schools[index]?.slug ?? 'training'}`,
+                    )}
+                  >
+                    {schools[index]?.name}
+                    <span aria-hidden="true">↗</span>
+                  </Link>
                 </div>
-              </li>
+                {index === 0 ? (
+                  <LearningFilm
+                    locale={locale}
+                    className={styles.chapterImage}
+                  />
+                ) : index === 1 ? (
+                  <LearningFilm
+                    film="conversation"
+                    locale={locale}
+                    className={styles.chapterImage}
+                  />
+                ) : (
+                  <LearningFilm
+                    film="workshop"
+                    locale={locale}
+                    className={styles.chapterImage}
+                  />
+                )}
+              </article>
             ))}
-          </ol>
+          </div>
         </section>
 
+        <div className={styles.programmeFeature}>
+          <PublishedProgrammeSpotlight locale={locale} />
+        </div>
+
         <section
-          id="about"
-          className={`${styles.section} ${styles.about}`}
-          aria-labelledby="home-about-title"
+          className={`${styles.section} ${styles.testimonials}`}
+          aria-labelledby="voices-title"
         >
-          <AcademyImage
-            className={styles.aboutVisual}
-            school="training"
-            locale={locale}
-            sizes="(max-width: 1000px) 100vw, 40vw"
-          />
-          <div className={styles.aboutCopy} data-reveal>
-            <p className={styles.eyebrow}>{copy.aboutEyebrow}</p>
-            <h2 id="home-about-title">{copy.aboutTitle}</h2>
-            <p className={styles.aboutLede}>{copy.aboutLede}</p>
-            <p>{copy.aboutBody}</p>
-            <div className={styles.values}>
-              {copy.values.map((value) => (
-                <span key={value}>{value}</span>
-              ))}
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.eyebrow}>{voices.eyebrow}</p>
+              <h2 id="voices-title">{voices.title}</h2>
             </div>
+            <p>{voices.intro}</p>
           </div>
+          <div className={styles.quoteGrid}>
+            {academyTestimonials.map((review) => (
+              <figure className={styles.quoteCard} key={review.id}>
+                <span aria-hidden="true" className={styles.quoteMark}>
+                  “
+                </span>
+                <blockquote>
+                  <p>{review.quote[locale]}</p>
+                </blockquote>
+                <figcaption>
+                  <strong dir="auto">{review.name}</strong>
+                  <span>{voices.excerptLabel}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <p className={styles.sourceNote}>{voices.sourceNote}</p>
         </section>
 
-        <aside className={styles.mediaCredits} aria-label={cinematic.credits}>
-          <span>{cinematic.credits}</span>
-          <a
-            href="https://mixkit.co/free-stock-video/a-hand-runs-through-the-book-spines-in-the-library-50726/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Mixkit · 50726
-          </a>
-          <a
-            href="https://mixkit.co/free-stock-video/reverse-tour-of-a-library-full-of-books-21595/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Mixkit · 21595
-          </a>
-          {Object.values(academyMedia).map((media) => (
-            <a
-              key={media.sourceUrl}
-              href={media.sourceUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {media.credit}
-            </a>
-          ))}
-        </aside>
-
         <section
-          className={`${styles.section} ${styles.pathway}`}
-          aria-labelledby="pathway-title"
+          className={`${styles.section} ${styles.moments}`}
+          aria-labelledby="moments-title"
         >
-          <div data-reveal>
-            <p className={styles.eyebrow}>{copy.pathwayEyebrow}</p>
-            <h2 id="pathway-title">{copy.pathwayTitle}</h2>
+          <div className={styles.sectionHeading} data-reveal>
+            <div>
+              <p className={styles.eyebrow}>{copy.momentsLabel}</p>
+              <h2 id="moments-title">{copy.momentsTitle}</h2>
+            </div>
+            <span className={styles.languageLine}>{copy.languages}</span>
           </div>
-          <nav
-            className={styles.pathwayLinks}
-            aria-labelledby="pathway-title"
-            data-reveal
-          >
-            <Link href={localizeHref(locale, '/consultations')}>
-              <span>01</span>
-              {copy.pathwayPsychology}
-              <b aria-hidden="true">↗</b>
-            </Link>
-            <Link href={localizeHref(locale, '/schools/languages')}>
-              <span>02</span>
-              {copy.pathwayLanguages}
-              <b aria-hidden="true">↗</b>
-            </Link>
-            <Link href={localizeHref(locale, '/schools/training')}>
-              <span>03</span>
-              {copy.pathwayTraining}
-              <b aria-hidden="true">↗</b>
-            </Link>
-          </nav>
+          <div className={styles.momentsGrid}>
+            {(['community', 'online'] as const).map((asset, index) => (
+              <Link
+                className={styles.moment}
+                key={asset}
+                href={localizeHref(
+                  locale,
+                  index === 0 ? '/programmes' : '/contact',
+                )}
+              >
+                <StockImage
+                  asset={asset}
+                  locale={locale}
+                  className={styles.momentImage}
+                  sizes="(max-width: 700px) 100vw, 50vw"
+                />
+                <div>
+                  <span>0{index + 1}</span>
+                  <h3>{copy.moments[index]}</h3>
+                  <p>
+                    {copy.momentLinks[index]}
+                    <b aria-hidden="true">↗</b>
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </section>
 
         <section
           id="contact"
-          className={styles.cta}
-          aria-labelledby="home-contact-title"
-          data-reveal
+          className={styles.closing}
+          aria-labelledby="closing-title"
         >
-          <div>
-            <p className={`${styles.eyebrow} ${styles.light}`}>
-              {copy.ctaEyebrow}
-            </p>
-            <h2 id="home-contact-title">{copy.ctaTitle}</h2>
-            <p>{copy.ctaBody}</p>
+          <div className={styles.closingCopy}>
+            <p className={styles.eyebrow}>{copy.closingLabel}</p>
+            <h2 id="closing-title">{copy.closingTitle}</h2>
+            <p>{copy.closingBody}</p>
+            <StockImage
+              asset="consultation"
+              locale={locale}
+              className={styles.closingImage}
+              sizes="(max-width: 700px) 100vw, 40vw"
+            />
+            <Link
+              className={styles.textLink}
+              href={localizeHref(locale, '/consultations#consultation-enquiry')}
+            >
+              {copy.consultation}
+              <span aria-hidden="true">↗</span>
+            </Link>
           </div>
-          <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
-            {copy.startConversation} <span aria-hidden="true">→</span>
-          </ButtonLink>
+          <div className={styles.enquirySurface}>
+            <EnquiryForm locale={locale} copy={publicCopy.form} />
+          </div>
         </section>
       </main>
       <SiteFooter />

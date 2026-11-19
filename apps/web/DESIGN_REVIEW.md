@@ -1,0 +1,48 @@
+# Luminol public website — editorial redesign
+
+The September 24 continuation adds denser layouts, topic-specific stock media, a lightweight film, real testimonial excerpts and a homepage enquiry form. See [the current refinement notes](../../docs/dense-cinematic-refinement.md) and [testimonial provenance](../../docs/testimonial-provenance.md). Validation: 996 unit tests and all 149 public browser cases pass; CI and preview status are recorded on PR #552. The sections below document the earlier design work.
+
+## Direction
+
+The reference video (https://www.youtube.com/watch?v=h2MjhbwVKLk) was analyzed from its full 15:20 auto-generated transcript. Its useful principles are visual storytelling through scroll, deliberate camera/image composition, consistent brand details, and a separately composed mobile layout. This implementation uses lightweight photographic parallax and native sticky story chapters, not a video frame sequence. Reduced-motion preferences disable both effects.
+
+Kent College (https://kentcollege.com/) informed the community photography and clear school pathways. The Walker School (https://www.thewalkerschool.org/) informed the immersive section scale, bold hierarchy, and values-led storytelling. Its embedded film was restricted in the review browser, but the page and scroll sections were readable. No reference-site code, branding, photographs, testimonials or claims were copied.
+
+## Scope
+
+- Public homepage, shared header/footer, full-screen keyboard-accessible navigation.
+- Editorial hero treatments on About, Programmes, Contact, Consultations and school pages.
+- Arabic RTL, French and English copy. Existing CMS programmes, programme filters, enquiries and workshop pages retain their data and flows.
+- Original supplied Luminol logo retained. No founder portrait added.
+- Native dialog provides Escape dismissal, focus containment and focus restoration. Body scrolling is restored when closed or unmounted.
+
+## Imagery
+
+The owner explicitly asked to integrate the previously commissioned AI-generated academy asset kit and add diverse realistic assets. `public/media/academy/manifest.json` records source, owner authorization and illustrative status. Localized descriptions, crop intent and focal positions live in `lib/academy-media.ts`. These illustrative scenes are not evidence of actual Luminol staff, students, premises or outcomes.
+
+Three images were generated with the built-in image-generation tool: `community-courtyard.webp`, `ideas-atelier.webp` and `conversation-lounge.webp`. The other 15 project images come from the owner's Luminol Website Asset Kit v3. The homepage uses distinct scenes for the hero, community, school cards, learning chapters and learning formats. Each AcademyImage now displays a localized AI-illustration caption, in addition to its localized alt text and source/crop metadata.
+
+New hero prompt: Wide 16:9 candid editorial photograph of three North African adult learners, aged 22–30, walking and talking with notebooks in a modest sunlit Mediterranean courtyard. Cream headscarf/navy overshirt, olive cardigan and light-blue shirt; group in the right two-thirds, shaded foliage and limestone to the left for the heading. Natural late-afternoon light, realistic skin, hair and hands, 35mm documentary photography, no invented school signage, logos, text, uniforms, certificates or glamour retouching.
+
+## September 23 refinement
+
+Continued from verified branch commit `b45180a6a621aea10c0a5461b6e6f518180772fc`, with no replacement project. The supplied About screenshots and the live three-language, three-viewport audit exposed oversized headings in narrow columns and long, visually empty sections. The founding story now pairs a full-width heading with a study photograph and readable text; the values section pairs a conversation scene with compact numbered principles. Three photographic school links replace the empty orbital diagram. A courtyard invitation closes the page.
+
+School pages now use distinct, governed programme illustrations only when CMS imagery is absent. Tablet heading scale and mobile photo ratios avoid clipping and awkward face crops. Contact has a direct enquiry anchor, readable school choices at 320px and compact tablet cards. Consultations retain their existing clinical routing and copy, with clearer service hierarchy. The menu gains a learning scene and a short entrance transition; the footer offers direct school links. Existing scroll storytelling remains, with reduced-motion fallbacks. No video or animation dependency was added.
+
+The new atelier scene shows adults developing ideas with a facilitator, while the reading lounge shows a small language conversation. These original imagined scenes add varied compositions rather than repeating classroom rows. Their 1440px WebP files total 246,750 bytes (about 241 KiB), with lazy loading outside the hero and responsive Next image delivery. They depict no identified Luminol person or premises.
+
+Programme school shortcuts retain the current search and language, update the native dropdown after client navigation and reset correctly. School programme enquiry links now carry course context in server-rendered HTML, including with JavaScript disabled. Regression coverage exercises all three locales. A Windows-only Prisma generation failure discovered during validation is fixed by invoking the installed CLI through Node instead of spawning a `.cmd` shim; schema and database behavior are unchanged.
+
+Additional research included Motion's official scroll examples (https://motion.dev/docs/react-scroll-animations) and its public repository (https://github.com/motiondivision/motion). The implementation keeps native CSS/HTML effects and does not copy reference code or media. The supplied ZIP documents were treated as reference material, not task instructions.
+
+## Verification
+
+- Root `pnpm lint`: pass (20 workspace tasks).
+- Root `pnpm typecheck`: pass (20 workspace tasks).
+- Root `pnpm test`: pass (986 tests, 114 existing skips).
+- Root `pnpm build`: pass (20 workspace tasks, including public web/admin/portal builds).
+- Live preview visually reviewed in Arabic and English. French copy and locale switching verified. Programme search and programme-to-enquiry context verified without submitting an enquiry. Native menu opens and dismisses with Escape. Arabic hero composition keeps the people clear of its heading.
+- Public browser suite: 133 tests passed using the production build, including programme fixtures (authenticated operational launch journeys excluded). Browser regression coverage now follows the redesigned layout, including 320/390/768px readability in all three languages, navigation, no-JavaScript school links, reduced motion and distinct image provenance. CI results are recorded on PR #552.
+
+No database, authentication, payment, outbound messaging, operational application or production environment changes are included.

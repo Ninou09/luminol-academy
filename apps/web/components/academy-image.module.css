@@ -5,19 +5,6 @@
   isolation: isolate;
 }
 
-.frame::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    transparent 52%,
-    color-mix(in srgb, var(--color-brand-ink) 55%, transparent)
-  );
-  pointer-events: none;
-}
-
 .image {
   object-fit: cover;
   transition: transform 900ms var(--luminol-ease-out);
@@ -25,26 +12,6 @@
 
 .frame:hover .image {
   transform: scale(1.025);
-}
-
-.credit {
-  position: absolute;
-  inset-inline-end: 0.85rem;
-  inset-block-end: 0.7rem;
-  z-index: 2;
-  color: var(--color-brand-surface);
-  font-size: 0.58rem;
-  letter-spacing: 0.04em;
-}
-
-.credit a {
-  color: inherit;
-  text-decoration-color: color-mix(
-    in srgb,
-    var(--color-brand-surface) 35%,
-    transparent
-  );
-  text-underline-offset: 0.2em;
 }
 
 @media (prefers-reduced-motion: reduce) {

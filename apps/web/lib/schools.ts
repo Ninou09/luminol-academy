@@ -1,5 +1,7 @@
 import type { Locale } from '@luminol/localization';
 
+import type { ProgrammeMediaTopic } from './programme-media';
+
 export type SchoolSlug = 'psychology' | 'languages' | 'training';
 
 export type SchoolDefinition = {
@@ -11,7 +13,11 @@ export type SchoolDefinition = {
   introduction: string;
   promise: string;
   visualWords: readonly string[];
-  programs: readonly { title: string; description: string }[];
+  programs: readonly {
+    title: string;
+    description: string;
+    mediaTopic: ProgrammeMediaTopic;
+  }[];
   approach: readonly { title: string; description: string }[];
   audiences: readonly string[];
   note: string;
@@ -31,21 +37,25 @@ const englishSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['Awareness', 'Balance', 'Connection'],
     programs: [
       {
+        mediaTopic: 'therapy',
         title: 'Therapy & consultations',
         description:
           'A clear first step for people seeking therapy or a consultation, helping the team understand the need and guide the person toward an appropriate next step.',
       },
       {
+        mediaTopic: 'family',
         title: 'Child and family guidance',
         description:
           'Educational support that helps parents and families better understand development, communication and everyday challenges.',
       },
       {
+        mediaTopic: 'coaching',
         title: 'Coaching programs',
         description:
           'Goal-oriented development for habits, self-awareness, relationships and the next meaningful chapter.',
       },
       {
+        mediaTopic: 'psychology-workshop',
         title: 'Workshops',
         description:
           'Accessible group learning around emotional intelligence, stress management, parenting and self-development.',
@@ -84,21 +94,25 @@ const englishSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['Learn', 'Express', 'Connect'],
     programs: [
       {
+        mediaTopic: 'english',
         title: 'English programs',
         description:
           'Progressive learning for foundations, academic goals, confident conversation and professional communication.',
       },
       {
+        mediaTopic: 'french',
         title: 'French programs',
         description:
           'Structured language development that balances grammar, comprehension, pronunciation and expression.',
       },
       {
+        mediaTopic: 'fluency',
         title: 'Fluency pathways',
         description:
           'Focused practice for learners ready to move from knowing the language to using it naturally.',
       },
       {
+        mediaTopic: 'communication',
         title: 'Communication skills',
         description:
           'Practical speaking, presentation and workplace communication for real personal and professional situations.',
@@ -142,21 +156,25 @@ const englishSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['Lead', 'Create', 'Advance'],
     programs: [
       {
+        mediaTopic: 'leadership',
         title: 'Leadership',
         description:
           'Develop self-awareness, sound decision-making and the communication needed to guide people well.',
       },
       {
+        mediaTopic: 'professional-communication',
         title: 'Professional communication',
         description:
           'Strengthen presentations, collaboration, feedback and confident communication across the workplace.',
       },
       {
+        mediaTopic: 'digital-skills',
         title: 'Productivity and digital skills',
         description:
           'Build practical systems and modern capabilities for focused, effective and adaptable work.',
       },
       {
+        mediaTopic: 'corporate-workshop',
         title: 'Corporate workshops',
         description:
           'Purpose-built learning experiences aligned with team needs, organizational context and desired outcomes.',
@@ -204,21 +222,25 @@ const frenchSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['Conscience', 'Équilibre', 'Lien'],
     programs: [
       {
+        mediaTopic: 'therapy',
         title: 'Thérapie & consultations',
         description:
           'Une première étape claire pour les personnes recherchant une thérapie ou une consultation, afin d’aider l’équipe à comprendre le besoin et à orienter vers la suite appropriée.',
       },
       {
+        mediaTopic: 'family',
         title: 'Accompagnement enfant et famille',
         description:
           'Un soutien éducatif pour aider les parents et les familles à mieux comprendre le développement, la communication et les difficultés du quotidien.',
       },
       {
+        mediaTopic: 'coaching',
         title: 'Programmes de coaching',
         description:
           'Un développement orienté objectifs autour des habitudes, de la connaissance de soi, des relations et des prochaines étapes importantes.',
       },
       {
+        mediaTopic: 'psychology-workshop',
         title: 'Ateliers',
         description:
           'Des apprentissages collectifs accessibles autour de l’intelligence émotionnelle, de la gestion du stress, de la parentalité et du développement personnel.',
@@ -257,21 +279,25 @@ const frenchSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['Apprendre', 'S’exprimer', 'Connecter'],
     programs: [
       {
+        mediaTopic: 'english',
         title: 'Programmes d’anglais',
         description:
           'Un apprentissage progressif pour les bases, les objectifs académiques, la conversation et la communication professionnelle.',
       },
       {
+        mediaTopic: 'french',
         title: 'Programmes de français',
         description:
           'Un développement structuré qui équilibre grammaire, compréhension, prononciation et expression.',
       },
       {
+        mediaTopic: 'fluency',
         title: 'Parcours d’aisance',
         description:
           'Une pratique ciblée pour passer de la connaissance de la langue à son utilisation naturelle.',
       },
       {
+        mediaTopic: 'communication',
         title: 'Compétences de communication',
         description:
           'Prise de parole, présentation et communication professionnelle pour des situations personnelles et professionnelles réelles.',
@@ -315,21 +341,25 @@ const frenchSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['Diriger', 'Créer', 'Avancer'],
     programs: [
       {
+        mediaTopic: 'leadership',
         title: 'Leadership',
         description:
           'Développer la connaissance de soi, la prise de décision et la communication nécessaires pour bien guider les personnes.',
       },
       {
+        mediaTopic: 'professional-communication',
         title: 'Communication professionnelle',
         description:
           'Renforcer les présentations, la collaboration, le feedback et la communication confiante au travail.',
       },
       {
+        mediaTopic: 'digital-skills',
         title: 'Productivité et compétences numériques',
         description:
           'Construire des systèmes pratiques et des capacités modernes pour un travail concentré, efficace et adaptable.',
       },
       {
+        mediaTopic: 'corporate-workshop',
         title: 'Ateliers en entreprise',
         description:
           'Des expériences d’apprentissage conçues autour des besoins de l’équipe, du contexte de l’organisation et des résultats recherchés.',
@@ -375,21 +405,25 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['وعي', 'توازن', 'تواصل'],
     programs: [
       {
+        mediaTopic: 'therapy',
         title: 'العلاج النفسي والاستشارات',
         description:
           'خطوة أولى واضحة لمن يبحث عن العلاج النفسي أو الاستشارة، تساعد الفريق على فهم الحاجة وتوجيه الشخص نحو الخطوة المناسبة.',
       },
       {
+        mediaTopic: 'family',
         title: 'إرشاد الطفل والعائلة',
         description:
           'دعم تربوي يساعد الأولياء والعائلات على فهم التطور والتواصل والتحديات اليومية بصورة أفضل.',
       },
       {
+        mediaTopic: 'coaching',
         title: 'برامج الكوتشينغ',
         description:
           'تطوير موجّه نحو الأهداف للعادات والوعي بالذات والعلاقات والاستعداد للفصل القادم.',
       },
       {
+        mediaTopic: 'psychology-workshop',
         title: 'ورشات',
         description:
           'تعلّم جماعي متاح حول الذكاء العاطفي وإدارة الضغط والأبوة والأمومة وتطوير الذات.',
@@ -428,21 +462,25 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['تعلّم', 'عبّر', 'تواصل'],
     programs: [
       {
+        mediaTopic: 'english',
         title: 'برامج الإنجليزية',
         description:
           'تعلّم تدريجي للأساسيات والأهداف الأكاديمية والمحادثة الواثقة والتواصل المهني.',
       },
       {
+        mediaTopic: 'french',
         title: 'برامج الفرنسية',
         description:
           'تطوير لغوي منظّم يوازن بين القواعد والفهم والنطق والتعبير.',
       },
       {
+        mediaTopic: 'fluency',
         title: 'مسارات الطلاقة',
         description:
           'ممارسة مركّزة للمتعلمين المستعدين للانتقال من معرفة اللغة إلى استخدامها بصورة طبيعية.',
       },
       {
+        mediaTopic: 'communication',
         title: 'مهارات التواصل',
         description:
           'مهارات عملية في الحديث والعرض والتواصل المهني لمواقف شخصية وعملية حقيقية.',
@@ -479,21 +517,25 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
     visualWords: ['قُد', 'ابتكر', 'تقدّم'],
     programs: [
       {
+        mediaTopic: 'leadership',
         title: 'القيادة',
         description:
           'طوّر الوعي بالذات واتخاذ القرار والتواصل الضروري لقيادة الأشخاص بصورة جيدة.',
       },
       {
+        mediaTopic: 'professional-communication',
         title: 'التواصل المهني',
         description:
           'عزّز العروض والتعاون والتغذية الراجعة والتواصل الواثق داخل بيئة العمل.',
       },
       {
+        mediaTopic: 'digital-skills',
         title: 'الإنتاجية والمهارات الرقمية',
         description:
           'ابنِ أنظمة عملية وقدرات حديثة لعمل مركّز وفعّال وقابل للتكيف.',
       },
       {
+        mediaTopic: 'corporate-workshop',
         title: 'ورشات المؤسسات',
         description:
           'تجارب تعلم مصممة حسب احتياجات الفريق وسياق المؤسسة والنتائج المطلوبة.',

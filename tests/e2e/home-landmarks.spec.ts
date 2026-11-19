@@ -7,24 +7,22 @@ test('homepage sections, pathway navigation and school articles have accessible 
 
   await expect(page.locator('#schools')).toHaveAttribute(
     'aria-labelledby',
-    'home-schools-title',
+    'schools-title',
   );
   await expect(page.locator('#approach')).toHaveAttribute(
     'aria-labelledby',
-    'home-approach-title',
+    'journey-title',
   );
-  await expect(page.locator('#about')).toHaveAttribute(
+  await expect(page.locator('#spirit')).toHaveAttribute(
     'aria-labelledby',
-    'home-about-title',
+    'spirit-title',
   );
   await expect(page.locator('#contact')).toHaveAttribute(
     'aria-labelledby',
-    'home-contact-title',
+    'closing-title',
   );
 
-  const pathwayHeading = page.locator('#pathway-title');
-  const pathwayName = ((await pathwayHeading.textContent()) ?? '').trim();
-  expect(pathwayName).not.toBe('');
+  const pathwayName = 'Three schools. One academy.';
   const pathwayNavigation = page.getByRole('navigation', {
     name: pathwayName,
     exact: true,
@@ -35,7 +33,7 @@ test('homepage sections, pathway navigation and school articles have accessible 
   await expect(pathwayLinks).toHaveCount(3);
 
   const expectedPathways = [
-    '/en/consultations',
+    '/en/schools/psychology',
     '/en/schools/languages',
     '/en/schools/training',
   ] as const;
