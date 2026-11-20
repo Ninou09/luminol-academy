@@ -11,6 +11,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.10.0",
     "@luminol/auth": "workspace:*",
     "@luminol/config": "workspace:*",
     "@luminol/database": "workspace:*",

@@ -39,7 +39,7 @@ import {
   serializeJsonLd,
 } from '../../lib/structured-data';
 import styles from './page.module.css';
-import { peoplePhotos } from '../../lib/people-photos';
+import { extraPhotos, peoplePhotos } from '../../lib/people-photos';
 
 type ProgrammesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -198,9 +198,9 @@ export default async function ProgrammesPage({
             locale={locale}
             priority
             photos={[
+              extraPhotos.programSearch,
               peoplePhotos.programCatalog,
               peoplePhotos.designBookshelf,
-              peoplePhotos.academyActWorkshop,
             ]}
           />
         </section>

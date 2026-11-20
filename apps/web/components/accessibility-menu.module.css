@@ -1,0 +1,71 @@
+.wrap {
+  position: relative;
+}
+.button {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 50%;
+  background: rgb(4 15 27 / 0.7);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+.button:hover {
+  background: rgb(139 222 239 / 0.15);
+}
+.button:focus-visible {
+  outline: 3px solid #8bdeef;
+  outline-offset: 3px;
+}
+.panel {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: calc(100% + 0.75rem);
+  display: grid;
+  gap: 0.6rem;
+  width: 15rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 1.1rem;
+  background: rgb(4 15 27 / 0.95);
+  box-shadow: 0 1.5rem 3rem -1rem rgb(0 0 0 / 0.7);
+  color: #fff;
+}
+.panel p {
+  margin: 0 0 0.2rem;
+  color: #f0cf8e;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.panel label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.panel input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: #f3d48f;
+}
+.close {
+  justify-self: start;
+  margin-top: 0.2rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #8bdeef;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}

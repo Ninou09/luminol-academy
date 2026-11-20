@@ -8,7 +8,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.sanity.io https://*.api.sanity.io https://vercel.live wss://*.clerk.com",
+  "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.sanity.io https://*.api.sanity.io https://vercel.live wss://*.clerk.com https://clerk-telemetry.com",
   'frame-src https://*.clerk.accounts.dev https://*.clerk.com https://vercel.live https://challenges.cloudflare.com',
   "worker-src 'self' blob:",
   'upgrade-insecure-requests',

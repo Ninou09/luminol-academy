@@ -194,7 +194,8 @@
 /* Team */
 .teamGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* Cards stay readable: as many 15rem columns as fit (4 on wide screens). */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
   gap: 1rem;
   margin: 0;
   padding: 0;
@@ -261,4 +262,52 @@
     grid-template-columns: 1fr;
     gap: 0.35rem;
   }
+}
+
+/* A cover photo turns the first card into a feature ticket. */
+.card[data-cover] {
+  grid-column: span 2;
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 0.9fr);
+}
+.cover {
+  position: relative;
+  grid-column: 3;
+  grid-row: 1;
+  min-height: 12rem;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+.cover img {
+  object-fit: cover;
+}
+.calendar {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  width: fit-content;
+  color: #8bdeef;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.calendar:hover {
+  color: #f3d48f;
+}
+@media (max-width: 900px) {
+  .card[data-cover] {
+    grid-column: auto;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .cover {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    min-height: 10rem;
+  }
+}
+
+/* Past events: the "details" / "recording" links are easy to tap. */
+.past a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
 }

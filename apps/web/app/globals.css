@@ -639,6 +639,14 @@ body {
     100% 100%;
 }
 
+/* Calm mode: a still, softly dimmed olive-tree landscape near Blida. */
+.inner-universe[data-calm] {
+  background:
+    linear-gradient(180deg, rgb(4 15 27 / 0.8), rgb(4 15 27 / 0.94)),
+    url('/media/people/olive-tree-landscape.webp') center / cover no-repeat,
+    #081d33;
+}
+
 .inner-universe canvas {
   position: absolute;
   inset: 0;
@@ -1042,4 +1050,32 @@ body:not(:has(main[data-cosmos])) .inner-universe canvas[data-live] {
   color: var(--color-brand-cyan-light, #8bdeef);
   font-weight: 700;
   text-underline-offset: 0.2em;
+}
+
+/* Reading comfort settings (see AccessibilityMenu). */
+html[data-text='large'] {
+  font-size: 112.5%;
+}
+html[data-contrast='high'] body {
+  --color-brand-muted: #e6f1f6;
+  --color-brand-ink-soft: #ffffff;
+}
+html[data-contrast='high'] main :is(p, li, dd, span, small, label) {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+html[data-contrast='high'] main :is(a, button):focus-visible {
+  outline: 3px solid #ffd56b !important;
+  outline-offset: 3px;
+}
+html[data-contrast='high'] main :is(section, article, li, div)[class] {
+  backdrop-filter: none !important;
+}
+html[data-contrast='high'] .inner-universe {
+  opacity: 0.35;
+}
+
+/* Message fields are never pill-shaped, whatever the control radius token. */
+main#main-content .form-grid textarea {
+  border-radius: 1rem;
 }

@@ -1596,3 +1596,10 @@
   color: #061321 !important;
   font-weight: 800;
 }
+
+/* Media credit links: small text, but a 24px touch target. */
+.mediaCredits a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.5rem;
+}

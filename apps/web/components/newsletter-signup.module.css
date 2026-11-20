@@ -130,3 +130,23 @@
   }
 }
 .band p { text-transform: none; letter-spacing: 0; }
+
+.band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.band::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(100deg, rgb(4 15 27 / 0.94) 35%, rgb(4 15 27 / 0.78) 70%, rgb(4 15 27 / 0.6)),
+    url('/media/people/newsletter-background.webp') center / cover no-repeat;
+}
+.band:dir(rtl)::before {
+  background:
+    linear-gradient(260deg, rgb(4 15 27 / 0.94) 35%, rgb(4 15 27 / 0.78) 70%, rgb(4 15 27 / 0.6)),
+    url('/media/people/newsletter-background.webp') center / cover no-repeat;
+}

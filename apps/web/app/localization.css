@@ -146,3 +146,14 @@ html[dir='rtl'] .form-grid label > span {
     white-space: nowrap;
   }
 }
+
+/* Phones: language buttons large enough to tap (at least 32px tall). */
+@media (max-width: 38rem) {
+  .locale-switcher a {
+    display: inline-grid;
+    place-items: center;
+    min-width: 2rem;
+    min-height: 2rem;
+    font-size: 0.62rem;
+  }
+}

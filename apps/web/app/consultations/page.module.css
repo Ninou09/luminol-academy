@@ -568,3 +568,12 @@
     inset-block-end: 0.75rem;
   }
 }
+
+/* Phones: one layer of padding instead of three, so the form has room. */
+@media (max-width: 640px) {
+  .enquiry {
+    gap: 1.75rem;
+    padding: 1.25rem 1rem;
+    border-radius: 1.4rem;
+  }
+}

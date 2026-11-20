@@ -1,11 +1,19 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import { getLocaleDirection } from '@luminol/localization';
+import { arSA, frFR } from '@clerk/localizations';
+import { getLocaleDirection, type Locale } from '@luminol/localization';
 import type { Metadata } from 'next';
 
 import { getPortalCopy } from '../lib/portal-localization';
 import { getPortalRequestLocale } from '../lib/request-locale';
 import './globals.css';
 import './portal-localization.css';
+
+/** Clerk's own sign-in texts follow the portal language (English is Clerk's default). */
+function clerkLocalization(locale: Locale) {
+  if (locale === 'ar') return { localization: arSA };
+  if (locale === 'fr') return { localization: frFR };
+  return {};
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getPortalRequestLocale();
@@ -28,7 +36,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={getLocaleDirection(locale)}>
       <body>
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider {...clerkLocalization(locale)}>{children}</ClerkProvider>
       </body>
     </html>
   );

@@ -49,3 +49,15 @@ dialog{--ink:#17363d;--muted:#607276;--line:#cad6d0;--soft:#eaf0e9;--teal:#176c6
 @media print{body{background:#fff;color:#17363d}}
 .card .preview,.paper{--ink:#17363d;--muted:#607276;--line:#cad6d0;--soft:#eaf0e9;--teal:#176c69;--gold:#b18a4c;--navy:#102b35;color:#17363d}
 .controls{background:rgba(7,26,43,.72)!important;border:1px solid var(--line)!important;border-radius:20px;box-shadow:none!important}.controls select option{color:#061321}
+
+/* Touch: every library button is at least 36px tall on phones. */
+@media (max-width: 640px) {
+  button, .btn, a.btn, [role='button'] {
+    min-height: 2.25rem;
+  }
+}
+footer a[href='#top'] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+}

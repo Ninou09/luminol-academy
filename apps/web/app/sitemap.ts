@@ -21,6 +21,7 @@ const routes = [
   '/privacy',
   '/schools',
   '/approach',
+  '/journal',
 ] as const;
 
 function buildAbsoluteLanguageAlternates(origin: string, pathname: string) {

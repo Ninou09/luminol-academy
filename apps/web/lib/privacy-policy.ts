@@ -69,6 +69,14 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         ],
       },
       {
+        id: 'assistant',
+        title: 'Luminol Assistant',
+        body: [
+          'The website assistant is an automated AI helper. When you chat with it, your messages are sent to our AI provider (Anthropic) only to generate the replies. Luminol does not store these conversations.',
+          'The assistant is not a therapist or a crisis service. Please do not share sensitive medical, financial or identity information with it.',
+        ],
+      },
+      {
         id: 'newsletter',
         title: 'Newsletter',
         body: [
@@ -147,6 +155,14 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         ],
       },
       {
+        id: 'assistant',
+        title: 'Assistant Luminol',
+        body: [
+          'L’assistant du site est une aide automatique basée sur l’IA. Lorsque vous l’utilisez, vos messages sont envoyés à notre fournisseur d’IA (Anthropic) uniquement pour générer les réponses. Luminol ne conserve pas ces conversations.',
+          'L’assistant n’est ni un thérapeute ni un service d’urgence. Ne lui communiquez pas d’informations médicales, financières ou d’identité sensibles.',
+        ],
+      },
+      {
         id: 'newsletter',
         title: 'Newsletter',
         body: [
@@ -222,6 +238,14 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         body: [
           'يستخدم الموقع ملف تعريف ارتباط وظيفيًا واحدًا لتذكّر لغتك (العربية أو الفرنسية أو الإنجليزية)، ولا يستخدم ملفات إعلانية أو تتبعية.',
           'تُقاس الزيارات بأداة تحترم الخصوصية تعمل دون ملفات تعريف الارتباط ولا تقدّم للفريق إلا أرقامًا إجمالية، مثل عدد زيارات صفحة ما.',
+        ],
+      },
+      {
+        id: 'assistant',
+        title: 'مساعد لومينول',
+        body: [
+          'مساعد الموقع أداة آلية تعمل بالذكاء الاصطناعي. عند استخدامه تُرسل رسائلك إلى مزوّد الذكاء الاصطناعي (Anthropic) فقط لإنشاء الردود، ولا تحتفظ لومينول بهذه المحادثات.',
+          'المساعد ليس معالجًا ولا خدمة طوارئ، يُرجى عدم مشاركة معلومات طبية أو مالية أو تعريفية حساسة معه.',
         ],
       },
       {

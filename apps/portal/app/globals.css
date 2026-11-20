@@ -748,3 +748,141 @@ footer [lang='ar'] {
 html[dir='rtl'] body {
   font-family: var(--font-arabic);
 }
+
+/* Sign-in / sign-up: the same night-blue, gold and cyan world as the website. */
+main.auth-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  min-height: 100svh;
+  background:
+    radial-gradient(60% 50% at 85% 10%, rgb(139 222 239 / 0.14), transparent 70%),
+    radial-gradient(50% 40% at 10% 90%, rgb(243 212 143 / 0.12), transparent 70%),
+    #040f1b;
+  color: #f4f8fb;
+}
+.auth-story {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  overflow: hidden;
+  isolation: isolate;
+}
+.auth-story::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: url('/media/portal-welcome.webp') 70% center / cover no-repeat;
+  content: '';
+}
+.auth-story::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* The photo is already a night scene: shade only behind the words. */
+  background: linear-gradient(90deg, rgb(4 15 27 / 0.72), rgb(4 15 27 / 0.25) 70%, transparent);
+  content: '';
+}
+.auth-brand {
+  width: fit-content;
+  color: #f4f8fb;
+  text-decoration: none;
+}
+.auth-story-body {
+  max-width: 34rem;
+}
+.auth-eyebrow {
+  margin: 0;
+  color: #f0cf8e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.auth-story h1 {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(2.6rem, 5.5vw, 4.6rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+.auth-lede {
+  margin: 1.2rem 0 0;
+  color: rgb(212 229 238 / 0.88);
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  line-height: 1.75;
+}
+.auth-points {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.auth-points li {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  color: #e6f3f8;
+  font-weight: 600;
+}
+.auth-points li::before {
+  width: 0.55rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f3d48f, #8bdeef);
+  box-shadow: 0 0 0.8rem rgb(139 222 239 / 0.6);
+  content: '';
+}
+.auth-back {
+  width: fit-content;
+  color: #8bdeef;
+  font-weight: 700;
+  text-decoration: none;
+}
+.auth-back:hover {
+  color: #f3d48f;
+}
+.auth-form {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 3vw, 2rem);
+}
+.auth-clerk-root {
+  width: min(100%, 26rem);
+}
+.auth-clerk-card {
+  width: 100%;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  box-shadow:
+    0 2rem 4rem -1.5rem rgb(0 0 0 / 0.8),
+    0 0 3rem rgb(139 222 239 / 0.08);
+}
+.auth-help {
+  max-width: 26rem;
+  margin: 0;
+  color: rgb(212 229 238 / 0.7);
+  font-size: 0.82rem;
+  text-align: center;
+}
+@media (max-width: 860px) {
+  main.auth-page {
+    grid-template-columns: 1fr;
+  }
+  .auth-story {
+    min-height: 0;
+    padding-block-end: 1.5rem;
+  }
+  .auth-points,
+  .auth-back {
+    display: none;
+  }
+  .auth-story h1 {
+    font-size: clamp(2.2rem, 9vw, 3rem);
+  }
+}

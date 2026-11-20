@@ -98,6 +98,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const a11yLabels = {
+  en: { button: 'Reading comfort', title: 'Reading comfort', largeText: 'Larger text', highContrast: 'High contrast', close: 'Close' },
+  fr: { button: 'Confort de lecture', title: 'Confort de lecture', largeText: 'Texte plus grand', highContrast: 'Contraste élevé', close: 'Fermer' },
+  ar: { button: 'راحة القراءة', title: 'راحة القراءة', largeText: 'نص أكبر', highContrast: 'تباين عالٍ', close: 'إغلاق' },
+} as const;
+
 const calmLabels = {
   en: { on: 'Calm mode: turn off 3D effects', off: 'Turn 3D effects back on' },
   fr: { on: 'Mode calme : couper les effets 3D', off: 'Réactiver les effets 3D' },
@@ -137,9 +143,13 @@ export default async function RootLayout({
           whatsappLabel={channelCopy[locale].whatsappAria}
           topLabel={backToTopLabel[locale]}
           calmLabels={calmLabels[locale]}
+          a11yLabels={a11yLabels[locale]}
+          locale={locale}
+          assistantEnabled={process.env.LUMINOL_ASSISTANT_DISABLED !== '1'}
         />
-        {process.env.VERCEL === '1' &&
-        process.env.NEXT_PUBLIC_DISABLE_ANALYTICS !== '1' ? (
+        {/* Load only once Web Analytics is enabled in the Vercel project;
+            otherwise the script path does not exist and returns 404. */}
+        {process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === '1' ? (
           <>
             {/* Vercel Web Analytics: cookie-free, aggregated page views. */}
             <script

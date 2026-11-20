@@ -17,6 +17,7 @@ import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { CurrentPageLink } from './current-page-link';
 import { LanguageSwitcher } from './language-switcher';
+import { getPortalHref, portalLabel } from '../lib/portal-link';
 import { MobileMenu } from './mobile-menu';
 import { NewsletterSignup } from './newsletter-signup';
 import { AcademyLogo as Wordmark } from './academy-logo';
@@ -39,6 +40,12 @@ const menuLabels = {
   fr: { open: 'Menu', close: 'Fermer le menu', home: 'Accueil' },
   en: { open: 'Menu', close: 'Close menu', home: 'Home' },
 } as const satisfies Record<Locale, { open: string; close: string; home: string }>;
+
+const journalLabel = {
+  ar: 'المجلة',
+  fr: 'Journal',
+  en: 'Journal',
+} as const satisfies Record<Locale, string>;
 
 const libraryLabel = {
   ar: 'المكتبة النفسية',
@@ -117,6 +124,7 @@ export async function SiteHeader() {
               hours={`${openingHours.title[locale]} · ${openingHours.label[locale]}`}
               contacts={[
                 { href: localizeHref(locale, '/contact'), label: copy.site.nav.contact },
+                { href: getPortalHref(locale), label: portalLabel[locale] },
                 {
                   href: `tel:${officialContacts.phone}`,
                   label: officialContacts.phoneDisplay,
@@ -134,8 +142,21 @@ export async function SiteHeader() {
                 { href: localizeHref(locale, '/consultations'), label: consultationsLabel[locale], match: '/consultations' },
                 { href: localizeHref(locale, '/approach'), label: copy.site.nav.approach, match: '/approach' },
                 { href: localizeHref(locale, '/about'), label: copy.site.nav.about, match: '/about' },
+                { href: localizeHref(locale, '/journal'), label: journalLabel[locale], match: '/journal' },
               ]}
             />
+            <a
+              className={styles.accountLink}
+              href={getPortalHref(locale)}
+              aria-label={portalLabel[locale]}
+              title={portalLabel[locale]}
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <circle cx="12" cy="8.5" r="3.6" />
+                <path d="M4.8 20c1.2-3.6 4-5.4 7.2-5.4s6 1.8 7.2 5.4" />
+              </svg>
+              <span className={styles.accountLabel}>{portalLabel[locale]}</span>
+            </a>
             <CurrentPageLink
               className={styles.contactLink}
               href={localizeHref(locale, '/contact')}
@@ -215,7 +236,9 @@ export async function SiteFooter() {
           >
             {copy.site.nav.contact}
           </CurrentPageLink>
+          <Link href={localizeHref(locale, '/journal')}>{journalLabel[locale]}</Link>
           <Link href="/psy-library">{libraryLabel[locale]}</Link>
+          <a href={getPortalHref(locale)}>{portalLabel[locale]}</a>
         </nav>
         <div className={styles.footerHours}>
           <span>{openingHours.title[locale]}</span>

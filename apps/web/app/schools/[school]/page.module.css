@@ -739,3 +739,11 @@
   margin-top: 2rem;
   aspect-ratio: 4 / 3.2;
 }
+
+/* Comfortable touch targets for the breadcrumb and programme card links. */
+.breadcrumb a,
+.programCard > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+}

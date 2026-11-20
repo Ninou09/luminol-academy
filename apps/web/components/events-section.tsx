@@ -1,4 +1,5 @@
 import { localizeHref, type Locale } from '@luminol/localization';
+import Image from 'next/image';
 
 import { channelCopy, getWhatsAppHref } from '../lib/contact-channels';
 import {
@@ -78,7 +79,17 @@ export function EventsSection({ locale }: { locale: Locale }) {
                       ? copy.inProgress
                       : null;
               return (
-                <li key={event.id} className={styles.card} data-kind={event.kind}>
+                <li
+                  key={event.id}
+                  className={styles.card}
+                  data-kind={event.kind}
+                  data-cover={event.cover ? true : undefined}
+                >
+                  {event.cover ? (
+                    <span className={styles.cover} aria-hidden="true">
+                      <Image src={event.cover} alt="" fill sizes="(max-width: 700px) 100vw, 33vw" />
+                    </span>
+                  ) : null}
                   <div className={styles.dateBadge} aria-hidden="true">
                     {second && event.status === 'inProgress' ? (
                       <>
@@ -134,6 +145,15 @@ export function EventsSection({ locale }: { locale: Locale }) {
                             ? copy.register
                             : copy.notify}{' '}
                         <span aria-hidden="true">↗</span>
+                      </a>
+                    ) : null}
+                    {event.date && event.status !== 'waitlist' ? (
+                      <a
+                        className={styles.calendar}
+                        href={`/api/events/${event.id}/calendar?lang=${locale}`}
+                        download
+                      >
+                        + {copy.calendar}
                       </a>
                     ) : null}
                   </div>

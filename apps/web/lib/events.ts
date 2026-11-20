@@ -18,6 +18,8 @@ export type LuminolEvent = {
   pageHref?: string;
   recording?: boolean;
   status?: 'waitlist' | 'dateTbc' | 'inProgress';
+  /** Optional cover photo in /media/people. */
+  cover?: string;
 };
 
 /**
@@ -42,6 +44,7 @@ export const luminolEvents: readonly LuminolEvent[] = [
     },
     presenters: ['fettouma'],
     registerHref: 'https://chat.whatsapp.com/D6PadKZe73qDXCr3ZRPzHE',
+    cover: '/media/people/adhd-event.webp',
   },
   {
     id: 'clinical-interview-2026-11',
@@ -282,6 +285,7 @@ export const eventsCopy: Record<
     inProgress: string;
     session2: string;
     notify: string;
+    calendar: string;
     with: string;
     teamEyebrow: string;
     teamTitle: string;
@@ -307,6 +311,7 @@ export const eventsCopy: Record<
     inProgress: 'In progress',
     session2: 'Session 2',
     notify: 'Get notified',
+    calendar: 'Add to calendar',
     with: 'With',
     teamEyebrow: 'The people',
     teamTitle: 'Who guides Luminol Psychology.',
@@ -331,6 +336,7 @@ export const eventsCopy: Record<
     inProgress: 'En cours',
     session2: 'Séance 2',
     notify: 'Être informé',
+    calendar: 'Ajouter au calendrier',
     with: 'Avec',
     teamEyebrow: 'Les personnes',
     teamTitle: 'Qui guide Luminol Psychologie.',
@@ -355,6 +361,7 @@ export const eventsCopy: Record<
     inProgress: 'جارٍ الآن',
     session2: 'الجلسة 2',
     notify: 'أعلمني',
+    calendar: 'أضف إلى التقويم',
     with: 'مع',
     teamEyebrow: 'الفريق',
     teamTitle: 'من يقود لومينول لعلم النفس.',

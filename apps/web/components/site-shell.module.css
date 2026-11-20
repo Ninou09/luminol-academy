@@ -33,8 +33,9 @@
 .headerInner {
   min-height: 5.5rem;
   display: grid;
-  grid-template-columns: minmax(10rem, 1fr) auto minmax(10rem, 1fr);
-  gap: 1.5rem;
+  /* Brand and actions take what they need; the menu is centred in the rest. */
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: clamp(1rem, 1.6vw, 1.5rem);
   align-items: center;
   width: min(calc(100% - (2 * var(--luminol-page-gutter))), 92rem);
   margin-inline: auto;
@@ -47,9 +48,10 @@
 }
 .nav {
   display: flex;
-  gap: clamp(1rem, 2.6vw, 2.25rem);
+  gap: clamp(0.9rem, 1.7vw, 2.25rem);
   align-items: center;
   justify-content: center;
+  min-width: 0;
 }
 .nav a {
   position: relative;
@@ -186,7 +188,7 @@
   text-transform: uppercase;
 }
 /* Collapse to the scrollable nav row before labels can wrap onto two lines. */
-@media (max-width: 1180px) {
+@media (max-width: 1365px) {
   .actions {
     grid-column: 2;
     grid-row: 1;
@@ -437,7 +439,7 @@
   background: linear-gradient(135deg, #8bdeef, #ffffff 45%, #f3d48f);
   color: var(--color-brand-night, #04101c);
 }
-@media (max-width: 1180px) {
+@media (max-width: 1365px) {
   .headerInner {
     border-radius: 1.5rem;
     padding: 0.6rem 0.75rem 0.4rem;
@@ -663,4 +665,68 @@
 }
 :global(html[data-menu-open]) .header {
   translate: 0 0 !important;
+}
+
+/* Learner portal entry: a quiet icon, with its label on wide screens. */
+.accountLink {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.65rem;
+  min-height: 2.65rem;
+  padding-inline: 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand-ink) 35%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--color-brand-ink);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+}
+.accountLink:hover {
+  border-color: var(--color-brand-gold-strong);
+  box-shadow: var(--luminol-glow);
+}
+.accountLink:focus-visible {
+  outline: 2px solid var(--color-brand-gold-strong);
+  outline-offset: 4px;
+}
+.accountLabel {
+  display: none;
+}
+@media (min-width: 1600px) {
+  .accountLabel {
+    display: inline;
+    white-space: nowrap;
+  }
+}
+@media (max-width: 640px) {
+  .accountLink {
+    display: none;
+  }
+}
+
+/* Very narrow phones (≤ 380px): keep the header on one row. Contact stays in
+   the menu and the dock, so the round arrow button can step aside. */
+@media (max-width: 380px) {
+  .actions {
+    flex-wrap: nowrap;
+    gap: 0.3rem;
+  }
+  .contactLink {
+    display: none;
+  }
+}
+
+/* Footer contacts and logo: comfortable touch targets (≥ 32px). */
+.footerContacts a,
+.footerBrand > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
 }

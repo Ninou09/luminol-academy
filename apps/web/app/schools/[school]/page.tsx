@@ -45,7 +45,9 @@ import { GlassIcon, type GlassIconName } from '../../../components/glass-icon';
 import Image from 'next/image';
 import { PhotoCard } from '../../../components/live-photo';
 import {
+  extraPhotos,
   momentPhotos,
+  type PeoplePhoto,
   peoplePhotos,
   programmePhotos,
 } from '../../../lib/people-photos';
@@ -101,9 +103,15 @@ const journeyIcons: GlassIconName[] = [
   'journey-build',
 ];
 
+const audiencePhotos: Record<string, PeoplePhoto | undefined> = {
+  psychology: momentPhotos.fatherTeenWalk,
+  languages: extraPhotos.languageOnline,
+  training: extraPhotos.professionalTraining,
+};
+
 const promisePhotos = {
   psychology: momentPhotos.mediterraneanCalm,
-  languages: momentPhotos.onlineCourseFlatlay,
+  languages: extraPhotos.languagesCafe,
   training: momentPhotos.publicSpeakingStage,
 } as const;
 
@@ -380,9 +388,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <div data-reveal>
             <p className={styles.eyebrow}>{copy.audienceEyebrow}</p>
             <h2 id="school-audience-title">{copy.audienceTitle}</h2>
-            {school.slug === 'psychology' ? (
+            {audiencePhotos[school.slug] ? (
               <PhotoCard
-                photo={momentPhotos.fatherTeenWalk}
+                photo={audiencePhotos[school.slug]!}
                 locale={locale}
                 className={styles.audiencePhoto}
                 sizes="(max-width: 900px) 100vw, 36vw"

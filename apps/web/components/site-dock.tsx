@@ -4,7 +4,17 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { setCalmMode, useCalmMode } from '../lib/calm-mode';
+import type { Locale } from '@luminol/localization';
+
+import { AccessibilityMenu } from './accessibility-menu';
+import { AssistantChat } from './assistant-chat';
 import styles from './site-dock.module.css';
+
+const toolsLabel = {
+  en: 'Display settings',
+  fr: 'Réglages d’affichage',
+  ar: 'إعدادات العرض',
+} as const satisfies Record<Locale, string>;
 
 /**
  * Floating dock: a WhatsApp shortcut (only when Luminol has configured a
@@ -16,16 +26,30 @@ export function SiteDock({
   whatsappLabel,
   topLabel,
   calmLabels,
+  a11yLabels,
+  locale,
+  assistantEnabled,
 }: {
+  locale: Locale;
+  assistantEnabled: boolean;
   whatsappHref: string | null;
   whatsappLabel: string;
   topLabel: string;
   calmLabels: { on: string; off: string };
+  a11yLabels: {
+    button: string;
+    title: string;
+    largeText: string;
+    highContrast: string;
+    close: string;
+  };
 }) {
   const calm = useCalmMode();
   const pathname = usePathname();
   const ringRef = useRef<SVGCircleElement>(null);
   const [visible, setVisible] = useState(false);
+  // Phones: display settings (text size, contrast, calm mode) fold behind one button.
+  const [toolsOpen, setToolsOpen] = useState(false);
   const firstRender = useRef(true);
 
   useEffect(() => {
@@ -82,6 +106,34 @@ export function SiteDock({
           </svg>
         </a>
       ) : null}
+      {assistantEnabled ? (
+        <AssistantChat locale={locale} whatsappHref={whatsappHref} />
+      ) : null}
+      <button
+        type="button"
+        className={styles.toolsToggle}
+        aria-expanded={toolsOpen}
+        aria-controls="dock-tools"
+        aria-label={toolsLabel[locale]}
+        title={toolsLabel[locale]}
+        onClick={() => setToolsOpen((open) => !open)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            d="M4 7h10M18 7h2M4 17h4M12 17h8M16 4.5v5M10 14.5v5"
+          />
+        </svg>
+      </button>
+      <div
+        id="dock-tools"
+        className={styles.tools}
+        data-open={toolsOpen || undefined}
+      >
+      <AccessibilityMenu labels={a11yLabels} />
       <button
         type="button"
         className={styles.calm}
@@ -104,6 +156,7 @@ export function SiteDock({
           )}
         </svg>
       </button>
+      </div>
       <button
         type="button"
         className={styles.top}

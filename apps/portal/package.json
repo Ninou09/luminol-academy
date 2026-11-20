@@ -11,6 +11,7 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@clerk/localizations": "^3.37.11",
     "@clerk/nextjs": "^6.28.1",
     "@luminol/analytics": "workspace:*",
     "@luminol/auth": "workspace:*",

@@ -1,0 +1,248 @@
+.root {
+  position: relative;
+}
+.launcher {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid rgb(243 212 143 / 0.45);
+  border-radius: 50%;
+  background: #040f1b;
+  box-shadow:
+    0 1rem 2rem -0.5rem rgb(0 0 0 / 0.6),
+    0 0 1.5rem rgb(139 222 239 / 0.35);
+  cursor: pointer;
+  overflow: visible;
+}
+.launcher img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.launcher:focus-visible {
+  outline: 3px solid #f3d48f;
+  outline-offset: 3px;
+}
+.pulse {
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgb(139 222 239 / 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pulse {
+    animation: assistant-pulse 2.8s ease-out infinite;
+  }
+}
+@keyframes assistant-pulse {
+  to {
+    scale: 1.35;
+    opacity: 0;
+  }
+}
+.panel {
+  position: fixed;
+  z-index: 70;
+  inset-block-end: clamp(5.5rem, 12vh, 7rem);
+  inset-inline-end: clamp(1rem, 3vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  width: min(24rem, calc(100vw - 2rem));
+  height: min(36rem, calc(100svh - 9rem));
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(80% 50% at 100% 0%, rgb(139 222 239 / 0.14), transparent 60%),
+    rgb(4 15 27 / 0.97);
+  box-shadow: 0 2rem 4rem -1rem rgb(0 0 0 / 0.8);
+  color: #f4f8fb;
+  backdrop-filter: blur(18px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel {
+    animation: panel-in 400ms var(--luminol-ease-out, ease) both;
+  }
+}
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.97);
+  }
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+}
+.head img {
+  border-radius: 50%;
+}
+.head div {
+  display: grid;
+  flex: 1;
+}
+.head strong {
+  font-size: 0.98rem;
+}
+.head small {
+  color: rgb(212 229 238 / 0.65);
+  font-size: 0.72rem;
+}
+.x {
+  width: 2rem;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.consent {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding: 1.2rem;
+  overflow-y: auto;
+}
+.consentArt {
+  justify-self: center;
+  width: clamp(6.5rem, 30vw, 9rem);
+  height: auto;
+  border-radius: 1.5rem;
+  mix-blend-mode: screen;
+}
+.consent h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.consent p {
+  margin: 0;
+  color: rgb(212 229 238 / 0.85);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+.primary {
+  justify-self: start;
+  min-height: 2.6rem;
+  padding: 0 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f3d48f, #ffffff 55%, #8bdeef);
+  color: #061321;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.bubble {
+  max-width: 85%;
+  margin: 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.bot {
+  align-self: flex-start;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(255 255 255 / 0.06);
+  border-end-start-radius: 0.3rem;
+}
+.me {
+  align-self: flex-end;
+  background: linear-gradient(135deg, rgb(243 212 143 / 0.9), rgb(139 222 239 / 0.9));
+  color: #061321;
+  border-end-end-radius: 0.3rem;
+}
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+.suggestions button {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid rgb(139 222 239 / 0.35);
+  border-radius: 999px;
+  background: transparent;
+  color: #bfefff;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.suggestions button:hover {
+  border-color: #f3d48f;
+  color: #f3d48f;
+}
+.form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  padding: 0.75rem;
+  border-top: 1px solid rgb(255 255 255 / 0.08);
+}
+.form textarea {
+  flex: 1;
+  max-height: 6rem;
+  min-height: 2.6rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.04);
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  resize: none;
+}
+.form textarea:focus {
+  border-color: #8bdeef;
+  outline: none;
+}
+.human {
+  padding: 0 0.9rem 0.8rem;
+  color: #6ee7a8;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+/* Open beside the dock so the launcher and other buttons stay visible. */
+.panel {
+  inset-block-end: clamp(1rem, 3vw, 1.75rem);
+  inset-inline-end: calc(clamp(1rem, 3vw, 1.75rem) + 4.75rem);
+  height: min(36rem, calc(100svh - 7rem));
+}
+@media (max-width: 640px) {
+  .launcher {
+    width: 2.85rem;
+  }
+  .panel {
+    inset-inline: 0.5rem;
+    inset-block-end: 0.5rem;
+    width: auto;
+    height: min(78svh, 40rem);
+  }
+}

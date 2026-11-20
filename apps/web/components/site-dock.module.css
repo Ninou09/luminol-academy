@@ -134,3 +134,63 @@
   width: 1.15rem;
   height: 1.15rem;
 }
+
+/* Display settings group: always open on larger screens. */
+.tools {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+}
+.tools > * {
+  pointer-events: auto;
+}
+.toolsToggle {
+  display: none;
+}
+
+/* Phones: a shorter dock so it covers less of the page. */
+@media (max-width: 640px) {
+  .dock {
+    inset-block-end: 0.85rem;
+    inset-inline-end: 0.75rem;
+    gap: 0.5rem;
+  }
+  .whatsapp {
+    width: 2.85rem;
+  }
+  .whatsapp svg {
+    width: 1.45rem;
+    height: 1.45rem;
+  }
+  .toolsToggle {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    border-radius: 50%;
+    background: rgb(4 15 27 / 0.78);
+    color: #f4f8fb;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+  }
+  .toolsToggle[aria-expanded='true'] {
+    border-color: #f3d48f;
+    color: #f3d48f;
+  }
+  .toolsToggle svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+  .toolsToggle:focus-visible {
+    outline: 3px solid #8bdeef;
+    outline-offset: 3px;
+  }
+  .tools {
+    gap: 0.5rem;
+  }
+  .tools:not([data-open]) {
+    display: none;
+  }
+}

@@ -18,6 +18,7 @@ import type { Metadata } from 'next';
 import { EnquiryForm } from '../../components/enquiry-form';
 import Image from 'next/image';
 
+import { FirstConsultation } from '../../components/first-consultation';
 import { PhotoStack } from '../../components/photo-stack';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
@@ -364,6 +365,8 @@ export default async function ConsultationsPage() {
             </ButtonLink>
           </div>
         </section>
+
+        <FirstConsultation locale={locale} />
 
         <section
           id="consultation-enquiry"
