@@ -131,8 +131,25 @@ test('Arabic school primary CTA keeps readable foreground contrast', async ({
     };
   });
 
-  expect(colors.foreground).toBe('rgb(250, 250, 248)');
-  expect(colors.foreground).not.toBe(colors.background);
+  function relativeLuminance(color: string) {
+    const channels = /^rgb\((\d+), (\d+), (\d+)\)$/.exec(color);
+    if (!channels)
+      throw new Error(`Expected an opaque RGB color, got ${color}`);
+    const [red, green, blue] = channels.slice(1).map((channel) => {
+      const value = Number(channel) / 255;
+      return value <= 0.04045
+        ? value / 12.92
+        : ((value + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+  }
+
+  const foreground = relativeLuminance(colors.foreground);
+  const background = relativeLuminance(colors.background);
+  const contrast =
+    (Math.max(foreground, background) + 0.05) /
+    (Math.min(foreground, background) + 0.05);
+  expect(contrast).toBeGreaterThanOrEqual(4.5);
 });
 
 test('localized school pages publish matching breadcrumb structured data', async ({
