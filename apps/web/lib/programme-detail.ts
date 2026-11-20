@@ -89,12 +89,16 @@ export function isPublicProgrammeSlug(slug: string): boolean {
 
 export async function getPublicProgrammeBySlug(
   slug: string,
+  verifySubmission = false,
 ): Promise<PublicProgrammeDetail | null> {
   const normalizedSlug = slug.trim().toLowerCase();
   if (!isPublicProgrammeSlug(normalizedSlug)) return null;
 
   const config = getSanityConfig();
-  if (!config) return null;
+  if (!config) {
+    if (verifySubmission) throw new Error('CMS unavailable');
+    return null;
+  }
 
   const query = `*[
     _type == "programme" &&
@@ -149,20 +153,25 @@ export async function getPublicProgrammeBySlug(
   endpoint.searchParams.set('$slug', JSON.stringify(normalizedSlug));
 
   try {
-    const response = await fetch(endpoint, {
-      next: { revalidate: 300 },
-    });
-    if (!response.ok) return null;
+    const response = await fetch(
+      endpoint,
+      verifySubmission ? { cache: 'no-store' } : { next: { revalidate: 300 } },
+    );
+    if (!response.ok) throw new Error('CMS unavailable');
 
     const payload: unknown = await response.json();
     const envelope = z.object({ result: z.unknown() }).safeParse(payload);
-    if (!envelope.success || envelope.data.result === null) return null;
+    if (!envelope.success) throw new Error('Invalid CMS response');
+    if (envelope.data.result === null) return null;
 
     const programme = publicProgrammeDetailSchema.safeParse(
       envelope.data.result,
     );
-    return programme.success ? programme.data : null;
-  } catch {
+    if (!programme.success || programme.data.slug.current !== normalizedSlug)
+      throw new Error('Invalid programme');
+    return programme.data;
+  } catch (error) {
+    if (verifySubmission) throw error;
     return null;
   }
 }

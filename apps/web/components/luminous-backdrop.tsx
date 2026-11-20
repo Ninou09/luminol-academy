@@ -123,7 +123,7 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
     width: portrait.width,
     height: portrait.height,
     sizes: '100vw',
-    quality: 82,
+    quality: 75,
   });
   const { props: desktopProps } = getImageProps({
     src: desktop.src,
@@ -131,7 +131,7 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
     width: desktop.width,
     height: desktop.height,
     sizes: '100vw',
-    quality: 82,
+    quality: 75,
     loading: 'eager',
     fetchPriority: 'high',
   });

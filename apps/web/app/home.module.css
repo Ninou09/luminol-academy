@@ -1471,3 +1471,13 @@
     white-space: normal;
   }
 }
+
+.page[data-cosmos]
+  :is(
+    .approach,
+    section[aria-labelledby='events-title'],
+    section[aria-labelledby='home-schools-title']
+  ) {
+  background: color-mix(in srgb, var(--color-brand-night) 38%, #252526);
+  border-block-start: 1px solid var(--color-brand-line);
+}

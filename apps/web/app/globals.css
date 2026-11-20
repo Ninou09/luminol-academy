@@ -1098,3 +1098,20 @@ main#main-content .form-grid textarea {
   color: var(--color-brand-surface);
   font: 500 0.75rem/1.6 var(--font-sans);
 }
+
+.enquiry-form textarea {
+  field-sizing: content;
+  max-block-size: 14rem;
+}
+.enquiry-form :is(input, textarea, button, select, summary) {
+  scroll-margin-block: 6rem max(5rem, env(safe-area-inset-bottom));
+}
+@media (max-width: 760px) {
+  .enquiry-form .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .enquiry-form :is(select, button, summary, input:not([type='checkbox'])),
+  .enquiry-form .consent-field {
+    min-block-size: 44px;
+  }
+}

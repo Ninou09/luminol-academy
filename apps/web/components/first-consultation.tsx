@@ -24,7 +24,7 @@ const copy: Record<
     steps: [
       {
         title: 'You send a request',
-        body: 'Use the form below, WhatsApp or a call to reception. Share only what is needed to understand your request.',
+        body: 'Use the form, WhatsApp or a call to reception. Share only what is needed to understand your request.',
       },
       {
         title: 'The team confirms the details',
@@ -43,7 +43,7 @@ const copy: Record<
     steps: [
       {
         title: 'Vous envoyez une demande',
-        body: 'Via le formulaire ci-dessous, WhatsApp ou un appel à l’accueil. Partagez seulement ce qui est nécessaire.',
+        body: 'Via le formulaire, WhatsApp ou un appel à l’accueil. Partagez seulement ce qui est nécessaire.',
       },
       {
         title: 'L’équipe confirme les détails',
@@ -62,7 +62,7 @@ const copy: Record<
     steps: [
       {
         title: 'ترسل طلبك',
-        body: 'عبر الاستمارة أدناه أو واتساب أو مكالمة إلى الاستقبال. شارك فقط ما يلزم لفهم طلبك.',
+        body: 'عبر الاستمارة أو واتساب أو مكالمة إلى الاستقبال. شارك فقط ما يلزم لفهم طلبك.',
       },
       {
         title: 'يؤكد الفريق التفاصيل',

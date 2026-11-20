@@ -1,3 +1,4 @@
+import { getProgrammeEnquiryDefaults } from '../../../lib/programme-enquiry';
 import { db } from '@luminol/database';
 import { contactSchema } from '@luminol/validation';
 import { after } from 'next/server';
@@ -144,11 +145,21 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  const programme = result.data.programmeSlug
-    ? await getPublicProgrammeBySlug(result.data.programmeSlug).catch(
-        () => null,
-      )
-    : null;
+  let programme = null;
+  if (result.data.programmeSlug) {
+    try {
+      programme = await getPublicProgrammeBySlug(
+        result.data.programmeSlug,
+        true,
+      );
+    } catch {
+      return jsonResponse({ code: 'programme_unavailable' }, 503);
+    }
+    if (!programme) return jsonResponse({ code: 'programme_retired' }, 410);
+  }
+  const school = programme
+    ? getProgrammeEnquiryDefaults(result.data.locale, programme).school
+    : result.data.school;
 
   let enquiry: { id: string };
   try {
@@ -161,7 +172,7 @@ export async function POST(request: Request): Promise<Response> {
         preferredContact: result.data.preferredContact,
         deliveryPreference: result.data.deliveryPreference ?? null,
         timingPreference: result.data.timingPreference ?? null,
-        school: result.data.school,
+        school,
         programmeSlug: programme?.slug.current ?? null,
         programmeTitleSnapshot: programme?.title ?? null,
         landingPath: result.data.landingPath ?? null,
@@ -189,7 +200,7 @@ export async function POST(request: Request): Promise<Response> {
         email: result.data.email,
         phone: result.data.phone || null,
         preferredContact: result.data.preferredContact,
-        school: result.data.school,
+        school,
         programmeTitleSnapshot: programme?.title ?? null,
         locale: result.data.locale,
         message: result.data.message,
@@ -200,7 +211,7 @@ export async function POST(request: Request): Promise<Response> {
         preferredContact: result.data.preferredContact,
         phone: result.data.phone || null,
         email: result.data.email,
-        school: result.data.school,
+        school,
         programmeTitle: programme?.title ?? null,
         locale: result.data.locale,
       });

@@ -9,10 +9,7 @@ import {
   getSameOriginReferrerPath,
 } from '../lib/enquiry-attribution';
 import { getEnquiryQualificationCopy } from '../lib/enquiry-qualification-localization';
-import {
-  getProgrammeSlugFromPathname,
-  type PublicEnquirySchool,
-} from '../lib/programme-enquiry';
+import { type PublicEnquirySchool } from '../lib/programme-enquiry';
 import { privacyPolicy } from '../lib/privacy-policy';
 import type { getPublicCopy } from '../lib/public-localization';
 
@@ -57,6 +54,29 @@ export function EnquiryForm({
     status: 'idle',
     message: '',
   });
+  const [contacts, setContacts] = useState({ email: '', phone: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const fieldHints: Record<string, string> = {
+    name: {
+      ar: 'أدخل اسمًا من حرفين على الأقل.',
+      fr: 'Saisissez un nom d’au moins deux caractères.',
+      en: 'Enter a name of at least two characters.',
+    }[locale],
+    phone: qualification.phoneHint,
+    email: {
+      ar: 'أدخل عنوان بريد إلكتروني صالحًا.',
+      fr: 'Saisissez une adresse e-mail valide.',
+      en: 'Enter a valid email address.',
+    }[locale],
+    consent: copy.consent,
+  };
+  function fieldError(name: string) {
+    return errors[name] ? (
+      <small id={'error-' + name} role="alert">
+        {errors[name]}
+      </small>
+    ) : null;
+  }
   const submissionLock = useRef(false);
 
   // Load the Cloudflare bot check only when Luminol has configured it.
@@ -88,12 +108,6 @@ export function EnquiryForm({
       search: window.location.search,
       referrerPathname,
     });
-    const referredProgrammeSlug = referrerPathname
-      ? getProgrammeSlugFromPathname(referrerPathname)
-      : null;
-    const programmeSlug =
-      initialProgrammeSlug ?? referredProgrammeSlug ?? undefined;
-
     setSubmission({ status: 'submitting', message: copy.sending });
     const turnstileToken = formData.get('cf-turnstile-response');
 
@@ -114,8 +128,8 @@ export function EnquiryForm({
           preferredContact: formData.get('preferredContact'),
           deliveryPreference: formData.get('deliveryPreference') || undefined,
           timingPreference: formData.get('timingPreference') || undefined,
-          school: formData.get('school'),
-          programmeSlug,
+          school: initialProgrammeSlug ? initialSchool : formData.get('school'),
+          programmeSlug: initialProgrammeSlug,
           ...attribution,
           message: formData.get('message') ?? '',
           locale,
@@ -124,13 +138,56 @@ export function EnquiryForm({
         }),
       });
 
-      const payload = (await response.json()) as { submitted?: boolean };
+      const payload = (await response.json()) as {
+        submitted?: boolean;
+        code?: string;
+      };
+      if (
+        payload.code === 'programme_unavailable' ||
+        payload.code === 'programme_retired'
+      ) {
+        const message =
+          payload.code === 'programme_retired'
+            ? {
+                en: 'This course is no longer published. Choose another programme in the catalogue.',
+                fr: 'Cette formation n’est plus publiée. Choisissez une autre formation dans le catalogue.',
+                ar: 'لم يعد هذا البرنامج منشورًا. اختر برنامجًا آخر من الدليل.',
+              }
+            : {
+                en: 'We could not verify the course. Please submit again.',
+                fr: 'Impossible de vérifier la formation. Veuillez réessayer.',
+                ar: 'تعذّر التحقق من البرنامج. أعد إرسال الطلب.',
+              };
+        setSubmission({ status: 'error', message: message[locale] });
+        return;
+      }
       if (!response.ok || !payload.submitted) throw new Error(copy.error);
 
+      const destination = requiresEmail ? contacts.email : contacts.phone;
       form.reset();
+      setErrors({});
+      setContacts({ email: '', phone: '' });
       (window as WindowWithExtras).va?.('event', { name: 'Enquiry submitted' });
       setPreferredContact('WHATSAPP');
-      setSubmission({ status: 'success', message: copy.success });
+      setSubmission({
+        status: 'success',
+        message:
+          copy.success +
+          ' ' +
+          {
+            en: 'We will reply via',
+            fr: 'Nous vous répondrons via',
+            ar: 'سنرد عليك عبر',
+          }[locale] +
+          ' ' +
+          {
+            EMAIL: qualification.contactEmail,
+            PHONE: qualification.contactPhone,
+            WHATSAPP: qualification.contactWhatsapp,
+          }[preferredContact] +
+          ' · ' +
+          destination,
+      });
     } catch {
       setSubmission({ status: 'error', message: copy.error });
     } finally {
@@ -146,6 +203,23 @@ export function EnquiryForm({
       }
       aria-busy={isSubmitting}
       aria-labelledby="enquiry-form-title"
+      onInvalidCapture={(event) => {
+        const field = event.target;
+        if (field instanceof HTMLInputElement && fieldHints[field.name])
+          setErrors((previous) => ({
+            ...previous,
+            [field.name]: fieldHints[field.name]!,
+          }));
+      }}
+      onInput={(event) => {
+        const field = event.target;
+        if (
+          field instanceof HTMLInputElement &&
+          field.validity.valid &&
+          errors[field.name]
+        )
+          setErrors((previous) => ({ ...previous, [field.name]: '' }));
+      }}
       onSubmit={submitEnquiry}
     >
       <div className="form-heading">
@@ -165,10 +239,13 @@ export function EnquiryForm({
             autoComplete="name"
             maxLength={100}
             minLength={2}
+            aria-invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? 'error-name' : undefined}
             name="name"
             required
             type="text"
           />
+          {fieldError('name')}
         </label>
         <label>
           <span>{qualification.preferredContact}</span>
@@ -192,32 +269,51 @@ export function EnquiryForm({
             <span>{copy.email}</span>
             <input
               key="email"
+              value={contacts.email}
+              onChange={(event) =>
+                setContacts({ ...contacts, email: event.target.value })
+              }
               autoComplete="email"
               dir="ltr"
               maxLength={254}
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? 'error-email' : undefined}
               name="email"
               required
               type="email"
             />
+            {fieldError('email')}
           </label>
         ) : (
           <label>
             <span>{copy.phone}</span>
             <input
               key="phone"
+              value={contacts.phone}
+              onChange={(event) =>
+                setContacts({ ...contacts, phone: event.target.value })
+              }
               autoComplete="tel"
               dir="ltr"
               maxLength={30}
+              aria-invalid={Boolean(errors.phone)}
+              aria-describedby={errors.phone ? 'error-phone' : undefined}
               name="phone"
               required
               type="tel"
             />
+            {fieldError('phone')}
             <small>{qualification.phoneHint}</small>
           </label>
         )}
         <label>
           <span>{copy.interest}</span>
-          <select defaultValue={initialSchool} name="school" required>
+          <select
+            disabled={Boolean(initialProgrammeSlug)}
+            defaultValue={initialSchool}
+            name="school"
+            required
+          >
             <option value="GENERAL">{copy.choose}</option>
             <option value="PSYCHOLOGY">{copy.psychology}</option>
             <option value="LANGUAGES">{copy.languages}</option>
@@ -299,7 +395,14 @@ export function EnquiryForm({
       ) : null}
 
       <label className="consent-field">
-        <input name="consent" required type="checkbox" />
+        <input
+          aria-invalid={Boolean(errors.consent)}
+          aria-describedby={errors.consent ? 'error-consent' : undefined}
+          name="consent"
+          required
+          type="checkbox"
+        />
+        {fieldError('consent')}
         <span>
           {copy.consent}{' '}
           <a
