@@ -29,11 +29,11 @@ test('premium school storytelling preserves landmarks and governed media', async
   await expect(academyMedia).toBeVisible();
   await expect(academyMedia).toHaveAttribute(
     'data-media-source',
-    'https://unsplash.com/photos/LQ1t-8Ms5PY',
+    'luminol-illustrative-photo',
   );
   await expect(
     academyMedia.getByRole('img', {
-      name: 'Two women having a conversation beside a sunlit window',
+      name: 'A psychologist sketches a family map while parents and a teenager talk',
     }),
   ).toBeVisible();
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);
@@ -159,8 +159,8 @@ test('localized school pages publish matching breadcrumb structured data', async
     const firstUrl = new URL(jsonLd.itemListElement[0]!.item);
     const currentUrl = new URL(jsonLd.itemListElement[1]!.item);
 
-    expect(firstUrl.pathname).toBe(`/${expectedLocale}`);
-    expect(firstUrl.hash).toBe('#schools');
+    expect(firstUrl.pathname).toBe(`/${expectedLocale}/schools`);
+    expect(firstUrl.hash).toBe('');
     expect(currentUrl.pathname).toBe(route);
     expect(currentUrl.origin).toBe(firstUrl.origin);
 

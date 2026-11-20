@@ -1,0 +1,63 @@
+/* Luminol theme: the library now shares the site's cosmic look — deep navy
+   space, gold and cyan light, glass surfaces. Worksheets stay paper-light. */
+@font-face{font-family:"Luminol Arabic";src:url("/fonts-noto-sans-arabic.ttf") format("truetype");font-weight:100 900;font-display:swap}
+:root{--navy:#061321;--ink:#eaf4f8;--teal:#8bdeef;--gold:#f3d48f;--muted:#a9c0cc;--line:rgba(255,255,255,.12);--soft:rgba(255,255,255,.05);--shadow:0 30px 70px -20px rgba(0,0,0,.7)}
+body{font-family:"Luminol Arabic",Tahoma,Arial,sans-serif;background:
+ radial-gradient(1200px 700px at 85% -10%,rgba(139,222,239,.14),transparent 60%),
+ radial-gradient(900px 600px at 0% 40%,rgba(243,212,143,.08),transparent 60%),
+ radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 60%,#fff,transparent),radial-gradient(1px 1px at 40% 80%,#cfefff,transparent),
+ #040f1b;background-attachment:fixed;color:var(--ink)}
+.top{background:rgba(7,26,43,.72);border-bottom:1px solid rgba(255,255,255,.08)}
+.brand{color:#fff}.brand .mark{border-color:rgba(243,212,143,.6);background:linear-gradient(145deg,#f3d48f,#b8862f);color:#061321}
+.top nav a{color:#c4d9e3}.top nav a:hover{color:var(--gold)}
+.top nav a.home-link{padding:.35rem .9rem;border-radius:999px;background:linear-gradient(135deg,#f3d48f,#fff 55%,#8bdeef);color:#061321;font-weight:700}
+.hero{background:transparent}
+.eyebrow{color:var(--gold)!important}
+.hero h1,.section-head h2,.review h2{color:#fff}
+.hero h1 em{color:var(--gold)}
+.lede,.section-head p{color:var(--muted)}
+.btn.primary{background:linear-gradient(135deg,#f3d48f,#fff 55%,#8bdeef);color:#061321;border:0}
+.btn.ghost{border-color:rgba(255,255,255,.3);color:#fff}
+.hero-stats span{color:var(--muted)}.hero-stats b{color:var(--gold)}
+.paper{box-shadow:0 0 0 1px rgba(243,212,143,.3),0 40px 90px -20px rgba(0,0,0,.8),0 0 60px -10px rgba(139,222,239,.35);transform:rotate(-3deg)}
+.intro,.library-section,.notice{background:transparent!important;color:var(--ink)}
+.steps article{background:linear-gradient(150deg,rgba(255,255,255,.07),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:18px;padding:18px}
+.steps span{color:var(--gold)}.steps h3{color:#fff}.steps p{color:var(--muted)}
+.controls input,.controls select{background:rgba(4,15,27,.6);border-color:rgba(255,255,255,.18);color:#fff;border-radius:12px}
+.controls label span{color:var(--muted)}
+.fav-filter{background:transparent;border-color:rgba(255,255,255,.25);color:#fff;border-radius:999px}
+.fav-filter[aria-pressed=true]{background:var(--gold);color:#061321}
+.chip{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.15);color:#dbe9ef;border-radius:999px}
+.chip.active{background:var(--gold);color:#061321;border-color:transparent}
+.results,#resultCount{color:var(--muted)}#reset{color:var(--teal);background:none;border:0}
+.card{background:linear-gradient(170deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(10px)}
+.card:hover{border-color:rgba(243,212,143,.45);box-shadow:0 30px 60px -25px rgba(0,0,0,.8),0 0 40px -15px rgba(139,222,239,.4);transform:translateY(-4px)}
+.card .preview{background:#f6f4ee;margin:10px;border-radius:16px}
+.card h3,.card-body h3{color:#fff}.card p{color:var(--muted)}
+.card .meta{color:var(--teal)}
+.tag{background:rgba(139,222,239,.15);color:#bfefff}.tag.comp{background:rgba(243,212,143,.18);color:#f3d48f}.tag.sheet{background:rgba(184,163,255,.18);color:#d6caff}
+.open-btn{color:var(--gold)}.fav{border-color:rgba(255,255,255,.2);color:#fff;background:transparent}.fav[aria-pressed=true]{background:var(--gold);color:#061321}
+.review{background:linear-gradient(150deg,rgba(243,212,143,.08),rgba(139,222,239,.06)),rgba(7,26,43,.7);border-block:1px solid var(--line)}
+.review li{border-color:var(--line);color:#dbe9ef}
+.notice{border:1px solid rgba(243,212,143,.3);border-radius:18px;padding:18px 22px;margin-block:40px;color:#dbe9ef}
+.notice b{color:var(--gold)}
+footer{background:#030b14;border-top:1px solid var(--line)}footer small,footer a{color:var(--muted)}
+/* The open resource is a printed worksheet: keep it light and legible. */
+dialog{background:#f6f4ee;color:#17363d;border-radius:22px;border:1px solid rgba(243,212,143,.4)}
+dialog .dialog-bar,dialog .dialog-nav{color:#17363d}
+dialog{--ink:#17363d;--muted:#607276;--line:#cad6d0;--soft:#eaf0e9;--teal:#176c69;--gold:#b18a4c;--navy:#102b35}
+@media print{body{background:#fff;color:#17363d}}
+.card .preview,.paper{--ink:#17363d;--muted:#607276;--line:#cad6d0;--soft:#eaf0e9;--teal:#176c69;--gold:#b18a4c;--navy:#102b35;color:#17363d}
+.controls{background:rgba(7,26,43,.72)!important;border:1px solid var(--line)!important;border-radius:20px;box-shadow:none!important}.controls select option{color:#061321}
+
+/* Touch: every library button is at least 36px tall on phones. */
+@media (max-width: 640px) {
+  button, .btn, a.btn, [role='button'] {
+    min-height: 2.25rem;
+  }
+}
+footer a[href='#top'] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+}

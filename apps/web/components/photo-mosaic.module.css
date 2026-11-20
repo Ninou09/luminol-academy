@@ -1,0 +1,67 @@
+.mosaic {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 84rem);
+  margin: clamp(2rem, 5vw, 4rem) auto;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: clamp(9rem, 15vw, 13rem);
+  gap: clamp(0.6rem, 1.2vw, 1rem);
+}
+.tile {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: clamp(1rem, 1.8vw, 1.5rem);
+  background: var(--color-brand-night, #061321);
+  box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.6);
+}
+.tile img {
+  object-fit: cover;
+  transition:
+    scale 1.4s var(--luminol-ease-out),
+    filter 1s ease;
+  filter: saturate(0.95);
+}
+.tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgb(4 15 27 / 0.45));
+  transition: opacity 600ms ease;
+}
+.tile:hover img {
+  scale: 1.07;
+  filter: saturate(1.08);
+}
+.tile:hover::after {
+  opacity: 0;
+}
+/* Bento rhythm: one hero tile, one tall, the rest square-ish. */
+.tile:nth-child(1) {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.tile:nth-child(2) {
+  grid-row: span 2;
+}
+.tile:nth-child(5),
+.tile:nth-child(6) {
+  grid-column: span 2;
+}
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 9.5rem;
+  }
+  .tile:nth-child(1) {
+    grid-column: span 2;
+  }
+  .tile:nth-child(2) {
+    grid-row: span 1;
+  }
+  .tile:nth-child(5) {
+    grid-column: span 1;
+  }
+}

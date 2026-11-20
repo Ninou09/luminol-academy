@@ -3,6 +3,7 @@ import {
   getOpenGraphLocale,
   localizeHref,
   localizePathname,
+  type Locale,
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
@@ -40,6 +41,16 @@ import {
   serializeJsonLd,
 } from '../../../lib/structured-data';
 import styles from './page.module.css';
+import { GlassIcon, type GlassIconName } from '../../../components/glass-icon';
+import Image from 'next/image';
+import { PhotoCard } from '../../../components/live-photo';
+import {
+  extraPhotos,
+  momentPhotos,
+  type PeoplePhoto,
+  peoplePhotos,
+  programmePhotos,
+} from '../../../lib/people-photos';
 
 type SchoolPageProps = {
   params: Promise<{ school: string }>;
@@ -86,6 +97,46 @@ export async function generateMetadata({
   };
 }
 
+const journeyIcons: GlassIconName[] = [
+  'journey-listen',
+  'journey-clarity',
+  'journey-build',
+];
+
+const audiencePhotos: Record<string, PeoplePhoto | undefined> = {
+  psychology: momentPhotos.fatherTeenWalk,
+  languages: extraPhotos.languageOnline,
+  training: extraPhotos.professionalTraining,
+};
+
+const promisePhotos = {
+  psychology: momentPhotos.mediterraneanCalm,
+  languages: extraPhotos.languagesCafe,
+  training: momentPhotos.publicSpeakingStage,
+} as const;
+
+const schoolHeroPhotos = {
+  psychology: peoplePhotos.therapyFamily,
+  languages: peoplePhotos.languagesClass,
+  training: peoplePhotos.trainingWorkshop,
+} as const;
+
+/** Each default programme card gets its own living photograph. */
+function programmeFallbackAsset(
+  school: 'psychology' | 'languages' | 'training',
+  index: number,
+  locale: Locale,
+): EditorialMediaAsset | null {
+  const photo = programmePhotos[school][index];
+  return photo
+    ? {
+        src: photo.src,
+        alt: photo.alt[locale],
+        source: 'illustrative',
+      }
+    : null;
+}
+
 export default async function SchoolPage({ params }: SchoolPageProps) {
   const { school: slug } = await params;
   if (!isSchoolSlug(slug)) notFound();
@@ -97,7 +148,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     {
       name: copy.schoolsLabel,
-      href: localizeHref(locale, '/#schools'),
+      href: localizeHref(locale, '/schools'),
     },
     {
       name: school.name,
@@ -182,7 +233,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <div className={styles.heroCopy} data-reveal>
             <nav className={styles.breadcrumb} aria-label={copy.schoolsLabel}>
               <Link
-                href={localizeHref(locale, '/#schools')}
+                href={localizeHref(locale, '/schools')}
                 style={{ color: 'inherit', textDecoration: 'none' }}
               >
                 {copy.schoolsLabel}
@@ -215,6 +266,8 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
+            scene={schoolHeroPhotos[school.slug]}
+            sceneKind="photo"
           />
         </section>
 
@@ -224,6 +277,16 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           aria-labelledby="school-promise-title"
           data-reveal
         >
+          <Image
+            className={`${styles.promiseArt} ${styles.promisePhoto}`}
+            src={promisePhotos[school.slug].src}
+            alt=""
+            width={promisePhotos[school.slug].width}
+            height={promisePhotos[school.slug].height}
+            sizes="100vw"
+            aria-hidden="true"
+            data-zoom
+          />
           <p id="school-promise-title">{copy.promiseLabel}</p>
           <blockquote>{school.promise}</blockquote>
         </section>
@@ -255,7 +318,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 <EditorialMedia
                   className={styles.programMedia}
                   school={school.slug}
-                  asset={program.image}
+                  asset={
+                    program.image ??
+                    programmeFallbackAsset(school.slug, index, locale)
+                  }
                 />
                 <h3 id={`school-programme-${index + 1}-title`} dir="auto">
                   {program.slug ? (
@@ -299,6 +365,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <ol>
             {school.approach.map((step, index) => (
               <li key={step.title} data-reveal>
+                <GlassIcon
+                  name={journeyIcons[index % journeyIcons.length]!}
+                  size="md"
+                  delay={index}
+                  className={styles.journeyIcon}
+                />
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 <div>
                   <h3>{step.title}</h3>
@@ -316,6 +388,14 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <div data-reveal>
             <p className={styles.eyebrow}>{copy.audienceEyebrow}</p>
             <h2 id="school-audience-title">{copy.audienceTitle}</h2>
+            {audiencePhotos[school.slug] ? (
+              <PhotoCard
+                photo={audiencePhotos[school.slug]!}
+                locale={locale}
+                className={styles.audiencePhoto}
+                sizes="(max-width: 900px) 100vw, 36vw"
+              />
+            ) : null}
           </div>
           <ul>
             {school.audiences.map((audience) => (

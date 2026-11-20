@@ -1,3 +1,4 @@
+import { matchSearchIntents } from './search-intents';
 import { z } from 'zod';
 
 import {
@@ -162,19 +163,62 @@ export function filterPublicProgrammes(
   filters: ProgrammeDiscoveryFilters,
 ) {
   const foldedQuery = fold(filters.query);
+  const eligible = programmes.filter(
+    (programme) =>
+      (!filters.school || programme.school === filters.school) &&
+      (!filters.language || programme.languages.includes(filters.language)),
+  );
 
-  return programmes
-    .flatMap((programme) => {
-      if (filters.school && programme.school !== filters.school) return [];
-      if (filters.language && !programme.languages.includes(filters.language)) {
-        return [];
-      }
+  let scored = eligible.flatMap((programme) => {
+    const score = textScore(programme, foldedQuery);
+    if (foldedQuery && score === 0) return [];
+    return [{ programme, score }];
+  });
 
-      const score = textScore(programme, foldedQuery);
-      if (foldedQuery && score === 0) return [];
+  // Smart search fallback: when nothing matches literally, everyday words
+  // ("my child does not listen", "قلق", "parler anglais") are mapped to the
+  // topics and school they usually mean.
+  // An explicit language or format in the query is a hard constraint, so the
+  // fallback never widens "Leadership Arabic" to programmes in English.
+  const constraintWords = new Set(
+    fold(
+      [
+        ...Object.values(programmeLanguageSearchLabels),
+        ...(['ar', 'fr', 'en'] as const).flatMap((locale) =>
+          (['ONLINE', 'IN_PERSON', 'HYBRID', 'FLEXIBLE'] as const).map(
+            (mode) => localizeProgrammeDelivery(locale, mode) ?? '',
+          ),
+        ),
+      ].join(' '),
+    ).split(' '),
+  );
+  const hasConstraint = foldedQuery
+    .split(' ')
+    .some((term) => term.length > 2 && constraintWords.has(term));
 
-      return [{ programme, score }];
-    })
+  if (foldedQuery && scored.length === 0 && !hasConstraint) {
+    const intents = matchSearchIntents(foldedQuery);
+    scored = eligible.flatMap((programme) => {
+      const text = fold(
+        (['ar', 'fr', 'en'] as const)
+          .map((locale) => {
+            const copy = localizeProgrammePublicCopy(locale, programme);
+            return `${copy.title} ${copy.summary}`;
+          })
+          .join(' '),
+      );
+      const score = intents.reduce(
+        (total, intent) =>
+          total +
+          (intent.topics.some((topic) => text.includes(fold(topic))) ? 25 : 0) +
+          (intent.school === programme.school ? 12 : 0),
+        0,
+      );
+      return score > 0 ? [{ programme, score }] : [];
+    });
+  }
+
+  return scored
     .sort(
       (a, b) =>
         b.score - a.score ||

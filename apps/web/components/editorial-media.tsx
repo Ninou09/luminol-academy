@@ -6,7 +6,8 @@ import styles from './editorial-media.module.css';
 export type EditorialMediaAsset = {
   src: string;
   alt: string;
-  source: 'sanity';
+  /** 'illustrative' marks commissioned photography. */
+  source: 'sanity' | 'illustrative';
 };
 
 type EditorialMediaProps = {
@@ -21,12 +22,6 @@ const schoolClass: Record<SchoolSlug, string> = {
   psychology: styles.psychology ?? '',
   languages: styles.languages ?? '',
   training: styles.training ?? '',
-};
-
-const schoolMark: Record<SchoolSlug, string> = {
-  psychology: 'P',
-  languages: 'L',
-  training: 'T',
 };
 
 function classes(...values: Array<string | false | null | undefined>) {
@@ -55,12 +50,19 @@ export function EditorialMedia({
           sizes={sizes}
           priority={priority}
         />
-      ) : (
+      ) : null}
+      {asset ? null : (
         <div className={styles.fallback} aria-hidden="true">
-          <span className={styles.grid} />
-          <span className={styles.halo} />
-          <span className={styles.axis} />
-          <span className={styles.mark}>{schoolMark[school]}</span>
+          <Image
+            className={styles.image}
+            src={`/media/brand/programme-${school}.webp`}
+            alt=""
+            width={1600}
+            height={900}
+            sizes={sizes}
+            priority={priority}
+          />
+          <span className={styles.tint} />
         </div>
       )}
     </div>

@@ -1,0 +1,204 @@
+.quiz {
+  --accent: #8bdeef;
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
+  background:
+    radial-gradient(
+      70% 90% at 100% 0%,
+      color-mix(in srgb, var(--accent) 16%, transparent),
+      transparent 60%
+    ),
+    rgb(7 26 43 / 0.75);
+  backdrop-filter: blur(14px);
+  color: #fff;
+  transition: background 600ms ease;
+}
+.quiz[data-school='psychology'] {
+  --accent: var(--color-school-psychology, #4fd1c5);
+}
+.quiz[data-school='languages'] {
+  --accent: var(--color-school-languages, #7aa2ff);
+}
+.quiz[data-school='training'] {
+  --accent: #f3d48f;
+}
+.progress {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1.75rem;
+}
+.progress span {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: rgb(255 255 255 / 0.12);
+  transition: background 500ms ease;
+}
+.progress span[data-active] {
+  background: linear-gradient(90deg, #8bdeef, #f3d48f);
+}
+.panel {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .panel,
+  .result {
+    animation: quiz-in 600ms var(--luminol-ease-out, ease) both;
+  }
+}
+@keyframes quiz-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+.panel legend {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.1;
+}
+.count {
+  color: #f0cf8e;
+  font-family: var(--font-sans, inherit);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.options {
+  display: grid;
+  gap: 0.6rem;
+}
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 3.75rem;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.04);
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color 300ms ease,
+    background 300ms ease,
+    translate 300ms var(--luminol-ease-out, ease);
+}
+.option:hover,
+.option:focus-visible {
+  border-color: #f3d48f;
+  background: rgb(243 212 143 / 0.08);
+  translate: 0.25rem 0;
+  outline: none;
+}
+.option:dir(rtl):hover {
+  translate: -0.25rem 0;
+}
+.option b {
+  color: #f3d48f;
+}
+.option:dir(rtl) b {
+  scale: -1 1;
+}
+.back {
+  margin-top: 1rem;
+  padding: 0.4rem 0;
+  border: 0;
+  background: none;
+  color: rgb(212 229 238 / 0.7);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.back:hover {
+  color: #fff;
+}
+.result {
+  text-align: center;
+}
+.orb {
+  display: block;
+  width: 4.5rem;
+  aspect-ratio: 1;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff,
+    var(--accent) 45%,
+    #0b3a55 80%
+  );
+  box-shadow: 0 0 3rem var(--accent);
+}
+.resultEyebrow {
+  margin: 0;
+  color: #f0cf8e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.result h3 {
+  margin: 0.6rem 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 500;
+}
+.promise {
+  max-width: 34rem;
+  margin: 0 auto;
+  color: var(--accent);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+.note {
+  max-width: 34rem;
+  margin: 0.9rem auto 0;
+  color: rgb(212 229 238 / 0.75);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 3rem;
+  padding: 0 1.3rem;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+.actions .primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #f3d48f, #ffffff 55%, #8bdeef);
+  color: #061321;
+}
+.actions .back {
+  margin: 0;
+}

@@ -6,6 +6,9 @@ import { useRef, useState, type KeyboardEvent } from 'react';
 
 import { AcademyLogo } from '../../../components/academy-logo';
 import styles from './page.module.css';
+import { GlassIcon } from '../../../components/glass-icon';
+import { PhotoBand } from '../../../components/live-photo';
+import { momentPhotos, peoplePhotos } from '../../../lib/people-photos';
 
 const topics = [
   {
@@ -126,7 +129,7 @@ export function WorkshopExperience({
   const topic = topics[activeTopic] ?? topics[0];
 
   return (
-    <div className={styles.page} lang="ar" dir="rtl">
+    <div className={styles.page} lang="ar" dir="rtl" data-cosmic-page>
       <a className={styles.skipLink} href="#main-content">
         انتقل إلى المحتوى الرئيسي
       </a>
@@ -232,7 +235,6 @@ export function WorkshopExperience({
                 preload
               />
               <div className={styles.eventImageCaption}>
-                <span>صورة توضيحية</span>
                 <strong>الفهم يبدأ بالإنصات</strong>
               </div>
             </div>
@@ -256,6 +258,8 @@ export function WorkshopExperience({
             </dl>
           </aside>
         </section>
+
+        <PhotoBand photo={peoplePhotos.workshopParents} locale="ar" priority />
 
         <section
           id="about"
@@ -339,6 +343,12 @@ export function WorkshopExperience({
           </div>
         </section>
 
+        <PhotoBand
+          photo={momentPhotos.artTherapyHands}
+          locale="ar"
+          reveal="portal"
+        />
+
         <section className={styles.audience} aria-labelledby="audience-title">
           <div className={styles.audienceCopy}>
             <p className={styles.sectionLabel}>لمن هذا اللقاء؟</p>
@@ -352,15 +362,19 @@ export function WorkshopExperience({
           </div>
           <ul>
             <li>
+              <GlassIcon name="ws-step-register" size="md" delay={0} />
               <span>01</span> أفراد الأسرة ومقدّمو الدعم
             </li>
             <li>
+              <GlassIcon name="ws-step-confirm" size="md" delay={1} />
               <span>02</span> المهتمون بالتثقيف النفسي
             </li>
             <li>
+              <GlassIcon name="ws-step-calendar" size="md" delay={2} />
               <span>03</span> طلبة علم النفس والتخصصات القريبة
             </li>
             <li>
+              <GlassIcon name="ws-step-join" size="md" delay={3} />
               <span>04</span> الممارسون في مجالات المساعدة
             </li>
           </ul>
@@ -405,6 +419,12 @@ export function WorkshopExperience({
             </div>
           </div>
         </section>
+
+        <PhotoBand
+          photo={peoplePhotos.workshopHomeSupport}
+          locale="ar"
+          reveal="curtain"
+        />
 
         <section className={styles.joining} aria-labelledby="joining-title">
           <div className={styles.sectionHeading}>

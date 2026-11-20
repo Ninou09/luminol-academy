@@ -70,14 +70,8 @@ for (const width of [390, 1440]) {
       return parseFloat(style.lineHeight) / parseFloat(style.fontSize);
     });
     expect(headingLineRatio).toBeGreaterThanOrEqual(1.4);
-    await page.getByRole('banner').locator('a[href="/ar#schools"]').click();
-    await expect(page).toHaveURL(/\/ar#schools$/);
-    await expect
-      .poll(() =>
-        page
-          .locator('#schools')
-          .evaluate((el) => el.getBoundingClientRect().top),
-      )
-      .toBeLessThan(200);
+    await page.getByRole('banner').locator('a[href="/ar/schools"]').click();
+    await expect(page).toHaveURL(/\/ar\/schools$/);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   });
 }

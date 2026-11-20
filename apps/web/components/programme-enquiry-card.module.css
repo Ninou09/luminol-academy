@@ -4,7 +4,7 @@
   border: 1px solid var(--color-brand-line);
   border-block-start: 3px solid var(--color-brand-gold-strong);
   border-radius: var(--luminol-media-radius);
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   color: var(--color-brand-ink);
   box-shadow: var(--shadow-editorial);
   overflow-wrap: anywhere;
@@ -62,7 +62,7 @@
   padding: 0.9rem 1rem;
   border: 1px solid var(--color-brand-ink);
   border-radius: var(--radius-control);
-  background: var(--color-brand-ink);
+  background: var(--luminol-deep, var(--color-brand-ink));
   color: var(--color-brand-surface);
   font-size: 0.9rem;
   font-weight: 700;
@@ -70,7 +70,7 @@
   text-decoration: none;
 }
 .action:hover {
-  background: var(--color-brand-ink-soft);
+  background: var(--luminol-deep-soft, var(--color-brand-ink-soft));
   color: var(--color-brand-surface);
 }
 .action:focus-visible {

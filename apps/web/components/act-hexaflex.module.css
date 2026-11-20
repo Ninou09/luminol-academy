@@ -1,0 +1,212 @@
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 82rem);
+  margin: 0 auto;
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+  color: #f4f8fb;
+}
+.eyebrow {
+  margin: 0;
+  color: #f0cf8e;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.intro h2 {
+  margin: 0.9rem 0 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+.intro > p:last-child {
+  margin: 0;
+  color: rgb(212 229 238 / 0.85);
+  line-height: 1.8;
+}
+.diagram {
+  --size: min(100%, 34rem);
+  position: relative;
+  width: var(--size);
+  aspect-ratio: 1;
+  justify-self: center;
+}
+.lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.lines polygon {
+  fill: rgb(139 222 239 / 0.05);
+  stroke: rgb(139 222 239 / 0.45);
+  stroke-width: 1.5;
+}
+.lines line {
+  stroke: rgb(243 212 143 / 0.25);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+}
+.orbit {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.08);
+  stroke-dasharray: 2 10;
+  transform-origin: 200px 200px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .orbit {
+    animation: orbit-spin 40s linear infinite;
+  }
+  .centre {
+    animation: centre-glow 5s ease-in-out infinite alternate;
+  }
+}
+@keyframes orbit-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes centre-glow {
+  to {
+    box-shadow:
+      0 0 0 0.75rem rgb(243 212 143 / 0.08),
+      0 0 4rem rgb(243 212 143 / 0.55);
+  }
+}
+.centre {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  display: grid;
+  place-items: center;
+  width: 32%;
+  aspect-ratio: 1;
+  padding: 0.75rem;
+  border-radius: 50%;
+  translate: -50% -50%;
+  background: radial-gradient(circle at 35% 30%, #fff4d6, #f3d48f 45%, #b8862f);
+  box-shadow:
+    0 0 0 0.5rem rgb(243 212 143 / 0.08),
+    0 0 2.5rem rgb(243 212 143 / 0.35);
+  color: #061321;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+}
+.centre:dir(rtl) {
+  translate: 50% -50%;
+}
+.nodes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Six nodes on the hexagon corners (top, then clockwise). */
+.node {
+  --x: 50%;
+  --y: 10%;
+  position: absolute;
+  inset-block-start: var(--y);
+  left: var(--x);
+  display: grid;
+  gap: 0.15rem;
+  width: clamp(7.5rem, 24%, 9.5rem);
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgb(139 222 239 / 0.4);
+  border-radius: 1rem;
+  translate: -50% -50%;
+  background: rgb(6 19 33 / 0.92);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  cursor: default;
+  transition:
+    border-color 300ms ease,
+    box-shadow 400ms ease,
+    scale 400ms var(--luminol-ease-out, ease);
+}
+.node:nth-child(2) {
+  --x: 84.75%;
+  --y: 30%;
+}
+.node:nth-child(3) {
+  --x: 84.75%;
+  --y: 70%;
+}
+.node:nth-child(4) {
+  --x: 50%;
+  --y: 90%;
+}
+.node:nth-child(5) {
+  --x: 15.25%;
+  --y: 70%;
+}
+.node:nth-child(6) {
+  --x: 15.25%;
+  --y: 30%;
+}
+.node strong {
+  color: #fff;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+.node small {
+  max-height: 0;
+  overflow: hidden;
+  color: rgb(212 229 238 / 0.8);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  opacity: 0;
+  transition:
+    max-height 400ms ease,
+    opacity 400ms ease;
+}
+.node:hover,
+.node:focus-visible {
+  z-index: 2;
+  border-color: #f3d48f;
+  box-shadow: 0 0 2rem rgb(243 212 143 / 0.35);
+  scale: 1.06;
+  outline: none;
+}
+.node:hover small,
+.node:focus-visible small {
+  max-height: 4rem;
+  opacity: 1;
+}
+@media (max-width: 860px) {
+  .section {
+    grid-template-columns: 1fr;
+  }
+  .node {
+    width: 28%;
+    padding: 0.45rem 0.5rem;
+  }
+  .node strong {
+    font-size: 0.72rem;
+  }
+}
+
+.valuesPhoto {
+  margin: 1.75rem 0 0;
+  overflow: hidden;
+  border: 1px solid rgb(243 212 143 / 0.3);
+  border-radius: 1.5rem;
+  box-shadow: 0 1.5rem 3rem -1.5rem rgb(0 0 0 / 0.6);
+}
+.valuesPhoto img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: scale 1.2s var(--luminol-ease-out, ease);
+}
+.valuesPhoto:hover img {
+  scale: 1.04;
+}

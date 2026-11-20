@@ -12,13 +12,14 @@ function classes(...values: Array<string | false | null | undefined>): string {
 type ButtonVariant = 'primary' | 'secondary' | 'quiet';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
+// `luminol-button` lets each app layer its own brand motion on the shared control.
 const buttonBase =
-  'inline-flex items-center justify-center gap-2 rounded-control font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-3 disabled:cursor-not-allowed disabled:opacity-50';
+  'luminol-button inline-flex items-center justify-center gap-2 rounded-control font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-3 disabled:cursor-not-allowed disabled:opacity-50';
 const buttonVariants: Record<ButtonVariant, string> = {
   primary:
-    'bg-brand-ink text-brand-canvas hover:bg-brand-gold hover:text-brand-ink',
+    'luminol-button--primary bg-brand-ink text-brand-canvas hover:bg-brand-gold hover:text-brand-ink',
   secondary:
-    'border border-brand-ink bg-transparent text-brand-ink hover:bg-brand-ink hover:text-brand-canvas',
+    'luminol-button--secondary border border-brand-ink bg-transparent text-brand-ink hover:bg-brand-ink hover:text-brand-canvas',
   quiet: 'bg-transparent text-brand-ink hover:bg-brand-line/50',
 };
 const buttonSizes: Record<ButtonSize, string> = {

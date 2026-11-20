@@ -4,6 +4,10 @@ import { ButtonLink } from '@luminol/ui';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { getRequestLocale } from '../lib/request-locale';
 import styles from './not-found.module.css';
+import { ImmersiveBand } from '../components/psychology-art';
+import { NeuralBrain } from '../components/neural-brain';
+import Image from 'next/image';
+import { peoplePhotos } from '../lib/people-photos';
 
 type NotFoundCopy = {
   eyebrow: string;
@@ -60,6 +64,7 @@ export default async function NotFound() {
         data-not-found
       >
         <section className={styles.hero} aria-labelledby="not-found-title">
+          <NeuralBrain className="hero-brain" />
           <div className={styles.copy}>
             <p className={styles.eyebrow}>{copy.eyebrow}</p>
             <h1 id="not-found-title">{copy.title}</h1>
@@ -82,6 +87,13 @@ export default async function NotFound() {
             className={styles.visual}
             aria-labelledby="not-found-note-title"
           >
+            <Image
+              className={styles.visualPhoto}
+              src={peoplePhotos.page404.src}
+              alt={peoplePhotos.page404.alt[locale]}
+              fill
+              sizes="(max-width: 900px) 100vw, 45vw"
+            />
             <div className={styles.orbit} aria-hidden="true">
               <span>4</span>
               <span>0</span>
@@ -93,6 +105,8 @@ export default async function NotFound() {
             </div>
           </aside>
         </section>
+
+        <ImmersiveBand art="lostPath" locale={locale} />
       </main>
       <SiteFooter />
     </>

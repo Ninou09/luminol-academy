@@ -3,8 +3,16 @@ import { getLocaleDirection, getOpenGraphLocale } from '@luminol/localization';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
+import { CountUp } from '../components/count-up';
+import { InnerUniverse } from '../components/inner-universe';
+import { LuminousCursor } from '../components/luminous-cursor';
+import { PublicInteractions } from '../components/public-interactions';
 import { PublicMotionController } from '../components/public-motion-controller';
 import { PageNavigation } from '../components/page-navigation';
+import { ScrollExperience } from '../components/scroll-experience';
+import { SiteChrome } from '../components/site-chrome';
+import { SiteDock } from '../components/site-dock';
+import { channelCopy, getWhatsAppHref } from '../lib/contact-channels';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { resolvePublicSiteUrl } from '../lib/site-url';
@@ -90,6 +98,48 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const a11yLabels = {
+  en: {
+    button: 'Reading comfort',
+    title: 'Reading comfort',
+    largeText: 'Larger text',
+    highContrast: 'High contrast',
+    close: 'Close',
+  },
+  fr: {
+    button: 'Confort de lecture',
+    title: 'Confort de lecture',
+    largeText: 'Texte plus grand',
+    highContrast: 'Contraste élevé',
+    close: 'Fermer',
+  },
+  ar: {
+    button: 'راحة القراءة',
+    title: 'راحة القراءة',
+    largeText: 'نص أكبر',
+    highContrast: 'تباين عالٍ',
+    close: 'إغلاق',
+  },
+} as const;
+
+const calmLabels = {
+  en: { on: 'Calm mode: turn off 3D effects', off: 'Turn 3D effects back on' },
+  fr: {
+    on: 'Mode calme : couper les effets 3D',
+    off: 'Réactiver les effets 3D',
+  },
+  ar: {
+    on: 'الوضع الهادئ: إيقاف المؤثرات ثلاثية الأبعاد',
+    off: 'إعادة تشغيل المؤثرات ثلاثية الأبعاد',
+  },
+} as const;
+
+const backToTopLabel = {
+  en: 'Back to top',
+  fr: 'Retour en haut',
+  ar: 'العودة إلى الأعلى',
+} as const;
+
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -103,9 +153,38 @@ export default async function RootLayout({
       dir={getLocaleDirection(locale)}
     >
       <body>
+        <InnerUniverse />
         <PageNavigation />
         <PublicMotionController />
+        <PublicInteractions />
+        <ScrollExperience />
+        <LuminousCursor />
+        <SiteChrome />
+        <CountUp />
         {children}
+        <SiteDock
+          whatsappHref={getWhatsAppHref(channelCopy[locale].whatsappMessage)}
+          whatsappLabel={channelCopy[locale].whatsappAria}
+          topLabel={backToTopLabel[locale]}
+          calmLabels={calmLabels[locale]}
+          a11yLabels={a11yLabels[locale]}
+          locale={locale}
+          assistantEnabled={process.env.LUMINOL_ASSISTANT_DISABLED !== '1'}
+        />
+        {/* Load only once Web Analytics is enabled in the Vercel project;
+            otherwise the script path does not exist and returns 404. */}
+        {process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === '1' ? (
+          <>
+            {/* Vercel Web Analytics: cookie-free, aggregated page views. */}
+            <script
+              dangerouslySetInnerHTML={{
+                __html:
+                  'window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};',
+              }}
+            />
+            <script defer src="/_vercel/insights/script.js" />
+          </>
+        ) : null}
       </body>
     </html>
   );

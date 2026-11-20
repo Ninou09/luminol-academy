@@ -23,17 +23,17 @@ for (const scenario of [
   },
   {
     route: '/en/schools/psychology',
-    currentHref: '/en#schools',
+    currentHref: '/en/schools',
     inactiveHref: '/en/programmes',
   },
   {
     route: '/ar/schools/languages',
-    currentHref: '/ar#schools',
+    currentHref: '/ar/schools',
     inactiveHref: '/ar/programmes',
   },
   {
     route: '/fr/schools/training',
-    currentHref: '/fr#schools',
+    currentHref: '/fr/schools',
     inactiveHref: '/fr/about',
   },
 ] as const) {

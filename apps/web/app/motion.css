@@ -23,19 +23,25 @@ html {
 html[data-motion='full'][data-motion-ready='true']
   [data-reveal][data-reveal-state='pending'] {
   opacity: 0;
-  translate: 0 1.75rem;
+  translate: 0 2.25rem;
+  scale: 0.985;
+  filter: blur(8px);
 }
 
 html[data-motion='full'][data-motion-ready='true'] [data-reveal] {
   transition:
-    opacity 700ms var(--luminol-ease-out),
-    translate 700ms var(--luminol-ease-out);
+    opacity 900ms var(--luminol-ease-out),
+    translate 1000ms var(--luminol-ease-out),
+    scale 1000ms var(--luminol-ease-out),
+    filter 900ms var(--luminol-ease-out);
 }
 
 html[data-motion='full'][data-motion-ready='true']
   [data-reveal][data-reveal-state='visible'] {
   opacity: 1;
   translate: 0 0;
+  scale: 1;
+  filter: none;
 }
 
 html[data-motion='full'] [data-motion-float] {

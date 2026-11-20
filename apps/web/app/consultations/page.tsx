@@ -6,14 +6,28 @@ import {
   type Locale,
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
+
+import {
+  channelCopy,
+  getBookingHref,
+  officialContacts,
+  openingHours,
+} from '../../lib/contact-channels';
 import type { Metadata } from 'next';
 
 import { EnquiryForm } from '../../components/enquiry-form';
+import Image from 'next/image';
+
+import { FirstConsultation } from '../../components/first-consultation';
+import { PhotoStack } from '../../components/photo-stack';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
+import { GlassIcon } from '../../components/glass-icon';
+import { PhotoCard } from '../../components/live-photo';
+import { consultationPhotos, peoplePhotos } from '../../lib/people-photos';
 
 const CONSULTATION_COPY = {
   en: {
@@ -55,7 +69,7 @@ const CONSULTATION_COPY = {
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Founder · expert therapist',
     authorityBody:
-      'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 30 years of field experience. Her experience is a visible trust anchor for the psychology division while the wider team supports each enquiry and next step.',
+      'Founder Kheddaoui Fettouma, an expert therapist, guides Luminol Psychology. Her field experience shapes how the team listens to each enquiry and chooses the right next step with you.',
     authorityAction: 'Meet the founder',
     formEyebrow: 'Tell us what you need',
     formTitle: 'Start with a short, structured enquiry.',
@@ -106,7 +120,7 @@ const CONSULTATION_COPY = {
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Fondatrice · thérapeute experte',
     authorityBody:
-      'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 30 ans d’expérience de terrain. Son expérience constitue un repère de confiance visible pour le pôle psychologie, tandis que l’équipe accompagne chaque demande et sa prochaine étape.',
+      'La fondatrice Kheddaoui Fettouma, thérapeute experte, guide Luminol Psychologie. Son expérience de terrain façonne la manière dont l’équipe écoute chaque demande et choisit avec vous la bonne prochaine étape.',
     authorityAction: 'Découvrir la fondatrice',
     formEyebrow: 'Expliquez-nous votre besoin',
     formTitle: 'Commencez par une demande courte et structurée.',
@@ -155,7 +169,7 @@ const CONSULTATION_COPY = {
     authorityName: 'خداوي فطومة',
     authorityRole: 'المؤسسة · معالجة خبيرة',
     authorityBody:
-      'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 30 سنة من الخبرة الميدانية. تمثل خبرتها مرجعاً واضحاً للثقة في قسم علم النفس، بينما يرافق الفريق كل طلب نحو الخطوة التالية المناسبة.',
+      'توجّه المؤسسة خداوي فطومة، المعالجة الخبيرة، قسم لومينول لعلم النفس. تصوغ خبرتها الميدانية طريقة إصغاء الفريق لكل طلب واختيار الخطوة التالية المناسبة معك.',
     authorityAction: 'تعرّف على المؤسسة',
     formEyebrow: 'أخبرنا بما تحتاجه',
     formTitle: 'ابدأ بطلب قصير ومنظم.',
@@ -198,9 +212,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const routePhotos = [
+  peoplePhotos.therapySession,
+  consultationPhotos.family,
+  consultationPhotos.learning,
+] as const;
+
 export default async function ConsultationsPage() {
   const locale = await getRequestLocale();
   const copy = CONSULTATION_COPY[locale];
+  const bookingHref = getBookingHref();
   const publicCopy = getPublicCopy(locale);
   const paths = copy.paths as readonly {
     number: string;
@@ -213,25 +234,58 @@ export default async function ConsultationsPage() {
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="consultation-title">
-          <div>
+          <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
             <h1 id="consultation-title">{copy.heroTitle as string}</h1>
             <p className={styles.lede}>{copy.heroBody as string}</p>
-          </div>
-          <aside className={styles.heroAside}>
-            <p>{copy.aside as string}</p>
-            <div className={styles.heroActions}>
-              <ButtonLink href="#consultation-enquiry">
-                {copy.primaryAction as string}
-              </ButtonLink>
-              <ButtonLink
-                href={localizeHref(locale, '/schools/psychology')}
-                variant="secondary"
-              >
-                {copy.secondaryAction as string}
-              </ButtonLink>
+            <div className={styles.heroAside}>
+              <p>{copy.aside as string}</p>
+              <div className={styles.heroActions}>
+                <ButtonLink href="#consultation-enquiry">
+                  {copy.primaryAction as string}
+                </ButtonLink>
+                <ButtonLink
+                  href={localizeHref(locale, '/schools/psychology')}
+                  variant="secondary"
+                >
+                  {copy.secondaryAction as string}
+                </ButtonLink>
+                {bookingHref ? (
+                  <ButtonLink
+                    href={bookingHref}
+                    variant="secondary"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {channelCopy[locale].book} ↗
+                  </ButtonLink>
+                ) : null}
+              </div>
+              <p className={styles.hoursChip}>
+                <span aria-hidden="true" />
+                {openingHours.title[locale]} ·{' '}
+                <time>{openingHours.label[locale]}</time>
+              </p>
+              <p className={styles.directLine}>
+                <a href={`tel:${officialContacts.phone}`} dir="ltr">
+                  {officialContacts.phoneDisplay}
+                </a>
+                <span aria-hidden="true">·</span>
+                <a href={`mailto:${officialContacts.email}`}>
+                  {officialContacts.email}
+                </a>
+              </p>
             </div>
-          </aside>
+          </div>
+          <PhotoStack
+            className={styles.heroStack}
+            locale={locale}
+            priority
+            photos={[
+              consultationPhotos.firstMeeting,
+              consultationPhotos.online,
+            ]}
+          />
         </section>
 
         <section className={styles.routing} aria-labelledby="routing-title">
@@ -243,42 +297,64 @@ export default async function ConsultationsPage() {
             <p>{copy.routingBody as string}</p>
           </div>
           <div className={styles.pathGrid}>
-            {paths.map((path) => (
+            {paths.map((path, index) => (
               <article className={styles.pathCard} key={path.number}>
-                <span>{path.number}</span>
-                <h3>{path.title}</h3>
-                <p>{path.body}</p>
+                <div className={styles.pathPhoto}>
+                  <Image
+                    src={routePhotos[index % routePhotos.length]!.src}
+                    alt={routePhotos[index % routePhotos.length]!.alt[locale]}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 30vw"
+                  />
+                </div>
+                <div className={styles.pathBody}>
+                  <span>{path.number}</span>
+                  <h3>{path.title}</h3>
+                  <p>{path.body}</p>
+                </div>
               </article>
             ))}
           </div>
         </section>
 
         <section
-          className={styles.authority}
+          className={`${styles.authority} ${styles.authorityV2}`}
           aria-labelledby="consultation-authority-title"
           data-consultation-founder-authority
         >
-          <div className={styles.authorityLead}>
-            <span className={styles.authorityYears} aria-hidden="true">
-              30+
-            </span>
-            <div>
-              <p className={styles.eyebrow}>
-                {copy.authorityEyebrow as string}
-              </p>
-              <h2 id="consultation-authority-title">
-                {copy.authorityTitle as string}
-              </h2>
+          <div className={styles.authorityVisual}>
+            <PhotoCard
+              photo={peoplePhotos.academySupervision}
+              locale={locale}
+              className={styles.authorityPhotoLarge}
+              sizes="(max-width: 900px) 100vw, 40vw"
+            />
+            <div className={styles.yearsBadge} aria-hidden="true">
+              <span data-count="30">30+</span>
+              <small>{copy.authorityEyebrow as string}</small>
             </div>
           </div>
-          <div className={styles.authorityCopy}>
-            <p className={styles.authorityName}>
-              {copy.authorityName as string}
+          <div className={styles.authorityText}>
+            <p className={styles.eyebrow}>{copy.authorityEyebrow as string}</p>
+            <h2 id="consultation-authority-title">
+              {copy.authorityTitle as string}
+            </h2>
+            <div className={styles.signature}>
+              <span className={styles.signatureMark} aria-hidden="true">
+                KF
+              </span>
+              <div>
+                <p className={styles.authorityName}>
+                  {copy.authorityName as string}
+                </p>
+                <p className={styles.authorityRole}>
+                  {copy.authorityRole as string}
+                </p>
+              </div>
+            </div>
+            <p className={styles.authorityBodyText}>
+              {copy.authorityBody as string}
             </p>
-            <p className={styles.authorityRole}>
-              {copy.authorityRole as string}
-            </p>
-            <p>{copy.authorityBody as string}</p>
             <ButtonLink
               href={localizeHref(locale, '/about')}
               variant="secondary"
@@ -288,22 +364,32 @@ export default async function ConsultationsPage() {
           </div>
         </section>
 
+        <FirstConsultation locale={locale} />
+
         <section
           id="consultation-enquiry"
           className={styles.enquiry}
           aria-labelledby="consultation-enquiry-title"
         >
           <div className={styles.enquiryContext}>
+            <GlassIcon name="enquiry-message" size="lg" />
             <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
             <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
             <p>{copy.formBody as string}</p>
             <p className={styles.safetyNote}>{copy.safety as string}</p>
+            <PhotoCard
+              photo={consultationPhotos.journal}
+              locale={locale}
+              className={styles.enquiryPhoto}
+              sizes="(max-width: 900px) 80vw, 26vw"
+            />
           </div>
           <div className={styles.formSurface}>
             <EnquiryForm
               locale={locale}
               copy={publicCopy.form}
               initialSchool="PSYCHOLOGY"
+              embedded
               initialMessage={copy.initialMessage as string}
             />
           </div>

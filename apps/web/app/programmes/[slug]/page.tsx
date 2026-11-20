@@ -11,6 +11,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { ActHexaflex } from '../../../components/act-hexaflex';
+import { actPhotos } from '../../../lib/people-photos';
 import { ProgrammeEnquiryCard } from '../../../components/programme-enquiry-card';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { buildProgrammeContactHref } from '../../../lib/programme-contact';
@@ -324,6 +326,19 @@ export default async function ProgrammeDetailPage({
                     sizes="(max-width: 900px) 100vw, 46vw"
                   />
                 </figure>
+              ) : programme.slug.current.startsWith(
+                  'acceptance-commitment-therapy',
+                ) ? (
+                <figure className={`${styles.mediaFrame} ${styles.coverPhoto}`}>
+                  <Image
+                    src={actPhotos.cover.src}
+                    alt={actPhotos.cover.alt[locale]}
+                    width={actPhotos.cover.width}
+                    height={actPhotos.cover.height}
+                    priority
+                    sizes="(max-width: 900px) 100vw, 46vw"
+                  />
+                </figure>
               ) : null}
               <ProgrammeEnquiryCard
                 locale={locale}
@@ -332,6 +347,10 @@ export default async function ProgrammeDetailPage({
             </div>
           </div>
         </section>
+
+        {programme.slug.current.startsWith('acceptance-commitment-therapy') ? (
+          <ActHexaflex locale={locale} />
+        ) : null}
 
         <section className={styles.content}>
           <div className={styles.contentInner}>
@@ -401,7 +420,11 @@ export default async function ProgrammeDetailPage({
               aria-labelledby="programme-facts-title"
               data-programme-detail-region="facts"
             >
-              <h2 id="programme-facts-title" className={styles.sectionLabel}>
+              <h2
+                id="programme-facts-title"
+                className={styles.sectionLabel}
+                data-no-split
+              >
                 {copy.facts}
               </h2>
               <dl>

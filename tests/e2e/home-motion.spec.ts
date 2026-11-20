@@ -34,7 +34,10 @@ test('motion controller honors reduced motion without hiding content', async ({
   );
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('#top img').first()).toBeVisible();
-  expect(await page.locator('#top video').getAttribute('src')).toBeNull();
+  // Reduced motion keeps the static artwork and never starts the WebGL field.
+  await expect(
+    page.locator('#top [data-media-source="luminol-commissioned-3d"]'),
+  ).not.toHaveAttribute('data-field', 'live');
 });
 
 test('full motion progressively reveals the homepage', async ({ page }) => {
