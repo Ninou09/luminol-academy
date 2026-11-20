@@ -8,7 +8,12 @@
     "./ai-operator": "./src/ai-operator.ts",
     "./ai-provider": "./src/ai-provider.ts",
     "./content-calendar": "./src/content-calendar.ts",
-    "./env": "./src/env.ts"
+    "./env": "./src/env.ts",
+    "./consultations": "./src/consultations.ts",
+    "./office-payments": "./src/office-payments.ts",
+    "./operations-tasks": "./src/operations-tasks.ts",
+    "./crm-activities": "./src/crm-activities.ts",
+    "./crm-sections": "./src/crm-sections.ts"
   },
   "scripts": {
     "build": "tsc --noEmit",
@@ -17,7 +22,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "zod": "^4.5.4"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",

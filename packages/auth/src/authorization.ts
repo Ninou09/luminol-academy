@@ -20,3 +20,19 @@ export function hasPlatformPermission(
       ),
   );
 }
+
+/**
+ * True when any persisted role grants the permission. Use for scoped staff
+ * capabilities; deliberately cross-organization work keeps using
+ * {@link hasPlatformPermission}.
+ */
+export function hasPermission(
+  roles: RoleAssignment[],
+  permission: PermissionKey,
+): boolean {
+  return roles.some(({ role }) =>
+    role.permissions.some(
+      ({ permission: assigned }) => assigned.key === permission,
+    ),
+  );
+}

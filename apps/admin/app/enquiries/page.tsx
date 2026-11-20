@@ -10,6 +10,7 @@ import {
 import Link from 'next/link';
 
 import { AdminLanguageSwitcher } from '../../components/admin-language-switcher';
+import { StaffNavigation } from '../../components/staff-navigation';
 import { getAdminEnumLabel } from '../../lib/admin-localization';
 import { getEnquiryAttributionCopy } from '../../lib/enquiry-attribution-localization';
 import { getEnquiryCampaignFilterCopy } from '../../lib/enquiry-campaign-filter-localization';
@@ -243,7 +244,7 @@ function dateInputValue(value: Date | null) {
 export default async function EnquiriesAdminPage({
   searchParams,
 }: EnquiryPageProps) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePermission('enquiry:work');
   const locale = await getAdminRequestLocale();
   const copy = getEnquiryDeskCopy(locale);
   const attributionCopy = getEnquiryAttributionCopy(locale);
@@ -532,7 +533,11 @@ export default async function EnquiriesAdminPage({
               <p>{copy.intro}</p>
             </div>
             <div className={styles.toolbar}>
-              <Link href={localizeHref(locale, '/')}>{copy.back}</Link>
+              <StaffNavigation
+                locale={locale}
+                roles={administrator.roles}
+                current="enquiries"
+              />
               <AdminLanguageSwitcher
                 locale={locale}
                 label={common.languageSelectorLabel}
@@ -1494,7 +1499,16 @@ export default async function EnquiriesAdminPage({
                   <article className={styles.card} key={enquiry.id}>
                     <header className={styles.cardHeader}>
                       <div className={styles.identity}>
-                        <h2 dir="auto">{enquiry.name}</h2>
+                        <h2 dir="auto">
+                          <Link
+                            href={localizeHref(
+                              locale,
+                              `/crm/leads/${enquiry.id}`,
+                            )}
+                          >
+                            {enquiry.name}
+                          </Link>
+                        </h2>
                         <p dir="auto">{enquiry.email}</p>
                       </div>
                       <div>

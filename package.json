@@ -34,9 +34,10 @@
       "deepmerge-ts": "8.0.0",
       "nanoid@3.3.17": "3.3.18",
       "next>postcss": "8.5.23",
-      "next>sharp": "0.35.4",
-      "mysql2": "3.22.0",
-      "fast-uri": "3.1.6"
+      "next>sharp": "0.35.5",
+      "mysql2": "3.24.6",
+      "fast-uri": "3.1.9",
+      "source-map-js": "1.2.2"
     },
     "onlyBuiltDependencies": [
       "@clerk/shared",

@@ -368,32 +368,56 @@ model User {
 
   organizationAuditEvents OrganizationAuditEvent[] @relation("OrganizationAuditActor")
 
+  staffRoleEventsActed    StaffRoleAuditEvent[] @relation("StaffRoleAuditActor")
+  staffRoleEventsReceived StaffRoleAuditEvent[] @relation("StaffRoleAuditTarget")
+
+  clientsCreated         Client[]                       @relation("ClientCreator")
+  consultationsDelivered ConsultationAppointment[]      @relation("ConsultationConsultant")
+  consultationsCreated   ConsultationAppointment[]      @relation("ConsultationCreator")
+  consultationEvents     ConsultationAppointmentEvent[] @relation("ConsultationEventActor")
+
+  officePaymentsRecorded OfficePayment[]      @relation("OfficePaymentRecorder")
+  officePaymentsVoided   OfficePayment[]      @relation("OfficePaymentVoider")
+  officePaymentEvents    OfficePaymentEvent[] @relation("OfficePaymentEventActor")
+
+  operationsTasksAssigned OperationsTask[]      @relation("OperationsTaskAssignee")
+  operationsTasksCreated  OperationsTask[]      @relation("OperationsTaskCreator")
+  operationsTasksDecided  OperationsTask[]      @relation("OperationsTaskDecider")
+  operationsTaskEvents    OperationsTaskEvent[] @relation("OperationsTaskEventActor")
+
+  crmActivities    CrmActivity[]  @relation("CrmActivityActor")
+  crmOffersCreated CrmOffer[]     @relation("CrmOfferCreator")
+  crmOffersTrained CrmOffer[]     @relation("CrmOfferTrainer")
+  crmDealsOwned    CrmDeal[]      @relation("CrmDealOwner")
+  crmDealsCreated  CrmDeal[]      @relation("CrmDealCreator")
+  crmDealEvents    CrmDealEvent[] @relation("CrmDealEventActor")
+
   @@index([email])
   @@index([deletedAt])
 }
 
 model AiOperatorProposal {
-  id               String                    @id @default(cuid())
-  actionId         String                    @unique
-  actionVersion    String
-  actionKind       String
-  executionPolicy  String
-  sourceSurface    String
-  sourceReference  String
-  actionEnvelope   Json
-  status           AiOperatorProposalStatus  @default(PENDING_APPROVAL)
-  proposedByUserId String?
-  decidedByUserId  String?
-  decidedAt        DateTime?
-  decisionNote     String?
-  executedByUserId String?
-  executedAt       DateTime?
-  createdAt        DateTime                  @default(now())
-  updatedAt        DateTime                  @updatedAt
-  proposedBy       User?                     @relation("AiOperatorProposalProposer", fields: [proposedByUserId], references: [id], onDelete: SetNull)
-  decidedBy        User?                     @relation("AiOperatorProposalDecider", fields: [decidedByUserId], references: [id], onDelete: SetNull)
-  executedBy       User?                     @relation("AiOperatorProposalExecutor", fields: [executedByUserId], references: [id], onDelete: SetNull)
-  events                    AiOperatorProposalEvent[]
+  id                      String                    @id @default(cuid())
+  actionId                String                    @unique
+  actionVersion           String
+  actionKind              String
+  executionPolicy         String
+  sourceSurface           String
+  sourceReference         String
+  actionEnvelope          Json
+  status                  AiOperatorProposalStatus  @default(PENDING_APPROVAL)
+  proposedByUserId        String?
+  decidedByUserId         String?
+  decidedAt               DateTime?
+  decisionNote            String?
+  executedByUserId        String?
+  executedAt              DateTime?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  proposedBy              User?                     @relation("AiOperatorProposalProposer", fields: [proposedByUserId], references: [id], onDelete: SetNull)
+  decidedBy               User?                     @relation("AiOperatorProposalDecider", fields: [decidedByUserId], references: [id], onDelete: SetNull)
+  executedBy              User?                     @relation("AiOperatorProposalExecutor", fields: [executedByUserId], references: [id], onDelete: SetNull)
+  events                  AiOperatorProposalEvent[]
   socialPublishingAttempt SocialPublishingAttempt?
 
   @@index([status, createdAt])
@@ -420,18 +444,18 @@ model AiOperatorProposalEvent {
 }
 
 model SocialPublishingAccount {
-  id                String                  @id @default(cuid())
-  accountRef        String                  @unique
-  platform          ContentCalendarPlatform
-  displayName       String
-  externalAccountId String
-  active            Boolean                 @default(true)
-  createdByUserId   String
-  updatedByUserId   String
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  createdBy         User                    @relation("SocialPublishingAccountCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
-  updatedBy         User                    @relation("SocialPublishingAccountUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)
+  id                 String                         @id @default(cuid())
+  accountRef         String                         @unique
+  platform           ContentCalendarPlatform
+  displayName        String
+  externalAccountId  String
+  active             Boolean                        @default(true)
+  createdByUserId    String
+  updatedByUserId    String
+  createdAt          DateTime                       @default(now())
+  updatedAt          DateTime                       @updatedAt
+  createdBy          User                           @relation("SocialPublishingAccountCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  updatedBy          User                           @relation("SocialPublishingAccountUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)
   events             SocialPublishingAccountEvent[]
   publishingAttempts SocialPublishingAttempt[]
 
@@ -457,29 +481,29 @@ model SocialPublishingAccountEvent {
 }
 
 model SocialPublishingAttempt {
-  id                    String                          @id @default(cuid())
-  idempotencyKey        String                          @unique
-  proposalId            String                          @unique
+  id                    String                         @id @default(cuid())
+  idempotencyKey        String                         @unique
+  proposalId            String                         @unique
   actionId              String
   contentCalendarItemId String
   contentRevision       Int
   platform              ContentCalendarPlatform
   accountRef            String
   externalAccountId     String
-  status                SocialPublishingAttemptStatus   @default(PLANNED)
-  attemptCount          Int                             @default(0)
-  nextAttemptAt         DateTime                        @default(now())
+  status                SocialPublishingAttemptStatus  @default(PLANNED)
+  attemptCount          Int                            @default(0)
+  nextAttemptAt         DateTime                       @default(now())
   providerReference     String?
   lastErrorCode         String?
   lockToken             String?
   lockedUntil           DateTime?
   startedAt             DateTime?
   completedAt           DateTime?
-  createdAt             DateTime                        @default(now())
-  updatedAt             DateTime                        @updatedAt
-  proposal              AiOperatorProposal              @relation(fields: [proposalId], references: [id], onDelete: Restrict)
-  content               ContentCalendarItem             @relation(fields: [contentCalendarItemId], references: [id], onDelete: Restrict)
-  account               SocialPublishingAccount         @relation(fields: [accountRef], references: [accountRef], onDelete: Restrict)
+  createdAt             DateTime                       @default(now())
+  updatedAt             DateTime                       @updatedAt
+  proposal              AiOperatorProposal             @relation(fields: [proposalId], references: [id], onDelete: Restrict)
+  content               ContentCalendarItem            @relation(fields: [contentCalendarItemId], references: [id], onDelete: Restrict)
+  account               SocialPublishingAccount        @relation(fields: [accountRef], references: [accountRef], onDelete: Restrict)
   events                SocialPublishingAttemptEvent[]
 
   @@index([status, nextAttemptAt])
@@ -525,24 +549,24 @@ model AiProviderUsage {
 }
 
 model ContentCalendarItem {
-  id              String                  @id @default(cuid())
-  title           String
-  caption         String
-  platform        ContentCalendarPlatform
-  accountRef      String
-  format          ContentCalendarFormat
-  status          ContentCalendarStatus    @default(DRAFT)
-  assetReference  String?
-  scheduledFor    DateTime?
-  timezone        String?
-  revision        Int                      @default(1)
-  createdByUserId String
-  updatedByUserId String
-  createdAt       DateTime                 @default(now())
-  updatedAt       DateTime                 @updatedAt
-  createdBy       User                     @relation("ContentCalendarItemCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
-  updatedBy       User                     @relation("ContentCalendarItemUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)
-  events                    ContentCalendarItemEvent[]
+  id                       String                     @id @default(cuid())
+  title                    String
+  caption                  String
+  platform                 ContentCalendarPlatform
+  accountRef               String
+  format                   ContentCalendarFormat
+  status                   ContentCalendarStatus      @default(DRAFT)
+  assetReference           String?
+  scheduledFor             DateTime?
+  timezone                 String?
+  revision                 Int                        @default(1)
+  createdByUserId          String
+  updatedByUserId          String
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  createdBy                User                       @relation("ContentCalendarItemCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  updatedBy                User                       @relation("ContentCalendarItemUpdater", fields: [updatedByUserId], references: [id], onDelete: Restrict)
+  events                   ContentCalendarItemEvent[]
   socialPublishingAttempts SocialPublishingAttempt[]
 
   @@index([status, scheduledFor])
@@ -1457,6 +1481,10 @@ model Enquiry {
   followUpEvents         EnquiryFollowUpEvent[]
   outcomeEvents          EnquiryOutcomeEvent[]
 
+  client     Client?
+  activities CrmActivity[]
+  deals      CrmDeal[]
+
   @@index([status, createdAt])
   @@index([ownerUserId, status, createdAt])
   @@index([nextFollowUpAt, status])
@@ -1555,4 +1583,403 @@ model CohortDeliveryAuditEvent {
   @@index([cohortId, occurredAt])
   @@index([actorUserId, occurredAt])
   @@index([subjectType, subjectId, occurredAt])
+}
+
+enum StaffRoleAuditAction {
+  GRANTED
+  REVOKED
+}
+
+model StaffRoleAuditEvent {
+  id           String               @id @default(cuid())
+  actorUserId  String
+  targetUserId String
+  roleKey      String
+  action       StaffRoleAuditAction
+  occurredAt   DateTime             @default(now())
+  actor        User                 @relation("StaffRoleAuditActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  target       User                 @relation("StaffRoleAuditTarget", fields: [targetUserId], references: [id], onDelete: Restrict)
+
+  @@index([targetUserId, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([occurredAt])
+}
+
+enum ConsultationMode {
+  ONSITE
+  ONLINE
+}
+
+enum ConsultationStatus {
+  REQUESTED
+  CONFIRMED
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+enum ConsultationEventType {
+  CREATED
+  RESCHEDULED
+  STATUS_CHANGED
+  NOTE_UPDATED
+}
+
+model Client {
+  id                       String                    @id @default(cuid())
+  displayName              String
+  phone                    String?
+  email                    String?
+  preferredLocale          String                    @default("ar")
+  contactConsent           Boolean                   @default(false)
+  contactConsentRecordedAt DateTime?
+  sourceEnquiryId          String?                   @unique
+  operationalNote          String?
+  createdByUserId          String
+  archivedAt               DateTime?
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  sourceEnquiry            Enquiry?                  @relation(fields: [sourceEnquiryId], references: [id], onDelete: SetNull)
+  createdBy                User                      @relation("ClientCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  appointments             ConsultationAppointment[]
+  payments                 OfficePayment[]
+  tasks                    OperationsTask[]
+  activities               CrmActivity[]
+  deals                    CrmDeal[]
+
+  @@index([displayName])
+  @@index([phone])
+  @@index([createdByUserId, createdAt])
+  @@index([archivedAt])
+}
+
+model ConsultationAppointment {
+  id               String                         @id @default(cuid())
+  clientId         String
+  consultantUserId String
+  startsAt         DateTime
+  endsAt           DateTime
+  mode             ConsultationMode
+  status           ConsultationStatus             @default(CONFIRMED)
+  priceMinor       Int
+  currency         String                         @default("DZD") @db.Char(3)
+  operationalNote  String?
+  revision         Int                            @default(1)
+  createdByUserId  String
+  createdAt        DateTime                       @default(now())
+  updatedAt        DateTime                       @updatedAt
+  client           Client                         @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  consultant       User                           @relation("ConsultationConsultant", fields: [consultantUserId], references: [id], onDelete: Restrict)
+  createdBy        User                           @relation("ConsultationCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  events           ConsultationAppointmentEvent[]
+  payments         OfficePayment[]
+
+  @@index([consultantUserId, startsAt])
+  @@index([status, startsAt])
+  @@index([clientId, startsAt])
+}
+
+model ConsultationAppointmentEvent {
+  id            String                  @id @default(cuid())
+  appointmentId String
+  eventType     ConsultationEventType
+  actorUserId   String
+  fromStatus    ConsultationStatus?
+  toStatus      ConsultationStatus
+  fromStartsAt  DateTime?
+  toStartsAt    DateTime
+  fromRevision  Int?
+  toRevision    Int
+  occurredAt    DateTime                @default(now())
+  appointment   ConsultationAppointment @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+  actor         User                    @relation("ConsultationEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([appointmentId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
+enum OfficePaymentMethod {
+  CASH
+  BARIDIMOB
+  CCP
+  BANK_TRANSFER
+}
+
+enum OfficePaymentPurpose {
+  CONSULTATION
+  PROGRAMME
+  OTHER
+}
+
+enum OfficePaymentStatus {
+  RECORDED
+  VOIDED
+}
+
+enum OfficePaymentEventType {
+  RECORDED
+  VOIDED
+}
+
+model OfficePayment {
+  id                String                   @id @default(cuid())
+  receiptNumber     String                   @unique
+  payerName         String
+  clientId          String?
+  appointmentId     String?
+  purpose           OfficePaymentPurpose
+  description       String
+  amountMinor       Int
+  currency          String                   @default("DZD") @db.Char(3)
+  method            OfficePaymentMethod
+  externalReference String?
+  receivedAt        DateTime
+  status            OfficePaymentStatus      @default(RECORDED)
+  recordedByUserId  String
+  voidedByUserId    String?
+  voidedAt          DateTime?
+  voidReason        String?
+  createdAt         DateTime                 @default(now())
+  client            Client?                  @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  appointment       ConsultationAppointment? @relation(fields: [appointmentId], references: [id], onDelete: Restrict)
+  recordedBy        User                     @relation("OfficePaymentRecorder", fields: [recordedByUserId], references: [id], onDelete: Restrict)
+  voidedBy          User?                    @relation("OfficePaymentVoider", fields: [voidedByUserId], references: [id], onDelete: Restrict)
+  events            OfficePaymentEvent[]
+
+  @@index([receivedAt])
+  @@index([status, receivedAt])
+  @@index([clientId, receivedAt])
+  @@index([appointmentId])
+  @@index([recordedByUserId, receivedAt])
+}
+
+model OfficePaymentEvent {
+  id          String                 @id @default(cuid())
+  paymentId   String
+  eventType   OfficePaymentEventType
+  actorUserId String
+  reason      String?
+  occurredAt  DateTime               @default(now())
+  payment     OfficePayment          @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+  actor       User                   @relation("OfficePaymentEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([paymentId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
+enum OperationsTaskKind {
+  TASK
+  APPROVAL
+}
+
+enum OperationsTaskStatus {
+  OPEN
+  DONE
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum OperationsTaskPriority {
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum OperationsTaskEventType {
+  CREATED
+  STATUS_CHANGED
+}
+
+model OperationsTask {
+  id              String                 @id @default(cuid())
+  kind            OperationsTaskKind
+  title           String
+  details         String?
+  assigneeUserId  String?
+  dueOn           DateTime?              @db.Date
+  priority        OperationsTaskPriority @default(NORMAL)
+  status          OperationsTaskStatus   @default(OPEN)
+  decisionNote    String?
+  clientId        String?
+  createdByUserId String
+  decidedByUserId String?
+  closedAt        DateTime?
+  revision        Int                    @default(1)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  assignee        User?                  @relation("OperationsTaskAssignee", fields: [assigneeUserId], references: [id], onDelete: Restrict)
+  createdBy       User                   @relation("OperationsTaskCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  decidedBy       User?                  @relation("OperationsTaskDecider", fields: [decidedByUserId], references: [id], onDelete: Restrict)
+  client          Client?                @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  events          OperationsTaskEvent[]
+
+  @@index([assigneeUserId, status, dueOn])
+  @@index([kind, status, createdAt])
+  @@index([createdByUserId, status])
+  @@index([clientId])
+}
+
+model OperationsTaskEvent {
+  id          String                  @id @default(cuid())
+  taskId      String
+  eventType   OperationsTaskEventType
+  actorUserId String
+  fromStatus  OperationsTaskStatus?
+  toStatus    OperationsTaskStatus
+  occurredAt  DateTime                @default(now())
+  task        OperationsTask          @relation(fields: [taskId], references: [id], onDelete: Restrict)
+  actor       User                    @relation("OperationsTaskEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([taskId, occurredAt])
+  @@index([actorUserId, occurredAt])
+}
+
+enum CrmActivityType {
+  CALL
+  WHATSAPP
+  EMAIL
+  MEETING
+  NOTE
+}
+
+enum CrmActivityDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum CrmActivityOutcome {
+  REACHED
+  NO_ANSWER
+  LEFT_MESSAGE
+  BOOKED
+  NOT_INTERESTED
+  OTHER
+}
+
+model CrmActivity {
+  id          String                @id @default(cuid())
+  type        CrmActivityType
+  direction   CrmActivityDirection?
+  outcome     CrmActivityOutcome?
+  summary     String
+  occurredAt  DateTime
+  enquiryId   String?
+  clientId    String?
+  actorUserId String
+  createdAt   DateTime              @default(now())
+  enquiry     Enquiry?              @relation(fields: [enquiryId], references: [id], onDelete: Restrict)
+  client      Client?               @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  actor       User                  @relation("CrmActivityActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([enquiryId, occurredAt])
+  @@index([clientId, occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([occurredAt])
+}
+
+enum CrmSection {
+  PSYCHOLOGY
+  LANGUAGES
+  PROFESSIONAL
+  EVENTS
+}
+
+enum CrmOfferKind {
+  CONSULTATION
+  LANGUAGE_COURSE
+  PROFESSIONAL_PROGRAMME
+  FAMILY_WORKSHOP
+  FREE_SESSION
+  EVENT
+}
+
+enum CrmOfferStatus {
+  DRAFT
+  OPEN
+  FULL
+  DONE
+  CANCELLED
+}
+
+enum CrmDealState {
+  OPEN
+  WON
+  LOST
+}
+
+enum CrmDealEventType {
+  CREATED
+  STAGE_CHANGED
+}
+
+model CrmOffer {
+  id              String         @id @default(cuid())
+  section         CrmSection
+  kind            CrmOfferKind
+  title           String
+  priceMinor      Int?
+  currency        String         @default("DZD") @db.Char(3)
+  startsOn        DateTime?      @db.Date
+  endsOn          DateTime?      @db.Date
+  capacity        Int?
+  trainerUserId   String?
+  status          CrmOfferStatus @default(DRAFT)
+  createdByUserId String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  trainer         User?          @relation("CrmOfferTrainer", fields: [trainerUserId], references: [id], onDelete: SetNull)
+  createdBy       User           @relation("CrmOfferCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  deals           CrmDeal[]
+
+  @@index([section, status, startsOn])
+  @@index([trainerUserId])
+}
+
+model CrmDeal {
+  id              String         @id @default(cuid())
+  section         CrmSection
+  stage           String
+  state           CrmDealState   @default(OPEN)
+  enquiryId       String?
+  clientId        String?
+  offerId         String?
+  valueMinor      Int?
+  currency        String         @default("DZD") @db.Char(3)
+  ownerUserId     String?
+  expectedCloseOn DateTime?      @db.Date
+  lostReason      String?
+  closedAt        DateTime?
+  revision        Int            @default(1)
+  createdByUserId String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  enquiry         Enquiry?       @relation(fields: [enquiryId], references: [id], onDelete: Restrict)
+  client          Client?        @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  offer           CrmOffer?      @relation(fields: [offerId], references: [id], onDelete: Restrict)
+  owner           User?          @relation("CrmDealOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  createdBy       User           @relation("CrmDealCreator", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  events          CrmDealEvent[]
+
+  @@index([section, state, updatedAt])
+  @@index([enquiryId])
+  @@index([clientId])
+  @@index([offerId, state])
+  @@index([ownerUserId, state])
+}
+
+model CrmDealEvent {
+  id          String           @id @default(cuid())
+  dealId      String
+  type        CrmDealEventType
+  fromStage   String?
+  toStage     String
+  reason      String?
+  actorUserId String
+  occurredAt  DateTime         @default(now())
+  deal        CrmDeal          @relation(fields: [dealId], references: [id], onDelete: Restrict)
+  actor       User             @relation("CrmDealEventActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([dealId, occurredAt])
+  @@index([actorUserId, occurredAt])
 }

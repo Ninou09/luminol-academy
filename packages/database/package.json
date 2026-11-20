@@ -7,7 +7,13 @@
     ".": "./src/index.ts",
     "./content-calendar": "./src/content-calendar.ts",
     "./social-publishing-attempts": "./src/social-publishing-attempts.ts",
-    "./social-publishing-delivery": "./src/social-publishing-delivery.ts"
+    "./social-publishing-delivery": "./src/social-publishing-delivery.ts",
+    "./staff-roles": "./src/staff-roles.ts",
+    "./consultations": "./src/consultations.ts",
+    "./office-payments": "./src/office-payments.ts",
+    "./operations-tasks": "./src/operations-tasks.ts",
+    "./crm": "./src/crm.ts",
+    "./crm-deals": "./src/crm-deals.ts"
   },
   "scripts": {
     "generate": "prisma generate",
@@ -26,7 +32,7 @@
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "pg": "^8.22.0",
-    "zod": "^4.5.4"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@luminol/config": "workspace:*",

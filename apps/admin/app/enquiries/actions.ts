@@ -64,7 +64,7 @@ function parseDateOnly(value: string) {
 }
 
 export async function transitionEnquiryStatus(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePermission('enquiry:work');
   const input = transitionSchema.parse({
     enquiryId: formData.get('enquiryId'),
     toStatus: formData.get('toStatus'),
@@ -102,10 +102,11 @@ export async function transitionEnquiryStatus(formData: FormData) {
 
   revalidatePath('/');
   revalidatePath('/enquiries');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function updateEnquiryOwnership(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePermission('enquiry:work');
   const input = ownershipSchema.parse({
     enquiryId: formData.get('enquiryId'),
     operation: formData.get('operation'),
@@ -144,10 +145,11 @@ export async function updateEnquiryOwnership(formData: FormData) {
   });
 
   revalidatePath('/enquiries');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function updateEnquiryFollowUpPlan(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePermission('enquiry:work');
   const operation = formData.get('operation');
   const input = followUpPlanSchema.parse({
     enquiryId: formData.get('enquiryId'),
@@ -176,10 +178,11 @@ export async function updateEnquiryFollowUpPlan(formData: FormData) {
   });
 
   revalidatePath('/enquiries');
+  revalidatePath('/crm', 'layout');
 }
 
 export async function updateEnquiryOutcome(formData: FormData) {
-  const administrator = await requirePermission('academy:manage');
+  const administrator = await requirePermission('enquiry:work');
   const operation = formData.get('operation');
   const input = outcomeSchema.parse({
     enquiryId: formData.get('enquiryId'),
@@ -226,4 +229,5 @@ export async function updateEnquiryOutcome(formData: FormData) {
   });
 
   revalidatePath('/enquiries');
+  revalidatePath('/crm', 'layout');
 }
