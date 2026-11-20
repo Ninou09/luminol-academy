@@ -2,7 +2,7 @@ import type { Locale } from '@luminol/localization';
 
 import Image from 'next/image';
 
-import { actPhotos } from '../lib/people-photos';
+import { actPhotos, illustrativePhotoCredit } from '../lib/people-photos';
 import styles from './act-hexaflex.module.css';
 
 const copy: Record<
@@ -76,7 +76,12 @@ export function ActHexaflex({ locale }: { locale: Locale }) {
           {text.title}
         </h2>
         <p>{text.body}</p>
-        <figure className={styles.valuesPhoto}>
+        <figure
+          className={styles.valuesPhoto}
+          data-media-source={illustrativePhotoCredit.source}
+          data-media-license={illustrativePhotoCredit.license}
+          data-media-crop="center-center"
+        >
           <Image
             src={actPhotos.values.src}
             alt={actPhotos.values.alt[locale]}

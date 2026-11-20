@@ -194,3 +194,14 @@
     display: none;
   }
 }
+
+.dock[hidden],
+:global(html[data-menu-open]) .dock {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .dock[data-at-hero] > :not(.toolsToggle, .tools) {
+    display: none;
+  }
+}

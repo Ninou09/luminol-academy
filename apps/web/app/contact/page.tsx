@@ -22,7 +22,7 @@ import { getSchools } from '../../lib/schools';
 import styles from './page.module.css';
 import { GlassIcon, type GlassIconName } from '../../components/glass-icon';
 import { FaqSection } from '../../components/faq-section';
-import { PhotoStack } from '../../components/photo-stack';
+import { PhotoCard } from '../../components/live-photo';
 import { AddressCard } from '../../components/address-card';
 import { ContactCards } from '../../components/contact-cards';
 import { SocialIcons } from '../../components/social-icons';
@@ -131,7 +131,12 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" tabIndex={-1} className={styles.page}>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={styles.page}
+        data-quiet-page
+      >
         <section
           className={styles.hero}
           aria-labelledby="contact-hero-title"
@@ -177,14 +182,12 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               ) : null}
             </div>
           </div>
-          <PhotoStack
+          <PhotoCard
             className={styles.heroStack}
             locale={locale}
+            photo={peoplePhotos.contactsNextStep}
             priority
-            photos={[
-              peoplePhotos.contactsNextStep,
-              peoplePhotos.designTherapyRoom,
-            ]}
+            caption
           />
         </section>
 

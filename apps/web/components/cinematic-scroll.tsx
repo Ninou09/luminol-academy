@@ -1,10 +1,14 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { useEffect } from 'react';
 
 /** Native scrolling drives the film framing; no pinned scroll or render loop. */
 export function CinematicScroll() {
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
+    if (!allowMotion) return;
     const hero = document.getElementById('top');
     if (!hero) return;
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -49,6 +53,6 @@ export function CinematicScroll() {
       preference.removeEventListener('change', syncPreference);
       reset();
     };
-  }, []);
+  }, [allowMotion]);
   return null;
 }

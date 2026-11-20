@@ -65,12 +65,14 @@ export function PhotoCard({
   className,
   sizes = '(max-width: 900px) 100vw, 40vw',
   priority = false,
+  caption = false,
 }: {
   photo: PeoplePhoto;
   locale: Locale;
   className?: string | undefined;
   sizes?: string;
   priority?: boolean;
+  caption?: boolean;
 }) {
   return (
     <figure
@@ -88,6 +90,11 @@ export function PhotoCard({
         sizes={sizes}
         priority={priority}
       />
+      {caption && (
+        <figcaption className="scene-caption">
+          {illustrativePhotoCredit.label[locale]}
+        </figcaption>
+      )}
       <span className={styles.cardGlare} aria-hidden="true" />
     </figure>
   );

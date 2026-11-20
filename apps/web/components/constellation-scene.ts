@@ -22,11 +22,9 @@ import {
  */
 
 export type ConstellationScene = {
-  /** Scroll story progress, 0 → 1. */
-  setProgress(value: number): void;
-  setPointer(x: number, y: number): void;
+  setSelected(index: number | null): void;
   /** Screen positions (px, relative to the canvas) of the three spheres. */
-  getAnchors(): Array<{ x: number; y: number; visible: number }>;
+  getAnchors(): Array<{ x: number; y: number }>;
   start(): void;
   stop(): void;
   destroy(): void;
@@ -269,11 +267,6 @@ function createRing(count: number) {
   return new Points(geometry, material);
 }
 
-const smooth = (edge0: number, edge1: number, value: number) => {
-  const t = Math.min(1, Math.max(0, (value - edge0) / (edge1 - edge0)));
-  return t * t * (3 - 2 * t);
-};
-
 export function createConstellationScene(
   canvas: HTMLCanvasElement,
   options: { tints: [string, string, string]; mobile: boolean },
@@ -300,7 +293,10 @@ export function createConstellationScene(
   const camera = new PerspectiveCamera(38, 1, 0.1, 100);
   camera.position.set(0, 0.6, 8.5);
 
+  camera.position.y = 0.2;
+  camera.lookAt(0, 0, 0);
   const world = new Group();
+  world.rotation.y = 0.15;
   scene.add(world);
 
   const core = createCore();
@@ -354,57 +350,45 @@ export function createConstellationScene(
   observer.observe(canvas);
   resize();
 
-  let progress = 0;
-  let eased = 0;
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  let selected: number | null = null;
+
   let raf = 0;
   let running = false;
   const startedAt = performance.now();
   const anchorVector = new Vector3();
-  let anchors = spheres.map(() => ({ x: 0, y: 0, visible: 0 }));
+  const anchors = spheres.map(() => ({ x: 0, y: 0 }));
 
   const render = (now: number) => {
     raf = 0;
     if (!running) return;
     const time = (now - startedAt) / 1000;
-    eased += (progress - eased) * 0.08;
-    pointer.x += (pointer.tx - pointer.x) * 0.05;
-    pointer.y += (pointer.ty - pointer.y) * 0.05;
-
-    const emerge = smooth(0.12, 0.62, eased);
-    const settle = smooth(0.55, 1, eased);
-
     (core.material as ShaderMaterial).uniforms.uTime!.value = time;
-    (core.material as ShaderMaterial).uniforms.uEnergy!.value =
-      1 - emerge * 0.6;
+    (core.material as ShaderMaterial).uniforms.uEnergy!.value = 0.4;
     core.rotation.y = time * 0.15;
     const breathe = 1 + Math.sin(time * 1.2) * 0.025;
-    core.scale.setScalar((0.78 - emerge * 0.18) * breathe);
+    core.scale.setScalar(0.6 * breathe);
     coreHalo.scale.setScalar(1 + Math.sin(time * 1.2) * 0.04);
 
     const ringUniforms = (ring.material as ShaderMaterial).uniforms;
     ringUniforms.uTime!.value = time;
-    ringUniforms.uReveal!.value = 0.35 + emerge * 0.65;
+    ringUniforms.uReveal!.value = 1;
 
-    const orbitRadius = 2.9 * emerge;
-    const orbitSpin = time * 0.12 * (1 - settle * 0.6) + settle * 0.35;
+    const radius = 2.9;
+    const orbitSpin = time * 0.048 + 0.35;
     spheres.forEach((sphere, index) => {
-      // Each sphere leaves the core slightly after the previous one.
-      const own = smooth(0.12 + index * 0.08, 0.62 + index * 0.06, eased);
       const angle = sphere.angle + orbitSpin;
-      const radius = orbitRadius * (0.6 + own * 0.4);
       sphere.group.position.set(
         Math.cos(angle) * radius,
         Math.sin(angle) * radius * 0.58 +
           Math.sin(time * 0.9 + index * 2) * 0.08,
         Math.sin(angle) * 0.9,
       );
-      sphere.group.scale.setScalar(0.2 + own * 0.8);
+      sphere.group.scale.setScalar(selected === index ? 1.22 : 1);
       const uniforms = (sphere.glass.material as ShaderMaterial).uniforms;
       uniforms.uTime!.value = time + index * 10;
-      uniforms.uOpacity!.value = own;
+      uniforms.uOpacity!.value = 1;
       (sphere.halo.material as ShaderMaterial).uniforms.uStrength!.value =
-        own * 0.75;
+        selected === index ? 1.55 : 0.65;
       sphere.glass.rotation.y = time * 0.3 + index;
 
       anchorVector.copy(sphere.group.position);
@@ -413,30 +397,15 @@ export function createConstellationScene(
       anchors[index] = {
         x: (anchorVector.x * 0.5 + 0.5) * width,
         y: (-anchorVector.y * 0.5 + 0.5) * height,
-        visible: smooth(0.45 + index * 0.08, 0.7 + index * 0.06, eased),
       };
     });
-    anchors = [...anchors];
-
-    // The core rises from below the title into the centre as schools emerge.
-    world.position.y =
-      -1.25 * (1 - emerge) + (camera.aspect < 0.8 ? 1.6 * emerge : 0);
-    world.rotation.y = pointer.x * 0.25 + settle * 0.15;
-    world.rotation.x = -pointer.y * 0.15;
-    camera.position.y = 0.6 - settle * 0.4;
-    camera.lookAt(0, 0, 0);
-
     renderer.render(scene, camera);
     raf = requestAnimationFrame(render);
   };
 
   return {
-    setProgress(value) {
-      progress = value;
-    },
-    setPointer(x, y) {
-      pointer.tx = x;
-      pointer.ty = y;
+    setSelected(index) {
+      selected = index;
     },
     getAnchors() {
       return anchors;

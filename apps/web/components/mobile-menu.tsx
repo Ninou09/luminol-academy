@@ -45,15 +45,35 @@ export function MobileMenu({
     document.documentElement.dataset.menuOpen = 'true';
     panelRef.current?.querySelector<HTMLElement>('a')?.focus();
     const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Tab') {
+        const controls = [
+          buttonRef.current,
+          ...panelRef.current!.querySelectorAll<HTMLAnchorElement>('a[href]'),
+        ];
+        const current = controls.indexOf(
+          document.activeElement as HTMLAnchorElement,
+        );
+        const next =
+          (current + (event.shiftKey ? -1 : 1) + controls.length) %
+          controls.length;
+        event.preventDefault();
+        controls[next]?.focus();
+      }
       if (event.key === 'Escape') {
         setOpen(false);
         buttonRef.current?.focus();
       }
     };
+    const wide = window.matchMedia('(min-width: 901px)');
+    const closeWide = () => {
+      if (wide.matches) setOpen(false);
+    };
+    wide.addEventListener('change', closeWide);
     document.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = previous;
       delete document.documentElement.dataset.menuOpen;
+      wide.removeEventListener('change', closeWide);
       document.removeEventListener('keydown', onKey);
     };
   }, [open]);

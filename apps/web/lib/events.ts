@@ -7,6 +7,7 @@ export type LuminolEvent = {
   /** ISO date (Algeria time); null while the date is still pending. */
   date: string | null;
   secondDate?: string;
+  endsAt?: string;
   time?: string;
   free: boolean;
   kind: 'awareness' | 'professional' | 'programme';
@@ -21,6 +22,39 @@ export type LuminolEvent = {
   /** Optional cover photo in /media/people. */
   cover?: string;
 };
+
+export const familyAfterTrauma: LuminolEvent = {
+  id: 'family-after-trauma-2026-09-25',
+  date: '2026-09-25',
+  endsAt: '2026-09-25T22:00:00+01:00',
+  free: true,
+  kind: 'awareness',
+  title: {
+    ar: 'الأسرة بعد الصدمة النفسية',
+    en: 'The family after psychological trauma',
+    fr: 'La famille après un traumatisme psychologique',
+  },
+  audience: {
+    ar: 'الأسر',
+    en: 'Families',
+    fr: 'Familles',
+  },
+  presenters: ['fettouma'],
+  pageHref: '/workshops/family-after-trauma',
+};
+
+const algeriaDay = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Africa/Algiers',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+export function hasEventEnded(event: LuminolEvent, now = new Date()) {
+  if (event.endsAt) return now.getTime() >= Date.parse(event.endsAt);
+  const lastDay = event.secondDate ?? event.date;
+  return lastDay !== null && lastDay < algeriaDay.format(now);
+}
 
 /**
  * Luminol events confirmed in the academy CRM export of 15 November 2026.
@@ -172,24 +206,7 @@ export const luminolEvents: readonly LuminolEvent[] = [
     },
     presenters: ['fettouma', 'saliha'],
   },
-  {
-    id: 'family-after-trauma-2026-09-25',
-    date: '2026-09-25',
-    free: true,
-    kind: 'awareness',
-    title: {
-      ar: 'الأسرة بعد الصدمة النفسية',
-      en: 'The family after psychological trauma',
-      fr: 'La famille après un traumatisme psychologique',
-    },
-    audience: {
-      ar: 'الأسر',
-      en: 'Families',
-      fr: 'Familles',
-    },
-    presenters: ['fettouma'],
-    pageHref: '/workshops/family-after-trauma',
-  },
+  familyAfterTrauma,
 ];
 
 export type TeamMember = {

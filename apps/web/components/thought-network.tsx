@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { useEffect, useRef } from 'react';
 
 type Node = { x: number; y: number; vx: number; vy: number; r: number };
@@ -17,12 +19,13 @@ export function ThoughtNetwork({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
+    if (!allowMotion) return;
     const canvas = canvasRef.current;
     const host = canvas?.parentElement;
     const context = canvas?.getContext('2d');
     if (!canvas || !host || !context) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     let width = 0;
     let height = 0;
@@ -177,7 +180,7 @@ export function ThoughtNetwork({
       host.removeEventListener('pointermove', onMove);
       host.removeEventListener('pointerleave', onLeave);
     };
-  }, []);
+  }, [allowMotion]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }

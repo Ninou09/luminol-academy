@@ -4,7 +4,7 @@ html {
 
 /* Each route gets a quiet arrival; persistent navigation never leaves the frame. */
 @media (prefers-reduced-motion: no-preference) {
-  main h1 {
+  main h1:not([data-no-split]) {
     animation: luminol-page-arrival 650ms var(--luminol-ease-out) both;
   }
 }
@@ -96,4 +96,18 @@ html[data-motion='full'] [data-motion-orbit='reverse'] {
     animation: none !important;
     transition: none !important;
   }
+}
+
+html:not([data-motion='full']) *,
+html:not([data-motion='full']) *::before,
+html:not([data-motion='full']) *::after,
+[data-quiet-page] *,
+[data-quiet-page] *::before,
+[data-quiet-page] *::after {
+  animation: none !important;
+  transition-duration: 0s !important;
+}
+
+html[data-motion='reduced'] {
+  scroll-behavior: auto;
 }

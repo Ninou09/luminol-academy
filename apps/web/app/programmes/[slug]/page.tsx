@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { ActHexaflex } from '../../../components/act-hexaflex';
-import { actPhotos } from '../../../lib/people-photos';
+import { actPhotos, illustrativePhotoCredit } from '../../../lib/people-photos';
 import { ProgrammeEnquiryCard } from '../../../components/programme-enquiry-card';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { buildProgrammeContactHref } from '../../../lib/programme-contact';
@@ -329,7 +329,12 @@ export default async function ProgrammeDetailPage({
               ) : programme.slug.current.startsWith(
                   'acceptance-commitment-therapy',
                 ) ? (
-                <figure className={`${styles.mediaFrame} ${styles.coverPhoto}`}>
+                <figure
+                  className={`${styles.mediaFrame} ${styles.coverPhoto}`}
+                  data-media-source={illustrativePhotoCredit.source}
+                  data-media-license={illustrativePhotoCredit.license}
+                  data-media-crop="center-center"
+                >
                   <Image
                     src={actPhotos.cover.src}
                     alt={actPhotos.cover.alt[locale]}
@@ -338,6 +343,9 @@ export default async function ProgrammeDetailPage({
                     priority
                     sizes="(max-width: 900px) 100vw, 46vw"
                   />
+                  <figcaption className="scene-caption">
+                    {illustrativePhotoCredit.label[locale]}
+                  </figcaption>
                 </figure>
               ) : null}
               <ProgrammeEnquiryCard

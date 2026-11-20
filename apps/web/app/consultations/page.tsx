@@ -19,7 +19,7 @@ import { EnquiryForm } from '../../components/enquiry-form';
 import Image from 'next/image';
 
 import { FirstConsultation } from '../../components/first-consultation';
-import { PhotoStack } from '../../components/photo-stack';
+
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
@@ -232,7 +232,12 @@ export default async function ConsultationsPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" tabIndex={-1} className={styles.page}>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={styles.page}
+        data-quiet-page
+      >
         <section className={styles.hero} aria-labelledby="consultation-title">
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
@@ -277,14 +282,12 @@ export default async function ConsultationsPage() {
               </p>
             </div>
           </div>
-          <PhotoStack
+          <PhotoCard
             className={styles.heroStack}
             locale={locale}
+            photo={consultationPhotos.firstMeeting}
             priority
-            photos={[
-              consultationPhotos.firstMeeting,
-              consultationPhotos.online,
-            ]}
+            caption
           />
         </section>
 

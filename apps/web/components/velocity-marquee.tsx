@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { useEffect, useRef } from 'react';
 
 import styles from './velocity-marquee.module.css';
@@ -12,11 +14,11 @@ import styles from './velocity-marquee.module.css';
 export function VelocityMarquee({ words }: { words: string[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
 
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
+    if (!allowMotion) return;
     const track = trackRef.current;
     if (!track) return;
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (motion.matches) return;
 
     const rtl = document.documentElement.dir === 'rtl' ? -1 : 1;
     let offset = 0;
@@ -52,7 +54,7 @@ export function VelocityMarquee({ words }: { words: string[] }) {
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, []);
+  }, [allowMotion]);
 
   const sequence = [...words, ...words];
   return (

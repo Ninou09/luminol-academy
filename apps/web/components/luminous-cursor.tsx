@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { useEffect, useRef } from 'react';
 
 import styles from './luminous-cursor.module.css';
@@ -16,13 +18,14 @@ export function LuminousCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
+    if (!allowMotion) return;
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-    if (motion.matches || !fine.matches) return;
+    if (!fine.matches) return;
 
     const target = { x: -100, y: -100 };
     const ringPos = { x: -100, y: -100 };
@@ -71,7 +74,7 @@ export function LuminousCursor() {
       window.removeEventListener('pointerup', onUp);
       delete document.documentElement.dataset.cursor;
     };
-  }, []);
+  }, [allowMotion]);
 
   return (
     <>

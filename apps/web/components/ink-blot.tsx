@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { useEffect, useRef } from 'react';
 
 /**
@@ -89,11 +91,12 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
 export function InkBlot({ className }: { className?: string | undefined }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
+    if (!allowMotion) return;
     const canvas = canvasRef.current;
     const host = canvas?.parentElement;
     if (!canvas || !host) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const gl = canvas.getContext('webgl', {
       premultipliedAlpha: true,
       alpha: true,
@@ -178,7 +181,7 @@ export function InkBlot({ className }: { className?: string | undefined }) {
       gl.deleteShader(fragment);
       gl.deleteBuffer(buffer);
     };
-  }, []);
+  }, [allowMotion]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }

@@ -63,6 +63,7 @@ const topics = [
 
 const faqs = [
   {
+    registrationOnly: true,
     question: 'هل اللقاء مجاني؟',
     answer:
       'نعم. المشاركة مجانية، لكن التسجيل المسبق عبر استمارة Tally المعتمدة ضروري حتى تصلك معلومات الانضمام.',
@@ -73,6 +74,7 @@ const faqs = [
       'لأفراد الأسرة والمهتمين بالتثقيف النفسي، وكذلك للطلبة والممارسين في مجالات المساعدة الذين يريدون مدخلًا واضحًا وداعمًا للموضوع.',
   },
   {
+    registrationOnly: true,
     question: 'كيف أحصل على رابط الحضور؟',
     answer:
       'بعد إتمام التسجيل، تُرسل معلومات الانضمام والتذكيرات بصورة خاصة عبر بيانات الاتصال التي أدخلتها في الاستمارة.',
@@ -94,7 +96,7 @@ const calendarHref = '/ar/workshops/family-after-trauma/calendar';
 export function WorkshopExperience({
   registrationHref,
 }: {
-  registrationHref: string;
+  registrationHref: string | null;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTopic, setActiveTopic] = useState(0);
@@ -126,6 +128,11 @@ export function WorkshopExperience({
     selectTopic(nextIndex);
   }
 
+  const programmesLink = (
+    <Link className={styles.primaryCta} href="/ar/programmes">
+      تصفّح البرامج الحالية
+    </Link>
+  );
   const topic = topics[activeTopic] ?? topics[0];
 
   return (
@@ -180,14 +187,16 @@ export function WorkshopExperience({
             </a>
           </nav>
 
-          <a
-            className={styles.headerCta}
-            href={registrationHref}
-            rel="noreferrer"
-            data-registration-link
-          >
-            سجّل مجانًا
-          </a>
+          {registrationHref ? (
+            <a
+              className={styles.headerCta}
+              href={registrationHref}
+              rel="noreferrer"
+              data-registration-link
+            >
+              سجّل مجانًا
+            </a>
+          ) : null}
         </div>
       </header>
 
@@ -195,32 +204,45 @@ export function WorkshopExperience({
         <section className={styles.hero} aria-labelledby="workshop-title">
           <div className={styles.heroGlow} aria-hidden="true" />
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>لقاء توعوي مجاني · أونلاين</p>
-            <h1 id="workshop-title">
-              الأسرة بعد الصدمة النفسية
-              <span>كيف نفهم ونساند؟</span>
+            <p className={styles.eyebrow}>
+              {registrationHref ? 'لقاء توعوي مجاني · أونلاين' : 'انتهى اللقاء'}
+            </p>
+            <h1 id="workshop-title" data-no-split>
+              الأسرة بعد الصدمة النفسية <span>كيف نفهم ونساند؟</span>
             </h1>
             <p className={styles.heroLede}>
               لقاء واضح وعملي يساعد الأسرة على فهم ما قد يتغيّر بعد الصدمة،
               وبناء مساندة أكثر أمانًا وهدوءًا واحترامًا.
             </p>
             <div className={styles.heroActions}>
-              <a
-                className={styles.primaryCta}
-                href={registrationHref}
-                rel="noreferrer"
-                data-registration-link
-              >
-                احجز مكانك مجانًا <span aria-hidden="true">↗</span>
-              </a>
-              <a className={styles.secondaryCta} href={calendarHref} download>
-                أضف الموعد إلى التقويم <span aria-hidden="true">↓</span>
-              </a>
+              {registrationHref ? (
+                <>
+                  <a
+                    className={styles.primaryCta}
+                    href={registrationHref}
+                    rel="noreferrer"
+                    data-registration-link
+                  >
+                    احجز مكانك مجانًا <span aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    className={styles.secondaryCta}
+                    href={calendarHref}
+                    download
+                  >
+                    أضف الموعد إلى التقويم <span aria-hidden="true">↓</span>
+                  </a>
+                </>
+              ) : (
+                programmesLink
+              )}
             </div>
-            <p className={styles.registrationNote}>
-              التسجيل يتم عبر استمارة Tally المعتمدة. معلومات الانضمام تُرسل
-              للمسجلين فقط.
-            </p>
+            {registrationHref ? (
+              <p className={styles.registrationNote}>
+                التسجيل يتم عبر استمارة Tally المعتمدة. معلومات الانضمام تُرسل
+                للمسجلين فقط.
+              </p>
+            ) : null}
           </div>
 
           <aside className={styles.eventCard} aria-label="تفاصيل اللقاء">
@@ -426,63 +448,73 @@ export function WorkshopExperience({
           reveal="curtain"
         />
 
-        <section className={styles.joining} aria-labelledby="joining-title">
-          <div className={styles.sectionHeading}>
-            <p className={styles.sectionLabel}>خطوات الانضمام</p>
-            <h2 id="joining-title">أربع خطوات بسيطة، بلا حساب جديد.</h2>
-          </div>
-          <ol>
-            <li>
-              <span>01</span>
-              <div>
-                <h3>سجّل عبر Tally</h3>
-                <p>استخدم الاستمارة المعتمدة وأدخل بيانات اتصال صحيحة.</p>
-              </div>
-            </li>
-            <li>
-              <span>02</span>
-              <div>
-                <h3>راجع التأكيد</h3>
-                <p>ستصلك رسالة تأكيد وتذكيرات مرتبطة بهذا اللقاء.</p>
-              </div>
-            </li>
-            <li>
-              <span>03</span>
-              <div>
-                <h3>احتفظ بالموعد</h3>
-                <p>أضف 25 سبتمبر، 20:00 بتوقيت الجزائر إلى تقويمك.</p>
-              </div>
-            </li>
-            <li>
-              <span>04</span>
-              <div>
-                <h3>انضم من الرسالة الخاصة</h3>
-                <p>استخدم معلومات الانضمام التي تصلك بعد التسجيل.</p>
-              </div>
-            </li>
-          </ol>
-        </section>
+        {registrationHref ? (
+          <section className={styles.joining} aria-labelledby="joining-title">
+            <div className={styles.sectionHeading}>
+              <p className={styles.sectionLabel}>خطوات الانضمام</p>
+              <h2 id="joining-title">أربع خطوات بسيطة، بلا حساب جديد.</h2>
+            </div>
+            <ol>
+              <li>
+                <span>01</span>
+                <div>
+                  <h3>سجّل عبر Tally</h3>
+                  <p>استخدم الاستمارة المعتمدة وأدخل بيانات اتصال صحيحة.</p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <h3>راجع التأكيد</h3>
+                  <p>ستصلك رسالة تأكيد وتذكيرات مرتبطة بهذا اللقاء.</p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <h3>احتفظ بالموعد</h3>
+                  <p>أضف 25 سبتمبر، 20:00 بتوقيت الجزائر إلى تقويمك.</p>
+                </div>
+              </li>
+              <li>
+                <span>04</span>
+                <div>
+                  <h3>انضم من الرسالة الخاصة</h3>
+                  <p>استخدم معلومات الانضمام التي تصلك بعد التسجيل.</p>
+                </div>
+              </li>
+            </ol>
+          </section>
+        ) : null}
 
         <section id="faq" className={styles.faq} aria-labelledby="faq-title">
           <div className={styles.faqIntro}>
-            <p className={styles.sectionLabel}>قبل أن تسجّل</p>
-            <h2 id="faq-title">أسئلة شائعة</h2>
-            <p>
-              إذا كان سؤالك متعلقًا بالتسجيل، ستجد غالبًا الإجابة هنا. لا ترسل
-              معلومات صحية أو شديدة الحساسية عبر الاستمارة.
+            <p className={styles.sectionLabel}>
+              {registrationHref ? 'قبل أن تسجّل' : 'عن اللقاء'}
             </p>
+            <h2 id="faq-title">أسئلة شائعة</h2>
+            {registrationHref ? (
+              <p>
+                إذا كان سؤالك متعلقًا بالتسجيل، ستجد غالبًا الإجابة هنا. لا ترسل
+                معلومات صحية أو شديدة الحساسية عبر الاستمارة.
+              </p>
+            ) : null}
           </div>
           <div className={styles.faqList}>
-            {faqs.map((item, index) => (
-              <details key={item.question}>
-                <summary>
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                  {item.question}
-                  <i aria-hidden="true">+</i>
-                </summary>
-                <p>{item.answer}</p>
-              </details>
-            ))}
+            {faqs
+              .filter(
+                (item) => registrationHref || !('registrationOnly' in item),
+              )
+              .map((item, index) => (
+                <details key={item.question}>
+                  <summary>
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    {item.question}
+                    <i aria-hidden="true">+</i>
+                  </summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
           </div>
         </section>
 
@@ -493,23 +525,27 @@ export function WorkshopExperience({
               افهم أكثر. ساند بلطف. وابدأ بخطوة آمنة.
             </h2>
           </div>
-          <div className={styles.finalActions}>
-            <a
-              className={styles.primaryCta}
-              href={registrationHref}
-              rel="noreferrer"
-              data-registration-link
-            >
-              سجّل مجانًا عبر Tally <span aria-hidden="true">↗</span>
-            </a>
-            <button
-              type="button"
-              className={styles.privacyButton}
-              onClick={() => privacyDialog.current?.showModal()}
-            >
-              كيف نحمي خصوصيتك؟
-            </button>
-          </div>
+          {registrationHref ? (
+            <div className={styles.finalActions}>
+              <a
+                className={styles.primaryCta}
+                href={registrationHref}
+                rel="noreferrer"
+                data-registration-link
+              >
+                سجّل مجانًا عبر Tally <span aria-hidden="true">↗</span>
+              </a>
+              <button
+                type="button"
+                className={styles.privacyButton}
+                onClick={() => privacyDialog.current?.showModal()}
+              >
+                كيف نحمي خصوصيتك؟
+              </button>
+            </div>
+          ) : (
+            programmesLink
+          )}
         </section>
       </main>
 
@@ -519,54 +555,59 @@ export function WorkshopExperience({
         <Link href="/ar">العودة إلى موقع الأكاديمية</Link>
       </footer>
 
-      <div className={styles.mobileBar} aria-label="التسجيل السريع">
-        <div>
-          <strong>لقاء مجاني</strong>
-          <span>25 سبتمبر · 20:00</span>
+      {registrationHref ? (
+        <div className={styles.mobileBar} aria-label="التسجيل السريع">
+          <div>
+            <strong>لقاء مجاني</strong>
+            <span>25 سبتمبر · 20:00</span>
+          </div>
+          <a href={registrationHref} rel="noreferrer" data-registration-link>
+            سجّل الآن
+          </a>
         </div>
-        <a href={registrationHref} rel="noreferrer" data-registration-link>
-          سجّل الآن
-        </a>
-      </div>
+      ) : null}
 
-      <dialog
-        ref={privacyDialog}
-        className={styles.privacyDialog}
-        aria-labelledby="privacy-title"
-        onClick={(event) => {
-          if (event.target === event.currentTarget) event.currentTarget.close();
-        }}
-      >
-        <div>
-          <button
-            type="button"
-            className={styles.dialogClose}
-            aria-label="إغلاق نافذة الخصوصية"
-            onClick={() => privacyDialog.current?.close()}
-          >
-            ×
-          </button>
-          <p className={styles.sectionLabel}>خصوصيتك أولًا</p>
-          <h2 id="privacy-title">ما الذي يحدث عند التسجيل؟</h2>
-          <p>
-            تنتقل إلى استمارة Tally الحالية التابعة للقاء. تُستخدم بيانات
-            الاتصال التي تختار إدخالها لتأكيد التسجيل وإرسال معلومات اللقاء وفق
-            الموافقات الظاهرة في الاستمارة.
-          </p>
-          <ul>
-            <li>لا تعرض هذه الصفحة سجلات المشاركين أو أي بيانات داخلية.</li>
-            <li>لا نطلب تشخيصًا أو أعراضًا أو تاريخًا علاجيًا.</li>
-            <li>معلومات الانضمام الخاصة لا تُنشر على هذه الصفحة.</li>
-          </ul>
-          <button
-            type="button"
-            className={styles.dialogAction}
-            onClick={() => privacyDialog.current?.close()}
-          >
-            فهمت
-          </button>
-        </div>
-      </dialog>
+      {registrationHref ? (
+        <dialog
+          ref={privacyDialog}
+          className={styles.privacyDialog}
+          aria-labelledby="privacy-title"
+          onClick={(event) => {
+            if (event.target === event.currentTarget)
+              event.currentTarget.close();
+          }}
+        >
+          <div>
+            <button
+              type="button"
+              className={styles.dialogClose}
+              aria-label="إغلاق نافذة الخصوصية"
+              onClick={() => privacyDialog.current?.close()}
+            >
+              ×
+            </button>
+            <p className={styles.sectionLabel}>خصوصيتك أولًا</p>
+            <h2 id="privacy-title">ما الذي يحدث عند التسجيل؟</h2>
+            <p>
+              تنتقل إلى استمارة Tally الحالية التابعة للقاء. تُستخدم بيانات
+              الاتصال التي تختار إدخالها لتأكيد التسجيل وإرسال معلومات اللقاء
+              وفق الموافقات الظاهرة في الاستمارة.
+            </p>
+            <ul>
+              <li>لا تعرض هذه الصفحة سجلات المشاركين أو أي بيانات داخلية.</li>
+              <li>لا نطلب تشخيصًا أو أعراضًا أو تاريخًا علاجيًا.</li>
+              <li>معلومات الانضمام الخاصة لا تُنشر على هذه الصفحة.</li>
+            </ul>
+            <button
+              type="button"
+              className={styles.dialogAction}
+              onClick={() => privacyDialog.current?.close()}
+            >
+              فهمت
+            </button>
+          </div>
+        </dialog>
+      ) : null}
     </div>
   );
 }

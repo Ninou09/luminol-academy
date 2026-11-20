@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import type { Locale } from '@luminol/localization';
 import { getImageProps } from 'next/image';
 import { useEffect, useRef } from 'react';
@@ -7,10 +9,6 @@ import { useEffect, useRef } from 'react';
 import { brandArtwork, brandArtworkCredit } from '../lib/academy-media';
 import { createLuminousField, type ArtworkFrame } from './luminous-field';
 import styles from './luminous-backdrop.module.css';
-
-type DataAwareNavigator = Navigator & {
-  connection?: EventTarget & { saveData?: boolean };
-};
 
 /** Keep in sync with the <source media> below. */
 const portraitQuery = '(max-width: 760px) and (orientation: portrait)';
@@ -28,23 +26,22 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
+    if (!allowMotion) return;
     const root = rootRef.current;
     const canvas = canvasRef.current;
     const hero = root?.closest<HTMLElement>('#top') ?? root;
     if (!root || !canvas || !hero) return;
 
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const portrait = window.matchMedia(portraitQuery);
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const connection = (navigator as DataAwareNavigator).connection;
-    if (motion.matches || connection?.saveData) return;
 
     const field = createLuminousField(canvas);
     if (!field) return;
     root.dataset.field = 'live';
 
-    let inView = true;
+    let inView = false;
     let frame = 0;
     const target = { x: 0, y: 0 };
     const current = { x: 0, y: 0 };
@@ -52,8 +49,12 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
     const syncFrame = () =>
       field.setFrame(portrait.matches ? portraitFrame : desktopFrame);
     const syncRunning = () => {
-      if (inView && !document.hidden && !motion.matches) field.start();
-      else field.stop();
+      if (inView && !document.hidden) field.start();
+      else {
+        field.stop();
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
     };
 
     // Ease the 3D parallax so the scene feels weighty rather than twitchy.
@@ -92,7 +93,6 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
     syncFrame();
     syncRunning();
     portrait.addEventListener('change', syncFrame);
-    motion.addEventListener('change', syncRunning);
     document.addEventListener('visibilitychange', syncRunning);
     if (finePointer.matches) {
       hero.addEventListener('pointermove', onPointerMove, { passive: true });
@@ -103,7 +103,6 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
       cancelAnimationFrame(frame);
       observer.disconnect();
       portrait.removeEventListener('change', syncFrame);
-      motion.removeEventListener('change', syncRunning);
       document.removeEventListener('visibilitychange', syncRunning);
       hero.removeEventListener('pointermove', onPointerMove);
       hero.removeEventListener('pointerleave', onPointerLeave);
@@ -112,7 +111,7 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
       field.destroy();
       delete root.dataset.field;
     };
-  }, []);
+  }, [allowMotion]);
 
   const desktop = brandArtwork.heroDesktop;
   const portrait = brandArtwork.heroMobile;
@@ -133,7 +132,8 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
     height: desktop.height,
     sizes: '100vw',
     quality: 82,
-    priority: true,
+    loading: 'eager',
+    fetchPriority: 'high',
   });
 
   return (

@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -20,10 +22,11 @@ const cardSelector = [
 export function PublicInteractions() {
   const pathname = usePathname();
 
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!allowMotion || /\/(consultations|contact)\/?$/.test(pathname)) return;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
-    if (motion.matches || !finePointer.matches) return;
+    if (!finePointer.matches) return;
 
     const cleanups: Array<() => void> = [];
     const bind = (
@@ -120,7 +123,7 @@ export function PublicInteractions() {
     return () => {
       for (const cleanup of cleanups) cleanup();
     };
-  }, [pathname]);
+  }, [pathname, allowMotion]);
 
   return null;
 }

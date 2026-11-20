@@ -105,13 +105,13 @@ const journeyIcons: GlassIconName[] = [
 
 const audiencePhotos: Record<string, PeoplePhoto | undefined> = {
   psychology: momentPhotos.fatherTeenWalk,
-  languages: extraPhotos.languageOnline,
+  languages: peoplePhotos.liveGenerations,
   training: extraPhotos.professionalTraining,
 };
 
 const promisePhotos = {
   psychology: momentPhotos.mediterraneanCalm,
-  languages: extraPhotos.languagesCafe,
+  languages: extraPhotos.languageOnline,
   training: momentPhotos.publicSpeakingStage,
 } as const;
 
@@ -126,8 +126,12 @@ function programmeFallbackAsset(
   school: 'psychology' | 'languages' | 'training',
   index: number,
   locale: Locale,
+  slug?: string,
 ): EditorialMediaAsset | null {
-  const photo = programmePhotos[school][index];
+  const photo =
+    slug === 'acceptance-commitment-therapy-act'
+      ? peoplePhotos.academyActWorkshop
+      : programmePhotos[school][index];
   return photo
     ? {
         src: photo.src,
@@ -320,7 +324,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                   school={school.slug}
                   asset={
                     program.image ??
-                    programmeFallbackAsset(school.slug, index, locale)
+                    programmeFallbackAsset(
+                      school.slug,
+                      index,
+                      locale,
+                      program.slug,
+                    )
                   }
                 />
                 <h3 id={`school-programme-${index + 1}-title`} dir="auto">

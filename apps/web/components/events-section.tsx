@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { channelCopy, getWhatsAppHref } from '../lib/contact-channels';
 import {
   eventsCopy,
+  hasEventEnded,
   luminolEvents,
   psychologyTeam,
   type LuminolEvent,
@@ -42,13 +43,11 @@ function presenterNames(event: LuminolEvent, locale: Locale) {
 /** Upcoming and recent Luminol sessions, from the academy's own records. */
 export function EventsSection({ locale }: { locale: Locale }) {
   const copy = eventsCopy[locale];
-  const today = new Date().toISOString().slice(0, 10);
-  const isUpcoming = (event: LuminolEvent) =>
-    event.date === null ||
-    event.date >= today ||
-    (event.secondDate !== undefined && event.secondDate >= today);
-  const upcoming = luminolEvents.filter(isUpcoming);
-  const past = luminolEvents.filter((event) => !isUpcoming(event)).slice(0, 5);
+  const now = new Date();
+  const upcoming = luminolEvents.filter((event) => !hasEventEnded(event, now));
+  const past = luminolEvents
+    .filter((event) => hasEventEnded(event, now))
+    .slice(0, 5);
   const askHref =
     getWhatsAppHref(channelCopy[locale].whatsappMessage) ??
     localizeHref(locale, '/contact');

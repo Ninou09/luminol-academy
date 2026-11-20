@@ -44,17 +44,17 @@ const constellationCopy = {
   en: {
     eyebrow: 'One source of light',
     title: 'Three schools. One light.',
-    hint: 'Scroll to watch each school emerge',
+    hint: 'Choose a school',
   },
   fr: {
     eyebrow: 'Une seule source de lumière',
     title: 'Trois écoles. Une seule lumière.',
-    hint: 'Faites défiler pour voir chaque école naître',
+    hint: 'Choisissez une école',
   },
   ar: {
     eyebrow: 'مصدر واحد للنور',
     title: 'ثلاث مدارس. نور واحد.',
-    hint: 'مرّر لترى كل مدرسة تنبثق',
+    hint: 'اختر مدرسة',
   },
 } as const satisfies Record<
   Locale,
@@ -100,19 +100,6 @@ export default async function Page() {
     training: styles.training ?? '',
   };
   const cinematic = cinematicCopy[locale];
-  // Words rise in sequence; the heading text itself stays a single phrase.
-  const splitWords = (text: string, offset = 0) =>
-    text.split(/\s+/).map((word, index) => (
-      <span
-        className={styles.word}
-        key={`${index}-${word}`}
-        style={{ '--word-index': index + offset } as React.CSSProperties}
-      >
-        {word}{' '}
-      </span>
-    ));
-  const titleWordCount = copy.heroTitle.split(/\s+/).length;
-
   return (
     <>
       <SiteHeader />
@@ -121,48 +108,24 @@ export default async function Page() {
       <main id="main-content" tabIndex={-1} className={styles.page} data-cosmos>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
           <LuminousBackdrop locale={locale} />
-          <div className={styles.heroLocation} aria-hidden="true">
-            <span>Luminol Academy</span>
-            <span>{cinematic.location}</span>
-          </div>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow} data-hero-exit>
-              <span className={styles.pulse} aria-hidden="true" />
-              {copy.heroEyebrow}
-            </p>
-            <h1
-              id="hero-title"
-              className={styles.heroTitle}
-              data-hero-exit
-              data-no-split
-            >
-              <span className={styles.titleLine}>
-                {splitWords(copy.heroTitle)}
-              </span>
-              <span className={`${styles.titleLine} ${styles.titleAccent}`}>
-                {splitWords(copy.heroAccent, titleWordCount)}
-              </span>
+            <h1 id="hero-title" className={styles.heroTitle} data-no-split>
+              {copy.heroTitle}
             </h1>
-          </div>
-          <div className={styles.heroSummary}>
-            <p className={styles.heroLede} data-hero-exit>
-              {copy.heroLede}
-            </p>
-            <div className={styles.heroActions} data-hero-exit>
-              <ButtonLink
-                href={localizeHref(locale, '/programmes')}
-                size="lg"
-                data-magnetic
-              >
-                {copy.exploreSchools} <span aria-hidden="true">↘</span>
-              </ButtonLink>
+            <p className={styles.heroLede}>{copy.heroLede}</p>
+            <div className={styles.heroActions}>
               <ButtonLink
                 href={localizeHref(locale, '/consultations')}
                 size="lg"
-                variant="secondary"
-                data-magnetic
               >
-                {copy.bookConsultation} <span aria-hidden="true">→</span>
+                {copy.bookConsultation}
+              </ButtonLink>
+              <ButtonLink
+                href={localizeHref(locale, '/programmes')}
+                size="lg"
+                variant="secondary"
+              >
+                {copy.exploreSchools}
               </ButtonLink>
             </div>
           </div>
@@ -197,7 +160,7 @@ export default async function Page() {
             slug: school.slug,
             number: school.number,
             name: school.name,
-            href: `#${school.slug}`,
+            href: localizeHref(locale, `/schools/${school.slug}`),
           }))}
         />
 
@@ -247,6 +210,9 @@ export default async function Page() {
                       className={styles.schoolPhotoVeil}
                       aria-hidden="true"
                     />
+                    <figcaption className="scene-caption">
+                      {illustrativePhotoCredit.label[locale]}
+                    </figcaption>
                     <span className={styles.artGlare} aria-hidden="true" />
                   </figure>
                   <span

@@ -1,44 +1,76 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
-/**
- * "Calm mode": the visitor can switch off the animated 3D universe. The
- * choice is a per-browser convenience kept in localStorage.
- */
-const KEY = 'luminol-calm-mode';
-const EVENT = 'luminol:calm-mode';
+const key = 'luminol-calm-mode';
+const change = 'luminol:calm-mode';
+let manual: boolean | undefined;
+const serverSnapshot = () => false;
 
-export function readCalmMode(): boolean {
+function readCalmMode() {
+  if (manual !== undefined) return manual;
   try {
-    return window.localStorage.getItem(KEY) === '1';
+    return window.localStorage.getItem(key) === '1';
   } catch {
     return false;
   }
 }
 
-export function setCalmMode(value: boolean) {
-  try {
-    if (value) window.localStorage.setItem(KEY, '1');
-    else window.localStorage.removeItem(KEY);
-  } catch {
-    // Storage may be unavailable (private mode); the toggle still works now.
-  }
-  if (value) document.documentElement.dataset.calm = 'true';
-  else delete document.documentElement.dataset.calm;
-  window.dispatchEvent(new CustomEvent(EVENT, { detail: value }));
+function connection() {
+  return (
+    navigator as Navigator & {
+      connection?: EventTarget & { saveData?: boolean };
+    }
+  ).connection;
 }
 
-export function useCalmMode(): boolean {
-  const [calm, setCalm] = useState(false);
-  useEffect(() => {
-    const initial = readCalmMode();
-    setCalm(initial);
-    if (initial) document.documentElement.dataset.calm = 'true';
-    const onChange = (event: Event) =>
-      setCalm(Boolean((event as CustomEvent<boolean>).detail));
-    window.addEventListener(EVENT, onChange);
-    return () => window.removeEventListener(EVENT, onChange);
-  }, []);
-  return calm;
+function subscribe(notify: () => void) {
+  const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const network = connection();
+  const syncStorage = (event: StorageEvent) => {
+    if (event.key === key || event.key === null) {
+      manual = undefined;
+      notify();
+    }
+  };
+  window.addEventListener(change, notify);
+  window.addEventListener('storage', syncStorage);
+  document.addEventListener('visibilitychange', notify);
+  media.addEventListener('change', notify);
+  network?.addEventListener('change', notify);
+  return () => {
+    window.removeEventListener(change, notify);
+    window.removeEventListener('storage', syncStorage);
+    document.removeEventListener('visibilitychange', notify);
+    media.removeEventListener('change', notify);
+    network?.removeEventListener('change', notify);
+  };
+}
+
+export function setCalmMode(value: boolean) {
+  manual = value;
+  try {
+    if (value) window.localStorage.setItem(key, '1');
+    else window.localStorage.removeItem(key);
+  } catch {
+    /* The in-memory setting still applies. */
+  }
+  window.dispatchEvent(new Event(change));
+}
+
+export function useCalmMode() {
+  return useSyncExternalStore(subscribe, readCalmMode, serverSnapshot);
+}
+
+export function motionAllowed() {
+  return (
+    !document.hidden &&
+    !readCalmMode() &&
+    !connection()?.saveData &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
+
+export function useMotionAllowed() {
+  return useSyncExternalStore(subscribe, motionAllowed, serverSnapshot);
 }

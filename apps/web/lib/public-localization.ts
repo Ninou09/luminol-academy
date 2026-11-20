@@ -20,7 +20,6 @@ type PublicCopy = {
   home: {
     heroEyebrow: string;
     heroTitle: string;
-    heroAccent: string;
     heroLede: string;
     exploreSchools: string;
     discoverLuminol: string;
@@ -223,11 +222,10 @@ export const PUBLIC_COPY = {
     },
     home: {
       heroEyebrow: 'Psychology · Languages · Professional growth',
-      heroTitle: 'Grow with clarity.',
-      heroAccent: 'Learn with purpose.',
+      heroTitle: 'Psychological consultations and training in Blida',
       heroLede:
-        'Request a psychology consultation or join a training programme. Luminol helps you choose the right next step — in Arabic, French or English.',
-      exploreSchools: 'Explore training programmes',
+        'Individual and family support, language courses and professional training.',
+      exploreSchools: 'Browse programmes',
       discoverLuminol: 'Discover Luminol',
       strengthsAria: 'Luminol platform strengths',
       connectedSchools: 'Connected schools',
@@ -277,7 +275,7 @@ export const PUBLIC_COPY = {
       pathwayEyebrow: 'Your next chapter',
       pathwayTitle: 'Begin with the growth that matters now.',
       pathwayPsychology: 'Strengthen your wellbeing',
-      bookConsultation: 'Request a consultation',
+      bookConsultation: 'Request a psychological consultation',
       pathwayLanguages: 'Find your confident voice',
       pathwayTraining: 'Advance your professional path',
       ctaEyebrow: 'Start your Luminol journey',
@@ -500,11 +498,10 @@ export const PUBLIC_COPY = {
     },
     home: {
       heroEyebrow: 'Psychologie · Langues · Évolution professionnelle',
-      heroTitle: 'Grandissez avec clarté.',
-      heroAccent: 'Apprenez avec intention.',
+      heroTitle: 'Consultations psychologiques et formations à Blida',
       heroLede:
-        'Demandez une consultation en psychologie ou rejoignez une formation. Luminol vous aide à choisir la bonne prochaine étape — en arabe, en français ou en anglais.',
-      exploreSchools: 'Explorer les formations',
+        'Accompagnement individuel et familial, cours de langues et formation professionnelle.',
+      exploreSchools: 'Parcourir les formations',
       discoverLuminol: 'Découvrir Luminol',
       strengthsAria: 'Forces de la plateforme Luminol',
       connectedSchools: 'Écoles complémentaires',
@@ -556,7 +553,7 @@ export const PUBLIC_COPY = {
       pathwayEyebrow: 'Votre prochain chapitre',
       pathwayTitle: 'Commencez par l’évolution qui compte maintenant.',
       pathwayPsychology: 'Renforcer votre bien-être',
-      bookConsultation: 'Demander une consultation',
+      bookConsultation: 'Demander une consultation psychologique',
       pathwayLanguages: 'Trouver une voix confiante',
       pathwayTraining: 'Faire avancer votre parcours professionnel',
       ctaEyebrow: 'Commencez votre parcours Luminol',
@@ -786,11 +783,9 @@ export const PUBLIC_COPY = {
     },
     home: {
       heroEyebrow: 'علم النفس · اللغات · التطور المهني',
-      heroTitle: 'تقدّم بوضوح.',
-      heroAccent: 'وتعلّم بهدف.',
-      heroLede:
-        'اطلب استشارة نفسية أو انضم إلى برنامج تدريبي. تساعدك لومينول على اختيار خطوتك التالية المناسبة — بالعربية أو الفرنسية أو الإنجليزية.',
-      exploreSchools: 'استكشف البرامج التدريبية',
+      heroTitle: 'استشارات نفسية وبرامج تكوينية في البليدة',
+      heroLede: 'مرافقة للأفراد والأسر، ودورات في اللغات والتكوين المهني.',
+      exploreSchools: 'تصفّح البرامج',
       discoverLuminol: 'اكتشف لومينول',
       strengthsAria: 'نقاط قوة منصة لومينول',
       connectedSchools: 'مدارس مترابطة',
@@ -840,7 +835,7 @@ export const PUBLIC_COPY = {
       pathwayEyebrow: 'فصلك القادم',
       pathwayTitle: 'ابدأ بالنمو الذي يهمك الآن.',
       pathwayPsychology: 'عزّز توازنك النفسي',
-      bookConsultation: 'اطلب استشارة',
+      bookConsultation: 'اطلب استشارة نفسية',
       pathwayLanguages: 'ابنِ صوتًا واثقًا',
       pathwayTraining: 'طوّر مسارك المهني',
       ctaEyebrow: 'ابدأ رحلتك مع لومينول',

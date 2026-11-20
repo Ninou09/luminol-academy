@@ -72,7 +72,10 @@ test('premium school storytelling preserves landmarks and governed media', async
   expect(mediaSources.length).toBeGreaterThan(0);
   expect(
     mediaSources.every(
-      (source) => source === 'governed-fallback' || source === 'sanity',
+      (source) =>
+        source === 'governed-fallback' ||
+        source === 'sanity' ||
+        source === 'illustrative',
     ),
   ).toBeTruthy();
 });

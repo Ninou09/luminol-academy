@@ -14,6 +14,11 @@ export type PeoplePhoto = {
 
 export const illustrativePhotoCredit = {
   source: 'luminol-illustrative-photo',
+  label: {
+    en: 'Illustrative scene',
+    fr: 'Scène illustrative',
+    ar: 'مشهد توضيحي',
+  },
   license: 'Luminol Academy commissioned photography (AI-assisted)',
 } as const;
 
@@ -339,37 +344,6 @@ export const programmePhotos: Record<
   ],
 };
 
-/** Home "Our schools": one living photo per school. */
-export const homeSchoolPhotos: Record<
-  'psychology' | 'languages' | 'training',
-  PeoplePhoto
-> = {
-  psychology: photo(
-    'therapy-cbt-worksheet',
-    1448,
-    1086,
-    'A psychologist and a client fill in a thought worksheet together over tea',
-    'Une psychologue et une cliente remplissent ensemble une fiche de pensées autour d’un thé',
-    'أخصائية نفسية وعميلة تملآن معًا ورقة تمرين الأفكار حول الشاي',
-  ),
-  languages: photo(
-    'live-conversation-cafe',
-    1600,
-    900,
-    'Young adults practise conversation together in a cosy café',
-    'De jeunes adultes pratiquent la conversation dans un café chaleureux',
-    'شباب يتدربون على المحادثة معًا في مقهى دافئ',
-  ),
-  training: photo(
-    'academy-certificate',
-    1536,
-    1024,
-    'A graduate receives her certificate while classmates applaud',
-    'Une diplômée reçoit son certificat sous les applaudissements',
-    'متخرجة تتسلّم شهادتها وسط تصفيق زملائها',
-  ),
-};
-
 /** Contact "Explore before you enquire": one living photo per school. */
 export const pathPhotos: Record<
   'psychology' | 'languages' | 'training',
@@ -687,3 +661,20 @@ export const extraPhotos = {
     'ختم شمعي ذهبي وشريط على مخمل أزرق داكن',
   ),
 } as const satisfies Record<string, PeoplePhoto>;
+
+/** Home "Our schools": one living photo per school. */
+export const homeSchoolPhotos: Record<
+  'psychology' | 'languages' | 'training',
+  PeoplePhoto
+> = {
+  psychology: photo(
+    'therapy-cbt-worksheet',
+    1448,
+    1086,
+    'A psychologist and a client fill in a thought worksheet together over tea',
+    'Une psychologue et une cliente remplissent ensemble une fiche de pensées autour d’un thé',
+    'أخصائية نفسية وعميلة تملآن معًا ورقة تمرين الأفكار حول الشاي',
+  ),
+  languages: extraPhotos.languagesCafe,
+  training: extraPhotos.programSearch,
+};

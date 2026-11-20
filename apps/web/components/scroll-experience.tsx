@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
@@ -33,10 +35,12 @@ export function ScrollExperience() {
   const pathname = usePathname();
 
   // Smooth scrolling for wheel and trackpad only; touch keeps native physics.
+  const allowMotion = useMotionAllowed();
+  const quietPage = /\/(consultations|contact)\/?$/.test(pathname);
   useEffect(() => {
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!allowMotion || quietPage) return;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
-    if (motion.matches || !finePointer.matches) return;
+    if (!finePointer.matches) return;
 
     const lenis = new Lenis({
       lerp: 0.085,
@@ -50,19 +54,15 @@ export function ScrollExperience() {
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
 
-    const stopOnReduce = () => {
-      if (motion.matches) lenis.destroy();
-    };
-    motion.addEventListener('change', stopOnReduce);
     return () => {
-      motion.removeEventListener('change', stopOnReduce);
       gsap.ticker.remove(tick);
       lenis.destroy();
       delete window.__luminolLenis;
     };
-  }, []);
+  }, [allowMotion, quietPage]);
 
   useEffect(() => {
+    if (!allowMotion || quietPage) return;
     const mm = gsap.matchMedia();
 
     mm.add('(prefers-reduced-motion: no-preference)', () => {
@@ -324,46 +324,12 @@ export function ScrollExperience() {
     });
 
     return () => mm.revert();
-  }, [pathname]);
+  }, [pathname, allowMotion, quietPage]);
 
-  // Smooth scroller restarts at the top of every new page. Leftover wheel
-  // momentum and ScrollTrigger refreshes (pin spacers from the old page)
-  // must not pull the new page down, so the reset is repeated until the
-  // visitor scrolls on their own.
+  // PageNavigation handles the native scroll position. Release Lenis on
+  // arrival without repeatedly pulling a visitor back up during font loading.
   useEffect(() => {
-    if (window.location.hash) return;
-    const lenis = window.__luminolLenis;
-    const toTop = () => {
-      lenis?.scrollTo(0, { immediate: true, force: true });
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    };
-    toTop();
-    lenis?.start();
-    let userMoved = false;
-    const startedAt = performance.now();
-    const markUser = () => {
-      userMoved = true;
-    };
-    const onRefresh = () => {
-      if (!userMoved && performance.now() - startedAt < 2000) toTop();
-    };
-    const frame = requestAnimationFrame(() => {
-      if (!userMoved) toTop();
-    });
-    ScrollTrigger.addEventListener('refresh', onRefresh);
-    window.addEventListener('wheel', markUser, { passive: true, once: true });
-    window.addEventListener('touchstart', markUser, {
-      passive: true,
-      once: true,
-    });
-    window.addEventListener('keydown', markUser, { once: true });
-    return () => {
-      cancelAnimationFrame(frame);
-      ScrollTrigger.removeEventListener('refresh', onRefresh);
-      window.removeEventListener('wheel', markUser);
-      window.removeEventListener('touchstart', markUser);
-      window.removeEventListener('keydown', markUser);
-    };
+    window.__luminolLenis?.start();
   }, [pathname]);
 
   return null;

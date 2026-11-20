@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-import { useCalmMode } from '../lib/calm-mode';
+import { useCalmMode, motionAllowed, useMotionAllowed } from '../lib/calm-mode';
 import { useEffect, useRef } from 'react';
 
 import type {
@@ -44,14 +44,20 @@ function lightweightDevice() {
 export function InnerUniverse() {
   const pathname = usePathname();
   const theme = themeFor(pathname);
+  const allowMotion = useMotionAllowed();
   const calm = useCalmMode();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const host = canvasRef.current?.parentElement;
     if (!host) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (calm) return;
+    if (
+      !allowMotion ||
+      theme === 'home' ||
+      theme === 'consultations' ||
+      theme === 'contact'
+    )
+      return;
 
     let universe: Universe | null = null;
     let disposed = false;
@@ -77,23 +83,17 @@ export function InnerUniverse() {
         (event.clientY / window.innerHeight - 0.5) * 2,
       );
     };
-    const onVisibility = () => {
-      if (!universe) return;
-      if (document.hidden) universe.stop();
-      else universe.start();
-    };
-
     const boot = async () => {
       const { createInnerUniverse, universeThemes } =
         await import('./inner-universe-scene');
-      if (disposed) return;
+      if (disposed || !motionAllowed()) return;
       universe = createInnerUniverse(canvas, {
         mobile: lightweightDevice(),
         theme: universeThemes[theme],
       });
       if (!universe) return;
       universe.start();
-      requestAnimationFrame(() => (canvas.dataset.live = 'true'));
+      canvas.dataset.live = 'true';
       frame = requestAnimationFrame(sync);
     };
     const idle = window.setTimeout(() => void boot(), 300);
@@ -111,23 +111,16 @@ export function InnerUniverse() {
       window.addEventListener('deviceorientation', onTilt, { passive: true });
     }
     window.addEventListener('pointermove', onPointer, { passive: true });
-    document.addEventListener('visibilitychange', onVisibility);
     return () => {
       disposed = true;
       window.clearTimeout(idle);
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', onPointer);
       window.removeEventListener('deviceorientation', onTilt);
-      document.removeEventListener('visibilitychange', onVisibility);
-      // Fade the old universe out while the next one fades in.
-      delete canvas.dataset.live;
-      const old = universe;
-      window.setTimeout(() => {
-        old?.destroy();
-        canvas.remove();
-      }, 900);
+      universe?.destroy();
+      canvas.remove();
     };
-  }, [theme, calm]);
+  }, [theme, allowMotion]);
 
   return (
     <div

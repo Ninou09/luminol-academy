@@ -1,51 +1,27 @@
 import { expect, test } from '@playwright/test';
 
-test('video resumes after leaving the hero, but preserves an explicit pause', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/en');
-  const video = page.locator('#top video');
-  await expect
-    .poll(() =>
-      video.evaluate((v: HTMLVideoElement) => !v.paused && v.readyState >= 2),
-    )
-    .toBe(true);
-  await page.getByRole('contentinfo').scrollIntoViewIfNeeded();
-  await expect
-    .poll(() => video.evaluate((v: HTMLVideoElement) => v.paused))
-    .toBe(true);
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await expect
-    .poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused))
-    .toBe(true);
-  await page
-    .getByRole('button', { name: 'Pause background video', exact: true })
-    .click();
-  await page.getByRole('contentinfo').scrollIntoViewIfNeeded();
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await expect(
-    page.getByRole('button', { name: 'Play background video', exact: true }),
-  ).toBeVisible();
-  expect(await video.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
-});
-
-test('changing reduced motion during playback stops video and optional motion', async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
-  await page.goto('/en');
-  const video = page.locator('#top video');
-  await expect
-    .poll(() => video.evaluate((v: HTMLVideoElement) => !v.paused))
-    .toBe(true);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect
-    .poll(() => video.evaluate((v: HTMLVideoElement) => v.paused))
-    .toBe(true);
-  await expect(video).not.toHaveAttribute('src');
-  await expect(page.locator('h1')).toBeVisible();
-});
+for (const section of ['#about', 'section[aria-labelledby="pathway-title"]']) {
+  test(`the film in ${section} follows visibility and remembers pause`, async ({
+    page,
+  }) => {
+    await page.goto('/en');
+    const area = page.locator(section);
+    const video = area.locator('video');
+    await expect(video).toHaveCount(0);
+    await area.scrollIntoViewIfNeeded();
+    await expect(video).toHaveJSProperty('paused', false);
+    await area.getByRole('button', { name: 'Pause background video' }).click();
+    await page.locator('#top').scrollIntoViewIfNeeded();
+    await expect(video).toHaveCount(0);
+    await area.scrollIntoViewIfNeeded();
+    await expect(video).toHaveJSProperty('paused', true);
+    await area.getByRole('button', { name: 'Play background video' }).click();
+    await expect(video).toHaveJSProperty('paused', false);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(video).toHaveCount(0);
+    await expect(area.locator('img').first()).toBeVisible();
+  });
+}
 
 for (const width of [390, 1440]) {
   test(`page navigation starts at the top at ${width}px and anchors still work`, async ({
@@ -70,7 +46,12 @@ for (const width of [390, 1440]) {
       return parseFloat(style.lineHeight) / parseFloat(style.fontSize);
     });
     expect(headingLineRatio).toBeGreaterThanOrEqual(1.4);
-    await page.getByRole('banner').locator('a[href="/ar/schools"]').click();
+    if (width < 901) {
+      await page.locator('button[aria-controls="mobile-menu-panel"]').click();
+      await page.locator('#mobile-menu-panel a[href="/ar/schools"]').click();
+    } else {
+      await page.getByRole('banner').locator('a[href="/ar/schools"]').click();
+    }
     await expect(page).toHaveURL(/\/ar\/schools$/);
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
   });

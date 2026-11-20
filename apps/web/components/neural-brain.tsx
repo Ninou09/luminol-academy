@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { useEffect, useRef } from 'react';
 
 import type { MindScene } from './mind-scene';
@@ -12,10 +14,11 @@ import type { MindScene } from './mind-scene';
 export function NeuralBrain({ className }: { className?: string | undefined }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
+    if (!allowMotion) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     let scene: MindScene | null = null;
     let disposed = false;
@@ -64,7 +67,7 @@ export function NeuralBrain({ className }: { className?: string | undefined }) {
       window.removeEventListener('pointermove', onPointer);
       scene?.destroy();
     };
-  }, []);
+  }, [allowMotion]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }

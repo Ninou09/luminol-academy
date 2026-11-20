@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -10,11 +12,13 @@ import { useEffect } from 'react';
  */
 export function CountUp() {
   const pathname = usePathname();
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!allowMotion) return;
     const elements = Array.from(
       document.querySelectorAll<HTMLElement>('[data-count]'),
     );
+    const originals = elements.map((element) => element.textContent);
     const frames: number[] = [];
     const observer = new IntersectionObserver(
       (entries) => {
@@ -43,8 +47,11 @@ export function CountUp() {
     for (const element of elements) observer.observe(element);
     return () => {
       observer.disconnect();
+      elements.forEach((element, i) => {
+        element.textContent = originals[i] ?? null;
+      });
       for (const frame of frames) cancelAnimationFrame(frame);
     };
-  }, [pathname]);
+  }, [pathname, allowMotion]);
   return null;
 }

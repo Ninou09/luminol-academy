@@ -682,3 +682,23 @@ main:has(> .hero .heroStack) {
   border-color: #f3d48f;
   color: #f3d48f;
 }
+
+.hero[data-single] {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 64rem);
+  margin-inline: auto;
+  padding-block: clamp(1.75rem, 4vw, 4rem);
+}
+.hero[data-single] .grid {
+  grid-template-columns: 1fr;
+}
+.hero[data-single] h1 {
+  max-width: 30ch;
+  font-size: clamp(2rem, 4.2vw, 4rem);
+}
+.hero[data-single] .resultHeading {
+  position: absolute;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

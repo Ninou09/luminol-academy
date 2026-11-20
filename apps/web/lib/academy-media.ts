@@ -105,9 +105,9 @@ export const brandArtwork: Record<BrandArtwork, BrandArtworkAsset> = {
     width: 1672,
     height: 941,
     alt: {
-      en: 'A glass sphere filled with flowing luminous cyan light',
-      fr: 'Une sphère de verre remplie d’une lumière cyan fluide',
-      ar: 'كرة زجاجية مملوءة بضوء سماوي متدفق',
+      en: 'A luminous brain inside a glass sphere',
+      fr: 'Un cerveau lumineux dans une sphère de verre',
+      ar: 'دماغ مضيء داخل كرة زجاجية',
     },
   },
   heroMobile: {
@@ -115,9 +115,9 @@ export const brandArtwork: Record<BrandArtwork, BrandArtworkAsset> = {
     width: 941,
     height: 1672,
     alt: {
-      en: 'A glass sphere filled with flowing luminous cyan light',
-      fr: 'Une sphère de verre remplie d’une lumière cyan fluide',
-      ar: 'كرة زجاجية مملوءة بضوء سماوي متدفق',
+      en: 'A luminous brain inside a glass sphere',
+      fr: 'Un cerveau lumineux dans une sphère de verre',
+      ar: 'دماغ مضيء داخل كرة زجاجية',
     },
   },
   darkTexture: {

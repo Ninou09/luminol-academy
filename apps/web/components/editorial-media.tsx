@@ -1,4 +1,5 @@
 import type { SchoolSlug } from '../lib/schools';
+import { illustrativePhotoCredit } from '../lib/people-photos';
 import Image from 'next/image';
 
 import styles from './editorial-media.module.css';
@@ -39,6 +40,14 @@ export function EditorialMedia({
     <div
       className={classes(styles.frame, schoolClass[school], className)}
       data-media-source={asset?.source ?? 'governed-fallback'}
+      data-media-license={
+        asset?.source === 'illustrative'
+          ? illustrativePhotoCredit.license
+          : undefined
+      }
+      data-media-crop={
+        asset?.source === 'illustrative' ? 'center-center' : undefined
+      }
     >
       {asset ? (
         <Image

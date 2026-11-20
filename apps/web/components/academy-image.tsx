@@ -53,11 +53,9 @@ export function AcademyImage({
           priority={priority}
           sizes={sizes}
         />
-        {sceneKind === 'photo' ? null : (
-          <figcaption className={styles.credit}>
-            <span>{brandArtworkCredit.label[locale]}</span>
-          </figcaption>
-        )}
+        <figcaption className={styles.credit}>
+          <span>{credit.label[locale]}</span>
+        </figcaption>
       </figure>
     );
   }

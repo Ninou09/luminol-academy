@@ -34,7 +34,7 @@ test('cinematic depth responds to scroll without intercepting navigation', async
       hero.evaluate((el) => el.style.getPropertyValue('--scene-scale')),
     )
     .not.toBe('');
-  await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'instant' }));
+  await page.mouse.wheel(0, 300);
   await expect
     .poll(() =>
       hero.evaluate((el) => parseFloat(el.style.getPropertyValue('--scene-y'))),
@@ -57,16 +57,18 @@ test('hero and school artwork retain their source metadata', async ({
   );
   await expect(hero.locator('img')).toHaveAttribute(
     'alt',
-    'A glass sphere filled with flowing luminous cyan light',
+    'A luminous brain inside a glass sphere',
   );
   for (const school of ['psychology', 'languages', 'training']) {
     const art = page.locator(`#${school} [data-academy-media="${school}"]`);
     await expect(art).toHaveAttribute(
       'data-media-source',
-      'luminol-commissioned-3d',
+      'luminol-illustrative-photo',
     );
     await expect(art.locator('img')).not.toHaveAttribute('alt', '');
   }
   // "Why Luminol exists" now plays the second academy film.
+  await expect(page.locator('#about video')).toHaveCount(0);
+  await page.locator('#about').scrollIntoViewIfNeeded();
   await expect(page.locator('#about video')).toHaveCount(1);
 });

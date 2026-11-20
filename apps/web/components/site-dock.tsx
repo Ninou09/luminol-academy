@@ -50,7 +50,7 @@ export function SiteDock({
   const [visible, setVisible] = useState(false);
   // Phones: display settings (text size, contrast, calm mode) fold behind one button.
   const [toolsOpen, setToolsOpen] = useState(false);
-  const firstRender = useRef(true);
+  const dockRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let frame = 0;
@@ -72,28 +72,27 @@ export function SiteDock({
     };
   }, []);
 
-  // A gentle page-in on client-side navigation.
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.getElementById('main-content')?.animate(
-      [
-        {
-          opacity: 0,
-          transform: 'translate3d(0, 18px, 0)',
-          filter: 'blur(6px)',
-        },
-        { opacity: 1, transform: 'none', filter: 'blur(0)' },
-      ],
-      { duration: 700, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
+    const dock = dockRef.current;
+    const section = document.querySelector(
+      '#consultation-enquiry, #contact-form, #top',
     );
+    if (!dock || !section) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      const visible = Boolean(entry?.isIntersecting);
+      if (section.id === 'top') dock.toggleAttribute('data-at-hero', visible);
+      else dock.hidden = visible;
+    });
+    observer.observe(section);
+    return () => {
+      observer.disconnect();
+      dock.hidden = false;
+      dock.removeAttribute('data-at-hero');
+    };
   }, [pathname]);
 
   return (
-    <div className={styles.dock}>
+    <div ref={dockRef} className={styles.dock}>
       {whatsappHref ? (
         <a
           className={styles.whatsapp}
