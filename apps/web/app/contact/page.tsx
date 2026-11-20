@@ -229,7 +229,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </div>
         </section>
 
-        <section className={styles.explore} aria-labelledby="contact-paths-title">
+        <section
+          className={styles.explore}
+          aria-labelledby="contact-paths-title"
+        >
           <div className={styles.exploreInner}>
             <div className={styles.pathsHeading} data-reveal>
               <h2 className={styles.eyebrow} id="contact-paths-title">
@@ -267,7 +270,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </div>
         </section>
 
-        <section className={styles.direct} aria-labelledby="contact-direct-title">
+        <section
+          className={styles.direct}
+          aria-labelledby="contact-direct-title"
+        >
           <div className={styles.directHeading} data-reveal>
             <h2 id="contact-direct-title">{contactLabels[locale].title}</h2>
           </div>

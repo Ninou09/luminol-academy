@@ -99,15 +99,39 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const a11yLabels = {
-  en: { button: 'Reading comfort', title: 'Reading comfort', largeText: 'Larger text', highContrast: 'High contrast', close: 'Close' },
-  fr: { button: 'Confort de lecture', title: 'Confort de lecture', largeText: 'Texte plus grand', highContrast: 'Contraste élevé', close: 'Fermer' },
-  ar: { button: 'راحة القراءة', title: 'راحة القراءة', largeText: 'نص أكبر', highContrast: 'تباين عالٍ', close: 'إغلاق' },
+  en: {
+    button: 'Reading comfort',
+    title: 'Reading comfort',
+    largeText: 'Larger text',
+    highContrast: 'High contrast',
+    close: 'Close',
+  },
+  fr: {
+    button: 'Confort de lecture',
+    title: 'Confort de lecture',
+    largeText: 'Texte plus grand',
+    highContrast: 'Contraste élevé',
+    close: 'Fermer',
+  },
+  ar: {
+    button: 'راحة القراءة',
+    title: 'راحة القراءة',
+    largeText: 'نص أكبر',
+    highContrast: 'تباين عالٍ',
+    close: 'إغلاق',
+  },
 } as const;
 
 const calmLabels = {
   en: { on: 'Calm mode: turn off 3D effects', off: 'Turn 3D effects back on' },
-  fr: { on: 'Mode calme : couper les effets 3D', off: 'Réactiver les effets 3D' },
-  ar: { on: 'الوضع الهادئ: إيقاف المؤثرات ثلاثية الأبعاد', off: 'إعادة تشغيل المؤثرات ثلاثية الأبعاد' },
+  fr: {
+    on: 'Mode calme : couper les effets 3D',
+    off: 'Réactiver les effets 3D',
+  },
+  ar: {
+    on: 'الوضع الهادئ: إيقاف المؤثرات ثلاثية الأبعاد',
+    off: 'إعادة تشغيل المؤثرات ثلاثية الأبعاد',
+  },
 } as const;
 
 const backToTopLabel = {

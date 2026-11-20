@@ -6,7 +6,11 @@
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: clamp(1.5rem, 3vw, 2.25rem);
   background:
-    radial-gradient(70% 90% at 100% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%),
+    radial-gradient(
+      70% 90% at 100% 0%,
+      color-mix(in srgb, var(--accent) 16%, transparent),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.75);
   backdrop-filter: blur(14px);
   color: #fff;
@@ -134,7 +138,12 @@
   aspect-ratio: 1;
   margin: 0 auto 1.25rem;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, var(--accent) 45%, #0b3a55 80%);
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff,
+    var(--accent) 45%,
+    #0b3a55 80%
+  );
   box-shadow: 0 0 3rem var(--accent);
 }
 .resultEyebrow {

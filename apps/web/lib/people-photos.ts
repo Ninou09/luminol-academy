@@ -370,7 +370,6 @@ export const homeSchoolPhotos: Record<
   ),
 };
 
-
 /** Contact "Explore before you enquire": one living photo per school. */
 export const pathPhotos: Record<
   'psychology' | 'languages' | 'training',

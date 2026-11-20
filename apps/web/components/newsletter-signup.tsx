@@ -14,7 +14,10 @@ const copy: Record<
     name: string;
     email: string;
     interest: string;
-    interests: Record<'GENERAL' | 'PSYCHOLOGY' | 'LANGUAGES' | 'TRAINING', string>;
+    interests: Record<
+      'GENERAL' | 'PSYCHOLOGY' | 'LANGUAGES' | 'TRAINING',
+      string
+    >;
     consent: string;
     privacy: string;
     submit: string;
@@ -140,10 +143,20 @@ export function NewsletterSignup({
         </h2>
         <p>{text.body}</p>
       </div>
-      <form className={styles.form} onSubmit={submit} aria-busy={state === 'sending'}>
+      <form
+        className={styles.form}
+        onSubmit={submit}
+        aria-busy={state === 'sending'}
+      >
         <label>
           <span>{text.name}</span>
-          <input name="name" required minLength={2} maxLength={100} autoComplete="name" />
+          <input
+            name="name"
+            required
+            minLength={2}
+            maxLength={100}
+            autoComplete="name"
+          />
         </label>
         <label>
           <span>{text.email}</span>
@@ -183,8 +196,17 @@ export function NewsletterSignup({
         <button type="submit" disabled={state === 'sending'}>
           {state === 'sending' ? text.sending : text.submit}
         </button>
-        <p className={styles.status} role="status" aria-live="polite" data-state={state}>
-          {state === 'success' ? text.success : state === 'error' ? text.error : ''}
+        <p
+          className={styles.status}
+          role="status"
+          aria-live="polite"
+          data-state={state}
+        >
+          {state === 'success'
+            ? text.success
+            : state === 'error'
+              ? text.error
+              : ''}
         </p>
       </form>
     </section>

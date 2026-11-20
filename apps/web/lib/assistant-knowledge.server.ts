@@ -45,7 +45,10 @@ function siteFacts(): string {
     .join('\n');
 
   const team = psychologyTeam
-    .map((member) => `- ${member.name.en} (${member.name.ar}): ${member.role.en}. ${member.note.en}`)
+    .map(
+      (member) =>
+        `- ${member.name.en} (${member.name.ar}): ${member.role.en}. ${member.note.en}`,
+    )
     .join('\n');
 
   const faq = contactFaq.en.items

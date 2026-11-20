@@ -27,10 +27,7 @@ import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
 import { GlassIcon } from '../../components/glass-icon';
 import { PhotoCard } from '../../components/live-photo';
-import {
-  consultationPhotos,
-  peoplePhotos,
-} from '../../lib/people-photos';
+import { consultationPhotos, peoplePhotos } from '../../lib/people-photos';
 
 const CONSULTATION_COPY = {
   en: {
@@ -241,50 +238,53 @@ export default async function ConsultationsPage() {
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
             <h1 id="consultation-title">{copy.heroTitle as string}</h1>
             <p className={styles.lede}>{copy.heroBody as string}</p>
-          <div className={styles.heroAside}>
-            <p>{copy.aside as string}</p>
-            <div className={styles.heroActions}>
-              <ButtonLink href="#consultation-enquiry">
-                {copy.primaryAction as string}
-              </ButtonLink>
-              <ButtonLink
-                href={localizeHref(locale, '/schools/psychology')}
-                variant="secondary"
-              >
-                {copy.secondaryAction as string}
-              </ButtonLink>
-              {bookingHref ? (
-                <ButtonLink
-                  href={bookingHref}
-                  variant="secondary"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  {channelCopy[locale].book} ↗
+            <div className={styles.heroAside}>
+              <p>{copy.aside as string}</p>
+              <div className={styles.heroActions}>
+                <ButtonLink href="#consultation-enquiry">
+                  {copy.primaryAction as string}
                 </ButtonLink>
-              ) : null}
+                <ButtonLink
+                  href={localizeHref(locale, '/schools/psychology')}
+                  variant="secondary"
+                >
+                  {copy.secondaryAction as string}
+                </ButtonLink>
+                {bookingHref ? (
+                  <ButtonLink
+                    href={bookingHref}
+                    variant="secondary"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {channelCopy[locale].book} ↗
+                  </ButtonLink>
+                ) : null}
+              </div>
+              <p className={styles.hoursChip}>
+                <span aria-hidden="true" />
+                {openingHours.title[locale]} ·{' '}
+                <time>{openingHours.label[locale]}</time>
+              </p>
+              <p className={styles.directLine}>
+                <a href={`tel:${officialContacts.phone}`} dir="ltr">
+                  {officialContacts.phoneDisplay}
+                </a>
+                <span aria-hidden="true">·</span>
+                <a href={`mailto:${officialContacts.email}`}>
+                  {officialContacts.email}
+                </a>
+              </p>
             </div>
-            <p className={styles.hoursChip}>
-              <span aria-hidden="true" />
-              {openingHours.title[locale]} ·{' '}
-              <time>{openingHours.label[locale]}</time>
-            </p>
-            <p className={styles.directLine}>
-              <a href={`tel:${officialContacts.phone}`} dir="ltr">
-                {officialContacts.phoneDisplay}
-              </a>
-              <span aria-hidden="true">·</span>
-              <a href={`mailto:${officialContacts.email}`}>
-                {officialContacts.email}
-              </a>
-            </p>
-          </div>
           </div>
           <PhotoStack
             className={styles.heroStack}
             locale={locale}
             priority
-            photos={[consultationPhotos.firstMeeting, consultationPhotos.online]}
+            photos={[
+              consultationPhotos.firstMeeting,
+              consultationPhotos.online,
+            ]}
           />
         </section>
 
@@ -335,9 +335,7 @@ export default async function ConsultationsPage() {
             </div>
           </div>
           <div className={styles.authorityText}>
-            <p className={styles.eyebrow}>
-              {copy.authorityEyebrow as string}
-            </p>
+            <p className={styles.eyebrow}>{copy.authorityEyebrow as string}</p>
             <h2 id="consultation-authority-title">
               {copy.authorityTitle as string}
             </h2>

@@ -45,7 +45,11 @@ export const journalArticles: readonly JournalArticle[] = [
     },
     sections: [
       {
-        heading: { en: 'Dim the day', fr: 'Baisser la lumière', ar: 'خفّف ضوء اليوم' },
+        heading: {
+          en: 'Dim the day',
+          fr: 'Baisser la lumière',
+          ar: 'خفّف ضوء اليوم',
+        },
         body: {
           en: 'Bright light and screens tell the brain it is still daytime. In the last hour before bed, lower the lights, put the phone away from the bed and choose something slow: a book, a warm drink without caffeine, a few quiet words with family.',
           fr: 'La lumière vive et les écrans disent au cerveau qu’il fait encore jour. Dans la dernière heure avant le coucher, baissez les lumières, éloignez le téléphone du lit et choisissez une activité lente : un livre, une boisson chaude sans caféine, quelques mots calmes en famille.',
@@ -53,7 +57,11 @@ export const journalArticles: readonly JournalArticle[] = [
         },
       },
       {
-        heading: { en: 'Keep a steady rhythm', fr: 'Garder un rythme régulier', ar: 'حافظ على إيقاع ثابت' },
+        heading: {
+          en: 'Keep a steady rhythm',
+          fr: 'Garder un rythme régulier',
+          ar: 'حافظ على إيقاع ثابت',
+        },
         body: {
           en: 'Going to bed and waking up at similar times, even at the weekend, helps the body clock settle. If you cannot sleep after about twenty minutes, get up, do something calm in low light and return when you feel sleepy.',
           fr: 'Se coucher et se lever à des heures proches, même le week-end, aide l’horloge du corps à se stabiliser. Si vous ne dormez pas après une vingtaine de minutes, levez-vous, faites une activité calme dans une lumière douce et revenez quand le sommeil arrive.',
@@ -61,7 +69,11 @@ export const journalArticles: readonly JournalArticle[] = [
         },
       },
       {
-        heading: { en: 'When to ask for support', fr: 'Quand demander de l’aide', ar: 'متى تطلب الدعم' },
+        heading: {
+          en: 'When to ask for support',
+          fr: 'Quand demander de l’aide',
+          ar: 'متى تطلب الدعم',
+        },
         body: {
           en: 'These habits are a support, not a treatment. If poor sleep lasts for weeks, comes with low mood or worry, or affects your day, talking with a qualified specialist or a doctor can help.',
           fr: 'Ces habitudes sont un soutien, pas un traitement. Si le mauvais sommeil dure des semaines, s’accompagne de tristesse ou d’inquiétude, ou pèse sur vos journées, parler à un spécialiste qualifié ou à un médecin peut aider.',
@@ -94,7 +106,11 @@ export const journalArticles: readonly JournalArticle[] = [
     },
     sections: [
       {
-        heading: { en: 'Why the body reacts', fr: 'Pourquoi le corps réagit', ar: 'لماذا يتفاعل الجسم' },
+        heading: {
+          en: 'Why the body reacts',
+          fr: 'Pourquoi le corps réagit',
+          ar: 'لماذا يتفاعل الجسم',
+        },
         body: {
           en: 'When we feel threatened, the body prepares to act: the heart speeds up, breathing becomes short and the muscles tense. This reaction is normal and protective, even when the “danger” is a worry rather than a real threat.',
           fr: 'Face à une menace, le corps se prépare à agir : le cœur accélère, la respiration devient courte et les muscles se tendent. Cette réaction est normale et protectrice, même lorsque le « danger » est une inquiétude plutôt qu’une vraie menace.',
@@ -102,7 +118,11 @@ export const journalArticles: readonly JournalArticle[] = [
         },
       },
       {
-        heading: { en: 'A simple rhythm', fr: 'Un rythme simple', ar: 'إيقاع بسيط' },
+        heading: {
+          en: 'A simple rhythm',
+          fr: 'Un rythme simple',
+          ar: 'إيقاع بسيط',
+        },
         body: {
           en: 'Breathe in gently for four counts, hold for four, then breathe out slowly for six. Repeat for about two minutes. A longer out-breath signals safety to the body. You can try it with the “Breathe with the light” exercise on our home page.',
           fr: 'Inspirez doucement sur quatre temps, retenez sur quatre, puis expirez lentement sur six. Répétez pendant environ deux minutes. Une expiration plus longue signale la sécurité au corps. Vous pouvez essayer avec l’exercice « Respirer avec la lumière » sur notre page d’accueil.',
@@ -110,7 +130,11 @@ export const journalArticles: readonly JournalArticle[] = [
         },
       },
       {
-        heading: { en: 'When to ask for support', fr: 'Quand demander de l’aide', ar: 'متى تطلب الدعم' },
+        heading: {
+          en: 'When to ask for support',
+          fr: 'Quand demander de l’aide',
+          ar: 'متى تطلب الدعم',
+        },
         body: {
           en: 'Breathing exercises are a support, not a treatment. If anxiety stays strong, returns often or affects sleep, work or relationships, talking with a qualified specialist can help. In an emergency, contact local emergency services.',
           fr: 'Les exercices de respiration sont un soutien, pas un traitement. Si l’anxiété reste forte, revient souvent ou touche le sommeil, le travail ou les relations, parler à un spécialiste qualifié peut aider. En cas d’urgence, contactez les services d’urgence locaux.',
@@ -143,7 +167,11 @@ export const journalArticles: readonly JournalArticle[] = [
     },
     sections: [
       {
-        heading: { en: 'Why “side by side” works', fr: 'Pourquoi le « côte à côte » fonctionne', ar: 'لماذا ينجح «جنبًا إلى جنب»' },
+        heading: {
+          en: 'Why “side by side” works',
+          fr: 'Pourquoi le « côte à côte » fonctionne',
+          ar: 'لماذا ينجح «جنبًا إلى جنب»',
+        },
         body: {
           en: 'Cooking, walking or driving together lowers the pressure of eye contact. The activity gives a natural rhythm, and silences feel less heavy.',
           fr: 'Cuisiner, marcher ou conduire ensemble réduit la pression du regard. L’activité donne un rythme naturel et les silences paraissent moins lourds.',
@@ -151,7 +179,11 @@ export const journalArticles: readonly JournalArticle[] = [
         },
       },
       {
-        heading: { en: 'Listen first', fr: 'Écouter d’abord', ar: 'الإصغاء أولًا' },
+        heading: {
+          en: 'Listen first',
+          fr: 'Écouter d’abord',
+          ar: 'الإصغاء أولًا',
+        },
         body: {
           en: 'Ask open questions, accept short answers and resist the urge to fix everything at once. Curiosity and calm show your teenager that it is safe to share.',
           fr: 'Posez des questions ouvertes, acceptez les réponses courtes et résistez à l’envie de tout régler tout de suite. La curiosité et le calme montrent à l’adolescent qu’il peut partager en sécurité.',
@@ -159,7 +191,11 @@ export const journalArticles: readonly JournalArticle[] = [
         },
       },
       {
-        heading: { en: 'When to look for guidance', fr: 'Quand chercher un accompagnement', ar: 'متى تبحث عن توجيه' },
+        heading: {
+          en: 'When to look for guidance',
+          fr: 'Quand chercher un accompagnement',
+          ar: 'متى تبحث عن توجيه',
+        },
         body: {
           en: 'If communication stays very difficult or you notice lasting changes in mood, sleep or school, Luminol’s family guidance and parent sessions can help you find a next step.',
           fr: 'Si la communication reste très difficile ou si vous remarquez des changements durables d’humeur, de sommeil ou à l’école, l’accompagnement familial et les séances pour parents de Luminol peuvent vous aider à trouver la suite.',
@@ -192,7 +228,11 @@ export const journalArticles: readonly JournalArticle[] = [
     },
     sections: [
       {
-        heading: { en: 'What it confirms', fr: 'Ce qu’elle confirme', ar: 'ماذا تؤكد' },
+        heading: {
+          en: 'What it confirms',
+          fr: 'Ce qu’elle confirme',
+          ar: 'ماذا تؤكد',
+        },
         body: {
           en: 'The attendance certificate confirms that you took part in a Luminol Academy programme. It is issued by Luminol Academy.',
           fr: 'L’attestation de participation confirme que vous avez suivi un programme de Luminol Academy. Elle est délivrée par Luminol Academy.',
@@ -200,7 +240,11 @@ export const journalArticles: readonly JournalArticle[] = [
         },
       },
       {
-        heading: { en: 'What it does not confer', fr: 'Ce qu’elle ne confère pas', ar: 'ما الذي لا تمنحه' },
+        heading: {
+          en: 'What it does not confer',
+          fr: 'Ce qu’elle ne confère pas',
+          ar: 'ما الذي لا تمنحه',
+        },
         body: {
           en: 'It does not confer academic accreditation or a licence to practise. It documents your learning and professional development.',
           fr: 'Elle ne confère ni accréditation académique ni autorisation d’exercer. Elle atteste de votre apprentissage et de votre développement professionnel.',
@@ -208,7 +252,11 @@ export const journalArticles: readonly JournalArticle[] = [
         },
       },
       {
-        heading: { en: 'Verify a certificate', fr: 'Vérifier une attestation', ar: 'التحقق من شهادة' },
+        heading: {
+          en: 'Verify a certificate',
+          fr: 'Vérifier une attestation',
+          ar: 'التحقق من شهادة',
+        },
         body: {
           en: 'Each certificate carries a verification link on the Luminol website, so an employer or institution can confirm that it is genuine.',
           fr: 'Chaque attestation comporte un lien de vérification sur le site de Luminol, afin qu’un employeur ou un établissement puisse confirmer son authenticité.',
@@ -239,47 +287,59 @@ export const journalCopy: Record<
 > = {
   en: {
     title: 'Luminol Journal',
-    description: 'Short, practical reads on wellbeing, family, languages and professional growth from Luminol Academy.',
+    description:
+      'Short, practical reads on wellbeing, family, languages and professional growth from Luminol Academy.',
     eyebrow: 'Luminol Journal',
     heroTitle: 'Ideas to carry into everyday life.',
-    heroBody: 'Short, practical reads on wellbeing, family, learning and growth — written to inform, never to replace a specialist.',
+    heroBody:
+      'Short, practical reads on wellbeing, family, learning and growth — written to inform, never to replace a specialist.',
     read: 'Read',
     minutes: 'min read',
     draft: 'Draft for review',
     back: 'All articles',
     ctaTitle: 'Want to talk it through?',
-    ctaBody: 'The Luminol team can help you find the right session, programme or consultation.',
+    ctaBody:
+      'The Luminol team can help you find the right session, programme or consultation.',
     ctaButton: 'Write to Luminol',
-    disclaimer: 'This article is general information, not individual advice or treatment. In an emergency, contact local emergency services.',
+    disclaimer:
+      'This article is general information, not individual advice or treatment. In an emergency, contact local emergency services.',
   },
   fr: {
     title: 'Journal Luminol',
-    description: 'Des lectures courtes et pratiques sur le bien-être, la famille, les langues et l’évolution professionnelle.',
+    description:
+      'Des lectures courtes et pratiques sur le bien-être, la famille, les langues et l’évolution professionnelle.',
     eyebrow: 'Journal Luminol',
     heroTitle: 'Des idées à emporter au quotidien.',
-    heroBody: 'Des lectures courtes et pratiques sur le bien-être, la famille, l’apprentissage et l’évolution — pour informer, jamais pour remplacer un spécialiste.',
+    heroBody:
+      'Des lectures courtes et pratiques sur le bien-être, la famille, l’apprentissage et l’évolution — pour informer, jamais pour remplacer un spécialiste.',
     read: 'Lire',
     minutes: 'min de lecture',
     draft: 'Brouillon à valider',
     back: 'Tous les articles',
     ctaTitle: 'Envie d’en parler ?',
-    ctaBody: 'L’équipe Luminol peut vous aider à trouver la bonne séance, le bon programme ou la bonne consultation.',
+    ctaBody:
+      'L’équipe Luminol peut vous aider à trouver la bonne séance, le bon programme ou la bonne consultation.',
     ctaButton: 'Écrire à Luminol',
-    disclaimer: 'Cet article est une information générale, pas un conseil individuel ni un traitement. En cas d’urgence, contactez les services d’urgence locaux.',
+    disclaimer:
+      'Cet article est une information générale, pas un conseil individuel ni un traitement. En cas d’urgence, contactez les services d’urgence locaux.',
   },
   ar: {
     title: 'مجلة لومينول',
-    description: 'قراءات قصيرة وعملية حول التوازن النفسي والأسرة واللغات والتطور المهني من أكاديمية لومينول.',
+    description:
+      'قراءات قصيرة وعملية حول التوازن النفسي والأسرة واللغات والتطور المهني من أكاديمية لومينول.',
     eyebrow: 'مجلة لومينول',
     heroTitle: 'أفكار ترافقك في حياتك اليومية.',
-    heroBody: 'قراءات قصيرة وعملية حول التوازن النفسي والأسرة والتعلّم والنمو، للتثقيف وليست بديلًا عن المختص.',
+    heroBody:
+      'قراءات قصيرة وعملية حول التوازن النفسي والأسرة والتعلّم والنمو، للتثقيف وليست بديلًا عن المختص.',
     read: 'اقرأ',
     minutes: 'دقائق قراءة',
     draft: 'مسودة للمراجعة',
     back: 'كل المقالات',
     ctaTitle: 'تريد أن تتحدث في الأمر؟',
-    ctaBody: 'يمكن لفريق لومينول مساعدتك في إيجاد اللقاء أو البرنامج أو الاستشارة المناسبة.',
+    ctaBody:
+      'يمكن لفريق لومينول مساعدتك في إيجاد اللقاء أو البرنامج أو الاستشارة المناسبة.',
     ctaButton: 'اكتب إلى لومينول',
-    disclaimer: 'هذا المقال معلومات عامة وليس نصيحة فردية أو علاجًا. في حالة الطوارئ اتصل بخدمات الطوارئ المحلية.',
+    disclaimer:
+      'هذا المقال معلومات عامة وليس نصيحة فردية أو علاجًا. في حالة الطوارئ اتصل بخدمات الطوارئ المحلية.',
   },
 };

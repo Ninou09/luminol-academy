@@ -228,7 +228,6 @@ export default async function ProgrammesPage({
         </nav>
 
         <section className={`section-shell ${styles.discovery}`}>
-
           {programmes === null ? (
             <div
               className={`${styles.emptyState} ${styles.unavailable}`}

@@ -186,7 +186,11 @@
   overflow: hidden;
   border-radius: clamp(1rem, 2vw, 1.5rem);
   background:
-    radial-gradient(circle at 50% 50%, rgb(139 222 239 / 0.14), transparent 65%),
+    radial-gradient(
+      circle at 50% 50%,
+      rgb(139 222 239 / 0.14),
+      transparent 65%
+    ),
     #061321;
 }
 .stepPhoto {
@@ -420,7 +424,11 @@
   border: 1px solid rgb(243 212 143 / 0.3);
   border-radius: clamp(1.5rem, 3vw, 2.25rem);
   background:
-    radial-gradient(80% 120% at 50% 0%, rgb(243 212 143 / 0.12), transparent 60%),
+    radial-gradient(
+      80% 120% at 50% 0%,
+      rgb(243 212 143 / 0.12),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.7);
   text-align: center;
 }

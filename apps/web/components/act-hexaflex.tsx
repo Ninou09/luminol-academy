@@ -35,8 +35,14 @@ const copy: Record<
     body: 'La thérapie d’acceptation et d’engagement s’appuie sur six processus reliés qui, ensemble, développent la flexibilité psychologique. La formation les explore en pratique.',
     centre: 'Flexibilité psychologique',
     processes: [
-      { name: 'Acceptation', hint: 'Faire de la place aux émotions difficiles' },
-      { name: 'Défusion cognitive', hint: 'Voir les pensées comme des pensées' },
+      {
+        name: 'Acceptation',
+        hint: 'Faire de la place aux émotions difficiles',
+      },
+      {
+        name: 'Défusion cognitive',
+        hint: 'Voir les pensées comme des pensées',
+      },
       { name: 'Moment présent', hint: 'Le contact avec l’ici et maintenant' },
       { name: 'Soi comme contexte', hint: 'Le soi observateur' },
       { name: 'Valeurs', hint: 'Ce qui compte vraiment' },

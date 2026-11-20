@@ -73,10 +73,13 @@ export default async function JournalArticlePage({ params }: Props) {
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <article className={styles.article} aria-labelledby="article-title">
           <Link className={styles.back} href={localizeHref(locale, '/journal')}>
-            <span aria-hidden="true">{locale === 'ar' ? '→' : '←'}</span> {copy.back}
+            <span aria-hidden="true">{locale === 'ar' ? '→' : '←'}</span>{' '}
+            {copy.back}
           </Link>
           <p className={styles.meta}>
-            {article.draft ? <span className={styles.draft}>{copy.draft}</span> : null}
+            {article.draft ? (
+              <span className={styles.draft}>{copy.draft}</span>
+            ) : null}
             <time dateTime={article.date}>{article.date}</time>
             <span>
               {article.minutes} {copy.minutes}
@@ -85,7 +88,13 @@ export default async function JournalArticlePage({ params }: Props) {
           <h1 id="article-title">{article.title[locale]}</h1>
           <p className={styles.lede}>{article.summary[locale]}</p>
           <figure className={styles.articleCover}>
-            <Image src={article.cover} alt={article.coverAlt[locale]} fill priority sizes="(max-width: 900px) 100vw, 60rem" />
+            <Image
+              src={article.cover}
+              alt={article.coverAlt[locale]}
+              fill
+              priority
+              sizes="(max-width: 900px) 100vw, 60rem"
+            />
           </figure>
           {article.sections.map((section) => (
             <section key={section.heading.en} className={styles.articleSection}>

@@ -610,7 +610,12 @@ main:has(> .hero .heroStack) {
   aspect-ratio: 1;
   margin: 0 auto 1.5rem;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, #8bdeef 40%, #0b3a55 75%);
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff,
+    #8bdeef 40%,
+    #0b3a55 75%
+  );
   box-shadow: 0 0 3rem rgb(139 222 239 / 0.6);
 }
 @media (prefers-reduced-motion: no-preference) {

@@ -57,7 +57,11 @@
   border: 1px solid rgb(255 255 255 / 0.14);
   border-radius: 1.5rem;
   background:
-    radial-gradient(80% 50% at 100% 0%, rgb(139 222 239 / 0.14), transparent 60%),
+    radial-gradient(
+      80% 50% at 100% 0%,
+      rgb(139 222 239 / 0.14),
+      transparent 60%
+    ),
     rgb(4 15 27 / 0.97);
   box-shadow: 0 2rem 4rem -1rem rgb(0 0 0 / 0.8);
   color: #f4f8fb;
@@ -174,7 +178,11 @@
 }
 .me {
   align-self: flex-end;
-  background: linear-gradient(135deg, rgb(243 212 143 / 0.9), rgb(139 222 239 / 0.9));
+  background: linear-gradient(
+    135deg,
+    rgb(243 212 143 / 0.9),
+    rgb(139 222 239 / 0.9)
+  );
   color: #061321;
   border-end-end-radius: 0.3rem;
 }

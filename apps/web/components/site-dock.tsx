@@ -81,7 +81,11 @@ export function SiteDock({
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     document.getElementById('main-content')?.animate(
       [
-        { opacity: 0, transform: 'translate3d(0, 18px, 0)', filter: 'blur(6px)' },
+        {
+          opacity: 0,
+          transform: 'translate3d(0, 18px, 0)',
+          filter: 'blur(6px)',
+        },
         { opacity: 1, transform: 'none', filter: 'blur(0)' },
       ],
       { duration: 700, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },
@@ -133,29 +137,29 @@ export function SiteDock({
         className={styles.tools}
         data-open={toolsOpen || undefined}
       >
-      <AccessibilityMenu labels={a11yLabels} />
-      <button
-        type="button"
-        className={styles.calm}
-        aria-pressed={calm}
-        aria-label={calm ? calmLabels.off : calmLabels.on}
-        title={calm ? calmLabels.off : calmLabels.on}
-        onClick={() => setCalmMode(!calm)}
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          {calm ? (
-            <path
-              fill="currentColor"
-              d="M12 2l1.8 5.6H20l-5 3.6 1.9 5.8L12 13.4 7.1 17l1.9-5.8-5-3.6h6.2Z"
-            />
-          ) : (
-            <path
-              fill="currentColor"
-              d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"
-            />
-          )}
-        </svg>
-      </button>
+        <AccessibilityMenu labels={a11yLabels} />
+        <button
+          type="button"
+          className={styles.calm}
+          aria-pressed={calm}
+          aria-label={calm ? calmLabels.off : calmLabels.on}
+          title={calm ? calmLabels.off : calmLabels.on}
+          onClick={() => setCalmMode(!calm)}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            {calm ? (
+              <path
+                fill="currentColor"
+                d="M12 2l1.8 5.6H20l-5 3.6 1.9 5.8L12 13.4 7.1 17l1.9-5.8-5-3.6h6.2Z"
+              />
+            ) : (
+              <path
+                fill="currentColor"
+                d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"
+              />
+            )}
+          </svg>
+        </button>
       </div>
       <button
         type="button"
@@ -175,7 +179,13 @@ export function SiteDock({
       >
         <svg viewBox="0 0 48 48" aria-hidden="true">
           <circle className={styles.track} cx="24" cy="24" r="21" />
-          <circle ref={ringRef} className={styles.ring} cx="24" cy="24" r="21" />
+          <circle
+            ref={ringRef}
+            className={styles.ring}
+            cx="24"
+            cy="24"
+            r="21"
+          />
         </svg>
         <span aria-hidden="true">↑</span>
       </button>

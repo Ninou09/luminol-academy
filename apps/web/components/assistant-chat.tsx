@@ -61,7 +61,8 @@ const copy: Record<
     placeholder: 'Écoles, événements, horaires…',
     send: 'Envoyer',
     human: 'Parler à une personne',
-    greeting: 'Bonjour ! Comment puis-je vous aider à trouver votre chemin chez Luminol ?',
+    greeting:
+      'Bonjour ! Comment puis-je vous aider à trouver votre chemin chez Luminol ?',
     suggestions: [
       'Quelle école me convient ?',
       'Quels sont les prochains événements ?',
@@ -191,7 +192,12 @@ export function AssistantChat({
         aria-label={open ? text.close : text.open}
         onClick={() => setOpen(!open)}
       >
-        <Image src="/media/people/ai-assistant-avatar.webp" alt="" width={56} height={56} />
+        <Image
+          src="/media/people/ai-assistant-avatar.webp"
+          alt=""
+          width={56}
+          height={56}
+        />
         <span className={styles.pulse} aria-hidden="true" />
       </button>
 
@@ -204,12 +210,22 @@ export function AssistantChat({
           dir={locale === 'ar' ? 'rtl' : 'ltr'}
         >
           <header className={styles.head}>
-            <Image src="/media/people/ai-assistant-avatar.webp" alt="" width={40} height={40} />
+            <Image
+              src="/media/people/ai-assistant-avatar.webp"
+              alt=""
+              width={40}
+              height={40}
+            />
             <div>
               <strong>{text.title}</strong>
               <small>{text.subtitle}</small>
             </div>
-            <button type="button" className={styles.x} onClick={() => setOpen(false)} aria-label={text.close}>
+            <button
+              type="button"
+              className={styles.x}
+              onClick={() => setOpen(false)}
+              aria-label={text.close}
+            >
               ×
             </button>
           </header>
@@ -233,7 +249,9 @@ export function AssistantChat({
           ) : (
             <>
               <div className={styles.list} ref={listRef} aria-live="polite">
-                <p className={`${styles.bubble} ${styles.bot}`}>{text.greeting}</p>
+                <p className={`${styles.bubble} ${styles.bot}`}>
+                  {text.greeting}
+                </p>
                 {messages.map((message, index) => (
                   <p
                     key={index}
@@ -246,7 +264,11 @@ export function AssistantChat({
                 {messages.length === 0 ? (
                   <div className={styles.suggestions}>
                     {text.suggestions.map((suggestion) => (
-                      <button key={suggestion} type="button" onClick={() => void ask(suggestion)}>
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => void ask(suggestion)}
+                      >
                         {suggestion}
                       </button>
                     ))}
@@ -270,12 +292,21 @@ export function AssistantChat({
                   aria-label={text.placeholder}
                   dir="auto"
                 />
-                <button type="submit" disabled={busy || !input.trim()} className={styles.primary}>
+                <button
+                  type="submit"
+                  disabled={busy || !input.trim()}
+                  className={styles.primary}
+                >
                   {text.send}
                 </button>
               </form>
               {whatsappHref ? (
-                <a className={styles.human} href={whatsappHref} target="_blank" rel="noopener">
+                <a
+                  className={styles.human}
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener"
+                >
                   {text.human} · WhatsApp ↗
                 </a>
               ) : null}

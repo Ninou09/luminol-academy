@@ -173,8 +173,16 @@
   border: 1px solid rgb(243 212 143 / 0.28);
   border-radius: clamp(1.5rem, 3vw, 2.25rem);
   background:
-    radial-gradient(70% 120% at 100% 0%, rgb(139 222 239 / 0.16), transparent 60%),
-    radial-gradient(60% 100% at 0% 100%, rgb(243 212 143 / 0.12), transparent 60%),
+    radial-gradient(
+      70% 120% at 100% 0%,
+      rgb(139 222 239 / 0.16),
+      transparent 60%
+    ),
+    radial-gradient(
+      60% 100% at 0% 100%,
+      rgb(243 212 143 / 0.12),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.82);
   backdrop-filter: blur(16px);
   box-shadow: 0 2.5rem 5rem -2rem rgb(0 0 0 / 0.7);

@@ -60,7 +60,8 @@ export default async function PrivacyPage() {
           <h1 id="privacy-title">{copy.heroTitle}</h1>
           <p className={styles.lede}>{copy.heroBody}</p>
           <p className={styles.updated}>
-            {copy.updatedLabel}: <time dateTime="2026-11-13">{copy.updated}</time>
+            {copy.updatedLabel}:{' '}
+            <time dateTime="2026-11-13">{copy.updated}</time>
           </p>
         </section>
 

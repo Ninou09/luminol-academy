@@ -385,11 +385,7 @@
   padding-inline: 1.1rem 0.6rem;
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 999px;
-  background: linear-gradient(
-    120deg,
-    rgb(7 26 43 / 0.62),
-    rgb(7 26 43 / 0.42)
-  );
+  background: linear-gradient(120deg, rgb(7 26 43 / 0.62), rgb(7 26 43 / 0.42));
   box-shadow:
     0 1rem 2.5rem -1.25rem rgb(0 0 0 / 0.6),
     inset 0 1px 0 rgb(255 255 255 / 0.08);
@@ -465,8 +461,16 @@
   overflow: hidden;
   padding: clamp(3rem, 6vw, 4.5rem) var(--luminol-page-gutter) 1.25rem;
   background:
-    radial-gradient(60% 80% at 15% 0%, rgb(139 222 239 / 0.08), transparent 60%),
-    radial-gradient(50% 70% at 90% 100%, rgb(243 212 143 / 0.08), transparent 60%),
+    radial-gradient(
+      60% 80% at 15% 0%,
+      rgb(139 222 239 / 0.08),
+      transparent 60%
+    ),
+    radial-gradient(
+      50% 70% at 90% 100%,
+      rgb(243 212 143 / 0.08),
+      transparent 60%
+    ),
     #061321;
 }
 .footer::before {

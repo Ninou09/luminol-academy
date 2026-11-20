@@ -32,7 +32,9 @@ function parts(iso: string, locale: Locale) {
 
 function presenterNames(event: LuminolEvent, locale: Locale) {
   return event.presenters
-    .map((id) => psychologyTeam.find((member) => member.id === id)?.name[locale])
+    .map(
+      (id) => psychologyTeam.find((member) => member.id === id)?.name[locale],
+    )
     .filter(Boolean)
     .join(' · ');
 }
@@ -87,7 +89,12 @@ export function EventsSection({ locale }: { locale: Locale }) {
                 >
                   {event.cover ? (
                     <span className={styles.cover} aria-hidden="true">
-                      <Image src={event.cover} alt="" fill sizes="(max-width: 700px) 100vw, 33vw" />
+                      <Image
+                        src={event.cover}
+                        alt=""
+                        fill
+                        sizes="(max-width: 700px) 100vw, 33vw"
+                      />
                     </span>
                   ) : null}
                   <div className={styles.dateBadge} aria-hidden="true">
@@ -210,7 +217,11 @@ export function TeamSection({ locale }: { locale: Locale }) {
       </div>
       <ul className={styles.teamGrid}>
         {psychologyTeam.map((member, index) => (
-          <li key={member.id} className={styles.member} data-lead={index === 0 || undefined}>
+          <li
+            key={member.id}
+            className={styles.member}
+            data-lead={index === 0 || undefined}
+          >
             <span className={styles.monogram} aria-hidden="true">
               {member.initials}
             </span>

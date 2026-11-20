@@ -13,12 +13,13 @@ describe('assistant crisis check', () => {
     expect(looksLikeCrisis(text)).toBe(true);
   });
 
-  it.each(['What events are coming up?', 'Où se trouve l’académie ?', 'أين تقع الأكاديمية؟'])(
-    'does not flag "%s"',
-    (text) => {
-      expect(looksLikeCrisis(text)).toBe(false);
-    },
-  );
+  it.each([
+    'What events are coming up?',
+    'Où se trouve l’académie ?',
+    'أين تقع الأكاديمية؟',
+  ])('does not flag "%s"', (text) => {
+    expect(looksLikeCrisis(text)).toBe(false);
+  });
 
   it('gives human contacts in every language', () => {
     for (const reply of Object.values(crisisReply)) {

@@ -601,7 +601,12 @@
   z-index: -1;
   inset: 0;
   background:
-    linear-gradient(180deg, rgb(4 15 27 / 0.92), rgb(4 15 27 / 0.55) 40%, rgb(4 15 27 / 0.92)),
+    linear-gradient(
+      180deg,
+      rgb(4 15 27 / 0.92),
+      rgb(4 15 27 / 0.55) 40%,
+      rgb(4 15 27 / 0.92)
+    ),
     radial-gradient(circle at 50% 40%, transparent, rgb(4 15 27 / 0.6));
 }
 .exploreInner {
@@ -625,7 +630,8 @@
 }
 .page .pathCard:hover {
   border-color: color-mix(in srgb, var(--path-accent) 60%, transparent);
-  box-shadow: 0 2rem 4rem -1rem rgb(0 0 0 / 0.6),
+  box-shadow:
+    0 2rem 4rem -1rem rgb(0 0 0 / 0.6),
     0 0 3rem -1rem var(--path-accent);
 }
 .page .pathCard p {
@@ -770,7 +776,11 @@
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 1.75rem;
   background:
-    radial-gradient(80% 140% at 0% 0%, rgb(243 212 143 / 0.12), transparent 60%),
+    radial-gradient(
+      80% 140% at 0% 0%,
+      rgb(243 212 143 / 0.12),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.6);
   backdrop-filter: blur(12px);
   color: #fff;

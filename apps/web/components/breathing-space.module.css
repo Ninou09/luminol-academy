@@ -373,7 +373,13 @@
       rgb(4 15 27 / 0.6) 45%,
       rgb(4 15 27 / 0.2) 100%
     ),
-    linear-gradient(180deg, rgb(4 15 27 / 0.6), transparent 25%, transparent 75%, rgb(4 15 27 / 0.7));
+    linear-gradient(
+      180deg,
+      rgb(4 15 27 / 0.6),
+      transparent 25%,
+      transparent 75%,
+      rgb(4 15 27 / 0.7)
+    );
   pointer-events: none;
 }
 .space:dir(rtl) .photoVeil {
@@ -388,7 +394,11 @@
     opacity: 0.4;
   }
   .photoVeil {
-    background: linear-gradient(180deg, rgb(4 15 27 / 0.55), rgb(4 15 27 / 0.85));
+    background: linear-gradient(
+      180deg,
+      rgb(4 15 27 / 0.55),
+      rgb(4 15 27 / 0.85)
+    );
   }
 }
 @media (prefers-reduced-motion: reduce) {

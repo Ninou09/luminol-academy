@@ -18,10 +18,12 @@ export const contactFaq: Record<Locale, FaqCopy> = {
   en: {
     eyebrow: 'Questions & answers',
     title: 'Before you write to us.',
-    intro: 'Short answers to the questions people ask most before their first step.',
+    intro:
+      'Short answers to the questions people ask most before their first step.',
     items: [
       {
-        question: 'I am not sure which school or programme I need. Can I still write?',
+        question:
+          'I am not sure which school or programme I need. Can I still write?',
         answer:
           'Yes. Choose “Help me choose” in the form and describe your goal in a few words. The team reviews it and guides you toward the right school and programme.',
       },
@@ -65,10 +67,12 @@ export const contactFaq: Record<Locale, FaqCopy> = {
   fr: {
     eyebrow: 'Questions & réponses',
     title: 'Avant de nous écrire.',
-    intro: 'Des réponses courtes aux questions les plus fréquentes avant un premier pas.',
+    intro:
+      'Des réponses courtes aux questions les plus fréquentes avant un premier pas.',
     items: [
       {
-        question: 'Je ne sais pas quelle école ou quel programme choisir. Puis-je quand même écrire ?',
+        question:
+          'Je ne sais pas quelle école ou quel programme choisir. Puis-je quand même écrire ?',
         answer:
           'Oui. Choisissez « Aidez-moi à choisir » dans le formulaire et décrivez votre objectif en quelques mots. L’équipe l’étudie et vous oriente vers la bonne école et le bon programme.',
       },
@@ -115,7 +119,8 @@ export const contactFaq: Record<Locale, FaqCopy> = {
     intro: 'إجابات قصيرة عن أكثر الأسئلة شيوعًا قبل الخطوة الأولى.',
     items: [
       {
-        question: 'لست متأكدًا من المدرسة أو البرنامج المناسب لي. هل يمكنني الكتابة رغم ذلك؟',
+        question:
+          'لست متأكدًا من المدرسة أو البرنامج المناسب لي. هل يمكنني الكتابة رغم ذلك؟',
         answer:
           'نعم. اختر «ساعدني على الاختيار» في الاستمارة وصف هدفك بكلمات قليلة، وسيدرسه الفريق ويوجّهك نحو المدرسة والبرنامج الأنسب.',
       },
@@ -141,7 +146,8 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       },
       {
         question: 'بأي لغات يمكنني التواصل مع لومينول؟',
-        answer: 'تعمل لومينول بالعربية والفرنسية والإنجليزية. اكتب باللغة الأقرب إليك.',
+        answer:
+          'تعمل لومينول بالعربية والفرنسية والإنجليزية. اكتب باللغة الأقرب إليك.',
       },
       {
         question: 'هل تتضمن البرامج شهادة؟',

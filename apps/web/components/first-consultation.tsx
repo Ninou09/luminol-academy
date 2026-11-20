@@ -80,7 +80,10 @@ const copy: Record<
 export function FirstConsultation({ locale }: { locale: Locale }) {
   const text = copy[locale];
   return (
-    <section className={styles.section} aria-labelledby="first-consultation-title">
+    <section
+      className={styles.section}
+      aria-labelledby="first-consultation-title"
+    >
       <p className={styles.eyebrow}>{text.eyebrow}</p>
       <h2 id="first-consultation-title" data-no-split>
         {text.title}

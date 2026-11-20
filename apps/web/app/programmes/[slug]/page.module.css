@@ -386,7 +386,11 @@
   padding: 1.25rem 1.4rem;
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 1.25rem;
-  background: linear-gradient(150deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.015));
+  background: linear-gradient(
+    150deg,
+    rgb(255 255 255 / 0.07),
+    rgb(255 255 255 / 0.015)
+  );
 }
 .facts dd {
   color: #fff;
@@ -402,7 +406,11 @@
   border-color: rgb(255 255 255 / 0.12) !important;
   border-radius: clamp(1.25rem, 2.5vw, 2rem) !important;
   background:
-    radial-gradient(80% 60% at 100% 0%, rgb(139 222 239 / 0.1), transparent 60%),
+    radial-gradient(
+      80% 60% at 100% 0%,
+      rgb(139 222 239 / 0.1),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.7) !important;
 }
 .detailCard:first-child ul {

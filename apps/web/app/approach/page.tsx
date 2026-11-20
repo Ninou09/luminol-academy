@@ -102,7 +102,10 @@ export default async function ApproachPage() {
                 <div className={styles.stepVisual}>
                   <Image
                     className={styles.stepPhoto}
-                    src={stepPhotos[step.key]?.src ?? peoplePhotos.certificatePhoto.src}
+                    src={
+                      stepPhotos[step.key]?.src ??
+                      peoplePhotos.certificatePhoto.src
+                    }
                     alt={
                       stepPhotos[step.key]?.alt[locale] ??
                       peoplePhotos.certificatePhoto.alt[locale]

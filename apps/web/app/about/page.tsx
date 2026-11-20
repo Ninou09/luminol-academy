@@ -319,7 +319,6 @@ export default async function AboutPage() {
           </div>
         </section>
 
-
         <section
           className={`${styles.section} ${styles.ecosystem}`}
           aria-labelledby="ecosystem-title"

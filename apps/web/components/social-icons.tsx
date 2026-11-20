@@ -19,7 +19,12 @@ export function SocialIcons({
     <ul className={className} aria-label={label}>
       {socialLinks.map((link) => (
         <li key={link.id}>
-          <a href={link.href} target="_blank" rel="noopener" aria-label={link.label}>
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener"
+            aria-label={link.label}
+          >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path fill="currentColor" d={paths[link.id]} />
             </svg>

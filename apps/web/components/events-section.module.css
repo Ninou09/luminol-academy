@@ -59,7 +59,11 @@
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 1.5rem;
   background:
-    radial-gradient(80% 100% at 0% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
+    radial-gradient(
+      80% 100% at 0% 0%,
+      color-mix(in srgb, var(--accent) 14%, transparent),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.75);
   backdrop-filter: blur(12px);
   transition:
@@ -82,7 +86,11 @@
   width: 4.5rem;
   height: 5rem;
   border-radius: 1rem;
-  background: linear-gradient(160deg, var(--accent), color-mix(in srgb, var(--accent) 40%, #061321));
+  background: linear-gradient(
+    160deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 40%, #061321)
+  );
   color: #061321;
   text-align: center;
   box-shadow: 0 0 2rem -0.5rem var(--accent);
@@ -213,7 +221,11 @@
 .member[data-lead] {
   border-color: rgb(243 212 143 / 0.45);
   background:
-    radial-gradient(80% 80% at 100% 0%, rgb(243 212 143 / 0.14), transparent 60%),
+    radial-gradient(
+      80% 80% at 100% 0%,
+      rgb(243 212 143 / 0.14),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.75);
 }
 .monogram {

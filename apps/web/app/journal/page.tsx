@@ -20,7 +20,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: copy.title,
     description: copy.description,
-    alternates: { canonical: route, languages: buildLanguageAlternates('/journal') },
+    alternates: {
+      canonical: route,
+      languages: buildLanguageAlternates('/journal'),
+    },
     openGraph: {
       title: copy.title,
       description: copy.description,
@@ -54,11 +57,19 @@ export default async function JournalPage() {
             aria-labelledby={`journal-${lead.slug}`}
           >
             <span className={styles.leadImage}>
-              <Image src={lead.cover} alt={lead.coverAlt[locale]} fill priority sizes="(max-width: 900px) 100vw, 55vw" />
+              <Image
+                src={lead.cover}
+                alt={lead.coverAlt[locale]}
+                fill
+                priority
+                sizes="(max-width: 900px) 100vw, 55vw"
+              />
             </span>
             <span className={styles.leadBody}>
               <span className={styles.meta}>
-                {lead.draft ? <span className={styles.draft}>{copy.draft}</span> : null}
+                {lead.draft ? (
+                  <span className={styles.draft}>{copy.draft}</span>
+                ) : null}
                 <span>
                   {lead.minutes} {copy.minutes}
                 </span>
@@ -81,16 +92,25 @@ export default async function JournalPage() {
                 aria-labelledby={`journal-${article.slug}`}
               >
                 <span className={styles.cardImage}>
-                  <Image src={article.cover} alt={article.coverAlt[locale]} fill sizes="(max-width: 900px) 100vw, 40vw" />
+                  <Image
+                    src={article.cover}
+                    alt={article.coverAlt[locale]}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 40vw"
+                  />
                 </span>
                 <span className={styles.meta}>
-                  {article.draft ? <span className={styles.draft}>{copy.draft}</span> : null}
+                  {article.draft ? (
+                    <span className={styles.draft}>{copy.draft}</span>
+                  ) : null}
                   <span>
                     {article.minutes} {copy.minutes}
                   </span>
                 </span>
                 <h2 id={`journal-${article.slug}`}>{article.title[locale]}</h2>
-                <span className={styles.summary}>{article.summary[locale]}</span>
+                <span className={styles.summary}>
+                  {article.summary[locale]}
+                </span>
               </Link>
             </li>
           ))}

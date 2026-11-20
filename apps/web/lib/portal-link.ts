@@ -6,7 +6,9 @@ const fallbackPortalUrl = 'https://luminol-academy-portal.vercel.app';
 export function getPortalHref(locale: Locale) {
   let origin = fallbackPortalUrl;
   try {
-    origin = new URL(process.env.NEXT_PUBLIC_PORTAL_URL?.trim() || fallbackPortalUrl).origin;
+    origin = new URL(
+      process.env.NEXT_PUBLIC_PORTAL_URL?.trim() || fallbackPortalUrl,
+    ).origin;
   } catch {
     // keep the fallback
   }

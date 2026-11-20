@@ -755,8 +755,16 @@ main.auth-page {
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   min-height: 100svh;
   background:
-    radial-gradient(60% 50% at 85% 10%, rgb(139 222 239 / 0.14), transparent 70%),
-    radial-gradient(50% 40% at 10% 90%, rgb(243 212 143 / 0.12), transparent 70%),
+    radial-gradient(
+      60% 50% at 85% 10%,
+      rgb(139 222 239 / 0.14),
+      transparent 70%
+    ),
+    radial-gradient(
+      50% 40% at 10% 90%,
+      rgb(243 212 143 / 0.12),
+      transparent 70%
+    ),
     #040f1b;
   color: #f4f8fb;
 }
@@ -782,7 +790,12 @@ main.auth-page {
   inset: 0;
   z-index: -1;
   /* The photo is already a night scene: shade only behind the words. */
-  background: linear-gradient(90deg, rgb(4 15 27 / 0.72), rgb(4 15 27 / 0.25) 70%, transparent);
+  background: linear-gradient(
+    90deg,
+    rgb(4 15 27 / 0.72),
+    rgb(4 15 27 / 0.25) 70%,
+    transparent
+  );
   content: '';
 }
 .auth-brand {

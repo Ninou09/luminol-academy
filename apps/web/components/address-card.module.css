@@ -12,7 +12,11 @@
   position: relative;
   min-height: 17rem;
   background:
-    radial-gradient(circle at 50% 50%, rgb(139 222 239 / 0.12), transparent 70%),
+    radial-gradient(
+      circle at 50% 50%,
+      rgb(139 222 239 / 0.12),
+      transparent 70%
+    ),
     #06182a;
 }
 .map svg {

@@ -27,7 +27,8 @@
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: url('/media/people/goals-rooftop.webp') center 35% / cover no-repeat;
+  background: url('/media/people/goals-rooftop.webp') center 35% / cover
+    no-repeat;
   content: '';
 }
 .hero::after {
@@ -35,7 +36,11 @@
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(80% 70% at 50% 40%, rgb(4 15 27 / 0.55), rgb(4 15 27 / 0.88)),
+    radial-gradient(
+      80% 70% at 50% 40%,
+      rgb(4 15 27 / 0.55),
+      rgb(4 15 27 / 0.88)
+    ),
     linear-gradient(180deg, transparent 50%, rgb(4 15 27 / 0.7));
   content: '';
 }
@@ -234,7 +239,11 @@
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: 1.75rem;
   background:
-    radial-gradient(80% 120% at 0% 0%, rgb(243 212 143 / 0.12), transparent 60%),
+    radial-gradient(
+      80% 120% at 0% 0%,
+      rgb(243 212 143 / 0.12),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.75);
 }
 .cta h2 {

@@ -22,7 +22,11 @@ const copy = {
     signIn: 'Welcome back.',
     signUp: 'Begin your path.',
     lede: 'One calm place for your courses, sessions, progress and certificates.',
-    points: ['Lessons and session schedule', 'Progress you can see', 'Verified certificates'],
+    points: [
+      'Lessons and session schedule',
+      'Progress you can see',
+      'Verified certificates',
+    ],
     back: 'Back to the website',
     help: 'Need help signing in? WhatsApp +213 556 91 45 17',
   },
@@ -31,7 +35,11 @@ const copy = {
     signIn: 'Bon retour.',
     signUp: 'Commencez votre parcours.',
     lede: 'Un seul endroit serein pour vos cours, séances, progrès et certificats.',
-    points: ['Leçons et calendrier des séances', 'Une progression visible', 'Certificats vérifiés'],
+    points: [
+      'Leçons et calendrier des séances',
+      'Une progression visible',
+      'Certificats vérifiés',
+    ],
     back: 'Retour au site',
     help: 'Besoin d’aide pour vous connecter ? WhatsApp +213 556 91 45 17',
   },
@@ -106,7 +114,8 @@ export async function AuthShell({
           </ul>
         </div>
         <a className="auth-back" href={site}>
-          <span aria-hidden="true">{locale === 'ar' ? '→' : '←'}</span> {text.back}
+          <span aria-hidden="true">{locale === 'ar' ? '→' : '←'}</span>{' '}
+          {text.back}
         </a>
       </section>
       <section className="auth-form">

@@ -62,7 +62,8 @@
 .card:focus-visible {
   flex: 1.6;
   border-color: color-mix(in srgb, var(--accent) 60%, transparent);
-  box-shadow: 0 2.5rem 5rem -2rem rgb(0 0 0 / 0.7),
+  box-shadow:
+    0 2.5rem 5rem -2rem rgb(0 0 0 / 0.7),
     0 0 3rem -1rem var(--accent);
 }
 .card:focus-visible {

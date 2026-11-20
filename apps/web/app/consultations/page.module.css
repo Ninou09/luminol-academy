@@ -459,7 +459,6 @@
   color: #f3d48f;
 }
 
-
 /* ─── Founder block v2: photo with a 30+ badge beside a tight story. ─── */
 .authorityV2 {
   display: grid !important;
@@ -472,8 +471,16 @@
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: clamp(1.5rem, 3vw, 2.25rem);
   background:
-    radial-gradient(70% 90% at 100% 0%, rgb(243 212 143 / 0.1), transparent 60%),
-    radial-gradient(60% 80% at 0% 100%, rgb(139 222 239 / 0.1), transparent 60%),
+    radial-gradient(
+      70% 90% at 100% 0%,
+      rgb(243 212 143 / 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      60% 80% at 0% 100%,
+      rgb(139 222 239 / 0.1),
+      transparent 60%
+    ),
     rgb(7 26 43 / 0.7) !important;
 }
 .authorityVisual {

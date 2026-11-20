@@ -352,7 +352,10 @@ export function ScrollExperience() {
     });
     ScrollTrigger.addEventListener('refresh', onRefresh);
     window.addEventListener('wheel', markUser, { passive: true, once: true });
-    window.addEventListener('touchstart', markUser, { passive: true, once: true });
+    window.addEventListener('touchstart', markUser, {
+      passive: true,
+      once: true,
+    });
     window.addEventListener('keydown', markUser, { once: true });
     return () => {
       cancelAnimationFrame(frame);

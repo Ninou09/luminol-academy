@@ -58,7 +58,10 @@ export const approachCopy: Record<Locale, ApproachCopy> = {
         label: 'Step 03',
         title: 'A clear pathway',
         body: 'Luminol follows up with the most suitable next step: a consultation, a programme, a workshop or guidance toward the right school.',
-        points: ['Psychology, languages or training', 'Format and timing discussed'],
+        points: [
+          'Psychology, languages or training',
+          'Format and timing discussed',
+        ],
       },
       {
         key: 'practice',
@@ -100,7 +103,10 @@ export const approachCopy: Record<Locale, ApproachCopy> = {
         label: 'Étape 01',
         title: 'Vous partagez votre objectif',
         body: 'Écrivez via le formulaire, WhatsApp ou par téléphone. Quelques mots suffisent — inutile de savoir déjà quelle école ou quel programme choisir.',
-        points: ['Formulaire, WhatsApp ou téléphone', 'Arabe, français ou anglais'],
+        points: [
+          'Formulaire, WhatsApp ou téléphone',
+          'Arabe, français ou anglais',
+        ],
       },
       {
         key: 'listen',
@@ -114,7 +120,10 @@ export const approachCopy: Record<Locale, ApproachCopy> = {
         label: 'Étape 03',
         title: 'Un parcours clair',
         body: 'Luminol vous recontacte avec la prochaine étape la plus adaptée : une consultation, un programme, un atelier ou une orientation vers la bonne école.',
-        points: ['Psychologie, langues ou formation', 'Format et calendrier discutés'],
+        points: [
+          'Psychologie, langues ou formation',
+          'Format et calendrier discutés',
+        ],
       },
       {
         key: 'practice',
@@ -156,7 +165,10 @@ export const approachCopy: Record<Locale, ApproachCopy> = {
         label: 'الخطوة 01',
         title: 'تشاركنا هدفك',
         body: 'اكتب عبر الاستمارة أو واتساب أو اتصل بنا. تكفي كلمات قليلة، ولا تحتاج إلى معرفة المدرسة أو البرنامج المناسب مسبقًا.',
-        points: ['الاستمارة أو واتساب أو الهاتف', 'بالعربية أو الفرنسية أو الإنجليزية'],
+        points: [
+          'الاستمارة أو واتساب أو الهاتف',
+          'بالعربية أو الفرنسية أو الإنجليزية',
+        ],
       },
       {
         key: 'listen',

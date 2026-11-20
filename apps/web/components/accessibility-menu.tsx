@@ -22,16 +22,30 @@ function apply(prefs: Prefs) {
 export function AccessibilityMenu({
   labels,
 }: {
-  labels: { button: string; title: string; largeText: string; highContrast: string; close: string };
+  labels: {
+    button: string;
+    title: string;
+    largeText: string;
+    highContrast: string;
+    close: string;
+  };
 }) {
   const [open, setOpen] = useState(false);
-  const [prefs, setPrefs] = useState<Prefs>({ largeText: false, highContrast: false });
+  const [prefs, setPrefs] = useState<Prefs>({
+    largeText: false,
+    highContrast: false,
+  });
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(window.localStorage.getItem(KEY) ?? '{}') as Partial<Prefs>;
-      const next = { largeText: Boolean(saved.largeText), highContrast: Boolean(saved.highContrast) };
+      const saved = JSON.parse(
+        window.localStorage.getItem(KEY) ?? '{}',
+      ) as Partial<Prefs>;
+      const next = {
+        largeText: Boolean(saved.largeText),
+        highContrast: Boolean(saved.highContrast),
+      };
       setPrefs(next);
       apply(next);
     } catch {
@@ -45,7 +59,8 @@ export function AccessibilityMenu({
       if (event.key === 'Escape') setOpen(false);
     };
     const onClick = (event: MouseEvent) => {
-      if (!panelRef.current?.parentElement?.contains(event.target as Node)) setOpen(false);
+      if (!panelRef.current?.parentElement?.contains(event.target as Node))
+        setOpen(false);
     };
     document.addEventListener('keydown', onKey);
     document.addEventListener('mousedown', onClick);
@@ -80,17 +95,35 @@ export function AccessibilityMenu({
         Aa
       </button>
       {open ? (
-        <div id="a11y-panel" ref={panelRef} className={styles.panel} role="group" aria-label={labels.title}>
+        <div
+          id="a11y-panel"
+          ref={panelRef}
+          className={styles.panel}
+          role="group"
+          aria-label={labels.title}
+        >
           <p>{labels.title}</p>
           <label>
-            <input type="checkbox" checked={prefs.largeText} onChange={() => update('largeText')} />
+            <input
+              type="checkbox"
+              checked={prefs.largeText}
+              onChange={() => update('largeText')}
+            />
             <span>{labels.largeText}</span>
           </label>
           <label>
-            <input type="checkbox" checked={prefs.highContrast} onChange={() => update('highContrast')} />
+            <input
+              type="checkbox"
+              checked={prefs.highContrast}
+              onChange={() => update('highContrast')}
+            />
             <span>{labels.highContrast}</span>
           </label>
-          <button type="button" className={styles.close} onClick={() => setOpen(false)}>
+          <button
+            type="button"
+            className={styles.close}
+            onClick={() => setOpen(false)}
+          >
             {labels.close}
           </button>
         </div>

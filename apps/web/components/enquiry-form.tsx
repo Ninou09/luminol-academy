@@ -302,7 +302,11 @@ export function EnquiryForm({
         <input name="consent" required type="checkbox" />
         <span>
           {copy.consent}{' '}
-          <a href={localizeHref(locale, '/privacy')} target="_blank" rel="noopener">
+          <a
+            href={localizeHref(locale, '/privacy')}
+            target="_blank"
+            rel="noopener"
+          >
             {privacyPolicy[locale].linkLabel}
           </a>
         </span>

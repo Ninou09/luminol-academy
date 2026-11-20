@@ -1,6 +1,10 @@
 import type { Locale } from '@luminol/localization';
 
-export type PrivacySection = { id: string; title: string; body: readonly string[] };
+export type PrivacySection = {
+  id: string;
+  title: string;
+  body: readonly string[];
+};
 
 export type PrivacyCopy = {
   title: string;

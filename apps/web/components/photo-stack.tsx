@@ -18,7 +18,9 @@ export function PhotoStack({
   className,
   priority = false,
 }: {
-  photos: readonly [PeoplePhoto, PeoplePhoto] | readonly [PeoplePhoto, PeoplePhoto, PeoplePhoto];
+  photos:
+    | readonly [PeoplePhoto, PeoplePhoto]
+    | readonly [PeoplePhoto, PeoplePhoto, PeoplePhoto];
   locale: Locale;
   className?: string | undefined;
   priority?: boolean;
@@ -60,8 +62,14 @@ export function PhotoStack({
           />
         </figure>
       ) : null}
-      <span className={`${styles.spark} ${styles.sparkOne}`} aria-hidden="true" />
-      <span className={`${styles.spark} ${styles.sparkTwo}`} aria-hidden="true" />
+      <span
+        className={`${styles.spark} ${styles.sparkOne}`}
+        aria-hidden="true"
+      />
+      <span
+        className={`${styles.spark} ${styles.sparkTwo}`}
+        aria-hidden="true"
+      />
     </div>
   );
 }

@@ -52,8 +52,16 @@
     padding: 6.5rem 1.5rem 2rem;
     overflow-y: auto;
     background:
-      radial-gradient(70% 50% at 100% 0%, rgb(139 222 239 / 0.18), transparent 60%),
-      radial-gradient(70% 50% at 0% 100%, rgb(243 212 143 / 0.14), transparent 60%),
+      radial-gradient(
+        70% 50% at 100% 0%,
+        rgb(139 222 239 / 0.18),
+        transparent 60%
+      ),
+      radial-gradient(
+        70% 50% at 0% 100%,
+        rgb(243 212 143 / 0.14),
+        transparent 60%
+      ),
       rgb(4 15 27 / 0.97);
     backdrop-filter: blur(20px);
     pointer-events: auto;

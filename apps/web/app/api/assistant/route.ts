@@ -27,8 +27,14 @@ const requestSchema = z.object({
     )
     .min(1)
     .max(16)
-    .refine((messages) => messages[0]?.role === 'user', 'Must start with the visitor')
-    .refine((messages) => messages.at(-1)?.role === 'user', 'Must end with the visitor'),
+    .refine(
+      (messages) => messages[0]?.role === 'user',
+      'Must start with the visitor',
+    )
+    .refine(
+      (messages) => messages.at(-1)?.role === 'user',
+      'Must end with the visitor',
+    ),
 });
 
 const unavailable: Record<'en' | 'fr' | 'ar', string> = {
@@ -67,7 +73,10 @@ function limited(address: string | null, now = Date.now()) {
 function textStream(text: string, status = 200) {
   return new Response(text, {
     status,
-    headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' },
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'no-store',
+    },
   });
 }
 
@@ -76,7 +85,10 @@ export async function POST(request: Request): Promise<Response> {
     return textStream('Forbidden', 403);
   }
   if (limited(clientAddress(request))) {
-    return textStream('Too many messages. Please try again in a few minutes.', 429);
+    return textStream(
+      'Too many messages. Please try again in a few minutes.',
+      429,
+    );
   }
 
   let parsed: z.infer<typeof requestSchema>;
@@ -117,14 +129,21 @@ export async function POST(request: Request): Promise<Response> {
       let wrote = false;
       try {
         for await (const event of stream) {
-          if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+          if (
+            event.type === 'content_block_delta' &&
+            event.delta.type === 'text_delta'
+          ) {
             wrote = true;
             controller.enqueue(encoder.encode(event.delta.text));
           }
         }
         const final = await stream.finalMessage();
         if (final.stop_reason === 'refusal' || !wrote) {
-          controller.enqueue(encoder.encode(wrote ? `\n\n${unavailable[locale]}` : unavailable[locale]));
+          controller.enqueue(
+            encoder.encode(
+              wrote ? `\n\n${unavailable[locale]}` : unavailable[locale],
+            ),
+          );
         }
       } catch (error) {
         if (error instanceof Anthropic.RateLimitError) {
@@ -134,7 +153,11 @@ export async function POST(request: Request): Promise<Response> {
         } else {
           console.error('Assistant stream failed');
         }
-        controller.enqueue(encoder.encode(wrote ? `\n\n${unavailable[locale]}` : unavailable[locale]));
+        controller.enqueue(
+          encoder.encode(
+            wrote ? `\n\n${unavailable[locale]}` : unavailable[locale],
+          ),
+        );
       } finally {
         controller.close();
       }

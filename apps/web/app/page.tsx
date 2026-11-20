@@ -89,7 +89,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-
 export default async function Page() {
   const locale = await getRequestLocale();
   const publicCopy = getPublicCopy(locale);
@@ -244,7 +243,10 @@ export default async function Page() {
                       fill
                       sizes="(max-width: 800px) 100vw, 45vw"
                     />
-                    <span className={styles.schoolPhotoVeil} aria-hidden="true" />
+                    <span
+                      className={styles.schoolPhotoVeil}
+                      aria-hidden="true"
+                    />
                     <span className={styles.artGlare} aria-hidden="true" />
                   </figure>
                   <span
@@ -385,23 +387,17 @@ export default async function Page() {
             aria-labelledby="pathway-title"
             data-reveal
           >
-            <Link
-              href={localizeHref(locale, '/consultations')}
-            >
+            <Link href={localizeHref(locale, '/consultations')}>
               <span>01</span>
               {copy.pathwayPsychology}
               <b aria-hidden="true">↗</b>
             </Link>
-            <Link
-              href={localizeHref(locale, '/schools/languages')}
-            >
+            <Link href={localizeHref(locale, '/schools/languages')}>
               <span>02</span>
               {copy.pathwayLanguages}
               <b aria-hidden="true">↗</b>
             </Link>
-            <Link
-              href={localizeHref(locale, '/schools/training')}
-            >
+            <Link href={localizeHref(locale, '/schools/training')}>
               <span>03</span>
               {copy.pathwayTraining}
               <b aria-hidden="true">↗</b>

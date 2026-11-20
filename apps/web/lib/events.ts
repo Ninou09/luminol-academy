@@ -205,7 +205,11 @@ export const psychologyTeam: readonly TeamMember[] = [
   {
     id: 'fettouma',
     initials: 'KF',
-    name: { en: 'Kheddaoui Fettouma', fr: 'Kheddaoui Fettouma', ar: 'فطومة خداوي' },
+    name: {
+      en: 'Kheddaoui Fettouma',
+      fr: 'Kheddaoui Fettouma',
+      ar: 'فطومة خداوي',
+    },
     role: {
       en: 'Founder · Therapist',
       fr: 'Fondatrice · Thérapeute',
@@ -235,7 +239,11 @@ export const psychologyTeam: readonly TeamMember[] = [
   {
     id: 'saliha',
     initials: 'SH',
-    name: { en: 'Dr Saliha Haj Mohamed', fr: 'Dr Saliha Haj Mohamed', ar: 'الدكتورة صليحة حاج محمد' },
+    name: {
+      en: 'Dr Saliha Haj Mohamed',
+      fr: 'Dr Saliha Haj Mohamed',
+      ar: 'الدكتورة صليحة حاج محمد',
+    },
     role: {
       en: 'Doctor · Guest presenter',
       fr: 'Docteure · Intervenante invitée',
@@ -295,7 +303,8 @@ export const eventsCopy: Record<
   en: {
     eyebrow: 'Events & sessions',
     title: 'Learn with Luminol, live.',
-    intro: 'Free awareness sessions for families and professional sessions for practitioners, mostly online via Zoom.',
+    intro:
+      'Free awareness sessions for families and professional sessions for practitioners, mostly online via Zoom.',
     upcoming: 'Coming up',
     past: 'Recent sessions',
     free: 'Free',
@@ -315,12 +324,14 @@ export const eventsCopy: Record<
     with: 'With',
     teamEyebrow: 'The people',
     teamTitle: 'Who guides Luminol Psychology.',
-    teamIntro: 'The founder leads the psychology division, joined by specialists who present sessions and programmes.',
+    teamIntro:
+      'The founder leads the psychology division, joined by specialists who present sessions and programmes.',
   },
   fr: {
     eyebrow: 'Événements & séances',
     title: 'Apprendre avec Luminol, en direct.',
-    intro: 'Des séances de sensibilisation gratuites pour les familles et des séances professionnelles pour les praticiens, surtout en ligne via Zoom.',
+    intro:
+      'Des séances de sensibilisation gratuites pour les familles et des séances professionnelles pour les praticiens, surtout en ligne via Zoom.',
     upcoming: 'À venir',
     past: 'Séances récentes',
     free: 'Gratuit',
@@ -340,12 +351,14 @@ export const eventsCopy: Record<
     with: 'Avec',
     teamEyebrow: 'Les personnes',
     teamTitle: 'Qui guide Luminol Psychologie.',
-    teamIntro: 'La fondatrice dirige le pôle psychologie, avec des spécialistes qui animent des séances et des programmes.',
+    teamIntro:
+      'La fondatrice dirige le pôle psychologie, avec des spécialistes qui animent des séances et des programmes.',
   },
   ar: {
     eyebrow: 'الفعاليات واللقاءات',
     title: 'تعلّم مع لومينول مباشرة.',
-    intro: 'لقاءات توعوية مجانية للأسر ولقاءات مهنية للممارسين، غالبًا عبر الإنترنت على Zoom.',
+    intro:
+      'لقاءات توعوية مجانية للأسر ولقاءات مهنية للممارسين، غالبًا عبر الإنترنت على Zoom.',
     upcoming: 'قريبًا',
     past: 'لقاءات سابقة',
     free: 'مجاني',
@@ -365,6 +378,7 @@ export const eventsCopy: Record<
     with: 'مع',
     teamEyebrow: 'الفريق',
     teamTitle: 'من يقود لومينول لعلم النفس.',
-    teamIntro: 'تقود المؤسسة قسم علم النفس، وينضم إليها مختصون يقدّمون اللقاءات والبرامج.',
+    teamIntro:
+      'تقود المؤسسة قسم علم النفس، وينضم إليها مختصون يقدّمون اللقاءات والبرامج.',
   },
 };

@@ -35,7 +35,8 @@ export async function GET(
   const locale = url.searchParams.get('lang');
   const lang = locale === 'fr' || locale === 'ar' ? locale : 'en';
   const day = event.secondDate ?? event.date;
-  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const stamp =
+    new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',

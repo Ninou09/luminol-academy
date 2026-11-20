@@ -39,7 +39,10 @@ const menuLabels = {
   ar: { open: 'القائمة', close: 'إغلاق القائمة', home: 'الرئيسية' },
   fr: { open: 'Menu', close: 'Fermer le menu', home: 'Accueil' },
   en: { open: 'Menu', close: 'Close menu', home: 'Home' },
-} as const satisfies Record<Locale, { open: string; close: string; home: string }>;
+} as const satisfies Record<
+  Locale,
+  { open: string; close: string; home: string }
+>;
 
 const journalLabel = {
   ar: 'المجلة',
@@ -123,7 +126,10 @@ export async function SiteHeader() {
               closeLabel={menuLabels[locale].close}
               hours={`${openingHours.title[locale]} · ${openingHours.label[locale]}`}
               contacts={[
-                { href: localizeHref(locale, '/contact'), label: copy.site.nav.contact },
+                {
+                  href: localizeHref(locale, '/contact'),
+                  label: copy.site.nav.contact,
+                },
                 { href: getPortalHref(locale), label: portalLabel[locale] },
                 {
                   href: `tel:${officialContacts.phone}`,
@@ -136,13 +142,41 @@ export async function SiteHeader() {
                 },
               ]}
               links={[
-                { href: localizeHref(locale, '/'), label: menuLabels[locale].home, match: '/' },
-                { href: localizeHref(locale, '/schools'), label: copy.site.nav.schools, match: '/schools' },
-                { href: localizeHref(locale, '/programmes'), label: copy.site.nav.programmes, match: '/programmes' },
-                { href: localizeHref(locale, '/consultations'), label: consultationsLabel[locale], match: '/consultations' },
-                { href: localizeHref(locale, '/approach'), label: copy.site.nav.approach, match: '/approach' },
-                { href: localizeHref(locale, '/about'), label: copy.site.nav.about, match: '/about' },
-                { href: localizeHref(locale, '/journal'), label: journalLabel[locale], match: '/journal' },
+                {
+                  href: localizeHref(locale, '/'),
+                  label: menuLabels[locale].home,
+                  match: '/',
+                },
+                {
+                  href: localizeHref(locale, '/schools'),
+                  label: copy.site.nav.schools,
+                  match: '/schools',
+                },
+                {
+                  href: localizeHref(locale, '/programmes'),
+                  label: copy.site.nav.programmes,
+                  match: '/programmes',
+                },
+                {
+                  href: localizeHref(locale, '/consultations'),
+                  label: consultationsLabel[locale],
+                  match: '/consultations',
+                },
+                {
+                  href: localizeHref(locale, '/approach'),
+                  label: copy.site.nav.approach,
+                  match: '/approach',
+                },
+                {
+                  href: localizeHref(locale, '/about'),
+                  label: copy.site.nav.about,
+                  match: '/about',
+                },
+                {
+                  href: localizeHref(locale, '/journal'),
+                  label: journalLabel[locale],
+                  match: '/journal',
+                },
               ]}
             />
             <a
@@ -151,7 +185,16 @@ export async function SiteHeader() {
               aria-label={portalLabel[locale]}
               title={portalLabel[locale]}
             >
-              <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              >
                 <circle cx="12" cy="8.5" r="3.6" />
                 <path d="M4.8 20c1.2-3.6 4-5.4 7.2-5.4s6 1.8 7.2 5.4" />
               </svg>
@@ -195,10 +238,7 @@ export async function SiteFooter() {
             <Wordmark className={styles.footerWordmark ?? ''} />
           </CurrentPageLink>
           <p>{copy.site.description}</p>
-          <SocialIcons
-            className={styles.socials}
-            label={followCopy[locale]}
-          />
+          <SocialIcons className={styles.socials} label={followCopy[locale]} />
         </div>
         <nav
           className={styles.footerNav}
@@ -236,7 +276,9 @@ export async function SiteFooter() {
           >
             {copy.site.nav.contact}
           </CurrentPageLink>
-          <Link href={localizeHref(locale, '/journal')}>{journalLabel[locale]}</Link>
+          <Link href={localizeHref(locale, '/journal')}>
+            {journalLabel[locale]}
+          </Link>
           <Link href="/psy-library">{libraryLabel[locale]}</Link>
           <a href={getPortalHref(locale)}>{portalLabel[locale]}</a>
         </nav>
@@ -258,8 +300,7 @@ export async function SiteFooter() {
                 target="_blank"
                 rel="noopener"
               >
-                {officialAddress.street[locale]},{' '}
-                {officialAddress.city[locale]}
+                {officialAddress.street[locale]}, {officialAddress.city[locale]}
               </a>
             </li>
             <li>

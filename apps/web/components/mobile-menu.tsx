@@ -78,53 +78,56 @@ export function MobileMenu({
       </button>
       {mounted
         ? createPortal(
-      <div
-        id="mobile-menu-panel"
-        ref={panelRef}
-        className={styles.panel}
-        data-open={open || undefined}
-        hidden={!open}
-      >
-        <nav aria-label={openLabel}>
-          <ol>
-            {links.map((link, index) => {
-              const active =
-                link.match === '/'
-                  ? localPath === '/'
-                  : localPath.startsWith(link.match);
-              return (
-                <li key={link.href} style={{ '--i': index } as React.CSSProperties}>
-                  <Link
-                    href={link.href}
-                    aria-current={active ? 'page' : undefined}
-                    onClick={() => setOpen(false)}
-                  >
-                    <span>{String(index + 1).padStart(2, '0')}</span>
-                    {link.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ol>
-        </nav>
-        <div className={styles.footer}>
-          <p>{hours}</p>
-          <div className={styles.contacts}>
-            {contacts.map((contact) => (
-              <a
-                key={contact.href}
-                href={contact.href}
-                dir="ltr"
-                {...(contact.external
-                  ? { target: '_blank', rel: 'noopener' }
-                  : {})}
-              >
-                {contact.label}
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>,
+            <div
+              id="mobile-menu-panel"
+              ref={panelRef}
+              className={styles.panel}
+              data-open={open || undefined}
+              hidden={!open}
+            >
+              <nav aria-label={openLabel}>
+                <ol>
+                  {links.map((link, index) => {
+                    const active =
+                      link.match === '/'
+                        ? localPath === '/'
+                        : localPath.startsWith(link.match);
+                    return (
+                      <li
+                        key={link.href}
+                        style={{ '--i': index } as React.CSSProperties}
+                      >
+                        <Link
+                          href={link.href}
+                          aria-current={active ? 'page' : undefined}
+                          onClick={() => setOpen(false)}
+                        >
+                          <span>{String(index + 1).padStart(2, '0')}</span>
+                          {link.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </nav>
+              <div className={styles.footer}>
+                <p>{hours}</p>
+                <div className={styles.contacts}>
+                  {contacts.map((contact) => (
+                    <a
+                      key={contact.href}
+                      href={contact.href}
+                      dir="ltr"
+                      {...(contact.external
+                        ? { target: '_blank', rel: 'noopener' }
+                        : {})}
+                    >
+                      {contact.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>,
             document.body,
           )
         : null}
