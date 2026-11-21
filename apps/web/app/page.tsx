@@ -3,23 +3,63 @@ import {
   getOpenGraphLocale,
   localizeHref,
   localizePathname,
+  type Locale,
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
-import { AcademyImage } from '../components/academy-image';
+import { BreathingSpace } from '../components/breathing-space';
 import { CinematicBackdrop } from '../components/cinematic-backdrop';
+import { InkBlot } from '../components/ink-blot';
+import { MindSection } from '../components/mind-section';
 import { CinematicScroll } from '../components/cinematic-scroll';
+import { LuminousBackdrop } from '../components/luminous-backdrop';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
+import { SchoolConstellation } from '../components/school-constellation';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
-import { academyMedia, cinematicCopy } from '../lib/academy-media';
+import { ThoughtNetwork } from '../components/thought-network';
+import { VelocityMarquee } from '../components/velocity-marquee';
+import {
+  brandArtworkCredit,
+  cinematicCopy,
+  schoolArtwork,
+} from '../lib/academy-media';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
+import { EventsSection } from '../components/events-section';
+import { PhotoBand } from '../components/live-photo';
+import {
+  homeSchoolPhotos,
+  illustrativePhotoCredit,
+  peoplePhotos,
+} from '../lib/people-photos';
+
+const constellationCopy = {
+  en: {
+    eyebrow: 'One source of light',
+    title: 'Three schools. One light.',
+    hint: 'Choose a school',
+  },
+  fr: {
+    eyebrow: 'Une seule source de lumière',
+    title: 'Trois écoles. Une seule lumière.',
+    hint: 'Choisissez une école',
+  },
+  ar: {
+    eyebrow: 'مصدر واحد للنور',
+    title: 'ثلاث مدارس. نور واحد.',
+    hint: 'اختر مدرسة',
+  },
+} as const satisfies Record<
+  Locale,
+  { eyebrow: string; title: string; hint: string }
+>;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -60,40 +100,32 @@ export default async function Page() {
     training: styles.training ?? '',
   };
   const cinematic = cinematicCopy[locale];
-
   return (
     <>
       <SiteHeader />
       <CinematicScroll />
       <OrganizationJsonLd description={publicCopy.site.description} />
-      <main id="main-content" tabIndex={-1} className={styles.page}>
+      <main id="main-content" tabIndex={-1} className={styles.page} data-cosmos>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
-          <CinematicBackdrop
-            pauseLabel={cinematic.pause}
-            playLabel={cinematic.play}
-          />
-          <div className={styles.heroLocation} aria-hidden="true">
-            <span>Luminol Academy</span>
-            <span>{cinematic.location}</span>
-          </div>
+          <LuminousBackdrop locale={locale} />
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>{copy.heroEyebrow}</p>
-            <h1 id="hero-title" className={styles.heroTitle}>
-              {copy.heroTitle} <span>{copy.heroAccent}</span>
+            <h1 id="hero-title" className={styles.heroTitle} data-no-split>
+              {copy.heroTitle}
             </h1>
-          </div>
-          <div className={styles.heroSummary}>
             <p className={styles.heroLede}>{copy.heroLede}</p>
             <div className={styles.heroActions}>
-              <ButtonLink href={localizeHref(locale, '/programmes')} size="lg">
-                {copy.exploreSchools} <span aria-hidden="true">↘</span>
-              </ButtonLink>
               <ButtonLink
                 href={localizeHref(locale, '/consultations')}
                 size="lg"
+              >
+                {copy.bookConsultation}
+              </ButtonLink>
+              <ButtonLink
+                href={localizeHref(locale, '/programmes')}
+                size="lg"
                 variant="secondary"
               >
-                {copy.pathwayPsychology} <span aria-hidden="true">→</span>
+                {copy.exploreSchools}
               </ButtonLink>
             </div>
           </div>
@@ -101,13 +133,17 @@ export default async function Page() {
             {cinematic.discover} <span aria-hidden="true">↓</span>
           </a>
         </section>
-        <dl className={styles.proof} aria-label={copy.strengthsAria}>
+        <dl
+          className={styles.proof}
+          aria-label={copy.strengthsAria}
+          data-stagger
+        >
           <div>
-            <dt>3</dt>
+            <dt data-count="3">3</dt>
             <dd>{copy.connectedSchools}</dd>
           </div>
           <div>
-            <dt>1</dt>
+            <dt data-count="30">30+</dt>
             <dd>{copy.humanJourney}</dd>
           </div>
           <div>
@@ -118,6 +154,16 @@ export default async function Page() {
 
         <PublishedProgrammeSpotlight locale={locale} />
 
+        <SchoolConstellation
+          {...constellationCopy[locale]}
+          schools={schoolList.map((school) => ({
+            slug: school.slug,
+            number: school.number,
+            name: school.name,
+            href: localizeHref(locale, `/schools/${school.slug}`),
+          }))}
+        />
+
         <section
           id="schools"
           className={styles.section}
@@ -126,36 +172,72 @@ export default async function Page() {
           <div className={styles.sectionHeading} data-reveal>
             <div>
               <p className={styles.eyebrow}>{copy.schoolsEyebrow}</p>
-              <h2 id="home-schools-title">{copy.schoolsTitle}</h2>
+              <h2 id="home-schools-title" data-split>
+                {copy.schoolsTitle}
+              </h2>
             </div>
-            <p>{copy.schoolsIntro}</p>
+            <p data-scrub-text>{copy.schoolsIntro}</p>
           </div>
           <div className={styles.schoolGrid}>
-            {schoolList.map((school) => (
+            {schoolList.map((school, index) => (
               <article
                 className={`${styles.schoolCard} ${schoolTone[school.slug]}`}
                 id={school.slug}
                 key={school.slug}
                 aria-labelledby={`home-school-${school.slug}-title`}
                 data-school-card
-                data-reveal
               >
-                <AcademyImage
-                  className={styles.schoolPhoto}
-                  school={school.slug}
-                  locale={locale}
-                  sizes="(max-width: 800px) 100vw, 55vw"
-                />
-                <div className={styles.schoolDetails}>
+                <div
+                  className={styles.schoolArtWrap}
+                  data-flip-in={index % 2 ? 'end' : 'start'}
+                >
+                  <figure
+                    className={styles.schoolArt}
+                    data-tilt="7"
+                    data-academy-media={school.slug}
+                    data-media-source={illustrativePhotoCredit.source}
+                    data-media-license={illustrativePhotoCredit.license}
+                    data-media-crop="center-center"
+                  >
+                    <Image
+                      className={styles.schoolPhoto}
+                      src={homeSchoolPhotos[school.slug].src}
+                      alt={homeSchoolPhotos[school.slug].alt[locale]}
+                      fill
+                      sizes="(max-width: 800px) 100vw, 45vw"
+                    />
+                    <span
+                      className={styles.schoolPhotoVeil}
+                      aria-hidden="true"
+                    />
+                    <figcaption className="scene-caption">
+                      {illustrativePhotoCredit.label[locale]}
+                    </figcaption>
+                    <span className={styles.artGlare} aria-hidden="true" />
+                  </figure>
+                  <span
+                    className={styles.schoolEmblem}
+                    aria-hidden="true"
+                    data-depth="0.28"
+                  >
+                    <span className={styles.artGlow} />
+                    <Image
+                      className={styles.artImage}
+                      src={schoolArtwork[school.slug].src}
+                      alt=""
+                      width={schoolArtwork[school.slug].width}
+                      height={schoolArtwork[school.slug].height}
+                      sizes="(max-width: 800px) 40vw, 16vw"
+                    />
+                  </span>
+                </div>
+                <div className={styles.schoolDetails} data-reveal>
                   <div className={styles.schoolTop}>
                     <span>{school.number}</span>
                     <span aria-hidden="true">Luminol Academy</span>
                   </div>
                   <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
                   <p className={styles.schoolPromise}>{school.promise}</p>
-                  <p className={styles.schoolDescription}>
-                    {school.introduction}
-                  </p>
                   <ul aria-label={`${school.name} — ${copy.focusAreas}`}>
                     {school.programs.slice(0, 3).map((program) => (
                       <li key={program.title}>{program.title}</li>
@@ -174,46 +256,69 @@ export default async function Page() {
           </div>
         </section>
 
+        <MindSection locale={locale} />
+
         <section
           id="approach"
           className={styles.approach}
           aria-labelledby="home-approach-title"
+          data-spotlight
         >
+          <ThoughtNetwork className={styles.network} />
           <div className={styles.approachIntro} data-reveal>
             <p className={`${styles.eyebrow} ${styles.light}`}>
               {copy.approachEyebrow}
             </p>
-            <h2 id="home-approach-title">{copy.approachTitle}</h2>
-            <p>{copy.approachIntro}</p>
+            <h2 id="home-approach-title" data-split>
+              {copy.approachTitle}
+            </h2>
+            <p data-scrub-text>{copy.approachIntro}</p>
           </div>
-          <ol className={styles.principles}>
-            {copy.principles.map((principle) => (
-              <li key={principle.number} data-reveal>
-                <span>{principle.number}</span>
-                <div>
-                  <h3>{principle.title}</h3>
-                  <p>{principle.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <div className={styles.approachLink} data-reveal>
+            <Link
+              className={styles.textLink}
+              href={localizeHref(locale, '/approach')}
+            >
+              {copy.approachEyebrow} <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </section>
+
+        <EventsSection locale={locale} />
+
+        <PhotoBand
+          photo={peoplePhotos.academyLecture}
+          locale={locale}
+          reveal="portal"
+        />
+
+        <BreathingSpace locale={locale} />
 
         <section
           id="about"
           className={`${styles.section} ${styles.about}`}
           aria-labelledby="home-about-title"
         >
-          <AcademyImage
-            className={styles.aboutVisual}
-            school="training"
-            locale={locale}
-            sizes="(max-width: 1000px) 100vw, 40vw"
-          />
+          <div
+            className={`${styles.aboutVisualWrap} ${styles.aboutFilm}`}
+            data-depth="0.08"
+          >
+            <CinematicBackdrop
+              pauseLabel={cinematic.pause}
+              playLabel={cinematic.play}
+              src="/media/cinematic/hero-loop.mp4"
+              poster="/media/cinematic/hero-poster.webp"
+            />
+            <span className={styles.aboutFilmGlow} aria-hidden="true" />
+          </div>
           <div className={styles.aboutCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.aboutEyebrow}</p>
-            <h2 id="home-about-title">{copy.aboutTitle}</h2>
-            <p className={styles.aboutLede}>{copy.aboutLede}</p>
+            <h2 id="home-about-title" data-split>
+              {copy.aboutTitle}
+            </h2>
+            <p className={styles.aboutLede} data-scrub-text>
+              {copy.aboutLede}
+            </p>
             <p>{copy.aboutBody}</p>
             <div className={styles.values}>
               {copy.values.map((value) => (
@@ -223,41 +328,25 @@ export default async function Page() {
           </div>
         </section>
 
-        <aside className={styles.mediaCredits} aria-label={cinematic.credits}>
-          <span>{cinematic.credits}</span>
-          <a
-            href="https://mixkit.co/free-stock-video/a-hand-runs-through-the-book-spines-in-the-library-50726/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Mixkit · 50726
-          </a>
-          <a
-            href="https://mixkit.co/free-stock-video/reverse-tour-of-a-library-full-of-books-21595/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Mixkit · 21595
-          </a>
-          {Object.values(academyMedia).map((media) => (
-            <a
-              key={media.sourceUrl}
-              href={media.sourceUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {media.credit}
-            </a>
-          ))}
-        </aside>
+        <VelocityMarquee
+          words={schoolList.flatMap((school) =>
+            school.eyebrow.split('·').map((word) => word.trim()),
+          )}
+        />
 
         <section
-          className={`${styles.section} ${styles.pathway}`}
+          className={`${styles.section} ${styles.pathway} ${styles.pathwayFilm}`}
           aria-labelledby="pathway-title"
         >
+          <CinematicBackdrop
+            pauseLabel={cinematic.pause}
+            playLabel={cinematic.play}
+          />
           <div data-reveal>
             <p className={styles.eyebrow}>{copy.pathwayEyebrow}</p>
-            <h2 id="pathway-title">{copy.pathwayTitle}</h2>
+            <h2 id="pathway-title" data-split>
+              {copy.pathwayTitle}
+            </h2>
           </div>
           <nav
             className={styles.pathwayLinks}
@@ -286,19 +375,45 @@ export default async function Page() {
           id="contact"
           className={styles.cta}
           aria-labelledby="home-contact-title"
-          data-reveal
+          data-spotlight
         >
-          <div>
+          <InkBlot className={styles.inkBlot} />
+          <div data-reveal>
             <p className={`${styles.eyebrow} ${styles.light}`}>
               {copy.ctaEyebrow}
             </p>
-            <h2 id="home-contact-title">{copy.ctaTitle}</h2>
+            <h2 id="home-contact-title" data-split>
+              {copy.ctaTitle}
+            </h2>
             <p>{copy.ctaBody}</p>
           </div>
-          <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
+          <ButtonLink
+            href={localizeHref(locale, '/contact')}
+            size="lg"
+            data-magnetic
+          >
             {copy.startConversation} <span aria-hidden="true">→</span>
           </ButtonLink>
         </section>
+
+        <aside className={styles.mediaCredits} aria-label={cinematic.credits}>
+          <span>{cinematic.credits}</span>
+          <a
+            href="https://mixkit.co/free-stock-video/a-hand-runs-through-the-book-spines-in-the-library-50726/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Mixkit · 50726
+          </a>
+          <a
+            href="https://mixkit.co/free-stock-video/reverse-tour-of-a-library-full-of-books-21595/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Mixkit · 21595
+          </a>
+          <span>{brandArtworkCredit.label[locale]}</span>
+        </aside>
       </main>
       <SiteFooter />
     </>

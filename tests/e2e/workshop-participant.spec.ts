@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const route = '/ar/workshops/family-after-trauma';
 
-test('workshop page preserves the approved Tally flow and safe attribution', async ({
+test('workshop page closes registration and keeps private details out of the archive', async ({
   page,
 }) => {
   const response = await page.goto(
@@ -29,31 +29,20 @@ test('workshop page preserves the approved Tally flow and safe attribution', asy
     ),
   ).toBe(true);
 
-  const links = page.locator('[data-registration-link]');
-  expect(await links.count()).toBeGreaterThanOrEqual(3);
-  const registrationHref = await links.first().getAttribute('href');
-  expect(registrationHref).toBeTruthy();
-
-  const registrationUrl = new URL(registrationHref!);
-  expect(registrationUrl.origin + registrationUrl.pathname).toBe(
-    'https://tally.so/r/GxMz8z',
-  );
-  expect(Object.fromEntries(registrationUrl.searchParams)).toEqual({
-    utm_source: 'facebook',
-    utm_medium: 'paid_social',
-    utm_campaign: 'LUM_FREE_250926_TRAFFIC',
-    utm_content: 'poster_01',
-    meta_campaign_id: '120260600000000059',
-    meta_adset_id: '120260600000000060',
-    meta_ad_id: '120260634590040059',
-  });
+  await expect(page.getByText('انتهى اللقاء', { exact: true })).toBeVisible();
+  await expect(
+    page.locator('[data-registration-link], a[href*="tally.so"], a[download]'),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('main a[href="/ar/programmes"]').first(),
+  ).toBeVisible();
 
   const visibleText = await page.locator('body').innerText();
   expect(visibleText).not.toMatch(/volgograd|telegram|t\.me\//i);
   expect(visibleText).not.toContain('private@example.com');
 });
 
-test('desktop participant experience exposes working tabs, FAQ and privacy dialog', async ({
+test('desktop participant experience exposes working tabs and FAQ', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -70,14 +59,6 @@ test('desktop participant experience exposes working tabs, FAQ and privacy dialo
   const firstFaq = page.locator('details').first();
   await firstFaq.locator('summary').click();
   await expect(firstFaq).toHaveAttribute('open', '');
-
-  await page.getByRole('button', { name: 'كيف نحمي خصوصيتك؟' }).click();
-  const dialog = page.getByRole('dialog', {
-    name: 'ما الذي يحدث عند التسجيل؟',
-  });
-  await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: 'إغلاق نافذة الخصوصية' }).click();
-  await expect(dialog).toBeHidden();
 
   const presenterImage = page.getByRole('img', {
     name: 'الأستاذة خداوي فطومة، مقدّمة اللقاء',
@@ -97,7 +78,7 @@ test('desktop participant experience exposes working tabs, FAQ and privacy dialo
   ).toBe(true);
 });
 
-test('mobile menu, tabs, FAQ and fixed registration action remain usable', async ({
+test('mobile menu, tabs, FAQ and programme link remain usable', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -128,14 +109,9 @@ test('mobile menu, tabs, FAQ and fixed registration action remain usable', async
   await faq.locator('summary').click();
   await expect(faq).toHaveAttribute('open', '');
 
-  const quickRegistration = page
-    .getByLabel('التسجيل السريع')
-    .getByRole('link', { name: 'سجّل الآن' });
-  await expect(quickRegistration).toBeVisible();
-  const box = await quickRegistration.boundingBox();
-  expect(box).not.toBeNull();
-  expect(box!.height).toBeGreaterThanOrEqual(48);
-
+  await expect(page.getByLabel('التسجيل السريع')).toHaveCount(0);
+  await page.locator('main a[href="/ar/programmes"]').last().click();
+  await expect(page).toHaveURL(/\/ar\/programmes$/);
   expect(
     await page
       .locator('body')

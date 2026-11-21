@@ -1,5 +1,7 @@
 'use client';
 
+import { useMotionAllowed } from '../lib/calm-mode';
+
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -7,7 +9,6 @@ import { getProgrammeSlugFromPathname } from '../lib/programme-enquiry';
 
 type MotionMode = 'full' | 'reduced';
 
-const reducedMotionQuery = '(prefers-reduced-motion: reduce)';
 const localizedContactPath = /^\/(?:ar|fr|en)\/contact\/?$/;
 
 function revealImmediately(elements: HTMLElement[]) {
@@ -69,9 +70,9 @@ function decorateProgrammeEnquiryLinks(pathname: string) {
 export function PublicMotionController() {
   const pathname = usePathname();
 
+  const allowMotion = useMotionAllowed();
   useEffect(() => {
     const root = document.documentElement;
-    const media = window.matchMedia(reducedMotionQuery);
     let observer: IntersectionObserver | null = null;
 
     decorateProgrammeEnquiryLinks(pathname);
@@ -122,21 +123,15 @@ export function PublicMotionController() {
       }
     };
 
-    const syncMotionPreference = () => {
-      applyMode(media.matches ? 'reduced' : 'full');
-    };
-
-    syncMotionPreference();
-    media.addEventListener('change', syncMotionPreference);
+    applyMode(allowMotion ? 'full' : 'reduced');
 
     return () => {
-      media.removeEventListener('change', syncMotionPreference);
       disconnectObserver();
       delete root.dataset.motion;
       delete root.dataset.motionReady;
       for (const element of elements) delete element.dataset.revealState;
     };
-  }, [pathname]);
+  }, [allowMotion, pathname]);
 
   return null;
 }

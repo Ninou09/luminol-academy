@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 for (const locale of ['ar', 'fr', 'en'] as const) {
-  for (const width of [320, 390, 768]) {
+  for (const width of [320, 360, 390, 768, 1440]) {
     test(`${locale} homepage stays readable at ${width}px`, async ({
       page,
     }) => {
-      await page.setViewportSize({ width, height: 900 });
+      await page.setViewportSize({ width, height: 844 });
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.goto(`/${locale}`);
       const title = page.getByRole('heading', { level: 1 });
@@ -33,6 +33,14 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
         '#top a[href*="/programmes"], #top a[href*="/consultations"]',
       );
       await expect(actions).toHaveCount(2);
+      await expect(actions.first()).toHaveAttribute(
+        'href',
+        `/${locale}/consultations`,
+      );
+      if (width === 390) {
+        const primary = (await actions.first().boundingBox())!;
+        expect(primary.y + primary.height).toBeLessThanOrEqual(844);
+      }
       for (const action of await actions.all()) {
         const box = await action.boundingBox();
         expect(box).not.toBeNull();
@@ -60,9 +68,9 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
 }
 
 const expectedHeroTitles = {
-  ar: 'تقدّم بوضوح. وتعلّم بهدف.',
-  fr: 'Grandissez avec clarté. Apprenez avec intention.',
-  en: 'Grow with clarity. Learn with purpose.',
+  ar: 'استشارات نفسية وبرامج تكوينية في البليدة',
+  fr: 'Consultations psychologiques et formations à Blida',
+  en: 'Psychological consultations and training in Blida',
 } as const;
 
 for (const locale of ['ar', 'fr', 'en'] as const) {
@@ -87,7 +95,7 @@ test('Arabic desktop hero preserves its poster under reduced motion', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/ar');
   await expect(page.locator('#top img').first()).toBeVisible();
-  expect(await page.locator('#top video').getAttribute('src')).toBeNull();
+  await expect(page.locator('#top video')).toHaveCount(0);
   await expect(page.locator('#top button')).toHaveCount(0);
 });
 

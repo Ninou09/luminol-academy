@@ -1,4 +1,5 @@
 import type { SchoolSlug } from '../lib/schools';
+import { illustrativePhotoCredit } from '../lib/people-photos';
 import Image from 'next/image';
 
 import styles from './editorial-media.module.css';
@@ -6,7 +7,8 @@ import styles from './editorial-media.module.css';
 export type EditorialMediaAsset = {
   src: string;
   alt: string;
-  source: 'sanity';
+  /** 'illustrative' marks commissioned photography. */
+  source: 'sanity' | 'illustrative';
 };
 
 type EditorialMediaProps = {
@@ -21,12 +23,6 @@ const schoolClass: Record<SchoolSlug, string> = {
   psychology: styles.psychology ?? '',
   languages: styles.languages ?? '',
   training: styles.training ?? '',
-};
-
-const schoolMark: Record<SchoolSlug, string> = {
-  psychology: 'P',
-  languages: 'L',
-  training: 'T',
 };
 
 function classes(...values: Array<string | false | null | undefined>) {
@@ -44,6 +40,14 @@ export function EditorialMedia({
     <div
       className={classes(styles.frame, schoolClass[school], className)}
       data-media-source={asset?.source ?? 'governed-fallback'}
+      data-media-license={
+        asset?.source === 'illustrative'
+          ? illustrativePhotoCredit.license
+          : undefined
+      }
+      data-media-crop={
+        asset?.source === 'illustrative' ? 'center-center' : undefined
+      }
     >
       {asset ? (
         <Image
@@ -55,12 +59,19 @@ export function EditorialMedia({
           sizes={sizes}
           priority={priority}
         />
-      ) : (
+      ) : null}
+      {asset ? null : (
         <div className={styles.fallback} aria-hidden="true">
-          <span className={styles.grid} />
-          <span className={styles.halo} />
-          <span className={styles.axis} />
-          <span className={styles.mark}>{schoolMark[school]}</span>
+          <Image
+            className={styles.image}
+            src={`/media/brand/programme-${school}.webp`}
+            alt=""
+            width={1600}
+            height={900}
+            sizes={sizes}
+            priority={priority}
+          />
+          <span className={styles.tint} />
         </div>
       )}
     </div>

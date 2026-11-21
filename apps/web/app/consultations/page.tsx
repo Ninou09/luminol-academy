@@ -6,14 +6,22 @@ import {
   type Locale,
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
+
 import type { Metadata } from 'next';
 
 import { EnquiryForm } from '../../components/enquiry-form';
+import Image from 'next/image';
+
+import { FirstConsultation } from '../../components/first-consultation';
+
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
+import { GlassIcon } from '../../components/glass-icon';
+import { PhotoCard } from '../../components/live-photo';
+import { consultationPhotos, peoplePhotos } from '../../lib/people-photos';
 
 const CONSULTATION_COPY = {
   en: {
@@ -21,12 +29,12 @@ const CONSULTATION_COPY = {
     description:
       'Start a psychology enquiry with Luminol Academy and let the team understand your goal before guiding you toward the most appropriate next step.',
     eyebrow: 'Psychology · consultations',
-    heroTitle: 'A clearer first step when you need psychological support.',
+    heroTitle: 'Psychological consultations in Blida and online',
     heroBody:
-      'Tell us what you are looking for before moving to a call or WhatsApp. The team can understand your request, preferred format and timing, then guide you toward an appropriate psychology pathway.',
+      'Meet in Blida or online. The academy team will contact you to discuss your request and confirm an appointment once you agree on a time.',
     aside:
       'Luminol Psychology may include therapy, consultation, educational guidance or coaching depending on the request. The first enquiry helps keep those pathways clear.',
-    primaryAction: 'Start your enquiry',
+    primaryAction: 'Request a consultation',
     secondaryAction: 'Explore psychology',
     routingEyebrow: 'One request · the right pathway',
     routingTitle: 'Not every psychology enquiry needs the same next step.',
@@ -55,7 +63,7 @@ const CONSULTATION_COPY = {
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Founder · expert therapist',
     authorityBody:
-      'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 30 years of field experience. Her experience is a visible trust anchor for the psychology division while the wider team supports each enquiry and next step.',
+      'Founder Kheddaoui Fettouma, an expert therapist, guides Luminol Psychology. Her field experience shapes how the team listens to each enquiry and chooses the right next step with you.',
     authorityAction: 'Meet the founder',
     formEyebrow: 'Tell us what you need',
     formTitle: 'Start with a short, structured enquiry.',
@@ -70,13 +78,12 @@ const CONSULTATION_COPY = {
     description:
       'Commencez une demande en psychologie auprès de Luminol Academy afin que l’équipe comprenne votre objectif avant de vous orienter vers la prochaine étape la plus adaptée.',
     eyebrow: 'Psychologie · consultations',
-    heroTitle:
-      'Une première étape plus claire lorsque vous cherchez un soutien psychologique.',
+    heroTitle: 'Consultations psychologiques à Blida et à distance',
     heroBody:
-      'Expliquez-nous d’abord ce que vous recherchez avant de passer à un appel ou à WhatsApp. L’équipe peut comprendre votre demande, le format souhaité et votre disponibilité, puis vous orienter vers un parcours adapté.',
+      'En cabinet à Blida ou à distance. L’équipe de l’académie vous contactera pour échanger sur votre demande et confirmer le rendez-vous après accord sur le créneau.',
     aside:
       'Luminol Psychologie peut inclure thérapie, consultation, accompagnement éducatif ou coaching selon la demande. Le premier échange aide à garder ces parcours clairement distincts.',
-    primaryAction: 'Commencer la demande',
+    primaryAction: 'Demander une consultation',
     secondaryAction: 'Découvrir la psychologie',
     routingEyebrow: 'Une demande · le bon parcours',
     routingTitle:
@@ -106,7 +113,7 @@ const CONSULTATION_COPY = {
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Fondatrice · thérapeute experte',
     authorityBody:
-      'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 30 ans d’expérience de terrain. Son expérience constitue un repère de confiance visible pour le pôle psychologie, tandis que l’équipe accompagne chaque demande et sa prochaine étape.',
+      'La fondatrice Kheddaoui Fettouma, thérapeute experte, guide Luminol Psychologie. Son expérience de terrain façonne la manière dont l’équipe écoute chaque demande et choisit avec vous la bonne prochaine étape.',
     authorityAction: 'Découvrir la fondatrice',
     formEyebrow: 'Expliquez-nous votre besoin',
     formTitle: 'Commencez par une demande courte et structurée.',
@@ -122,12 +129,12 @@ const CONSULTATION_COPY = {
     description:
       'ابدأ طلبك في مجال علم النفس مع أكاديمية لومينول حتى يفهم الفريق هدفك أولاً ثم يوجّهك نحو الخطوة التالية الأنسب.',
     eyebrow: 'علم النفس · الاستشارات',
-    heroTitle: 'خطوة أولى أوضح عندما تحتاج إلى دعم نفسي.',
+    heroTitle: 'الاستشارات النفسية في البليدة وعن بُعد',
     heroBody:
-      'أخبرنا بما تبحث عنه قبل الانتقال مباشرة إلى المكالمة أو واتساب. يساعد ذلك الفريق على فهم طلبك وطريقة المتابعة المناسبة وتوقيتك، ثم توجيهك نحو المسار النفسي الأنسب.',
+      'يمكنك طلب لقاء في البليدة أو عن بُعد. يتواصل معك فريق الأكاديمية لمناقشة طلبك وتأكيد الموعد بعد الاتفاق معك على التوقيت.',
     aside:
       'قد يشمل مسار لومينول في علم النفس العلاج النفسي أو الاستشارة أو الإرشاد التربوي أو الكوتشينغ بحسب طبيعة الطلب. الاستفسار الأول يساعدنا على الفصل بوضوح بين هذه المسارات.',
-    primaryAction: 'ابدأ طلبك',
+    primaryAction: 'اطلب استشارة نفسية',
     secondaryAction: 'استكشف قسم علم النفس',
     routingEyebrow: 'طلب واحد · المسار المناسب',
     routingTitle: 'ليست كل طلبات علم النفس بحاجة إلى الخطوة نفسها.',
@@ -155,7 +162,7 @@ const CONSULTATION_COPY = {
     authorityName: 'خداوي فطومة',
     authorityRole: 'المؤسسة · معالجة خبيرة',
     authorityBody:
-      'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 30 سنة من الخبرة الميدانية. تمثل خبرتها مرجعاً واضحاً للثقة في قسم علم النفس، بينما يرافق الفريق كل طلب نحو الخطوة التالية المناسبة.',
+      'توجّه المؤسسة خداوي فطومة، المعالجة الخبيرة، قسم لومينول لعلم النفس. تصوغ خبرتها الميدانية طريقة إصغاء الفريق لكل طلب واختيار الخطوة التالية المناسبة معك.',
     authorityAction: 'تعرّف على المؤسسة',
     formEyebrow: 'أخبرنا بما تحتاجه',
     formTitle: 'ابدأ بطلب قصير ومنظم.',
@@ -198,6 +205,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const routePhotos = [
+  peoplePhotos.therapySession,
+  consultationPhotos.family,
+  consultationPhotos.learning,
+] as const;
+
 export default async function ConsultationsPage() {
   const locale = await getRequestLocale();
   const copy = CONSULTATION_COPY[locale];
@@ -211,27 +224,59 @@ export default async function ConsultationsPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main-content" tabIndex={-1} className={styles.page}>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={styles.page}
+        data-quiet-page
+      >
         <section className={styles.hero} aria-labelledby="consultation-title">
-          <div>
+          <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
             <h1 id="consultation-title">{copy.heroTitle as string}</h1>
             <p className={styles.lede}>{copy.heroBody as string}</p>
-          </div>
-          <aside className={styles.heroAside}>
-            <p>{copy.aside as string}</p>
             <div className={styles.heroActions}>
               <ButtonLink href="#consultation-enquiry">
-                {copy.primaryAction as string}
-              </ButtonLink>
-              <ButtonLink
-                href={localizeHref(locale, '/schools/psychology')}
-                variant="secondary"
-              >
-                {copy.secondaryAction as string}
+                {copy.primaryAction}
               </ButtonLink>
             </div>
-          </aside>
+          </div>
+          <PhotoCard
+            className={styles.heroStack}
+            locale={locale}
+            photo={consultationPhotos.firstMeeting}
+            priority
+            caption
+          />
+        </section>
+
+        <section
+          id="consultation-enquiry"
+          className={styles.enquiry}
+          aria-labelledby="consultation-enquiry-title"
+        >
+          <div className={styles.enquiryContext}>
+            <GlassIcon name="enquiry-message" size="lg" />
+            <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
+            <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
+            <p>{copy.formBody as string}</p>
+            <p className={styles.safetyNote}>{copy.safety as string}</p>
+            <PhotoCard
+              photo={consultationPhotos.journal}
+              locale={locale}
+              className={styles.enquiryPhoto}
+              sizes="(max-width: 900px) 80vw, 26vw"
+            />
+          </div>
+          <div className={styles.formSurface}>
+            <EnquiryForm
+              locale={locale}
+              copy={publicCopy.form}
+              initialSchool="PSYCHOLOGY"
+              embedded
+              initialMessage={copy.initialMessage as string}
+            />
+          </div>
         </section>
 
         <section className={styles.routing} aria-labelledby="routing-title">
@@ -240,45 +285,72 @@ export default async function ConsultationsPage() {
               <p className={styles.eyebrow}>{copy.routingEyebrow as string}</p>
               <h2 id="routing-title">{copy.routingTitle as string}</h2>
             </div>
-            <p>{copy.routingBody as string}</p>
+            <div>
+              <p>{copy.routingBody as string}</p>
+              <a href={localizeHref(locale, '/schools/psychology')}>
+                {copy.secondaryAction}
+              </a>
+            </div>
           </div>
           <div className={styles.pathGrid}>
-            {paths.map((path) => (
+            {paths.map((path, index) => (
               <article className={styles.pathCard} key={path.number}>
-                <span>{path.number}</span>
-                <h3>{path.title}</h3>
-                <p>{path.body}</p>
+                <div className={styles.pathPhoto}>
+                  <Image
+                    src={routePhotos[index % routePhotos.length]!.src}
+                    alt={routePhotos[index % routePhotos.length]!.alt[locale]}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 30vw"
+                  />
+                </div>
+                <div className={styles.pathBody}>
+                  <span>{path.number}</span>
+                  <h3>{path.title}</h3>
+                  <p>{path.body}</p>
+                </div>
               </article>
             ))}
           </div>
         </section>
 
         <section
-          className={styles.authority}
+          className={`${styles.authority} ${styles.authorityV2}`}
           aria-labelledby="consultation-authority-title"
           data-consultation-founder-authority
         >
-          <div className={styles.authorityLead}>
-            <span className={styles.authorityYears} aria-hidden="true">
-              30+
-            </span>
-            <div>
-              <p className={styles.eyebrow}>
-                {copy.authorityEyebrow as string}
-              </p>
-              <h2 id="consultation-authority-title">
-                {copy.authorityTitle as string}
-              </h2>
+          <div className={styles.authorityVisual}>
+            <PhotoCard
+              photo={peoplePhotos.academySupervision}
+              locale={locale}
+              className={styles.authorityPhotoLarge}
+              sizes="(max-width: 900px) 100vw, 40vw"
+            />
+            <div className={styles.yearsBadge} aria-hidden="true">
+              <span data-count="30">30+</span>
+              <small>{copy.authorityEyebrow as string}</small>
             </div>
           </div>
-          <div className={styles.authorityCopy}>
-            <p className={styles.authorityName}>
-              {copy.authorityName as string}
+          <div className={styles.authorityText}>
+            <p className={styles.eyebrow}>{copy.authorityEyebrow as string}</p>
+            <h2 id="consultation-authority-title">
+              {copy.authorityTitle as string}
+            </h2>
+            <div className={styles.signature}>
+              <span className={styles.signatureMark} aria-hidden="true">
+                KF
+              </span>
+              <div>
+                <p className={styles.authorityName}>
+                  {copy.authorityName as string}
+                </p>
+                <p className={styles.authorityRole}>
+                  {copy.authorityRole as string}
+                </p>
+              </div>
+            </div>
+            <p className={styles.authorityBodyText}>
+              {copy.authorityBody as string}
             </p>
-            <p className={styles.authorityRole}>
-              {copy.authorityRole as string}
-            </p>
-            <p>{copy.authorityBody as string}</p>
             <ButtonLink
               href={localizeHref(locale, '/about')}
               variant="secondary"
@@ -288,26 +360,7 @@ export default async function ConsultationsPage() {
           </div>
         </section>
 
-        <section
-          id="consultation-enquiry"
-          className={styles.enquiry}
-          aria-labelledby="consultation-enquiry-title"
-        >
-          <div className={styles.enquiryContext}>
-            <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
-            <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
-            <p>{copy.formBody as string}</p>
-            <p className={styles.safetyNote}>{copy.safety as string}</p>
-          </div>
-          <div className={styles.formSurface}>
-            <EnquiryForm
-              locale={locale}
-              copy={publicCopy.form}
-              initialSchool="PSYCHOLOGY"
-              initialMessage={copy.initialMessage as string}
-            />
-          </div>
-        </section>
+        <FirstConsultation locale={locale} />
       </main>
       <SiteFooter />
     </>

@@ -1,0 +1,106 @@
+.constellation {
+  color: var(--color-brand-surface);
+  padding: clamp(3rem, 7vw, 7rem) var(--luminol-page-gutter);
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-brand-cyan-deep) 15%, transparent),
+    transparent 68%
+  );
+}
+.stage {
+  position: relative;
+  max-width: 66rem;
+  margin-inline: auto;
+}
+.intro {
+  text-align: center;
+}
+.eyebrow,
+.labelNumber {
+  color: var(--color-brand-cyan-light);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.title {
+  margin: 0;
+  font: 500 clamp(2.25rem, 6vw, 5rem)/1.15 var(--font-display);
+}
+.title:dir(rtl),
+.label strong:dir(rtl) {
+  font-family: var(--font-arabic);
+  line-height: 1.5;
+}
+.hint {
+  margin: 0.75rem 0 0;
+}
+.canvas {
+  display: block;
+  width: 100%;
+  height: clamp(13rem, 28vw, 22rem);
+  margin-block: 1rem;
+  background:
+    radial-gradient(
+      circle at center,
+      var(--color-brand-cyan-light) 0.25rem,
+      var(--color-brand-cyan-deep) 0.5rem,
+      transparent 2.75rem
+    ),
+    radial-gradient(
+      ellipse 34% 33% at center,
+      transparent 98%,
+      var(--color-brand-cyan-deep) 99%,
+      transparent 100%
+    );
+}
+.constellation[data-scene='live'] .canvas {
+  background: none;
+}
+.labels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.label a {
+  display: flex;
+  gap: 0.8rem;
+  align-items: baseline;
+  height: 100%;
+  padding: 0.85rem 1.1rem;
+  color: inherit;
+  background: color-mix(in srgb, var(--color-brand-night) 84%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--color-brand-cyan-light) 35%, transparent);
+  border-radius: 0.8rem;
+  text-decoration: none;
+}
+.label strong {
+  font: 500 clamp(1.25rem, 2.2vw, 1.8rem)/1.2 var(--font-display);
+}
+.label a:is(:hover, :focus-visible, :active) {
+  color: var(--color-brand-cyan-light);
+  border-color: currentColor;
+  box-shadow: inset 0 0 1.4rem color-mix(in srgb, currentColor 19%, transparent);
+}
+.label a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+/* Extend the same native link to its sphere. Keyboard focus stays on the name. */
+.constellation[data-scene='live'] .label a::before {
+  position: absolute;
+  content: '';
+  width: 3rem;
+  height: 3rem;
+  top: var(--y);
+  left: var(--x);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+@media (max-width: 760px) {
+  .labels {
+    grid-template-columns: 1fr;
+  }
+}

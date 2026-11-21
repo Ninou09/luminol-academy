@@ -1,3 +1,9 @@
+import {
+  officialAddress,
+  officialContacts,
+  openingHours,
+  socialLinks,
+} from './contact-channels';
 import { resolvePublicSiteOrigin } from './site-url';
 
 type BreadcrumbItem = {
@@ -34,6 +40,23 @@ export function buildOrganizationJsonLd(description: string) {
     name: 'Luminol Academy',
     url: origin,
     description,
+    telephone: officialContacts.phone,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: officialAddress.schemaStreet,
+      addressLocality: 'Blida',
+      postalCode: '09000',
+      addressCountry: 'DZ',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: officialAddress.latitude,
+      longitude: officialAddress.longitude,
+    },
+    hasMap: officialAddress.mapHref,
+    email: officialContacts.email,
+    sameAs: socialLinks.map((link) => link.href),
+    openingHours: openingHours.schema,
   } as const;
 }
 

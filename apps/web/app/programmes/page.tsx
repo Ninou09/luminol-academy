@@ -1,7 +1,6 @@
 import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
 import {
   buildLanguageAlternates,
-  getAttendanceCertificateCopy,
   getOpenGraphLocale,
   localizeHref,
   localizePathname,
@@ -10,6 +9,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { PhotoStack } from '../../components/photo-stack';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { buildProgrammeContactHref } from '../../lib/programme-contact';
 import {
@@ -39,6 +39,7 @@ import {
   serializeJsonLd,
 } from '../../lib/structured-data';
 import styles from './page.module.css';
+import { extraPhotos, peoplePhotos } from '../../lib/people-photos';
 
 type ProgrammesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -111,6 +112,135 @@ export default async function ProgrammesPage({
     });
   }
 
+  const single = sourceProgrammes?.length === 1 && programmes?.length === 1;
+  const results = programmes?.length ? (
+    <section aria-labelledby="programme-results-title">
+      <div className={styles.resultHeading} aria-live="polite">
+        <p className="eyebrow">{copy.published}</p>
+        <h2 id="programme-results-title">
+          {programmes.length}{' '}
+          {programmes.length === 1
+            ? copy.programmeSingular
+            : copy.programmePlural}
+        </h2>
+      </div>
+
+      <div className={styles.grid}>
+        {programmes.map((programme, index) => {
+          const publicCopy = localizeProgrammePublicCopy(locale, programme);
+          const isWaitlist = isProgrammeWaitlist(programme.slug.current);
+          const waitlistLabel = isWaitlist
+            ? localizeProgrammeWaitlistLabel(locale)
+            : null;
+          const contactLabel = isWaitlist
+            ? localizeProgrammeWaitlistAction(locale)
+            : enquiryProgrammeLabel;
+          const deliveryLabel = isWaitlist
+            ? null
+            : localizeProgrammeDelivery(locale, programme.delivery);
+          const programmeHref = localizeHref(
+            locale,
+            `/programmes/${programme.slug.current}`,
+          );
+          const contactHref = buildProgrammeContactHref(
+            locale,
+            programme.slug.current,
+          );
+          const schoolName = schools[programme.school].name;
+          const programmeActionLabel = `${viewProgrammeLabel}: ${publicCopy.title}`;
+          const schoolActionLabel = `${copy.viewSchool}: ${schoolName}`;
+          const contactActionLabel = `${contactLabel}: ${publicCopy.title}`;
+          const titleId = `programme-card-${index + 1}-title`;
+
+          return (
+            <article
+              className={styles.card}
+              key={programme._id}
+              aria-labelledby={titleId}
+              data-programme-card
+            >
+              {!isWaitlist && programme.image ? (
+                <Image
+                  className={styles.image}
+                  src={buildSanityProgrammeImageUrl(programme.image)}
+                  alt={programme.image.alt}
+                  width={1200}
+                  height={675}
+                  sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                />
+              ) : null}
+
+              <div className={styles.cardBody}>
+                <div className={styles.meta}>
+                  <span>{schoolName}</span>
+                  {programme.featured ? <span>{copy.featured}</span> : null}
+                  <span data-enrolment={isWaitlist ? 'waitlist' : 'enquire'}>
+                    {waitlistLabel ??
+                      {
+                        en: 'Enquire about availability',
+                        fr: 'Disponibilité sur demande',
+                        ar: 'استفسر عن توفر المقاعد',
+                      }[locale]}
+                  </span>
+                </div>
+                <h3 id={titleId} dir="auto">
+                  <Link className={styles.titleLink} href={programmeHref}>
+                    {publicCopy.title}
+                  </Link>
+                </h3>
+                <p dir="auto">
+                  {isWaitlist
+                    ? {
+                        ar: 'لأخصائيي علم النفس والمهتمين بالعلاج بالتقبل والالتزام.',
+                        fr: 'Pour les professionnels de la psychologie et les personnes qui souhaitent découvrir l’ACT.',
+                        en: 'For psychology professionals and people interested in learning ACT.',
+                      }[locale]
+                    : publicCopy.summary}
+                </p>
+                {!isWaitlist ? (
+                  <ul className={styles.tags} aria-label={copy.detailsAria}>
+                    {programme.languages.map((language) => (
+                      <li key={language}>{copy.languageNames[language]}</li>
+                    ))}
+                    {deliveryLabel ? <li>{deliveryLabel}</li> : null}
+                  </ul>
+                ) : null}
+                <div className={styles.cardActions} data-programme-actions>
+                  <Link
+                    className={styles.primaryAction}
+                    href={programmeHref}
+                    aria-label={programmeActionLabel}
+                    data-programme-primary-action
+                  >
+                    {viewProgrammeLabel}
+                  </Link>
+                  <Link
+                    className={styles.secondaryAction}
+                    href={contactHref}
+                    aria-label={contactActionLabel}
+                    data-programme-enquiry-action
+                  >
+                    {contactLabel}
+                  </Link>
+                  <Link
+                    className={styles.tertiaryAction}
+                    href={localizeHref(
+                      locale,
+                      `/schools/${programme.school}#programs`,
+                    )}
+                    aria-label={schoolActionLabel}
+                  >
+                    {copy.viewSchool}
+                  </Link>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  ) : null;
+
   return (
     <>
       {programmeListJsonLd ? (
@@ -125,223 +255,146 @@ export default async function ProgrammesPage({
       <SiteHeader />
       <main id="main-content" tabIndex={-1}>
         <section
-          className={`section-shell ${styles.hero}`}
+          className={styles.hero}
+          data-single={single || undefined}
           aria-labelledby="programmes-hero-title"
         >
-          <p className="eyebrow">{copy.eyebrow}</p>
-          <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
-          <p>{copy.heroBody}</p>
-          <p>{getAttendanceCertificateCopy(locale).scope}</p>
-        </section>
+          <div className={styles.heroCopy}>
+            <p className="eyebrow">{copy.eyebrow}</p>
+            <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
+            {single ? results : <p>{copy.heroBody}</p>}
+            <form
+              className={styles.filters}
+              action={localizeHref(locale, '/programmes')}
+              method="get"
+              role="search"
+              aria-label={copy.searchLabel}
+            >
+              <label className={styles.queryField} htmlFor="programme-query">
+                <span>{copy.searchLabel}</span>
+                <input
+                  id="programme-query"
+                  name="q"
+                  type="search"
+                  dir="auto"
+                  defaultValue={filters.query}
+                  maxLength={100}
+                  placeholder={copy.searchPlaceholder}
+                />
+              </label>
 
-        <section className={`section-shell ${styles.discovery}`}>
-          <form
-            className={styles.filters}
-            action={localizeHref(locale, '/programmes')}
-            method="get"
-            role="search"
-            aria-label={copy.searchLabel}
-          >
-            <label className={styles.queryField} htmlFor="programme-query">
-              <span>{copy.searchLabel}</span>
-              <input
-                id="programme-query"
-                name="q"
-                type="search"
-                dir="auto"
-                defaultValue={filters.query}
-                maxLength={100}
-                placeholder={copy.searchPlaceholder}
-              />
-            </label>
+              <label htmlFor="programme-school">
+                <span>{copy.schoolLabel}</span>
+                <select
+                  id="programme-school"
+                  name="school"
+                  defaultValue={filters.school ?? ''}
+                >
+                  <option value="">{copy.allSchools}</option>
+                  {Object.values(schools).map((school) => (
+                    <option key={school.slug} value={school.slug}>
+                      {school.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-            <label htmlFor="programme-school">
-              <span>{copy.schoolLabel}</span>
-              <select
-                id="programme-school"
-                name="school"
-                defaultValue={filters.school ?? ''}
-              >
-                <option value="">{copy.allSchools}</option>
-                {Object.values(schools).map((school) => (
-                  <option key={school.slug} value={school.slug}>
-                    {school.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <label htmlFor="programme-language">
+                <span>{copy.languageLabel}</span>
+                <select
+                  id="programme-language"
+                  name="language"
+                  defaultValue={filters.language ?? ''}
+                >
+                  <option value="">{copy.allLanguages}</option>
+                  {Object.entries(copy.languageNames).map(([code, label]) => (
+                    <option key={code} value={code}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-            <label htmlFor="programme-language">
-              <span>{copy.languageLabel}</span>
-              <select
-                id="programme-language"
-                name="language"
-                defaultValue={filters.language ?? ''}
-              >
-                <option value="">{copy.allLanguages}</option>
-                {Object.entries(copy.languageNames).map(([code, label]) => (
-                  <option key={code} value={code}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <div className={styles.filterActions}>
-              <button type="submit">{copy.apply}</button>
-              <Link href={localizeHref(locale, '/programmes')}>
-                {copy.clear}
-              </Link>
-            </div>
-          </form>
-
-          {programmes === null ? (
-            <div className={styles.emptyState} role="status">
-              <h2>{copy.unavailableTitle}</h2>
-              <p>{copy.unavailableBody}</p>
-              <Link href={localizeHref(locale, '/#schools')}>
-                {copy.exploreSchools}
-              </Link>
-            </div>
-          ) : programmes.length === 0 ? (
-            <div className={styles.emptyState} aria-live="polite">
-              <h2>{copy.emptyTitle}</h2>
-              <p>{copy.emptyBody}</p>
-              <Link href={localizeHref(locale, '/programmes')}>
-                {copy.reset}
-              </Link>
-            </div>
-          ) : (
-            <section aria-labelledby="programme-results-title">
-              <div className={styles.resultHeading} aria-live="polite">
-                <p className="eyebrow">{copy.published}</p>
-                <h2 id="programme-results-title">
-                  {programmes.length}{' '}
-                  {programmes.length === 1
-                    ? copy.programmeSingular
-                    : copy.programmePlural}
-                </h2>
+              <div className={styles.filterActions}>
+                <button type="submit">{copy.apply}</button>
+                <Link href={localizeHref(locale, '/programmes')}>
+                  {copy.clear}
+                </Link>
               </div>
-
-              <div className={styles.grid}>
-                {programmes.map((programme, index) => {
-                  const publicCopy = localizeProgrammePublicCopy(
-                    locale,
-                    programme,
-                  );
-                  const isWaitlist = isProgrammeWaitlist(
-                    programme.slug.current,
-                  );
-                  const waitlistLabel = isWaitlist
-                    ? localizeProgrammeWaitlistLabel(locale)
-                    : null;
-                  const contactLabel = isWaitlist
-                    ? localizeProgrammeWaitlistAction(locale)
-                    : enquiryProgrammeLabel;
-                  const deliveryLabel = isWaitlist
-                    ? null
-                    : localizeProgrammeDelivery(locale, programme.delivery);
-                  const programmeHref = localizeHref(
-                    locale,
-                    `/programmes/${programme.slug.current}`,
-                  );
-                  const contactHref = buildProgrammeContactHref(
-                    locale,
-                    programme.slug.current,
-                  );
-                  const schoolName = schools[programme.school].name;
-                  const programmeActionLabel = `${viewProgrammeLabel}: ${publicCopy.title}`;
-                  const schoolActionLabel = `${copy.viewSchool}: ${schoolName}`;
-                  const contactActionLabel = `${contactLabel}: ${publicCopy.title}`;
-                  const titleId = `programme-card-${index + 1}-title`;
-
-                  return (
-                    <article
-                      className={styles.card}
-                      key={programme._id}
-                      aria-labelledby={titleId}
-                      data-programme-card
-                    >
-                      {!isWaitlist && programme.image ? (
-                        <Image
-                          className={styles.image}
-                          src={buildSanityProgrammeImageUrl(programme.image)}
-                          alt={programme.image.alt}
-                          width={1200}
-                          height={675}
-                          sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                        />
-                      ) : null}
-
-                      <div className={styles.cardBody}>
-                        <div className={styles.meta}>
-                          <span>{schoolName}</span>
-                          {programme.featured ? (
-                            <span>{copy.featured}</span>
-                          ) : null}
-                          {waitlistLabel ? <span>{waitlistLabel}</span> : null}
-                        </div>
-                        <h3 id={titleId} dir="auto">
-                          <Link
-                            className={styles.titleLink}
-                            href={programmeHref}
-                          >
-                            {publicCopy.title}
-                          </Link>
-                        </h3>
-                        <p dir="auto">{publicCopy.summary}</p>
-                        {!isWaitlist ? (
-                          <ul
-                            className={styles.tags}
-                            aria-label={copy.detailsAria}
-                          >
-                            {programme.languages.map((language) => (
-                              <li key={language}>
-                                {copy.languageNames[language]}
-                              </li>
-                            ))}
-                            {deliveryLabel ? <li>{deliveryLabel}</li> : null}
-                          </ul>
-                        ) : null}
-                        <div
-                          className={styles.cardActions}
-                          data-programme-actions
-                        >
-                          <Link
-                            className={styles.primaryAction}
-                            href={programmeHref}
-                            aria-label={programmeActionLabel}
-                            data-programme-primary-action
-                          >
-                            {viewProgrammeLabel}
-                          </Link>
-                          <Link
-                            className={styles.secondaryAction}
-                            href={contactHref}
-                            aria-label={contactActionLabel}
-                            data-programme-enquiry-action
-                          >
-                            {contactLabel}
-                          </Link>
-                          <Link
-                            className={styles.tertiaryAction}
-                            href={localizeHref(
-                              locale,
-                              `/schools/${programme.school}#programs`,
-                            )}
-                            aria-label={schoolActionLabel}
-                          >
-                            {copy.viewSchool}
-                          </Link>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
+            </form>
+          </div>
+          {!single && (
+            <PhotoStack
+              className={styles.heroStack}
+              locale={locale}
+              priority
+              photos={[
+                extraPhotos.programSearch,
+                peoplePhotos.programCatalog,
+                peoplePhotos.designBookshelf,
+              ]}
+            />
           )}
         </section>
+
+        <nav className={styles.schoolTiles} aria-label={copy.schoolLabel}>
+          {Object.values(schools).map((school) => {
+            const active = filters.school === school.slug;
+            const params = new URLSearchParams();
+            if (filters.query) params.set('q', filters.query);
+            if (!active) params.set('school', school.slug);
+            if (filters.language) params.set('language', filters.language);
+            return (
+              <Link
+                key={school.slug}
+                className={`${styles.schoolTile} ${styles[school.slug] ?? ''}`}
+                href={localizeHref(
+                  locale,
+                  params.size ? `/programmes?${params}` : '/programmes',
+                )}
+                aria-current={active ? 'true' : undefined}
+                data-tilt="6"
+              >
+                <span className={styles.tileNumber}>{school.number}</span>
+                <strong>{school.name}</strong>
+                <span className={styles.tilePromise}>{school.promise}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {!single && (
+          <section className={`section-shell ${styles.discovery}`}>
+            {programmes === null ? (
+              <div
+                className={`${styles.emptyState} ${styles.unavailable}`}
+                role="status"
+              >
+                <span className={styles.emptyOrb} aria-hidden="true" />
+                <h2>{copy.unavailableTitle}</h2>
+                <p>{copy.unavailableBody}</p>
+                <div className={styles.emptyActions}>
+                  <Link href={localizeHref(locale, '/schools')}>
+                    {copy.exploreSchools}
+                  </Link>
+                  <Link href={localizeHref(locale, '/contact')}>
+                    {copy.askLuminol} <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </div>
+            ) : programmes.length === 0 ? (
+              <div className={styles.emptyState} aria-live="polite">
+                <h2>{copy.emptyTitle}</h2>
+                <p>{copy.emptyBody}</p>
+                <Link href={localizeHref(locale, '/programmes')}>
+                  {copy.reset}
+                </Link>
+              </div>
+            ) : (
+              results
+            )}
+          </section>
+        )}
       </main>
       <SiteFooter />
     </>

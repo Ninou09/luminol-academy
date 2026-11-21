@@ -16,7 +16,7 @@ export function getSocialPreviewAlt(locale: Locale): string {
 
 export function renderSocialPreviewImage(locale: GeneratedSocialPreviewLocale) {
   const copy = getPublicCopy(locale);
-  const title = `${copy.home.heroTitle} ${copy.home.heroAccent}`;
+  const title = copy.home.heroTitle;
   const signals = [copy.home.mind, copy.home.voice, copy.home.work];
 
   return new ImageResponse(

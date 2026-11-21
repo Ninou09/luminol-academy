@@ -1,9 +1,12 @@
+import { getProgrammeEnquiryDefaults } from '../../../lib/programme-enquiry';
 import { db } from '@luminol/database';
 import { contactSchema } from '@luminol/validation';
 import { after } from 'next/server';
 
 import { dispatchEnquiryCommunications } from '../../../lib/enquiry-communications.server';
 import { getPublicProgrammeBySlug } from '../../../lib/programme-detail';
+import { sendTelegramEnquiryAlert } from '../../../lib/telegram-notify.server';
+import { verifyTurnstileToken } from '../../../lib/turnstile.server';
 
 const MAX_BODY_SIZE = 20_000;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1_000;
@@ -112,6 +115,17 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
+  const humanCheck = await verifyTurnstileToken(
+    request.headers.get('x-turnstile-token'),
+    getClientAddress(request),
+  );
+  if (!humanCheck) {
+    return jsonResponse(
+      { error: 'Please confirm the security check and try again.' },
+      400,
+    );
+  }
+
   let body: unknown;
   try {
     const rawBody = await request.text();
@@ -131,11 +145,21 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  const programme = result.data.programmeSlug
-    ? await getPublicProgrammeBySlug(result.data.programmeSlug).catch(
-        () => null,
-      )
-    : null;
+  let programme = null;
+  if (result.data.programmeSlug) {
+    try {
+      programme = await getPublicProgrammeBySlug(
+        result.data.programmeSlug,
+        true,
+      );
+    } catch {
+      return jsonResponse({ code: 'programme_unavailable' }, 503);
+    }
+    if (!programme) return jsonResponse({ code: 'programme_retired' }, 410);
+  }
+  const school = programme
+    ? getProgrammeEnquiryDefaults(result.data.locale, programme).school
+    : result.data.school;
 
   let enquiry: { id: string };
   try {
@@ -148,7 +172,7 @@ export async function POST(request: Request): Promise<Response> {
         preferredContact: result.data.preferredContact,
         deliveryPreference: result.data.deliveryPreference ?? null,
         timingPreference: result.data.timingPreference ?? null,
-        school: result.data.school,
+        school,
         programmeSlug: programme?.slug.current ?? null,
         programmeTitleSnapshot: programme?.title ?? null,
         landingPath: result.data.landingPath ?? null,
@@ -176,11 +200,26 @@ export async function POST(request: Request): Promise<Response> {
         email: result.data.email,
         phone: result.data.phone || null,
         preferredContact: result.data.preferredContact,
-        school: result.data.school,
+        school,
         programmeTitleSnapshot: programme?.title ?? null,
         locale: result.data.locale,
         message: result.data.message,
       });
+      const telegram = await sendTelegramEnquiryAlert({
+        id: enquiry.id,
+        name: result.data.name,
+        preferredContact: result.data.preferredContact,
+        phone: result.data.phone || null,
+        email: result.data.email,
+        school,
+        programmeTitle: programme?.title ?? null,
+        locale: result.data.locale,
+      });
+      if (telegram === 'failed') {
+        console.error('Enquiry Telegram alert failed', {
+          enquiryId: enquiry.id,
+        });
+      }
       if (communication.failures > 0) {
         console.error('Enquiry communication dispatch incomplete', {
           enquiryId: enquiry.id,

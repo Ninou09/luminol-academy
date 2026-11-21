@@ -251,4 +251,20 @@ describe('programme discovery filters', () => {
       'programme-stress',
     ]);
   });
+
+  it('falls back to everyday intents when nothing matches literally', () => {
+    expect(
+      filterPublicProgrammes(programmes, { query: 'my son feels anxious' })[0]
+        ?._id,
+    ).toBe('programme-stress');
+    expect(
+      filterPublicProgrammes(programmes, { query: 'نحس بالقلق' })[0]?._id,
+    ).toBe('programme-stress');
+    expect(
+      filterPublicProgrammes(programmes, { query: 'parler mieux' })[0]?._id,
+    ).toBe('programme-english');
+    expect(
+      filterPublicProgrammes(programmes, { query: 'manager my team' })[0]?._id,
+    ).toBe('programme-leadership');
+  });
 });

@@ -1,0 +1,62 @@
+/* Photo bands get a warm cinematic grade to sit inside the cosmic theme. */
+.band img {
+  filter: saturate(1.05) contrast(1.04);
+}
+
+.card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin: 0;
+  aspect-ratio: 4 / 5;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: clamp(1.25rem, 2.4vw, 2rem);
+  background: var(--color-brand-night);
+  box-shadow:
+    0 2.5rem 5rem -1.5rem rgb(0 0 0 / 0.55),
+    0 0 3.5rem -1rem rgb(139 222 239 / 0.25);
+  transform: perspective(1100px) rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg));
+  transition: transform 700ms var(--luminol-ease-out);
+}
+
+.card[data-tilt-active] {
+  transition: transform 120ms linear;
+}
+
+.cardImage {
+  object-fit: cover;
+  transition: scale 1.2s var(--luminol-ease-out);
+}
+
+.card:hover .cardImage {
+  scale: 1.04;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgb(4 15 27 / 0.55));
+  pointer-events: none;
+}
+
+.cardGlare {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: radial-gradient(
+    circle at var(--glare-x, 30%) var(--glare-y, 20%),
+    rgb(255 255 255 / 0.28),
+    transparent 45%
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+
+.card[data-tilt-active] .cardGlare {
+  opacity: 1;
+}

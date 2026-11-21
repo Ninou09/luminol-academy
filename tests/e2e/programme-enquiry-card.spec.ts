@@ -102,3 +102,30 @@ test('programme enquiry remains a usable native link without JavaScript', async 
     await context.close();
   }
 });
+
+for (const locale of ['ar', 'fr', 'en'] as const) {
+  test(`${locale} single programme leads from the catalogue to the ACT diagram and enquiry`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(`/${locale}/programmes?q=ACT&school=psychology`);
+    const card = page.locator('[data-programme-card]');
+    await expect(card).toHaveCount(1);
+    await expect(card).toContainText(
+      /waitlist|liste d’attente|قائمة الانتظار/i,
+    );
+    const cardTop = (await card.boundingBox())!.y;
+    expect(cardTop).toBeLessThan(
+      (await page.getByRole('search').boundingBox())!.y,
+    );
+    await card.locator('[data-programme-primary-action]').click();
+    await expect(
+      page.locator('section[aria-labelledby="act-hexaflex-title"] li'),
+    ).toHaveCount(6);
+    await page.locator('[data-programme-panel-action]').click();
+    await expect(page).toHaveURL(
+      new RegExp(`/${locale}/contact\\?programme=${slug}`),
+    );
+    await expect(page.locator('[data-contact-form] form')).toBeVisible();
+  });
+}

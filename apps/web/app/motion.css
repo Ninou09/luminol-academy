@@ -4,7 +4,7 @@ html {
 
 /* Each route gets a quiet arrival; persistent navigation never leaves the frame. */
 @media (prefers-reduced-motion: no-preference) {
-  main h1 {
+  main h1:not([data-no-split]) {
     animation: luminol-page-arrival 650ms var(--luminol-ease-out) both;
   }
 }
@@ -23,19 +23,25 @@ html {
 html[data-motion='full'][data-motion-ready='true']
   [data-reveal][data-reveal-state='pending'] {
   opacity: 0;
-  translate: 0 1.75rem;
+  translate: 0 2.25rem;
+  scale: 0.985;
+  filter: blur(8px);
 }
 
 html[data-motion='full'][data-motion-ready='true'] [data-reveal] {
   transition:
-    opacity 700ms var(--luminol-ease-out),
-    translate 700ms var(--luminol-ease-out);
+    opacity 900ms var(--luminol-ease-out),
+    translate 1000ms var(--luminol-ease-out),
+    scale 1000ms var(--luminol-ease-out),
+    filter 900ms var(--luminol-ease-out);
 }
 
 html[data-motion='full'][data-motion-ready='true']
   [data-reveal][data-reveal-state='visible'] {
   opacity: 1;
   translate: 0 0;
+  scale: 1;
+  filter: none;
 }
 
 html[data-motion='full'] [data-motion-float] {
@@ -90,4 +96,18 @@ html[data-motion='full'] [data-motion-orbit='reverse'] {
     animation: none !important;
     transition: none !important;
   }
+}
+
+html:not([data-motion='full']) *,
+html:not([data-motion='full']) *::before,
+html:not([data-motion='full']) *::after,
+[data-quiet-page] *,
+[data-quiet-page] *::before,
+[data-quiet-page] *::after {
+  animation: none !important;
+  transition-duration: 0s !important;
+}
+
+html[data-motion='reduced'] {
+  scroll-behavior: auto;
 }

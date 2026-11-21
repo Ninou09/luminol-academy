@@ -23,17 +23,17 @@ for (const scenario of [
   },
   {
     route: '/en/schools/psychology',
-    currentHref: '/en#schools',
+    currentHref: '/en/schools',
     inactiveHref: '/en/programmes',
   },
   {
     route: '/ar/schools/languages',
-    currentHref: '/ar#schools',
+    currentHref: '/ar/schools',
     inactiveHref: '/ar/programmes',
   },
   {
     route: '/fr/schools/training',
-    currentHref: '/fr#schools',
+    currentHref: '/fr/schools',
     inactiveHref: '/fr/about',
   },
 ] as const) {
@@ -46,7 +46,9 @@ for (const scenario of [
 
     for (const landmark of [
       page.getByRole('banner'),
-      page.getByRole('contentinfo'),
+      scenario.currentHref.endsWith('/contact')
+        ? page.getByRole('contentinfo').getByRole('navigation')
+        : page.getByRole('contentinfo'),
     ]) {
       await expect(
         landmark.locator(`a[href="${scenario.currentHref}"]:not([hreflang])`),

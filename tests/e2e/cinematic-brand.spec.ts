@@ -34,7 +34,7 @@ test('cinematic depth responds to scroll without intercepting navigation', async
       hero.evaluate((el) => el.style.getPropertyValue('--scene-scale')),
     )
     .not.toBe('');
-  await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'instant' }));
+  await page.mouse.wheel(0, 300);
   await expect
     .poll(() =>
       hero.evaluate((el) => parseFloat(el.style.getPropertyValue('--scene-y'))),
@@ -46,20 +46,29 @@ test('cinematic depth responds to scroll without intercepting navigation', async
     .toBe('');
 });
 
-test('new learning and workshop photos retain their source metadata', async ({
+test('hero and school artwork retain their source metadata', async ({
   page,
 }) => {
   await page.goto('/en');
-  await expect(page.locator('#top video')).toHaveAttribute(
-    'src',
-    '/media/editorial/academy-film.mp4',
-  );
-  await expect(page.locator('#languages [data-academy-media]')).toHaveAttribute(
+  const hero = page.locator('#top [data-media-source]').first();
+  await expect(hero).toHaveAttribute(
     'data-media-source',
-    'https://unsplash.com/photos/omeaHbEFlN4',
+    'luminol-commissioned-3d',
   );
-  await expect(page.locator('#training [data-academy-media]')).toHaveAttribute(
-    'data-media-source',
-    'https://unsplash.com/photos/vdXMSiX-n6M',
+  await expect(hero.locator('img')).toHaveAttribute(
+    'alt',
+    'A luminous brain inside a glass sphere',
   );
+  for (const school of ['psychology', 'languages', 'training']) {
+    const art = page.locator(`#${school} [data-academy-media="${school}"]`);
+    await expect(art).toHaveAttribute(
+      'data-media-source',
+      'luminol-illustrative-photo',
+    );
+    await expect(art.locator('img')).not.toHaveAttribute('alt', '');
+  }
+  // "Why Luminol exists" now plays the second academy film.
+  await expect(page.locator('#about video')).toHaveCount(0);
+  await page.locator('#about').scrollIntoViewIfNeeded();
+  await expect(page.locator('#about video')).toHaveCount(1);
 });

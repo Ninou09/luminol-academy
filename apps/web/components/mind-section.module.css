@@ -1,0 +1,71 @@
+.mind {
+  color: var(--color-brand-surface);
+  background: var(--color-brand-night);
+}
+.stage {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: clamp(1.25rem, 5vw, 5rem);
+  padding: clamp(3rem, 6vw, 6rem) var(--luminol-page-gutter);
+  max-width: 80rem;
+  margin-inline: auto;
+}
+.visual {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  aspect-ratio: 4 / 3;
+}
+.visual img {
+  object-fit: contain;
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.mind[data-scene='live'] .visual img {
+  visibility: hidden;
+}
+.intro {
+  grid-row: 1;
+}
+.eyebrow {
+  color: var(--color-brand-cyan-light);
+  font-weight: 700;
+}
+.title {
+  margin: 0;
+  font: 500 clamp(2rem, 4.4vw, 4.4rem)/1.1 var(--font-display);
+}
+.title:dir(rtl) {
+  font-family: var(--font-arabic);
+  line-height: 1.45;
+}
+.body {
+  line-height: 1.7;
+}
+.labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+.labels li {
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--color-brand-cyan-deep);
+  border-radius: var(--radius-pill);
+}
+@media (max-width: 760px) {
+  .stage {
+    grid-template-columns: 1fr;
+  }
+  .visual {
+    grid-column: 1;
+    grid-row: 2;
+    max-height: 18rem;
+  }
+}

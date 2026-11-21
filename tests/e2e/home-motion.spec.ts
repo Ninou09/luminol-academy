@@ -10,7 +10,7 @@ test('premium home shell exposes core navigation and brand surfaces', async ({
     page.getByRole('navigation', { name: /primary navigation/i }),
   ).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Grow with clarity.',
+    'Psychological consultations and training in Blida',
   );
   await expect(page.locator('[data-reveal]')).not.toHaveCount(0);
   await expect(page.getByRole('contentinfo')).toBeVisible();
@@ -34,7 +34,10 @@ test('motion controller honors reduced motion without hiding content', async ({
   );
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   await expect(page.locator('#top img').first()).toBeVisible();
-  expect(await page.locator('#top video').getAttribute('src')).toBeNull();
+  // Reduced motion keeps the static artwork and never starts the WebGL field.
+  await expect(
+    page.locator('#top [data-media-source="luminol-commissioned-3d"]'),
+  ).not.toHaveAttribute('data-field', 'live');
 });
 
 test('full motion progressively reveals the homepage', async ({ page }) => {
@@ -59,15 +62,11 @@ test('mobile in-page navigation clears the sticky header', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/en');
 
-  await page
-    .getByRole('navigation', { name: /primary navigation/i })
-    .getByRole('link', { name: /our approach/i })
-    .click();
-
-  await expect(page).toHaveURL(/#approach$/);
+  await page.locator('#top a[href="#schools"]').click();
+  await expect(page).toHaveURL(/#schools$/);
   await expect
     .poll(() =>
-      page.locator('#approach').evaluate((target) => {
+      page.locator('#schools').evaluate((target) => {
         const header = document.querySelector('header');
         if (!header) return Number.NEGATIVE_INFINITY;
         return (
@@ -97,22 +96,121 @@ test('motion targets are discovered after client navigation to home', async ({
   await expect(reveal).toBeVisible();
 });
 
-test('school card hover lift remains active after reveal', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'no-preference' });
+test('constellation schools are native links with a visible keyboard focus', async ({
+  page,
+}) => {
   await page.goto('/en');
+  const links = page.locator('[aria-labelledby="constellation-title"] a');
+  await expect(links).toHaveCount(3);
+  await links.first().focus();
+  await page.keyboard.press('Tab');
+  await expect(links.nth(1)).toBeFocused();
+  await expect(links.nth(1)).toHaveCSS('outline-style', 'solid');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/en\/schools\/languages$/);
+});
 
-  const card = page.locator('[data-school-card]').first();
-  await card.scrollIntoViewIfNeeded();
-  await expect(card).toHaveAttribute('data-reveal-state', 'visible');
-  await card.hover();
+test('manual calm mode persists before any WebGL scene starts on reload', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/ar');
+  await page.locator('button[aria-controls="dock-tools"]').click();
+  const calm = page.locator('#dock-tools button[aria-pressed]');
+  await calm.click();
+  await expect(calm).toHaveAttribute('aria-pressed', 'true');
+  await expect(
+    page.locator('[data-scene="live"], [data-field="live"], video'),
+  ).toHaveCount(0);
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = new Proxy(original, {
+      apply(fn, target, args) {
+        if (String(args[0]).includes('webgl'))
+          document.documentElement.dataset.triedWebgl = 'true';
+        return Reflect.apply(fn, target, args);
+      },
+    });
+  });
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+  for (const id of [
+    'constellation-title',
+    'mind-title',
+    'home-about-title',
+    'pathway-title',
+  ]) {
+    await page
+      .locator(`section[aria-labelledby="${id}"]`)
+      .first()
+      .scrollIntoViewIfNeeded();
+  }
+  await expect(page.locator('html')).not.toHaveAttribute('data-tried-webgl');
+  await expect(page.locator('video')).toHaveCount(0);
+});
 
-  await expect
-    .poll(() =>
-      card.evaluate((element) => {
-        const transform = getComputedStyle(element).transform;
-        if (transform === 'none') return 0;
-        return new DOMMatrixReadOnly(transform).m42;
-      }),
-    )
-    .toBeLessThan(-1);
+test('data saver keeps school links and posters available', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'connection', {
+      value: Object.assign(new EventTarget(), { saveData: true }),
+    });
+  });
+  await page.goto('/fr');
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
+  await page.locator('#about').scrollIntoViewIfNeeded();
+  await expect(
+    page.locator('video, [data-field="live"], [data-scene="live"]'),
+  ).toHaveCount(0);
+  await expect(page.locator('#about img').first()).toBeVisible();
+  await page
+    .locator('[aria-labelledby="constellation-title"] a')
+    .last()
+    .click();
+  await expect(page).toHaveURL(/\/fr\/schools\/training$/);
+});
+
+test('without WebGL the mobile poster and school links still work by touch', async ({
+  browser,
+}) => {
+  const ctx = await browser.newContext({
+    baseURL: 'http://localhost:3000',
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  });
+  try {
+    await ctx.addInitScript(() => {
+      HTMLCanvasElement.prototype.getContext = new Proxy(
+        HTMLCanvasElement.prototype.getContext,
+        {
+          apply(fn, target, args) {
+            return String(args[0]).includes('webgl')
+              ? null
+              : Reflect.apply(fn, target, args);
+          },
+        },
+      );
+    });
+    const page = await ctx.newPage();
+    const videos: string[] = [];
+    page.on('request', (r) => {
+      if (r.url().includes('.mp4')) videos.push(r.url());
+    });
+    await page.goto('/en');
+    await expect(page.locator('#top img')).toBeVisible();
+    for (const area of ['#about', 'section[aria-labelledby="pathway-title"]']) {
+      await page.locator(area).scrollIntoViewIfNeeded();
+      await expect(page.locator(area).locator('img').first()).toBeVisible();
+    }
+    expect(videos).toEqual([]);
+    await page
+      .locator('[aria-labelledby="constellation-title"] a')
+      .nth(1)
+      .tap();
+    await expect(page).toHaveURL(/\/en\/schools\/languages$/);
+  } finally {
+    await ctx.close();
+  }
 });

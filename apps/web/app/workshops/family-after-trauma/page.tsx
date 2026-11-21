@@ -1,3 +1,4 @@
+import { familyAfterTrauma, hasEventEnded } from '../../../lib/events';
 import type { Metadata } from 'next';
 
 import {
@@ -44,7 +45,10 @@ type PageProps = {
 };
 
 export default async function WorkshopPage({ searchParams }: PageProps) {
-  const registrationHref = buildWorkshopRegistrationHref(await searchParams);
+  const params = await searchParams;
+  const registrationHref = hasEventEnded(familyAfterTrauma)
+    ? null
+    : buildWorkshopRegistrationHref(params);
 
   return <WorkshopExperience registrationHref={registrationHref} />;
 }

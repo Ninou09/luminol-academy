@@ -11,11 +11,19 @@ import Link from 'next/link';
 
 import { AcademyImage } from '../../components/academy-image';
 import { FounderJsonLd } from '../../components/founder-json-ld';
+import { TeamSection } from '../../components/events-section';
+import { PhotoMosaic } from '../../components/photo-mosaic';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
+import Image from 'next/image';
+import {
+  aboutPhotos,
+  extraPhotos,
+  peoplePhotos,
+} from '../../lib/people-photos';
 
 const founderNameByLocale = {
   en: 'Kheddaoui Fettouma',
@@ -39,7 +47,7 @@ const founderAuthorityByLocale = {
         number: '01',
         title: 'A recognizable founder voice',
         description:
-          'The founder remains a visible trust anchor while Luminol develops institutional authority through its wider expert team.',
+          'You always know who stands behind the psychology division — and the wider expert team carries the same standards into every programme.',
       },
     ],
     action: 'Start a psychology enquiry',
@@ -59,7 +67,7 @@ const founderAuthorityByLocale = {
         number: '01',
         title: 'Une voix fondatrice identifiable',
         description:
-          'La fondatrice reste un repère de confiance visible tandis que Luminol développe aussi l’autorité de son équipe d’experts.',
+          'Vous savez toujours qui se tient derrière le pôle psychologie — et l’équipe d’experts porte les mêmes exigences dans chaque programme.',
       },
     ],
     action: 'Commencer une demande en psychologie',
@@ -79,7 +87,7 @@ const founderAuthorityByLocale = {
         number: '01',
         title: 'صوت مؤسس واضح ومعروف',
         description:
-          'تبقى المؤسسة ركناً أساسياً للثقة، مع بناء سلطة مؤسساتية أوسع من خلال بقية فريق الخبراء في لومينول.',
+          'تعرف دائمًا من يقف وراء قسم علم النفس، ويحمل فريق الخبراء المعايير نفسها إلى كل برنامج.',
       },
     ],
     action: 'ابدأ طلباً في علم النفس',
@@ -129,6 +137,12 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
 }
+
+const galleryLabel = {
+  en: 'Moments at Luminol',
+  fr: 'Moments chez Luminol',
+  ar: 'لحظات في لومينول',
+} as const satisfies Record<Locale, string>;
 
 export default async function AboutPage() {
   const locale = await getRequestLocale();
@@ -184,6 +198,8 @@ export default async function AboutPage() {
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
+            scene={peoplePhotos.liveCommunity}
+            sceneKind="photo"
           />
         </section>
 
@@ -201,6 +217,19 @@ export default async function AboutPage() {
             <p>{copy.originBodyTwo}</p>
           </div>
         </section>
+
+        <PhotoMosaic
+          label={galleryLabel[locale]}
+          locale={locale}
+          photos={[
+            peoplePhotos.academyRoleplay,
+            aboutPhotos.listening,
+            aboutPhotos.graduate,
+            aboutPhotos.family,
+            aboutPhotos.online,
+            aboutPhotos.event,
+          ]}
+        />
 
         <section
           className={styles.section}
@@ -234,13 +263,31 @@ export default async function AboutPage() {
           </div>
         </section>
 
+        <TeamSection locale={locale} />
+
         <section className={styles.missionVision}>
           <article aria-labelledby="about-mission-title" data-reveal>
+            <Image
+              className={styles.missionPhoto}
+              src={aboutPhotos.audience.src}
+              alt=""
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+              aria-hidden="true"
+            />
             <span>{copy.missionLabel}</span>
             <h2 id="about-mission-title">{copy.missionTitle}</h2>
             <p>{copy.missionBody}</p>
           </article>
           <article aria-labelledby="about-vision-title" data-reveal>
+            <Image
+              className={styles.missionPhoto}
+              src={extraPhotos.aboutCommunity.src}
+              alt=""
+              fill
+              sizes="(max-width: 900px) 100vw, 50vw"
+              aria-hidden="true"
+            />
             <span>{copy.visionLabel}</span>
             <h2 id="about-vision-title">{copy.visionTitle}</h2>
             <p>{copy.visionBody}</p>
@@ -287,6 +334,14 @@ export default async function AboutPage() {
             </div>
           </div>
           <div className={styles.ecosystemStage} data-reveal>
+            <div className={styles.orbitSystem} aria-hidden="true">
+              <span className={styles.orbitRing} />
+              <span className={styles.orbitRing} />
+              <span className={styles.orbitRing} />
+              <span className={styles.orbitSpark} />
+              <span className={styles.orbitSpark} />
+              <span className={styles.orbitSpark} />
+            </div>
             <div className={styles.ecosystemCore} data-motion-float>
               Luminol
               <small>{copy.oneJourney}</small>
@@ -299,6 +354,16 @@ export default async function AboutPage() {
                 aria-labelledby={`about-school-${school.slug}-title`}
                 data-ecosystem-school={school.slug}
               >
+                <span className={styles.schoolBeam} aria-hidden="true" />
+                <Image
+                  className={styles.schoolCardArt}
+                  src={`/media/brand/about-${school.slug}.webp`}
+                  alt=""
+                  width={1122}
+                  height={1402}
+                  sizes="(max-width: 1000px) 60vw, 22vw"
+                  aria-hidden="true"
+                />
                 <span>{school.number}</span>
                 <h3 id={`about-school-${school.slug}-title`}>{school.name}</h3>
                 <p>{school.tagline}</p>

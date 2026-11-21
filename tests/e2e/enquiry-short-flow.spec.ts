@@ -63,6 +63,13 @@ test('email enquiries preserve optional details after failure and can be retried
   await expect(form.locator('[name="phone"]')).toHaveCount(0);
   await expect(form.locator('[name="email"]')).toHaveAttribute('required');
   await form.locator('[name="email"]').fill('test@example.com');
+  const channel = form.locator('[name="preferredContact"]');
+  await channel.selectOption('PHONE');
+  await form.locator('[name="phone"]').fill('0555 12 34 56');
+  await channel.selectOption('WHATSAPP');
+  await expect(form.locator('[name="phone"]')).toHaveValue('0555 12 34 56');
+  await channel.selectOption('EMAIL');
+  await expect(form.locator('[name="email"]')).toHaveValue('test@example.com');
   await form.locator('summary').click();
   await form.locator('[name="city"]').fill('Blida');
   await form.locator('[name="deliveryPreference"]').selectOption('ONLINE');

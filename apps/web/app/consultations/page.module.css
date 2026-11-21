@@ -1,6 +1,6 @@
 .page {
   overflow: clip;
-  background: var(--color-brand-canvas);
+  background: transparent;
   color: var(--color-brand-ink);
 }
 
@@ -68,7 +68,7 @@
   padding: clamp(1.5rem, 3vw, 2.3rem);
   border: 1px solid var(--color-brand-line);
   border-radius: 1.5rem;
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   box-shadow: var(--shadow-editorial);
 }
 
@@ -122,7 +122,7 @@
   padding: 1.5rem;
   border: 1px solid var(--color-brand-line);
   border-radius: 1.25rem;
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
 }
 
 .pathCard span {
@@ -154,7 +154,7 @@
   padding: clamp(2rem, 5vw, 4rem);
   border: 1px solid var(--color-brand-line);
   border-radius: 1.8rem;
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   box-shadow: var(--shadow-editorial);
 }
 
@@ -214,7 +214,7 @@
   margin-bottom: clamp(4rem, 8vw, 8rem);
   padding: clamp(2rem, 5vw, 4rem);
   border-radius: 1.8rem;
-  background: var(--color-brand-ink);
+  background: var(--luminol-deep, var(--color-brand-ink));
   color: var(--color-brand-surface);
 }
 
@@ -235,7 +235,7 @@
 .formSurface {
   padding: clamp(1.2rem, 3vw, 2rem);
   border-radius: 1.35rem;
-  background: var(--color-brand-surface);
+  background: var(--luminol-card, var(--color-brand-surface));
   color: var(--color-brand-ink);
 }
 
@@ -257,5 +257,352 @@
 
   .authorityLead {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Glass route icons and the 30-year growth rings. */
+.pathCard .pathIcon {
+  margin: -0.5rem 0 0.5rem -0.5rem;
+}
+.authorityLead {
+  position: relative;
+}
+.authorityIcon {
+  position: absolute;
+  z-index: 0;
+  inset-block-start: 50%;
+  inset-inline-start: -2rem;
+  translate: 0 -50%;
+  opacity: 0.85;
+}
+.authorityLead > :not(.authorityIcon) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Illustrative photography: supervision beside the founder story, a calm
+   session beside the enquiry form. */
+.authorityPhoto {
+  width: min(16rem, 70%);
+  margin-block-end: 1.5rem;
+  aspect-ratio: 4 / 4.6;
+}
+.enquiryPhoto {
+  width: min(20rem, 100%);
+  margin-block-start: 2rem;
+}
+
+/* The shared .enquiry-form card provides the surface. */
+.formSurface {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.authorityPhoto {
+  margin-block: 2rem 0;
+}
+/* "30+" sits beside the growth-rings art, above the heading. */
+.authorityLead {
+  grid-template-columns: 1fr;
+  padding-block-start: clamp(9rem, 16vw, 13rem);
+}
+.authorityYears {
+  position: absolute;
+  inset-block-start: clamp(2rem, 4vw, 3rem);
+  inset-inline-start: clamp(11rem, 18vw, 15rem);
+}
+.authorityIcon {
+  inset-block-start: 0;
+  translate: 0 0;
+  inset-inline-start: -1rem;
+}
+@media (max-width: 760px) {
+  .authorityPhoto,
+  .enquiryPhoto {
+    width: 100%;
+    aspect-ratio: 4 / 3.6;
+  }
+}
+.enquiryContext h2 {
+  margin-block-end: 1.25rem;
+  line-height: 1.08;
+}
+
+/* ─── Consultations v2: a living photo stack beside the promise,
+   photo pathway cards and no decorative stickers. ─── */
+.page .hero {
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  align-items: center;
+  min-height: clamp(36rem, 82svh, 54rem);
+  padding-block: clamp(3rem, 7vw, 6rem);
+}
+.page .hero h1 {
+  font-size: clamp(2.8rem, 5.6vw, 5.6rem);
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.heroCopy {
+  min-width: 0;
+}
+.page .heroAside {
+  margin-top: 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.page .heroAside > p:first-child {
+  max-width: 36rem;
+  color: rgb(212 229 238 / 0.8);
+}
+.hoursChip {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.25rem !important;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.05);
+  color: rgb(212 229 238 / 0.9) !important;
+  font-size: 0.82rem;
+}
+.hoursChip span {
+  width: 0.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #6ee7a8;
+  box-shadow: 0 0 0.75rem #6ee7a8;
+}
+.heroStack {
+  justify-self: end;
+  width: min(100%, 36rem);
+}
+.page .pathCard {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border-color: rgb(255 255 255 / 0.12);
+  border-radius: 1.5rem;
+  background: linear-gradient(180deg, rgb(7 26 43 / 0.85), rgb(7 26 43 / 0.65));
+  transition:
+    translate 600ms var(--luminol-ease-out),
+    box-shadow 600ms ease,
+    border-color 400ms ease;
+}
+.page .pathCard:hover {
+  translate: 0 -0.5rem;
+  border-color: rgb(243 212 143 / 0.4);
+  box-shadow: 0 2rem 4rem -1.5rem rgb(0 0 0 / 0.6);
+}
+.pathPhoto {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+.pathPhoto img {
+  object-fit: cover;
+  transition: scale 1.2s var(--luminol-ease-out);
+}
+.pathPhoto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgb(7 26 43 / 0.9));
+}
+.pathCard:hover .pathPhoto img {
+  scale: 1.06;
+}
+.pathBody {
+  position: relative;
+  margin-top: -1.5rem;
+  padding: 0 1.5rem 1.6rem;
+}
+.pathBody span {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: #f3d48f;
+  color: #061321 !important;
+}
+@media (max-width: 900px) {
+  .page .hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .heroStack {
+    justify-self: center;
+    width: min(100%, 32rem);
+  }
+  .page .pathGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.directLine {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  margin-top: 0.75rem !important;
+  font-size: 0.9rem;
+}
+.directLine a {
+  color: #8bdeef;
+  font-weight: 700;
+  text-decoration: none;
+}
+.directLine a:hover {
+  color: #f3d48f;
+}
+
+/* ─── Founder block v2: photo with a 30+ badge beside a tight story. ─── */
+.authorityV2 {
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr) !important;
+  gap: clamp(1.5rem, 4vw, 3.5rem) !important;
+  align-items: center !important;
+  padding: clamp(1.25rem, 3vw, 2rem) !important;
+  min-height: 0 !important;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
+  background:
+    radial-gradient(
+      70% 90% at 100% 0%,
+      rgb(243 212 143 / 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      60% 80% at 0% 100%,
+      rgb(139 222 239 / 0.1),
+      transparent 60%
+    ),
+    rgb(7 26 43 / 0.7) !important;
+}
+.authorityVisual {
+  position: relative;
+  min-width: 0;
+}
+.authorityPhotoLarge {
+  width: 100%;
+  aspect-ratio: 4 / 3.4;
+}
+.yearsBadge {
+  position: absolute;
+  z-index: 6;
+  inset-block-end: clamp(-1rem, -1.5vw, -0.5rem);
+  inset-inline-end: clamp(-1rem, -1.5vw, -0.5rem);
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  padding: 1rem 1.25rem 0.9rem;
+  border: 1px solid rgb(243 212 143 / 0.45);
+  border-radius: 1.25rem;
+  background: rgb(4 15 27 / 0.82);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 1.5rem 3rem -1rem rgb(0 0 0 / 0.6),
+    0 0 2.5rem -0.5rem rgb(243 212 143 / 0.35);
+}
+.yearsBadge span {
+  background: linear-gradient(135deg, #ffffff, #f3d48f 60%, #8bdeef);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 1;
+}
+.yearsBadge small {
+  max-width: 9rem;
+  color: rgb(212 229 238 / 0.75);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.authorityText {
+  min-width: 0;
+  padding-block: clamp(0.5rem, 2vw, 1.5rem);
+}
+.authorityText h2 {
+  margin: 0.5rem 0 1.5rem;
+  font-size: clamp(2rem, 3.6vw, 3.4rem) !important;
+  line-height: 1.04 !important;
+  text-wrap: balance;
+}
+.signature {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.04);
+}
+.signatureMark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f3d48f, #8bdeef);
+  color: #061321;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.signature p {
+  margin: 0 !important;
+}
+.authorityBodyText {
+  margin: 1.25rem 0 1.5rem;
+  color: rgb(212 229 238 / 0.85);
+  line-height: 1.8;
+}
+@media (max-width: 900px) {
+  .authorityV2 {
+    grid-template-columns: 1fr !important;
+  }
+  .yearsBadge {
+    inset-inline-end: 0.75rem;
+    inset-block-end: 0.75rem;
+  }
+}
+
+/* Phones: one layer of padding instead of three, so the form has room. */
+@media (max-width: 640px) {
+  .enquiry {
+    gap: 1.75rem;
+    padding: 1.25rem 1rem;
+    border-radius: 1.4rem;
+  }
+}
+
+.page .hero {
+  min-height: 0;
+  padding-block: clamp(2rem, 6vw, 5rem);
+}
+.page .hero h1:dir(rtl) {
+  line-height: 1.4;
+}
+.heroStack {
+  aspect-ratio: 4 / 3;
+}
+.enquiry {
+  border-block-start: 1px solid var(--color-brand-line);
+}
+@media (max-width: 900px) {
+  .enquiryContext .enquiryPhoto {
+    display: none;
+  }
+  .page .enquiry {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
