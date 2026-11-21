@@ -15,6 +15,8 @@ export type EnquiryCommunicationRecord = {
   phone: string | null;
   preferredContact: 'EMAIL' | 'PHONE' | 'WHATSAPP' | null;
   school: 'PSYCHOLOGY' | 'LANGUAGES' | 'TRAINING' | 'GENERAL';
+  requestKind: 'CONSULTATION' | 'PROGRAMME' | 'GENERAL';
+  readiness: 'INFORMATION' | 'REGISTRATION_BOOKING' | null;
   programmeTitleSnapshot: string | null;
   locale: EnquiryLocale;
   message: string;
@@ -92,6 +94,7 @@ export function buildStaffEnquiryNotification(
   const programme = enquiry.programmeTitleSnapshot
     ? ` · البرنامج: ${enquiry.programmeTitleSnapshot}`
     : '';
+  const readiness = enquiry.readiness ? ` · الخطوة: ${enquiry.readiness}` : '';
   return {
     idempotencyKey: `enquiry-received-${enquiry.id}-${recipientId}`,
     recipientId,
@@ -99,7 +102,7 @@ export function buildStaffEnquiryNotification(
     category: 'transactional',
     payload: {
       subject: 'طلب جديد عبر موقع أكاديمية لومينول',
-      message: `وصل طلب جديد عبر الموقع. المرجع: ${enquiry.id} · المجال: ${enquiry.school}${programme}. افتح لوحة الاستفسارات المحمية لمراجعة بيانات التواصل والتفاصيل.`,
+      message: `وصل طلب جديد عبر الموقع. المرجع: ${enquiry.id} · النوع: ${enquiry.requestKind} · المجال: ${enquiry.school}${programme}${readiness}. افتح لوحة الاستفسارات المحمية لمراجعة بيانات التواصل والتفاصيل.`,
     },
     channels: ['in_app', 'email'],
   };

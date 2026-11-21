@@ -15,6 +15,9 @@ suite('enquiry qualification persistence', () => {
         email: `enquiry-qualification-${suffix}@example.test`,
         phone: '+213 555 12 34 56',
         city: 'Blida',
+        profession: 'Psychologist',
+        requestKind: 'PROGRAMME',
+        readiness: 'REGISTRATION_BOOKING',
         preferredContact: 'WHATSAPP',
         deliveryPreference: 'FLEXIBLE',
         timingPreference: 'WITHIN_MONTH',
@@ -24,6 +27,9 @@ suite('enquiry qualification persistence', () => {
       },
       select: {
         city: true,
+        profession: true,
+        requestKind: true,
+        readiness: true,
         preferredContact: true,
         deliveryPreference: true,
         timingPreference: true,
@@ -32,6 +38,9 @@ suite('enquiry qualification persistence', () => {
 
     expect(enquiry).toEqual({
       city: 'Blida',
+      profession: 'Psychologist',
+      requestKind: 'PROGRAMME',
+      readiness: 'REGISTRATION_BOOKING',
       preferredContact: 'WHATSAPP',
       deliveryPreference: 'FLEXIBLE',
       timingPreference: 'WITHIN_MONTH',
@@ -49,6 +58,9 @@ suite('enquiry qualification persistence', () => {
       },
       select: {
         city: true,
+        profession: true,
+        requestKind: true,
+        readiness: true,
         preferredContact: true,
         deliveryPreference: true,
         timingPreference: true,
@@ -57,6 +69,9 @@ suite('enquiry qualification persistence', () => {
 
     expect(legacyCompatible).toEqual({
       city: null,
+      profession: null,
+      requestKind: 'GENERAL',
+      readiness: null,
       preferredContact: null,
       deliveryPreference: null,
       timingPreference: null,

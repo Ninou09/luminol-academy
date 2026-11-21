@@ -1,6 +1,6 @@
 'use client';
 
-import type { Locale } from '@luminol/localization';
+import { localizeHref, type Locale } from '@luminol/localization';
 import { Button } from '@luminol/ui';
 import { useRef, useState, type FormEvent } from 'react';
 
@@ -17,6 +17,7 @@ import type { getPublicCopy } from '../lib/public-localization';
 
 type FormCopy = ReturnType<typeof getPublicCopy>['form'];
 type ContactPreference = 'EMAIL' | 'PHONE' | 'WHATSAPP';
+type EnquiryRequestKind = 'CONSULTATION' | 'PROGRAMME' | 'GENERAL';
 
 type SubmissionState =
   | { status: 'idle'; message: '' }
@@ -30,6 +31,7 @@ type EnquiryFormProps = {
   initialSchool?: PublicEnquirySchool | undefined;
   initialMessage?: string | undefined;
   initialProgrammeSlug?: string | undefined;
+  requestKind?: EnquiryRequestKind | undefined;
 };
 
 export function EnquiryForm({
@@ -38,6 +40,7 @@ export function EnquiryForm({
   initialSchool = 'GENERAL',
   initialMessage = '',
   initialProgrammeSlug,
+  requestKind = initialProgrammeSlug ? 'PROGRAMME' : 'GENERAL',
 }: EnquiryFormProps) {
   const qualification = getEnquiryQualificationCopy(locale);
   const [preferredContact, setPreferredContact] =
@@ -82,6 +85,9 @@ export function EnquiryForm({
           email: formData.get('email') ?? '',
           phone: formData.get('phone') ?? '',
           city: formData.get('city'),
+          profession: formData.get('profession'),
+          requestKind,
+          readiness: formData.get('readiness') || undefined,
           preferredContact: formData.get('preferredContact'),
           deliveryPreference: formData.get('deliveryPreference') || undefined,
           timingPreference: formData.get('timingPreference') || undefined,
@@ -191,6 +197,17 @@ export function EnquiryForm({
             <option value="TRAINING">{copy.training}</option>
           </select>
         </label>
+        <label>
+          <span>{qualification.readiness}</span>
+          <select defaultValue="INFORMATION" name="readiness" required>
+            <option value="INFORMATION">
+              {qualification.informationFirst}
+            </option>
+            <option value="REGISTRATION_BOOKING">
+              {qualification.registrationBooking}
+            </option>
+          </select>
+        </label>
       </div>
 
       <details
@@ -212,6 +229,13 @@ export function EnquiryForm({
               name="message"
               rows={3}
             />
+          </label>
+          <label>
+            <span>
+              {qualification.profession} <small>{copy.optional}</small>
+            </span>
+            <input maxLength={120} name="profession" type="text" />
+            <small>{qualification.professionHint}</small>
           </label>
           <label>
             <span>
@@ -258,7 +282,12 @@ export function EnquiryForm({
 
       <label className="consent-field">
         <input name="consent" required type="checkbox" />
-        <span>{copy.consent}</span>
+        <span>
+          {copy.consent}{' '}
+          <a href={localizeHref(locale, '/legal/privacy')}>
+            {qualification.privacyNotice}
+          </a>
+        </span>
       </label>
 
       <div className="form-actions">

@@ -4,6 +4,13 @@ export type EnquiryQualificationCopy = {
   optionalDetails: string;
   optionalDetailsHint: string;
   city: string;
+  profession: string;
+  professionHint: string;
+  readiness: string;
+  chooseReadiness: string;
+  informationFirst: string;
+  registrationBooking: string;
+  privacyNotice: string;
   preferredContact: string;
   chooseContact: string;
   contactEmail: string;
@@ -29,6 +36,13 @@ const COPY: Record<Locale, EnquiryQualificationCopy> = {
     optionalDetailsHint:
       'You can discuss these with the team later. Please do not include medical records or sensitive personal details.',
     city: 'City / area',
+    profession: 'Profession or field',
+    professionHint: 'Especially helpful for professional training requests.',
+    readiness: 'What would you like next?',
+    chooseReadiness: 'Choose the next step',
+    informationFirst: 'Receive the programme or details first',
+    registrationBooking: 'Start registration or booking',
+    privacyNotice: 'Read the privacy notice',
     preferredContact: 'Preferred contact',
     chooseContact: 'Choose a contact method',
     contactEmail: 'Email',
@@ -52,6 +66,14 @@ const COPY: Record<Locale, EnquiryQualificationCopy> = {
     optionalDetailsHint:
       'Vous pourrez en discuter avec l’équipe plus tard. Ne joignez pas de dossier médical ni de détails personnels sensibles.',
     city: 'Ville / région',
+    profession: 'Profession ou spécialité',
+    professionHint:
+      'Particulièrement utile pour les demandes de formation professionnelle.',
+    readiness: 'Quelle suite souhaitez-vous ?',
+    chooseReadiness: 'Choisissez la prochaine étape',
+    informationFirst: 'Recevoir d’abord le programme ou les informations',
+    registrationBooking: 'Commencer l’inscription ou la réservation',
+    privacyNotice: 'Lire l’avis de confidentialité',
     preferredContact: 'Moyen de contact préféré',
     chooseContact: 'Choisissez un moyen de contact',
     contactEmail: 'E-mail',
@@ -76,6 +98,13 @@ const COPY: Record<Locale, EnquiryQualificationCopy> = {
     optionalDetailsHint:
       'يمكنك مناقشة هذه التفاصيل مع الفريق لاحقًا. يرجى عدم إدراج تقارير طبية أو معلومات شخصية حساسة.',
     city: 'المدينة / المنطقة',
+    profession: 'المهنة أو التخصص',
+    professionHint: 'مهم خصوصًا لتوجيه طلبات التكوين المهني.',
+    readiness: 'ما الخطوة التي تفضّلها؟',
+    chooseReadiness: 'اختر الخطوة التالية',
+    informationFirst: 'استلام البرنامج أو التفاصيل أولًا',
+    registrationBooking: 'بدء التسجيل أو الحجز',
+    privacyNotice: 'اقرأ إشعار الخصوصية',
     preferredContact: 'وسيلة التواصل المفضلة',
     chooseContact: 'اختر وسيلة التواصل',
     contactEmail: 'البريد الإلكتروني',

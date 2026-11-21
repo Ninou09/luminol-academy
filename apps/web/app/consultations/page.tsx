@@ -11,6 +11,7 @@ import type { Metadata } from 'next';
 import { EnquiryForm } from '../../components/enquiry-form';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
+import { getConsultationFacts } from '../../lib/consultation-facts';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
@@ -202,6 +203,7 @@ export default async function ConsultationsPage() {
   const locale = await getRequestLocale();
   const copy = CONSULTATION_COPY[locale];
   const publicCopy = getPublicCopy(locale);
+  const facts = getConsultationFacts(locale);
   const paths = copy.paths as readonly {
     number: string;
     title: string;
@@ -251,6 +253,31 @@ export default async function ConsultationsPage() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section
+          className={styles.facts}
+          aria-labelledby="consultation-facts-title"
+        >
+          <div className={styles.factsHeading}>
+            <p className={styles.eyebrow}>{facts.heading}</p>
+            <h2 id="consultation-facts-title">{facts.price}</h2>
+          </div>
+          <dl className={styles.factsGrid}>
+            <div>
+              <dt>{facts.priceLabel}</dt>
+              <dd>{facts.price}</dd>
+            </div>
+            <div>
+              <dt>{facts.durationLabel}</dt>
+              <dd>{facts.duration}</dd>
+            </div>
+            <div>
+              <dt>{facts.formatLabel}</dt>
+              <dd>{facts.format}</dd>
+            </div>
+          </dl>
+          <p className={styles.factsBoundary}>{facts.availability}</p>
         </section>
 
         <section
@@ -305,6 +332,7 @@ export default async function ConsultationsPage() {
               copy={publicCopy.form}
               initialSchool="PSYCHOLOGY"
               initialMessage={copy.initialMessage as string}
+              requestKind="CONSULTATION"
             />
           </div>
         </section>
