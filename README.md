@@ -1,79 +1,118 @@
 # Luminol Academy
 
-Production monorepo foundation for Luminol Academy: a multilingual, premium learning institution spanning the School of Psychology, School of Languages, and School of Professional Development.
+**English** · [العربية](README.ar.md)
 
-[Public site design review with mobile and desktop screenshots (русский)](docs/PUBLIC_SITE_REVIEW.ru.md)
+Luminol Academy is a trilingual (Arabic, French, English) learning institution based in Blida, Algeria, with three schools: the **School of Psychology**, the **School of Languages** and the **School of Professional Development**. This repository is the production monorepo behind its public website, learner portal, administration and CRM workspace, and editorial CMS.
 
-## Workspace map
+| Application   | Purpose                                                    | Production                                | Local                 |
+| ------------- | ---------------------------------------------------------- | ----------------------------------------- | --------------------- |
+| `apps/web`    | Public website: schools, programmes, consultations         | https://luminol-academy-web.vercel.app    | http://localhost:3000 |
+| `apps/admin`  | Administration, CRM, operations and finance                | https://luminol-academy-admin.vercel.app  | http://localhost:3001 |
+| `apps/portal` | Learner and client portal: courses, progress, certificates | https://luminol-academy-portal.vercel.app | http://localhost:3002 |
+| `apps/studio` | Sanity Studio for editorial content                        | Hosted by Sanity                          | http://localhost:3333 |
 
-| Workspace     | Purpose                      | Local URL             |
-| ------------- | ---------------------------- | --------------------- |
-| `apps/web`    | Public institutional website | http://localhost:3000 |
-| `apps/admin`  | Administration dashboard     | http://localhost:3001 |
-| `apps/portal` | Student and client portal    | http://localhost:3002 |
-| `apps/studio` | Sanity Studio                | http://localhost:3333 |
+## Documentation
 
-Shared packages provide UI, database access, authentication, validation, configuration, domain types, utilities, email delivery, and analytics contracts. Turborepo coordinates all workspace tasks.
+Start with the [documentation index](docs/README.md). The most useful entry points are:
 
-## Prerequisites
+- [Architecture](docs/ARCHITECTURE.md): applications, shared packages, data flow and request lifecycle
+- [Configuration and deployment](docs/CONFIGURATION.md): every environment variable, Vercel projects and release flow
+- [Public website](docs/PUBLIC_WEBSITE.md): features, localization, media rules and the AI assistant
+- [Public site review](docs/PUBLIC_SITE_REVIEW.md): annotated screenshots of the consultation and programme journeys
+- [Project status](docs/PROJECT_STATUS.md) and [master roadmap](docs/MASTER_ROADMAP.md)
 
-- Node.js 20 or newer
-- pnpm 10 (Corepack recommended)
-- Docker Desktop (for local PostgreSQL)
-- Accounts for Clerk, Sanity, Resend, GitHub, and Vercel when connecting hosted services
+Arabic translations of the core guides live in [`docs/ar`](docs/ar/README.md).
 
-## Browser-based setup (GitHub Codespaces)
+## Technology
 
-1. In GitHub, open the repository, select **Code → Codespaces → Create codespace on main**.
-2. In the Codespaces terminal run `corepack enable && pnpm install`.
-3. Create local configuration with `cp .env.example .env` and replace only the service placeholders you intend to use.
-4. Start PostgreSQL with `docker compose up -d postgres`.
-5. Generate the Prisma client and initialize the database with `pnpm db:generate && pnpm db:migrate --name init`.
-6. Start the workspaces with `pnpm dev`.
-7. Open the forwarded **Ports** panel: ports 3000, 3001, 3002, and 3333 map to the four applications above. Set port visibility to private unless you intentionally need to share a preview.
+| Layer         | Choice                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------ |
+| Framework     | Next.js 16 (App Router, Turbopack), React 19, TypeScript (strict)                          |
+| Styling       | Tailwind CSS 4, CSS Modules, shared design tokens                                          |
+| Data          | PostgreSQL 16, Prisma ORM 7                                                                |
+| Identity      | Clerk, with database-backed role-based access control                                      |
+| Content       | Sanity 6 with typed, reviewed fallbacks                                                    |
+| Messaging     | Resend (email), Telegram (staff alerts), scheduled notification worker                     |
+| AI            | Anthropic Claude for the public assistant; opt-in OpenAI gateway for the admin AI operator |
+| Motion and 3D | three.js, GSAP and Lenis, disabled under reduced motion                                    |
+| Tooling       | pnpm 10 workspaces, Turborepo, Vitest, Playwright, ESLint, Prettier                        |
+| Hosting       | Vercel (one project per application), GitHub Actions for CI                                |
 
-For a local browser workflow, clone the repository, run the same commands in a terminal, then visit the URLs in the workspace map.
+## Getting started
 
-## Environment variables
+### Prerequisites
 
-Copy `.env.example` to `.env`. The committed file contains safe placeholders only.
+- Node.js 20.19+, 22.13+ or 24+
+- pnpm 10.34.5 or newer within major version 10 (enable it with `corepack enable`)
+- Docker Desktop, for the local PostgreSQL service
+- Accounts for Clerk, Sanity, Resend, Vercel and Anthropic when you connect hosted services
 
-| Variable                                                 | Required for               | Source                             |
-| -------------------------------------------------------- | -------------------------- | ---------------------------------- |
-| `DATABASE_URL`                                           | Prisma/PostgreSQL          | Local Docker value is ready to use |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` / `CLERK_SECRET_KEY` | Authentication             | Clerk dashboard                    |
-| `NEXT_PUBLIC_SANITY_PROJECT_ID` / `SANITY_API_TOKEN`     | CMS reads/writes           | Sanity project settings            |
-| `NEXT_PUBLIC_SANITY_DATASET`                             | CMS dataset                | Usually `production`               |
-| `RESEND_API_KEY`                                         | Transactional email        | Resend API keys                    |
-| `NEXT_PUBLIC_APP_URL`                                    | Absolute application links | Deployment URL                     |
+### Local setup
 
-Sanity Studio uses the corresponding `SANITY_STUDIO_PROJECT_ID` and `SANITY_STUDIO_DATASET` variables. Published active programmes are validated and rendered on their matching public school pages. If CMS configuration or content is unavailable, reviewed typed fallback programmes keep the website operational.
+```bash
+corepack enable
+pnpm install
+cp .env.example .env                 # replace only the placeholders you need
+docker compose up -d postgres        # PostgreSQL 16 with a health check
+pnpm db:generate                     # generate the Prisma client
+pnpm db:migrate --name init          # apply migrations to the local database
+pnpm dev                             # start every application
+```
 
-## Content management
+The committed `.env.example` holds safe placeholders only. Never commit a real `.env` file. Every variable is described in [Configuration and deployment](docs/CONFIGURATION.md).
 
-Run `pnpm --filter @luminol/studio dev` to open Sanity Studio locally. Studio manages programmes, site settings, team members, and consent-confirmed testimonials. See [docs/cms.md](docs/cms.md) for environment setup, publishing rules, content safety, CORS configuration, and fallback behavior.
+### GitHub Codespaces
+
+1. Open the repository on GitHub and choose **Code → Codespaces → Create codespace** on the branch you want to review.
+2. Run the local setup commands above in the Codespaces terminal.
+3. Open the **Ports** panel. Ports 3000, 3001, 3002 and 3333 map to the four applications. Keep port visibility private unless you intend to share a preview.
 
 ## Commands
 
-```bash
-pnpm dev          # run all applications in development
-pnpm build        # production-build every workspace
-pnpm lint         # lint all workspaces
-pnpm typecheck    # strict TypeScript checks
-pnpm test         # Vitest unit tests
-pnpm test:e2e     # Playwright browser tests (install browser first)
-pnpm format       # format tracked source files
-pnpm db:generate  # generate Prisma client
-pnpm db:migrate   # create/apply a local migration
-pnpm db:studio    # inspect local data
-```
-
-## Architecture and deployment
-
-Each app is independently deployable. In Vercel, create separate projects with the applicable app directory as **Root Directory**, while retaining pnpm workspace access. Configure secrets in each Vercel environment rather than committing `.env` files. The root Dockerfile verifies the whole monorepo; Docker Compose supplies a development-only PostgreSQL 16 service with a health check and persistent volume.
-
-Arabic experiences must set `dir="rtl"` on the document boundary and use the Arabic tokenized font stack. Latin experiences use Manrope and Cormorant Garamond. Brand colors and font families live in `@luminol/config/tailwind` and application Tailwind themes.
+| Command               | Purpose                                                             |
+| --------------------- | ------------------------------------------------------------------- |
+| `pnpm dev`            | Run all applications in development mode                            |
+| `pnpm build`          | Production build of every workspace                                 |
+| `pnpm lint`           | ESLint across all workspaces                                        |
+| `pnpm typecheck`      | Strict TypeScript checks                                            |
+| `pnpm test`           | Vitest unit and integration tests                                   |
+| `pnpm test:e2e`       | Playwright browser tests (run `pnpm exec playwright install` first) |
+| `pnpm format`         | Format the repository with Prettier                                 |
+| `pnpm format:check`   | Verify formatting, as CI does                                       |
+| `pnpm db:generate`    | Generate the Prisma client                                          |
+| `pnpm db:migrate`     | Create and apply a local migration                                  |
+| `pnpm db:studio`      | Inspect local data in Prisma Studio                                 |
+| `pnpm security:check` | Secret scan and GitHub Action pin check                             |
 
 ## Quality gates
 
-Pull requests run install, lint, strict typecheck, unit tests, and production builds in GitHub Actions. Keep changes within the relevant milestone, validate external input with Zod, preserve semantic accessibility and RTL behavior, and never commit credentials.
+Every pull request runs the `quality` workflow, which is required before merging into `main`:
+
+1. Frozen dependency install, secret scan and Action pin check
+2. Prisma generation, schema validation and migration replay on an ephemeral PostgreSQL
+3. Lint, Prettier formatting check, strict typecheck and unit tests
+4. Production builds of every application
+5. Public Playwright smoke tests, plus authenticated journeys when their protected state is configured
+6. Production dependency audit (`pnpm audit --prod --audit-level high`)
+
+`main` is protected: changes land through pull requests only, and force pushes and deletion are blocked.
+
+## Engineering conventions
+
+The full rule set is in [AGENTS.md](AGENTS.md). In short:
+
+- Use pnpm only and run workspace commands from the repository root.
+- Keep TypeScript strict, avoid `any` and validate every external input with Zod.
+- Keep applications independently deployable. Shared code belongs in `packages/*`; an application never imports another application.
+- Every user-facing change must work in Arabic (right-to-left), French and English, with semantic, accessible HTML.
+- Use design tokens instead of hard-coded brand colours.
+- Public media keeps its source, alternative text and crop intent. Unreviewed or fabricated imagery is not published.
+- Never commit secrets, client data or generated build output.
+
+## Security
+
+Report suspected vulnerabilities privately to the academy at luminolacademy09@gmail.com rather than opening a public issue. Security controls and the launch audit are described in [Security and launch readiness](docs/SECURITY_AND_LAUNCH_READINESS.md).
+
+## Licence
+
+This is a private repository. No open-source licence is granted; all rights belong to Luminol Academy.

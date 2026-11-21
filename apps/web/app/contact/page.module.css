@@ -229,6 +229,10 @@
 }
 
 .formSurface :global(.enquiry-form) {
+  /* The contact form has its own backdrop: the academy's welcome desk. */
+  background:
+    linear-gradient(160deg, rgb(32 66 98 / 0.62), rgb(4 15 27 / 0.82)),
+    url('/media/people/contact-welcome-desk.webp') center / cover;
   display: grid;
   gap: 2rem;
   padding: clamp(1.5rem, 4vw, 3.25rem);

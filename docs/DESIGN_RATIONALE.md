@@ -14,7 +14,7 @@ The homepage introduces the academy through the luminous sphere. On the consulta
 
 Programme enquiries retain the selected course through submission. The course’s published record determines the school. Visitors can retry a temporary verification failure with their input intact. Past sessions have a dedicated archive ordered by the end of each meeting in Algeria.
 
-[Review the consultation, ACT and archive screens](PUBLIC_SITE_REVIEW.ru.md)
+[Review the consultation, ACT and archive screens](PUBLIC_SITE_REVIEW.md)
 
 ## 1. The core idea: an inner universe
 

@@ -896,7 +896,16 @@
   }
 }
 
-/* The orbit cards rely on light, not on floating glass stickers. */
-.schoolCardArt {
-  display: none !important;
+/* Each orbit card holds its own glass symbol inside the card, above the title. */
+.page .schoolCardArt {
+  top: 1.25rem;
+  width: auto;
+  height: 58%;
+  max-width: 70%;
+  object-fit: contain;
+  pointer-events: none;
+}
+.page .schoolCard:hover .schoolCardArt {
+  translate: -50% -0.4rem;
+  scale: 1.03;
 }

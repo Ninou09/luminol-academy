@@ -19,7 +19,11 @@ import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
 import Image from 'next/image';
-import { aboutPhotos, peoplePhotos } from '../../lib/people-photos';
+import {
+  aboutPhotos,
+  extraPhotos,
+  peoplePhotos,
+} from '../../lib/people-photos';
 
 const founderNameByLocale = {
   en: 'Kheddaoui Fettouma',
@@ -278,7 +282,7 @@ export default async function AboutPage() {
           <article aria-labelledby="about-vision-title" data-reveal>
             <Image
               className={styles.missionPhoto}
-              src={peoplePhotos.liveGenerations.src}
+              src={extraPhotos.aboutCommunity.src}
               alt=""
               fill
               sizes="(max-width: 900px) 100vw, 50vw"
@@ -353,7 +357,7 @@ export default async function AboutPage() {
                 <span className={styles.schoolBeam} aria-hidden="true" />
                 <Image
                   className={styles.schoolCardArt}
-                  src={`/media/brand/school-${school.slug}.webp`}
+                  src={`/media/brand/about-${school.slug}.webp`}
                   alt=""
                   width={1122}
                   height={1402}

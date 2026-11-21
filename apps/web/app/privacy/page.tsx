@@ -55,7 +55,7 @@ export default async function PrivacyPage() {
             sizes="100vw"
             aria-hidden="true"
           />
-          <GlassIcon name="step-recorded" size="lg" className={styles.icon} />
+          <GlassIcon name="privacy-shield" size="lg" className={styles.icon} />
           <p className={styles.eyebrow}>{copy.eyebrow}</p>
           <h1 id="privacy-title">{copy.heroTitle}</h1>
           <p className={styles.lede}>{copy.heroBody}</p>
