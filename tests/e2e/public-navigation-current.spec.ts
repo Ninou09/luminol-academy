@@ -46,7 +46,9 @@ for (const scenario of [
 
     for (const landmark of [
       page.getByRole('banner'),
-      page.getByRole('contentinfo'),
+      scenario.currentHref.endsWith('/contact')
+        ? page.getByRole('contentinfo').getByRole('navigation')
+        : page.getByRole('contentinfo'),
     ]) {
       await expect(
         landmark.locator(`a[href="${scenario.currentHref}"]:not([hreflang])`),
