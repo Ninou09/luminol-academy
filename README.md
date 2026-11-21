@@ -2,6 +2,8 @@
 
 Production monorepo foundation for Luminol Academy: a multilingual, premium learning institution spanning the School of Psychology, School of Languages, and School of Professional Development.
 
+[Public site design review with mobile and desktop screenshots (русский)](docs/PUBLIC_SITE_REVIEW.ru.md)
+
 ## Workspace map
 
 | Workspace     | Purpose                      | Local URL             |
