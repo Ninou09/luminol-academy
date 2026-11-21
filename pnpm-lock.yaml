@@ -6,6 +6,7 @@ settings:
 
 overrides:
   deepmerge-ts: 8.0.0
+  effect: 3.22.5
   nanoid@3.3.17: 3.3.18
   next>postcss: 8.5.23
   next>sharp: 0.35.5
@@ -4155,8 +4156,8 @@ packages:
   duplexify@3.7.1:
     resolution: {integrity: sha512-07z8uv2wMyS51kKhD1KsdXJg5WQ6t93RneqRxUHnskXVtlYYkLqM0gqStQZ3pj073g687jPCHrqNfCzawLYh5g==}
 
-  effect@3.20.0:
-    resolution: {integrity: sha512-qMLfDJscrNG8p/aw+IkT9W7fgj50Z4wG5bLBy0Txsxz8iUHjDIkOgO3SV0WZfnQbNG2VJYb0b+rDLMrhM4+Krw==}
+  effect@3.22.5:
+    resolution: {integrity: sha512-AdIU4llI19BzhJ4xUBZix7kS8oiYSlCsJ61j3UM3UyJw9ecDrsrrweDFm/Ku1nHbJWMLoynK+1Me4it3Zkmjpw==}
 
   ejs@6.0.1:
     resolution: {integrity: sha512-UaaM14yby8U3k02ihS1Bmj5Kz2d7CCQM1scxpgs4Mhkq8F1wR2gl3+Ts4h5Ne4Mnt7M9m4Dw7jsuMr3+xO4vZA==}
@@ -8641,7 +8642,7 @@ snapshots:
     dependencies:
       c12: 3.3.4
       deepmerge-ts: 8.0.0
-      effect: 3.20.0
+      effect: 3.22.5
       empathic: 2.0.0
     transitivePeerDependencies:
       - magicast
@@ -10795,7 +10796,7 @@ snapshots:
       readable-stream: 2.3.8
       stream-shift: 1.0.3
 
-  effect@3.20.0:
+  effect@3.22.5:
     dependencies:
       '@standard-schema/spec': 1.1.0
       fast-check: 3.23.2

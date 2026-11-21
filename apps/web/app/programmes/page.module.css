@@ -702,3 +702,32 @@ main:has(> .hero .heroStack) {
   height: 1px;
   overflow: hidden;
 }
+
+.card {
+  container-type: inline-size;
+  min-inline-size: 0;
+}
+.cardBody {
+  overflow-wrap: anywhere;
+}
+.meta [data-enrolment='waitlist'] {
+  color: var(--color-brand-gold-strong);
+}
+.meta [data-enrolment='enquire'] {
+  color: var(--color-brand-cyan-light);
+}
+@container (max-width: 26rem) {
+  .cardBody {
+    padding: 1rem;
+  }
+  .cardActions {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+.cardActions .secondaryAction {
+  border: 0;
+  padding-inline: 0;
+  text-decoration: underline;
+}

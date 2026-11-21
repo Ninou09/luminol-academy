@@ -7,12 +7,6 @@ import {
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 
-import {
-  channelCopy,
-  getBookingHref,
-  officialContacts,
-  openingHours,
-} from '../../lib/contact-channels';
 import type { Metadata } from 'next';
 
 import { EnquiryForm } from '../../components/enquiry-form';
@@ -35,12 +29,12 @@ const CONSULTATION_COPY = {
     description:
       'Start a psychology enquiry with Luminol Academy and let the team understand your goal before guiding you toward the most appropriate next step.',
     eyebrow: 'Psychology · consultations',
-    heroTitle: 'A clearer first step when you need psychological support.',
+    heroTitle: 'Psychological consultations in Blida and online',
     heroBody:
-      'Tell us what you are looking for before moving to a call or WhatsApp. The team can understand your request, preferred format and timing, then guide you toward an appropriate psychology pathway.',
+      'Meet in Blida or online. The academy team will contact you to discuss your request and confirm an appointment once you agree on a time.',
     aside:
       'Luminol Psychology may include therapy, consultation, educational guidance or coaching depending on the request. The first enquiry helps keep those pathways clear.',
-    primaryAction: 'Start your enquiry',
+    primaryAction: 'Request a consultation',
     secondaryAction: 'Explore psychology',
     routingEyebrow: 'One request · the right pathway',
     routingTitle: 'Not every psychology enquiry needs the same next step.',
@@ -84,13 +78,12 @@ const CONSULTATION_COPY = {
     description:
       'Commencez une demande en psychologie auprès de Luminol Academy afin que l’équipe comprenne votre objectif avant de vous orienter vers la prochaine étape la plus adaptée.',
     eyebrow: 'Psychologie · consultations',
-    heroTitle:
-      'Une première étape plus claire lorsque vous cherchez un soutien psychologique.',
+    heroTitle: 'Consultations psychologiques à Blida et à distance',
     heroBody:
-      'Expliquez-nous d’abord ce que vous recherchez avant de passer à un appel ou à WhatsApp. L’équipe peut comprendre votre demande, le format souhaité et votre disponibilité, puis vous orienter vers un parcours adapté.',
+      'En cabinet à Blida ou à distance. L’équipe de l’académie vous contactera pour échanger sur votre demande et confirmer le rendez-vous après accord sur le créneau.',
     aside:
       'Luminol Psychologie peut inclure thérapie, consultation, accompagnement éducatif ou coaching selon la demande. Le premier échange aide à garder ces parcours clairement distincts.',
-    primaryAction: 'Commencer la demande',
+    primaryAction: 'Demander une consultation',
     secondaryAction: 'Découvrir la psychologie',
     routingEyebrow: 'Une demande · le bon parcours',
     routingTitle:
@@ -136,12 +129,12 @@ const CONSULTATION_COPY = {
     description:
       'ابدأ طلبك في مجال علم النفس مع أكاديمية لومينول حتى يفهم الفريق هدفك أولاً ثم يوجّهك نحو الخطوة التالية الأنسب.',
     eyebrow: 'علم النفس · الاستشارات',
-    heroTitle: 'خطوة أولى أوضح عندما تحتاج إلى دعم نفسي.',
+    heroTitle: 'الاستشارات النفسية في البليدة وعن بُعد',
     heroBody:
-      'أخبرنا بما تبحث عنه قبل الانتقال مباشرة إلى المكالمة أو واتساب. يساعد ذلك الفريق على فهم طلبك وطريقة المتابعة المناسبة وتوقيتك، ثم توجيهك نحو المسار النفسي الأنسب.',
+      'يمكنك طلب لقاء في البليدة أو عن بُعد. يتواصل معك فريق الأكاديمية لمناقشة طلبك وتأكيد الموعد بعد الاتفاق معك على التوقيت.',
     aside:
       'قد يشمل مسار لومينول في علم النفس العلاج النفسي أو الاستشارة أو الإرشاد التربوي أو الكوتشينغ بحسب طبيعة الطلب. الاستفسار الأول يساعدنا على الفصل بوضوح بين هذه المسارات.',
-    primaryAction: 'ابدأ طلبك',
+    primaryAction: 'اطلب استشارة نفسية',
     secondaryAction: 'استكشف قسم علم النفس',
     routingEyebrow: 'طلب واحد · المسار المناسب',
     routingTitle: 'ليست كل طلبات علم النفس بحاجة إلى الخطوة نفسها.',
@@ -221,7 +214,6 @@ const routePhotos = [
 export default async function ConsultationsPage() {
   const locale = await getRequestLocale();
   const copy = CONSULTATION_COPY[locale];
-  const bookingHref = getBookingHref();
   const publicCopy = getPublicCopy(locale);
   const paths = copy.paths as readonly {
     number: string;
@@ -243,43 +235,10 @@ export default async function ConsultationsPage() {
             <p className={styles.eyebrow}>{copy.eyebrow as string}</p>
             <h1 id="consultation-title">{copy.heroTitle as string}</h1>
             <p className={styles.lede}>{copy.heroBody as string}</p>
-            <div className={styles.heroAside}>
-              <p>{copy.aside as string}</p>
-              <div className={styles.heroActions}>
-                <ButtonLink href="#consultation-enquiry">
-                  {copy.primaryAction as string}
-                </ButtonLink>
-                <ButtonLink
-                  href={localizeHref(locale, '/schools/psychology')}
-                  variant="secondary"
-                >
-                  {copy.secondaryAction as string}
-                </ButtonLink>
-                {bookingHref ? (
-                  <ButtonLink
-                    href={bookingHref}
-                    variant="secondary"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    {channelCopy[locale].book} ↗
-                  </ButtonLink>
-                ) : null}
-              </div>
-              <p className={styles.hoursChip}>
-                <span aria-hidden="true" />
-                {openingHours.title[locale]} ·{' '}
-                <time>{openingHours.label[locale]}</time>
-              </p>
-              <p className={styles.directLine}>
-                <a href={`tel:${officialContacts.phone}`} dir="ltr">
-                  {officialContacts.phoneDisplay}
-                </a>
-                <span aria-hidden="true">·</span>
-                <a href={`mailto:${officialContacts.email}`}>
-                  {officialContacts.email}
-                </a>
-              </p>
+            <div className={styles.heroActions}>
+              <ButtonLink href="#consultation-enquiry">
+                {copy.primaryAction}
+              </ButtonLink>
             </div>
           </div>
           <PhotoCard
@@ -291,13 +250,47 @@ export default async function ConsultationsPage() {
           />
         </section>
 
+        <section
+          id="consultation-enquiry"
+          className={styles.enquiry}
+          aria-labelledby="consultation-enquiry-title"
+        >
+          <div className={styles.enquiryContext}>
+            <GlassIcon name="enquiry-message" size="lg" />
+            <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
+            <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
+            <p>{copy.formBody as string}</p>
+            <p className={styles.safetyNote}>{copy.safety as string}</p>
+            <PhotoCard
+              photo={consultationPhotos.journal}
+              locale={locale}
+              className={styles.enquiryPhoto}
+              sizes="(max-width: 900px) 80vw, 26vw"
+            />
+          </div>
+          <div className={styles.formSurface}>
+            <EnquiryForm
+              locale={locale}
+              copy={publicCopy.form}
+              initialSchool="PSYCHOLOGY"
+              embedded
+              initialMessage={copy.initialMessage as string}
+            />
+          </div>
+        </section>
+
         <section className={styles.routing} aria-labelledby="routing-title">
           <div className={styles.routingHeader}>
             <div>
               <p className={styles.eyebrow}>{copy.routingEyebrow as string}</p>
               <h2 id="routing-title">{copy.routingTitle as string}</h2>
             </div>
-            <p>{copy.routingBody as string}</p>
+            <div>
+              <p>{copy.routingBody as string}</p>
+              <a href={localizeHref(locale, '/schools/psychology')}>
+                {copy.secondaryAction}
+              </a>
+            </div>
           </div>
           <div className={styles.pathGrid}>
             {paths.map((path, index) => (
@@ -368,35 +361,6 @@ export default async function ConsultationsPage() {
         </section>
 
         <FirstConsultation locale={locale} />
-
-        <section
-          id="consultation-enquiry"
-          className={styles.enquiry}
-          aria-labelledby="consultation-enquiry-title"
-        >
-          <div className={styles.enquiryContext}>
-            <GlassIcon name="enquiry-message" size="lg" />
-            <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
-            <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
-            <p>{copy.formBody as string}</p>
-            <p className={styles.safetyNote}>{copy.safety as string}</p>
-            <PhotoCard
-              photo={consultationPhotos.journal}
-              locale={locale}
-              className={styles.enquiryPhoto}
-              sizes="(max-width: 900px) 80vw, 26vw"
-            />
-          </div>
-          <div className={styles.formSurface}>
-            <EnquiryForm
-              locale={locale}
-              copy={publicCopy.form}
-              initialSchool="PSYCHOLOGY"
-              embedded
-              initialMessage={copy.initialMessage as string}
-            />
-          </div>
-        </section>
       </main>
       <SiteFooter />
     </>

@@ -8,6 +8,14 @@
 
 ---
 
+## Consultation and programme journeys
+
+The homepage introduces the academy through the luminous sphere. On the consultations page, a single labelled illustrative photograph accompanies the booking request. On narrow screens, the heading and action precede the photograph. The form comes before the longer explanation so a returning visitor can request an appointment directly.
+
+Programme enquiries retain the selected course through submission. The course’s published record determines the school. Visitors can retry a temporary verification failure with their input intact. Past sessions have a dedicated archive ordered by the end of each meeting in Algeria.
+
+[Review the consultation, ACT and archive screens](PUBLIC_SITE_REVIEW.md)
+
 ## 1. The core idea: an inner universe
 
 The website is designed as **a journey through the inner world of a person**.

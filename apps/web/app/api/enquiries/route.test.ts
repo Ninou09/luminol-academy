@@ -299,6 +299,7 @@ describe('POST /api/enquiries', () => {
 
   it('persists only server-verified public programme context', async () => {
     getPublicProgrammeBySlug.mockResolvedValueOnce({
+      school: 'psychology',
       title: 'Acceptance and Commitment Therapy',
       slug: { current: 'acceptance-commitment-therapy' },
     });
@@ -307,6 +308,7 @@ describe('POST /api/enquiries', () => {
       createRequest(
         {
           ...validEnquiry,
+          school: 'TRAINING',
           programmeSlug: 'acceptance-commitment-therapy',
         },
         '203.0.113.21',
@@ -316,32 +318,32 @@ describe('POST /api/enquiries', () => {
     expect(response.status).toBe(201);
     expect(getPublicProgrammeBySlug).toHaveBeenCalledWith(
       'acceptance-commitment-therapy',
+      true,
     );
     expect(createEnquiry).toHaveBeenCalledWith({
       data: expect.objectContaining({
         programmeSlug: 'acceptance-commitment-therapy',
         programmeTitleSnapshot: 'Acceptance and Commitment Therapy',
+        school: 'PSYCHOLOGY',
       }),
     });
   });
 
-  it('keeps lead capture available when programme verification fails', async () => {
-    getPublicProgrammeBySlug.mockResolvedValueOnce(null);
-
+  it.each([
+    ['retired', 410],
+    ['unavailable', 503],
+  ] as const)('preserves course intent when %s', async (state, status) => {
+    if (state === 'retired')
+      getPublicProgrammeBySlug.mockResolvedValueOnce(null);
+    else getPublicProgrammeBySlug.mockRejectedValueOnce(new Error('offline'));
     const response = await POST(
       createRequest(
         { ...validEnquiry, programmeSlug: 'retired-programme' },
         '203.0.113.22',
       ),
     );
-
-    expect(response.status).toBe(201);
-    expect(createEnquiry).toHaveBeenCalledWith({
-      data: expect.objectContaining({
-        programmeSlug: null,
-        programmeTitleSnapshot: null,
-      }),
-    });
+    expect(response.status).toBe(status);
+    expect(createEnquiry).not.toHaveBeenCalled();
   });
 
   it('returns a safe error when persistence fails', async () => {

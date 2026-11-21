@@ -1,3 +1,4 @@
+import { localizeProgrammePublicCopy } from '../../lib/programme-presentation';
 import {
   buildLanguageAlternates,
   getOpenGraphLocale,
@@ -98,7 +99,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     ? await getPublicProgrammeBySlug(programmeSlug)
     : null;
   const enquiryDefaults = programme
-    ? getProgrammeEnquiryDefaults(locale, programme)
+    ? getProgrammeEnquiryDefaults(locale, {
+        ...programme,
+        title: localizeProgrammePublicCopy(locale, programme).title,
+      })
     : null;
   const contactPaths = [
     {
@@ -221,13 +225,25 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               </Link>
             </p>
           </div>
-          <div className={styles.formSurface} data-contact-form data-reveal>
+          <div className={styles.formSurface} data-contact-form>
+            {programmeSlug && !programme && (
+              <p role="status">
+                {
+                  {
+                    ar: 'سنتحقق من توفر البرنامج عند إرسال طلبك.',
+                    fr: 'La disponibilité de cette formation sera vérifiée à l’envoi.',
+                    en: 'We will check this programme’s availability when you submit.',
+                  }[locale]
+                }{' '}
+                <bdi>{programmeSlug}</bdi>
+              </p>
+            )}
             <EnquiryForm
               locale={locale}
               copy={publicCopy.form}
               initialSchool={enquiryDefaults?.school}
               initialMessage={enquiryDefaults?.message}
-              initialProgrammeSlug={programme?.slug.current}
+              initialProgrammeSlug={programmeSlug ?? undefined}
             />
           </div>
         </section>

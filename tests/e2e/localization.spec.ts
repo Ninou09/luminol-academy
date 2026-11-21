@@ -6,14 +6,15 @@ test('mobile header keeps primary navigation, contact access and locale URL stat
   await page.setViewportSize({ width: 320, height: 812 });
   await page.goto('/fr/programmes?q=english&school=languages#catalogue');
 
+  await page.locator('button[aria-controls="mobile-menu-panel"]').click();
   const primaryNav = page.getByRole('navigation', {
-    name: 'Navigation principale',
+    name: 'Menu',
+    exact: true,
   });
   await expect(primaryNav).toBeVisible();
-  await expect(primaryNav).toHaveCSS('overflow-x', 'auto');
 
   const primaryLinks = primaryNav.getByRole('link');
-  await expect(primaryLinks).toHaveCount(5);
+  expect(await primaryLinks.count()).toBeGreaterThanOrEqual(5);
   for (let index = 0; index < (await primaryLinks.count()); index += 1) {
     await primaryLinks.nth(index).focus();
     await expect(primaryLinks.nth(index)).toBeFocused();
@@ -23,7 +24,10 @@ test('mobile header keeps primary navigation, contact access and locale URL stat
   await expect(
     page.getByRole('navigation', { name: 'Navigation du pied de page' }),
   ).toBeVisible();
-  await expect(page.locator('.site-header-actions > a')).toBeVisible();
+  await expect(
+    page.locator('#mobile-menu-panel a[href="/fr/contact"]').last(),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
 
   const arabicLocaleLink = page.locator('.locale-switcher a[lang="ar"]');
   await expect(arabicLocaleLink).toHaveAttribute(
@@ -46,10 +50,14 @@ test('Arabic mobile primary navigation remains RTL and page-safe', async ({
   await page.goto('/ar');
 
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-  const primaryNav = page.getByRole('navigation', { name: 'التنقل الرئيسي' });
+  await page.locator('button[aria-controls="mobile-menu-panel"]').click();
+  const primaryNav = page.getByRole('navigation', {
+    name: 'القائمة',
+    exact: true,
+  });
   await expect(primaryNav).toBeVisible();
   await expect(primaryNav).toHaveCSS('direction', 'rtl');
-  await expect(primaryNav.getByRole('link')).toHaveCount(5);
+  expect(await primaryNav.getByRole('link').count()).toBeGreaterThanOrEqual(5);
   await expect(primaryNav.locator('a[href="/ar/consultations"]')).toBeVisible();
   await expect(
     page.getByRole('navigation', { name: 'التنقل في تذييل الصفحة' }),

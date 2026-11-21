@@ -10,7 +10,7 @@ test('psychology consultations are localized and expose the enquiry flow', async
   await expect(
     page.getByRole('heading', {
       level: 1,
-      name: 'خطوة أولى أوضح عندما تحتاج إلى دعم نفسي.',
+      name: 'الاستشارات النفسية في البليدة وعن بُعد',
     }),
   ).toBeVisible();
 

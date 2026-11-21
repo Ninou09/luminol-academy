@@ -97,11 +97,27 @@ export async function generateMetadata({
   };
 }
 
-const journeyIcons: GlassIconName[] = [
-  'journey-listen',
-  'journey-clarity',
-  'journey-build',
-];
+/** Each school has its own trio of glass objects for its three-step journey. */
+const journeyIcons: Record<
+  'psychology' | 'languages' | 'training',
+  GlassIconName[]
+> = {
+  psychology: [
+    'journey-psychology-listen',
+    'journey-psychology-clarity',
+    'journey-psychology-build',
+  ],
+  languages: [
+    'journey-languages-listen',
+    'journey-languages-clarity',
+    'journey-languages-build',
+  ],
+  training: [
+    'journey-training-listen',
+    'journey-training-clarity',
+    'journey-training-build',
+  ],
+};
 
 const audiencePhotos: Record<string, PeoplePhoto | undefined> = {
   psychology: momentPhotos.fatherTeenWalk,
@@ -375,7 +391,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             {school.approach.map((step, index) => (
               <li key={step.title} data-reveal>
                 <GlassIcon
-                  name={journeyIcons[index % journeyIcons.length]!}
+                  name={journeyIcons[slug][index % journeyIcons[slug].length]!}
                   size="md"
                   delay={index}
                   className={styles.journeyIcon}

@@ -41,13 +41,26 @@ function presenterNames(event: LuminolEvent, locale: Locale) {
 }
 
 /** Upcoming and recent Luminol sessions, from the academy's own records. */
-export function EventsSection({ locale }: { locale: Locale }) {
+export function EventsSection({
+  locale,
+  archive = false,
+}: {
+  locale: Locale;
+  archive?: boolean;
+}) {
   const copy = eventsCopy[locale];
   const now = new Date();
-  const upcoming = luminolEvents.filter((event) => !hasEventEnded(event, now));
+  const upcoming = luminolEvents
+    .filter((event) => !hasEventEnded(event, now))
+    .sort((a, b) => (a.date ?? '9999').localeCompare(b.date ?? '9999'));
+  const endTime = (event: LuminolEvent) =>
+    Date.parse(
+      event.endsAt ?? `${event.secondDate ?? event.date}T23:59:59.999+01:00`,
+    );
+  const Heading = archive ? 'h1' : 'h2';
   const past = luminolEvents
     .filter((event) => hasEventEnded(event, now))
-    .slice(0, 5);
+    .sort((a, b) => endTime(b) - endTime(a));
   const askHref =
     getWhatsAppHref(channelCopy[locale].whatsappMessage) ??
     localizeHref(locale, '/contact');
@@ -56,17 +69,23 @@ export function EventsSection({ locale }: { locale: Locale }) {
     <section className={styles.section} aria-labelledby="events-title">
       <div className={styles.heading} data-reveal>
         <p className={styles.eyebrow}>{copy.eyebrow}</p>
-        <h2 id="events-title" data-no-split>
-          {copy.title}
-        </h2>
+        <Heading id="events-title" data-no-split>
+          {archive
+            ? {
+                ar: 'أرشيف اللقاءات',
+                en: 'Past sessions',
+                fr: 'Rencontres passées',
+              }[locale]
+            : copy.title}
+        </Heading>
         <p>{copy.intro}</p>
       </div>
 
-      {upcoming.length > 0 ? (
+      {!archive && upcoming.length > 0 ? (
         <>
           <h3 className={styles.groupTitle}>{copy.upcoming}</h3>
           <ul className={styles.upcoming}>
-            {upcoming.map((event) => {
+            {upcoming.slice(0, 3).map((event) => {
               const date = event.date ? parts(event.date, locale) : null;
               const second = event.secondDate
                 ? parts(event.secondDate, locale)
@@ -172,7 +191,7 @@ export function EventsSection({ locale }: { locale: Locale }) {
 
       <h3 className={styles.groupTitle}>{copy.past}</h3>
       <ol className={styles.past}>
-        {past.map((event) => {
+        {(archive ? past : past.slice(0, 3)).map((event) => {
           const date = parts(event.date!, locale);
           return (
             <li key={event.id}>
@@ -198,6 +217,18 @@ export function EventsSection({ locale }: { locale: Locale }) {
           );
         })}
       </ol>
+      {!archive && (
+        <a className={styles.calendar} href={localizeHref(locale, '/events')}>
+          {
+            {
+              ar: 'كل اللقاءات السابقة',
+              fr: 'Toutes les rencontres passées',
+              en: 'All past sessions',
+            }[locale]
+          }{' '}
+          →
+        </a>
+      )}
     </section>
   );
 }

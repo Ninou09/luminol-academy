@@ -174,14 +174,29 @@ export default async function ProgrammesPage({
                 <div className={styles.meta}>
                   <span>{schoolName}</span>
                   {programme.featured ? <span>{copy.featured}</span> : null}
-                  {waitlistLabel ? <span>{waitlistLabel}</span> : null}
+                  <span data-enrolment={isWaitlist ? 'waitlist' : 'enquire'}>
+                    {waitlistLabel ??
+                      {
+                        en: 'Enquire about availability',
+                        fr: 'Disponibilité sur demande',
+                        ar: 'استفسر عن توفر المقاعد',
+                      }[locale]}
+                  </span>
                 </div>
                 <h3 id={titleId} dir="auto">
                   <Link className={styles.titleLink} href={programmeHref}>
                     {publicCopy.title}
                   </Link>
                 </h3>
-                <p dir="auto">{publicCopy.summary}</p>
+                <p dir="auto">
+                  {isWaitlist
+                    ? {
+                        ar: 'لأخصائيي علم النفس والمهتمين بالعلاج بالتقبل والالتزام.',
+                        fr: 'Pour les professionnels de la psychologie et les personnes qui souhaitent découvrir l’ACT.',
+                        en: 'For psychology professionals and people interested in learning ACT.',
+                      }[locale]
+                    : publicCopy.summary}
+                </p>
                 {!isWaitlist ? (
                   <ul className={styles.tags} aria-label={copy.detailsAria}>
                     {programme.languages.map((language) => (

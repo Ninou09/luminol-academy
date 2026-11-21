@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 import { SchoolQuiz } from '../../components/school-quiz';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
-import { peoplePhotos } from '../../lib/people-photos';
+import { extraPhotos } from '../../lib/people-photos';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { schoolQuiz } from '../../lib/school-quiz';
@@ -18,9 +18,9 @@ import { getSchools } from '../../lib/schools';
 import styles from './page.module.css';
 
 const coverPhotos = {
-  psychology: peoplePhotos.therapyFamily,
-  languages: peoplePhotos.languagesClass,
-  training: peoplePhotos.trainingWorkshop,
+  psychology: extraPhotos.hubPsychology,
+  languages: extraPhotos.hubLanguages,
+  training: extraPhotos.hubTraining,
 } as const;
 
 export async function generateMetadata(): Promise<Metadata> {
