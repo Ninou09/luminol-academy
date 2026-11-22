@@ -351,7 +351,6 @@ export default async function AboutPage() {
                 className={`${styles.schoolCard} ${school.tone}`}
                 href={localizeHref(locale, `/schools/${school.slug}`)}
                 key={school.slug}
-                aria-labelledby={`about-school-${school.slug}-title`}
                 data-ecosystem-school={school.slug}
               >
                 <span className={styles.schoolBeam} aria-hidden="true" />

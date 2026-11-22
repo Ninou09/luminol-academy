@@ -54,13 +54,15 @@ test('premium About storytelling preserves public landmarks and school pathways'
   await expect(ecosystemSchools).toHaveCount(3);
   for (let index = 0; index < (await ecosystemSchools.count()); index += 1) {
     const school = ecosystemSchools.nth(index);
-    const labelId = await school.getAttribute('aria-labelledby');
-    expect(labelId).toBeTruthy();
-    const heading = page.locator(`#${labelId}`);
-    await expect(heading).toHaveJSProperty('tagName', 'H3');
+    // The link is named by its visible text (WCAG 2.5.3), which includes the
+    // school name from its heading.
+    const heading = school.locator('h3');
+    await expect(heading).toHaveCount(1);
     const schoolName = ((await heading.textContent()) ?? '').trim();
     expect(schoolName).not.toBe('');
-    await expect(school).toHaveAccessibleName(schoolName);
+    await expect(school).not.toHaveAttribute('aria-labelledby');
+    await expect(school).not.toHaveAttribute('aria-label');
+    await expect(school).toContainText(schoolName);
   }
 });
 

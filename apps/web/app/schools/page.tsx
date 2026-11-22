@@ -67,7 +67,6 @@ export default async function SchoolsPage() {
               key={school.slug}
               href={localizeHref(locale, `/schools/${school.slug}`)}
               className={`${styles.card} ${styles[school.slug] ?? ''}`}
-              aria-labelledby={`schools-card-${school.slug}`}
             >
               <span className={styles.cardPhoto}>
                 <Image

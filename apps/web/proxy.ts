@@ -2,6 +2,7 @@ import {
   LOCALE_COOKIE_MAX_AGE_SECONDS,
   LOCALE_COOKIE_NAME,
   LOCALE_REQUEST_HEADER,
+  localeSchema,
   resolveLocaleRequest,
   type Locale,
 } from '@luminol/localization';
@@ -31,7 +32,21 @@ function persistLocale(
   return response;
 }
 
+/**
+ * True for the internal request that this proxy produced by rewriting
+ * `/ar/about` to `/about`. On some platforms (seen with `next start` on
+ * Windows) Next.js runs the proxy again for that rewritten path; without this
+ * check it would redirect back to `/ar/about` in an endless loop. The public
+ * website has no protected routes, so trusting the header here is safe.
+ */
+export function isLocalizedRewrite(request: NextRequest): boolean {
+  return localeSchema.safeParse(request.headers.get(LOCALE_REQUEST_HEADER))
+    .success;
+}
+
 export function proxy(request: NextRequest) {
+  if (isLocalizedRewrite(request)) return NextResponse.next();
+
   const decision = resolveLocaleRequest(
     request.nextUrl.pathname,
     request.cookies.get(LOCALE_COOKIE_NAME)?.value,

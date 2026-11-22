@@ -17,6 +17,7 @@
     "db:studio": "pnpm --filter @luminol/database studio"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@playwright/test": "^1.62.1",
     "eslint": "^10.9.1",
     "prettier": "^3.6.2",

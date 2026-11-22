@@ -13,19 +13,19 @@ test('public language switcher exposes native language names and linked resource
   for (const language of [
     {
       code: 'ar',
-      name: 'العربية',
+      name: 'العربية AR',
       href: '/ar/about',
       current: false,
     },
     {
       code: 'fr',
-      name: 'Français',
+      name: 'Français FR',
       href: '/fr/about',
       current: false,
     },
     {
       code: 'en',
-      name: 'English',
+      name: 'English EN',
       href: '/en/about',
       current: true,
     },

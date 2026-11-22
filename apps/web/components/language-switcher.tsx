@@ -44,7 +44,9 @@ export function LanguageSwitcher({ locale, label }: LanguageSwitcherProps) {
             lang={target}
             hrefLang={target}
             dir={definition.direction}
-            aria-label={definition.nativeLabel}
+            // Starts from the language name and keeps the visible code in the
+            // accessible name, so voice control can follow "FR" (WCAG 2.5.3).
+            aria-label={`${definition.nativeLabel} ${target.toUpperCase()}`}
             aria-current={target === locale ? 'page' : undefined}
           >
             {target.toUpperCase()}

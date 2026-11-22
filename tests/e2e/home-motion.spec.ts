@@ -83,8 +83,10 @@ test('motion targets are discovered after client navigation to home', async ({
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.goto('/en/about');
+  // The logo link is named by its visible wordmark, "Luminol Academy".
   await page
-    .getByRole('link', { name: /luminol home/i })
+    .getByRole('banner')
+    .getByRole('link', { name: /^luminol\s+academy$/i })
     .first()
     .click();
 
