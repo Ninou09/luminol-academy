@@ -97,12 +97,14 @@ export function verifyClerkWebhook(
   headers: { id: string; timestamp: string; signature: string },
   secret: string,
 ): ClerkUserEvent {
-  const verified: unknown = new Webhook(secret).verify(payload, {
+  // Throws when the signature or timestamp is invalid. Svix 2 no longer
+  // returns the event, so the verified body is parsed here.
+  new Webhook(secret).verify(payload, {
     'svix-id': headers.id,
     'svix-timestamp': headers.timestamp,
     'svix-signature': headers.signature,
   });
-  return clerkEventSchema.parse(verified);
+  return clerkEventSchema.parse(JSON.parse(payload));
 }
 
 export async function synchronizeClerkUser(
