@@ -78,7 +78,6 @@ export async function SiteHeader() {
             className={styles.brand}
             href={localizeHref(locale, '/')}
             activePathname="/"
-            ariaLabel={copy.site.nav.homeAria}
           >
             <Wordmark />
           </CurrentPageLink>
@@ -230,11 +229,7 @@ export async function SiteFooter() {
       />
       <div className={styles.footerMain}>
         <div className={styles.footerBrand}>
-          <CurrentPageLink
-            href={localizeHref(locale, '/')}
-            activePathname="/"
-            ariaLabel={copy.site.nav.homeAria}
-          >
+          <CurrentPageLink href={localizeHref(locale, '/')} activePathname="/">
             <Wordmark className={styles.footerWordmark ?? ''} />
           </CurrentPageLink>
           <p>{copy.site.description}</p>
