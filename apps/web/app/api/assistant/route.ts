@@ -38,9 +38,9 @@ const requestSchema = z.object({
 });
 
 const unavailable: Record<'en' | 'fr' | 'ar', string> = {
-  en: 'The assistant is not available right now. Please message us on WhatsApp (+213 556 91 45 17) or call reception (+213 777 07 71 97).',
-  fr: 'L’assistant n’est pas disponible pour le moment. Écrivez-nous sur WhatsApp (+213 556 91 45 17) ou appelez l’accueil (+213 777 07 71 97).',
-  ar: 'المساعد غير متاح حاليًا. راسلنا على واتساب ‎(+213 556 91 45 17) أو اتصل بالاستقبال ‎(+213 777 07 71 97).',
+  en: 'The assistant is not available right now. Please message us on WhatsApp (+213 553 14 02 93) or call reception (+213 777 07 71 97).',
+  fr: 'L’assistant n’est pas disponible pour le moment. Écrivez-nous sur WhatsApp (+213 553 14 02 93) ou appelez l’accueil (+213 777 07 71 97).',
+  ar: 'المساعد غير متاح حاليًا. راسلنا على واتساب ‎(+213 553 14 02 93) أو اتصل بالاستقبال ‎(+213 777 07 71 97).',
 };
 
 let client: Anthropic | null = null;

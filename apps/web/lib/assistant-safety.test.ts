@@ -24,7 +24,7 @@ describe('assistant crisis check', () => {
   it('gives human contacts in every language', () => {
     for (const reply of Object.values(crisisReply)) {
       expect(reply).toContain('+213 777 07 71 97');
-      expect(reply).toContain('+213 556 91 45 17');
+      expect(reply).toContain('+213 553 14 02 93');
     }
   });
 });

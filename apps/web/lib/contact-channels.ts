@@ -4,12 +4,16 @@ import type { Locale } from '@luminol/localization';
  * Optional direct channels, switched on from the hosting environment:
  * NEXT_PUBLIC_WHATSAPP_NUMBER (international digits, e.g. 213XXXXXXXXX) and
  * NEXT_PUBLIC_BOOKING_URL (an https scheduling link such as Cal.com).
- * Nothing is shown until Luminol provides real values.
+ * The official numbers below are used when these are not set.
  */
 /** Official Luminol contact details, confirmed by the academy. */
 export const officialContacts = {
-  whatsapp: '+213556914517',
-  whatsappDisplay: '+213 556 91 45 17',
+  /** WhatsApp Business account: every WhatsApp button opens this number. */
+  whatsapp: '+213553140293',
+  whatsappDisplay: '+213 553 14 02 93',
+  /** Second WhatsApp line, still answered by the team. */
+  whatsappSecond: '+213556914517',
+  whatsappSecondDisplay: '+213 556 91 45 17',
   phone: '+213777077197',
   phoneDisplay: '+213 777 07 71 97',
   email: 'luminolacademy09@gmail.com',
@@ -172,6 +176,7 @@ export const contactLabels: Record<
     callHint: string;
     whatsapp: string;
     whatsappHint: string;
+    whatsappSecondHint: string;
     email: string;
     emailHint: string;
   }
@@ -181,7 +186,8 @@ export const contactLabels: Record<
     call: 'Call reception',
     callHint: 'Phone',
     whatsapp: 'Message on WhatsApp',
-    whatsappHint: 'WhatsApp',
+    whatsappHint: 'WhatsApp Business',
+    whatsappSecondHint: 'WhatsApp · second line',
     email: 'Write an email',
     emailHint: 'Email',
   },
@@ -190,7 +196,8 @@ export const contactLabels: Record<
     call: 'Appeler l’accueil',
     callHint: 'Téléphone',
     whatsapp: 'Écrire sur WhatsApp',
-    whatsappHint: 'WhatsApp',
+    whatsappHint: 'WhatsApp Business',
+    whatsappSecondHint: 'WhatsApp · deuxième ligne',
     email: 'Envoyer un e-mail',
     emailHint: 'E-mail',
   },
@@ -199,7 +206,8 @@ export const contactLabels: Record<
     call: 'اتصل بالاستقبال',
     callHint: 'الهاتف',
     whatsapp: 'راسلنا عبر واتساب',
-    whatsappHint: 'واتساب',
+    whatsappHint: 'واتساب للأعمال',
+    whatsappSecondHint: 'واتساب · الخط الثاني',
     email: 'أرسل بريدًا إلكترونيًا',
     emailHint: 'البريد الإلكتروني',
   },

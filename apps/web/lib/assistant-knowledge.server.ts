@@ -63,7 +63,8 @@ ${schools}
 
 ### Contact
 - Reception phone: ${officialContacts.phoneDisplay}
-- WhatsApp: ${officialContacts.whatsappDisplay}
+- WhatsApp Business (main): ${officialContacts.whatsappDisplay}
+- WhatsApp second line: ${officialContacts.whatsappSecondDisplay}
 - Email: ${officialContacts.email}
 - Address: Luminol Academy, ${officialAddress.street.en}, ${officialAddress.city.en}, ${officialAddress.country.en} (${officialAddress.street.ar})
 - Directions: ${officialAddress.directionsHref}

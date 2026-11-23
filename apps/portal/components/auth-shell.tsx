@@ -28,7 +28,7 @@ const copy = {
       'Verified certificates',
     ],
     back: 'Back to the website',
-    help: 'Need help signing in? WhatsApp +213 556 91 45 17',
+    help: 'Need help signing in? WhatsApp +213 553 14 02 93',
   },
   fr: {
     eyebrow: 'Votre espace Luminol',
@@ -41,7 +41,7 @@ const copy = {
       'Certificats vérifiés',
     ],
     back: 'Retour au site',
-    help: 'Besoin d’aide pour vous connecter ? WhatsApp +213 556 91 45 17',
+    help: 'Besoin d’aide pour vous connecter ? WhatsApp +213 553 14 02 93',
   },
   ar: {
     eyebrow: 'فضاؤك في لومينول',
@@ -50,7 +50,7 @@ const copy = {
     lede: 'مكان هادئ واحد لدوراتك وجلساتك وتقدّمك وشهاداتك.',
     points: ['الدروس وجدول الجلسات', 'تقدّم واضح أمامك', 'شهادات موثّقة'],
     back: 'العودة إلى الموقع',
-    help: 'تحتاج مساعدة في الدخول؟ واتساب ‎+213 556 91 45 17',
+    help: 'تحتاج مساعدة في الدخول؟ واتساب ‎+213 553 14 02 93',
   },
 } as const satisfies Record<
   Locale,
