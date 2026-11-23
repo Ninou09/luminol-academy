@@ -14,6 +14,7 @@ This index lists every document in the repository, grouped by purpose. Guides ma
 | [Public website](PUBLIC_WEBSITE.md)              | Routes, features, localization, media rules and academy facts    | AR  |
 | [Public site review](PUBLIC_SITE_REVIEW.md)      | Annotated screenshots of consultation and programme journeys     | AR  |
 | [Engineering rules](../AGENTS.md)                | Mandatory conventions for every change                           |     |
+| [Handoff](HANDOFF.md)                            | Current state, next actions and what is waiting on the academy   |     |
 
 ## Product and planning
 

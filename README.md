@@ -19,6 +19,7 @@ Start with the [documentation index](docs/README.md). The most useful entry poin
 - [Configuration and deployment](docs/CONFIGURATION.md): every environment variable, Vercel projects and release flow
 - [Public website](docs/PUBLIC_WEBSITE.md): features, localization, media rules and the AI assistant
 - [Public site review](docs/PUBLIC_SITE_REVIEW.md): annotated screenshots of the consultation and programme journeys
+- [Handoff](docs/HANDOFF.md): current state and the next actions
 - [Project status](docs/PROJECT_STATUS.md) and [master roadmap](docs/MASTER_ROADMAP.md)
 
 Arabic translations of the core guides live in [`docs/ar`](docs/ar/README.md).
