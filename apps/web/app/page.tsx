@@ -143,7 +143,7 @@ export default async function Page() {
             <dd>{copy.connectedSchools}</dd>
           </div>
           <div>
-            <dt data-count="30">30+</dt>
+            <dt data-count="31">31+</dt>
             <dd>{copy.humanJourney}</dd>
           </div>
           <div>

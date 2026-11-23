@@ -19,7 +19,7 @@ test('psychology consultations are localized and expose the enquiry flow', async
   );
   await expect(founderAuthority).toBeVisible();
   await expect(founderAuthority).toContainText('خداوي فطومة');
-  await expect(founderAuthority).toContainText('30');
+  await expect(founderAuthority).toContainText('31');
   await expect(founderAuthority.locator('a')).toHaveAttribute(
     'href',
     '/ar/about',

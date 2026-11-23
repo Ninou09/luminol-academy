@@ -11,7 +11,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
-import { journalArticles, journalCopy } from '../../../lib/journal';
+import {
+  journalArticles,
+  journalAuthor,
+  journalCopy,
+} from '../../../lib/journal';
 import { getRequestLocale } from '../../../lib/request-locale';
 import { serializeJsonLd } from '../../../lib/structured-data';
 import styles from '../journal.module.css';
@@ -60,6 +64,7 @@ export default async function JournalArticlePage({ params }: Props) {
     datePublished: article.date,
     inLanguage: locale,
     image: article.cover,
+    author: { '@type': 'Person', name: journalAuthor[locale].name },
     publisher: { '@type': 'Organization', name: 'Luminol Academy' },
   };
 
@@ -80,6 +85,9 @@ export default async function JournalArticlePage({ params }: Props) {
             {article.draft ? (
               <span className={styles.draft}>{copy.draft}</span>
             ) : null}
+            <span>
+              {journalAuthor[locale].label} {journalAuthor[locale].name}
+            </span>
             <time dateTime={article.date}>{article.date}</time>
             <span>
               {article.minutes} {copy.minutes}

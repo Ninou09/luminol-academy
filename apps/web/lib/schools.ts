@@ -94,14 +94,14 @@ const englishSchools: Record<SchoolSlug, SchoolDefinition> = {
           'Structured language development that balances grammar, comprehension, pronunciation and expression.',
       },
       {
-        title: 'Fluency pathways',
+        title: 'Level programmes',
         description:
-          'Focused practice for learners ready to move from knowing the language to using it naturally.',
+          'A step-by-step path from beginner to advanced, starting at your level. In person in Blida or online.',
       },
       {
-        title: 'Communication skills',
+        title: 'Speaking programme',
         description:
-          'Practical speaking, presentation and workplace communication for real personal and professional situations.',
+          'Guided conversation practice to speak with confidence in everyday, academic and professional situations. In person or online.',
       },
     ],
     approach: [
@@ -267,14 +267,14 @@ const frenchSchools: Record<SchoolSlug, SchoolDefinition> = {
           'Un développement structuré qui équilibre grammaire, compréhension, prononciation et expression.',
       },
       {
-        title: 'Parcours d’aisance',
+        title: 'Programmes par niveaux',
         description:
-          'Une pratique ciblée pour passer de la connaissance de la langue à son utilisation naturelle.',
+          'Un parcours progressif du niveau débutant au niveau avancé, qui commence à votre niveau. En présentiel à Blida ou en ligne.',
       },
       {
-        title: 'Compétences de communication',
+        title: 'Programme d’expression orale',
         description:
-          'Prise de parole, présentation et communication professionnelle pour des situations personnelles et professionnelles réelles.',
+          'Une pratique guidée de la conversation pour parler avec assurance au quotidien, dans les études et au travail. En présentiel ou en ligne.',
       },
     ],
     approach: [
@@ -438,14 +438,14 @@ const arabicSchools: Record<SchoolSlug, SchoolDefinition> = {
           'تطوير لغوي منظّم يوازن بين القواعد والفهم والنطق والتعبير.',
       },
       {
-        title: 'مسارات الطلاقة',
+        title: 'برامج المستويات',
         description:
-          'ممارسة مركّزة للمتعلمين المستعدين للانتقال من معرفة اللغة إلى استخدامها بصورة طبيعية.',
+          'مسار متدرّج من المستوى المبتدئ إلى المتقدّم يبدأ من مستواك. حضوريًا في البليدة أو عن بُعد.',
       },
       {
-        title: 'مهارات التواصل',
+        title: 'برنامج المحادثة',
         description:
-          'مهارات عملية في الحديث والعرض والتواصل المهني لمواقف شخصية وعملية حقيقية.',
+          'ممارسة موجّهة للمحادثة تمنحك الثقة في الحديث في الحياة اليومية والدراسة والعمل. حضوريًا أو عن بُعد.',
       },
     ],
     approach: [

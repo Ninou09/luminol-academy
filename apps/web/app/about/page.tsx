@@ -35,10 +35,10 @@ const founderAuthorityByLocale = {
   en: {
     eyebrow: 'Founder-led authority',
     title: 'Experience behind the institution.',
-    body: 'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 30 years of field experience, and supported by a broader expert team across content and programme delivery.',
+    body: 'Luminol Academy is anchored by founder Kheddaoui Fettouma, an expert therapist with more than 31 years of field experience, and supported by a broader expert team across content and programme delivery.',
     facts: [
       {
-        number: '30+',
+        number: '31+',
         title: 'Years of field experience',
         description:
           'Long-term practical experience anchors the psychology division in real human work, not trend-led content alone.',
@@ -55,10 +55,10 @@ const founderAuthorityByLocale = {
   fr: {
     eyebrow: 'Une autorité portée par la fondatrice',
     title: 'Une expérience réelle derrière l’institution.',
-    body: 'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 30 ans d’expérience de terrain, ainsi que sur une équipe élargie d’experts pour les contenus et les programmes.',
+    body: 'Luminol Academy s’appuie sur sa fondatrice Kheddaoui Fettouma, thérapeute experte avec plus de 31 ans d’expérience de terrain, ainsi que sur une équipe élargie d’experts pour les contenus et les programmes.',
     facts: [
       {
-        number: '30+',
+        number: '31+',
         title: 'Années d’expérience de terrain',
         description:
           'Une longue expérience pratique ancre le pôle psychologie dans le travail humain réel, au-delà des tendances de contenu.',
@@ -75,10 +75,10 @@ const founderAuthorityByLocale = {
   ar: {
     eyebrow: 'خبرة تقودها المؤسسة',
     title: 'خبرة ميدانية حقيقية وراء المؤسسة.',
-    body: 'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 30 سنة من الخبرة الميدانية، إلى جانب فريق أوسع من الخبراء في المحتوى وتقديم البرامج.',
+    body: 'ترتكز أكاديمية لومينول على خبرة مؤسستها خداوي فطومة، وهي معالجة خبيرة تمتلك أكثر من 31 سنة من الخبرة الميدانية، إلى جانب فريق أوسع من الخبراء في المحتوى وتقديم البرامج.',
     facts: [
       {
-        number: '+30',
+        number: '+31',
         title: 'سنة من الخبرة الميدانية',
         description:
           'تمنح الخبرة العملية الطويلة قسم علم النفس أساساً مرتبطاً بالعمل الإنساني الحقيقي، وليس بالمحتوى الرائج فقط.',

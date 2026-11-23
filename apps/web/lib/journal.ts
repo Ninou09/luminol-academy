@@ -267,6 +267,13 @@ export const journalArticles: readonly JournalArticle[] = [
   },
 ];
 
+/** Articles are written and signed by the academy's founder. */
+export const journalAuthor: Record<Locale, { label: string; name: string }> = {
+  en: { label: 'By', name: 'Kheddaoui Fettouma' },
+  fr: { label: 'Par', name: 'Kheddaoui Fettouma' },
+  ar: { label: 'بقلم', name: 'خداوي فطومة' },
+};
+
 export const journalCopy: Record<
   Locale,
   {
