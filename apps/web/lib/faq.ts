@@ -12,7 +12,8 @@ export type FaqCopy = {
 /**
  * Answers use only facts already stated elsewhere on the site (the enquiry
  * flow, the safety notice, the certificate scope and the trilingual offer).
- * Prices, durations and response times stay out until Luminol confirms them.
+ * Fees are explained personally by the team, so no amounts are published.
+ * Response times stay out until Luminol confirms them.
  */
 export const contactFaq: Record<Locale, FaqCopy> = {
   en: {
@@ -60,7 +61,12 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       {
         question: 'When do courses start, and can I attend online?',
         answer:
-          'All psychology and language courses are open for registration. Each group starts as soon as it is full, and you can choose to attend in person in Blida or online.',
+          'All psychology and language courses are open for registration. Each group starts as soon as it is full, and you can choose to attend in person in Blida or online. Psychology courses run for 18 hours, in Arabic with some Darija and French.',
+      },
+      {
+        question: 'How much do consultations and courses cost?',
+        answer:
+          'Our fees are kept accessible, and we prefer to explain them personally so you get the right option for your situation. Message us on WhatsApp or call reception: we will give you every detail, with no commitment.',
       },
       {
         question: 'How are my details used?',
@@ -115,7 +121,12 @@ export const contactFaq: Record<Locale, FaqCopy> = {
         question:
           'Quand les formations commencent-elles, et puis-je les suivre en ligne ?',
         answer:
-          'Toutes les formations en psychologie et en langues sont ouvertes aux inscriptions. Chaque groupe démarre dès qu’il est complet, en présentiel à Blida ou en ligne, selon votre choix.',
+          'Toutes les formations en psychologie et en langues sont ouvertes aux inscriptions. Chaque groupe démarre dès qu’il est complet, en présentiel à Blida ou en ligne, selon votre choix. Les formations en psychologie durent 18 heures, en arabe avec un peu de darija et de français.',
+      },
+      {
+        question: 'Combien coûtent les consultations et les formations ?',
+        answer:
+          'Nos tarifs restent accessibles, et nous préférons vous les présenter de vive voix pour vous proposer la formule adaptée à votre situation. Écrivez-nous sur WhatsApp ou appelez l’accueil : nous vous donnerons tous les détails, sans engagement.',
       },
       {
         question: 'Comment mes données sont-elles utilisées ?',
@@ -168,7 +179,12 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       {
         question: 'متى تبدأ الدورات، وهل يمكنني متابعتها عن بُعد؟',
         answer:
-          'جميع دورات علم النفس واللغات مفتوحة للتسجيل. تبدأ كل مجموعة بمجرد اكتمالها، ويمكنك اختيار الحضور في البليدة أو المتابعة عن بُعد.',
+          'جميع دورات علم النفس واللغات مفتوحة للتسجيل. تبدأ كل مجموعة بمجرد اكتمالها، ويمكنك اختيار الحضور في البليدة أو المتابعة عن بُعد. تمتد دورات علم النفس 18 ساعة، بالعربية مع شيء من الدارجة والفرنسية.',
+      },
+      {
+        question: 'كم تكلّف الاستشارات والدورات؟',
+        answer:
+          'أسعارنا في متناول الجميع، ونفضّل أن نشرحها لك شخصيًا لنقترح عليك الصيغة الأنسب لوضعك. راسلنا عبر واتساب أو اتصل بالاستقبال، وسنعطيك كل التفاصيل دون أي التزام.',
       },
       {
         question: 'كيف تُستخدم بياناتي؟',
