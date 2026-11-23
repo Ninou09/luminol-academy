@@ -33,7 +33,7 @@ export const securityHeaders = [
  * same-origin geolocation. React's development build also needs `eval` for
  * debugging; production never receives 'unsafe-eval'.
  */
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = globalThis.process?.env?.NODE_ENV === 'development';
 const publicWebsiteCsp = csp
   .replace(
     "script-src 'self' 'unsafe-inline'",
