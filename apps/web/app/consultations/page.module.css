@@ -606,3 +606,14 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Fees are explained personally, so the hero only signals accessibility. */
+.feesNote {
+  max-width: 34rem;
+  margin: 1.25rem 0 0;
+  padding-inline-start: 0.9rem;
+  border-inline-start: 2px solid var(--color-brand-gold-strong);
+  color: var(--color-brand-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}

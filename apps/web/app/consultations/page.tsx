@@ -35,6 +35,8 @@ const CONSULTATION_COPY = {
     aside:
       'Luminol Psychology may include therapy, consultation, educational guidance or coaching depending on the request. The first enquiry helps keep those pathways clear.',
     primaryAction: 'Request a consultation',
+    feesNote:
+      'Accessible fees, explained personally. Message us on WhatsApp or call reception for every detail, with no commitment.',
     secondaryAction: 'Explore psychology',
     routingEyebrow: 'One request · the right pathway',
     routingTitle: 'Not every psychology enquiry needs the same next step.',
@@ -84,6 +86,8 @@ const CONSULTATION_COPY = {
     aside:
       'Luminol Psychologie peut inclure thérapie, consultation, accompagnement éducatif ou coaching selon la demande. Le premier échange aide à garder ces parcours clairement distincts.',
     primaryAction: 'Demander une consultation',
+    feesNote:
+      'Des tarifs accessibles, présentés de vive voix. Écrivez-nous sur WhatsApp ou appelez l’accueil pour tous les détails, sans engagement.',
     secondaryAction: 'Découvrir la psychologie',
     routingEyebrow: 'Une demande · le bon parcours',
     routingTitle:
@@ -135,6 +139,8 @@ const CONSULTATION_COPY = {
     aside:
       'قد يشمل مسار لومينول في علم النفس العلاج النفسي أو الاستشارة أو الإرشاد التربوي أو الكوتشينغ بحسب طبيعة الطلب. الاستفسار الأول يساعدنا على الفصل بوضوح بين هذه المسارات.',
     primaryAction: 'اطلب استشارة نفسية',
+    feesNote:
+      'أسعار في متناول الجميع نشرحها لك شخصيًا. راسلنا عبر واتساب أو اتصل بالاستقبال لمعرفة كل التفاصيل دون أي التزام.',
     secondaryAction: 'استكشف قسم علم النفس',
     routingEyebrow: 'طلب واحد · المسار المناسب',
     routingTitle: 'ليست كل طلبات علم النفس بحاجة إلى الخطوة نفسها.',
@@ -240,6 +246,7 @@ export default async function ConsultationsPage() {
                 {copy.primaryAction}
               </ButtonLink>
             </div>
+            <p className={styles.feesNote}>{copy.feesNote as string}</p>
           </div>
           <PhotoCard
             className={styles.heroStack}

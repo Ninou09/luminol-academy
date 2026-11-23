@@ -74,6 +74,10 @@ ${schools}
 ### Psychology consultations
 A person sends a request (form, WhatsApp or a call). Staff then confirm the specialist, the price and the time; the appointment is confirmed only after that follow-up. Sessions happen online or at the academy in Blida.
 
+### Courses and fees
+- Each psychology course runs for 18 hours, taught in Arabic with some Darija and a little French, in person in Blida or online. Every course ends with a certificate of attendance. A group starts once it is full.
+- Fees: never state amounts. Say that fees are accessible and that the team explains them personally, then point to WhatsApp or the reception phone.
+
 ### Events
 ${events}
 

@@ -383,7 +383,7 @@ export const PUBLIC_COPY = {
       eyebrow: 'Search & discovery',
       heroTitle: 'Find the Luminol programme that fits your next step.',
       heroBody:
-        'Search the currently published programme catalogue, then narrow it by school or delivery language.',
+        'Search the published catalogue, then narrow it by school or delivery language. Each psychology course runs for 18 hours, in Arabic with some Darija and French, in person in Blida or online.',
       searchLabel: 'Search programmes',
       searchPlaceholder: 'Try leadership, English or stress',
       schoolLabel: 'School',
@@ -666,7 +666,7 @@ export const PUBLIC_COPY = {
       eyebrow: 'Recherche & découverte',
       heroTitle: 'Trouvez le programme Luminol adapté à votre prochaine étape.',
       heroBody:
-        'Recherchez dans le catalogue publié puis affinez par école ou langue d’enseignement.',
+        'Recherchez dans le catalogue publié puis affinez par école ou langue d’enseignement. Chaque formation en psychologie dure 18 heures, en arabe avec un peu de darija et de français, en présentiel à Blida ou en ligne.',
       searchLabel: 'Rechercher un programme',
       searchPlaceholder: 'Ex. leadership, anglais ou stress',
       schoolLabel: 'École',
@@ -940,7 +940,7 @@ export const PUBLIC_COPY = {
       eyebrow: 'البحث والاستكشاف',
       heroTitle: 'اعثر على برنامج لومينول المناسب لخطوتك القادمة.',
       heroBody:
-        'ابحث في دليل البرامج المنشورة ثم حدّد النتائج حسب المدرسة أو لغة التقديم.',
+        'ابحث في دليل البرامج المنشورة ثم حدّد النتائج حسب المدرسة أو لغة التقديم. تمتد كل دورة في علم النفس 18 ساعة، بالعربية مع شيء من الدارجة والفرنسية، حضوريًا في البليدة أو عن بُعد.',
       searchLabel: 'ابحث في البرامج',
       searchPlaceholder: 'مثال: قيادة، إنجليزية أو ضغط نفسي',
       schoolLabel: 'المدرسة',
