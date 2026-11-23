@@ -73,13 +73,13 @@ The header shows a **My account** link to the learner portal, localized to the c
 
 ## Academy facts used on the site
 
-| Fact          | Value                                               |
-| ------------- | --------------------------------------------------- |
-| Address       | Villa No. 2, Ezzayat Street, Blida, Algeria         |
-| Opening hours | Saturday to Thursday, 08:00–17:00. Closed on Friday |
-| WhatsApp      | +213 556 91 45 17                                   |
-| Reception     | +213 777 07 71 97                                   |
-| Email         | luminolacademy09@gmail.com                          |
+| Fact          | Value                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| Address       | Villa No. 2, Ezzayat Street, Blida, Algeria                                                 |
+| Opening hours | Saturday to Thursday, 08:00–17:00. Closed on Friday                                         |
+| WhatsApp      | +213 553 14 02 93 (WhatsApp Business, used by every button) · second line +213 556 91 45 17 |
+| Reception     | +213 777 07 71 97                                                                           |
+| Email         | luminolacademy09@gmail.com                                                                  |
 
 Keep these values in `apps/web/lib/contact-channels.ts` and the localized copy in sync when they change. Client records from the CRM are never published on the website.
 

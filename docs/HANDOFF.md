@@ -103,6 +103,7 @@ Redeploy each project after changing its variables. Full reference: [Configurati
 ## Decisions already made by the owner
 
 - Contact details, address (شارع الزيات، فيلا رقم 2، البليدة) and social links are correct.
+- WhatsApp: every button opens the WhatsApp Business account +213 553 14 02 93. The second line +213 556 91 45 17 is listed on the Contact page and known to the assistant.
 - Consultations: individual, couples and family, mostly led by the founder, Kheddaoui Fettouma, 31+ years of experience. No parent attendance or signature is required.
 - Fees: consultations have a fixed fee, but **no amounts are published**. The site says fees are accessible and explained personally by WhatsApp or phone.
 - Courses: all psychology and language courses are open. A group starts once full. 18 hours each, in Arabic with some Darija and a little French, in person or online, with a certificate of attendance.

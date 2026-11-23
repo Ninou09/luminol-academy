@@ -17,7 +17,7 @@ const icons = {
     'M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm0 2v.4l8 5 8-5V7Zm16 2.8-7.5 4.7a1 1 0 0 1-1 0L4 9.8V17h16Z',
 } as const;
 
-/** Three direct channels: reception phone, WhatsApp and email. */
+/** Direct channels: reception phone, two WhatsApp lines and email. */
 export function ContactCards({
   locale,
   className,
@@ -26,15 +26,8 @@ export function ContactCards({
   className?: string | undefined;
 }) {
   const labels = contactLabels[locale];
+  // Both WhatsApp lines share the first row; phone and email follow.
   const cards = [
-    {
-      id: 'phone' as const,
-      hint: labels.callHint,
-      action: labels.call,
-      value: officialContacts.phoneDisplay,
-      href: `tel:${officialContacts.phone}`,
-      external: false,
-    },
     {
       id: 'whatsapp' as const,
       hint: labels.whatsappHint,
@@ -42,6 +35,22 @@ export function ContactCards({
       value: officialContacts.whatsappDisplay,
       href: getWhatsAppHref(channelCopy[locale].whatsappMessage) ?? '#',
       external: true,
+    },
+    {
+      id: 'whatsappSecond' as const,
+      hint: labels.whatsappSecondHint,
+      action: labels.whatsapp,
+      value: officialContacts.whatsappSecondDisplay,
+      href: `https://wa.me/${officialContacts.whatsappSecond.replace(/\D/g, '')}?text=${encodeURIComponent(channelCopy[locale].whatsappMessage)}`,
+      external: true,
+    },
+    {
+      id: 'phone' as const,
+      hint: labels.callHint,
+      action: labels.call,
+      value: officialContacts.phoneDisplay,
+      href: `tel:${officialContacts.phone}`,
+      external: false,
     },
     {
       id: 'email' as const,
@@ -57,13 +66,16 @@ export function ContactCards({
       {cards.map((card) => (
         <li key={card.id}>
           <a
-            className={`${styles.card} ${styles[card.id] ?? ''}`}
+            className={`${styles.card} ${styles[card.id === 'whatsappSecond' ? 'whatsapp' : card.id] ?? ''}`}
             href={card.href}
             {...(card.external ? { target: '_blank', rel: 'noopener' } : {})}
           >
             <span className={styles.icon} aria-hidden="true">
               <svg viewBox="0 0 24 24">
-                <path fill="currentColor" d={icons[card.id]} />
+                <path
+                  fill="currentColor"
+                  d={icons[card.id === 'whatsappSecond' ? 'whatsapp' : card.id]}
+                />
               </svg>
             </span>
             <span className={styles.text}>
