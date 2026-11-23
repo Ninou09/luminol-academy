@@ -1472,12 +1472,97 @@
   }
 }
 
+/* Schools, approach and events read as night-blue glass panels: inset from
+   the screen edges, with soft cyan and gold light instead of a flat fill. */
 .page[data-cosmos]
   :is(
     .approach,
     section[aria-labelledby='events-title'],
     section[aria-labelledby='home-schools-title']
   ) {
-  background: color-mix(in srgb, var(--color-brand-night) 38%, #252526);
-  border-block-start: 1px solid var(--color-brand-line);
+  position: relative;
+  isolation: isolate;
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 84rem);
+  margin: clamp(1.5rem, 4vw, 3rem) auto;
+  padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 5vw, 4.5rem);
+  overflow: clip;
+  border: 1px solid rgb(139 222 239 / 0.14);
+  border-radius: clamp(1.5rem, 3vw, 2.5rem);
+  background:
+    radial-gradient(
+      60rem 32rem at 88% 0%,
+      rgb(53 185 221 / 0.12),
+      transparent 62%
+    ),
+    radial-gradient(
+      48rem 28rem at 6% 100%,
+      rgb(240 207 142 / 0.08),
+      transparent 60%
+    ),
+    linear-gradient(180deg, rgb(13 40 66 / 0.72), rgb(6 22 38 / 0.86));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.07),
+    0 2.5rem 5rem -2.5rem rgb(0 0 0 / 0.6);
+}
+.page[data-cosmos] .approach {
+  align-items: start;
+}
+
+/* Five approach steps beside the statement, linking to the full journey. */
+.approachSide {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.25rem);
+  align-self: center;
+}
+.approachSteps {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+.approachSteps li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1.1rem;
+  align-items: baseline;
+  padding-block: 1rem;
+  border-block-end: 1px solid rgb(255 255 255 / 0.1);
+}
+.approachSteps li:first-child {
+  border-block-start: 1px solid rgb(255 255 255 / 0.1);
+}
+.approachSteps li > span {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.approachSteps h3 {
+  margin: 0;
+  color: #f4f8fb;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.approachSteps p {
+  margin: 0.3rem 0 0;
+  color: rgb(212 229 238 / 0.72);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+@media (max-width: 900px) {
+  .page[data-cosmos] .approach {
+    grid-template-columns: 1fr;
+  }
+  .approachIntro {
+    position: static;
+  }
+}
+
+.page[data-cosmos] .approachIntro h2 + p {
+  margin-top: 1.25rem;
 }

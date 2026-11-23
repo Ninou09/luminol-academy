@@ -43,6 +43,7 @@ test('localized public responses preserve the governed security-header contract'
     const permissionsPolicy = headers['permissions-policy'];
     expect(permissionsPolicy).toContain('camera=()');
     expect(permissionsPolicy).toContain('microphone=()');
-    expect(permissionsPolicy).toContain('geolocation=()');
+    // The public map may ask for the visitor's location on this site only.
+    expect(permissionsPolicy).toContain('geolocation=(self)');
   }
 });

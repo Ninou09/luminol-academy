@@ -1,5 +1,5 @@
 import type { NextConfig } from 'next';
-import { securityHeaders } from '@luminol/config/security-headers';
+import { publicWebsiteSecurityHeaders } from '@luminol/config/security-headers';
 
 const sanityProjectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID?.trim();
 const sanityDataset =
@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   async headers() {
-    return [{ source: '/(.*)', headers: securityHeaders }];
+    return [{ source: '/(.*)', headers: publicWebsiteSecurityHeaders }];
   },
 };
 export default nextConfig;

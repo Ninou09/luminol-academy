@@ -15,7 +15,6 @@ const copy: Record<
     eyebrow: string;
     title: string;
     steps: readonly { title: string; body: string }[];
-    note: string;
   }
 > = {
   en: {
@@ -35,7 +34,6 @@ const copy: Record<
         body: 'Online or at the academy in Blida, as agreed with you. Your appointment is confirmed only after that follow-up.',
       },
     ],
-    note: 'Not an emergency service. In an urgent situation, contact local emergency services or qualified medical care.',
   },
   fr: {
     eyebrow: 'Votre première consultation',
@@ -54,7 +52,6 @@ const copy: Record<
         body: 'En ligne ou à l’académie à Blida, selon ce qui est convenu. Le rendez-vous n’est confirmé qu’après ce suivi.',
       },
     ],
-    note: 'Ce n’est pas un service d’urgence. En cas d’urgence, contactez les services d’urgence locaux ou un professionnel de santé qualifié.',
   },
   ar: {
     eyebrow: 'استشارتك الأولى',
@@ -73,7 +70,6 @@ const copy: Record<
         body: 'عبر الإنترنت أو في الأكاديمية بالبليدة حسب ما يُتفق عليه. لا يُؤكَّد الموعد إلا بعد هذا التواصل.',
       },
     ],
-    note: 'هذه ليست خدمة طوارئ. في الحالات العاجلة اتصل بخدمات الطوارئ المحلية أو بجهة طبية مؤهلة.',
   },
 };
 
@@ -107,7 +103,6 @@ export function FirstConsultation({ locale }: { locale: Locale }) {
           sizes="(max-width: 900px) 100vw, 82rem"
         />
       </figure>
-      <p className={styles.note}>{text.note}</p>
     </section>
   );
 }

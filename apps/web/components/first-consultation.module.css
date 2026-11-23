@@ -76,12 +76,6 @@
   color: rgb(212 229 238 / 0.85);
   line-height: 1.7;
 }
-.note {
-  max-width: 44rem;
-  margin: 1.5rem auto 0;
-  color: rgb(212 229 238 / 0.7);
-  font-size: 0.85rem;
-}
 @media (max-width: 860px) {
   .steps {
     grid-template-columns: 1fr;

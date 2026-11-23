@@ -410,25 +410,23 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           className={`${styles.section} ${styles.audience}`}
           aria-labelledby="school-audience-title"
         >
-          <div data-reveal>
+          <div className={styles.audienceText} data-reveal>
             <p className={styles.eyebrow}>{copy.audienceEyebrow}</p>
             <h2 id="school-audience-title">{copy.audienceTitle}</h2>
-            {audiencePhotos[school.slug] ? (
-              <PhotoCard
-                photo={audiencePhotos[school.slug]!}
-                locale={locale}
-                className={styles.audiencePhoto}
-                sizes="(max-width: 900px) 100vw, 36vw"
-              />
-            ) : null}
+            <ul>
+              {school.audiences.map((audience) => (
+                <li key={audience}>{audience}</li>
+              ))}
+            </ul>
           </div>
-          <ul>
-            {school.audiences.map((audience) => (
-              <li key={audience} data-reveal>
-                {audience}
-              </li>
-            ))}
-          </ul>
+          {audiencePhotos[school.slug] ? (
+            <PhotoCard
+              photo={audiencePhotos[school.slug]!}
+              locale={locale}
+              className={styles.audiencePhoto}
+              sizes="(max-width: 900px) 100vw, 46vw"
+            />
+          ) : null}
         </section>
 
         <aside

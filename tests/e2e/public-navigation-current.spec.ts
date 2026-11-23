@@ -50,9 +50,19 @@ for (const scenario of [
         ? page.getByRole('contentinfo').getByRole('navigation')
         : page.getByRole('contentinfo'),
     ]) {
-      await expect(
-        landmark.locator(`a[href="${scenario.currentHref}"]:not([hreflang])`),
-      ).toHaveAttribute('aria-current', 'page');
+      // The header can link to the current page more than once (the logo
+      // and "Home"); every such link must be marked as the current page.
+      const currentLinks = landmark.locator(
+        `a[href="${scenario.currentHref}"]:not([hreflang])`,
+      );
+      const count = await currentLinks.count();
+      expect(count).toBeGreaterThan(0);
+      for (let index = 0; index < count; index += 1) {
+        await expect(currentLinks.nth(index)).toHaveAttribute(
+          'aria-current',
+          'page',
+        );
+      }
       await expect(
         landmark.locator(`a[href="${scenario.inactiveHref}"]:not([hreflang])`),
       ).not.toHaveAttribute('aria-current');

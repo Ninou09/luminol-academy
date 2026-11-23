@@ -248,7 +248,12 @@ export function AssistantChat({
             </div>
           ) : (
             <>
-              <div className={styles.list} ref={listRef} aria-live="polite">
+              <div
+                className={styles.list}
+                ref={listRef}
+                aria-live="polite"
+                data-lenis-prevent
+              >
                 <p className={`${styles.bubble} ${styles.bot}`}>
                   {text.greeting}
                 </p>

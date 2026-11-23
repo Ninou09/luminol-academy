@@ -188,7 +188,7 @@
   text-transform: uppercase;
 }
 /* Collapse to the scrollable nav row before labels can wrap onto two lines. */
-@media (max-width: 1365px) {
+@media (max-width: 1399px) {
   .actions {
     grid-column: 2;
     grid-row: 1;
@@ -435,7 +435,7 @@
   background: linear-gradient(135deg, #8bdeef, #ffffff 45%, #f3d48f);
   color: var(--color-brand-night, #04101c);
 }
-@media (max-width: 1365px) {
+@media (max-width: 1399px) {
   .headerInner {
     border-radius: 1.5rem;
     padding: 0.6rem 0.75rem 0.4rem;
@@ -733,4 +733,11 @@
   display: inline-flex;
   align-items: center;
   min-height: 2rem;
+}
+
+/* Seven entries share the bar, so the pills stay compact at every width. */
+.nav a,
+.nav :global(button) {
+  padding-inline: 0.62rem;
+  letter-spacing: 0.04em;
 }
