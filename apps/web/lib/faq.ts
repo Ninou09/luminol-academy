@@ -55,7 +55,12 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       {
         question: 'Do programmes include a certificate?',
         answer:
-          'Programmes can include an attendance certificate issued by Luminol Academy. It does not confer academic accreditation or a licence to practise.',
+          'Yes. Every course ends with a certificate of attendance issued by Luminol Academy. It does not confer academic accreditation or a licence to practise.',
+      },
+      {
+        question: 'When do courses start, and can I attend online?',
+        answer:
+          'All psychology and language courses are open for registration. Each group starts as soon as it is full, and you can choose to attend in person in Blida or online.',
       },
       {
         question: 'How are my details used?',
@@ -104,7 +109,13 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       {
         question: 'Les programmes donnent-ils un certificat ?',
         answer:
-          'Les programmes peuvent inclure une attestation de participation délivrée par Luminol Academy. Elle ne confère ni accréditation académique ni autorisation d’exercer.',
+          'Oui. Chaque formation se termine par une attestation de participation délivrée par Luminol Academy. Elle ne confère ni accréditation académique ni autorisation d’exercer.',
+      },
+      {
+        question:
+          'Quand les formations commencent-elles, et puis-je les suivre en ligne ?',
+        answer:
+          'Toutes les formations en psychologie et en langues sont ouvertes aux inscriptions. Chaque groupe démarre dès qu’il est complet, en présentiel à Blida ou en ligne, selon votre choix.',
       },
       {
         question: 'Comment mes données sont-elles utilisées ?',
@@ -152,7 +163,12 @@ export const contactFaq: Record<Locale, FaqCopy> = {
       {
         question: 'هل تتضمن البرامج شهادة؟',
         answer:
-          'قد تتضمن البرامج شهادة حضور تصدرها أكاديمية لومينول، وهي لا تمنح اعتمادًا أكاديميًا ولا ترخيصًا بالممارسة.',
+          'نعم. تنتهي كل دورة بشهادة حضور تصدرها أكاديمية لومينول، وهي لا تمنح اعتمادًا أكاديميًا ولا ترخيصًا بالممارسة.',
+      },
+      {
+        question: 'متى تبدأ الدورات، وهل يمكنني متابعتها عن بُعد؟',
+        answer:
+          'جميع دورات علم النفس واللغات مفتوحة للتسجيل. تبدأ كل مجموعة بمجرد اكتمالها، ويمكنك اختيار الحضور في البليدة أو المتابعة عن بُعد.',
       },
       {
         question: 'كيف تُستخدم بياناتي؟',

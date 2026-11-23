@@ -43,23 +43,23 @@ const CONSULTATION_COPY = {
     paths: [
       {
         number: '01',
-        title: 'Therapy & consultations',
-        body: 'For people seeking psychological support or a professional consultation pathway.',
+        title: 'Individual consultations',
+        body: 'Confidential, personal sessions to understand yourself, work through difficulties and find psychological balance.',
       },
       {
         number: '02',
-        title: 'Parents & families',
-        body: 'For parenting, child-development, family communication and guidance requests.',
+        title: 'Couples consultations',
+        body: 'Specialised sessions to improve mutual understanding, resolve disagreements and build a healthy relationship.',
       },
       {
         number: '03',
-        title: 'Learning & development',
-        body: 'For psychology education, workshops, coaching or professional-learning enquiries.',
+        title: 'Family consultations',
+        body: 'Practical support to strengthen communication, resolve conflict and build a close, stable family.',
       },
     ],
     authorityEyebrow: 'Founder-led psychology',
     authorityTitle:
-      'More than 30 years of field experience behind the first step.',
+      'More than 31 years of field experience behind the first step.',
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Founder · expert therapist',
     authorityBody:
@@ -93,23 +93,23 @@ const CONSULTATION_COPY = {
     paths: [
       {
         number: '01',
-        title: 'Thérapie & consultations',
-        body: 'Pour les personnes qui recherchent un soutien psychologique ou un parcours de consultation professionnelle.',
+        title: 'Consultations individuelles',
+        body: 'Des séances confidentielles et personnalisées pour mieux vous comprendre, traverser les difficultés et retrouver votre équilibre psychologique.',
       },
       {
         number: '02',
-        title: 'Parents & familles',
-        body: 'Pour les demandes liées à la parentalité, au développement de l’enfant, à la communication familiale et à l’orientation.',
+        title: 'Consultations de couple',
+        body: 'Des séances spécialisées pour améliorer la compréhension mutuelle, résoudre les désaccords et construire une relation saine.',
       },
       {
         number: '03',
-        title: 'Apprentissage & développement',
-        body: 'Pour la psychoéducation, les ateliers, le coaching ou la formation professionnelle.',
+        title: 'Consultations familiales',
+        body: 'Un soutien concret pour renforcer la communication, apaiser les conflits et bâtir une famille unie et stable.',
       },
     ],
     authorityEyebrow: 'Psychologie portée par la fondatrice',
     authorityTitle:
-      'Plus de 30 ans d’expérience de terrain derrière cette première étape.',
+      'Plus de 31 ans d’expérience de terrain derrière cette première étape.',
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Fondatrice · thérapeute experte',
     authorityBody:
@@ -142,23 +142,23 @@ const CONSULTATION_COPY = {
     paths: [
       {
         number: '01',
-        title: 'العلاج النفسي والاستشارات',
-        body: 'لمن يبحث عن دعم نفسي أو مسار استشارة مع مختص.',
+        title: 'الاستشارات الفردية',
+        body: 'جلسات سرية ومخصصة لمساعدتك على فهم ذاتك وتجاوز التحديات والوصول إلى التوازن النفسي.',
       },
       {
         number: '02',
-        title: 'الوالدان والعائلة',
-        body: 'لطلبات التربية ونمو الطفل والتواصل الأسري والإرشاد.',
+        title: 'الاستشارات الزوجية',
+        body: 'جلسات متخصصة لتحسين التفاهم وحل الخلافات وبناء علاقة زوجية صحية.',
       },
       {
         number: '03',
-        title: 'التعلم والتطوير',
-        body: 'للتثقيف النفسي والورشات والكوتشينغ أو التكوين المهني.',
+        title: 'الاستشارات الأسرية',
+        body: 'دعم وحلول عملية لتعزيز التواصل وحل النزاعات وبناء أسرة متماسكة ومستقرة.',
       },
     ],
     authorityEyebrow: 'قسم علم النفس بخبرة المؤسسة',
     authorityTitle:
-      'أكثر من 30 سنة من الخبرة الميدانية وراء هذه الخطوة الأولى.',
+      'أكثر من 31 سنة من الخبرة الميدانية وراء هذه الخطوة الأولى.',
     authorityName: 'خداوي فطومة',
     authorityRole: 'المؤسسة · معالجة خبيرة',
     authorityBody:
@@ -326,7 +326,7 @@ export default async function ConsultationsPage() {
               sizes="(max-width: 900px) 100vw, 40vw"
             />
             <div className={styles.yearsBadge} aria-hidden="true">
-              <span data-count="30">30+</span>
+              <span data-count="31">31+</span>
               <small>{copy.authorityEyebrow as string}</small>
             </div>
           </div>
