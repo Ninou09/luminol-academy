@@ -909,3 +909,99 @@
   translate: -50% -0.4rem;
   scale: 1.03;
 }
+
+/* ===== One human journey, refined: a calm glass core over three schools ===== */
+.ecosystemStage {
+  min-height: auto;
+  padding-top: 19rem;
+  border-radius: clamp(1.5rem, 3vw, 2.5rem);
+  background:
+    radial-gradient(
+      ellipse at 50% 18%,
+      rgb(139 222 239 / 0.16),
+      transparent 55%
+    ),
+    radial-gradient(ellipse at 12% 95%, rgb(63 184 169 / 0.1), transparent 50%),
+    radial-gradient(
+      ellipse at 88% 95%,
+      rgb(224 176 122 / 0.1),
+      transparent 50%
+    ),
+    linear-gradient(180deg, rgb(13 40 66 / 0.7), rgb(6 22 38 / 0.85));
+}
+.orbitSystem {
+  top: 1.5rem;
+  width: min(34rem, 88%);
+  opacity: 0.8;
+}
+.ecosystemCore {
+  top: 6.5rem;
+  width: 9.5rem;
+  border: 1px solid rgb(139 222 239 / 0.5);
+  background: radial-gradient(
+    circle at 50% 32%,
+    rgb(139 222 239 / 0.3),
+    rgb(7 26 43 / 0.94) 70%
+  );
+  color: #f4f8fb;
+  box-shadow:
+    0 0 0 0.6rem rgb(139 222 239 / 0.06),
+    0 0 3rem rgb(139 222 239 / 0.35),
+    inset 0 1px 0 rgb(255 255 255 / 0.2);
+  font-size: 1.85rem;
+  text-shadow: none;
+}
+.ecosystemCore small {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--color-brand-gold-strong);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.schoolBeam {
+  height: 3rem;
+  opacity: 0.75;
+}
+.schoolCard {
+  transition:
+    translate 500ms var(--luminol-ease-out),
+    border-color 500ms ease,
+    box-shadow 500ms ease;
+}
+.schoolCard:hover {
+  translate: 0 -0.35rem;
+  border-color: color-mix(in srgb, var(--school-accent) 55%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    0 1.5rem 3rem -1.5rem
+      color-mix(in srgb, var(--school-accent) 45%, transparent);
+}
+@media (max-width: 1000px) {
+  .ecosystemStage {
+    gap: 1.25rem;
+    padding-top: 17rem;
+  }
+  .schoolBeam {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .schoolCard:hover {
+    translate: none;
+  }
+}
+.ecosystemStage {
+  perspective-origin: 50% 8rem;
+}
+.orbitSystem {
+  top: -3rem;
+  left: 50%;
+  right: auto;
+}
+.orbitSystem {
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+}

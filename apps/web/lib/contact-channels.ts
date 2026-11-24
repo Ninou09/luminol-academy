@@ -48,25 +48,72 @@ export const officialAddress = {
 
 export const addressCopy: Record<
   Locale,
-  { title: string; directions: string; open: string; visit: string }
+  {
+    title: string;
+    directions: string;
+    open: string;
+    visit: string;
+    map: {
+      mapTitle: string;
+      originLabel: string;
+      originPlaceholder: string;
+      showRoute: string;
+      useLocation: string;
+      locating: string;
+      locationUnavailable: string;
+      reset: string;
+    };
+  }
 > = {
   en: {
     title: 'Visit the academy',
     directions: 'Get directions',
     open: 'Open in Google Maps',
     visit: 'Address',
+    map: {
+      mapTitle: 'Interactive map of Luminol Academy in Blida',
+      originLabel: 'Plan your route',
+      originPlaceholder: 'Your starting point, e.g. Algiers or Boufarik',
+      showRoute: 'Show route',
+      useLocation: 'Use my location',
+      locating: 'Finding your location…',
+      locationUnavailable:
+        'Your location is not available. Type a starting point instead.',
+      reset: 'Show the academy only',
+    },
   },
   fr: {
     title: 'Venir à l’académie',
     directions: 'Itinéraire',
     open: 'Ouvrir dans Google Maps',
     visit: 'Adresse',
+    map: {
+      mapTitle: 'Carte interactive de Luminol Academy à Blida',
+      originLabel: 'Préparer votre trajet',
+      originPlaceholder: 'Point de départ, par ex. Alger ou Boufarik',
+      showRoute: 'Afficher l’itinéraire',
+      useLocation: 'Utiliser ma position',
+      locating: 'Recherche de votre position…',
+      locationUnavailable:
+        'Votre position n’est pas disponible. Saisissez un point de départ.',
+      reset: 'Afficher seulement l’académie',
+    },
   },
   ar: {
     title: 'زر الأكاديمية',
     directions: 'احصل على الاتجاهات',
     open: 'افتح في خرائط Google',
     visit: 'العنوان',
+    map: {
+      mapTitle: 'خريطة تفاعلية لأكاديمية لومينول في البليدة',
+      originLabel: 'خطّط لطريقك',
+      originPlaceholder: 'نقطة انطلاقك، مثل الجزائر العاصمة أو بوفاريك',
+      showRoute: 'اعرض الطريق',
+      useLocation: 'استخدم موقعي',
+      locating: 'جارٍ تحديد موقعك…',
+      locationUnavailable: 'تعذّر تحديد موقعك. اكتب نقطة انطلاق بدلًا من ذلك.',
+      reset: 'اعرض الأكاديمية فقط',
+    },
   },
 };
 

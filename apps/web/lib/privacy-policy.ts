@@ -35,7 +35,7 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
     heroBody:
       'This page explains which personal data Luminol Academy receives through this website, why, and the choices you have.',
     updatedLabel: 'Last updated',
-    updated: '13 November 2026',
+    updated: '24 November 2026',
     contentsLabel: 'On this page',
     contactCta: 'Contact Luminol about your data',
     linkLabel: 'Privacy policy',
@@ -62,6 +62,7 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         body: [
           'Your enquiry is stored in Luminol’s database on secure hosting. Confirmation emails are sent through an email delivery provider, and the team may receive an internal notification of a new enquiry through a messaging service.',
           'These providers act only on Luminol’s behalf. Workshop registrations use a separate Tally form, which has its own privacy terms.',
+          'The map on the contact page is provided by Google Maps, which receives your IP address when the map loads. If you choose “Use my location” to plan a route, your browser asks first, and the location is sent only to Google Maps to draw the route; Luminol does not store it.',
         ],
       },
       {
@@ -121,7 +122,7 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
     heroBody:
       'Cette page explique quelles données personnelles Luminol Academy reçoit via ce site, pourquoi, et quels sont vos choix.',
     updatedLabel: 'Dernière mise à jour',
-    updated: '13 novembre 2026',
+    updated: '24 novembre 2026',
     contentsLabel: 'Sur cette page',
     contactCta: 'Contacter Luminol au sujet de vos données',
     linkLabel: 'Politique de confidentialité',
@@ -148,6 +149,7 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         body: [
           'Votre demande est conservée dans la base de données de Luminol sur un hébergement sécurisé. Les e-mails de confirmation passent par un prestataire d’envoi, et l’équipe peut recevoir une notification interne via un service de messagerie.',
           'Ces prestataires agissent uniquement pour le compte de Luminol. Les inscriptions aux ateliers utilisent un formulaire Tally distinct, soumis à ses propres conditions.',
+          'La carte de la page contact est fournie par Google Maps, qui reçoit votre adresse IP lors de son chargement. Si vous choisissez « Utiliser ma position » pour préparer un trajet, votre navigateur vous le demande d’abord, et la position est envoyée uniquement à Google Maps pour tracer l’itinéraire ; Luminol ne la conserve pas.',
         ],
       },
       {
@@ -207,7 +209,7 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
     heroBody:
       'توضّح هذه الصفحة البيانات الشخصية التي تتلقاها أكاديمية لومينول عبر هذا الموقع، وسبب ذلك، والخيارات المتاحة لك.',
     updatedLabel: 'آخر تحديث',
-    updated: '13 نوفمبر 2026',
+    updated: '24 نوفمبر 2026',
     contentsLabel: 'في هذه الصفحة',
     contactCta: 'تواصل مع لومينول بشأن بياناتك',
     linkLabel: 'سياسة الخصوصية',
@@ -234,6 +236,7 @@ export const privacyPolicy: Record<Locale, PrivacyCopy> = {
         body: [
           'يُحفظ طلبك في قاعدة بيانات لومينول على استضافة آمنة. تُرسل رسائل التأكيد عبر مزوّد لإرسال البريد الإلكتروني، وقد يتلقى الفريق إشعارًا داخليًا بطلب جديد عبر خدمة مراسلة.',
           'يعمل هؤلاء المزوّدون لحساب لومينول فقط. يتم التسجيل في الورشات عبر استمارة Tally منفصلة تخضع لشروط الخصوصية الخاصة بها.',
+          'تُقدَّم الخريطة في صفحة التواصل عبر خرائط Google، التي تتلقى عنوان IP الخاص بك عند تحميلها. وإذا اخترت «استخدم موقعي» لتخطيط طريقك، يطلب منك المتصفح الإذن أولًا، ولا يُرسل الموقع إلا إلى خرائط Google لرسم الطريق، ولا تحتفظ به لومينول.',
         ],
       },
       {

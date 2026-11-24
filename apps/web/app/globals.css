@@ -1074,6 +1074,18 @@ html[data-contrast='high'] main :is(section, article, li, div)[class] {
 html[data-contrast='high'] .inner-universe {
   opacity: 0.35;
 }
+/* The language switcher sits on a light pill: keep it legible in high contrast. */
+html[data-contrast='high'] .locale-switcher {
+  border-color: #ffffff;
+  background: #04101c;
+}
+html[data-contrast='high'] .locale-switcher a {
+  color: #ffffff;
+}
+html[data-contrast='high'] .locale-switcher a[aria-current='page'] {
+  background: #ffd56b;
+  color: #04101c;
+}
 
 /* Message fields are never pill-shaped, whatever the control radius token. */
 main#main-content .form-grid textarea {

@@ -13,7 +13,7 @@
 .hero {
   width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 60rem);
   margin-inline: auto;
-  padding-block: clamp(6rem, 12vw, 9rem) clamp(2.5rem, 5vw, 4rem);
+  padding-block: clamp(2rem, 4.5vw, 3.75rem) clamp(2.5rem, 5vw, 4rem);
   text-align: center;
 }
 .hero h1 {

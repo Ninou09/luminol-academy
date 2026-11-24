@@ -265,3 +265,59 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Article as a calm reading panel: inset from the screen edges on every size. */
+.article {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 54rem);
+  margin-block: clamp(1.5rem, 4vw, 3rem) clamp(3rem, 7vw, 5rem);
+  padding: clamp(1.5rem, 5vw, 4rem) clamp(1.25rem, 5vw, 4rem);
+  border: 1px solid rgb(139 222 239 / 0.14);
+  border-radius: clamp(1.5rem, 3vw, 2.5rem);
+  background:
+    radial-gradient(
+      48rem 26rem at 90% 0%,
+      rgb(53 185 221 / 0.1),
+      transparent 60%
+    ),
+    linear-gradient(180deg, rgb(13 40 66 / 0.72), rgb(6 22 38 / 0.86));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.07),
+    0 2.5rem 5rem -2.5rem rgb(0 0 0 / 0.6);
+}
+.article > * {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+}
+.article > .articleCover {
+  max-width: none;
+}
+.articleSection h2 {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.articleSection h2::before {
+  content: '';
+  flex: none;
+  width: 1.5rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #8bdeef, transparent);
+}
+:global(html[dir='rtl']) .articleSection h2::before {
+  background: linear-gradient(-90deg, #8bdeef, transparent);
+}
+.articleSection p {
+  text-wrap: pretty;
+}
+@media (max-width: 640px) {
+  .articleCover {
+    border-radius: 1.1rem;
+  }
+  .articleSection p {
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+}

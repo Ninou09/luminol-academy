@@ -27,6 +27,36 @@ export const securityHeaders = [
   { key: 'X-DNS-Prefetch-Control', value: 'off' },
 ];
 
+/**
+ * The public website embeds the academy's Google map and lets visitors share
+ * their location to plan a route, so it allows Google Maps frames and
+ * same-origin geolocation. React's development build also needs `eval` for
+ * debugging; production never receives 'unsafe-eval'.
+ */
+const isDevelopment = globalThis.process?.env?.NODE_ENV === 'development';
+const publicWebsiteCsp = csp
+  .replace(
+    "script-src 'self' 'unsafe-inline'",
+    `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ''}`,
+  )
+  .replace(
+    'frame-src https://*.clerk.accounts.dev',
+    'frame-src https://www.google.com https://maps.google.com https://*.clerk.accounts.dev',
+  );
+
+export const publicWebsiteSecurityHeaders = securityHeaders.map((header) => {
+  if (header.key === 'Content-Security-Policy') {
+    return { key: header.key, value: publicWebsiteCsp };
+  }
+  if (header.key === 'Permissions-Policy') {
+    return {
+      key: header.key,
+      value: 'camera=(), microphone=(), geolocation=(self)',
+    };
+  }
+  return header;
+});
+
 export const privateCacheHeaders = [
   { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
 ];

@@ -19,6 +19,7 @@ import { CurrentPageLink } from './current-page-link';
 import { LanguageSwitcher } from './language-switcher';
 import { getPortalHref, portalLabel } from '../lib/portal-link';
 import { MobileMenu } from './mobile-menu';
+import { ResourcesMenu } from './resources-menu';
 import { NewsletterSignup } from './newsletter-signup';
 import { AcademyLogo as Wordmark } from './academy-logo';
 import styles from './site-shell.module.css';
@@ -56,6 +57,36 @@ const libraryLabel = {
   en: 'Psychology library',
 } as const satisfies Record<Locale, string>;
 
+const eventsLabel = {
+  ar: 'اللقاءات والفعاليات',
+  fr: 'Rencontres',
+  en: 'Events',
+} as const satisfies Record<Locale, string>;
+
+const resourcesCopy = {
+  ar: {
+    label: 'موارد',
+    journal: 'مقالات قصيرة للحياة اليومية والتعلّم',
+    events: 'لقاءات قادمة وأرشيف الجلسات السابقة',
+    library: 'مكتبة بصرية عربية في علم النفس',
+  },
+  fr: {
+    label: 'Ressources',
+    journal: 'Des articles courts pour le quotidien et l’apprentissage',
+    events: 'Rencontres à venir et archive des sessions passées',
+    library: 'Une bibliothèque visuelle de psychologie en arabe',
+  },
+  en: {
+    label: 'Resources',
+    journal: 'Short articles for everyday life and learning',
+    events: 'Upcoming meetings and the archive of past sessions',
+    library: 'An Arabic visual library of psychology',
+  },
+} as const satisfies Record<
+  Locale,
+  { label: string; journal: string; events: string; library: string }
+>;
+
 const consultationsLabel = {
   ar: 'الاستشارات النفسية',
   fr: 'Consultations',
@@ -82,6 +113,12 @@ export async function SiteHeader() {
             <Wordmark />
           </CurrentPageLink>
           <nav className={styles.nav} aria-label={copy.site.nav.primaryAria}>
+            <CurrentPageLink
+              href={localizeHref(locale, '/')}
+              activePathname="/"
+            >
+              {menuLabels[locale].home}
+            </CurrentPageLink>
             <CurrentPageLink
               href={localizeHref(locale, '/schools')}
               activePathname="/schools"
@@ -114,6 +151,29 @@ export async function SiteHeader() {
             >
               {copy.site.nav.about}
             </CurrentPageLink>
+            <ResourcesMenu
+              label={resourcesCopy[locale].label}
+              links={[
+                {
+                  href: localizeHref(locale, '/journal'),
+                  label: journalLabel[locale],
+                  description: resourcesCopy[locale].journal,
+                  match: '/journal',
+                },
+                {
+                  href: localizeHref(locale, '/events'),
+                  label: eventsLabel[locale],
+                  description: resourcesCopy[locale].events,
+                  match: '/events',
+                },
+                {
+                  href: '/psy-library',
+                  label: libraryLabel[locale],
+                  description: resourcesCopy[locale].library,
+                  match: '/psy-library',
+                },
+              ]}
+            />
           </nav>
           <div className={`${styles.actions} site-header-actions`}>
             <LanguageSwitcher
@@ -175,6 +235,16 @@ export async function SiteHeader() {
                   href: localizeHref(locale, '/journal'),
                   label: journalLabel[locale],
                   match: '/journal',
+                },
+                {
+                  href: localizeHref(locale, '/events'),
+                  label: eventsLabel[locale],
+                  match: '/events',
+                },
+                {
+                  href: '/psy-library',
+                  label: libraryLabel[locale],
+                  match: '/psy-library',
                 },
               ]}
             />

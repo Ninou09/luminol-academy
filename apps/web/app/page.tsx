@@ -22,14 +22,11 @@ import { SchoolConstellation } from '../components/school-constellation';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { ThoughtNetwork } from '../components/thought-network';
 import { VelocityMarquee } from '../components/velocity-marquee';
-import {
-  brandArtworkCredit,
-  cinematicCopy,
-  schoolArtwork,
-} from '../lib/academy-media';
+import { cinematicCopy, schoolArtwork } from '../lib/academy-media';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
+import { approachCopy } from '../lib/approach';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
 import { EventsSection } from '../components/events-section';
@@ -274,13 +271,28 @@ export default async function Page() {
             </h2>
             <p data-scrub-text>{copy.approachIntro}</p>
           </div>
-          <div className={styles.approachLink} data-reveal>
-            <Link
-              className={styles.textLink}
-              href={localizeHref(locale, '/approach')}
-            >
-              {copy.approachEyebrow} <span aria-hidden="true">→</span>
-            </Link>
+          <div className={styles.approachSide} data-reveal>
+            <ol className={styles.approachSteps}>
+              {approachCopy[locale].steps.map((step, index) => (
+                <li key={step.key}>
+                  <span aria-hidden="true">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.points.join(' · ')}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <div className={styles.approachLink}>
+              <Link
+                className={styles.textLink}
+                href={localizeHref(locale, '/approach')}
+              >
+                {copy.approachEyebrow} <span aria-hidden="true">→</span>
+              </Link>
+            </div>
           </div>
         </section>
 
@@ -395,25 +407,6 @@ export default async function Page() {
             {copy.startConversation} <span aria-hidden="true">→</span>
           </ButtonLink>
         </section>
-
-        <aside className={styles.mediaCredits} aria-label={cinematic.credits}>
-          <span>{cinematic.credits}</span>
-          <a
-            href="https://mixkit.co/free-stock-video/a-hand-runs-through-the-book-spines-in-the-library-50726/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Mixkit · 50726
-          </a>
-          <a
-            href="https://mixkit.co/free-stock-video/reverse-tour-of-a-library-full-of-books-21595/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Mixkit · 21595
-          </a>
-          <span>{brandArtworkCredit.label[locale]}</span>
-        </aside>
       </main>
       <SiteFooter />
     </>

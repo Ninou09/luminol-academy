@@ -8,7 +8,6 @@ import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 
-import { GlassIcon } from '../../components/glass-icon';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { momentPhotos } from '../../lib/people-photos';
 import { privacyPolicy } from '../../lib/privacy-policy';
@@ -55,13 +54,12 @@ export default async function PrivacyPage() {
             sizes="100vw"
             aria-hidden="true"
           />
-          <GlassIcon name="privacy-shield" size="lg" className={styles.icon} />
           <p className={styles.eyebrow}>{copy.eyebrow}</p>
           <h1 id="privacy-title">{copy.heroTitle}</h1>
           <p className={styles.lede}>{copy.heroBody}</p>
           <p className={styles.updated}>
             {copy.updatedLabel}:{' '}
-            <time dateTime="2026-11-13">{copy.updated}</time>
+            <time dateTime="2026-11-24">{copy.updated}</time>
           </p>
         </section>
 

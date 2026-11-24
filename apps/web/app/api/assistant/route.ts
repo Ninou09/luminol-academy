@@ -2,12 +2,14 @@ import Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
 
 import { buildAssistantSystemPrompt } from '../../../lib/assistant-knowledge.server';
+import { answerFromSite } from '../../../lib/assistant-offline';
 import { crisisReply, looksLikeCrisis } from '../../../lib/assistant-safety';
 
 /**
  * Luminol Assistant: answers questions about the academy from the site's
  * own facts and hands visitors over to a person. Conversations are not
- * stored by Luminol. Switched on only when ANTHROPIC_API_KEY is set.
+ * stored by Luminol. With ANTHROPIC_API_KEY set it answers with Claude;
+ * otherwise, or if Claude fails, it answers from built-in site facts.
  */
 export const runtime = 'nodejs';
 
@@ -106,8 +108,9 @@ export async function POST(request: Request): Promise<Response> {
     return textStream(crisisReply[locale]);
   }
 
+  const question = messages.at(-1)!.content;
   const anthropic = getClient();
-  if (!anthropic) return textStream(unavailable[locale], 503);
+  if (!anthropic) return textStream(answerFromSite(question, locale));
 
   const stream = anthropic.messages.stream({
     model: MODEL,
@@ -141,7 +144,9 @@ export async function POST(request: Request): Promise<Response> {
         if (final.stop_reason === 'refusal' || !wrote) {
           controller.enqueue(
             encoder.encode(
-              wrote ? `\n\n${unavailable[locale]}` : unavailable[locale],
+              wrote
+                ? `\n\n${unavailable[locale]}`
+                : answerFromSite(question, locale),
             ),
           );
         }
@@ -155,7 +160,9 @@ export async function POST(request: Request): Promise<Response> {
         }
         controller.enqueue(
           encoder.encode(
-            wrote ? `\n\n${unavailable[locale]}` : unavailable[locale],
+            wrote
+              ? `\n\n${unavailable[locale]}`
+              : answerFromSite(question, locale),
           ),
         );
       } finally {

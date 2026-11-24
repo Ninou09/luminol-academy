@@ -753,3 +753,53 @@
   color: var(--color-brand-canvas);
   border: 1px solid var(--color-brand-cyan-light);
 }
+
+/* Who this school supports: title and audiences beside one landscape photo. */
+.audience {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+}
+.audienceText h2 {
+  margin-bottom: 0;
+}
+.audience ul {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+.audience li {
+  min-height: 0;
+  gap: 0.7rem;
+  align-items: center;
+  padding: 0.95rem 1.1rem;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+}
+.audience li::before {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--school-accent, var(--color-brand-cyan));
+  box-shadow: 0 0 0.75rem var(--school-accent, var(--color-brand-cyan));
+}
+.audience .audiencePhoto {
+  width: 100%;
+  margin-top: 0;
+  aspect-ratio: 4 / 3;
+}
+@media (max-width: 900px) {
+  .audience {
+    grid-template-columns: 1fr;
+  }
+  .audience .audiencePhoto {
+    aspect-ratio: 16 / 10;
+  }
+}
+@media (max-width: 420px) {
+  .audience li {
+    padding: 0.8rem 0.9rem;
+    font-size: 1rem;
+  }
+}
