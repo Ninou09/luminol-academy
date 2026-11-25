@@ -48,10 +48,20 @@ describe('Next.js 16 Clerk proxy conventions', () => {
         'request.cookies.get(LOCALE_COOKIE_NAME)?.value !== decision.locale',
       );
       const localizedProtectionIndex = source.indexOf(
-        'if (!isPublicPathname(decision.pathname)) await auth.protect();',
+        'if (!isPublicPathname(decision.pathname))',
       );
       expect(localePersistenceIndex).toBeGreaterThan(-1);
       expect(localizedProtectionIndex).toBeGreaterThan(localePersistenceIndex);
+
+      if (app === 'portal') {
+        const localizedProtection = source.slice(localizedProtectionIndex);
+        expect(localizedProtection).toContain(
+          "localizePathname(decision.locale, '/sign-in')",
+        );
+        expect(localizedProtection).toContain(
+          'await auth.protect({ unauthenticatedUrl: signIn.toString() })',
+        );
+      }
 
       for (const route of publicRoutes) {
         expect(source).toContain(route);

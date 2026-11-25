@@ -15,7 +15,7 @@ import {
   founderCopy,
   founderJourney,
   founderPath,
-  founderPortrait,
+  founderEditorialPortrait,
   founderWebsite,
 } from '../../../lib/founder';
 import { illustrativePhotoCredit } from '../../../lib/people-photos';
@@ -45,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: getOpenGraphLocale(locale),
       type: 'profile',
       url: route,
-      images: [founderPortrait.src],
+      images: [founderEditorialPortrait.src],
     },
   };
 }
@@ -65,7 +65,7 @@ export default async function FounderPage() {
         data-founder-theme
       >
         <section className={styles.hero} aria-labelledby="founder-title">
-          <FounderGold className={styles.goldScene} />
+          <FounderGold className={styles.goldScene} ornate />
           <div className={styles.intro}>
             <p className={styles.role}>{copy.role}</p>
             <h1 id="founder-title">{copy.name}</h1>
@@ -76,15 +76,15 @@ export default async function FounderPage() {
           </div>
           <figure
             className={styles.portrait}
-            data-media-source={founderPortrait.source}
-            data-media-crop="center-top"
+            data-media-source={founderEditorialPortrait.source}
+            data-media-crop="desktop-full-mobile-right"
           >
             <Image
-              src={founderPortrait.src}
+              src={founderEditorialPortrait.src}
               alt={copy.name}
               fill
               priority
-              sizes="(max-width: 760px) 90vw, (max-width: 1200px) 42vw, 480px"
+              sizes="(max-width: 760px) 92vw, (max-width: 1200px) 94vw, 1152px"
             />
             <figcaption>
               <strong>

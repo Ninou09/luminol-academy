@@ -512,3 +512,175 @@
     animation: enter 240ms var(--luminol-ease-out, ease) both;
   }
 }
+
+.page {
+  --portrait-plum: #291235;
+  --portrait-violet: #673591;
+  --portrait-orchid: #ac6ada;
+  --portrait-satin: #f2d18a;
+}
+.page .hero {
+  position: relative;
+  display: grid;
+  padding: clamp(1.2rem, 5vw, 4rem);
+  min-height: clamp(31rem, 51vw, 41rem);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  border-color: color-mix(
+    in srgb,
+    var(--portrait-satin) 65%,
+    var(--portrait-violet)
+  );
+  background: var(--portrait-plum);
+  box-shadow: 0 1.8rem 5rem -2rem
+    color-mix(in srgb, var(--portrait-orchid) 60%, transparent);
+}
+.page .hero::before {
+  z-index: 0;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--portrait-plum) 98%, transparent),
+    color-mix(in srgb, var(--portrait-violet) 92%, transparent) 37%,
+    color-mix(in srgb, var(--portrait-orchid) 35%, transparent) 53%,
+    transparent 68%
+  );
+  animation: none;
+}
+.hero::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--portrait-satin) 48%, transparent);
+  border-radius: inherit;
+  content: '';
+  pointer-events: none;
+}
+.hero .intro {
+  position: relative;
+  z-index: 2;
+  width: min(54%, 33rem);
+  justify-self: left;
+}
+.hero .intro h1 {
+  font-size: clamp(2.35rem, 6vw, 5.45rem);
+  text-wrap: balance;
+  text-shadow: 0 0.2rem 1.3rem var(--portrait-plum);
+}
+.hero .intro .role {
+  color: var(--portrait-satin);
+}
+.hero .intro p:not(.role) {
+  color: var(--founder-ink);
+  text-shadow: 0 0.08rem 0.45rem var(--portrait-plum);
+}
+.hero .portrait {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  animation: none;
+}
+.hero .portrait img {
+  object-position: 73% 45%;
+}
+.hero .portrait figcaption {
+  left: auto;
+  right: clamp(1rem, 4vw, 2.4rem);
+  inset-block-end: clamp(1rem, 4vw, 2.4rem);
+  direction: ltr;
+  text-align: center;
+  background: linear-gradient(
+    140deg,
+    var(--portrait-violet),
+    var(--portrait-plum)
+  );
+  color: var(--founder-ink);
+  border-color: var(--portrait-satin);
+}
+.hero .portrait figcaption:dir(rtl) {
+  direction: rtl;
+}
+.hero .goldScene {
+  inset-inline: auto 33%;
+  inset-block-start: 0;
+  width: 29%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.92;
+}
+.hero .cta {
+  border-color: var(--portrait-satin);
+  background: linear-gradient(
+    120deg,
+    var(--portrait-satin),
+    var(--founder-ink) 75%
+  );
+}
+.page .chapters,
+.page .details section,
+.page .contact {
+  border-color: color-mix(
+    in srgb,
+    var(--portrait-orchid) 42%,
+    var(--portrait-plum)
+  );
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--portrait-violet) 67%, var(--portrait-plum)),
+    var(--portrait-plum)
+  );
+}
+@media (max-width: 760px) {
+  .page .hero {
+    gap: 1.15rem;
+    padding: clamp(1rem, 4.5vw, 1.45rem);
+    min-height: 0;
+    background: radial-gradient(
+      ellipse at 100% 0%,
+      var(--portrait-violet),
+      var(--portrait-plum) 73%
+    );
+  }
+  .page .hero::before {
+    background: radial-gradient(
+      ellipse at 100% 5%,
+      color-mix(in srgb, var(--portrait-orchid) 32%, transparent),
+      transparent 55%
+    );
+  }
+  .hero::after {
+    inset: 0.35rem;
+  }
+  .hero .intro {
+    width: 100%;
+    padding: 0.2rem;
+  }
+  .hero .portrait {
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 4;
+    border-radius: 1rem;
+  }
+  .hero .portrait img {
+    object-position: 83% 45%;
+  }
+  .hero .portrait figcaption {
+    right: 0.55rem;
+    inset-block-end: 0.55rem;
+    min-width: 0;
+    padding: 0.45rem 0.65rem;
+  }
+  .hero .goldScene {
+    width: 58%;
+    height: 55%;
+    inset-inline-end: -10%;
+    opacity: 0.5;
+  }
+}

@@ -1,6 +1,10 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import { arSA, frFR } from '@clerk/localizations';
-import { getLocaleDirection, type Locale } from '@luminol/localization';
+import {
+  getLocaleDirection,
+  localizePathname,
+  type Locale,
+} from '@luminol/localization';
 import type { Metadata } from 'next';
 
 import { getPortalCopy } from '../lib/portal-localization';
@@ -36,7 +40,15 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={getLocaleDirection(locale)}>
       <body>
-        <ClerkProvider {...clerkLocalization(locale)}>{children}</ClerkProvider>
+        <ClerkProvider
+          {...clerkLocalization(locale)}
+          signInUrl={localizePathname(locale, '/sign-in')}
+          signUpUrl={localizePathname(locale, '/sign-up')}
+          signInFallbackRedirectUrl={localizePathname(locale, '/')}
+          signUpFallbackRedirectUrl={localizePathname(locale, '/')}
+        >
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );

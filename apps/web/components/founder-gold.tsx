@@ -3,7 +3,13 @@
 import { useEffect, useRef } from 'react';
 import { useMotionAllowed } from '../lib/calm-mode';
 
-export function FounderGold({ className }: { className?: string | undefined }) {
+export function FounderGold({
+  className,
+  ornate = false,
+}: {
+  className?: string | undefined;
+  ornate?: boolean;
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
   const allowed = useMotionAllowed();
 
@@ -23,7 +29,7 @@ export function FounderGold({ className }: { className?: string | undefined }) {
       void import('./founder-gold-scene')
         .then(({ createFounderGold }) => {
           if (stopped) return;
-          const scene = createFounderGold(canvas);
+          const scene = createFounderGold(canvas, ornate);
           play = scene?.play;
           dispose = scene?.dispose;
           play?.(visible);
@@ -38,7 +44,7 @@ export function FounderGold({ className }: { className?: string | undefined }) {
       observer.disconnect();
       dispose?.();
     };
-  }, [allowed]);
+  }, [allowed, ornate]);
 
   return <canvas ref={ref} className={className} aria-hidden="true" />;
 }

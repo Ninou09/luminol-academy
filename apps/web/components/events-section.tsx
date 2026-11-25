@@ -1,6 +1,8 @@
 import { localizeHref, type Locale } from '@luminol/localization';
 import Image from 'next/image';
 
+import { illustrativePhotoCredit, peoplePhotos } from '../lib/people-photos';
+import { getUpcomingWorkshops } from '../lib/workshop-plan';
 import { channelCopy, getWhatsAppHref } from '../lib/contact-channels';
 import {
   eventsCopy,
@@ -16,6 +18,27 @@ const dateLocale: Record<Locale, string> = {
   fr: 'fr-FR',
   ar: 'ar-DZ',
 };
+
+const previewCopy = {
+  en: {
+    proposed: 'Next proposed workshop',
+    schedule: 'See the workshop calendar',
+    blida: 'Blida',
+    zoom: 'Online · Zoom',
+  },
+  fr: {
+    proposed: 'Prochain atelier prévisionnel',
+    schedule: 'Voir le calendrier des ateliers',
+    blida: 'Blida',
+    zoom: 'En ligne · Zoom',
+  },
+  ar: {
+    proposed: 'الورشة المقترحة القادمة',
+    schedule: 'عرض تقويم الورش',
+    blida: 'البليدة',
+    zoom: 'عبر الإنترنت · Zoom',
+  },
+} as const;
 
 function parts(iso: string, locale: Locale) {
   const date = new Date(`${iso}T12:00:00+01:00`);
@@ -50,6 +73,7 @@ export function EventsSection({
 }) {
   const copy = eventsCopy[locale];
   const now = new Date();
+  const nextWorkshop = archive ? undefined : getUpcomingWorkshops(now)[0];
   const upcoming = luminolEvents
     .filter((event) => !hasEventEnded(event, now))
     .sort((a, b) => (a.date ?? '9999').localeCompare(b.date ?? '9999'));
@@ -69,6 +93,7 @@ export function EventsSection({
       className={styles.section}
       aria-labelledby={archive ? 'events-recent' : 'events-title'}
       data-events-archive={archive || undefined}
+      data-home-events={!archive || undefined}
     >
       {!archive ? (
         <div className={styles.heading} data-reveal>
@@ -80,6 +105,98 @@ export function EventsSection({
         </div>
       ) : null}
 
+      <div className={archive ? undefined : styles.homeProgramme}>
+        <div className={archive ? undefined : styles.recentPanel}>
+          {archive ? (
+            <h2 id="events-recent" className={styles.groupTitle} data-no-split>
+              {copy.past}
+            </h2>
+          ) : (
+            <h3 className={styles.groupTitle}>{copy.past}</h3>
+          )}
+          <ol className={styles.past}>
+            {(archive ? past : past.slice(0, 3)).map((event) => {
+              const lastDate = event.secondDate ?? event.date!;
+              const date = parts(lastDate, locale);
+              return (
+                <li key={event.id}>
+                  <time dateTime={lastDate}>{date.full}</time>
+                  <div>
+                    <strong dir="auto">{event.title[locale]}</strong>
+                    <span>
+                      {copy.with} {presenterNames(event, locale)}
+                    </span>
+                  </div>
+                  {event.pageHref ? (
+                    <a href={localizeHref(locale, event.pageHref)}>
+                      {copy.details} <span aria-hidden="true">→</span>
+                    </a>
+                  ) : event.recording ? (
+                    <a href={askHref} target="_blank" rel="noopener">
+                      {copy.recording} · {copy.askRecording}
+                    </a>
+                  ) : (
+                    <span />
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+          {!archive && (
+            <a
+              className={styles.calendar}
+              href={localizeHref(locale, '/events')}
+            >
+              {
+                {
+                  ar: 'كل الفعاليات والورش',
+                  fr: 'Tous les événements et ateliers',
+                  en: 'All events and workshops',
+                }[locale]
+              }{' '}
+              →
+            </a>
+          )}
+        </div>
+        {!archive && nextWorkshop ? (
+          <aside
+            className={styles.workshopPreview}
+            aria-labelledby="home-workshop-title"
+          >
+            <figure
+              className={styles.previewPhoto}
+              data-media-source={illustrativePhotoCredit.source}
+              data-media-license={illustrativePhotoCredit.license}
+            >
+              <Image
+                src={peoplePhotos.academyRoleplay.src}
+                alt={peoplePhotos.academyRoleplay.alt[locale]}
+                fill
+                sizes="(max-width: 760px) 92vw, 36vw"
+              />
+              <figcaption className="scene-caption">
+                {illustrativePhotoCredit.label[locale]}
+              </figcaption>
+            </figure>
+            <div className={styles.previewCopy}>
+              <p className={styles.previewLabel}>
+                {previewCopy[locale].proposed}
+              </p>
+              <h3 id="home-workshop-title">{nextWorkshop.title[locale]}</h3>
+              <p>
+                <time dateTime={nextWorkshop.date}>
+                  {parts(nextWorkshop.date, locale).full}
+                </time>{' '}
+                · {previewCopy[locale][nextWorkshop.venue]}
+              </p>
+              <a href={localizeHref(locale, '/events#upcoming-workshops')}>
+                {previewCopy[locale].schedule}{' '}
+                <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
+              </a>
+            </div>
+          </aside>
+        ) : null}
+      </div>
       {!archive && upcoming.length > 0 ? (
         <>
           <h3 className={styles.groupTitle}>{copy.upcoming}</h3>
@@ -187,54 +304,6 @@ export function EventsSection({
           </ul>
         </>
       ) : null}
-
-      {archive ? (
-        <h2 id="events-recent" className={styles.groupTitle} data-no-split>
-          {copy.past}
-        </h2>
-      ) : (
-        <h3 className={styles.groupTitle}>{copy.past}</h3>
-      )}
-      <ol className={styles.past}>
-        {(archive ? past : past.slice(0, 3)).map((event) => {
-          const lastDate = event.secondDate ?? event.date!;
-          const date = parts(lastDate, locale);
-          return (
-            <li key={event.id}>
-              <time dateTime={lastDate}>{date.full}</time>
-              <div>
-                <strong dir="auto">{event.title[locale]}</strong>
-                <span>
-                  {copy.with} {presenterNames(event, locale)}
-                </span>
-              </div>
-              {event.pageHref ? (
-                <a href={localizeHref(locale, event.pageHref)}>
-                  {copy.details} <span aria-hidden="true">→</span>
-                </a>
-              ) : event.recording ? (
-                <a href={askHref} target="_blank" rel="noopener">
-                  {copy.recording} · {copy.askRecording}
-                </a>
-              ) : (
-                <span />
-              )}
-            </li>
-          );
-        })}
-      </ol>
-      {!archive && (
-        <a className={styles.calendar} href={localizeHref(locale, '/events')}>
-          {
-            {
-              ar: 'كل الفعاليات والورش',
-              fr: 'Tous les événements et ateliers',
-              en: 'All events and workshops',
-            }[locale]
-          }{' '}
-          →
-        </a>
-      )}
     </section>
   );
 }

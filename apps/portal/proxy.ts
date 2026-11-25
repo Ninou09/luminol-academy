@@ -3,6 +3,7 @@ import {
   LOCALE_COOKIE_MAX_AGE_SECONDS,
   LOCALE_COOKIE_NAME,
   LOCALE_REQUEST_HEADER,
+  localizePathname,
   resolveLocaleRequest,
   type Locale,
 } from '@luminol/localization';
@@ -72,7 +73,14 @@ export default clerkMiddleware(async (auth, request) => {
     );
   }
 
-  if (!isPublicPathname(decision.pathname)) await auth.protect();
+  if (!isPublicPathname(decision.pathname)) {
+    const signIn = new URL(
+      localizePathname(decision.locale, '/sign-in'),
+      request.url,
+    );
+    signIn.searchParams.set('redirect_url', request.url);
+    await auth.protect({ unauthenticatedUrl: signIn.toString() });
+  }
 
   const destination = request.nextUrl.clone();
   destination.pathname = decision.pathname;

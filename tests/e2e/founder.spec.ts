@@ -14,6 +14,9 @@ test('founder milestones work by keyboard and the violet theme follows the profi
     'data-founder-theme',
     'true',
   );
+  await expect(
+    page.getByRole('main').locator('img[src*="founder-fettouma-wide.webp"]'),
+  ).toBeVisible();
   const chapters = page.getByRole('navigation', { name: 'On this page' });
   await chapters.getByRole('link', { name: 'Career' }).click();
   await expect(page).toHaveURL(/#founder-career$/);
