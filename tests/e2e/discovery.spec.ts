@@ -14,6 +14,8 @@ const routePaths = [
   '/schools',
   '/approach',
   '/journal',
+  '/events',
+  '/psy-library',
 ] as const;
 
 const locales = ['ar', 'fr', 'en'] as const;
@@ -88,6 +90,8 @@ test('robots and sitemap preserve governed public discovery', async ({
       routePath: '/consultations',
       defaultPath: '/en/consultations',
     },
+    { routePath: '/events', defaultPath: '/en/events' },
+    { routePath: '/psy-library', defaultPath: '/en/psy-library' },
   ]) {
     for (const entryLocale of locales) {
       const entryLoc = `${governedPublicOrigin}/${entryLocale}${routePath}`;
