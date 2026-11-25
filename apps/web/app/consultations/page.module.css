@@ -459,7 +459,7 @@
   color: #f3d48f;
 }
 
-/* ─── Founder block v2: photo with a 30+ badge beside a tight story. ─── */
+/* Founder profile */
 .authorityV2 {
   display: grid !important;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr) !important;
@@ -488,43 +488,29 @@
   min-width: 0;
 }
 .authorityPhotoLarge {
+  position: relative;
+  overflow: hidden;
   width: 100%;
-  aspect-ratio: 4 / 3.4;
+  margin: 0;
+  aspect-ratio: 4 / 3.65;
+  border-radius: clamp(1rem, 2vw, 1.75rem);
 }
-.yearsBadge {
-  position: absolute;
-  z-index: 6;
-  inset-block-end: clamp(-1rem, -1.5vw, -0.5rem);
-  inset-inline-end: clamp(-1rem, -1.5vw, -0.5rem);
-  display: grid;
-  justify-items: center;
-  gap: 0.15rem;
-  padding: 1rem 1.25rem 0.9rem;
-  border: 1px solid rgb(243 212 143 / 0.45);
-  border-radius: 1.25rem;
-  background: rgb(4 15 27 / 0.82);
-  backdrop-filter: blur(14px);
-  box-shadow:
-    0 1.5rem 3rem -1rem rgb(0 0 0 / 0.6),
-    0 0 2.5rem -0.5rem rgb(243 212 143 / 0.35);
+.authorityPhotoLarge img {
+  object-fit: cover;
+  object-position: center top;
 }
-.yearsBadge span {
-  background: linear-gradient(135deg, #ffffff, #f3d48f 60%, #8bdeef);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 5vw, 4rem);
-  line-height: 1;
+.authorityText .founderAction {
+  --founder-button: #ead0fc;
+  --founder-button-hover: #fbf4ff;
+  --founder-button-ink: #231631;
+  display: inline-flex;
+  gap: 0.65rem;
+  background: var(--founder-button);
+  color: var(--founder-button-ink);
 }
-.yearsBadge small {
-  max-width: 9rem;
-  color: rgb(212 229 238 / 0.75);
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-align: center;
-  text-transform: uppercase;
+.authorityText .founderAction:hover {
+  background: var(--founder-button-hover);
+  color: var(--founder-button-ink);
 }
 .authorityText {
   min-width: 0;
@@ -545,19 +531,6 @@
   border-radius: 1rem;
   background: rgb(255 255 255 / 0.04);
 }
-.signatureMark {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 3rem;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f3d48f, #8bdeef);
-  color: #061321;
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 600;
-}
 .signature p {
   margin: 0 !important;
 }
@@ -569,10 +542,6 @@
 @media (max-width: 900px) {
   .authorityV2 {
     grid-template-columns: 1fr !important;
-  }
-  .yearsBadge {
-    inset-inline-end: 0.75rem;
-    inset-block-end: 0.75rem;
   }
 }
 

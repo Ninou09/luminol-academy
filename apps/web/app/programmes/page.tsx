@@ -9,6 +9,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { FounderTraining } from '../../components/founder-training';
 import { PhotoStack } from '../../components/photo-stack';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { buildProgrammeContactHref } from '../../lib/programme-contact';
@@ -395,6 +396,7 @@ export default async function ProgrammesPage({
             )}
           </section>
         )}
+        {isUnfilteredCatalogue ? <FounderTraining locale={locale} /> : null}
       </main>
       <SiteFooter />
     </>

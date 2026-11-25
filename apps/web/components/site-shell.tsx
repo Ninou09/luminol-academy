@@ -11,6 +11,7 @@ import {
   officialContacts,
   openingHours,
 } from '../lib/contact-channels';
+import { founderNav, founderPath } from '../lib/founder';
 import { privacyPolicy } from '../lib/privacy-policy';
 import { SocialIcons } from './social-icons';
 import { getPublicCopy } from '../lib/public-localization';
@@ -145,12 +146,23 @@ export async function SiteHeader() {
             >
               {copy.site.nav.approach}
             </CurrentPageLink>
-            <CurrentPageLink
-              href={localizeHref(locale, '/about')}
-              activePathname="/about"
-            >
-              {copy.site.nav.about}
-            </CurrentPageLink>
+            <ResourcesMenu
+              label={copy.site.nav.about}
+              openOnHover
+              links={[
+                {
+                  href: localizeHref(locale, '/about'),
+                  label: copy.site.nav.about,
+                  match: '/about',
+                },
+                {
+                  href: localizeHref(locale, founderPath),
+                  label: founderNav[locale].label,
+                  description: founderNav[locale].description,
+                  match: founderPath,
+                },
+              ]}
+            />
             <ResourcesMenu
               label={resourcesCopy[locale].label}
               links={[
@@ -230,6 +242,11 @@ export async function SiteHeader() {
                   href: localizeHref(locale, '/about'),
                   label: copy.site.nav.about,
                   match: '/about',
+                },
+                {
+                  href: localizeHref(locale, founderPath),
+                  label: founderNav[locale].label,
+                  match: founderPath,
                 },
                 {
                   href: localizeHref(locale, '/journal'),
@@ -334,6 +351,12 @@ export async function SiteFooter() {
             activePathname="/about"
           >
             {copy.site.nav.about}
+          </CurrentPageLink>
+          <CurrentPageLink
+            href={localizeHref(locale, founderPath)}
+            activePathname={founderPath}
+          >
+            {founderNav[locale].label}
           </CurrentPageLink>
           <CurrentPageLink
             href={localizeHref(locale, '/contact')}
