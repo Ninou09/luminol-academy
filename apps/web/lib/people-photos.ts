@@ -29,8 +29,9 @@ const photo = (
   en: string,
   fr: string,
   ar: string,
+  revision?: string,
 ): PeoplePhoto => ({
-  src: `/media/people/${name}.webp`,
+  src: `/media/people/${name}.webp${revision ? `?v=${revision}` : ''}`,
   width,
   height,
   alt: { en, fr, ar },
@@ -62,6 +63,7 @@ export const peoplePhotos = {
     'A teacher explains a diagram to a class beside the Luminol Academy sign',
     'Un formateur explique un schéma à un groupe près de l’enseigne de Luminol Academy',
     'مدرّب يشرح مخططًا لمجموعة قرب لافتة أكاديمية لومينول',
+    'blida-2026',
   ),
   academyRoleplay: photo(
     'academy-roleplay',
@@ -70,6 +72,7 @@ export const peoplePhotos = {
     'Two participants practise active listening while a trainer observes',
     'Deux participants pratiquent l’écoute active sous le regard d’une formatrice',
     'مشاركان يتدرّبان على الإصغاء النشط بإشراف مدرّبة',
+    'blida-2026',
   ),
   liveGenerations: photo(
     'live-generations',
@@ -87,6 +90,7 @@ export const peoplePhotos = {
     'A man gestures as he speaks to a psychologist seated across from him',
     'Un homme fait un geste en parlant à une psychologue assise en face de lui',
     'رجل يشير بيديه وهو يتحدث إلى أخصائية نفسية تجلس قبالته',
+    'blida-2026',
   ),
   academySupervision: photo(
     'academy-supervision',
@@ -95,6 +99,7 @@ export const peoplePhotos = {
     'Three colleagues review a diagram during a peer supervision session',
     'Trois collègues examinent un schéma pendant une séance de supervision',
     'ثلاثة زملاء يراجعون مخططًا في جلسة إشراف بين الأقران',
+    'blida-2026',
   ),
   liveHeroMoment: photo(
     'live-hero-moment',
@@ -384,6 +389,7 @@ export const consultationPhotos = {
     'A woman holds the door open and welcomes a visitor to the consultation room',
     'Une femme tient la porte ouverte et accueille une visiteuse dans le cabinet',
     'امرأة تفتح الباب وترحّب بزائرة في غرفة الاستشارة',
+    'blida-2026',
   ),
   firstMeeting: photo(
     'cons-first-meeting',
@@ -392,6 +398,7 @@ export const consultationPhotos = {
     'A psychologist listens to a client beneath the Luminol Academy sign',
     'Une psychologue écoute un client sous l’enseigne de Luminol Academy',
     'أخصائية نفسية تصغي إلى مراجع تحت لافتة أكاديمية لومينول',
+    'blida-2026',
   ),
   online: photo(
     'cons-online',
@@ -408,6 +415,7 @@ export const consultationPhotos = {
     'A couple speaks with a counsellor in a consultation room',
     'Un couple échange avec une conseillère dans un cabinet',
     'زوجان يتحاوران مع مستشارة في غرفة استشارة',
+    'blida-2026',
   ),
   learning: photo(
     'cons-learning',
@@ -416,6 +424,7 @@ export const consultationPhotos = {
     'A teenager chooses an illustrated card during a family consultation',
     'Un adolescent choisit une carte illustrée pendant une consultation familiale',
     'مراهق يختار بطاقة مصوّرة خلال استشارة أسرية',
+    'blida-2026',
   ),
   journal: photo(
     'cons-journal',
@@ -424,6 +433,7 @@ export const consultationPhotos = {
     'A woman checks her phone and takes notes at a desk by a window',
     'Une femme consulte son téléphone et prend des notes près d’une fenêtre',
     'امرأة تنظر في هاتفها وتدوّن ملاحظات قرب نافذة',
+    'blida-2026',
   ),
 } as const satisfies Record<string, PeoplePhoto>;
 
@@ -436,6 +446,7 @@ export const aboutPhotos = {
     'A participant asks a question during a workshop in Blida',
     'Une participante pose une question pendant un atelier à Blida',
     'مشاركة تطرح سؤالًا خلال ورشة في البليدة',
+    'blida-2026',
   ),
   graduate: photo(
     'about-graduate',
@@ -444,6 +455,7 @@ export const aboutPhotos = {
     'A participant receives a Luminol Academy certificate of participation as the audience applauds',
     'Une participante reçoit une attestation de participation de Luminol Academy sous les applaudissements',
     'مشاركة تتسلّم شهادة مشاركة من أكاديمية لومينول فيما يصفّق الحضور',
+    'blida-2026',
   ),
   online: photo(
     'about-online',
@@ -476,6 +488,7 @@ export const aboutPhotos = {
     'Learners pass a worksheet around a shared table',
     'Des apprenants se passent une fiche de travail autour d’une table',
     'متعلّمون يتبادلون ورقة عمل حول طاولة مشتركة',
+    'blida-2026',
   ),
 } as const satisfies Record<string, PeoplePhoto>;
 
@@ -548,6 +561,7 @@ export const approachPhotos = {
     'A woman starts a message on her phone at a kitchen table',
     'Une femme commence à écrire un message sur son téléphone à la table de la cuisine',
     'امرأة تبدأ كتابة رسالة على هاتفها عند طاولة المطبخ',
+    'blida-2026',
   ),
   listen: photo(
     'approach-02-team-listens',
@@ -556,6 +570,7 @@ export const approachPhotos = {
     'A receptionist takes notes with a visitor beneath the Luminol Academy sign',
     'Une réceptionniste prend des notes avec une visiteuse sous l’enseigne de Luminol Academy',
     'موظفة استقبال تدوّن ملاحظات مع زائرة تحت لافتة أكاديمية لومينول',
+    'blida-2026',
   ),
   pathway: photo(
     'approach-03-clear-path',
@@ -564,6 +579,7 @@ export const approachPhotos = {
     'Two people compare illustrated programme options at a table',
     'Deux personnes comparent des options de programme illustrées autour d’une table',
     'شخصان يقارنان خيارات برامج معروضة على بطاقات فوق طاولة',
+    'blida-2026',
   ),
   practice: photo(
     'approach-04-practical-learning',
@@ -572,6 +588,7 @@ export const approachPhotos = {
     'Three people discuss a sequence of illustrated cards on a corkboard',
     'Trois personnes discutent d’une série de cartes illustrées sur un tableau en liège',
     'ثلاثة أشخاص يناقشون سلسلة بطاقات مصوّرة على لوحة فلّين',
+    'blida-2026',
   ),
 } as const satisfies Record<string, PeoplePhoto>;
 
@@ -675,6 +692,7 @@ export const extraPhotos = {
     'Three learners review a cardboard prototype beside sketches on a whiteboard',
     'Trois apprenants examinent un prototype en carton près de croquis au tableau',
     'ثلاثة متعلّمين يراجعون نموذجًا من الورق المقوّى بجوار رسوم على السبورة',
+    'blida-2026',
   ),
   homeDiscoverProgrammes: photo(
     'home-discover-programmes',
