@@ -16,11 +16,13 @@ export function PhotoMosaic({
   locale,
   label,
   className,
+  preserveFrame,
 }: {
   photos: readonly PeoplePhoto[];
   locale: Locale;
   label: string;
   className?: string | undefined;
+  preserveFrame?: string;
 }) {
   return (
     <section
@@ -34,6 +36,7 @@ export function PhotoMosaic({
             key={photo.src}
             className={styles.tile}
             data-no-reveal
+            data-preserve-frame={photo.src === preserveFrame || undefined}
             data-depth={index % 2 ? '0.06' : undefined}
           >
             <Image
@@ -41,7 +44,7 @@ export function PhotoMosaic({
               alt={photo.alt[locale]}
               fill
               sizes={
-                index === 0
+                index === 0 || photo.src === preserveFrame
                   ? '(max-width: 760px) 100vw, 50vw'
                   : '(max-width: 760px) 50vw, 25vw'
               }

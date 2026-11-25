@@ -19,12 +19,14 @@ export function MobileMenu({
   closeLabel,
   contacts,
   hours,
+  founderTheme = false,
 }: {
   links: readonly MenuLink[];
   openLabel: string;
   closeLabel: string;
   contacts: readonly { href: string; label: string; external?: boolean }[];
   hours: string;
+  founderTheme?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -103,6 +105,7 @@ export function MobileMenu({
               ref={panelRef}
               className={styles.panel}
               data-open={open || undefined}
+              data-founder-theme={founderTheme || undefined}
               hidden={!open}
             >
               <nav aria-label={openLabel}>

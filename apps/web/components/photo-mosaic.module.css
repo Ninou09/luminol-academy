@@ -65,3 +65,14 @@
     grid-column: span 1;
   }
 }
+
+.tile[data-preserve-frame] img,
+.tile[data-preserve-frame]:hover img {
+  object-fit: contain;
+  scale: none;
+  filter: none;
+}
+
+.tile[data-preserve-frame]::after {
+  content: none;
+}

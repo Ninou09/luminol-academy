@@ -569,7 +569,7 @@
 }
 @media (max-width: 900px) {
   .enquiryContext .enquiryPhoto {
-    display: none;
+    aspect-ratio: 16 / 9;
   }
   .page .enquiry {
     grid-template-columns: minmax(0, 1fr);
@@ -585,4 +585,14 @@
   color: var(--color-brand-muted);
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+.peerPhoto {
+  width: min(100%, 24rem);
+  aspect-ratio: 16 / 9;
+  margin-block-start: 1.15rem;
+}
+
+.heroStack img {
+  object-position: center top;
 }

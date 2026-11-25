@@ -498,3 +498,21 @@
 .stepCard:hover .stepPhoto {
   scale: 1.05;
 }
+
+.step[aria-labelledby='approach-step-listen'] .stepPhoto {
+  object-position: center top;
+}
+
+.stepVisual.certificateVisual {
+  aspect-ratio: 1672 / 941;
+}
+
+.certificateVisual .stepPhoto,
+.stepCard:hover .certificateVisual .stepPhoto {
+  object-fit: contain;
+  scale: none;
+}
+
+.stepVisual.certificateVisual::after {
+  content: none;
+}

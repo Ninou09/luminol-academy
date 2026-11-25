@@ -94,7 +94,11 @@ const consultationsLabel = {
   en: 'Consultations',
 } as const satisfies Record<Locale, string>;
 
-export async function SiteHeader() {
+type SiteShellProps = { founderTheme?: boolean };
+
+export async function SiteHeader({
+  founderTheme = false,
+}: SiteShellProps = {}) {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
   const common = getCommonDictionary(locale);
@@ -104,7 +108,10 @@ export async function SiteHeader() {
       <a className={styles.skipLink} href="#main-content">
         {skipToContentLabel[locale]}
       </a>
-      <header className={styles.header}>
+      <header
+        className={styles.header}
+        data-founder-theme={founderTheme || undefined}
+      >
         <div className={styles.headerInner}>
           <CurrentPageLink
             className={styles.brand}
@@ -193,6 +200,7 @@ export async function SiteHeader() {
               label={common.languageSelectorLabel}
             />
             <MobileMenu
+              founderTheme={founderTheme}
               openLabel={menuLabels[locale].open}
               closeLabel={menuLabels[locale].close}
               hours={`${openingHours.title[locale]} · ${openingHours.label[locale]}`}
@@ -304,12 +312,17 @@ export async function SiteHeader() {
   );
 }
 
-export async function SiteFooter() {
+export async function SiteFooter({
+  founderTheme = false,
+}: SiteShellProps = {}) {
   const locale = await getRequestLocale();
   const copy = getPublicCopy(locale);
 
   return (
-    <footer className={styles.footer}>
+    <footer
+      className={styles.footer}
+      data-founder-theme={founderTheme || undefined}
+    >
       <NewsletterSignup
         locale={locale}
         privacyHref={localizeHref(locale, '/privacy')}

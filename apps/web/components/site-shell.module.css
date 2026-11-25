@@ -741,3 +741,67 @@
   padding-inline: 0.62rem;
   letter-spacing: 0.04em;
 }
+
+.header[data-founder-theme] {
+  --color-brand-ink: var(--founder-ink);
+  --color-brand-ink-soft: var(--founder-muted);
+  --color-brand-gold-strong: var(--founder-accent);
+  --header-menu-surface: var(--founder-panel);
+  --header-menu-active: var(--founder-tint);
+  --header-menu-line: var(--founder-line);
+}
+
+.header[data-founder-theme] .headerInner {
+  border-color: var(--founder-line);
+  background: linear-gradient(
+    112deg,
+    color-mix(in srgb, var(--founder-panel) 89%, transparent),
+    color-mix(in srgb, var(--founder-deep) 94%, transparent)
+  );
+}
+
+.header[data-founder-theme] .nav a[aria-current='page'] {
+  background: var(--founder-tint);
+  box-shadow: inset 0 0 0 1px var(--founder-line);
+}
+
+.header[data-founder-theme] .contactLink,
+.footer[data-founder-theme] .footerCta {
+  background: linear-gradient(
+    122deg,
+    var(--founder-accent),
+    var(--founder-ink)
+  );
+  color: var(--founder-deep);
+  box-shadow: 0 0.6rem 1.5rem -0.8rem var(--founder-light);
+}
+
+.footer[data-founder-theme] {
+  background:
+    radial-gradient(ellipse at 72% 0%, var(--founder-tint), transparent 66%),
+    var(--founder-deep);
+}
+
+.footer[data-founder-theme]::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--founder-accent),
+    transparent
+  );
+}
+
+.footer[data-founder-theme] .footerHours > span,
+.footer[data-founder-theme] .footerNav a:is(:hover, [aria-current='page']),
+.footer[data-founder-theme] .footerBottom a:hover {
+  color: var(--founder-accent);
+}
+
+.footer[data-founder-theme] :is(.footerHours, .socials a) {
+  border-color: var(--founder-line);
+}
+
+.footer[data-founder-theme] .socials a:is(:hover, :focus-visible) {
+  background: var(--founder-accent);
+  color: var(--founder-deep);
+}
