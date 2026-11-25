@@ -836,6 +836,7 @@
 }
 
 .page section[aria-labelledby='school-programmes-title'] {
+  scroll-margin-block-start: 5.5rem;
   padding-block: clamp(1.75rem, 5vw, 4rem);
 }
 .page section[aria-labelledby='school-programmes-title'] .sectionHeading {
@@ -910,6 +911,17 @@
   }
 }
 
+/* Keep four-card sets balanced without leaving a row of one. */
+@media (min-width: 760px) {
+  .programGrid:has(> .programCard:nth-child(4):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1240px) {
+  .programGrid:has(> .programCard:nth-child(4):last-child) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
 @media (min-width: 901px) {
   .programCard:only-child {
     display: grid;
