@@ -105,19 +105,19 @@ export const brandArtwork: Record<BrandArtwork, BrandArtworkAsset> = {
     width: 1672,
     height: 941,
     alt: {
-      en: 'A luminous brain inside a glass sphere',
-      fr: 'Un cerveau lumineux dans une sphère de verre',
-      ar: 'دماغ مضيء داخل كرة زجاجية',
+      en: 'A facilitator speaks with adult learners around a table',
+      fr: 'Une formatrice échange avec des apprenants adultes autour d’une table',
+      ar: 'مدرّبة تتحاور مع متعلّمين بالغين حول طاولة',
     },
   },
   heroMobile: {
     src: '/media/brand/hero-mobile.webp',
-    width: 941,
-    height: 1672,
+    width: 1122,
+    height: 1402,
     alt: {
-      en: 'A luminous brain inside a glass sphere',
-      fr: 'Un cerveau lumineux dans une sphère de verre',
-      ar: 'دماغ مضيء داخل كرة زجاجية',
+      en: 'A facilitator speaks with adult learners around a table',
+      fr: 'Une formatrice échange avec des apprenants adultes autour d’une table',
+      ar: 'مدرّبة تتحاور مع متعلّمين بالغين حول طاولة',
     },
   },
   darkTexture: {

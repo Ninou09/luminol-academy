@@ -1,5 +1,7 @@
 import type { Locale } from '@luminol/localization';
 
+import { extraPhotos } from './people-photos';
+
 type Text = Record<Locale, string>;
 
 export type JournalArticle = {
@@ -11,6 +13,7 @@ export type JournalArticle = {
   school: 'psychology' | 'languages' | 'training';
   cover: string;
   coverAlt: Text;
+  articleImage: { src: string; alt: Text };
   title: Text;
   summary: Text;
   sections: readonly { heading: Text; body: Text }[];
@@ -27,11 +30,15 @@ export const journalArticles: readonly JournalArticle[] = [
     date: '2026-11-19',
     minutes: 3,
     school: 'psychology',
-    cover: '/media/people/sleep-night.webp',
-    coverAlt: {
-      en: 'A woman reads in bed by the warm glow of a salt lamp',
-      fr: 'Une femme lit au lit à la lueur d’une lampe de sel',
-      ar: 'امرأة تقرأ في سريرها على ضوء مصباح ملح دافئ',
+    cover: extraPhotos.sleepNight.src,
+    coverAlt: extraPhotos.sleepNight.alt,
+    articleImage: {
+      src: '/media/people/journal-sleep.webp',
+      alt: {
+        en: 'A woman sets a phone down beside a notebook and a lamp',
+        fr: 'Une femme pose un téléphone à côté d’un carnet et d’une lampe',
+        ar: 'امرأة تضع هاتفًا بجوار دفتر ومصباح',
+      },
     },
     title: {
       en: 'A gentler evening: small habits for better sleep',
@@ -88,11 +95,15 @@ export const journalArticles: readonly JournalArticle[] = [
     date: '2026-11-19',
     minutes: 3,
     school: 'psychology',
-    cover: '/media/people/anxiety-article.webp',
-    coverAlt: {
-      en: 'A young man breathes calmly by a window at dawn',
-      fr: 'Un jeune homme respire calmement près d’une fenêtre à l’aube',
-      ar: 'شاب يتنفس بهدوء قرب نافذة عند الفجر',
+    cover: extraPhotos.anxiety.src,
+    coverAlt: extraPhotos.anxiety.alt,
+    articleImage: {
+      src: '/media/people/journal-breathing.webp',
+      alt: {
+        en: 'A seated man practises breathing with a hand on his chest',
+        fr: 'Un homme assis pratique un exercice de respiration, la main sur la poitrine',
+        ar: 'رجل جالس يمارس تمرين تنفّس واضعًا يده على صدره',
+      },
     },
     title: {
       en: 'Two minutes to slow down: breathing when anxiety rises',
@@ -149,11 +160,15 @@ export const journalArticles: readonly JournalArticle[] = [
     date: '2026-11-19',
     minutes: 3,
     school: 'psychology',
-    cover: '/media/people/parenting-article.webp',
-    coverAlt: {
-      en: 'A father and his teenage daughter laugh while cooking together',
-      fr: 'Un père et sa fille adolescente rient en cuisinant ensemble',
-      ar: 'أب وابنته المراهقة يضحكان وهما يطبخان معًا',
+    cover: extraPhotos.parenting.src,
+    coverAlt: extraPhotos.parenting.alt,
+    articleImage: {
+      src: '/media/people/journal-teenagers.webp',
+      alt: {
+        en: 'An adult sits beside a teenager as she pours tea',
+        fr: 'Un adulte est assis à côté d’une adolescente qui verse du thé',
+        ar: 'رجل يجلس بجوار فتاة مراهقة وهي تصب الشاي',
+      },
     },
     title: {
       en: 'Side by side: small rituals that open conversations with teenagers',
@@ -210,11 +225,15 @@ export const journalArticles: readonly JournalArticle[] = [
     date: '2026-11-19',
     minutes: 2,
     school: 'training',
-    cover: '/media/people/certificate-seal.webp',
-    coverAlt: {
-      en: 'A certificate with a gold seal and a fountain pen on a wooden desk',
-      fr: 'Un certificat au sceau doré et un stylo plume sur un bureau en bois',
-      ar: 'شهادة بختم ذهبي وقلم حبر على مكتب خشبي',
+    cover: extraPhotos.certificateSeal.src,
+    coverAlt: extraPhotos.certificateSeal.alt,
+    articleImage: {
+      src: '/media/people/journal-certificate.webp',
+      alt: {
+        en: 'A certificate is handed over as a seated group applauds',
+        fr: 'Une attestation est remise sous les applaudissements d’un groupe assis',
+        ar: 'تُسلّم شهادة بينما يصفّق الحضور',
+      },
     },
     title: {
       en: 'What a Luminol attendance certificate means',

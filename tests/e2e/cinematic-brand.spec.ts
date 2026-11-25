@@ -46,7 +46,7 @@ test('cinematic depth responds to scroll without intercepting navigation', async
     .toBe('');
 });
 
-test('hero and school artwork retain their source metadata', async ({
+test('hero and school photos retain their source metadata', async ({
   page,
 }) => {
   await page.goto('/en');
@@ -55,9 +55,14 @@ test('hero and school artwork retain their source metadata', async ({
     'data-media-source',
     'luminol-commissioned-3d',
   );
-  await expect(hero.locator('img')).toHaveAttribute(
+  const photo = hero.locator('picture');
+  await expect(photo).toHaveAttribute(
+    'data-media-source',
+    'luminol-illustrative-photo',
+  );
+  await expect(photo.locator('img')).toHaveAttribute(
     'alt',
-    'A luminous brain inside a glass sphere',
+    'A facilitator speaks with adult learners around a table',
   );
   for (const school of ['psychology', 'languages', 'training']) {
     const art = page.locator(`#${school} [data-academy-media="${school}"]`);
