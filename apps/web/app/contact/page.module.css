@@ -865,8 +865,3 @@
   align-items: start;
   align-content: start;
 }
-.formSurface :global(.form-grid input),
-.formSurface :global(.form-grid select) {
-  min-height: 3rem;
-  margin: 0;
-}

@@ -136,10 +136,21 @@ test('premium Contact page preserves the enquiry form contract', async ({
   await expect(email).toHaveCount(0);
   await expect(phone).toHaveAttribute('required', '');
 
-  await expect(form.locator('select[name="school"]')).toHaveAttribute(
-    'required',
-    '',
-  );
+  const interest = form.locator('select[name="school"]');
+  await expect(interest).toHaveAttribute('required', '');
+  for (const [input, select] of [
+    [form.locator('input[name="name"]'), preferredContact],
+    [phone, interest],
+  ] as const) {
+    const inputBox = await input.boundingBox();
+    const selectBox = await select.boundingBox();
+    expect(inputBox).not.toBeNull();
+    expect(selectBox).not.toBeNull();
+    expect(Math.abs(inputBox!.y - selectBox!.y)).toBeLessThanOrEqual(1);
+    expect(Math.abs(inputBox!.height - selectBox!.height)).toBeLessThanOrEqual(
+      1,
+    );
+  }
   await expect(form.locator('textarea[name="message"]')).not.toHaveAttribute(
     'required',
     '',

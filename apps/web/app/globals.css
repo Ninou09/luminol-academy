@@ -1147,10 +1147,8 @@ main#main-content .form-grid textarea {
   align-content: start;
 }
 .enquiry-form .form-grid :is(input, select) {
-  min-height: 3rem;
+  block-size: 3.25rem;
   margin: 0;
-}
-.enquiry-form .form-grid select {
   padding-block: 0.55rem;
 }
 
