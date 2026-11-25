@@ -14,6 +14,8 @@ const copy = {
     blida: 'In person · Blida',
     zoom: 'Online · Zoom',
     local: 'Algeria time',
+    homeworkPractice:
+      'Practise breaking homework into manageable steps and preparing a weekly progress card.',
   },
   fr: {
     title: 'Ateliers à venir',
@@ -24,6 +26,8 @@ const copy = {
     blida: 'En présentiel · Blida',
     zoom: 'En ligne · Zoom',
     local: 'heure d’Algérie',
+    homeworkPractice:
+      'Apprenez à découper les devoirs en étapes et à préparer une fiche de suivi hebdomadaire.',
   },
   ar: {
     title: 'الورش القادمة',
@@ -34,6 +38,8 @@ const copy = {
     blida: 'حضوريًا · البليدة',
     zoom: 'عبر الإنترنت · Zoom',
     local: 'بتوقيت الجزائر',
+    homeworkPractice:
+      'يتدرّب المشاركون على تقسيم الواجب إلى خطوات وإعداد بطاقة متابعة أسبوعية.',
   },
 } as const;
 
@@ -96,6 +102,9 @@ export function WorkshopAgenda({
                 <div>
                   <h3>{entry.title[locale]}</h3>
                   <p>{entry.audience[locale]}</p>
+                  {entry.date === '2026-12-05' ? (
+                    <p>{labels.homeworkPractice}</p>
+                  ) : null}
                 </div>
                 <div className={styles.venue}>
                   <span>{labels[entry.venue]}</span>

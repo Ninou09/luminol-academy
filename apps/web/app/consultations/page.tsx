@@ -282,7 +282,6 @@ export default async function ConsultationsPage() {
               }}
               headingId="consultation-enquiry-title"
               initialSchool="PSYCHOLOGY"
-              embedded
               initialMessage={copy.initialMessage as string}
             />
             <p className={styles.safetyNote}>{copy.safety as string}</p>
