@@ -195,16 +195,6 @@
   color: var(--color-brand-muted);
   line-height: 1.85;
 }
-.schoolGrid {
-  display: grid;
-  gap: clamp(3rem, 6vw, 6rem);
-}
-.schoolCard {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  gap: clamp(2rem, 6vw, 7rem);
-  align-items: center;
-}
 .psychology {
   --school-accent: var(--color-school-psychology);
 }
@@ -214,130 +204,10 @@
 .training {
   --school-accent: var(--color-school-training);
 }
-.schoolArt {
-  position: relative;
-  isolation: isolate;
-  width: 100%;
-  max-height: 44rem;
-  margin: 0;
-  aspect-ratio: 4 / 5;
-  border-radius: 1.75rem;
-  background: var(--color-brand-surface);
-  box-shadow:
-    0 2.5rem 5rem -1.5rem rgb(7 26 43 / 0.28),
-    0 0 0 1px rgb(16 42 67 / 0.05);
-  transform: perspective(1100px) rotateX(var(--tilt-x, 0deg))
-    rotateY(var(--tilt-y, 0deg));
-  transform-style: preserve-3d;
-  transition:
-    transform 700ms var(--luminol-ease-out),
-    box-shadow 700ms var(--luminol-ease-out);
-}
-.schoolArt[data-tilt-active] {
-  box-shadow:
-    0 3.5rem 6rem -1.5rem rgb(7 26 43 / 0.35),
-    0 0 4rem -1rem color-mix(in srgb, var(--school-accent) 55%, transparent);
-  transition:
-    transform 120ms linear,
-    box-shadow 400ms ease;
-}
-.artImage {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  object-fit: cover;
-}
-.artGlow {
-  position: absolute;
-  z-index: 0;
-  inset: 14%;
-  border-radius: 50%;
-  background: var(--school-accent);
-  opacity: 0.45;
-  filter: blur(4rem);
-}
-.artGlare {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(
-    circle at var(--glare-x, 30%) var(--glare-y, 20%),
-    rgb(255 255 255 / 0.4),
-    transparent 45%
-  );
-  mix-blend-mode: soft-light;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 400ms ease;
-}
-.schoolArt[data-tilt-active] .artGlare {
-  opacity: 1;
-}
-.artNumber {
-  position: absolute;
-  z-index: 3;
-  inset-block-start: 1.5rem;
-  inset-inline-start: 1.5rem;
-  display: grid;
-  place-items: center;
-  width: 3.25rem;
-  aspect-ratio: 1;
-  border: 1px solid rgb(255 255 255 / 0.7);
-  border-radius: 50%;
-  background: rgb(255 255 255 / 0.5);
-  backdrop-filter: blur(12px);
-  color: var(--school-accent);
-  font-size: 0.85rem;
-  font-weight: 800;
-  transform: translateZ(60px);
-}
-.schoolDetails {
-  min-width: 0;
-  padding-block: 1.5rem;
-}
-.schoolTop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  color: var(--color-brand-muted);
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.schoolTop span:first-child {
-  color: var(--school-accent);
-  font-size: 1rem;
-}
-.schoolCard h3 {
-  margin: 2rem 0 1.25rem;
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 4.5vw, 4.75rem);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.035em;
-}
 .schoolPromise {
   color: var(--school-accent);
   font-size: 1.15rem;
   line-height: 1.75;
-}
-.schoolCard ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
-  margin: 1.5rem 0;
-  padding: 1.25rem 0 0;
-  list-style: none;
-  border-top: 1px solid var(--color-brand-line);
-}
-.schoolCard li {
-  font-size: 0.85rem;
-  line-height: 1.8;
 }
 .textLink {
   display: inline-flex;
@@ -602,42 +472,12 @@
   outline: 3px solid var(--color-brand-cyan);
   outline-offset: 5px;
 }
-
-@media (min-width: 801px) {
-  .schoolCard:nth-child(even) .schoolArtWrap {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .schoolCard:nth-child(even) .schoolDetails {
-    grid-column: 1;
-    grid-row: 1;
-  }
-}
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .principles li:hover {
     translate: 0 -4px;
   }
   .textLink:hover span {
     translate: 0.25rem 0;
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .artImage {
-    animation: art-float 9s ease-in-out infinite alternate;
-  }
-  .schoolCard:nth-child(2) .artImage {
-    animation-delay: -3s;
-  }
-  .schoolCard:nth-child(3) .artImage {
-    animation-delay: -6s;
-  }
-}
-@keyframes art-float {
-  from {
-    translate: 0 -0.5rem;
-  }
-  to {
-    translate: 0 0.6rem;
   }
 }
 .page:dir(rtl) :is(h1, h2, h3, .schoolPromise, .aboutLede, .pathwayLinks a) {
@@ -650,12 +490,11 @@
   line-height: 1.45;
   font-weight: 500;
 }
-.page:dir(rtl) :is(.eyebrow, .schoolTop) {
+.page:dir(rtl) .eyebrow {
   letter-spacing: normal;
 }
 .heroTitle,
 .sectionHeading h2,
-.schoolCard h3,
 .pathwayLinks a {
   overflow-wrap: anywhere;
 }
@@ -668,7 +507,6 @@
   }
 }
 @media (max-width: 800px) {
-  .schoolCard,
   .sectionHeading,
   .approach,
   .about,
@@ -676,18 +514,8 @@
   .cta {
     grid-template-columns: 1fr;
   }
-  .schoolArt {
-    aspect-ratio: 1 / 1.1;
-    border-radius: 1.25rem;
-  }
   .proof {
     margin-top: -2rem;
-  }
-  .schoolDetails {
-    padding: 0;
-  }
-  .schoolCard h3 {
-    margin-top: 1rem;
   }
   .approachIntro {
     position: static;
@@ -744,15 +572,6 @@
   .cta {
     padding-inline: 1.25rem;
   }
-  .schoolGrid {
-    gap: 3.5rem;
-  }
-  .schoolCard {
-    gap: 1.5rem;
-  }
-  .schoolTop {
-    font-size: 0.6rem;
-  }
   .aboutVisual {
     min-height: 25rem;
   }
@@ -766,17 +585,9 @@
     ) {
     font-size: clamp(1.75rem, 7vw, 2.75rem);
   }
-  .page:dir(rtl) .schoolCard h3 {
-    font-size: clamp(1.8rem, 7vw, 2.5rem);
-  }
   .principles li {
     grid-template-columns: 1.5rem minmax(0, 1fr);
     gap: 0.75rem;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .schoolArt {
-    transform: none;
   }
 }
 
@@ -814,7 +625,6 @@
   }
 }
 
-.schoolArtWrap,
 .aboutVisualWrap {
   min-width: 0;
   transform-style: preserve-3d;
@@ -825,61 +635,6 @@
 /* SplitText masks: let descenders breathe inside the clipped lines. */
 .page :global(.split-line) {
   padding-block-end: 0.08em;
-}
-
-/* Original editorial photo floats in front of each artwork, credit intact. */
-.schoolArtWrap {
-  position: relative;
-}
-.schoolInset {
-  position: absolute;
-  z-index: 4;
-  inset-block-end: -2.5rem;
-  inset-inline-end: -2rem;
-  width: 44%;
-  aspect-ratio: 4 / 3;
-  border: 6px solid var(--color-brand-surface);
-  border-radius: 1rem;
-  box-shadow: 0 1.75rem 3.5rem -0.75rem rgb(7 26 43 / 0.4);
-  rotate: 4deg;
-  transition:
-    rotate 600ms var(--luminol-ease-out),
-    scale 600ms var(--luminol-ease-out);
-}
-.schoolCard:nth-child(even) .schoolInset {
-  inset-inline-end: auto;
-  inset-inline-start: -2rem;
-  rotate: -4deg;
-}
-.schoolArtWrap:hover .schoolInset {
-  rotate: 0deg;
-  scale: 1.04;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .schoolInset {
-    animation: inset-float 7s ease-in-out infinite alternate;
-  }
-}
-@keyframes inset-float {
-  from {
-    translate: 0 0;
-  }
-  to {
-    translate: 0 -0.9rem;
-  }
-}
-@media (max-width: 800px) {
-  .schoolInset {
-    width: 58%;
-    inset-block-end: -1.5rem;
-    inset-inline-end: -0.5rem;
-  }
-  .schoolCard:nth-child(even) .schoolInset {
-    inset-inline-start: -0.5rem;
-  }
-  .schoolGrid {
-    gap: 5rem;
-  }
 }
 
 /* Neurons behind the approach copy. */
@@ -1000,14 +755,6 @@
 .page[data-cosmos] .eyebrow {
   color: var(--color-brand-cyan-light);
 }
-/* Each school card floats on a faint glass plate. */
-.page[data-cosmos] .schoolDetails {
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  border: 1px solid rgb(255 255 255 / 0.08);
-  border-radius: 1.5rem;
-  background: linear-gradient(160deg, rgb(7 26 43 / 0.55), rgb(7 26 43 / 0.25));
-  backdrop-filter: blur(10px);
-}
 .page[data-cosmos] .mediaCredits {
   background: rgb(4 15 27 / 0.7);
 }
@@ -1022,23 +769,6 @@
   color: var(--color-brand-night);
 }
 
-/* Commissioned artwork is now transparent: let it float freely in space. */
-.schoolArt {
-  background: transparent;
-  box-shadow: none;
-}
-.schoolArt[data-tilt-active] {
-  box-shadow: none;
-}
-.artImage {
-  object-fit: contain;
-  filter: drop-shadow(0 1.5rem 3rem rgb(0 0 0 / 0.5))
-    drop-shadow(0 0 2rem rgb(139 222 239 / 0.22));
-}
-.artGlow {
-  opacity: 0.35;
-}
-
 /* Brighter cosmos with pearl, gold and white accents. */
 .page[data-cosmos] {
   --color-brand-ink-soft: #d4e5ee;
@@ -1051,16 +781,8 @@
   -webkit-background-clip: text;
   background-clip: text;
 }
-.page[data-cosmos] .schoolTop span:first-child,
 .page[data-cosmos] .principles li > span {
   color: #f0cf8e;
-}
-
-.page[data-cosmos] .artNumber {
-  border-color: rgb(243 212 143 / 0.45);
-  background: rgb(7 26 43 / 0.55);
-  color: #f3d48f;
-  box-shadow: 0 0 1.5rem rgb(243 212 143 / 0.2);
 }
 
 /* "Why Luminol exists": a living film in a luminous glass frame. */
@@ -1136,32 +858,7 @@
   }
 }
 /* Commissioned transparent vignettes float beside each school artwork. */
-.schoolInset {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  overflow: visible;
-}
-.schoolInset img {
-  object-fit: contain;
-  filter: drop-shadow(0 1.25rem 2rem rgb(0 0 0 / 0.5))
-    drop-shadow(0 0 1.5rem rgb(139 222 239 / 0.25));
-}
-.schoolInset figcaption {
-  display: none;
-}
-.schoolInset,
-.schoolInset::before,
-.schoolInset::after {
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
 /* No photo gradient over transparent vignettes. */
-.schoolInset::after {
-  display: none;
-}
 /* Final call to action: a moment of relief behind the invitation. */
 .page[data-cosmos] .cta {
   background:
@@ -1187,97 +884,6 @@
 /* The relief photo carries the final section; the inkblot rests elsewhere. */
 .page[data-cosmos] .cta .inkBlot {
   display: none;
-}
-
-/* ── Our schools: a living photo with the school's glass emblem floating
-   in front of it (one staircase only, no repeated artwork). ── */
-.page .schoolArt {
-  overflow: hidden;
-  aspect-ratio: 4 / 4.6;
-  border: 1px solid rgb(255 255 255 / 0.16);
-  border-radius: clamp(1.25rem, 2.4vw, 2rem);
-  background: var(--color-brand-night);
-  box-shadow:
-    0 2.5rem 5rem -1.5rem rgb(0 0 0 / 0.6),
-    0 0 4rem -1.5rem color-mix(in srgb, var(--school-accent) 60%, transparent);
-}
-.page .schoolArt[data-tilt-active] {
-  box-shadow:
-    0 3rem 6rem -1.5rem rgb(0 0 0 / 0.65),
-    0 0 5rem -1rem color-mix(in srgb, var(--school-accent) 70%, transparent);
-}
-.schoolPhoto {
-  object-fit: cover;
-  transition:
-    scale 1.4s var(--luminol-ease-out),
-    filter 1.4s var(--luminol-ease-out);
-  filter: saturate(1.04) contrast(1.03);
-}
-.schoolCard:nth-child(1) .schoolPhoto {
-  object-position: 45% 50%;
-}
-.schoolCard:nth-child(2) .schoolPhoto {
-  object-position: 55% 50%;
-}
-.schoolCard:nth-child(3) .schoolPhoto {
-  object-position: 38% 40%;
-}
-.schoolArt:hover .schoolPhoto {
-  scale: 1.05;
-}
-.schoolPhotoVeil {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  background:
-    linear-gradient(180deg, transparent 50%, rgb(4 15 27 / 0.6)),
-    radial-gradient(
-      120% 80% at 100% 100%,
-      color-mix(in srgb, var(--school-accent) 35%, transparent),
-      transparent 60%
-    );
-  mix-blend-mode: normal;
-  pointer-events: none;
-}
-.schoolEmblem {
-  position: absolute;
-  z-index: 4;
-  inset-block-end: -3rem;
-  inset-inline-end: -2.5rem;
-  display: block;
-  width: clamp(10rem, 20vw, 17rem);
-  aspect-ratio: 1;
-  pointer-events: none;
-}
-.schoolCard:nth-child(even) .schoolEmblem {
-  inset-inline-end: auto;
-  inset-inline-start: -2.5rem;
-}
-.schoolEmblem .artImage {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.schoolEmblem .artGlow {
-  inset: 20%;
-  opacity: 0.55;
-}
-@media (max-width: 800px) {
-  .page .schoolArt {
-    aspect-ratio: 4 / 3.4;
-  }
-  .schoolEmblem {
-    width: 38vw;
-    max-width: 12rem;
-    inset-block-end: -2.25rem;
-    inset-inline-end: -0.5rem;
-  }
-  .schoolCard:nth-child(even) .schoolEmblem {
-    inset-inline-start: -0.5rem;
-  }
-  .schoolArtWrap {
-    margin-block-end: 1.5rem;
-  }
 }
 
 /* ── Proof strip: a real face beside each number. ── */
@@ -1333,25 +939,6 @@
     box-shadow:
       0 0 0 7px rgb(243 212 143 / 0.16),
       0 0.75rem 1.5rem rgb(0 0 0 / 0.35);
-  }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .schoolPhoto {
-    animation: photo-breathe 18s ease-in-out infinite alternate;
-  }
-  .schoolCard:nth-child(2) .schoolPhoto {
-    animation-delay: -6s;
-  }
-  .schoolCard:nth-child(3) .schoolPhoto {
-    animation-delay: -12s;
-  }
-}
-@keyframes photo-breathe {
-  from {
-    transform: scale(1.02) translate3d(0, 0, 0);
-  }
-  to {
-    transform: scale(1.09) translate3d(-1.2%, -1%, 0);
   }
 }
 
@@ -1565,4 +1152,127 @@
 
 .page[data-cosmos] .approachIntro h2 + p {
   margin-top: 1.25rem;
+}
+
+/* Home school cards */
+.page[data-cosmos] section.schoolsSection {
+  padding: clamp(1.25rem, 4vw, 3.5rem);
+}
+
+.schoolsSection .sectionHeading {
+  align-items: end;
+  column-gap: clamp(1.25rem, 4vw, 4rem);
+  row-gap: 0.75rem;
+  margin-block-end: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.schoolsSection .sectionHeading > p {
+  margin: 0;
+}
+
+.schoolsSection .sectionHeading h2 {
+  font-size: clamp(2rem, 4.25vw, 4rem);
+}
+
+.schoolGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.85rem, 2vw, 1.5rem);
+}
+
+.schoolCard {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+  border: 1px solid var(--color-brand-line);
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  background: color-mix(in srgb, var(--color-brand-night) 72%, transparent);
+}
+
+.schoolArt {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 3 / 2;
+  margin: 0;
+  overflow: hidden;
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
+  background: var(--color-brand-night);
+}
+
+.schoolPhoto {
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+.schoolDetails {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-block-start: 2px solid var(--school-accent);
+}
+
+.schoolCard h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 2.65vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+
+.schoolCard .schoolPromise {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.schoolCard ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 0.85rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.75rem 0 0;
+  border-block-start: 1px solid var(--color-brand-line);
+  list-style: none;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.schoolCard .textLink {
+  margin-block-start: auto;
+  gap: 0.6rem;
+}
+
+@media (min-width: 621px) and (max-width: 1000px) {
+  .schoolGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .schoolCard {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-rows: auto;
+  }
+  .schoolArt {
+    aspect-ratio: auto;
+    min-height: 12rem;
+    border-start-end-radius: 0;
+    border-end-start-radius: inherit;
+  }
+  .schoolDetails {
+    border-block-start: 0;
+    border-inline-start: 2px solid var(--school-accent);
+  }
+}
+
+@media (max-width: 620px) {
+  .schoolGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .schoolArt {
+    aspect-ratio: 4 / 3;
+  }
 }

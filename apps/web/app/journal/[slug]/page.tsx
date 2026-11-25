@@ -63,7 +63,7 @@ export default async function JournalArticlePage({ params }: Props) {
     description: article.summary[locale],
     datePublished: article.date,
     inLanguage: locale,
-    image: article.cover,
+    image: article.articleImage.src,
     author: { '@type': 'Person', name: journalAuthor[locale].name },
     publisher: { '@type': 'Organization', name: 'Luminol Academy' },
   };
@@ -97,8 +97,8 @@ export default async function JournalArticlePage({ params }: Props) {
           <p className={styles.lede}>{article.summary[locale]}</p>
           <figure className={styles.articleCover}>
             <Image
-              src={article.cover}
-              alt={article.coverAlt[locale]}
+              src={article.articleImage.src}
+              alt={article.articleImage.alt[locale]}
               fill
               priority
               sizes="(max-width: 900px) 100vw, 60rem"
