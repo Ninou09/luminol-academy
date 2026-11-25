@@ -1155,7 +1155,7 @@
 }
 
 /* Home school cards */
-.page[data-cosmos] .schoolsSection {
+.page[data-cosmos] section.schoolsSection {
   padding: clamp(1.25rem, 4vw, 3.5rem);
 }
 
@@ -1168,6 +1168,10 @@
 
 .schoolsSection .sectionHeading > p {
   margin: 0;
+}
+
+.schoolsSection .sectionHeading h2 {
+  font-size: clamp(2rem, 4.25vw, 4rem);
 }
 
 .schoolGrid {
@@ -1188,7 +1192,7 @@
 .schoolArt {
   position: relative;
   isolation: isolate;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   margin: 0;
   overflow: hidden;
   border-start-start-radius: inherit;
@@ -1267,5 +1271,8 @@
 @media (max-width: 620px) {
   .schoolGrid {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .schoolArt {
+    aspect-ratio: 4 / 3;
   }
 }
