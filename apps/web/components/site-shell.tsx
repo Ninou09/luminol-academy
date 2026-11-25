@@ -69,19 +69,19 @@ const resourcesCopy = {
     label: 'موارد',
     journal: 'مقالات قصيرة للحياة اليومية والتعلّم',
     events: 'لقاءات قادمة وأرشيف الجلسات السابقة',
-    library: 'مكتبة بصرية عربية في علم النفس',
+    library: 'قراءات وأدوات بصرية في علم النفس',
   },
   fr: {
     label: 'Ressources',
     journal: 'Des articles courts pour le quotidien et l’apprentissage',
     events: 'Rencontres à venir et archive des sessions passées',
-    library: 'Une bibliothèque visuelle de psychologie en arabe',
+    library: 'Lectures et outils visuels en psychologie',
   },
   en: {
     label: 'Resources',
     journal: 'Short articles for everyday life and learning',
     events: 'Upcoming meetings and the archive of past sessions',
-    library: 'An Arabic visual library of psychology',
+    library: 'Psychology reading and visual tools',
   },
 } as const satisfies Record<
   Locale,
@@ -187,7 +187,7 @@ export async function SiteHeader({
                   match: '/events',
                 },
                 {
-                  href: '/psy-library',
+                  href: localizeHref(locale, '/psy-library'),
                   label: libraryLabel[locale],
                   description: resourcesCopy[locale].library,
                   match: '/psy-library',
@@ -268,7 +268,7 @@ export async function SiteHeader({
                   match: '/events',
                 },
                 {
-                  href: '/psy-library',
+                  href: localizeHref(locale, '/psy-library'),
                   label: libraryLabel[locale],
                   match: '/psy-library',
                 },
@@ -381,7 +381,9 @@ export async function SiteFooter({
           <Link href={localizeHref(locale, '/journal')}>
             {journalLabel[locale]}
           </Link>
-          <Link href="/psy-library">{libraryLabel[locale]}</Link>
+          <Link href={localizeHref(locale, '/psy-library')}>
+            {libraryLabel[locale]}
+          </Link>
           <a href={getPortalHref(locale)}>{portalLabel[locale]}</a>
         </nav>
         <div className={styles.footerHours}>

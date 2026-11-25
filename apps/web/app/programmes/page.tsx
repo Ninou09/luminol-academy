@@ -264,6 +264,17 @@ export default async function ProgrammesPage({
             <p className="eyebrow">{copy.eyebrow}</p>
             <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
             {single ? results : <p>{copy.heroBody}</p>}
+            {!single ? (
+              <Link href={localizeHref(locale, '/psy-library')}>
+                {
+                  {
+                    en: 'Explore the Psychology Library',
+                    fr: 'Explorer la bibliothèque de psychologie',
+                    ar: 'استكشف المكتبة النفسية',
+                  }[locale]
+                }
+              </Link>
+            ) : null}
             <form
               className={styles.filters}
               action={localizeHref(locale, '/programmes')}

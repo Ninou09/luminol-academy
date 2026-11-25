@@ -413,3 +413,102 @@
     height: 56%;
   }
 }
+
+.hero {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+}
+.intro p:not(.role) {
+  max-width: 51ch;
+  margin-block-end: 1.35rem;
+}
+.cta {
+  min-height: 3.2rem;
+  text-align: center;
+  box-shadow: 0 0.55rem 1.8rem -0.5rem var(--founder-gold-glow);
+}
+.portrait {
+  aspect-ratio: 5 / 5.4;
+  border-radius: 48% 48% 1.25rem 1.25rem / 22% 22% 1.25rem 1.25rem;
+}
+.portrait figcaption {
+  min-width: min(70%, 10rem);
+  padding: 0.7rem 0.95rem;
+  background: var(--founder-deep);
+}
+.portrait strong {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1;
+}
+.chapters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 0.45rem;
+  gap: 0.45rem;
+}
+.chapters a {
+  justify-content: center;
+  padding-inline: 0.35rem;
+  border: 1px solid var(--founder-line);
+  text-align: center;
+}
+.details {
+  align-items: start;
+}
+.details section,
+.contact {
+  background:
+    linear-gradient(145deg, var(--founder-tint), transparent 65%),
+    var(--founder-panel);
+}
+.timeline summary:hover,
+.contact address a:focus-visible {
+  color: var(--founder-gold);
+  background: var(--founder-tint);
+}
+.cta:focus-visible,
+.chapters a:focus-visible,
+.timeline summary:focus-visible,
+.contact address a:focus-visible {
+  outline: 2px solid var(--founder-gold);
+  outline-offset: -3px;
+}
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: clamp(1rem, 5vw, 1.7rem);
+  }
+  .portrait {
+    width: min(100%, 32rem);
+    justify-self: center;
+    aspect-ratio: 5 / 5.15;
+  }
+}
+@media (max-width: 480px) {
+  .cta {
+    width: 100%;
+  }
+  .chapters a {
+    font-size: 0.83rem;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :global(html[data-motion='full']) .cta,
+  :global(html[data-motion='full']) .contact address a {
+    transition:
+      translate 200ms var(--luminol-ease-out, ease),
+      box-shadow 220ms,
+      background 220ms;
+  }
+  :global(html[data-motion='full'])
+    :is(.cta, .contact address a):is(:hover, :focus-visible) {
+    translate: 0 -0.2rem;
+    box-shadow: 0 0.65rem 1.6rem -0.5rem var(--founder-gold-glow);
+  }
+  :global(html[data-motion='full']) .portrait figcaption {
+    animation: enter 800ms 280ms var(--luminol-ease-out, ease) both;
+  }
+  :global(html[data-motion='full']) .timeline details[open] p {
+    animation: enter 240ms var(--luminol-ease-out, ease) both;
+  }
+}

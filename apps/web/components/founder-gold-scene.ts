@@ -39,7 +39,9 @@ export function createFounderGold(canvas: HTMLCanvasElement) {
 
   const gold = new MeshStandardMaterial({
     color: new Color(0xe6ad55),
-    metalness: 0.62,
+    emissive: 0xc88931,
+    emissiveIntensity: 0.13,
+    metalness: 0.54,
     roughness: 0.27,
   });
   const ringGeometry = new TorusGeometry(1.35, 0.04, 10, 96);
@@ -65,6 +67,7 @@ export function createFounderGold(canvas: HTMLCanvasElement) {
 
   const draw = (time: number) => {
     const t = time * 0.001;
+    sculpture.rotation.z = Math.sin(t * 0.21) * 0.14;
     ring.rotation.set(0.42 + Math.sin(t * 0.48) * 0.22, t * 0.28, -0.3);
     orbit.rotation.set(1.15, -t * 0.24, 0.35);
     for (const [index, shard] of shards.entries()) {

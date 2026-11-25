@@ -15,6 +15,7 @@ const routes = [
   '/en/schools',
   '/ar/schools/psychology',
   '/fr/about',
+  '/fr/journal',
   '/ar/contact',
   '/en/privacy',
 ];

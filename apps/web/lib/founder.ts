@@ -1,6 +1,7 @@
 import type { Locale } from '@luminol/localization';
 
 export const founderPath = '/about/founder';
+export const founderExperience = '31+';
 export const founderWebsite = 'https://luminolacademy.nl/';
 export const founderPortrait = {
   src: '/media/founder-office-portrait.webp',
@@ -60,7 +61,7 @@ export const founderCopy = {
     name: 'Kheddaoui Fettouma',
     role: 'Founder of Luminol Academy · Clinical psychologist',
     intro:
-      'Kheddaoui Fettouma founded Luminol Academy in 2019 to bring psychological consultations, education and professional training together. She brings 31 years of experience to her work with individuals, couples and families.',
+      'Kheddaoui Fettouma founded Luminol Academy in 2019 to bring psychological consultations, education and professional training together. She brings more than 31 years of experience to her work with individuals, couples and families.',
     years: 'Years of experience',
     website: 'Visit her personal website',
     career: 'Clinical practice and teaching',
@@ -72,7 +73,7 @@ export const founderCopy = {
     name: 'Kheddaoui Fettouma',
     role: 'Fondatrice de Luminol Academy · Psychologue clinicienne',
     intro:
-      'Kheddaoui Fettouma a fondé Luminol Academy en 2019 pour réunir consultations psychologiques, enseignement et formation professionnelle. Elle s’appuie sur 31 ans d’expérience pour accompagner les personnes, les couples et les familles.',
+      'Kheddaoui Fettouma a fondé Luminol Academy en 2019 pour réunir consultations psychologiques, enseignement et formation professionnelle. Elle s’appuie sur plus de 31 ans d’expérience pour accompagner les personnes, les couples et les familles.',
     years: 'Ans d’expérience',
     website: 'Visiter son site personnel',
     career: 'Pratique clinique et enseignement',
@@ -84,7 +85,7 @@ export const founderCopy = {
     name: 'خداوي فطومة',
     role: 'مؤسّسة أكاديمية لومينول · أخصائية نفسية عيادية',
     intro:
-      'أسّست خداوي فطومة أكاديمية لومينول عام 2019 لتجمع بين الاستشارات النفسية والتعليم والتدريب المهني. وتستند في عملها مع الأفراد والأزواج والأسر إلى 31 عامًا من الخبرة.',
+      'أسّست خداوي فطومة أكاديمية لومينول عام 2019 لتجمع بين الاستشارات النفسية والتعليم والتدريب المهني. وتستند في عملها مع الأفراد والأزواج والأسر إلى أكثر من 31 عامًا من الخبرة.',
     years: 'عامًا من الخبرة',
     website: 'زيارة موقعها الشخصي',
     career: 'الممارسة العيادية والتدريس',

@@ -14,12 +14,15 @@ test('psychology consultations are localized and expose the enquiry flow', async
     }),
   ).toBeVisible();
 
+  const enquiryTitle = page.locator('#consultation-enquiry-title');
+  await expect(enquiryTitle).toHaveRole('heading');
+  await expect(enquiryTitle).not.toHaveCSS('clip-path', 'inset(50%)');
   const founderAuthority = page.locator(
     '[data-consultation-founder-authority]',
   );
   await expect(founderAuthority).toBeVisible();
   await expect(founderAuthority).toContainText('خداوي فطومة');
-  await expect(founderAuthority).toContainText('31');
+  await expect(founderAuthority).toContainText('31+');
   await expect(founderAuthority.locator('a')).toHaveAttribute(
     'href',
     '/ar/about/founder',

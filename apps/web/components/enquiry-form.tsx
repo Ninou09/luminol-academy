@@ -30,6 +30,7 @@ type EnquiryFormProps = {
   /** The surrounding section already has its own heading. */
   embedded?: boolean;
   initialProgrammeSlug?: string | undefined;
+  headingId?: string;
 };
 
 type WindowWithExtras = Window & {
@@ -46,6 +47,7 @@ export function EnquiryForm({
   initialMessage = '',
   embedded = false,
   initialProgrammeSlug,
+  headingId = 'enquiry-form-title',
 }: EnquiryFormProps) {
   const qualification = getEnquiryQualificationCopy(locale);
   const [preferredContact, setPreferredContact] =
@@ -202,7 +204,7 @@ export function EnquiryForm({
         embedded ? 'enquiry-form enquiry-form--embedded' : 'enquiry-form'
       }
       aria-busy={isSubmitting}
-      aria-labelledby="enquiry-form-title"
+      aria-labelledby={headingId}
       onInvalidCapture={(event) => {
         const field = event.target;
         if (field instanceof HTMLInputElement && fieldHints[field.name])
@@ -224,7 +226,7 @@ export function EnquiryForm({
     >
       <div className="form-heading">
         <p className="eyebrow">{copy.eyebrow}</p>
-        <h2 id="enquiry-form-title">{copy.title}</h2>
+        <h2 id={headingId}>{copy.title}</h2>
         <p>{copy.intro}</p>
       </div>
 

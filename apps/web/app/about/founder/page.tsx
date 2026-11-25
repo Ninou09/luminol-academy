@@ -11,6 +11,7 @@ import { FounderTraining } from '../../../components/founder-training';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import {
   founderContact,
+  founderExperience,
   founderCopy,
   founderJourney,
   founderPath,
@@ -86,7 +87,9 @@ export default async function FounderPage() {
               sizes="(max-width: 760px) 90vw, (max-width: 1200px) 42vw, 480px"
             />
             <figcaption>
-              <strong>31</strong>
+              <strong>
+                <bdi>{founderExperience}</bdi>
+              </strong>
               <span>{copy.years}</span>
             </figcaption>
           </figure>

@@ -12,6 +12,7 @@ import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { journalArticles, journalCopy } from '../../lib/journal';
 import { getRequestLocale } from '../../lib/request-locale';
 import styles from './journal.module.css';
+import { StoryRail } from './story-rail';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -38,7 +39,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function JournalPage() {
   const locale = await getRequestLocale();
   const copy = journalCopy[locale];
-  const [lead, ...rest] = journalArticles;
 
   return (
     <>
@@ -50,46 +50,12 @@ export default async function JournalPage() {
           <p className={styles.lede}>{copy.heroBody}</p>
         </section>
 
-        {lead ? (
-          <Link
-            href={localizeHref(locale, `/journal/${lead.slug}`)}
-            className={styles.lead}
-            aria-labelledby={`journal-${lead.slug}`}
-          >
-            <span className={styles.leadImage}>
-              <Image
-                src={lead.cover}
-                alt={lead.coverAlt[locale]}
-                fill
-                priority
-                sizes="(max-width: 900px) 100vw, 55vw"
-              />
-            </span>
-            <span className={styles.leadBody}>
-              <span className={styles.meta}>
-                {lead.draft ? (
-                  <span className={styles.draft}>{copy.draft}</span>
-                ) : null}
-                <span>
-                  {lead.minutes} {copy.minutes}
-                </span>
-              </span>
-              <h2 id={`journal-${lead.slug}`}>{lead.title[locale]}</h2>
-              <span className={styles.summary}>{lead.summary[locale]}</span>
-              <b className={styles.read}>
-                {copy.read} <span aria-hidden="true">→</span>
-              </b>
-            </span>
-          </Link>
-        ) : null}
-
-        <ul className={styles.grid}>
-          {rest.map((article) => (
+        <StoryRail locale={locale}>
+          {journalArticles.map((article) => (
             <li key={article.slug}>
               <Link
                 href={localizeHref(locale, `/journal/${article.slug}`)}
                 className={styles.card}
-                aria-labelledby={`journal-${article.slug}`}
               >
                 <span className={styles.cardImage}>
                   <Image
@@ -99,22 +65,30 @@ export default async function JournalPage() {
                     sizes="(max-width: 900px) 100vw, 40vw"
                   />
                 </span>
-                <span className={styles.meta}>
-                  {article.draft ? (
-                    <span className={styles.draft}>{copy.draft}</span>
-                  ) : null}
-                  <span>
-                    {article.minutes} {copy.minutes}
+                <div className={styles.storyBody}>
+                  <span className={styles.meta}>
+                    {article.draft ? (
+                      <span className={styles.draft}>{copy.draft}</span>
+                    ) : null}
+                    <span>
+                      {article.minutes} {copy.minutes}
+                    </span>
                   </span>
-                </span>
-                <h2 id={`journal-${article.slug}`}>{article.title[locale]}</h2>
-                <span className={styles.summary}>
-                  {article.summary[locale]}
-                </span>
+                  <h3>{article.title[locale]}</h3>
+                  <span className={styles.summary}>
+                    {article.summary[locale]}
+                  </span>
+                  <b className={styles.read}>
+                    {copy.read}{' '}
+                    <span aria-hidden="true">
+                      {locale === 'ar' ? '←' : '→'}
+                    </span>
+                  </b>
+                </div>
               </Link>
             </li>
           ))}
-        </ul>
+        </StoryRail>
       </main>
       <SiteFooter />
     </>

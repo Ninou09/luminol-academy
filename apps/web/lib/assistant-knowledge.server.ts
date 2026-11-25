@@ -70,7 +70,7 @@ ${schools}
 - Directions: ${officialAddress.directionsHref}
 - Opening hours: ${openingHours.label.en} (${openingHours.note.en})
 - Social: ${socialLinks.map((link) => `${link.label} ${link.href}`).join(', ')}
-- Website pages: /contact (enquiry form), /consultations, /programmes, /schools, /approach, /about, /privacy, /psy-library (Arabic psychology library)
+- Website pages: /contact (enquiry form), /consultations, /programmes, /schools, /approach, /about, /privacy, /psy-library (psychology library)
 
 ### Psychology consultations
 A person sends a request (form, WhatsApp or a call). Staff then confirm the specialist, the price and the time; the appointment is confirmed only after that follow-up. Sessions happen online or at the academy in Blida.
