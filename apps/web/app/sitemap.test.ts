@@ -33,12 +33,21 @@ describe('public sitemap localization', () => {
       (entry) => entry.url === 'https://academy.example.com/ar/consultations',
     );
 
-    expect(entries).toHaveLength(36);
+    expect(entries).toHaveLength(39);
     expect(frenchAbout?.alternates?.languages).toEqual({
       ar: 'https://academy.example.com/ar/about',
       fr: 'https://academy.example.com/fr/about',
       en: 'https://academy.example.com/en/about',
       'x-default': 'https://academy.example.com/en/about',
+    });
+    const founder = entries.find(
+      (entry) => entry.url === 'https://academy.example.com/en/about/founder',
+    );
+    expect(founder?.alternates?.languages).toEqual({
+      ar: 'https://academy.example.com/ar/about/founder',
+      fr: 'https://academy.example.com/fr/about/founder',
+      en: 'https://academy.example.com/en/about/founder',
+      'x-default': 'https://academy.example.com/en/about/founder',
     });
     expect(arabicConsultations?.alternates?.languages).toEqual({
       ar: 'https://academy.example.com/ar/consultations',

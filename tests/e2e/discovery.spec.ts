@@ -4,6 +4,7 @@ const routePaths = [
   '',
   '/programmes',
   '/about',
+  '/about/founder',
   '/consultations',
   '/contact',
   '/schools/psychology',
