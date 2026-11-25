@@ -56,7 +56,6 @@ export default async function JournalPage() {
               <Link
                 href={localizeHref(locale, `/journal/${article.slug}`)}
                 className={styles.card}
-                aria-labelledby={`journal-${article.slug}`}
               >
                 <span className={styles.cardImage}>
                   <Image
@@ -75,9 +74,7 @@ export default async function JournalPage() {
                       {article.minutes} {copy.minutes}
                     </span>
                   </span>
-                  <h3 id={`journal-${article.slug}`}>
-                    {article.title[locale]}
-                  </h3>
+                  <h3>{article.title[locale]}</h3>
                   <span className={styles.summary}>
                     {article.summary[locale]}
                   </span>
