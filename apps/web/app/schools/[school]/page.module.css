@@ -803,3 +803,126 @@
     font-size: 1rem;
   }
 }
+
+/* Keep the copy and main photo in the same viewport on regular screens. */
+.page .hero {
+  min-height: 0;
+  gap: clamp(1.25rem, 4vw, 4rem);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  padding-block: clamp(1.5rem, 4vw, 3.5rem);
+}
+.page .hero h1 {
+  font-size: clamp(2.35rem, 4.65vw, 5rem);
+  line-height: 1.02;
+  text-wrap: balance;
+}
+.page .heroVisual {
+  min-height: 0;
+  aspect-ratio: 3 / 2;
+  margin: 0;
+}
+.page .hero .breadcrumb {
+  margin-block-end: 1.1rem;
+}
+.page .heroLede,
+.page .heroActions {
+  margin-block-start: 1.15rem;
+}
+.page .heroActions a {
+  min-height: 44px;
+}
+.page .promiseBand {
+  min-height: clamp(13rem, 22vw, 20rem);
+}
+
+.page section[aria-labelledby='school-programmes-title'] {
+  padding-block: clamp(1.75rem, 5vw, 4rem);
+}
+.page section[aria-labelledby='school-programmes-title'] .sectionHeading {
+  gap: 1rem clamp(1rem, 3vw, 2.25rem);
+  margin-block-end: 1.35rem;
+}
+.page section[aria-labelledby='school-programmes-title'] h2 {
+  font-size: clamp(2.1rem, 4.5vw, 4rem);
+  line-height: 1.05;
+}
+.programGrid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+.programCard {
+  min-height: 0;
+  padding: clamp(0.9rem, 2.1vw, 1.4rem);
+}
+.programCard .programMedia {
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: min(1rem, var(--luminol-media-radius));
+}
+.programCard h3 {
+  margin-block-start: 1rem;
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+  line-height: 1.18;
+}
+.programCard p {
+  margin-block: 0.65rem 0.9rem;
+}
+.programCard > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding-inline: 0.85rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: 0.65rem;
+}
+.method {
+  gap: clamp(1.25rem, 4vw, 4rem);
+  padding-block: clamp(2rem, 5vw, 4rem);
+}
+.page .method li {
+  grid-template-columns: minmax(5rem, 10rem) auto minmax(0, 1fr);
+  gap: clamp(0.55rem, 2vw, 1.2rem);
+  padding-block: 1rem;
+}
+.method li .journeyPhoto {
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  border-radius: 0.75rem;
+}
+@media (max-width: 900px) {
+  .page .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page .heroVisual {
+    max-height: 24rem;
+  }
+}
+@media (max-width: 560px) {
+  .page .method li {
+    grid-template-columns: minmax(4rem, 28vw) auto minmax(0, 1fr);
+  }
+  .method h3 {
+    font-size: 1.3rem;
+  }
+  .method li p {
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+}
+
+@media (min-width: 901px) {
+  .programCard:only-child {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    column-gap: clamp(1.25rem, 4vw, 3rem);
+    align-content: center;
+  }
+  .programCard:only-child .programMedia {
+    grid-column: 1;
+    grid-row: 1 / span 5;
+    align-self: center;
+  }
+  .programCard:only-child > :not(.programMedia) {
+    grid-column: 2;
+  }
+}

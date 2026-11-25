@@ -323,3 +323,93 @@
   color: var(--founder-accent);
   font-variant-numeric: tabular-nums;
 }
+
+.hero {
+  border-color: color-mix(in srgb, var(--founder-gold) 45%, transparent);
+  background: linear-gradient(
+    126deg,
+    var(--founder-deep),
+    var(--founder-panel) 58%,
+    var(--founder-light)
+  );
+}
+.hero::before {
+  background:
+    radial-gradient(
+      ellipse at 82% 18%,
+      var(--founder-gold-glow),
+      transparent 47%
+    ),
+    radial-gradient(ellipse at 38% 48%, var(--founder-light), transparent 64%);
+}
+.goldScene {
+  position: absolute;
+  z-index: -1;
+  inset-block-start: -13%;
+  inset-inline-end: 7%;
+  width: 58%;
+  height: 115%;
+  pointer-events: none;
+  opacity: 0.83;
+}
+.intro .role,
+.portrait strong,
+.year {
+  color: var(--founder-gold);
+}
+.intro h1 {
+  color: var(--founder-ink);
+  text-shadow: 0 0.15em 1.15em var(--founder-gold-glow);
+}
+.cta {
+  background: linear-gradient(
+    118deg,
+    var(--founder-gold),
+    var(--founder-ink) 72%
+  );
+  box-shadow: 0 0.6rem 2rem -0.7rem var(--founder-gold-glow);
+}
+.portrait {
+  border-color: var(--founder-gold);
+  box-shadow: 0 1.6rem 3rem -1.5rem var(--founder-deep);
+}
+.portrait figcaption {
+  border-color: var(--founder-gold);
+}
+.chapters a:is(:hover, :focus-visible) {
+  color: var(--founder-gold);
+}
+.contact address {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+.contact address a {
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--founder-line);
+  border-radius: 0.8rem;
+  text-decoration: none;
+}
+.contact address a:hover {
+  border-color: var(--founder-gold);
+  background: var(--founder-tint);
+}
+.contact address svg {
+  width: 1.25rem;
+  flex: none;
+  color: var(--founder-gold);
+}
+.contact address a > span {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+  color: var(--founder-ink);
+}
+@media (max-width: 760px) {
+  .goldScene {
+    inset-block-start: 4%;
+    inset-inline-end: -34%;
+    width: 95%;
+    height: 56%;
+  }
+}

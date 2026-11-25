@@ -102,7 +102,6 @@
 @keyframes resources-in {
   from {
     opacity: 0;
-    transform: translateY(-0.35rem);
   }
 }
 

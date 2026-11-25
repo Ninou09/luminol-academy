@@ -805,3 +805,12 @@
   background: var(--founder-accent);
   color: var(--founder-deep);
 }
+
+/* The violet surface continues up through the top gutter of the founder page. */
+:global(html) .header[data-founder-theme] {
+  background: var(--founder-deep) !important;
+}
+.header[data-founder-theme] .contactLink,
+.footer[data-founder-theme] .footerCta {
+  background: linear-gradient(120deg, var(--founder-gold), var(--founder-ink));
+}

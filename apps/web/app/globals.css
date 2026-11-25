@@ -1139,3 +1139,22 @@ main#main-content .form-grid textarea {
   --founder-line: color-mix(in srgb, var(--founder-accent) 27%, transparent);
   --founder-tint: color-mix(in srgb, var(--founder-accent) 14%, transparent);
 }
+
+/* Align controls at the top of each row, even when another field has help text. */
+.enquiry-form .form-grid,
+.enquiry-form .form-grid label {
+  align-items: start;
+  align-content: start;
+}
+.enquiry-form .form-grid :is(input, select) {
+  min-height: 3rem;
+  margin: 0;
+}
+.enquiry-form .form-grid select {
+  padding-block: 0.55rem;
+}
+
+[data-founder-theme] {
+  --founder-gold: #f5d49a;
+  --founder-gold-glow: rgb(232 180 95 / 0.29);
+}

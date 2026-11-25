@@ -859,3 +859,14 @@
   width: 100%;
   margin: 0;
 }
+
+.formSurface :global(.form-grid),
+.formSurface :global(.form-grid label) {
+  align-items: start;
+  align-content: start;
+}
+.formSurface :global(.form-grid input),
+.formSurface :global(.form-grid select) {
+  min-height: 3rem;
+  margin: 0;
+}

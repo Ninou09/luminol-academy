@@ -1005,3 +1005,48 @@
   right: 0;
   margin-inline: auto;
 }
+
+.page .origin {
+  align-items: start;
+  gap: clamp(1rem, 4vw, 3rem);
+  margin-block: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1rem, 3vw, 2.5rem);
+  border: 1px solid var(--color-brand-line);
+  border-radius: 1.35rem;
+  background: var(--color-brand-night);
+}
+.page .origin h2 {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.page .missionVision article {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  min-height: 0;
+  padding: 0;
+  background: var(--color-brand-night);
+}
+.page .missionVision article::before {
+  content: none;
+}
+.missionFrame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+.missionFrame .missionPhoto {
+  z-index: auto;
+}
+.missionCopy {
+  padding: clamp(1rem, 3vw, 2rem);
+}
+.missionCopy > span {
+  color: var(--color-brand-gold-strong);
+}
+.page .missionCopy h2 {
+  font-size: clamp(1.75rem, 3vw, 2.9rem);
+  line-height: 1.12;
+  text-wrap: balance;
+}

@@ -41,16 +41,10 @@ import {
   serializeJsonLd,
 } from '../../../lib/structured-data';
 import styles from './page.module.css';
-import { GlassIcon, type GlassIconName } from '../../../components/glass-icon';
 import Image from 'next/image';
 import { PhotoCard } from '../../../components/live-photo';
-import {
-  extraPhotos,
-  momentPhotos,
-  type PeoplePhoto,
-  peoplePhotos,
-  programmePhotos,
-} from '../../../lib/people-photos';
+import { programmePhotos } from '../../../lib/people-photos';
+import { schoolPhotos } from '../../../lib/school-photos';
 
 type SchoolPageProps = {
   params: Promise<{ school: string }>;
@@ -97,45 +91,54 @@ export async function generateMetadata({
   };
 }
 
-/** Each school has its own trio of glass objects for its three-step journey. */
-const journeyIcons: Record<
-  'psychology' | 'languages' | 'training',
-  GlassIconName[]
-> = {
-  psychology: [
-    'journey-psychology-listen',
-    'journey-psychology-clarity',
-    'journey-psychology-build',
-  ],
-  languages: [
-    'journey-languages-listen',
-    'journey-languages-clarity',
-    'journey-languages-build',
-  ],
-  training: [
-    'journey-training-listen',
-    'journey-training-clarity',
-    'journey-training-build',
-  ],
+const schoolScenes = {
+  psychology: {
+    hero: schoolPhotos['psychology-hero'],
+    promise: schoolPhotos['psychology-academy-space'],
+    audience: schoolPhotos['psychology-who-we-support'],
+    journey: [
+      schoolPhotos['psychology-listen'],
+      schoolPhotos['psychology-clarity'],
+      schoolPhotos['psychology-progress'],
+    ],
+    programmes: [
+      ...programmePhotos.psychology.slice(0, 3),
+      schoolPhotos['psychology-act-workshop'],
+    ],
+  },
+  languages: {
+    hero: schoolPhotos['languages-hero'],
+    promise: schoolPhotos['languages-online-learning'],
+    audience: schoolPhotos['languages-who-we-support'],
+    journey: [
+      schoolPhotos['languages-know-level'],
+      schoolPhotos['languages-practice'],
+      schoolPhotos['languages-use-your-voice'],
+    ],
+    programmes: [
+      schoolPhotos['languages-english-programs'],
+      schoolPhotos['languages-french-programs'],
+      schoolPhotos['languages-level-programmes'],
+      schoolPhotos['languages-speaking-programme'],
+    ],
+  },
+  training: {
+    hero: schoolPhotos['training-hero'],
+    promise: schoolPhotos['training-presentation-practice'],
+    audience: schoolPhotos['training-who-we-support'],
+    journey: [
+      schoolPhotos['training-define-outcome'],
+      schoolPhotos['training-learn-by-doing'],
+      schoolPhotos['training-apply-skills'],
+    ],
+    programmes: [
+      schoolPhotos['training-leadership'],
+      schoolPhotos['training-communication'],
+      schoolPhotos['training-digital-skills'],
+      schoolPhotos['training-corporate-workshop'],
+    ],
+  },
 };
-
-const audiencePhotos: Record<string, PeoplePhoto | undefined> = {
-  psychology: momentPhotos.fatherTeenWalk,
-  languages: peoplePhotos.liveGenerations,
-  training: extraPhotos.professionalTraining,
-};
-
-const promisePhotos = {
-  psychology: momentPhotos.mediterraneanCalm,
-  languages: extraPhotos.languageOnline,
-  training: momentPhotos.publicSpeakingStage,
-} as const;
-
-const schoolHeroPhotos = {
-  psychology: peoplePhotos.therapyFamily,
-  languages: peoplePhotos.languagesClass,
-  training: peoplePhotos.trainingWorkshop,
-} as const;
 
 /** Each default programme card gets its own living photograph. */
 function programmeFallbackAsset(
@@ -146,8 +149,8 @@ function programmeFallbackAsset(
 ): EditorialMediaAsset | null {
   const photo =
     slug === 'acceptance-commitment-therapy-act'
-      ? peoplePhotos.academyActWorkshop
-      : programmePhotos[school][index];
+      ? schoolPhotos['psychology-act-workshop']
+      : schoolScenes[school].programmes[index];
   return photo
     ? {
         src: photo.src,
@@ -286,7 +289,7 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             locale={locale}
             priority
             sizes="(max-width: 1000px) 100vw, 48vw"
-            scene={schoolHeroPhotos[school.slug]}
+            scene={schoolScenes[slug].hero}
             sceneKind="photo"
           />
         </section>
@@ -299,10 +302,10 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
         >
           <Image
             className={`${styles.promiseArt} ${styles.promisePhoto}`}
-            src={promisePhotos[school.slug].src}
+            src={schoolScenes[slug].promise.src}
             alt=""
-            width={promisePhotos[school.slug].width}
-            height={promisePhotos[school.slug].height}
+            width={schoolScenes[slug].promise.width}
+            height={schoolScenes[slug].promise.height}
             sizes="100vw"
             aria-hidden="true"
             data-zoom
@@ -332,14 +335,18 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 data-programme-card
                 data-reveal
               >
-                <span className={styles.programIndex}>
-                  {String(index + 1).padStart(2, '0')}
-                </span>
                 <EditorialMedia
                   className={styles.programMedia}
                   school={school.slug}
                   asset={
-                    program.image ??
+                    (program.slug === 'acceptance-commitment-therapy-act'
+                      ? programmeFallbackAsset(
+                          slug,
+                          index,
+                          locale,
+                          program.slug,
+                        )
+                      : program.image) ??
                     programmeFallbackAsset(
                       school.slug,
                       index,
@@ -390,11 +397,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           <ol>
             {school.approach.map((step, index) => (
               <li key={step.title} data-reveal>
-                <GlassIcon
-                  name={journeyIcons[slug][index % journeyIcons[slug].length]!}
-                  size="md"
-                  delay={index}
-                  className={styles.journeyIcon}
+                <PhotoCard
+                  photo={schoolScenes[slug].journey[index]!}
+                  locale={locale}
+                  className={styles.journeyPhoto}
+                  sizes="(max-width: 560px) 30vw, 160px"
                 />
                 <span>{String(index + 1).padStart(2, '0')}</span>
                 <div>
@@ -419,14 +426,12 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               ))}
             </ul>
           </div>
-          {audiencePhotos[school.slug] ? (
-            <PhotoCard
-              photo={audiencePhotos[school.slug]!}
-              locale={locale}
-              className={styles.audiencePhoto}
-              sizes="(max-width: 900px) 100vw, 46vw"
-            />
-          ) : null}
+          <PhotoCard
+            photo={schoolScenes[slug].audience}
+            locale={locale}
+            className={styles.audiencePhoto}
+            sizes="(max-width: 900px) 100vw, 46vw"
+          />
         </section>
 
         <aside
