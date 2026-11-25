@@ -7,7 +7,6 @@ import { getImageProps } from 'next/image';
 import { useEffect, useRef } from 'react';
 
 import { brandArtwork, brandArtworkCredit } from '../lib/academy-media';
-import { illustrativePhotoCredit } from '../lib/people-photos';
 import { createLuminousField, type ArtworkFrame } from './luminous-field';
 import styles from './luminous-backdrop.module.css';
 
@@ -146,11 +145,7 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
       data-media-crop="sphere-right"
     >
       <div className={styles.scene}>
-        <picture
-          data-media-source={illustrativePhotoCredit.source}
-          data-media-license={illustrativePhotoCredit.license}
-          data-media-crop="center-center"
-        >
+        <picture>
           <source media={portraitQuery} srcSet={portraitSrcSet} />
           <img
             {...desktopProps}
