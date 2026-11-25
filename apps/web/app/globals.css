@@ -1127,3 +1127,15 @@ main#main-content .form-grid textarea {
     min-block-size: 44px;
   }
 }
+
+/* Violet palette for the founder profile and its navigation surfaces. */
+[data-founder-theme] {
+  --founder-ink: #fbf4ff;
+  --founder-muted: #e2d1ed;
+  --founder-accent: #ead0fc;
+  --founder-deep: #20142c;
+  --founder-panel: #342143;
+  --founder-light: #765591;
+  --founder-line: color-mix(in srgb, var(--founder-accent) 27%, transparent);
+  --founder-tint: color-mix(in srgb, var(--founder-accent) 14%, transparent);
+}

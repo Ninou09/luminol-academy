@@ -135,3 +135,15 @@
     transform: translateY(1rem);
   }
 }
+
+@media (max-width: 900px) {
+  .panel[data-open][data-founder-theme] {
+    background:
+      radial-gradient(ellipse at 85% 0%, var(--founder-light), transparent 60%),
+      var(--founder-deep);
+  }
+
+  .panel[data-founder-theme] :is(nav a span, nav a[aria-current]) {
+    color: var(--founder-accent);
+  }
+}

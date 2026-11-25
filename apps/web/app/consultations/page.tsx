@@ -364,6 +364,13 @@ export default async function ConsultationsPage() {
               {copy.authorityAction}{' '}
               <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
             </ButtonLink>
+            <PhotoCard
+              photo={peoplePhotos.academySupervision}
+              locale={locale}
+              className={styles.peerPhoto}
+              sizes="(max-width: 900px) 90vw, 36vw"
+              caption
+            />
           </div>
         </section>
 

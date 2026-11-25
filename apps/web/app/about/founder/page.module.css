@@ -1,22 +1,16 @@
 .page {
-  --founder-ink: #fbf4ff;
-  --founder-muted: #e4d7ef;
-  --founder-accent: #ead0fc;
-  --founder-deep: #231631;
-  --founder-panel: #352245;
-  --founder-light: #73558a;
-  --founder-line: color-mix(in srgb, var(--founder-accent) 26%, transparent);
   display: flow-root;
   padding-block: clamp(1rem, 4vw, 4rem) 3rem;
   background: linear-gradient(
     155deg,
     var(--founder-panel),
-    var(--founder-deep) 55%
+    var(--founder-deep) 42%
   );
   color: var(--founder-ink);
 }
 
 .hero,
+.chapters,
 .details,
 .contact {
   width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 72rem);
@@ -24,6 +18,9 @@
 }
 
 .hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: clamp(1.25rem, 5vw, 4.5rem);
@@ -31,9 +28,22 @@
   padding: clamp(1.25rem, 4vw, 3rem);
   border: 1px solid var(--founder-line);
   border-radius: clamp(1.5rem, 4vw, 3rem);
+  background: linear-gradient(
+    135deg,
+    var(--founder-panel),
+    var(--founder-deep)
+  );
+}
+
+.hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: -20%;
   background:
-    radial-gradient(ellipse at 80% 5%, var(--founder-light), transparent 70%),
-    var(--founder-panel);
+    radial-gradient(ellipse at 75% 15%, var(--founder-light), transparent 58%),
+    radial-gradient(ellipse at 22% 90%, var(--founder-tint), transparent 46%);
+  content: '';
+  pointer-events: none;
 }
 
 .intro h1 {
@@ -52,8 +62,7 @@
 }
 
 .intro p,
-.details p,
-.details li {
+.details p {
   color: var(--founder-muted);
   line-height: 1.75;
 }
@@ -136,10 +145,7 @@
   font-size: clamp(1.45rem, 3vw, 2.15rem);
   text-wrap: balance;
 }
-.details ul {
-  margin: 0;
-  padding-inline-start: 1.25rem;
-}
+
 .contact address {
   display: flex;
   flex-wrap: wrap;
@@ -157,23 +163,37 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .intro,
-  .portrait {
-    animation: enter 600ms ease-out both;
+  :global(html[data-motion='full']) .intro,
+  :global(html[data-motion='full']) .portrait {
+    animation: enter 700ms var(--luminol-ease-out) both;
   }
-  .portrait {
-    animation-delay: 90ms;
+
+  :global(html[data-motion='full']) .portrait {
+    animation-delay: 110ms;
+  }
+
+  :global(html[data-motion='full']) .hero::before {
+    animation: drift 15s ease-in-out infinite alternate;
   }
 }
 
 @keyframes enter {
   from {
     opacity: 0;
-    translate: 0 0.6rem;
+    translate: 0 0.85rem;
   }
   to {
     opacity: 1;
     translate: 0 0;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate(-3%, -4%) scale(1);
+  }
+  to {
+    transform: translate(4%, 5%) scale(1.12);
   }
 }
 
@@ -185,4 +205,121 @@
   .portrait {
     aspect-ratio: 4 / 4.2;
   }
+}
+
+.chapters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 0.7rem;
+  margin-block: 1.15rem;
+  padding: 0.35rem;
+  border: 1px solid var(--founder-line);
+  border-radius: 1rem;
+  background: var(--founder-panel);
+}
+
+.chapters a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 0.85rem;
+  border-radius: 0.65rem;
+  color: var(--founder-muted);
+  text-decoration: none;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.chapters a:is(:hover, :focus-visible) {
+  background: var(--founder-tint);
+  color: var(--founder-ink);
+}
+
+.page :is(h2, section)[id] {
+  scroll-margin-block-start: 7rem;
+}
+
+.studyPhoto {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+  margin-block-start: 1.25rem;
+  border-radius: 1rem;
+  background: var(--founder-deep);
+}
+
+.studyPhoto img {
+  object-fit: cover;
+}
+
+.timeline {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline details {
+  overflow: clip;
+  border: 1px solid var(--founder-line);
+  border-radius: 0.8rem;
+}
+
+.timeline details[open] {
+  background: var(--founder-tint);
+}
+
+.timeline summary {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 52px;
+  padding: 0.7rem 0.8rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.timeline summary::-webkit-details-marker {
+  display: none;
+}
+
+.timeline summary::after {
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-inline-end: 0.25rem;
+  border-inline-end: 1px solid;
+  border-block-end: 1px solid;
+  rotate: 45deg;
+  content: '';
+  transition: rotate 200ms ease;
+}
+
+.timeline details[open] summary::after {
+  rotate: 225deg;
+}
+
+.timeline summary:hover {
+  background: var(--founder-tint);
+}
+
+.timeline summary:focus-visible {
+  outline: 2px solid var(--founder-accent);
+  outline-offset: -3px;
+}
+
+.timeline details > p {
+  margin: 0;
+  padding: 0 0.8rem 0.8rem;
+}
+
+.year {
+  padding: 0.18rem 0.5rem;
+  border-radius: 0.35rem;
+  background: var(--founder-deep);
+  color: var(--founder-accent);
+  font-variant-numeric: tabular-nums;
 }

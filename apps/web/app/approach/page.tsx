@@ -12,7 +12,7 @@ import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { approachCopy } from '../../lib/approach';
 import {
   approachPhotos,
-  peoplePhotos,
+  illustrativePhotoCredit,
   type PeoplePhoto,
 } from '../../lib/people-photos';
 import { getRequestLocale } from '../../lib/request-locale';
@@ -99,21 +99,30 @@ export default async function ApproachPage() {
                     ))}
                   </ul>
                 </div>
-                <div className={styles.stepVisual}>
+                <div
+                  className={
+                    step.key === 'progress'
+                      ? `${styles.stepVisual} ${styles.certificateVisual}`
+                      : styles.stepVisual
+                  }
+                  data-media-source={illustrativePhotoCredit.source}
+                  data-media-license={illustrativePhotoCredit.license}
+                >
                   <Image
                     className={styles.stepPhoto}
                     src={
-                      stepPhotos[step.key]?.src ??
-                      peoplePhotos.certificatePhoto.src
+                      stepPhotos[step.key]?.src ?? approachPhotos.progress.src
                     }
                     alt={
                       stepPhotos[step.key]?.alt[locale] ??
-                      peoplePhotos.certificatePhoto.alt[locale]
+                      approachPhotos.progress.alt[locale]
                     }
                     fill
                     sizes="(max-width: 900px) 100vw, 40vw"
                   />
-                  <StepGlyph kind={step.key} />
+                  {step.key === 'progress' ? null : (
+                    <StepGlyph kind={step.key} />
+                  )}
                 </div>
               </div>
             </li>

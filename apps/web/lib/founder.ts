@@ -66,12 +66,6 @@ export const founderCopy = {
     career: 'Clinical practice and teaching',
     careerBody:
       'She worked as a psychologist at the cancer centre of Frantz Fanon Hospital in Blida, then practised in a private clinic. She taught at the University of Blida and supervised field placements for psychology students at the universities of Algiers and Blida.',
-    education: 'Education',
-    qualifications: [
-      'Degree in clinical psychology, University of Algiers, 1995',
-      'Postgraduate diploma in psychopathology, 2007',
-      'Master’s in clinical psychology, University of Blida 2, 2018',
-    ],
     contact: 'Contact Kheddaoui Fettouma',
   },
   fr: {
@@ -84,12 +78,6 @@ export const founderCopy = {
     career: 'Pratique clinique et enseignement',
     careerBody:
       'Elle a exercé comme psychologue au centre anticancer de l’hôpital Frantz Fanon de Blida, puis en cabinet privé. Elle a enseigné à l’université de Blida et supervisé les stages de terrain d’étudiants en psychologie aux universités d’Alger et de Blida.',
-    education: 'Formation universitaire',
-    qualifications: [
-      'Licence en psychologie clinique, université d’Alger, 1995',
-      'Diplôme de post-graduation en psychopathologie, 2007',
-      'Master en psychologie clinique, université de Blida 2, 2018',
-    ],
     contact: 'Contacter Kheddaoui Fettouma',
   },
   ar: {
@@ -102,12 +90,6 @@ export const founderCopy = {
     career: 'الممارسة العيادية والتدريس',
     careerBody:
       'عملت أخصائية نفسية في مركز مكافحة السرطان بمستشفى فرانس فانون في البليدة، ثم مارست العلاج النفسي في عيادة خاصة. درّست في جامعة البليدة وأشرفت على التدريب الميداني لطلبة علم النفس في جامعتي الجزائر والبليدة.',
-    education: 'المؤهلات الأكاديمية',
-    qualifications: [
-      'ليسانس في علم النفس العيادي، جامعة الجزائر، 1995',
-      'دبلوم دراسات ما بعد التدرّج في علم النفس المرضي، 2007',
-      'ماستر في علم النفس العيادي، جامعة البليدة 2، 2018',
-    ],
     contact: 'التواصل مع خداوي فطومة',
   },
 } as const satisfies Record<
@@ -120,8 +102,108 @@ export const founderCopy = {
     website: string;
     career: string;
     careerBody: string;
-    education: string;
-    qualifications: readonly string[];
     contact: string;
+  }
+>;
+
+export const founderJourney = {
+  en: {
+    navigation: 'On this page',
+    career: 'Career',
+    training: 'Training',
+    contact: 'Contact',
+    title: 'Milestones',
+    entries: [
+      {
+        year: 1995,
+        title: 'Clinical psychology degree',
+        detail: 'University of Algiers.',
+      },
+      {
+        year: 2007,
+        title: 'Postgraduate diploma',
+        detail: 'Specialisation in psychopathology.',
+      },
+      {
+        year: 2018,
+        title: 'Master’s in clinical psychology',
+        detail: 'University of Blida 2.',
+      },
+      {
+        year: 2019,
+        title: 'Luminol Academy founded',
+        detail:
+          'Education, professional training and psychological consultations.',
+      },
+    ],
+  },
+  fr: {
+    navigation: 'Sur cette page',
+    career: 'Parcours',
+    training: 'Formations',
+    contact: 'Contact',
+    title: 'Dates clés',
+    entries: [
+      {
+        year: 1995,
+        title: 'Licence en psychologie clinique',
+        detail: 'Université d’Alger.',
+      },
+      {
+        year: 2007,
+        title: 'Diplôme de post-graduation',
+        detail: 'Spécialisation en psychopathologie.',
+      },
+      {
+        year: 2018,
+        title: 'Master en psychologie clinique',
+        detail: 'Université de Blida 2.',
+      },
+      {
+        year: 2019,
+        title: 'Fondation de Luminol Academy',
+        detail:
+          'Enseignement, formation professionnelle et consultations psychologiques.',
+      },
+    ],
+  },
+  ar: {
+    navigation: 'في هذه الصفحة',
+    career: 'المسار المهني',
+    training: 'التدريب',
+    contact: 'التواصل',
+    title: 'محطات بارزة',
+    entries: [
+      {
+        year: 1995,
+        title: 'ليسانس في علم النفس العيادي',
+        detail: 'جامعة الجزائر.',
+      },
+      {
+        year: 2007,
+        title: 'دبلوم دراسات ما بعد التدرّج',
+        detail: 'تخصّص علم النفس المرضي.',
+      },
+      {
+        year: 2018,
+        title: 'ماستر في علم النفس العيادي',
+        detail: 'جامعة البليدة 2.',
+      },
+      {
+        year: 2019,
+        title: 'تأسيس أكاديمية لومينول',
+        detail: 'التعليم والتدريب المهني والاستشارات النفسية.',
+      },
+    ],
+  },
+} as const satisfies Record<
+  Locale,
+  {
+    navigation: string;
+    career: string;
+    training: string;
+    contact: string;
+    title: string;
+    entries: readonly { year: number; title: string; detail: string }[];
   }
 >;

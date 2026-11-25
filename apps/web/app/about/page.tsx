@@ -221,13 +221,14 @@ export default async function AboutPage() {
         <PhotoMosaic
           label={galleryLabel[locale]}
           locale={locale}
+          preserveFrame={aboutPhotos.graduate.src}
           photos={[
             peoplePhotos.academyRoleplay,
             aboutPhotos.listening,
-            aboutPhotos.graduate,
+            aboutPhotos.event,
             aboutPhotos.family,
             aboutPhotos.online,
-            aboutPhotos.event,
+            aboutPhotos.graduate,
           ]}
         />
 
