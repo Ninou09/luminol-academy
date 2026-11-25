@@ -12,7 +12,7 @@ import {
   WebGLRenderer,
 } from 'three';
 
-export function createFounderGold(canvas: HTMLCanvasElement) {
+export function createFounderGold(canvas: HTMLCanvasElement, ornate: boolean) {
   let renderer: WebGLRenderer;
   try {
     renderer = new WebGLRenderer({
@@ -49,7 +49,13 @@ export function createFounderGold(canvas: HTMLCanvasElement) {
   const ring = new Mesh(ringGeometry, gold);
   const orbit = new Mesh(ringGeometry, gold);
   orbit.scale.setScalar(0.8);
-  const shards = Array.from({ length: 4 }, () => new Mesh(shardGeometry, gold));
+  const shards = Array.from(
+    { length: ornate ? 8 : 4 },
+    () => new Mesh(shardGeometry, gold),
+  );
+  const halo = new Mesh(ringGeometry, gold);
+  halo.scale.setScalar(1.28);
+  if (ornate) sculpture.add(halo);
   sculpture.add(ring, orbit, ...shards);
   const resize = () => {
     const width = canvas.clientWidth;
@@ -58,6 +64,7 @@ export function createFounderGold(canvas: HTMLCanvasElement) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
+    if (ornate) camera.position.z = Math.max(7, 5.3 / camera.aspect);
     camera.updateProjectionMatrix();
   };
   const resizeObserver = new ResizeObserver(resize);
@@ -70,14 +77,16 @@ export function createFounderGold(canvas: HTMLCanvasElement) {
     sculpture.rotation.z = Math.sin(t * 0.21) * 0.14;
     ring.rotation.set(0.42 + Math.sin(t * 0.48) * 0.22, t * 0.28, -0.3);
     orbit.rotation.set(1.15, -t * 0.24, 0.35);
+    if (ornate) halo.rotation.set(0.28, Math.sin(t * 0.42) * 0.65, t * 0.16);
     for (const [index, shard] of shards.entries()) {
-      const angle = index * Math.PI * 0.5 + t * 0.44;
+      const angle = index * ((Math.PI * 2) / shards.length) + t * 0.44;
       shard.position.set(
         Math.cos(angle) * 1.95,
         Math.sin(angle) * 1.65,
         Math.sin(angle) * 0.35,
       );
       shard.rotation.set(t * 0.42, angle, t * 0.25);
+      if (ornate) shard.scale.setScalar(index % 2 ? 0.36 : 0.61);
     }
     renderer.render(scene, camera);
   };

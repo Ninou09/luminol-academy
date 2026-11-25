@@ -323,3 +323,94 @@
   align-items: center;
   min-height: 2.25rem;
 }
+
+.section[data-home-events] {
+  padding-block: clamp(2rem, 5vw, 4.5rem);
+}
+.section[data-home-events] .heading h2 {
+  font-size: clamp(2.3rem, 4.6vw, 4rem);
+}
+.homeProgramme {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
+  gap: clamp(0.85rem, 2vw, 1.5rem);
+}
+.homeProgramme:has(> :only-child) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.recentPanel,
+.workshopPreview {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--luminol-media-radius);
+  background: var(--color-brand-night);
+}
+.recentPanel {
+  padding: clamp(0.95rem, 2vw, 1.55rem);
+}
+.recentPanel .groupTitle {
+  margin-block: 0 0.8rem;
+  color: var(--color-brand-gold-strong);
+}
+.recentPanel .past li {
+  grid-template-columns: minmax(5.8rem, 0.38fr) minmax(0, 1fr);
+  gap: 0.4rem 0.75rem;
+}
+.recentPanel .past li > :last-child {
+  grid-column: 2;
+  white-space: normal;
+}
+.recentPanel .past li > span:empty {
+  display: none;
+}
+.workshopPreview {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background:
+    linear-gradient(
+      140deg,
+      var(--color-school-psychology-soft),
+      transparent 65%
+    ),
+    var(--color-brand-night);
+}
+.previewPhoto {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 2 / 1;
+  margin: 0;
+}
+.previewPhoto img {
+  object-fit: cover;
+}
+.previewCopy {
+  padding: clamp(0.9rem, 2vw, 1.25rem);
+}
+.previewCopy p {
+  margin: 0 0 0.45rem;
+  line-height: 1.5;
+  color: var(--color-brand-ink-soft);
+}
+.previewCopy .previewLabel {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.previewCopy h3 {
+  margin: 0 0 0.55rem;
+  font: 500 clamp(1.45rem, 2.8vw, 2.1rem)/1.15 var(--font-display);
+}
+.previewCopy a {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-brand-cyan-light);
+  text-underline-offset: 0.2rem;
+}
+@media (max-width: 760px) {
+  .homeProgramme {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

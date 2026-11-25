@@ -12,6 +12,11 @@ import Link from 'next/link';
 import { AcademyImage } from '../../components/academy-image';
 import { FounderJsonLd } from '../../components/founder-json-ld';
 import { TeamSection } from '../../components/events-section';
+import {
+  founderEditorialPortrait,
+  founderPath,
+  founderCopy,
+} from '../../lib/founder';
 import { PhotoMosaic } from '../../components/photo-mosaic';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
@@ -138,6 +143,33 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const galleryChapters = {
+  en: [
+    'Listening in practice',
+    'Independent study',
+    'In the classroom',
+    'Family support',
+    'Learning online',
+    'Recognising progress',
+  ],
+  fr: [
+    'L’écoute en pratique',
+    'Étude en autonomie',
+    'En salle de cours',
+    'Soutien familial',
+    'Apprendre en ligne',
+    'Reconnaître les progrès',
+  ],
+  ar: [
+    'الإصغاء في الممارسة',
+    'الدراسة الفردية',
+    'داخل قاعة التدريب',
+    'دعم الأسرة',
+    'التعلّم عن بُعد',
+    'تقدير التقدّم',
+  ],
+} as const;
+
 const galleryLabel = {
   en: 'Moments at Luminol',
   fr: 'Moments chez Luminol',
@@ -220,6 +252,7 @@ export default async function AboutPage() {
 
         <PhotoMosaic
           label={galleryLabel[locale]}
+          chapters={galleryChapters[locale]}
           locale={locale}
           preserveFrame={aboutPhotos.graduate.src}
           photos={[
@@ -237,12 +270,36 @@ export default async function AboutPage() {
           aria-labelledby="founder-authority-title"
           data-founder-authority
         >
-          <div className={styles.sectionHeading} data-reveal>
-            <div>
+          <div className={styles.founderFeature} data-founder-theme>
+            <div className={styles.founderFeatureCopy} data-reveal>
               <p className={styles.eyebrow}>{founderAuthority.eyebrow}</p>
-              <h2 id="founder-authority-title">{founderAuthority.title}</h2>
+              <h2 id="founder-authority-title">{founderCopy[locale].name}</h2>
+              <p>{founderAuthority.body}</p>
+              <ButtonLink
+                href={localizeHref(locale, founderPath)}
+                variant="secondary"
+              >
+                {
+                  {
+                    en: 'Meet the founder',
+                    fr: 'Découvrir la fondatrice',
+                    ar: 'تعرّف على المؤسسة',
+                  }[locale]
+                }
+                <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
+              </ButtonLink>
             </div>
-            <p>{founderAuthority.body}</p>
+            <div
+              className={styles.founderFeaturePhoto}
+              data-media-source={founderEditorialPortrait.source}
+            >
+              <Image
+                src={founderEditorialPortrait.src}
+                alt={founderCopy[locale].name}
+                fill
+                sizes="(max-width: 720px) 90vw, 43vw"
+              />
+            </div>
           </div>
           <div className={styles.valueGrid}>
             {founderAuthority.facts.map((fact) => (

@@ -35,6 +35,21 @@ test('premium About storytelling preserves public landmarks and school pathways'
     ).toBeVisible();
   }
 
+  const gallery = page.getByRole('region', { name: 'Moments at Luminol' });
+  const lastPhoto = gallery.getByRole('button', {
+    name: 'Recognising progress',
+  });
+  await lastPhoto.click();
+  await expect(lastPhoto).toHaveAttribute('aria-current', 'true');
+  await expect(gallery.locator('[aria-live="polite"]')).toHaveText('6 / 6');
+  const founder = page.locator('[data-founder-authority]');
+  await expect(
+    founder.locator('img[src*="founder-fettouma-wide.webp"]'),
+  ).toBeVisible();
+  await expect(
+    founder.getByRole('link', { name: 'Meet the founder' }),
+  ).toHaveAttribute('href', '/en/about/founder');
+
   const valueCards = page.locator('[data-value-card]');
   await expect(valueCards).not.toHaveCount(0);
   for (let index = 0; index < (await valueCards.count()); index += 1) {

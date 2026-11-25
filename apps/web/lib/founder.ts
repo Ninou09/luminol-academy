@@ -8,6 +8,11 @@ export const founderPortrait = {
   source:
     'https://assets.cdn.filesafe.space/YpQfZFsq469Yi5AADq1v/media/6ad88cbe3cacdd911709f799.png',
 } as const;
+export const founderEditorialPortrait = {
+  src: '/media/founder-fettouma-wide.webp',
+  source: 'owner-supplied-illustrative-portrait',
+} as const;
+
 export const founderContact = {
   email: 'kheddaouipsy@yahoo.fr',
   phone: '+213556914517',

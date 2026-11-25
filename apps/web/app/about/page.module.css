@@ -1050,3 +1050,51 @@
   line-height: 1.12;
   text-wrap: balance;
 }
+
+.founderFeature {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-block-end: 1.1rem;
+  overflow: hidden;
+  border: 1px solid var(--founder-line);
+  border-radius: var(--luminol-media-radius);
+  background: linear-gradient(
+    132deg,
+    var(--founder-panel),
+    var(--founder-deep)
+  );
+  color: var(--founder-ink);
+}
+.founderFeatureCopy {
+  align-self: center;
+  padding: clamp(1.15rem, 4vw, 2.75rem);
+}
+.founderFeatureCopy h2 {
+  margin: 0;
+  font: 500 clamp(2rem, 4vw, 3.8rem)/1.16 var(--font-display);
+}
+.founderFeatureCopy > p:not(.eyebrow) {
+  color: var(--founder-muted);
+  line-height: 1.6;
+}
+.founderFeatureCopy a {
+  gap: 0.6rem;
+  color: var(--founder-ink);
+}
+.founderFeaturePhoto {
+  position: relative;
+  min-height: 15rem;
+}
+.founderFeaturePhoto img {
+  object-fit: cover;
+  object-position: 78% 40%;
+}
+@media (max-width: 720px) {
+  .founderFeature {
+    grid-template-columns: 1fr;
+  }
+  .founderFeaturePhoto {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+}
