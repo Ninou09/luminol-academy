@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { FirstConsultation } from '../../components/first-consultation';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
+import { founderPath, founderPortrait } from '../../lib/founder';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
@@ -60,13 +61,12 @@ const CONSULTATION_COPY = {
       },
     ],
     authorityEyebrow: 'Founder-led psychology',
-    authorityTitle:
-      'More than 31 years of field experience behind the first step.',
+    authorityTitle: '31 years of field experience behind the first step.',
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Founder · expert therapist',
     authorityBody:
       'Founder Kheddaoui Fettouma, an expert therapist, guides Luminol Psychology. Her field experience shapes how the team listens to each enquiry and chooses the right next step with you.',
-    authorityAction: 'Meet the founder',
+    authorityAction: 'Learn more about the founder',
     formEyebrow: 'Tell us what you need',
     formTitle: 'Start with a short, structured enquiry.',
     formBody:
@@ -113,7 +113,7 @@ const CONSULTATION_COPY = {
     ],
     authorityEyebrow: 'Psychologie portée par la fondatrice',
     authorityTitle:
-      'Plus de 31 ans d’expérience de terrain derrière cette première étape.',
+      '31 ans d’expérience de terrain derrière cette première étape.',
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Fondatrice · thérapeute experte',
     authorityBody:
@@ -163,8 +163,7 @@ const CONSULTATION_COPY = {
       },
     ],
     authorityEyebrow: 'قسم علم النفس بخبرة المؤسسة',
-    authorityTitle:
-      'أكثر من 31 سنة من الخبرة الميدانية وراء هذه الخطوة الأولى.',
+    authorityTitle: '31 سنة من الخبرة الميدانية وراء هذه الخطوة الأولى.',
     authorityName: 'خداوي فطومة',
     authorityRole: 'المؤسسة · معالجة خبيرة',
     authorityBody:
@@ -326,16 +325,18 @@ export default async function ConsultationsPage() {
           data-consultation-founder-authority
         >
           <div className={styles.authorityVisual}>
-            <PhotoCard
-              photo={peoplePhotos.academySupervision}
-              locale={locale}
+            <figure
               className={styles.authorityPhotoLarge}
-              sizes="(max-width: 900px) 100vw, 40vw"
-            />
-            <div className={styles.yearsBadge} aria-hidden="true">
-              <span data-count="31">31+</span>
-              <small>{copy.authorityEyebrow as string}</small>
-            </div>
+              data-media-source={founderPortrait.source}
+              data-media-crop="center-top"
+            >
+              <Image
+                src={founderPortrait.src}
+                alt={copy.authorityName}
+                fill
+                sizes="(max-width: 900px) 90vw, 40vw"
+              />
+            </figure>
           </div>
           <div className={styles.authorityText}>
             <p className={styles.eyebrow}>{copy.authorityEyebrow as string}</p>
@@ -343,9 +344,6 @@ export default async function ConsultationsPage() {
               {copy.authorityTitle as string}
             </h2>
             <div className={styles.signature}>
-              <span className={styles.signatureMark} aria-hidden="true">
-                KF
-              </span>
               <div>
                 <p className={styles.authorityName}>
                   {copy.authorityName as string}
@@ -359,10 +357,12 @@ export default async function ConsultationsPage() {
               {copy.authorityBody as string}
             </p>
             <ButtonLink
-              href={localizeHref(locale, '/about')}
+              href={localizeHref(locale, founderPath)}
+              className={styles.founderAction}
               variant="secondary"
             >
-              {copy.authorityAction as string}
+              {copy.authorityAction}{' '}
+              <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
             </ButtonLink>
           </div>
         </section>

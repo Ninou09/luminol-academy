@@ -5,6 +5,7 @@ import {
 } from '@luminol/localization';
 import type { MetadataRoute } from 'next';
 
+import { founderPath } from '../lib/founder';
 import { isPublicProgrammeSlug } from '../lib/programme-detail';
 import { getPublicProgrammes } from '../lib/sanity';
 import { resolvePublicSiteOrigin } from '../lib/site-url';
@@ -14,6 +15,7 @@ const routes = [
   '/programmes',
   '/consultations',
   '/about',
+  founderPath,
   '/contact',
   '/schools/psychology',
   '/schools/languages',

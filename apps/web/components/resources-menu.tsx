@@ -9,7 +9,7 @@ import styles from './resources-menu.module.css';
 type ResourceLink = {
   href: string;
   label: string;
-  description: string;
+  description?: string;
   /** Unprefixed path that marks this entry as the current page. */
   match: string;
 };
@@ -22,9 +22,11 @@ type ResourceLink = {
 export function ResourcesMenu({
   label,
   links,
+  openOnHover = false,
 }: {
   label: string;
   links: readonly ResourceLink[];
+  openOnHover?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -32,8 +34,9 @@ export function ResourcesMenu({
   const panelId = useId();
   const pathname = usePathname() ?? '/';
   const bare = pathname.replace(/^\/(ar|fr|en)(?=\/|$)/, '') || '/';
-  const activeMatch = links.find(
-    (link) => bare === link.match || bare.startsWith(`${link.match}/`),
+  const activeMatch = (
+    links.find((link) => bare === link.match) ??
+    links.find((link) => bare.startsWith(`${link.match}/`))
   )?.match;
 
   useEffect(() => {
@@ -60,7 +63,29 @@ export function ResourcesMenu({
   }, [open]);
 
   return (
-    <div className={styles.root} ref={rootRef}>
+    <div
+      className={styles.root}
+      ref={rootRef}
+      data-hover-menu={openOnHover || undefined}
+      onPointerEnter={
+        openOnHover
+          ? (event) => {
+              if (event.pointerType === 'mouse') setOpen(true);
+            }
+          : undefined
+      }
+      onPointerLeave={
+        openOnHover
+          ? (event) => {
+              if (
+                event.pointerType === 'mouse' &&
+                !event.currentTarget.contains(document.activeElement)
+              )
+                setOpen(false);
+            }
+          : undefined
+      }
+    >
       <button
         ref={buttonRef}
         type="button"
@@ -68,7 +93,10 @@ export function ResourcesMenu({
         aria-expanded={open}
         aria-controls={panelId}
         data-current={activeMatch ? 'true' : undefined}
-        onClick={() => setOpen((value) => !value)}
+        onClick={(event) => {
+          if (openOnHover && event.detail > 0) setOpen(true);
+          else setOpen((value) => !value);
+        }}
       >
         {label}
         <svg viewBox="0 0 12 12" aria-hidden="true" className={styles.chevron}>
@@ -90,7 +118,7 @@ export function ResourcesMenu({
                 onClick={() => setOpen(false)}
               >
                 <strong>{link.label}</strong>
-                <span>{link.description}</span>
+                {link.description ? <span>{link.description}</span> : null}
               </Link>
             </li>
           ))}
