@@ -22,7 +22,7 @@
   border-radius: clamp(1.5rem, 3vw, 2.5rem);
   text-align: center;
 }
-/* Dawn over the rooftops: looking ahead, the theme of the journal. */
+/* Use the wider study-room photograph in the desktop banner. */
 .hero::before {
   position: absolute;
   inset: 0;
@@ -258,6 +258,9 @@
 }
 
 @media (max-width: 900px) {
+  .hero::before {
+    background-image: url('/media/people/journal-hero-reading.webp');
+  }
   .lead {
     grid-template-columns: 1fr;
   }

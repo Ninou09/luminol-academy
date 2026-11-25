@@ -22,7 +22,7 @@ import { SchoolConstellation } from '../components/school-constellation';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { ThoughtNetwork } from '../components/thought-network';
 import { VelocityMarquee } from '../components/velocity-marquee';
-import { cinematicCopy, schoolArtwork } from '../lib/academy-media';
+import { cinematicCopy } from '../lib/academy-media';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
@@ -163,7 +163,7 @@ export default async function Page() {
 
         <section
           id="schools"
-          className={styles.section}
+          className={`${styles.section} ${styles.schoolsSection}`}
           aria-labelledby="home-schools-title"
         >
           <div className={styles.sectionHeading} data-reveal>
@@ -176,7 +176,7 @@ export default async function Page() {
             <p data-scrub-text>{copy.schoolsIntro}</p>
           </div>
           <div className={styles.schoolGrid}>
-            {schoolList.map((school, index) => (
+            {schoolList.map((school) => (
               <article
                 className={`${styles.schoolCard} ${schoolTone[school.slug]}`}
                 id={school.slug}
@@ -184,55 +184,25 @@ export default async function Page() {
                 aria-labelledby={`home-school-${school.slug}-title`}
                 data-school-card
               >
-                <div
-                  className={styles.schoolArtWrap}
-                  data-flip-in={index % 2 ? 'end' : 'start'}
+                <figure
+                  className={styles.schoolArt}
+                  data-academy-media={school.slug}
+                  data-media-source={illustrativePhotoCredit.source}
+                  data-media-license={illustrativePhotoCredit.license}
+                  data-media-crop="center-center"
                 >
-                  <figure
-                    className={styles.schoolArt}
-                    data-tilt="7"
-                    data-academy-media={school.slug}
-                    data-media-source={illustrativePhotoCredit.source}
-                    data-media-license={illustrativePhotoCredit.license}
-                    data-media-crop="center-center"
-                  >
-                    <Image
-                      className={styles.schoolPhoto}
-                      src={homeSchoolPhotos[school.slug].src}
-                      alt={homeSchoolPhotos[school.slug].alt[locale]}
-                      fill
-                      sizes="(max-width: 800px) 100vw, 45vw"
-                    />
-                    <span
-                      className={styles.schoolPhotoVeil}
-                      aria-hidden="true"
-                    />
-                    <figcaption className="scene-caption">
-                      {illustrativePhotoCredit.label[locale]}
-                    </figcaption>
-                    <span className={styles.artGlare} aria-hidden="true" />
-                  </figure>
-                  <span
-                    className={styles.schoolEmblem}
-                    aria-hidden="true"
-                    data-depth="0.28"
-                  >
-                    <span className={styles.artGlow} />
-                    <Image
-                      className={styles.artImage}
-                      src={schoolArtwork[school.slug].src}
-                      alt=""
-                      width={schoolArtwork[school.slug].width}
-                      height={schoolArtwork[school.slug].height}
-                      sizes="(max-width: 800px) 40vw, 16vw"
-                    />
-                  </span>
-                </div>
-                <div className={styles.schoolDetails} data-reveal>
-                  <div className={styles.schoolTop}>
-                    <span>{school.number}</span>
-                    <span aria-hidden="true">Luminol Academy</span>
-                  </div>
+                  <Image
+                    className={styles.schoolPhoto}
+                    src={homeSchoolPhotos[school.slug].src}
+                    alt={homeSchoolPhotos[school.slug].alt[locale]}
+                    fill
+                    sizes="(max-width: 620px) 90vw, (max-width: 1000px) 38vw, 27vw"
+                  />
+                  <figcaption className="scene-caption">
+                    {illustrativePhotoCredit.label[locale]}
+                  </figcaption>
+                </figure>
+                <div className={styles.schoolDetails}>
                   <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
                   <p className={styles.schoolPromise}>{school.promise}</p>
                   <ul aria-label={`${school.name} — ${copy.focusAreas}`}>
@@ -245,7 +215,10 @@ export default async function Page() {
                     href={localizeHref(locale, `/schools/${school.slug}`)}
                     aria-label={`${copy.discoverSchool}: ${school.name}`}
                   >
-                    {copy.discoverSchool} <span aria-hidden="true">→</span>
+                    {copy.discoverSchool}{' '}
+                    <span aria-hidden="true">
+                      {locale === 'ar' ? '←' : '→'}
+                    </span>
                   </Link>
                 </div>
               </article>
