@@ -172,6 +172,7 @@ export async function SiteHeader({
             />
             <ResourcesMenu
               label={resourcesCopy[locale].label}
+              openOnHover
               links={[
                 {
                   href: localizeHref(locale, '/journal'),

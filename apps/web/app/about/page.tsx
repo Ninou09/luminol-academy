@@ -268,30 +268,38 @@ export default async function AboutPage() {
 
         <section className={styles.missionVision}>
           <article aria-labelledby="about-mission-title" data-reveal>
-            <Image
-              className={styles.missionPhoto}
-              src={aboutPhotos.audience.src}
-              alt=""
-              fill
-              sizes="(max-width: 900px) 100vw, 50vw"
-              aria-hidden="true"
-            />
-            <span>{copy.missionLabel}</span>
-            <h2 id="about-mission-title">{copy.missionTitle}</h2>
-            <p>{copy.missionBody}</p>
+            <div className={styles.missionFrame}>
+              <Image
+                className={styles.missionPhoto}
+                src={aboutPhotos.audience.src}
+                alt=""
+                fill
+                sizes="(max-width: 900px) 100vw, 50vw"
+                aria-hidden="true"
+              />
+            </div>
+            <div className={styles.missionCopy}>
+              <span>{copy.missionLabel}</span>
+              <h2 id="about-mission-title">{copy.missionTitle}</h2>
+              <p>{copy.missionBody}</p>
+            </div>
           </article>
           <article aria-labelledby="about-vision-title" data-reveal>
-            <Image
-              className={styles.missionPhoto}
-              src={extraPhotos.aboutCommunity.src}
-              alt=""
-              fill
-              sizes="(max-width: 900px) 100vw, 50vw"
-              aria-hidden="true"
-            />
-            <span>{copy.visionLabel}</span>
-            <h2 id="about-vision-title">{copy.visionTitle}</h2>
-            <p>{copy.visionBody}</p>
+            <div className={styles.missionFrame}>
+              <Image
+                className={styles.missionPhoto}
+                src={extraPhotos.aboutCommunity.src}
+                alt=""
+                fill
+                sizes="(max-width: 900px) 100vw, 50vw"
+                aria-hidden="true"
+              />
+            </div>
+            <div className={styles.missionCopy}>
+              <span>{copy.visionLabel}</span>
+              <h2 id="about-vision-title">{copy.visionTitle}</h2>
+              <p>{copy.visionBody}</p>
+            </div>
           </article>
         </section>
 

@@ -859,3 +859,9 @@
   width: 100%;
   margin: 0;
 }
+
+.formSurface :global(.form-grid),
+.formSurface :global(.form-grid label) {
+  align-items: start;
+  align-content: start;
+}

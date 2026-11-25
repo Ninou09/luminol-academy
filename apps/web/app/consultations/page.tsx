@@ -267,12 +267,6 @@ export default async function ConsultationsPage() {
             <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
             <p>{copy.formBody as string}</p>
             <p className={styles.safetyNote}>{copy.safety as string}</p>
-            <PhotoCard
-              photo={consultationPhotos.journal}
-              locale={locale}
-              className={styles.enquiryPhoto}
-              sizes="(max-width: 900px) 80vw, 26vw"
-            />
           </div>
           <div className={styles.formSurface}>
             <EnquiryForm
@@ -323,8 +317,9 @@ export default async function ConsultationsPage() {
           className={`${styles.authority} ${styles.authorityV2}`}
           aria-labelledby="consultation-authority-title"
           data-consultation-founder-authority
+          data-founder-theme
         >
-          <div className={styles.authorityVisual}>
+          <div className={styles.authorityVisual} data-reveal>
             <figure
               className={styles.authorityPhotoLarge}
               data-media-source={founderPortrait.source}
@@ -338,7 +333,7 @@ export default async function ConsultationsPage() {
               />
             </figure>
           </div>
-          <div className={styles.authorityText}>
+          <div className={styles.authorityText} data-reveal>
             <p className={styles.eyebrow}>{copy.authorityEyebrow as string}</p>
             <h2 id="consultation-authority-title">
               {copy.authorityTitle as string}
@@ -364,13 +359,6 @@ export default async function ConsultationsPage() {
               {copy.authorityAction}{' '}
               <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
             </ButtonLink>
-            <PhotoCard
-              photo={peoplePhotos.academySupervision}
-              locale={locale}
-              className={styles.peerPhoto}
-              sizes="(max-width: 900px) 90vw, 36vw"
-              caption
-            />
           </div>
         </section>
 

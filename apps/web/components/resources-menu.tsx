@@ -94,7 +94,8 @@ export function ResourcesMenu({
         aria-controls={panelId}
         data-current={activeMatch ? 'true' : undefined}
         onClick={(event) => {
-          if (openOnHover && event.detail > 0) setOpen(true);
+          const pointer = event.nativeEvent as PointerEvent;
+          if (openOnHover && pointer.pointerType === 'mouse') setOpen(true);
           else setOpen((value) => !value);
         }}
       >
