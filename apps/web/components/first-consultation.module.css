@@ -84,7 +84,7 @@
     display: none;
   }
 }
-/* Keep both participants in view when the photo is cropped on mobile. */
+/* A gesture of trust: the first step is simply reaching out. */
 .photo {
   position: relative;
   aspect-ratio: 21 / 8;
@@ -95,7 +95,7 @@
 }
 .photo img {
   object-fit: cover;
-  object-position: center 45%;
+  object-position: 60% 45%;
 }
 .photo::after {
   position: absolute;

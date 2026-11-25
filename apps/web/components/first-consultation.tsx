@@ -2,7 +2,7 @@ import type { Locale } from '@luminol/localization';
 
 import Image from 'next/image';
 
-import { consultationPhotos } from '../lib/people-photos';
+import { extraPhotos } from '../lib/people-photos';
 import styles from './first-consultation.module.css';
 
 /**
@@ -97,8 +97,8 @@ export function FirstConsultation({ locale }: { locale: Locale }) {
       </ol>
       <figure className={styles.photo}>
         <Image
-          src={consultationPhotos.welcome.src}
-          alt={consultationPhotos.welcome.alt[locale]}
+          src={extraPhotos.childHands.src}
+          alt={extraPhotos.childHands.alt[locale]}
           fill
           sizes="(max-width: 900px) 100vw, 82rem"
         />
