@@ -15,12 +15,15 @@ import Image from 'next/image';
 import { FirstConsultation } from '../../components/first-consultation';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
-import { founderPath, founderPortrait } from '../../lib/founder';
+import {
+  founderExperience,
+  founderPath,
+  founderPortrait,
+} from '../../lib/founder';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
-import { GlassIcon } from '../../components/glass-icon';
 import { PhotoCard } from '../../components/live-photo';
 import { consultationPhotos, peoplePhotos } from '../../lib/people-photos';
 
@@ -39,10 +42,10 @@ const CONSULTATION_COPY = {
     feesNote:
       'Accessible fees, explained personally. Message us on WhatsApp or call reception for every detail, with no commitment.',
     secondaryAction: 'Explore psychology',
-    routingEyebrow: 'One request · the right pathway',
-    routingTitle: 'Not every psychology enquiry needs the same next step.',
+    routingEyebrow: 'Ways we can help',
+    routingTitle: 'Individual, couples and family consultations',
     routingBody:
-      'The goal is to understand what you need before recommending a service or programme.',
+      'Tell us what brings you here and we’ll help you choose the most suitable type of support.',
     paths: [
       {
         number: '01',
@@ -61,16 +64,16 @@ const CONSULTATION_COPY = {
       },
     ],
     authorityEyebrow: 'Founder-led psychology',
-    authorityTitle: '31 years of field experience behind the first step.',
+    authorityTitle: 'years of clinical experience',
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Founder · expert therapist',
     authorityBody:
       'Founder Kheddaoui Fettouma, an expert therapist, guides Luminol Psychology. Her field experience shapes how the team listens to each enquiry and chooses the right next step with you.',
     authorityAction: 'Learn more about the founder',
     formEyebrow: 'Tell us what you need',
-    formTitle: 'Start with a short, structured enquiry.',
+    formTitle: 'Request a psychology consultation',
     formBody:
-      'Share only what is needed for the team to understand your request. A team member can then follow up with the most suitable next step.',
+      'Leave your contact details and choose how you’d like us to reach you. The team will follow up about your request.',
     safety:
       'This form is not emergency care. If there is an immediate risk of harm or an urgent psychiatric or medical situation, contact appropriate local emergency or qualified medical services.',
     initialMessage: 'I would like information about a psychology consultation.',
@@ -89,11 +92,10 @@ const CONSULTATION_COPY = {
     feesNote:
       'Des tarifs accessibles, présentés de vive voix. Écrivez-nous sur WhatsApp ou appelez l’accueil pour tous les détails, sans engagement.',
     secondaryAction: 'Découvrir la psychologie',
-    routingEyebrow: 'Une demande · le bon parcours',
-    routingTitle:
-      'Toutes les demandes en psychologie n’appellent pas la même prochaine étape.',
+    routingEyebrow: 'Les accompagnements proposés',
+    routingTitle: 'Consultations individuelles, de couple et familiales',
     routingBody:
-      'L’objectif est de comprendre votre besoin avant de recommander un service ou un programme.',
+      'Expliquez-nous ce qui vous amène. Nous vous aiderons à choisir l’accompagnement le plus adapté.',
     paths: [
       {
         number: '01',
@@ -112,17 +114,16 @@ const CONSULTATION_COPY = {
       },
     ],
     authorityEyebrow: 'Psychologie portée par la fondatrice',
-    authorityTitle:
-      '31 ans d’expérience de terrain derrière cette première étape.',
+    authorityTitle: 'ans d’expérience clinique',
     authorityName: 'Kheddaoui Fettouma',
     authorityRole: 'Fondatrice · thérapeute experte',
     authorityBody:
       'La fondatrice Kheddaoui Fettouma, thérapeute experte, guide Luminol Psychologie. Son expérience de terrain façonne la manière dont l’équipe écoute chaque demande et choisit avec vous la bonne prochaine étape.',
     authorityAction: 'Découvrir la fondatrice',
     formEyebrow: 'Expliquez-nous votre besoin',
-    formTitle: 'Commencez par une demande courte et structurée.',
+    formTitle: 'Demander une consultation psychologique',
     formBody:
-      'Partagez uniquement les informations nécessaires pour comprendre votre demande. Un membre de l’équipe pourra ensuite vous proposer la prochaine étape la plus adaptée.',
+      'Laissez vos coordonnées et choisissez votre moyen de contact. L’équipe reviendra vers vous au sujet de votre demande.',
     safety:
       'Ce formulaire ne remplace pas les soins d’urgence. En cas de risque immédiat ou de situation psychiatrique ou médicale urgente, contactez les services d’urgence locaux ou des professionnels de santé qualifiés.',
     initialMessage:
@@ -142,9 +143,10 @@ const CONSULTATION_COPY = {
     feesNote:
       'أسعار في متناول الجميع نشرحها لك شخصيًا. راسلنا عبر واتساب أو اتصل بالاستقبال لمعرفة كل التفاصيل دون أي التزام.',
     secondaryAction: 'استكشف قسم علم النفس',
-    routingEyebrow: 'طلب واحد · المسار المناسب',
-    routingTitle: 'ليست كل طلبات علم النفس بحاجة إلى الخطوة نفسها.',
-    routingBody: 'هدفنا أولاً هو فهم حاجتك قبل اقتراح خدمة أو برنامج محدد.',
+    routingEyebrow: 'كيف يمكننا مساعدتك',
+    routingTitle: 'استشارات فردية وزوجية وأسرية',
+    routingBody:
+      'أخبرنا بما يدفعك إلى طلب الاستشارة، وسنساعدك في اختيار نوع الدعم الأنسب لك.',
     paths: [
       {
         number: '01',
@@ -163,16 +165,16 @@ const CONSULTATION_COPY = {
       },
     ],
     authorityEyebrow: 'قسم علم النفس بخبرة المؤسسة',
-    authorityTitle: '31 سنة من الخبرة الميدانية وراء هذه الخطوة الأولى.',
+    authorityTitle: 'سنة من الخبرة السريرية',
     authorityName: 'خداوي فطومة',
     authorityRole: 'المؤسسة · معالجة خبيرة',
     authorityBody:
       'توجّه المؤسسة خداوي فطومة، المعالجة الخبيرة، قسم لومينول لعلم النفس. تصوغ خبرتها الميدانية طريقة إصغاء الفريق لكل طلب واختيار الخطوة التالية المناسبة معك.',
     authorityAction: 'تعرّف على المؤسسة',
     formEyebrow: 'أخبرنا بما تحتاجه',
-    formTitle: 'ابدأ بطلب قصير ومنظم.',
+    formTitle: 'اطلب استشارة نفسية',
     formBody:
-      'شارك فقط المعلومات اللازمة لفهم طلبك. بعد ذلك يستطيع أحد أفراد الفريق التواصل معك واقتراح الخطوة التالية الأنسب.',
+      'اترك بيانات الاتصال واختر الوسيلة التي تفضّلها. سيتواصل معك الفريق لمتابعة طلبك.',
     safety:
       'هذا النموذج ليس خدمة طوارئ. إذا كان هناك خطر فوري أو حالة نفسية أو طبية طارئة، تواصل مع خدمات الطوارئ المحلية أو جهة طبية مؤهلة.',
     initialMessage: 'أرغب في معرفة معلومات حول استشارة نفسية.',
@@ -261,21 +263,29 @@ export default async function ConsultationsPage() {
           className={styles.enquiry}
           aria-labelledby="consultation-enquiry-title"
         >
-          <div className={styles.enquiryContext}>
-            <GlassIcon name="enquiry-message" size="lg" />
-            <p className={styles.eyebrow}>{copy.formEyebrow as string}</p>
-            <h2 id="consultation-enquiry-title">{copy.formTitle as string}</h2>
-            <p>{copy.formBody as string}</p>
-            <p className={styles.safetyNote}>{copy.safety as string}</p>
+          <div className={styles.enquiryBackdrop} aria-hidden="true">
+            <Image
+              src={consultationPhotos.journal.src}
+              alt=""
+              fill
+              sizes="(max-width: 720px) 100vw, 74rem"
+            />
           </div>
           <div className={styles.formSurface}>
             <EnquiryForm
               locale={locale}
-              copy={publicCopy.form}
+              copy={{
+                ...publicCopy.form,
+                eyebrow: copy.formEyebrow,
+                title: copy.formTitle,
+                intro: copy.formBody,
+              }}
+              headingId="consultation-enquiry-title"
               initialSchool="PSYCHOLOGY"
               embedded
               initialMessage={copy.initialMessage as string}
             />
+            <p className={styles.safetyNote}>{copy.safety as string}</p>
           </div>
         </section>
 
@@ -287,9 +297,12 @@ export default async function ConsultationsPage() {
             </div>
             <div>
               <p>{copy.routingBody as string}</p>
-              <a href={localizeHref(locale, '/schools/psychology')}>
+              <ButtonLink
+                href={localizeHref(locale, '/schools/psychology')}
+                variant="secondary"
+              >
                 {copy.secondaryAction}
-              </a>
+              </ButtonLink>
             </div>
           </div>
           <div className={styles.pathGrid}>
@@ -304,7 +317,6 @@ export default async function ConsultationsPage() {
                   />
                 </div>
                 <div className={styles.pathBody}>
-                  <span>{path.number}</span>
                   <h3>{path.title}</h3>
                   <p>{path.body}</p>
                 </div>
@@ -336,7 +348,7 @@ export default async function ConsultationsPage() {
           <div className={styles.authorityText} data-reveal>
             <p className={styles.eyebrow}>{copy.authorityEyebrow as string}</p>
             <h2 id="consultation-authority-title">
-              {copy.authorityTitle as string}
+              <bdi>{founderExperience}</bdi> {copy.authorityTitle}
             </h2>
             <div className={styles.signature}>
               <div>

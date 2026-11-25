@@ -1,0 +1,179 @@
+.page {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
+  margin-inline: auto;
+  padding-block: 1.25rem clamp(2.5rem, 6vw, 5rem);
+}
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(1.2rem, 5vw, 3rem);
+  border: 1px solid var(--color-brand-line);
+  border-radius: 1.6rem;
+  background:
+    radial-gradient(
+      ellipse at 85% 10%,
+      var(--color-school-psychology-soft),
+      transparent 55%
+    ),
+    var(--color-brand-night);
+}
+.scene {
+  position: absolute;
+  z-index: -1;
+  width: 48%;
+  height: 125%;
+  inset-inline-end: 0;
+  inset-block-start: -10%;
+  pointer-events: none;
+}
+.hero h1 {
+  max-width: 70%;
+  margin: 0;
+  font: 500 clamp(2.4rem, 5vw, 4.8rem)/1.13 var(--font-display);
+  color: var(--color-brand-ink);
+}
+.hero p {
+  max-width: 52ch;
+  color: var(--color-brand-ink-soft);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.actions a {
+  display: inline-grid;
+  place-items: center;
+  min-height: 44px;
+  padding-inline: 0.85rem;
+  border: 1px solid var(--color-brand-line);
+  border-radius: 0.75rem;
+  background: var(--color-brand-night);
+  color: var(--color-brand-ink);
+  text-decoration: none;
+}
+.actions a:hover {
+  border-color: var(--color-brand-gold-strong);
+}
+.hero :dir(rtl) {
+  line-height: 1.4;
+}
+.page [data-events-archive] {
+  width: 100%;
+  padding-block: 0.75rem 1.5rem;
+}
+.page [data-events-archive] h2,
+.agenda {
+  scroll-margin-block-start: 6rem;
+}
+.agenda {
+  margin-block-start: 0.75rem;
+}
+.agendaHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.75rem;
+}
+.kicker {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.8rem;
+}
+.agenda h2 {
+  margin: 0;
+  font: 500 clamp(1.9rem, 4vw, 3.4rem)/1.15 var(--font-display);
+}
+.agendaHead p {
+  max-width: 66ch;
+  line-height: 1.6;
+}
+.month {
+  margin-block: 0.65rem;
+  overflow: hidden;
+  border: 1px solid var(--color-brand-line);
+  border-radius: 1rem;
+  background: var(--color-brand-night);
+}
+.month summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 3.2rem;
+  padding: 0.8rem 1.1rem;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--color-brand-ink);
+}
+.month summary::-webkit-details-marker {
+  display: none;
+}
+.month summary > span {
+  color: var(--color-brand-gold-strong);
+  transition: rotate 180ms;
+}
+.month[open] summary > span {
+  rotate: 45deg;
+}
+.month ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.month li {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, 0.24fr) minmax(0, 1fr) minmax(
+      9rem,
+      0.38fr
+    );
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1.1rem;
+  border-block-start: 1px solid var(--color-brand-line);
+}
+.month li:hover {
+  background: var(--color-school-psychology-soft);
+}
+.month time {
+  color: var(--color-brand-gold-strong);
+  font-weight: 700;
+}
+.month h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.month li p,
+.venue {
+  margin: 0.25rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.84rem;
+}
+.venue {
+  display: grid;
+  gap: 0.3rem;
+}
+@media (max-width: 660px) {
+  .agendaHead {
+    display: grid;
+  }
+  .month li {
+    grid-template-columns: 4.6rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.35rem 0.6rem;
+  }
+  .venue {
+    grid-column: 2;
+  }
+  .scene {
+    opacity: 0.38;
+  }
+  .hero h1 {
+    max-width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .month summary > span {
+    transition: none;
+  }
+}

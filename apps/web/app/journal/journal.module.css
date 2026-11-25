@@ -15,8 +15,8 @@
   position: relative;
   isolation: isolate;
   width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 84rem);
-  margin: clamp(5rem, 9vw, 6.5rem) auto clamp(1.5rem, 4vw, 2.5rem);
-  padding: clamp(4rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4rem);
+  margin: clamp(1rem, 3vw, 2.5rem) auto 1.4rem;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(1.25rem, 5vw, 4rem);
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 0.12);
   border-radius: clamp(1.5rem, 3vw, 2.5rem);
@@ -92,100 +92,6 @@
   line-height: 1.7;
 }
 
-/* Lead story */
-.lead {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: clamp(1.25rem, 3vw, 2.5rem);
-  align-items: center;
-  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 84rem);
-  margin: 0 auto 1rem;
-  padding: clamp(1rem, 2vw, 1.4rem);
-  border: 1px solid rgb(255 255 255 / 0.12);
-  border-radius: clamp(1.5rem, 3vw, 2.25rem);
-  background: rgb(7 26 43 / 0.7);
-  color: inherit;
-  text-decoration: none;
-  transition:
-    border-color 400ms ease,
-    translate 500ms var(--luminol-ease-out, ease);
-}
-.lead:hover {
-  border-color: rgb(243 212 143 / 0.45);
-  translate: 0 -0.3rem;
-}
-.leadImage,
-.cardImage {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  border-radius: clamp(1rem, 2vw, 1.5rem);
-}
-.leadImage {
-  aspect-ratio: 16 / 10;
-}
-.leadImage img,
-.cardImage img {
-  object-fit: cover;
-  transition: scale 1.4s var(--luminol-ease-out, ease);
-}
-.lead:hover .leadImage img,
-.card:hover .cardImage img {
-  scale: 1.05;
-}
-.leadBody {
-  display: grid;
-  gap: 0.9rem;
-  padding: 0.5rem;
-}
-.lead h2 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.9rem, 3.4vw, 3rem);
-  font-weight: 500;
-  line-height: 1.05;
-}
-.read {
-  color: #f3d48f;
-}
-
-/* Other stories */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 84rem);
-  margin: 0 auto;
-  padding: 0;
-  list-style: none;
-}
-.card {
-  display: grid;
-  gap: 0.75rem;
-  height: 100%;
-  padding: 1rem 1rem 1.4rem;
-  border: 1px solid rgb(255 255 255 / 0.12);
-  border-radius: 1.75rem;
-  background: rgb(7 26 43 / 0.7);
-  color: inherit;
-  text-decoration: none;
-  transition: border-color 400ms ease;
-}
-.card:hover {
-  border-color: rgb(139 222 239 / 0.45);
-}
-.cardImage {
-  aspect-ratio: 16 / 9;
-}
-.card h2 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 2.4vw, 2rem);
-  font-weight: 500;
-  line-height: 1.1;
-}
-
-/* Article */
 .article {
   width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 46rem);
   margin-inline: auto;
@@ -257,18 +163,6 @@
   color: rgb(212 229 238 / 0.85);
 }
 
-@media (max-width: 900px) {
-  .hero::before {
-    background-image: url('/media/people/journal-hero-reading.webp');
-  }
-  .lead {
-    grid-template-columns: 1fr;
-  }
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* Article as a calm reading panel: inset from the screen edges on every size. */
 .article {
   width: min(calc(100% - 2 * var(--luminol-page-gutter, 1.25rem)), 54rem);
@@ -322,5 +216,135 @@
   .articleSection p {
     font-size: 1rem;
     line-height: 1.8;
+  }
+}
+
+.stories {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 84rem);
+  margin-inline: auto;
+}
+.storiesBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding-block: 0.4rem 0.8rem;
+}
+.storiesBar h2 {
+  margin: 0;
+  font: 500 clamp(1.65rem, 3vw, 2.45rem)/1.15 var(--font-display);
+}
+.storyControls {
+  display: flex;
+  gap: 0.5rem;
+}
+.storyControls button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--color-brand-line);
+  border-radius: 50%;
+  background: var(--color-brand-night);
+  color: var(--color-brand-ink);
+  cursor: pointer;
+  transition:
+    border-color 180ms,
+    background 180ms;
+}
+.storyControls button:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+.storyControls button:enabled:hover {
+  border-color: var(--color-brand-gold-strong);
+  color: var(--color-brand-gold-strong);
+}
+.storyTrack {
+  --story-gap: clamp(0.75rem, 2vw, 1.2rem);
+  display: flex;
+  gap: var(--story-gap);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline mandatory;
+  scrollbar-color: var(--color-brand-cyan) var(--color-brand-night);
+  scrollbar-width: thin;
+  margin: 0;
+  padding: 0 0 0.7rem;
+  list-style: none;
+}
+.storyTrack li {
+  display: grid;
+  flex: 0 0 calc((100% - var(--story-gap)) / 2);
+  min-width: 0;
+  scroll-snap-align: start;
+}
+.card {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border: 1px solid var(--color-brand-line);
+  border-radius: clamp(0.95rem, 2vw, 1.5rem);
+  background: linear-gradient(
+    150deg,
+    var(--color-brand-surface),
+    var(--color-brand-night)
+  );
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 200ms;
+}
+.card:focus-visible,
+.storyTrack:focus-visible {
+  outline: 2px solid var(--color-brand-gold-strong);
+  outline-offset: -3px;
+}
+.card:is(:hover, :focus-visible) {
+  border-color: var(--color-brand-gold-strong);
+}
+.cardImage {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+}
+.cardImage img {
+  object-fit: cover;
+}
+.storyBody {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.55rem;
+  padding: clamp(0.9rem, 2vw, 1.4rem);
+}
+.card h3 {
+  margin: 0;
+  font: 500 clamp(1.4rem, 2.75vw, 2.35rem)/1.16 var(--font-display);
+}
+.read {
+  color: var(--color-brand-gold-strong);
+  margin-block-start: 0.2rem;
+  font-size: 0.84rem;
+}
+@media (max-width: 700px) {
+  .storyTrack li {
+    flex-basis: 88%;
+  }
+  .storyTrack li:last-child {
+    scroll-snap-align: end;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :global(html:not([data-motion='reduced'])) .cardImage img {
+    transition: scale 650ms var(--luminol-ease-out, ease);
+  }
+  :global(html:not([data-motion='reduced']))
+    .card:is(:hover, :focus-visible)
+    .cardImage
+    img {
+    scale: 1.05;
   }
 }

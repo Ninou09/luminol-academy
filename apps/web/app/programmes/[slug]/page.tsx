@@ -39,6 +39,14 @@ import {
 } from '../../../lib/structured-data';
 import styles from './page.module.css';
 
+const ACT_SLUG = 'acceptance-commitment-therapy-act';
+
+const ACT_INTRO = {
+  en: 'Explore how Acceptance and Commitment Therapy helps people respond more flexibly to difficult thoughts and feelings and take action guided by their values. This training introduces the model and exercises used in psychological practice.',
+  fr: 'Découvrez comment la thérapie d’acceptation et d’engagement aide à réagir avec plus de souplesse aux pensées et émotions difficiles et à agir selon ses valeurs. Cette formation présente le modèle et des exercices utilisés en pratique psychologique.',
+  ar: 'تعرّف على كيفية استخدام العلاج بالتقبّل والالتزام للتعامل بمرونة مع الأفكار والمشاعر الصعبة واتخاذ خطوات تنسجم مع القيم الشخصية. يقدّم التكوين النموذج وتمارين تُستخدم في الممارسة النفسية.',
+} as const satisfies Record<Locale, string>;
+
 const DETAIL_COPY = {
   en: {
     catalogue: 'Programmes',
@@ -59,7 +67,7 @@ const DETAIL_COPY = {
     waitlistNextEyebrow: 'Next cohort',
     waitlistNextTitle: 'Interested in the next ACT cohort?',
     waitlistNextBody:
-      'The next cohort has not been scheduled publicly yet. Contact Luminol to register your interest without relying on an expired date or unconfirmed delivery details.',
+      'Register your interest with Luminol. The team can share the schedule and enrolment details once they are confirmed.',
     nextEyebrow: 'Your next step',
     nextTitle: 'Want to know whether this programme fits your goal?',
     nextBody:
@@ -85,7 +93,7 @@ const DETAIL_COPY = {
     waitlistNextEyebrow: 'Prochaine cohorte',
     waitlistNextTitle: 'Intéressé par la prochaine cohorte ACT ?',
     waitlistNextBody:
-      'La prochaine cohorte n’est pas encore programmée publiquement. Contactez Luminol pour signaler votre intérêt sans vous fier à une ancienne date ni à des modalités non confirmées.',
+      'Signalez votre intérêt à Luminol. L’équipe pourra vous communiquer les dates et les modalités d’inscription dès leur confirmation.',
     nextEyebrow: 'Votre prochaine étape',
     nextTitle:
       'Vous souhaitez savoir si ce programme correspond à votre objectif ?',
@@ -112,7 +120,7 @@ const DETAIL_COPY = {
     waitlistNextEyebrow: 'الفوج القادم',
     waitlistNextTitle: 'هل أنت مهتم بالفوج القادم لدورة ACT؟',
     waitlistNextBody:
-      'لم يُعلن عن موعد الفوج القادم بعد. تواصل مع لومينول لتسجيل اهتمامك دون الاعتماد على تاريخ منتهٍ أو تفاصيل تقديم لم يتم تأكيدها.',
+      'سجّل اهتمامك لدى لومينول. يمكن للفريق إبلاغك بالمواعيد وتفاصيل التسجيل بعد تأكيدها.',
     nextEyebrow: 'خطوتك التالية',
     nextTitle: 'هل تريد معرفة ما إذا كان هذا البرنامج يناسب هدفك؟',
     nextBody:
@@ -146,6 +154,10 @@ export async function generateMetadata({
   }
 
   const publicCopy = localizeProgrammePublicCopy(locale, programme);
+  const summary =
+    programme.slug.current === ACT_SLUG
+      ? ACT_INTRO[locale]
+      : publicCopy.summary;
   const pathname = `/programmes/${programme.slug.current}`;
   const route = localizePathname(locale, pathname);
   const isWaitlist = isProgrammeWaitlist(programme.slug.current);
@@ -161,14 +173,14 @@ export async function generateMetadata({
 
   return {
     title: publicCopy.title,
-    description: publicCopy.summary,
+    description: summary,
     alternates: {
       canonical: route,
       languages: buildLanguageAlternates(pathname),
     },
     openGraph: {
       title: publicCopy.title,
-      description: publicCopy.summary,
+      description: summary,
       siteName: 'Luminol Academy',
       locale: getOpenGraphLocale(locale),
       type: 'website',
@@ -178,7 +190,7 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title: publicCopy.title,
-      description: publicCopy.summary,
+      description: summary,
       images: [socialImage],
     },
   };
@@ -196,6 +208,14 @@ export default async function ProgrammeDetailPage({
   const schools = getSchools(locale);
   const school = schools[programme.school];
   const isWaitlist = isProgrammeWaitlist(programme.slug.current);
+  const isAct = programme.slug.current === ACT_SLUG;
+  const summary = isAct ? ACT_INTRO[locale] : publicCopy.summary;
+  const enquiryCard = (
+    <ProgrammeEnquiryCard
+      locale={locale}
+      programmeSlug={programme.slug.current}
+    />
+  );
   const waitlistLabel = isWaitlist
     ? localizeProgrammeWaitlistLabel(locale)
     : null;
@@ -234,7 +254,7 @@ export default async function ProgrammeDetailPage({
   ]);
   const courseJsonLd = buildCourseJsonLd({
     name: publicCopy.title,
-    description: publicCopy.summary,
+    description: summary,
     href: localizedProgrammeHref,
     languages: isWaitlist ? [] : programme.languages,
     ...(!isWaitlist && programme.image
@@ -255,7 +275,12 @@ export default async function ProgrammeDetailPage({
         data-course-jsonld
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(courseJsonLd) }}
       />
-      <main id="main-content" tabIndex={-1} className={styles.page}>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={styles.page}
+        data-act-programme={isAct || undefined}
+      >
         <section
           className={styles.hero}
           aria-labelledby="programme-detail-title"
@@ -287,13 +312,13 @@ export default async function ProgrammeDetailPage({
                 {publicCopy.title}
               </h1>
               <p className={styles.summary} dir="auto">
-                {publicCopy.summary}
+                {summary}
               </p>
 
               <ul className={styles.meta} aria-label={copy.facts}>
                 <li>{school.name}</li>
-                {programme.featured ? <li>{copy.featured}</li> : null}
-                {waitlistLabel ? <li>{waitlistLabel}</li> : null}
+                {programme.featured && !isAct ? <li>{copy.featured}</li> : null}
+                {waitlistLabel && !isAct ? <li>{waitlistLabel}</li> : null}
                 {deliveryLabel ? <li>{deliveryLabel}</li> : null}
                 {languageNames.map((language) => (
                   <li key={language}>{language}</li>
@@ -348,10 +373,7 @@ export default async function ProgrammeDetailPage({
                   </figcaption>
                 </figure>
               ) : null}
-              <ProgrammeEnquiryCard
-                locale={locale}
-                programmeSlug={programme.slug.current}
-              />
+              {!isAct ? enquiryCard : null}
             </div>
           </div>
         </section>
@@ -423,46 +445,49 @@ export default async function ProgrammeDetailPage({
               </div>
             ) : null}
 
-            <section
-              className={styles.facts}
-              aria-labelledby="programme-facts-title"
-              data-programme-detail-region="facts"
-            >
-              <h2
-                id="programme-facts-title"
-                className={styles.sectionLabel}
-                data-no-split
+            <div className={isAct ? styles.actNext : undefined}>
+              <section
+                className={styles.facts}
+                aria-labelledby="programme-facts-title"
+                data-programme-detail-region="facts"
               >
-                {copy.facts}
-              </h2>
-              <dl>
-                <div>
-                  <dt>{copy.school}</dt>
-                  <dd>{school.name}</dd>
-                </div>
-                {isWaitlist ? (
+                <h2
+                  id="programme-facts-title"
+                  className={styles.sectionLabel}
+                  data-no-split
+                >
+                  {copy.facts}
+                </h2>
+                <dl>
                   <div>
-                    <dt>{copy.status}</dt>
-                    <dd>{waitlistLabel}</dd>
+                    <dt>{copy.school}</dt>
+                    <dd>{school.name}</dd>
                   </div>
-                ) : (
-                  <>
+                  {isWaitlist ? (
                     <div>
-                      <dt>{copy.delivery}</dt>
-                      <dd dir="auto">{deliveryLabel ?? copy.unspecified}</dd>
+                      <dt>{copy.status}</dt>
+                      <dd>{waitlistLabel}</dd>
                     </div>
-                    <div>
-                      <dt>{copy.languages}</dt>
-                      <dd>
-                        {languageNames.length > 0
-                          ? languageNames.join(' · ')
-                          : copy.unspecified}
-                      </dd>
-                    </div>
-                  </>
-                )}
-              </dl>
-            </section>
+                  ) : (
+                    <>
+                      <div>
+                        <dt>{copy.delivery}</dt>
+                        <dd dir="auto">{deliveryLabel ?? copy.unspecified}</dd>
+                      </div>
+                      <div>
+                        <dt>{copy.languages}</dt>
+                        <dd>
+                          {languageNames.length > 0
+                            ? languageNames.join(' · ')
+                            : copy.unspecified}
+                        </dd>
+                      </div>
+                    </>
+                  )}
+                </dl>
+              </section>
+              {isAct ? enquiryCard : null}
+            </div>
           </div>
         </section>
 

@@ -210,3 +210,56 @@
 .valuesPhoto:hover img {
   scale: 1.04;
 }
+
+.section {
+  gap: clamp(1rem, 4vw, 3rem);
+  padding-block: clamp(1.5rem, 4vw, 3rem);
+}
+.valuesPhoto {
+  margin-block-start: 1rem;
+}
+.valuesPhoto img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+@media (max-width: 860px) {
+  .diagram {
+    width: 100%;
+    aspect-ratio: auto;
+  }
+  .lines {
+    display: none;
+  }
+  .centre {
+    position: static;
+    width: fit-content;
+    aspect-ratio: auto;
+    translate: none;
+    border-radius: 0.7rem;
+    margin-block-end: 0.65rem;
+    animation: none;
+    box-shadow: none;
+  }
+  .nodes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+  .node {
+    position: static;
+    width: auto;
+    translate: none;
+    text-align: start;
+    padding: 0.75rem;
+  }
+  .node small {
+    max-height: none;
+    opacity: 1;
+  }
+  .node:is(:hover, :focus-visible) {
+    scale: none;
+  }
+}
+:global(html[data-motion='reduced']) :is(.orbit, .centre) {
+  animation: none;
+}

@@ -57,7 +57,6 @@ export function EventsSection({
     Date.parse(
       event.endsAt ?? `${event.secondDate ?? event.date}T23:59:59.999+01:00`,
     );
-  const Heading = archive ? 'h1' : 'h2';
   const past = luminolEvents
     .filter((event) => hasEventEnded(event, now))
     .sort((a, b) => endTime(b) - endTime(a));
@@ -66,20 +65,20 @@ export function EventsSection({
     localizeHref(locale, '/contact');
 
   return (
-    <section className={styles.section} aria-labelledby="events-title">
-      <div className={styles.heading} data-reveal>
-        <p className={styles.eyebrow}>{copy.eyebrow}</p>
-        <Heading id="events-title" data-no-split>
-          {archive
-            ? {
-                ar: 'أرشيف اللقاءات',
-                en: 'Past sessions',
-                fr: 'Rencontres passées',
-              }[locale]
-            : copy.title}
-        </Heading>
-        <p>{copy.intro}</p>
-      </div>
+    <section
+      className={styles.section}
+      aria-labelledby={archive ? 'events-recent' : 'events-title'}
+      data-events-archive={archive || undefined}
+    >
+      {!archive ? (
+        <div className={styles.heading} data-reveal>
+          <p className={styles.eyebrow}>{copy.eyebrow}</p>
+          <h2 id="events-title" data-no-split>
+            {copy.title}
+          </h2>
+          <p>{copy.intro}</p>
+        </div>
+      ) : null}
 
       {!archive && upcoming.length > 0 ? (
         <>
@@ -189,13 +188,20 @@ export function EventsSection({
         </>
       ) : null}
 
-      <h3 className={styles.groupTitle}>{copy.past}</h3>
+      {archive ? (
+        <h2 id="events-recent" className={styles.groupTitle} data-no-split>
+          {copy.past}
+        </h2>
+      ) : (
+        <h3 className={styles.groupTitle}>{copy.past}</h3>
+      )}
       <ol className={styles.past}>
         {(archive ? past : past.slice(0, 3)).map((event) => {
-          const date = parts(event.date!, locale);
+          const lastDate = event.secondDate ?? event.date!;
+          const date = parts(lastDate, locale);
           return (
             <li key={event.id}>
-              <time dateTime={event.date!}>{date.full}</time>
+              <time dateTime={lastDate}>{date.full}</time>
               <div>
                 <strong dir="auto">{event.title[locale]}</strong>
                 <span>
@@ -221,9 +227,9 @@ export function EventsSection({
         <a className={styles.calendar} href={localizeHref(locale, '/events')}>
           {
             {
-              ar: 'كل اللقاءات السابقة',
-              fr: 'Toutes les rencontres passées',
-              en: 'All past sessions',
+              ar: 'كل الفعاليات والورش',
+              fr: 'Tous les événements et ateliers',
+              en: 'All events and workshops',
             }[locale]
           }{' '}
           →
