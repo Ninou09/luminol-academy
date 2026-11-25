@@ -33,7 +33,7 @@ test('premium school storytelling preserves landmarks and governed media', async
   );
   await expect(
     academyMedia.getByRole('img', {
-      name: 'A psychologist sketches a family map while parents and a teenager talk',
+      name: 'Three people work through a worksheet together at a table',
     }),
   ).toBeVisible();
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);
