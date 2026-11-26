@@ -94,6 +94,12 @@ const consultationsLabel = {
   en: 'Consultations',
 } as const satisfies Record<Locale, string>;
 
+const learningLabel = {
+  en: 'Study at Luminol',
+  fr: 'Étudier à Luminol',
+  ar: 'الدراسة في لومينول',
+} as const;
+
 type SiteShellProps = { founderTheme?: boolean };
 
 export async function SiteHeader({
@@ -127,31 +133,27 @@ export async function SiteHeader({
             >
               {menuLabels[locale].home}
             </CurrentPageLink>
-            <CurrentPageLink
-              href={localizeHref(locale, '/schools')}
-              activePathname="/schools"
-              matchDescendants
-            >
-              {copy.site.nav.schools}
-            </CurrentPageLink>
-            <CurrentPageLink
-              href={localizeHref(locale, '/programmes')}
-              activePathname="/programmes"
-              matchDescendants
-            >
-              {copy.site.nav.programmes}
-            </CurrentPageLink>
+            <ResourcesMenu
+              label={learningLabel[locale]}
+              openOnHover
+              links={[
+                {
+                  href: localizeHref(locale, '/schools'),
+                  label: copy.site.nav.schools,
+                  match: '/schools',
+                },
+                {
+                  href: localizeHref(locale, '/programmes'),
+                  label: copy.site.nav.programmes,
+                  match: '/programmes',
+                },
+              ]}
+            />
             <CurrentPageLink
               href={localizeHref(locale, '/consultations')}
               activePathname="/consultations"
             >
               {consultationsLabel[locale]}
-            </CurrentPageLink>
-            <CurrentPageLink
-              href={localizeHref(locale, '/approach')}
-              activePathname="/approach"
-            >
-              {copy.site.nav.approach}
             </CurrentPageLink>
             <ResourcesMenu
               label={copy.site.nav.about}
@@ -167,6 +169,11 @@ export async function SiteHeader({
                   label: founderNav[locale].label,
                   description: founderNav[locale].description,
                   match: founderPath,
+                },
+                {
+                  href: localizeHref(locale, '/approach'),
+                  label: copy.site.nav.approach,
+                  match: '/approach',
                 },
               ]}
             />
@@ -228,9 +235,15 @@ export async function SiteHeader({
                   match: '/',
                 },
                 {
+                  href: localizeHref(locale, '/consultations'),
+                  label: consultationsLabel[locale],
+                  match: '/consultations',
+                },
+                {
                   href: localizeHref(locale, '/schools'),
                   label: copy.site.nav.schools,
                   match: '/schools',
+                  group: learningLabel[locale],
                 },
                 {
                   href: localizeHref(locale, '/programmes'),
@@ -238,19 +251,12 @@ export async function SiteHeader({
                   match: '/programmes',
                 },
                 {
-                  href: localizeHref(locale, '/consultations'),
-                  label: consultationsLabel[locale],
-                  match: '/consultations',
-                },
-                {
-                  href: localizeHref(locale, '/approach'),
-                  label: copy.site.nav.approach,
-                  match: '/approach',
-                },
-                {
                   href: localizeHref(locale, '/about'),
                   label: copy.site.nav.about,
                   match: '/about',
+                  group: { en: 'Academy', fr: 'L’académie', ar: 'الأكاديمية' }[
+                    locale
+                  ],
                 },
                 {
                   href: localizeHref(locale, founderPath),
@@ -258,9 +264,15 @@ export async function SiteHeader({
                   match: founderPath,
                 },
                 {
+                  href: localizeHref(locale, '/approach'),
+                  label: copy.site.nav.approach,
+                  match: '/approach',
+                },
+                {
                   href: localizeHref(locale, '/journal'),
                   label: journalLabel[locale],
                   match: '/journal',
+                  group: resourcesCopy[locale].label,
                 },
                 {
                   href: localizeHref(locale, '/events'),

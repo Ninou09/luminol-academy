@@ -69,3 +69,24 @@ for (const scenario of [
     }
   });
 }
+
+test('study navigation opens and returns focus with the keyboard', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/en/programmes');
+  const nav = page.getByRole('navigation', { name: 'Primary navigation' });
+  const study = nav.getByRole('button', { name: 'Study at Luminol' });
+  await study.focus();
+  await page.keyboard.press('Enter');
+  await expect(study).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Tab');
+  await expect(nav.getByRole('link', { name: 'Our schools' })).toBeFocused();
+  await expect(nav.locator('a[href="/en/programmes"]')).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await page.keyboard.press('Escape');
+  await expect(study).toBeFocused();
+  await expect(study).toHaveAttribute('aria-expanded', 'false');
+});

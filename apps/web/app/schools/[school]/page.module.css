@@ -938,3 +938,11 @@
     grid-column: 2;
   }
 }
+
+.catalogueLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-brand-cyan-light);
+  text-underline-offset: 0.2em;
+}

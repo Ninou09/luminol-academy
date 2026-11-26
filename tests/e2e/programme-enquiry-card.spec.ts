@@ -114,10 +114,14 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
     await expect(card).toContainText(
       /waitlist|liste d’attente|قائمة الانتظار/i,
     );
-    const cardTop = (await card.boundingBox())!.y;
-    expect(cardTop).toBeLessThan(
-      (await page.getByRole('search').boundingBox())!.y,
+    const [cardBounds, searchBounds] = await Promise.all([
+      card.boundingBox(),
+      page.getByRole('search').boundingBox(),
+    ]);
+    expect(cardBounds!.y).toBeGreaterThan(
+      searchBounds!.y + searchBounds!.height,
     );
+    await expect(page.locator('#programme-results-title')).toBeVisible();
     await card.locator('[data-programme-primary-action]').click();
     await expect(
       page.locator('section[aria-labelledby="act-hexaflex-title"] li'),

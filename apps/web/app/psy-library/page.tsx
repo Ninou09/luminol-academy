@@ -196,7 +196,7 @@ export default async function PsychologyLibrary() {
                 alt={photo.alt[locale]}
                 width={photo.width}
                 height={photo.height}
-                sizes="(max-width: 560px) 90vw, 20vw"
+                sizes="(max-width: 900px) 92vw, 1120px"
                 data-media-source={illustrativePhotoCredit.source}
                 data-media-license={illustrativePhotoCredit.license}
               />

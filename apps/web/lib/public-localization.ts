@@ -382,8 +382,7 @@ export const PUBLIC_COPY = {
         'Explore published Luminol Academy programmes by school, language and learning goal.',
       eyebrow: 'Search & discovery',
       heroTitle: 'Find the Luminol programme that fits your next step.',
-      heroBody:
-        'Search the published catalogue, then narrow it by school or delivery language. Each psychology course runs for 18 hours, in Arabic with some Darija and French, in person in Blida or online.',
+      heroBody: 'Filter published courses by school or language.',
       searchLabel: 'Search programmes',
       searchPlaceholder: 'Try leadership, English or stress',
       schoolLabel: 'School',
@@ -665,8 +664,7 @@ export const PUBLIC_COPY = {
         'Explorez les programmes publiés de Luminol Academy par école, langue et objectif d’apprentissage.',
       eyebrow: 'Recherche & découverte',
       heroTitle: 'Trouvez le programme Luminol adapté à votre prochaine étape.',
-      heroBody:
-        'Recherchez dans le catalogue publié puis affinez par école ou langue d’enseignement. Chaque formation en psychologie dure 18 heures, en arabe avec un peu de darija et de français, en présentiel à Blida ou en ligne.',
+      heroBody: 'Filtrez les cours publiés par école ou langue.',
       searchLabel: 'Rechercher un programme',
       searchPlaceholder: 'Ex. leadership, anglais ou stress',
       schoolLabel: 'École',
@@ -939,8 +937,7 @@ export const PUBLIC_COPY = {
         'استكشف برامج أكاديمية لومينول المنشورة حسب المدرسة واللغة وهدف التعلّم.',
       eyebrow: 'البحث والاستكشاف',
       heroTitle: 'اعثر على برنامج لومينول المناسب لخطوتك القادمة.',
-      heroBody:
-        'ابحث في دليل البرامج المنشورة ثم حدّد النتائج حسب المدرسة أو لغة التقديم. تمتد كل دورة في علم النفس 18 ساعة، بالعربية مع شيء من الدارجة والفرنسية، حضوريًا في البليدة أو عن بُعد.',
+      heroBody: 'صفِّ الدورات المنشورة بحسب المدرسة أو اللغة.',
       searchLabel: 'ابحث في البرامج',
       searchPlaceholder: 'مثال: قيادة، إنجليزية أو ضغط نفسي',
       schoolLabel: 'المدرسة',

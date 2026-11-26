@@ -7,7 +7,7 @@ import { createPortal } from 'react-dom';
 
 import styles from './mobile-menu.module.css';
 
-type MenuLink = { href: string; label: string; match: string };
+type MenuLink = { href: string; label: string; match: string; group?: string };
 
 /**
  * Phone navigation: a burger button opens a full-screen glass panel with
@@ -114,18 +114,22 @@ export function MobileMenu({
                     const active =
                       link.match === '/'
                         ? localPath === '/'
-                        : localPath.startsWith(link.match);
+                        : localPath === link.match ||
+                          (localPath.startsWith(`${link.match}/`) &&
+                            !links.some((other) => other.match === localPath));
                     return (
                       <li
                         key={link.href}
                         style={{ '--i': index } as React.CSSProperties}
                       >
+                        {link.group ? (
+                          <p className={styles.groupLabel}>{link.group}</p>
+                        ) : null}
                         <Link
                           href={link.href}
                           aria-current={active ? 'page' : undefined}
                           onClick={() => setOpen(false)}
                         >
-                          <span>{String(index + 1).padStart(2, '0')}</span>
                           {link.label}
                         </Link>
                       </li>

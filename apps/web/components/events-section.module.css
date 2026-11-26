@@ -414,3 +414,20 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.section[data-home-events] {
+  padding-block: clamp(1rem, 3vw, 2.25rem);
+}
+.section[data-home-events] .heading {
+  margin-block-end: 0.9rem;
+}
+.section[data-home-events] .heading h2 {
+  margin-block: 0.35rem 0.6rem;
+  font-size: clamp(1.85rem, 3.3vw, 3rem);
+}
+.homeProgramme {
+  align-items: start;
+}
+.section[data-events-archive] {
+  padding-block: clamp(1rem, 3vw, 2.25rem);
+}
