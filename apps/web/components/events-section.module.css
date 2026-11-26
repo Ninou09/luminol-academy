@@ -431,3 +431,26 @@
 .section[data-events-archive] {
   padding-block: clamp(1rem, 3vw, 2.25rem);
 }
+
+.section[data-home-events] .heading {
+  max-width: 66ch;
+}
+.section[data-home-events] .heading > p:last-child {
+  line-height: 1.55;
+}
+.section[data-home-events] .past li {
+  padding-block: 0.7rem;
+}
+.section[data-home-events] .workshopPreview {
+  grid-template-rows: auto auto;
+}
+@media (max-width: 480px) {
+  .section[data-home-events] .past li {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.18rem;
+    align-items: start;
+  }
+  .section[data-home-events] .past li > :last-child {
+    grid-column: 1;
+  }
+}

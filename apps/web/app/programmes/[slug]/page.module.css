@@ -539,3 +539,28 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.page[data-act-programme] .heroCopy h1 {
+  font-size: clamp(1.9rem, 3.9vw, 3.8rem);
+}
+.page[data-act-programme] .hero {
+  padding-block: clamp(1rem, 2.4vw, 2rem);
+}
+.page[data-act-programme] .heroGrid {
+  gap: clamp(1rem, 3vw, 2.5rem);
+}
+.page[data-act-programme] .contentInner {
+  padding-block: clamp(1rem, 2.7vw, 2.35rem);
+}
+.actNext .facts {
+  margin: 0;
+}
+@media (max-width: 540px) {
+  .page[data-act-programme] .actions > a {
+    min-width: 0;
+    text-align: center;
+  }
+  .actNext .facts dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

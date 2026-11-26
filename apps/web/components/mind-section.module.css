@@ -84,12 +84,12 @@
     var(--color-brand-night);
 }
 .stage {
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+  grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.84fr);
   gap: clamp(0.75rem, 3vw, 2rem);
   padding: clamp(0.9rem, 3vw, 2rem);
 }
 .visual {
-  max-height: 17rem;
+  max-height: 21rem;
 }
 .eyebrow {
   margin: 0 0 0.48rem;
@@ -112,7 +112,7 @@
     grid-column: 1;
     grid-row: 2;
     width: min(100%, 19rem);
-    height: 9rem;
+    height: 12rem;
     margin-inline: auto;
   }
 }
@@ -123,4 +123,10 @@
   margin-block-start: 0.35rem;
   color: var(--color-brand-cyan-light);
   text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) {
+  .mind[data-scene='live'] .canvas {
+    cursor: crosshair;
+  }
 }

@@ -6,6 +6,7 @@ import { useMotionAllowed } from '../lib/calm-mode';
 import { localizeHref, type Locale } from '@luminol/localization';
 import { useEffect, useRef } from 'react';
 
+import type { MindScene } from './mind-scene';
 import { observeScene } from '../lib/visible-scene';
 import Image from 'next/image';
 import { psychologyArtwork, brandArtworkCredit } from '../lib/academy-media';
@@ -53,10 +54,22 @@ export function MindSection({ locale }: { locale: Locale }) {
     const section = sectionRef.current;
     const canvas = canvasRef.current;
     if (!allowMotion || !section || !canvas) return;
-    return observeScene(section, async () => {
+    let scene: MindScene | null = null;
+    const steer = (event: PointerEvent) => {
+      if (!scene || event.pointerType === 'touch') return;
+      const rect = canvas.getBoundingClientRect();
+      scene.setPointer(
+        2 * ((event.clientX - rect.left) / rect.width) - 1,
+        2 * ((event.clientY - rect.top) / rect.height) - 1,
+      );
+    };
+    const reset = () => scene?.setPointer(0, 0);
+    canvas.addEventListener('pointermove', steer);
+    canvas.addEventListener('pointerleave', reset);
+    const dispose = observeScene(section, async () => {
       const { createMindScene } = await import('./mind-scene');
       return () => {
-        const scene = createMindScene(canvas, {
+        scene = createMindScene(canvas, {
           compact: true,
           mobile: window.matchMedia('(max-width: 760px)').matches,
         });
@@ -64,6 +77,11 @@ export function MindSection({ locale }: { locale: Locale }) {
         return scene;
       };
     });
+    return () => {
+      canvas.removeEventListener('pointermove', steer);
+      canvas.removeEventListener('pointerleave', reset);
+      dispose();
+    };
   }, [allowMotion]);
 
   return (

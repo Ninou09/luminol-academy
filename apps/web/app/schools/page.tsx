@@ -9,18 +9,15 @@ import Link from 'next/link';
 
 import { SchoolQuiz } from '../../components/school-quiz';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
-import { extraPhotos } from '../../lib/people-photos';
+import {
+  homeSchoolPhotos,
+  illustrativePhotoCredit,
+} from '../../lib/people-photos';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import { schoolQuiz } from '../../lib/school-quiz';
 import { getSchools } from '../../lib/schools';
 import styles from './page.module.css';
-
-const coverPhotos = {
-  psychology: extraPhotos.hubPsychology,
-  languages: extraPhotos.hubLanguages,
-  training: extraPhotos.hubTraining,
-} as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -55,13 +52,21 @@ export default async function SchoolsPage() {
               href={localizeHref(locale, `/schools/${school.slug}`)}
               className={`${styles.card} ${styles[school.slug] ?? ''}`}
             >
-              <span className={styles.cardPhoto}>
+              <span
+                className={styles.cardPhoto}
+                data-media-source={illustrativePhotoCredit.source}
+                data-media-license={illustrativePhotoCredit.license}
+                data-media-crop="center-center"
+              >
                 <Image
-                  src={coverPhotos[school.slug].src}
-                  alt={coverPhotos[school.slug].alt[locale]}
+                  src={homeSchoolPhotos[school.slug].src}
+                  alt={homeSchoolPhotos[school.slug].alt[locale]}
                   fill
                   sizes="(max-width: 900px) 100vw, 33vw"
                 />
+              </span>
+              <span className={`scene-caption ${styles.sourceCaption}`}>
+                {illustrativePhotoCredit.label[locale]}
               </span>
               <span className={styles.cardBody}>
                 <span className={styles.number}>{school.number}</span>

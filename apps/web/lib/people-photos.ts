@@ -809,21 +809,35 @@ export const extraPhotos = {
   ),
 } as const satisfies Record<string, PeoplePhoto>;
 
-/** Home "Our schools": one living photo per school. */
+/** Illustrations approved for the school cards on Home and the school index. */
 export const homeSchoolPhotos: Record<
   'psychology' | 'languages' | 'training',
   PeoplePhoto
 > = {
   psychology: photo(
-    'therapy-cbt-worksheet',
-    1122,
-    1402,
-    'A small group sits in a circle and listens to a facilitator',
-    'Un petit groupe assis en cercle écoute un animateur',
-    'مجموعة صغيرة تجلس في حلقة وتصغي إلى الميسّر',
+    'school-psychology',
+    1448,
+    1086,
+    'A psychology instructor explains a diagram to a small group',
+    'Une formatrice en psychologie explique un schéma à un petit groupe',
+    'مدرّبة في علم النفس تشرح مخططًا لمجموعة صغيرة',
   ),
-  languages: extraPhotos.languagesCafe,
-  training: extraPhotos.homeDiscoverProgrammes,
+  languages: photo(
+    'school-languages',
+    1448,
+    1086,
+    'Two adults practise speaking with an illustrated card',
+    'Deux adultes s’entraînent à parler à l’aide d’une carte illustrée',
+    'متعلّمان يتدرّبان على المحادثة باستخدام بطاقة مصوّرة',
+  ),
+  training: photo(
+    'school-training',
+    1448,
+    1086,
+    'Four adults work together on an exercise at a table',
+    'Quatre adultes travaillent ensemble sur un exercice autour d’une table',
+    'أربعة متعلّمين يعملون معًا على تمرين حول طاولة',
+  ),
 };
 export const newEditorialPhotos = {
   quietRoom: photo(

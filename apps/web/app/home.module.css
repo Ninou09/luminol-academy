@@ -264,11 +264,10 @@
     max(var(--luminol-page-gutter), calc((100vw - 82rem) / 2));
 }
 .approachIntro {
-  position: sticky;
-  top: 8rem;
-  align-self: start;
+  position: relative;
+  min-width: 0;
 }
-.approachIntro p:last-child,
+.approachDescription,
 .principles p,
 .cta p:last-child {
   color: color-mix(in srgb, var(--color-brand-surface) 80%, transparent);
@@ -994,7 +993,7 @@
 }
 .approachLink {
   position: relative;
-  align-self: end;
+  margin-block-start: 1.05rem;
 }
 .approachLink a {
   display: inline-flex;
@@ -1092,25 +1091,21 @@
     0 2.5rem 5rem -2.5rem rgb(0 0 0 / 0.6);
 }
 .page[data-cosmos] .approach {
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
 }
-
-.approachSide {
-  display: grid;
-  gap: clamp(1.5rem, 3vw, 2.25rem);
-  align-self: center;
+.approachIntro {
+  width: min(100%, 57rem);
 }
-@media (max-width: 900px) {
-  .page[data-cosmos] .approach {
-    grid-template-columns: 1fr;
-  }
-  .approachIntro {
-    position: static;
-  }
+.approachIntro h2 {
+  max-width: 23ch;
+  margin-block: 0.35rem 0.65rem;
+  font-size: clamp(1.95rem, 4.3vw, 4rem);
+  text-wrap: balance;
 }
-
-.page[data-cosmos] .approachIntro h2 + p {
-  margin-top: 1.25rem;
+.approachDescription {
+  max-width: 58ch;
+  margin: 0;
 }
 
 /* Home school cards */

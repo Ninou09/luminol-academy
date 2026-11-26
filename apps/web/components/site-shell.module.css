@@ -187,52 +187,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-/* Collapse to the scrollable nav row before labels can wrap onto two lines. */
 @media (max-width: 1399px) {
-  .actions {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .headerInner {
-    grid-template-columns: 1fr auto;
-    gap: 0.75rem 1rem;
-    padding-block: 0.75rem 0.5rem;
-  }
-  .nav {
-    grid-column: 1 / -1;
-    min-width: 0;
-    width: 100%;
-    justify-content: flex-start;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    padding-block: 0.15rem;
-    scrollbar-width: none;
-  }
-  .nav::-webkit-scrollbar {
-    display: none;
-  }
-  /* Hint that the menu scrolls: the last items fade out at the edge. */
-  .nav {
-    mask-image: linear-gradient(
-      to right,
-      black 0,
-      black calc(100% - 3rem),
-      transparent
-    );
-    padding-inline-end: 2.5rem;
-  }
-  .nav:dir(rtl) {
-    mask-image: linear-gradient(
-      to left,
-      black 0,
-      black calc(100% - 3rem),
-      transparent
-    );
-  }
-  .nav a {
-    flex: 0 0 auto;
-    white-space: nowrap;
-  }
   .footerMain {
     grid-template-columns: 1fr 1fr;
   }
@@ -434,16 +389,6 @@
 .contactLink:hover {
   background: linear-gradient(135deg, #8bdeef, #ffffff 45%, #f3d48f);
   color: var(--color-brand-night, #04101c);
-}
-@media (max-width: 1399px) {
-  .headerInner {
-    border-radius: 1.5rem;
-    padding: 0.6rem 0.75rem 0.4rem;
-  }
-  .nav {
-    background: transparent;
-    padding: 0;
-  }
 }
 @media (max-width: 620px) {
   .header {
@@ -654,7 +599,7 @@
   padding-block: 0.02em 0.12em;
 }
 /* Phones: the burger menu replaces the scrolling nav row. */
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
   .nav {
     display: none !important;
   }
@@ -735,11 +680,27 @@
   min-height: 2rem;
 }
 
-/* Seven entries share the bar, so the pills stay compact at every width. */
-.nav a,
+/* Keep dropdowns in the same row as the wordmark and account controls. */
+.nav {
+  justify-self: center;
+  width: max-content;
+  max-width: 100%;
+  gap: clamp(0.1rem, 0.55vw, 0.5rem);
+  border: 1px solid var(--color-brand-line);
+}
+.nav > a,
 .nav :global(button) {
-  padding-inline: 0.62rem;
-  letter-spacing: 0.04em;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: clamp(0.38rem, 0.7vw, 0.7rem);
+  letter-spacing: 0.035em;
+}
+@media (min-width: 1081px) and (max-width: 1240px) {
+  .headerInner {
+    gap: 0.55rem;
+    padding-inline: 0.75rem 0.45rem;
+  }
 }
 
 .header[data-founder-theme] {

@@ -263,3 +263,12 @@
 :global(html[data-motion='reduced']) :is(.orbit, .centre) {
   animation: none;
 }
+
+.section {
+  padding-block: clamp(1rem, 2.8vw, 2.25rem);
+}
+@media (min-width: 861px) {
+  .diagram {
+    --size: min(100%, 29rem);
+  }
+}

@@ -4,7 +4,7 @@
 .panel {
   display: none;
 }
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
   .toggle {
     position: relative;
     z-index: 61;
@@ -131,7 +131,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
   .panel[data-open][data-founder-theme] {
     background:
       radial-gradient(ellipse at 85% 0%, var(--founder-light), transparent 60%),

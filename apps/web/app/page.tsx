@@ -168,22 +168,21 @@ export default async function Page() {
           data-spotlight
         >
           <ThoughtNetwork className={styles.network} />
-          <div className={styles.approachIntro} data-reveal>
+          <div className={styles.approachIntro}>
             <p className={`${styles.eyebrow} ${styles.light}`}>
               {copy.approachEyebrow}
             </p>
-            <h2 id="home-approach-title" data-split>
+            <h2 id="home-approach-title" data-no-split>
               {copy.approachTitle}
             </h2>
-            <p data-scrub-text>{copy.approachIntro}</p>
-          </div>
-          <div className={styles.approachSide} data-reveal>
+            <p className={styles.approachDescription}>{copy.approachIntro}</p>
             <div className={styles.approachLink}>
               <Link
                 className={styles.textLink}
                 href={localizeHref(locale, '/approach')}
               >
-                {copy.approachEyebrow} <span aria-hidden="true">→</span>
+                {copy.approachEyebrow}{' '}
+                <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
               </Link>
             </div>
           </div>

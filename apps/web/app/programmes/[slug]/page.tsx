@@ -506,28 +506,30 @@ export default async function ProgrammeDetailPage({
           </div>
         </section>
 
-        <section
-          className={styles.footerCta}
-          aria-labelledby="programme-next-title"
-          data-programme-detail-region="next-step"
-        >
-          <p className={styles.sectionLabel}>
-            {isWaitlist ? copy.waitlistNextEyebrow : copy.nextEyebrow}
-          </p>
-          <h2 id="programme-next-title">
-            {isWaitlist ? copy.waitlistNextTitle : copy.nextTitle}
-          </h2>
-          <p>{isWaitlist ? copy.waitlistNextBody : copy.nextBody}</p>
-          <div className={styles.footerActions}>
-            <ButtonLink href={contactHref}>{primaryActionLabel}</ButtonLink>
-            <ButtonLink
-              href={localizeHref(locale, '/programmes')}
-              variant="secondary"
-            >
-              {copy.back}
-            </ButtonLink>
-          </div>
-        </section>
+        {!isAct && (
+          <section
+            className={styles.footerCta}
+            aria-labelledby="programme-next-title"
+            data-programme-detail-region="next-step"
+          >
+            <p className={styles.sectionLabel}>
+              {isWaitlist ? copy.waitlistNextEyebrow : copy.nextEyebrow}
+            </p>
+            <h2 id="programme-next-title">
+              {isWaitlist ? copy.waitlistNextTitle : copy.nextTitle}
+            </h2>
+            <p>{isWaitlist ? copy.waitlistNextBody : copy.nextBody}</p>
+            <div className={styles.footerActions}>
+              <ButtonLink href={contactHref}>{primaryActionLabel}</ButtonLink>
+              <ButtonLink
+                href={localizeHref(locale, '/programmes')}
+                variant="secondary"
+              >
+                {copy.back}
+              </ButtonLink>
+            </div>
+          </section>
+        )}
       </main>
       <SiteFooter />
     </>

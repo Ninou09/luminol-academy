@@ -79,7 +79,7 @@ test('About reduced motion keeps the editorial image in place', async ({
 
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
   await expect(
-    page.locator('[data-about-hero] [data-academy-media="psychology"] img'),
+    page.locator('[data-about-hero] [data-editorial-film] img'),
   ).toBeVisible();
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);
 });

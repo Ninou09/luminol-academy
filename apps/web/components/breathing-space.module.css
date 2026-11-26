@@ -406,3 +406,30 @@
     transition: none;
   }
 }
+
+:global(main[data-cosmos]) .space {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
+  margin-inline: auto;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--luminol-media-radius);
+  padding: clamp(1rem, 3vw, 2.45rem);
+  gap: clamp(0.7rem, 3vw, 2.25rem);
+}
+:global(main[data-cosmos]) .title {
+  font-size: clamp(1.85rem, 3.65vw, 3.4rem);
+}
+:global(main[data-cosmos]) .body {
+  margin-block: 0.75rem 1rem;
+  line-height: 1.58;
+}
+:global(main[data-cosmos]) .stage {
+  gap: 0.5rem;
+}
+:global(main[data-cosmos]) .orb {
+  width: min(100%, clamp(9rem, 25vw, 20rem));
+}
+@media (max-width: 800px) {
+  :global(main[data-cosmos]) .stage {
+    order: 0;
+  }
+}

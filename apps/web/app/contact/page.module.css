@@ -707,3 +707,35 @@
     aspect-ratio: 16 / 10;
   }
 }
+
+.page[data-act-contact] .hero {
+  max-width: 69rem;
+  align-items: stretch;
+}
+.page[data-act-contact] .heroCopy {
+  padding: clamp(0.9rem, 2.8vw, 2rem);
+}
+.page[data-act-contact] .hero h1 {
+  font-size: clamp(1.85rem, 3.45vw, 3.25rem);
+  text-wrap: balance;
+}
+.page[data-act-contact] .heroBody {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.page[data-act-contact] .heroStack {
+  min-height: 0;
+  max-height: 16rem;
+  aspect-ratio: 2 / 1;
+}
+.page[data-act-contact] .enquirySection {
+  gap: clamp(0.75rem, 2vw, 1.35rem);
+}
+@media (max-width: 820px) {
+  .page[data-act-contact] .hero {
+    max-width: 41rem;
+  }
+  .page[data-act-contact] .heroStack {
+    max-height: 8rem;
+  }
+}

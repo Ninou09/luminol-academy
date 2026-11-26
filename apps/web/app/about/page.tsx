@@ -10,7 +10,8 @@ import type { Metadata } from 'next';
 import { buildPublicMetadata } from '../../lib/public-metadata';
 import { publicSearch } from '../../lib/public-seo';
 
-import { AcademyImage } from '../../components/academy-image';
+import { EditorialFilm } from '../../components/cinematic-backdrop';
+import { editorialFilms } from '../../lib/editorial-films';
 import { FounderJsonLd } from '../../components/founder-json-ld';
 import { TeamSection } from '../../components/events-section';
 import {
@@ -196,14 +197,11 @@ export default async function AboutPage() {
             </h1>
             <p>{copy.heroBody}</p>
           </div>
-          <AcademyImage
+          <EditorialFilm
             className={styles.heroVisual}
-            school="psychology"
             locale={locale}
-            priority
+            film={editorialFilms.about}
             sizes="(max-width: 1000px) 100vw, 48vw"
-            scene={peoplePhotos.liveCommunity}
-            sceneKind="photo"
           />
         </section>
 

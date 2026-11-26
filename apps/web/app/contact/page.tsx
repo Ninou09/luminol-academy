@@ -74,6 +74,32 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   const programme = programmeSlug
     ? await getPublicProgrammeBySlug(programmeSlug)
     : null;
+  const actContact =
+    programme?.slug.current === 'acceptance-commitment-therapy-act'
+      ? {
+          en: {
+            title: 'Join the ACT training waitlist',
+            intro:
+              'Leave your contact details so the academy can let you know when the next session is confirmed.',
+            action: 'Go to the form',
+            form: 'Your contact details',
+          },
+          fr: {
+            title: 'Rejoindre la liste d’attente pour la formation ACT',
+            intro:
+              'Laissez vos coordonnées pour être informé lorsque la prochaine session sera confirmée.',
+            action: 'Accéder au formulaire',
+            form: 'Vos coordonnées',
+          },
+          ar: {
+            title: 'الانضمام إلى قائمة انتظار تكوين ACT',
+            intro:
+              'اترك بيانات التواصل لتخبرك الأكاديمية عند تأكيد موعد الدورة القادمة.',
+            action: 'انتقل إلى النموذج',
+            form: 'بيانات التواصل',
+          },
+        }[locale]
+      : null;
   const enquiryDefaults = programme
     ? getProgrammeEnquiryDefaults(locale, {
         ...programme,
@@ -116,6 +142,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         tabIndex={-1}
         className={styles.page}
         data-quiet-page
+        data-act-contact={actContact ? true : undefined}
       >
         <section
           className={styles.hero}
@@ -127,17 +154,22 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               <span className={styles.pulse} aria-hidden="true" />
               {copy.eyebrow}
             </p>
-            <h1 id="contact-hero-title">{copy.heroTitle}</h1>
-            <p className={styles.heroBody}>{copy.heroBody}</p>
+            <h1 id="contact-hero-title">
+              {actContact?.title ?? copy.heroTitle}
+            </h1>
+            <p className={styles.heroBody}>
+              {actContact?.intro ?? copy.heroBody}
+            </p>
             <div className={styles.heroActions}>
               <a
                 className={styles.primaryChip}
                 href="#contact-form"
                 data-magnetic
               >
-                {channels.write} <span aria-hidden="true">↓</span>
+                {actContact?.action ?? channels.write}{' '}
+                <span aria-hidden="true">↓</span>
               </a>
-              {bookingHref ? (
+              {!actContact && bookingHref ? (
                 <a
                   className={styles.chip}
                   href={bookingHref}
@@ -148,7 +180,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                   {channels.book} <span aria-hidden="true">↗</span>
                 </a>
               ) : null}
-              {whatsappHref ? (
+              {!actContact && whatsappHref ? (
                 <a
                   className={styles.chip}
                   href={whatsappHref}
@@ -218,7 +250,11 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             )}
             <EnquiryForm
               locale={locale}
-              copy={publicCopy.form}
+              copy={
+                actContact
+                  ? { ...publicCopy.form, title: actContact.form }
+                  : publicCopy.form
+              }
               initialSchool={enquiryDefaults?.school}
               initialMessage={enquiryDefaults?.message}
               initialProgrammeSlug={programmeSlug ?? undefined}

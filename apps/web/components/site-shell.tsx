@@ -316,7 +316,7 @@ export async function SiteHeader({
               <span className={styles.contactLabel}>
                 {copy.site.nav.contact}
               </span>{' '}
-              <span aria-hidden="true">↗</span>
+              <span aria-hidden="true">↗︎</span>
             </CurrentPageLink>
           </div>
         </div>

@@ -350,7 +350,7 @@ export function createMindScene(
       camera.aspect < 0.8 ? 9.5 : camera.aspect < 1.2 ? 7.4 : 6.2;
     // On wide screens the brain sits right of the introduction text.
     brainOffsetX = !options.compact && camera.aspect > 1.2 ? 0.95 : 0;
-    if (options.compact) camera.position.z = camera.aspect < 0.9 ? 8.2 : 6.6;
+    if (options.compact) camera.position.z = camera.aspect < 0.9 ? 7.5 : 5.6;
     camera.updateProjectionMatrix();
   };
   const observer = new ResizeObserver(resize);
@@ -379,15 +379,26 @@ export function createMindScene(
     neuronMaterial.uniforms.uTime!.value = time;
     neuronMaterial.uniforms.uAssemble!.value = assemble;
     neuronMaterial.uniforms.uActivity!.value = 0.25 + activity * 0.75;
-    edgeMaterial.uniforms.uOpacity!.value = activity * 0.22;
+    const pointerEnergy = options.compact
+      ? Math.min(1, Math.hypot(pointer.x, pointer.y))
+      : 0;
+    edgeMaterial.uniforms.uOpacity!.value =
+      activity * (0.22 + pointerEnergy * 0.24);
     impulseMaterial.uniforms.uTime!.value = time;
     impulseMaterial.uniforms.uActivity!.value = activity;
     fibreMaterial.uniforms.uTime!.value = time;
     fibreMaterial.uniforms.uReveal!.value = smooth(0.45, 0.9, eased) * 1.1;
 
     // A slow, contemplative turn, steered a little by the pointer.
-    brain.rotation.y = -0.6 + eased * 1.4 + time * 0.05 + pointer.x * 0.35;
-    brain.rotation.x = 0.12 + pointer.y * 0.18 + Math.sin(time * 0.3) * 0.03;
+    brain.rotation.y =
+      -0.6 +
+      eased * 1.4 +
+      time * 0.05 +
+      pointer.x * (options.compact ? 0.62 : 0.35);
+    brain.rotation.x =
+      0.12 +
+      pointer.y * (options.compact ? 0.32 : 0.18) +
+      Math.sin(time * 0.3) * 0.03;
     brain.position.y = 0.35 + (1 - assemble) * 0.3;
     brain.position.x = brainOffsetX;
     brain.scale.setScalar(0.9 + assemble * 0.15 + Math.sin(time * 0.8) * 0.006);

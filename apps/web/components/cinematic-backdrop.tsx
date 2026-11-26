@@ -1,6 +1,9 @@
 'use client';
 
 import { brandArtworkCredit } from '../lib/academy-media';
+import type { Locale } from '@luminol/localization';
+import { filmControls, type EditorialFilmAsset } from '../lib/editorial-films';
+import { illustrativePhotoCredit } from '../lib/people-photos';
 import { useMotionAllowed } from '../lib/calm-mode';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -115,5 +118,94 @@ export function CinematicBackdrop({
         </button>
       ) : null}
     </div>
+  );
+}
+
+/** A visible poster and play control for editorial films that start on request. */
+export function EditorialFilm({
+  className,
+  locale,
+  film,
+  sizes,
+}: {
+  className?: string | undefined;
+  locale: Locale;
+  film: EditorialFilmAsset;
+  sizes: string;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [state, setState] = useState<'idle' | 'loading' | 'playing' | 'error'>(
+    'idle',
+  );
+  const text = filmControls[locale];
+
+  useEffect(() => {
+    if (state === 'playing') videoRef.current?.focus();
+  }, [state]);
+
+  async function startFilm() {
+    const video = videoRef.current;
+    if (!video) return;
+    setState('loading');
+    if (!video.getAttribute('src')) video.src = film.src;
+    try {
+      await video.play();
+      setState('playing');
+    } catch {
+      setState('error');
+    }
+  }
+
+  return (
+    <figure
+      className={[styles.editorial, className].filter(Boolean).join(' ')}
+      data-media-source={film.source}
+      data-media-license="Pexels License"
+      data-media-crop="center-center"
+      data-editorial-film
+    >
+      <Image
+        className={styles.editorialPoster}
+        src={film.poster}
+        alt={film.alt[locale]}
+        fill
+        sizes={sizes}
+      />
+      <video
+        ref={videoRef}
+        className={styles.editorialVideo}
+        aria-label={film.alt[locale]}
+        controls={state === 'playing'}
+        hidden={state !== 'playing'}
+        tabIndex={state === 'playing' ? 0 : -1}
+        preload="none"
+        muted
+        playsInline
+        onError={() => setState('error')}
+      />
+      {state === 'idle' || state === 'loading' ? (
+        <button
+          type="button"
+          className={styles.editorialControl}
+          onClick={startFilm}
+          aria-disabled={state === 'loading'}
+          disabled={state === 'loading'}
+        >
+          <span aria-hidden="true">▶︎</span>{' '}
+          {state === 'loading' ? text.loading : text.play}
+        </button>
+      ) : null}
+      {state === 'error' ? (
+        <p className={styles.editorialControl} role="status">
+          {text.error}
+        </p>
+      ) : null}
+      <figcaption className={styles.editorialCredit}>
+        {illustrativePhotoCredit.label[locale]} ·{' '}
+        <a href={film.source} target="_blank" rel="noopener">
+          Pexels
+        </a>
+      </figcaption>
+    </figure>
   );
 }

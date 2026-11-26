@@ -1,3 +1,5 @@
+import { EditorialFilm } from '../../components/cinematic-backdrop';
+import { editorialFilms } from '../../lib/editorial-films';
 import { GoldAccent } from '../../components/gold-accent';
 import { PhotoCard } from '../../components/live-photo';
 import { localizeHref } from '@luminol/localization';
@@ -158,20 +160,12 @@ export default async function PsychologyLibrary() {
               <a href={localizeHref(locale, founderPath)}>{text.profile}</a>
             </div>
           </div>
-          <figure
+          <EditorialFilm
             className={styles.photo}
-            data-media-source={illustrativePhotoCredit.source}
-            data-media-license={illustrativePhotoCredit.license}
-          >
-            <Image
-              src={editorialPhotos.library.src}
-              alt={editorialPhotos.library.alt[locale]}
-              width={editorialPhotos.library.width}
-              height={editorialPhotos.library.height}
-              sizes="(max-width: 740px) 92vw, 42vw"
-              preload
-            />
-          </figure>
+            locale={locale}
+            film={editorialFilms.library}
+            sizes="(max-width: 740px) 92vw, 42vw"
+          />
         </section>
 
         <section
