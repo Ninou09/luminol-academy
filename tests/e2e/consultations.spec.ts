@@ -32,6 +32,31 @@ test('psychology consultations are localized and expose the enquiry flow', async
   await expect(page.locator('select[name="school"]')).toHaveValue('PSYCHOLOGY');
 });
 
+test('consultation fields align in two rows on a wide screen', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 955, height: 848 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/en/consultations#consultation-enquiry');
+  await page.evaluate(() => document.fonts.ready);
+
+  const form = page.locator('#consultation-enquiry form');
+  for (const [input, select] of [
+    ['name', 'preferredContact'],
+    ['phone', 'school'],
+  ]) {
+    const [inputBox, selectBox] = await Promise.all([
+      form.locator(`[name="${input}"]`).boundingBox(),
+      form.locator(`[name="${select}"]`).boundingBox(),
+    ]);
+    expect(inputBox).not.toBeNull();
+    expect(selectBox).not.toBeNull();
+    expect(Math.abs(inputBox!.y - selectBox!.y)).toBeLessThanOrEqual(1);
+    expect(inputBox!.height).toBeGreaterThanOrEqual(44);
+    expect(inputBox!.height).toBeCloseTo(selectBox!.height);
+  }
+});
+
 test('consultation metadata keeps localized canonical and language alternates', async ({
   page,
 }) => {

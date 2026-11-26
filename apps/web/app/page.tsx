@@ -22,7 +22,7 @@ import { SchoolConstellation } from '../components/school-constellation';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { ThoughtNetwork } from '../components/thought-network';
 import { VelocityMarquee } from '../components/velocity-marquee';
-import { cinematicCopy, schoolArtwork } from '../lib/academy-media';
+import { cinematicCopy } from '../lib/academy-media';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { getSocialPreviewImage } from '../lib/social-preview-metadata';
@@ -197,14 +197,6 @@ export default async function Page() {
                     alt={homeSchoolPhotos[school.slug].alt[locale]}
                     fill
                     sizes="(max-width: 620px) 90vw, (max-width: 1000px) 38vw, 27vw"
-                  />
-                  <Image
-                    className={styles.schoolEmblem}
-                    src={schoolArtwork[school.slug].src}
-                    alt=""
-                    width={schoolArtwork[school.slug].width}
-                    height={schoolArtwork[school.slug].height}
-                    sizes="80px"
                   />
                   <figcaption className="scene-caption">
                     {illustrativePhotoCredit.label[locale]}

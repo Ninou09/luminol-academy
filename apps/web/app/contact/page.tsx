@@ -8,6 +8,7 @@ import {
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import enquiryStyles from '../../components/compact-enquiry.module.css';
 import { EnquiryForm } from '../../components/enquiry-form';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPsychologyContactPathDescription } from '../../lib/contact-paths';
@@ -213,7 +214,6 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                     size="sm"
                     delay={index}
                   />
-                  <span>{String(index + 1).padStart(2, '0')}</span>
                   {step}
                 </li>
               ))}
@@ -225,7 +225,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               </Link>
             </p>
           </div>
-          <div className={styles.formSurface} data-contact-form>
+          <div
+            className={`${styles.formSurface} ${enquiryStyles.compact}`}
+            data-contact-form
+          >
             {programmeSlug && !programme && (
               <p role="status">
                 {

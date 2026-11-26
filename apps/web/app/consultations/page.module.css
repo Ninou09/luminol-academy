@@ -601,15 +601,6 @@
   gap: clamp(1rem, 3vw, 2rem);
   padding: clamp(1rem, 3vw, 2rem);
 }
-.enquiry .formSurface :global(.enquiry-form) {
-  gap: 1rem;
-  padding: clamp(1rem, 2.4vw, 1.75rem);
-  background: var(--color-brand-night);
-  box-shadow: none;
-}
-.enquiry .formSurface :global(.form-heading > p:last-child) {
-  margin: 0;
-}
 .enquiryContext h2 {
   font-size: clamp(1.9rem, 3.5vw, 3rem);
 }
@@ -678,54 +669,49 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding: clamp(1rem, 4vw, 3rem);
-  margin-block-end: clamp(1.4rem, 4vw, 3rem);
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 49rem);
+  padding: 0;
+  margin-block-end: clamp(1.15rem, 3vw, 2rem);
   scroll-margin-block-start: 6rem;
   border: 1px solid var(--color-brand-line);
   background: var(--color-brand-night);
 }
+
 .enquiryBackdrop {
   position: absolute;
   z-index: -1;
   inset: 0;
 }
+
 .enquiryBackdrop img {
   object-fit: cover;
   object-position: center 45%;
 }
-.enquiryBackdrop::after {
-  position: absolute;
-  inset: 0;
-  content: '';
-  background: linear-gradient(180deg, rgb(5 18 30 / 0.67), rgb(5 18 30 / 0.94));
-}
+
 .enquiry .formSurface {
-  width: min(100%, 58rem);
-  margin-inline: auto;
+  border-radius: 0;
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--color-brand-night) 93%, transparent) 25%,
+    color-mix(in srgb, var(--color-brand-night) 78%, transparent) 65%,
+    var(--color-brand-night)
+  );
 }
+
 .enquiry .formSurface :global(.enquiry-form) {
-  padding: 0;
   border: 0;
+  border-radius: 0;
   background: none;
 }
-.enquiry .formSurface :global(.form-heading h2) {
-  font-size: clamp(1.8rem, 4vw, 3.15rem);
-  line-height: 1.15;
-  margin-block: 0.35rem 0.6rem;
-  color: var(--color-brand-ink);
-}
-.enquiry .formSurface :global(.form-heading) {
-  margin: 0;
-}
-.enquiry .formSurface :global(.form-grid :is(input, select, textarea)) {
-  background: var(--color-brand-night);
-}
+
 .enquiry .safetyNote {
-  margin: 1rem 0 0;
-  padding-block-start: 0.75rem;
-  line-height: 1.55;
+  margin: 0 var(--enquiry-padding) var(--enquiry-padding);
+  padding-block-start: 0.65rem;
+  line-height: 1.5;
+  font-size: 0.8rem;
   color: var(--color-brand-ink-soft);
 }
+
 @media (max-width: 760px) {
   .page .routingHeader {
     grid-template-columns: 1fr;
@@ -737,24 +723,4 @@
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     align-items: center;
   }
-}
-
-.page .enquiry {
-  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 66rem);
-  padding: clamp(0.85rem, 3vw, 1.7rem);
-}
-.enquiry .formSurface {
-  width: min(100%, 48rem);
-}
-.enquiry .formSurface :global(.enquiry-form) {
-  gap: 0.65rem;
-}
-.enquiry .formSurface :global(.form-heading h2) {
-  font-size: clamp(1.55rem, 3.3vw, 2.5rem);
-}
-.enquiry .formSurface :global(.form-grid) {
-  gap: 0.7rem;
-}
-.enquiry .safetyNote {
-  margin-block-start: 0.65rem;
 }

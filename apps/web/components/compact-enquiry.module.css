@@ -1,0 +1,118 @@
+.compact {
+  --enquiry-padding: clamp(0.9rem, 2.65vw, 1.65rem);
+  container-type: inline-size;
+}
+
+.compact :global(.enquiry-form) {
+  display: grid;
+  gap: 0.85rem;
+  padding: var(--enquiry-padding);
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--luminol-media-radius);
+  background:
+    linear-gradient(
+      125deg,
+      var(--color-brand-night),
+      color-mix(in srgb, var(--color-brand-night) 80%, transparent) 65%,
+      var(--color-brand-night)
+    ),
+    var(--enquiry-backdrop, none) center / cover;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+.compact :global(.enquiry-form .form-heading h2) {
+  margin: 0.3rem 0 0;
+  font-size: clamp(1.6rem, 3vw, 2.65rem);
+  line-height: 1.12;
+}
+
+.compact :global(.enquiry-form .form-heading > p:last-child) {
+  margin: 0.45rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.compact :global(.enquiry-form > .enquiry-context) {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.compact :global(.enquiry-form .form-grid) {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.65rem 0.85rem;
+  margin: 0;
+}
+
+.compact :global(.enquiry-form .form-grid label) {
+  min-width: 0;
+  gap: 0.3rem;
+}
+
+.compact :global(.enquiry-form .form-grid label > span) {
+  font-size: 0.82rem;
+  letter-spacing: normal;
+}
+
+.compact :global(.enquiry-form .form-grid :is(input, select, textarea)) {
+  min-width: 0;
+  padding: 0.5rem 0.7rem;
+  background: var(--color-brand-night);
+  font-size: max(16px, 0.9rem);
+}
+
+.compact :global(.enquiry-form .form-grid :is(input, select)) {
+  height: 2.75rem;
+  min-height: 2.75rem;
+}
+
+.compact :global(.enquiry-form .form-grid small) {
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+.compact :global(.enquiry-form .message-field) {
+  grid-column: 1 / -1;
+}
+
+.compact :global(.enquiry-form .enquiry-details) {
+  margin: 0;
+  padding: 0;
+}
+
+.compact :global(.enquiry-form .enquiry-details summary) {
+  display: list-item;
+  min-block-size: 2.75rem;
+  padding-block: 0.5rem;
+  color: var(--color-brand-ink);
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.compact :global(.enquiry-form .enquiry-details[open] .form-grid) {
+  margin-block: 0.55rem 0.8rem;
+}
+
+.compact :global(.enquiry-form .consent-field) {
+  margin: 0;
+  align-items: baseline;
+  min-block-size: auto;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.compact :global(.enquiry-form .consent-field input) {
+  flex: none;
+}
+
+.compact :global(.enquiry-form .form-actions) {
+  margin: 0;
+}
+
+@container (min-width: 29rem) {
+  .compact :global(.enquiry-form .form-grid) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
