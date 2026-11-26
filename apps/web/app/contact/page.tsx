@@ -36,10 +36,7 @@ import {
   getWhatsAppHref,
 } from '../../lib/contact-channels';
 import { contactFaq } from '../../lib/faq';
-import {
-  editorialPhotos,
-  pathPhotos,
-} from '../../lib/people-photos';
+import { editorialPhotos, pathPhotos } from '../../lib/people-photos';
 import { privacyPolicy } from '../../lib/privacy-policy';
 import Image from 'next/image';
 
