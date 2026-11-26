@@ -41,7 +41,7 @@ test('premium About storytelling preserves public landmarks and school pathways'
   });
   await lastPhoto.click();
   await expect(lastPhoto).toHaveAttribute('aria-current', 'true');
-  await expect(gallery.locator('[aria-live="polite"]')).toHaveText('8 / 8');
+  await expect(gallery.locator('[aria-live="polite"]')).toHaveText('9 / 9');
   const founder = page.locator('[data-founder-authority]');
   await expect(
     founder.locator('img[src*="founder-fettouma-wide.webp"]'),

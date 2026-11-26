@@ -193,3 +193,8 @@
     height: clamp(11rem, 53vw, 17rem);
   }
 }
+
+.credit {
+  color: var(--color-brand-gold-strong);
+  font-size: 0.75rem;
+}

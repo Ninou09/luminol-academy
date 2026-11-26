@@ -35,7 +35,7 @@ import {
 import styles from './page.module.css';
 import Image from 'next/image';
 import { PhotoCard } from '../../../components/live-photo';
-import { programmePhotos } from '../../../lib/people-photos';
+import { editorialPhotos, programmePhotos } from '../../../lib/people-photos';
 import { schoolPhotos } from '../../../lib/school-photos';
 
 type SchoolPageProps = {
@@ -73,7 +73,7 @@ const schoolScenes = {
     ],
   },
   languages: {
-    hero: schoolPhotos['languages-hero'],
+    hero: editorialPhotos.languageClass,
     promise: schoolPhotos['languages-online-learning'],
     audience: schoolPhotos['languages-who-we-support'],
     journey: [
@@ -89,7 +89,7 @@ const schoolScenes = {
     ],
   },
   training: {
-    hero: schoolPhotos['training-hero'],
+    hero: editorialPhotos.teamWorkshop,
     promise: schoolPhotos['training-presentation-practice'],
     audience: schoolPhotos['training-who-we-support'],
     journey: [

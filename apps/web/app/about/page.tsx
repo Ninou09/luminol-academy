@@ -119,6 +119,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const galleryChapters = {
   en: [
+    'Preparing the classroom',
     'Listening in practice',
     'After class',
     'In the classroom',
@@ -129,6 +130,7 @@ const galleryChapters = {
     'Recognising progress',
   ],
   fr: [
+    'Préparer la salle de cours',
     'L’écoute en pratique',
     'Après le cours',
     'En salle de cours',
@@ -139,6 +141,7 @@ const galleryChapters = {
     'Reconnaître les progrès',
   ],
   ar: [
+    'تجهيز قاعة التدريب',
     'الإصغاء في الممارسة',
     'بعد الدرس',
     'داخل قاعة التدريب',
@@ -214,6 +217,7 @@ export default async function AboutPage() {
           locale={locale}
           preserveFrame={aboutPhotos.graduate.src}
           photos={[
+            editorialPhotos.workday,
             editorialPhotos.seminar,
             editorialPhotos.afterClass,
             aboutPhotos.event,

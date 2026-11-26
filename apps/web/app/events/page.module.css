@@ -6,31 +6,53 @@
 .hero {
   position: relative;
   isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(0.9rem, 3vw, 2.5rem);
   overflow: hidden;
-  padding: clamp(1.2rem, 5vw, 3rem);
+  padding: clamp(0.85rem, 3vw, 2rem);
   border: 1px solid var(--color-brand-line);
   border-radius: 1.6rem;
   background:
     radial-gradient(
       ellipse at 85% 10%,
-      var(--color-school-psychology-soft),
+      color-mix(in srgb, var(--color-brand-gold) 14%, transparent),
       transparent 55%
     ),
     var(--color-brand-night);
 }
+.heroCopy {
+  min-width: 0;
+}
 .scene {
-  position: absolute;
-  z-index: -1;
-  width: 48%;
-  height: 125%;
-  inset-inline-end: 0;
-  inset-block-start: -10%;
+  width: 3.5rem;
+  height: 2.75rem;
+  align-self: center;
   pointer-events: none;
 }
-.hero h1 {
-  max-width: 70%;
+.hero .heroPhoto {
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 2 / 1;
   margin: 0;
-  font: 500 clamp(2.4rem, 5vw, 4.8rem)/1.13 var(--font-display);
+  border-color: color-mix(
+    in srgb,
+    var(--color-brand-gold) 40%,
+    var(--color-brand-line)
+  );
+}
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .scene {
+    display: none;
+  }
+}
+.hero h1 {
+  margin: 0;
+  font: 500 clamp(2.05rem, 4vw, 3.65rem)/1.13 var(--font-display);
   color: var(--color-brand-ink);
 }
 .hero p {
