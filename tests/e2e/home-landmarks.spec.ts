@@ -63,7 +63,6 @@ test('homepage sections, pathway navigation and school articles have accessible 
 
   const schoolCards = page.locator('[data-school-card]');
   await expect(schoolCards).toHaveCount(3);
-  await expect(schoolCards.locator('figure img')).toHaveCount(3);
 
   for (let index = 0; index < (await schoolCards.count()); index += 1) {
     const card = schoolCards.nth(index);

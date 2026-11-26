@@ -66,7 +66,7 @@ test('hero and school artwork retain their source metadata', async ({
       'luminol-illustrative-photo',
     );
     await expect(art.locator('img[alt]:not([alt=""])')).toHaveCount(1);
-    await expect(art.locator('img[alt=""]')).toHaveCount(1);
+    await expect(art.locator('img')).toHaveCount(1);
   }
   // "Why Luminol exists" now plays the second academy film.
   await expect(page.locator('#about video')).toHaveCount(0);
