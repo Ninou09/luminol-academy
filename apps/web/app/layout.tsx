@@ -22,7 +22,7 @@ import './localization.css';
 import './motion.css';
 
 const manrope = localFont({
-  src: './fonts/manrope.ttf',
+  src: './fonts/manrope.woff2',
   weight: '200 800',
   display: 'swap',
   variable: '--font-manrope',
@@ -30,12 +30,12 @@ const manrope = localFont({
 const cormorant = localFont({
   src: [
     {
-      path: './fonts/cormorant-garamond.ttf',
+      path: './fonts/cormorant-garamond.woff2',
       weight: '300 700',
       style: 'normal',
     },
     {
-      path: './fonts/cormorant-garamond-italic.ttf',
+      path: './fonts/cormorant-garamond-italic.woff2',
       weight: '300 700',
       style: 'italic',
     },
@@ -44,7 +44,7 @@ const cormorant = localFont({
   variable: '--font-cormorant',
 });
 const notoSansArabic = localFont({
-  src: './fonts/noto-sans-arabic.ttf',
+  src: './fonts/noto-sans-arabic.woff2',
   weight: '100 900',
   display: 'swap',
   variable: '--font-noto-arabic',
@@ -63,14 +63,6 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: resolvePublicSiteUrl(),
     title: { default: 'Luminol Academy', template: '%s | Luminol Academy' },
     description: copy.site.description,
-    keywords: [
-      'Luminol Academy',
-      'psychology',
-      'mental wellness',
-      'language learning',
-      'professional training',
-      'coaching',
-    ],
     icons: {
       icon: [
         { url: '/favicon.ico', type: 'image/x-icon' },

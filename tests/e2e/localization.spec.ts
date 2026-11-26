@@ -75,7 +75,9 @@ test('localized home metadata does not duplicate the academy brand', async ({
   page,
 }) => {
   await page.goto('/ar');
-  await expect(page).toHaveTitle('Luminol Academy');
+  await expect(page).toHaveTitle(
+    'علم النفس واللغات والتكوين المهني في البليدة | Luminol Academy',
+  );
 });
 
 test('Arabic public typography does not apply Latin tracking to joined text', async ({

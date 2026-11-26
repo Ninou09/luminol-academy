@@ -46,6 +46,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: 'Luminol Academy',
       locale: getOpenGraphLocale(locale),
       type: 'article',
+      url: localizePathname(locale, path),
+      publishedTime: article.date,
+      modifiedTime: article.updatedAt,
       images: [article.cover],
     },
   };
@@ -62,6 +65,7 @@ export default async function JournalArticlePage({ params }: Props) {
     headline: article.title[locale],
     description: article.summary[locale],
     datePublished: article.date,
+    dateModified: article.updatedAt,
     inLanguage: locale,
     image: article.articleImage.src,
     author: { '@type': 'Person', name: journalAuthor[locale].name },

@@ -1,10 +1,8 @@
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-} from '@luminol/localization';
+import { localizeHref } from '@luminol/localization';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -16,24 +14,11 @@ import { StoryRail } from './story-rail';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = journalCopy[locale];
-  const route = localizePathname(locale, '/journal');
-  return {
-    title: copy.title,
-    description: copy.description,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates('/journal'),
-    },
-    openGraph: {
-      title: copy.title,
-      description: copy.description,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/journal',
+    publicSearch['/journal'][locale],
+  );
 }
 
 export default async function JournalPage() {
@@ -46,7 +31,7 @@ export default async function JournalPage() {
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="journal-title">
           <p className={styles.eyebrow}>{copy.eyebrow}</p>
-          <h1 id="journal-title">{copy.heroTitle}</h1>
+          <h1 id="journal-title">{publicSearch['/journal'][locale].heading}</h1>
           <p className={styles.lede}>{copy.heroBody}</p>
         </section>
 
@@ -62,7 +47,7 @@ export default async function JournalPage() {
                     src={article.cover}
                     alt={article.coverAlt[locale]}
                     fill
-                    sizes="(max-width: 900px) 100vw, 40vw"
+                    sizes="(max-width: 700px) 86vw, (max-width: 1080px) 46vw, (max-width: 1280px) 30vw, 400px"
                   />
                 </span>
                 <div className={styles.storyBody}>

@@ -1,12 +1,9 @@
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-  type Locale,
-} from '@luminol/localization';
+import { localizeHref, type Locale } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../../lib/public-metadata';
+import { publicSearch } from '../../../lib/public-seo';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -25,17 +22,11 @@ import {
 } from '../../../lib/programme-presentation';
 import { getPublicCopy } from '../../../lib/public-localization';
 import { getRequestLocale } from '../../../lib/request-locale';
-import { getSocialPreviewImage } from '../../../lib/social-preview-metadata';
 import {
   buildSanityProgrammeImageUrl,
   getProgrammesForSchool,
 } from '../../../lib/sanity';
-import {
-  getSchool,
-  getSchools,
-  isSchoolSlug,
-  schools,
-} from '../../../lib/schools';
+import { getSchools, isSchoolSlug, schools } from '../../../lib/schools';
 import {
   buildBreadcrumbJsonLd,
   serializeJsonLd,
@@ -61,34 +52,8 @@ export async function generateMetadata({
   if (!isSchoolSlug(slug)) return {};
 
   const locale = await getRequestLocale();
-  const school = getSchool(locale, slug);
-  const pathname = `/schools/${school.slug}`;
-  const route = localizePathname(locale, pathname);
-  const socialPreview = getSocialPreviewImage(locale);
-
-  return {
-    title: school.name,
-    description: school.introduction,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates(pathname),
-    },
-    openGraph: {
-      title: `Luminol ${school.name}`,
-      description: school.introduction,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-      images: [socialPreview],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `Luminol ${school.name}`,
-      description: school.introduction,
-      images: [socialPreview],
-    },
-  };
+  const pathname = `/schools/${slug}` as const;
+  return buildPublicMetadata(locale, pathname, publicSearch[pathname][locale]);
 }
 
 const schoolScenes = {
@@ -267,7 +232,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               </span>
             </nav>
             <p className={styles.eyebrow}>{school.eyebrow}</p>
-            <h1 id="school-hero-title">{school.headline}</h1>
+            <h1 id="school-hero-title">
+              {publicSearch[`/schools/${slug}`][locale].heading}
+            </h1>
             <p className={styles.heroLede}>{school.introduction}</p>
             <div className={styles.heroActions}>
               <ButtonLink href="#programs" size="lg">

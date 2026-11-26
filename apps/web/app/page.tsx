@@ -1,12 +1,9 @@
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-  type Locale,
-} from '@luminol/localization';
+import { localizeHref, type Locale } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../lib/public-metadata';
+import { publicSearch } from '../lib/public-seo';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -25,7 +22,6 @@ import { VelocityMarquee } from '../components/velocity-marquee';
 import { cinematicCopy } from '../lib/academy-media';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
-import { getSocialPreviewImage } from '../lib/social-preview-metadata';
 import { approachCopy } from '../lib/approach';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
@@ -60,30 +56,7 @@ const constellationCopy = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = getPublicCopy(locale);
-  const route = localizePathname(locale, '/');
-  const socialPreview = getSocialPreviewImage(locale);
-
-  return {
-    title: { absolute: 'Luminol Academy' },
-    description: copy.site.description,
-    alternates: { canonical: route, languages: buildLanguageAlternates('/') },
-    openGraph: {
-      title: 'Luminol Academy',
-      description: copy.site.description,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-      images: [socialPreview],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'Luminol Academy',
-      description: copy.site.description,
-      images: [socialPreview],
-    },
-  };
+  return buildPublicMetadata(locale, '/', publicSearch['/'][locale]);
 }
 
 export default async function Page() {
@@ -101,13 +74,13 @@ export default async function Page() {
     <>
       <SiteHeader />
       <CinematicScroll />
-      <OrganizationJsonLd description={publicCopy.site.description} />
+      <OrganizationJsonLd description={publicSearch['/'][locale].description} />
       <main id="main-content" tabIndex={-1} className={styles.page} data-cosmos>
         <section id="top" className={styles.hero} aria-labelledby="hero-title">
           <LuminousBackdrop locale={locale} />
           <div className={styles.heroCopy}>
             <h1 id="hero-title" className={styles.heroTitle} data-no-split>
-              {copy.heroTitle}
+              {publicSearch['/'][locale].heading}
             </h1>
             <p className={styles.heroLede}>{copy.heroLede}</p>
             <div className={styles.heroActions}>

@@ -139,6 +139,12 @@ type ProgrammeDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+const actSearchTitles = {
+  en: 'Acceptance and Commitment Therapy (ACT) Training',
+  fr: 'Formation à la thérapie d’acceptation et d’engagement (ACT)',
+  ar: 'تكوين في العلاج بالقبول والالتزام (ACT)',
+} as const;
+
 export async function generateMetadata({
   params,
 }: ProgrammeDetailPageProps): Promise<Metadata> {
@@ -158,6 +164,10 @@ export async function generateMetadata({
     programme.slug.current === ACT_SLUG
       ? ACT_INTRO[locale]
       : publicCopy.summary;
+  const title =
+    programme.slug.current === ACT_SLUG
+      ? actSearchTitles[locale]
+      : publicCopy.title;
   const pathname = `/programmes/${programme.slug.current}`;
   const route = localizePathname(locale, pathname);
   const isWaitlist = isProgrammeWaitlist(programme.slug.current);
@@ -172,14 +182,14 @@ export async function generateMetadata({
       : getSocialPreviewImage(locale);
 
   return {
-    title: publicCopy.title,
+    title,
     description: summary,
     alternates: {
       canonical: route,
       languages: buildLanguageAlternates(pathname),
     },
     openGraph: {
-      title: publicCopy.title,
+      title,
       description: summary,
       siteName: 'Luminol Academy',
       locale: getOpenGraphLocale(locale),
@@ -189,7 +199,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: publicCopy.title,
+      title,
       description: summary,
       images: [socialImage],
     },

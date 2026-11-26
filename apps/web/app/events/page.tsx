@@ -1,8 +1,7 @@
-import {
-  buildLanguageAlternates,
-  localizePathname,
-} from '@luminol/localization';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 
 import { EventsSection } from '../../components/events-section';
 import { FounderGold } from '../../components/founder-gold';
@@ -38,14 +37,11 @@ const copy = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  return {
-    title: copy[locale].title,
-    description: copy[locale].intro,
-    alternates: {
-      canonical: localizePathname(locale, '/events'),
-      languages: buildLanguageAlternates('/events'),
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/events',
+    publicSearch['/events'][locale],
+  );
 }
 
 export default async function EventsArchive() {

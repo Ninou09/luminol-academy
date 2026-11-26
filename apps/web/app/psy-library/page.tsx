@@ -1,11 +1,11 @@
-import {
-  buildLanguageAlternates,
-  localizeHref,
-  localizePathname,
-} from '@luminol/localization';
+import { localizeHref } from '@luminol/localization';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 import Image from 'next/image';
 
+import { PageBreadcrumbJsonLd } from '../../components/page-breadcrumb-json-ld';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { founderExperience, founderPath } from '../../lib/founder';
 import {
@@ -90,14 +90,11 @@ const copy = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  return {
-    title: copy[locale].title,
-    description: copy[locale].intro,
-    alternates: {
-      canonical: localizePathname(locale, '/psy-library'),
-      languages: buildLanguageAlternates('/psy-library'),
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/psy-library',
+    publicSearch['/psy-library'][locale],
+  );
 }
 
 export default async function PsychologyLibrary() {
@@ -134,6 +131,11 @@ export default async function PsychologyLibrary() {
 
   return (
     <>
+      <PageBreadcrumbJsonLd
+        locale={locale}
+        pathname="/psy-library"
+        label={text.title}
+      />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="library-title">

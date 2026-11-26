@@ -4,7 +4,7 @@ test('institutional home is available', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveURL(/\/en\/?$/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Psychological consultations and training in Blida',
+    'Psychology, languages and professional training in Blida',
   );
 });
 
@@ -31,7 +31,7 @@ test('locale routing persists language and document direction', async ({
 test('public copy follows the canonical locale', async ({ page }) => {
   await page.goto('/ar');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'استشارات نفسية وبرامج تكوينية في البليدة',
+    'علم النفس واللغات والتكوين المهني في البليدة',
   );
   await expect(
     page.locator('header').getByRole('link', { name: 'البرامج' }),

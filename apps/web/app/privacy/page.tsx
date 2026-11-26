@@ -1,11 +1,9 @@
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-} from '@luminol/localization';
+import { localizeHref } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 import Image from 'next/image';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
@@ -16,24 +14,11 @@ import styles from './page.module.css';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = privacyPolicy[locale];
-  const route = localizePathname(locale, '/privacy');
-  return {
-    title: copy.title,
-    description: copy.description,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates('/privacy'),
-    },
-    openGraph: {
-      title: copy.title,
-      description: copy.description,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/privacy',
+    publicSearch['/privacy'][locale],
+  );
 }
 
 export default async function PrivacyPage() {

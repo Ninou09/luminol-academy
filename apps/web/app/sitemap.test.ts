@@ -88,7 +88,10 @@ describe('public sitemap localization', () => {
   it('adds governed programme detail routes with localized alternates', async () => {
     vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://academy.example.com');
     getPublicProgrammesMock.mockResolvedValue([
-      { slug: { current: 'acceptance-commitment-therapy-act' } },
+      {
+        slug: { current: 'acceptance-commitment-therapy-act' },
+        updatedAt: '2026-11-26T10:30:00Z',
+      },
       { slug: { current: '../draft-programme' } },
     ]);
 
@@ -99,6 +102,7 @@ describe('public sitemap localization', () => {
         'https://academy.example.com/ar/programmes/acceptance-commitment-therapy-act',
     );
 
+    expect(arabicAct?.lastModified).toBe('2026-11-26T10:30:00Z');
     expect(arabicAct?.alternates?.languages).toEqual({
       ar: 'https://academy.example.com/ar/programmes/acceptance-commitment-therapy-act',
       fr: 'https://academy.example.com/fr/programmes/acceptance-commitment-therapy-act',

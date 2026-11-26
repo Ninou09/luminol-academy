@@ -577,6 +577,18 @@
 }
 
 /* Fees are explained personally, so the hero only signals accessibility. */
+.consultationLocation {
+  margin-block: 0.85rem 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.consultationLocation a {
+  color: var(--color-brand-cyan-light);
+  text-underline-offset: 0.18em;
+}
+
 .feesNote {
   max-width: 34rem;
   margin: 1.25rem 0 0;
