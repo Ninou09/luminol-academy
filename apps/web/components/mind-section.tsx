@@ -2,7 +2,7 @@
 
 import { useMotionAllowed } from '../lib/calm-mode';
 
-import type { Locale } from '@luminol/localization';
+import { localizeHref, type Locale } from '@luminol/localization';
 import { useEffect, useRef } from 'react';
 
 import { observeScene } from '../lib/visible-scene';
@@ -15,23 +15,32 @@ const copy = {
     eyebrow: 'Inside the mind',
     title: 'Every thought is a connection.',
     body: 'Psychology studies how thoughts, feelings and actions shape one another.',
+    library: 'Explore psychology resources',
     labels: ['Thoughts', 'Feelings', 'Actions'],
   },
   fr: {
     eyebrow: 'Au cœur de l’esprit',
     title: 'Chaque pensée est une connexion.',
     body: 'La psychologie étudie la façon dont les pensées, les émotions et les actions s’influencent.',
+    library: 'Consulter la bibliothèque de psychologie',
     labels: ['Pensées', 'Émotions', 'Actions'],
   },
   ar: {
     eyebrow: 'داخل العقل',
     title: 'كل فكرة هي اتصال.',
     body: 'يدرس علم النفس كيف تؤثر الأفكار والمشاعر والأفعال في بعضها البعض.',
+    library: 'تصفّح مكتبة علم النفس',
     labels: ['الأفكار', 'المشاعر', 'الأفعال'],
   },
 } as const satisfies Record<
   Locale,
-  { eyebrow: string; title: string; body: string; labels: readonly string[] }
+  {
+    eyebrow: string;
+    title: string;
+    body: string;
+    library: string;
+    labels: readonly string[];
+  }
 >;
 
 export function MindSection({ locale }: { locale: Locale }) {
@@ -92,6 +101,12 @@ export function MindSection({ locale }: { locale: Locale }) {
               <li key={label}>{label}</li>
             ))}
           </ul>
+          <a
+            className={styles.libraryLink}
+            href={localizeHref(locale, '/psy-library')}
+          >
+            {text.library}
+          </a>
         </div>
       </div>
     </section>

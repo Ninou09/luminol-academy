@@ -195,7 +195,6 @@
 
 .origin h2,
 .sectionHeading h2,
-.ecosystemHeading h2,
 .cta h2 {
   margin: 0;
   font-family: var(--font-display);
@@ -286,8 +285,7 @@
   line-height: 1.8;
 }
 
-.sectionHeading,
-.ecosystemHeading {
+.sectionHeading {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(20rem, 34rem);
   gap: 3rem;
@@ -295,8 +293,7 @@
   margin-bottom: clamp(2.5rem, 6vw, 5rem);
 }
 
-.sectionHeading > p,
-.ecosystemHeading > p {
+.sectionHeading > p {
   margin: 0;
   color: var(--color-brand-muted);
   line-height: 1.8;
@@ -340,109 +337,6 @@
   margin: 0;
   color: var(--color-brand-muted);
   line-height: 1.75;
-}
-
-.ecosystem {
-  position: relative;
-}
-
-.ecosystemStage {
-  position: relative;
-  min-height: 42rem;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  align-items: end;
-  padding: clamp(1rem, 2vw, 1.5rem);
-  border: 1px solid var(--color-brand-line);
-  border-radius: var(--luminol-media-radius);
-  background: var(--luminol-deep, var(--color-brand-ink));
-  overflow: hidden;
-}
-
-.ecosystemStage::before {
-  content: '';
-  position: absolute;
-  width: 34rem;
-  aspect-ratio: 1;
-  left: 50%;
-  top: 42%;
-  translate: -50% -50%;
-  border: 1px solid
-    color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 5rem color-mix(in srgb, var(--color-brand-surface) 3%, transparent),
-    0 0 0 10rem color-mix(in srgb, var(--color-brand-surface) 2%, transparent);
-}
-
-.ecosystemCore {
-  position: absolute;
-  left: 50%;
-  top: 35%;
-  width: 10rem;
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: var(--color-brand-canvas);
-  color: var(--color-brand-ink);
-  box-shadow: var(--shadow-editorial);
-  font-family: var(--font-display);
-  font-size: 2.1rem;
-  z-index: 2;
-}
-
-.ecosystemCore small {
-  position: absolute;
-  inset-block-end: 1.3rem;
-  color: var(--color-brand-muted);
-  font-family: var(--font-sans);
-  font-size: 0.55rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.schoolCard {
-  position: relative;
-  z-index: 2;
-  min-height: 13rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.4rem;
-  border: 1px solid
-    color-mix(in srgb, var(--color-brand-surface) 16%, transparent);
-  border-radius: 1rem;
-  color: var(--color-brand-surface);
-  text-decoration: none;
-  backdrop-filter: blur(0.8rem);
-  transition: transform var(--luminol-motion-standard) var(--luminol-ease-out);
-}
-
-.schoolCard:hover {
-  transform: translateY(-0.4rem);
-}
-
-.schoolCard span {
-  color: var(--school-accent);
-  font-size: 0.66rem;
-  font-weight: 800;
-}
-
-.schoolCard h3 {
-  margin: 0.8rem 0 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.7rem, 2.8vw, 2.7rem);
-  font-weight: 500;
-}
-
-.schoolCard p {
-  margin: 0.55rem 0 0;
-  color: color-mix(in srgb, var(--color-brand-surface) 66%, transparent);
-  line-height: 1.6;
 }
 
 .psychology {
@@ -495,12 +389,6 @@
   .heroVisual {
     min-height: 34rem;
   }
-
-  .ecosystemStage {
-    min-height: 48rem;
-    grid-template-columns: 1fr;
-    padding-top: 20rem;
-  }
 }
 
 @media (max-width: 720px) {
@@ -541,18 +429,9 @@
     padding-inline: 1.25rem;
   }
 
-  .sectionHeading,
-  .ecosystemHeading {
+  .sectionHeading {
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
-
-  .ecosystemStage {
-    min-height: 52rem;
-  }
-
-  .ecosystemStage::before {
-    width: 22rem;
   }
 
   .cta {
@@ -592,220 +471,14 @@
 }
 
 /* ================= One human journey: a living 3D orbital system ================= */
-.ecosystemStage {
-  min-height: 46rem;
-  padding: clamp(1.25rem, 2.5vw, 2rem);
-  padding-top: 20rem;
-  align-items: stretch;
-  perspective: 1200px;
-  border-color: rgb(255 255 255 / 0.14);
-  background:
-    radial-gradient(
-      ellipse at 50% 28%,
-      rgb(139 222 239 / 0.22),
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse at 15% 90%,
-      rgb(63 184 169 / 0.12),
-      transparent 50%
-    ),
-    radial-gradient(
-      ellipse at 85% 90%,
-      rgb(224 176 122 / 0.12),
-      transparent 50%
-    ),
-    rgb(4 15 27 / 0.55);
-}
-.ecosystemStage::before {
-  display: none;
-}
-.orbitSystem {
-  position: absolute;
-  top: 3.5rem;
-  left: 50%;
-  width: min(40rem, 90%);
-  aspect-ratio: 1;
-  translate: -50% 0;
-  transform-style: preserve-3d;
-  transform: rotateX(68deg);
-  pointer-events: none;
-}
-.orbitRing {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  border: 1px solid rgb(139 222 239 / 0.35);
-  border-radius: 50%;
-  box-shadow:
-    0 0 1.5rem rgb(139 222 239 / 0.15),
-    inset 0 0 1.5rem rgb(139 222 239 / 0.1);
-}
-.orbitRing:nth-child(1) {
-  width: 46%;
-  height: 46%;
-}
-.orbitRing:nth-child(2) {
-  width: 72%;
-  height: 72%;
-  border-color: rgb(243 212 143 / 0.3);
-}
-.orbitRing:nth-child(3) {
-  width: 98%;
-  height: 98%;
-  border-style: dashed;
-  border-color: rgb(255 255 255 / 0.18);
-}
 /* Bright sparks travel along each ring. */
-.orbitSpark {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  border-radius: 50%;
-}
-.orbitSpark::after {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  margin-left: -5px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow:
-    0 0 12px #8bdeef,
-    0 0 30px #8bdeef;
-}
-.orbitSpark:nth-child(4) {
-  width: 46%;
-  height: 46%;
-}
-.orbitSpark:nth-child(5) {
-  width: 72%;
-  height: 72%;
-}
-.orbitSpark:nth-child(5)::after {
-  background: #fff4d6;
-  box-shadow:
-    0 0 12px #f3d48f,
-    0 0 30px #f3d48f;
-}
-.orbitSpark:nth-child(6) {
-  width: 98%;
-  height: 98%;
-}
-.ecosystemCore {
-  top: 10.5rem;
-  width: 11.5rem;
-  border: 1px solid rgb(255 255 255 / 0.4);
-  background:
-    radial-gradient(
-      circle at 32% 28%,
-      rgb(255 255 255 / 0.95),
-      transparent 30%
-    ),
-    radial-gradient(circle at 50% 60%, #8bdeef, #159bc2 55%, #0a4f6e 100%);
-  color: #04202e;
-  box-shadow:
-    0 0 3rem rgb(139 222 239 / 0.55),
-    0 0 8rem rgb(21 155 194 / 0.35),
-    inset -1.5rem -2rem 3rem rgb(4 32 46 / 0.35);
-  font-size: 2.3rem;
-  text-shadow: 0 1px 0 rgb(255 255 255 / 0.6);
-}
-.ecosystemCore small {
-  color: rgb(4 32 46 / 0.75);
-}
-.schoolCard {
-  min-height: 22rem;
-  justify-content: flex-end;
-  overflow: visible;
-  border-color: rgb(255 255 255 / 0.16);
-  background: linear-gradient(
-    170deg,
-    color-mix(in srgb, var(--school-accent) 22%, transparent),
-    rgb(4 15 27 / 0.6)
-  );
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
-}
-.schoolCardArt {
-  position: absolute;
-  top: -5.5rem;
-  left: 50%;
-  width: 62%;
-  height: auto;
-  translate: -50% 0;
-  filter: drop-shadow(0 1.5rem 2rem rgb(0 0 0 / 0.5))
-    drop-shadow(
-      0 0 1.5rem color-mix(in srgb, var(--school-accent) 50%, transparent)
-    );
-  transition:
-    translate 700ms var(--luminol-ease-out),
-    scale 700ms var(--luminol-ease-out);
-}
-.schoolCard:hover .schoolCardArt {
-  translate: -50% -0.75rem;
-  scale: 1.06;
-}
 /* A beam of light rises from each school toward the core. */
-.schoolBeam {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  width: 2px;
-  height: 7rem;
-  translate: -50% 0;
-  background: linear-gradient(0deg, var(--school-accent), transparent);
-  opacity: 0.6;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .orbitRing:nth-child(1),
-  .orbitSpark:nth-child(4) {
-    animation: orbit-spin 14s linear infinite;
-  }
-  .orbitRing:nth-child(2),
-  .orbitSpark:nth-child(5) {
-    animation: orbit-spin 22s linear infinite reverse;
-  }
-  .orbitRing:nth-child(3),
-  .orbitSpark:nth-child(6) {
-    animation: orbit-spin 34s linear infinite;
-  }
-  .schoolCardArt {
-    animation: art-levitate 7s ease-in-out infinite alternate;
-  }
-  .schoolCard:nth-of-type(2) .schoolCardArt {
-    animation-delay: -2.5s;
-  }
-  .schoolCard:nth-of-type(3) .schoolCardArt {
-    animation-delay: -5s;
-  }
-}
-@keyframes orbit-spin {
-  to {
-    rotate: 1turn;
-  }
-}
 @keyframes art-levitate {
   from {
     translate: -50% -0.4rem;
   }
   to {
     translate: -50% 0.5rem;
-  }
-}
-@media (max-width: 1000px) {
-  .ecosystemStage {
-    grid-template-columns: 1fr;
-    gap: 7rem;
-    padding-top: 22rem;
-  }
-  .schoolCard {
-    min-height: 16rem;
-  }
-  .schoolCardArt {
-    width: 46%;
   }
 }
 /* The new hero scene already holds figures: the connection art sits at the lower edge. */
@@ -818,17 +491,6 @@
 
 /* The orbit core already reads "Luminol · One human journey"; keep the
    section heading for screen readers only so the words are not shown twice. */
-.ecosystemHeading {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-.ecosystem {
-  position: relative;
-}
 
 /* ─── About v2 ─── */
 /* Hero photo: a tall arched window onto the community, with a soft halo. */
@@ -897,114 +559,8 @@
 }
 
 /* Each orbit card holds its own glass symbol inside the card, above the title. */
-.page .schoolCardArt {
-  top: 1.25rem;
-  width: auto;
-  height: 58%;
-  max-width: 70%;
-  object-fit: contain;
-  pointer-events: none;
-}
-.page .schoolCard:hover .schoolCardArt {
-  translate: -50% -0.4rem;
-  scale: 1.03;
-}
 
 /* ===== One human journey, refined: a calm glass core over three schools ===== */
-.ecosystemStage {
-  min-height: auto;
-  padding-top: 19rem;
-  border-radius: clamp(1.5rem, 3vw, 2.5rem);
-  background:
-    radial-gradient(
-      ellipse at 50% 18%,
-      rgb(139 222 239 / 0.16),
-      transparent 55%
-    ),
-    radial-gradient(ellipse at 12% 95%, rgb(63 184 169 / 0.1), transparent 50%),
-    radial-gradient(
-      ellipse at 88% 95%,
-      rgb(224 176 122 / 0.1),
-      transparent 50%
-    ),
-    linear-gradient(180deg, rgb(13 40 66 / 0.7), rgb(6 22 38 / 0.85));
-}
-.orbitSystem {
-  top: 1.5rem;
-  width: min(34rem, 88%);
-  opacity: 0.8;
-}
-.ecosystemCore {
-  top: 6.5rem;
-  width: 9.5rem;
-  border: 1px solid rgb(139 222 239 / 0.5);
-  background: radial-gradient(
-    circle at 50% 32%,
-    rgb(139 222 239 / 0.3),
-    rgb(7 26 43 / 0.94) 70%
-  );
-  color: #f4f8fb;
-  box-shadow:
-    0 0 0 0.6rem rgb(139 222 239 / 0.06),
-    0 0 3rem rgb(139 222 239 / 0.35),
-    inset 0 1px 0 rgb(255 255 255 / 0.2);
-  font-size: 1.85rem;
-  text-shadow: none;
-}
-.ecosystemCore small {
-  display: block;
-  margin-top: 0.4rem;
-  color: var(--color-brand-gold-strong);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-.schoolBeam {
-  height: 3rem;
-  opacity: 0.75;
-}
-.schoolCard {
-  transition:
-    translate 500ms var(--luminol-ease-out),
-    border-color 500ms ease,
-    box-shadow 500ms ease;
-}
-.schoolCard:hover {
-  translate: 0 -0.35rem;
-  border-color: color-mix(in srgb, var(--school-accent) 55%, transparent);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.14),
-    0 1.5rem 3rem -1.5rem
-      color-mix(in srgb, var(--school-accent) 45%, transparent);
-}
-@media (max-width: 1000px) {
-  .ecosystemStage {
-    gap: 1.25rem;
-    padding-top: 17rem;
-  }
-  .schoolBeam {
-    display: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .schoolCard:hover {
-    translate: none;
-  }
-}
-.ecosystemStage {
-  perspective-origin: 50% 8rem;
-}
-.orbitSystem {
-  top: -3rem;
-  left: 50%;
-  right: auto;
-}
-.orbitSystem {
-  left: 0;
-  right: 0;
-  margin-inline: auto;
-}
 
 .page .origin {
   align-items: start;
@@ -1168,4 +724,26 @@
     min-height: 0;
     aspect-ratio: 2 / 1;
   }
+}
+
+.schoolGuide {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 70rem);
+  margin: 0.75rem auto;
+  padding: clamp(0.85rem, 2vw, 1.25rem);
+  border: 1px solid var(--color-brand-line);
+  border-inline-start: 2px solid var(--color-brand-gold);
+  border-radius: var(--luminol-media-radius);
+  background: var(--color-brand-night);
+}
+.schoolGuide h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.5vw, 1.8rem);
+}
+.page .originCopy p + p {
+  margin-block-start: 0.65rem;
 }

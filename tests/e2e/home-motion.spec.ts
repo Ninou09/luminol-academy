@@ -98,11 +98,11 @@ test('motion targets are discovered after client navigation to home', async ({
   await expect(reveal).toBeVisible();
 });
 
-test('constellation schools are native links with a visible keyboard focus', async ({
+test('school cards have native links with a visible keyboard focus', async ({
   page,
 }) => {
   await page.goto('/en');
-  const links = page.locator('[aria-labelledby="constellation-title"] a');
+  const links = page.locator('[data-school-card] a');
   await expect(links).toHaveCount(3);
   await links.first().focus();
   await page.keyboard.press('Tab');
@@ -139,7 +139,7 @@ test('manual calm mode persists before any WebGL scene starts on reload', async 
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'reduced');
   for (const id of [
-    'constellation-title',
+    'home-schools-title',
     'mind-title',
     'home-about-title',
     'pathway-title',
@@ -168,10 +168,7 @@ test('data saver keeps school links and posters available', async ({
     page.locator('video, [data-field="live"], [data-scene="live"]'),
   ).toHaveCount(0);
   await expect(page.locator('#about img').first()).toBeVisible();
-  await page
-    .locator('[aria-labelledby="constellation-title"] a')
-    .last()
-    .click();
+  await page.locator('[data-school-card] a').last().click();
   await expect(page).toHaveURL(/\/fr\/schools\/training$/);
 });
 
@@ -209,10 +206,7 @@ test('without WebGL the mobile poster and school links still work by touch', asy
       await expect(page.locator(area).locator('img').first()).toBeVisible();
     }
     expect(videos).toEqual([]);
-    await page
-      .locator('[aria-labelledby="constellation-title"] a')
-      .nth(1)
-      .tap();
+    await page.locator('[data-school-card] a').nth(1).tap();
     await expect(page).toHaveURL(/\/en\/schools\/languages$/);
   } finally {
     await ctx.close();

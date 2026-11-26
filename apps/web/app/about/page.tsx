@@ -8,7 +8,6 @@ import type { Metadata } from 'next';
 
 import { buildPublicMetadata } from '../../lib/public-metadata';
 import { publicSearch } from '../../lib/public-seo';
-import Link from 'next/link';
 
 import { AcademyImage } from '../../components/academy-image';
 import { FounderJsonLd } from '../../components/founder-json-ld';
@@ -162,29 +161,6 @@ export default async function AboutPage() {
   const copy = getPublicCopy(locale).about;
   const founderName = founderNameByLocale[locale];
   const founderAuthority = founderAuthorityByLocale[locale];
-  const schoolCards = [
-    {
-      slug: 'psychology',
-      number: '01',
-      name: copy.psychologyName,
-      tagline: copy.psychologyTagline,
-      tone: styles.psychology ?? '',
-    },
-    {
-      slug: 'languages',
-      number: '02',
-      name: copy.languagesName,
-      tagline: copy.languagesTagline,
-      tone: styles.languages ?? '',
-    },
-    {
-      slug: 'training',
-      number: '03',
-      name: copy.trainingName,
-      tagline: copy.trainingTagline,
-      tone: styles.training ?? '',
-    },
-  ] as const;
 
   return (
     <>
@@ -229,7 +205,6 @@ export default async function AboutPage() {
           <div className={styles.originCopy} data-reveal>
             <p className={styles.originLede}>{copy.originLede}</p>
             <p>{copy.originBodyOne}</p>
-            <p>{copy.originBodyTwo}</p>
           </div>
         </section>
 
@@ -374,53 +349,27 @@ export default async function AboutPage() {
           </div>
         </section>
 
-        <section
-          className={`${styles.section} ${styles.ecosystem}`}
-          aria-labelledby="ecosystem-title"
+        <aside
+          className={styles.schoolGuide}
+          aria-labelledby="school-guide-title"
         >
-          <div className={styles.ecosystemHeading} data-reveal>
-            <div>
-              <p className={styles.eyebrow}>{copy.oneJourney}</p>
-              <h2 id="ecosystem-title">Luminol</h2>
-            </div>
-          </div>
-          <div className={styles.ecosystemStage} data-reveal>
-            <div className={styles.orbitSystem} aria-hidden="true">
-              <span className={styles.orbitRing} />
-              <span className={styles.orbitRing} />
-              <span className={styles.orbitRing} />
-              <span className={styles.orbitSpark} />
-              <span className={styles.orbitSpark} />
-              <span className={styles.orbitSpark} />
-            </div>
-            <div className={styles.ecosystemCore} data-motion-float>
-              Luminol
-              <small>{copy.oneJourney}</small>
-            </div>
-            {schoolCards.map((school) => (
-              <Link
-                className={`${styles.schoolCard} ${school.tone}`}
-                href={localizeHref(locale, `/schools/${school.slug}`)}
-                key={school.slug}
-                data-ecosystem-school={school.slug}
-              >
-                <span className={styles.schoolBeam} aria-hidden="true" />
-                <Image
-                  className={styles.schoolCardArt}
-                  src={`/media/brand/about-${school.slug}.webp`}
-                  alt=""
-                  width={1122}
-                  height={1402}
-                  sizes="(max-width: 1000px) 60vw, 22vw"
-                  aria-hidden="true"
-                />
-                <span>{school.number}</span>
-                <h3 id={`about-school-${school.slug}-title`}>{school.name}</h3>
-                <p>{school.tagline}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
+          <h2 id="school-guide-title">
+            {getPublicCopy(locale).site.nav.schools}
+          </h2>
+          <ButtonLink
+            href={localizeHref(locale, '/schools')}
+            variant="secondary"
+          >
+            {
+              {
+                en: 'See all schools',
+                fr: 'Voir toutes les écoles',
+                ar: 'تصفّح جميع المدارس',
+              }[locale]
+            }
+            <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
+          </ButtonLink>
+        </aside>
 
         <section
           className={styles.cta}

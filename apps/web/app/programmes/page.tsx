@@ -7,8 +7,6 @@ import { publicSearch } from '../../lib/public-seo';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { FounderTraining } from '../../components/founder-training';
-import { PhotoStack } from '../../components/photo-stack';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { buildProgrammeContactHref } from '../../lib/programme-contact';
 import {
@@ -38,11 +36,7 @@ import {
   serializeJsonLd,
 } from '../../lib/structured-data';
 import styles from './page.module.css';
-import {
-  extraPhotos,
-  illustrativePhotoCredit,
-  peoplePhotos,
-} from '../../lib/people-photos';
+import { illustrativePhotoCredit } from '../../lib/people-photos';
 
 type ProgrammesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -97,7 +91,7 @@ export default async function ProgrammesPage({
     });
   }
 
-  const single = sourceProgrammes?.length === 1 && programmes?.length === 1;
+  const single = programmes?.length === 1;
   const results = programmes?.length ? (
     <section aria-labelledby="programme-results-title">
       <div className={styles.resultHeading} aria-live="polite">
@@ -256,26 +250,19 @@ export default async function ProgrammesPage({
       <main id="main-content" tabIndex={-1}>
         <section
           className={styles.hero}
-          data-single={single || undefined}
           aria-labelledby="programmes-hero-title"
         >
           <div className={styles.heroCopy}>
-            <p className="eyebrow">{copy.eyebrow}</p>
             <h1 id="programmes-hero-title">
-              {publicSearch['/programmes'][locale].heading}
-            </h1>
-            {single ? results : <p>{copy.heroBody}</p>}
-            {!single ? (
-              <Link href={localizeHref(locale, '/psy-library')}>
+              {
                 {
-                  {
-                    en: 'Explore the Psychology Library',
-                    fr: 'Explorer la bibliothèque de psychologie',
-                    ar: 'استكشف المكتبة النفسية',
-                  }[locale]
-                }
-              </Link>
-            ) : null}
+                  en: 'Programme catalogue',
+                  fr: 'Catalogue des programmes',
+                  ar: 'دليل البرامج التدريبية',
+                }[locale]
+              }
+            </h1>
+            <p>{copy.heroBody}</p>
             <form
               className={styles.filters}
               action={localizeHref(locale, '/programmes')}
@@ -336,78 +323,52 @@ export default async function ProgrammesPage({
               </div>
             </form>
           </div>
-          {!single && (
-            <PhotoStack
-              className={styles.heroStack}
-              locale={locale}
-              priority
-              photos={[
-                extraPhotos.programSearch,
-                peoplePhotos.programCatalog,
-                peoplePhotos.designBookshelf,
-              ]}
-            />
-          )}
         </section>
 
-        <nav className={styles.schoolTiles} aria-label={copy.schoolLabel}>
-          {Object.values(schools).map((school) => {
-            const active = filters.school === school.slug;
-            const params = new URLSearchParams();
-            if (filters.query) params.set('q', filters.query);
-            if (!active) params.set('school', school.slug);
-            if (filters.language) params.set('language', filters.language);
-            return (
-              <Link
-                key={school.slug}
-                className={`${styles.schoolTile} ${styles[school.slug] ?? ''}`}
-                href={localizeHref(
-                  locale,
-                  params.size ? `/programmes?${params}` : '/programmes',
-                )}
-                aria-current={active ? 'true' : undefined}
-                data-tilt="6"
-              >
-                <strong>{school.name}</strong>
-                <span className={styles.tilePromise}>{school.promise}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {!single && (
-          <section className={`section-shell ${styles.discovery}`}>
-            {programmes === null ? (
-              <div
-                className={`${styles.emptyState} ${styles.unavailable}`}
-                role="status"
-              >
-                <span className={styles.emptyOrb} aria-hidden="true" />
-                <h2>{copy.unavailableTitle}</h2>
-                <p>{copy.unavailableBody}</p>
-                <div className={styles.emptyActions}>
-                  <Link href={localizeHref(locale, '/schools')}>
-                    {copy.exploreSchools}
-                  </Link>
-                  <Link href={localizeHref(locale, '/contact')}>
-                    {copy.askLuminol} <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              </div>
-            ) : programmes.length === 0 ? (
-              <div className={styles.emptyState} aria-live="polite">
-                <h2>{copy.emptyTitle}</h2>
-                <p>{copy.emptyBody}</p>
-                <Link href={localizeHref(locale, '/programmes')}>
-                  {copy.reset}
+        <section
+          className={styles.catalogueResults}
+          data-single={single || undefined}
+        >
+          {programmes === null ? (
+            <div
+              className={`${styles.emptyState} ${styles.unavailable}`}
+              role="status"
+            >
+              <span className={styles.emptyOrb} aria-hidden="true" />
+              <h2>{copy.unavailableTitle}</h2>
+              <p>{copy.unavailableBody}</p>
+              <div className={styles.emptyActions}>
+                <Link href={localizeHref(locale, '/schools')}>
+                  {copy.exploreSchools}
+                </Link>
+                <Link href={localizeHref(locale, '/contact')}>
+                  {copy.askLuminol} <span aria-hidden="true">→</span>
                 </Link>
               </div>
-            ) : (
-              results
-            )}
-          </section>
-        )}
-        {isUnfilteredCatalogue ? <FounderTraining locale={locale} /> : null}
+            </div>
+          ) : programmes.length === 0 ? (
+            <div className={styles.emptyState} aria-live="polite">
+              <h2>{copy.emptyTitle}</h2>
+              <p>{copy.emptyBody}</p>
+              <Link href={localizeHref(locale, '/programmes')}>
+                {copy.reset}
+              </Link>
+            </div>
+          ) : (
+            results
+          )}
+        </section>
+        <aside className={styles.catalogueHelp}>
+          <Link href={localizeHref(locale, '/psy-library#clinical-pathways')}>
+            {
+              {
+                en: 'Read the founder’s psychology course outlines',
+                fr: 'Consulter les plans de cours de la fondatrice',
+                ar: 'اطّلع على محاور دورات علم النفس للمؤسسة',
+              }[locale]
+            }
+          </Link>
+        </aside>
       </main>
       <SiteFooter />
     </>

@@ -1,4 +1,4 @@
-import { localizeHref, type Locale } from '@luminol/localization';
+import { localizeHref } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
 
@@ -15,14 +15,12 @@ import { CinematicScroll } from '../components/cinematic-scroll';
 import { LuminousBackdrop } from '../components/luminous-backdrop';
 import { OrganizationJsonLd } from '../components/organization-json-ld';
 import { PublishedProgrammeSpotlight } from '../components/published-programme-spotlight';
-import { SchoolConstellation } from '../components/school-constellation';
 import { SiteFooter, SiteHeader } from '../components/site-shell';
 import { ThoughtNetwork } from '../components/thought-network';
 import { VelocityMarquee } from '../components/velocity-marquee';
 import { cinematicCopy } from '../lib/academy-media';
 import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
-import { approachCopy } from '../lib/approach';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
 import { EventsSection } from '../components/events-section';
@@ -32,27 +30,6 @@ import {
   illustrativePhotoCredit,
   peoplePhotos,
 } from '../lib/people-photos';
-
-const constellationCopy = {
-  en: {
-    eyebrow: 'One source of light',
-    title: 'Three schools. One light.',
-    hint: 'Choose a school',
-  },
-  fr: {
-    eyebrow: 'Une seule source de lumière',
-    title: 'Trois écoles. Une seule lumière.',
-    hint: 'Choisissez une école',
-  },
-  ar: {
-    eyebrow: 'مصدر واحد للنور',
-    title: 'ثلاث مدارس. نور واحد.',
-    hint: 'اختر مدرسة',
-  },
-} as const satisfies Record<
-  Locale,
-  { eyebrow: string; title: string; hint: string }
->;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -124,16 +101,6 @@ export default async function Page() {
 
         <PublishedProgrammeSpotlight locale={locale} />
 
-        <SchoolConstellation
-          {...constellationCopy[locale]}
-          schools={schoolList.map((school) => ({
-            slug: school.slug,
-            number: school.number,
-            name: school.name,
-            href: localizeHref(locale, `/schools/${school.slug}`),
-          }))}
-        />
-
         <section
           id="schools"
           className={`${styles.section} ${styles.schoolsSection}`}
@@ -141,12 +108,10 @@ export default async function Page() {
         >
           <div className={styles.sectionHeading} data-reveal>
             <div>
-              <p className={styles.eyebrow}>{copy.schoolsEyebrow}</p>
               <h2 id="home-schools-title" data-split>
-                {copy.schoolsTitle}
+                {copy.schoolsEyebrow}
               </h2>
             </div>
-            <p data-scrub-text>{copy.schoolsIntro}</p>
           </div>
           <div className={styles.schoolGrid}>
             {schoolList.map((school) => (
@@ -178,11 +143,6 @@ export default async function Page() {
                 <div className={styles.schoolDetails}>
                   <h3 id={`home-school-${school.slug}-title`}>{school.name}</h3>
                   <p className={styles.schoolPromise}>{school.promise}</p>
-                  <ul aria-label={`${school.name} — ${copy.focusAreas}`}>
-                    {school.programs.slice(0, 3).map((program) => (
-                      <li key={program.title}>{program.title}</li>
-                    ))}
-                  </ul>
                   <Link
                     className={styles.textLink}
                     href={localizeHref(locale, `/schools/${school.slug}`)}
@@ -218,19 +178,6 @@ export default async function Page() {
             <p data-scrub-text>{copy.approachIntro}</p>
           </div>
           <div className={styles.approachSide} data-reveal>
-            <ol className={styles.approachSteps}>
-              {approachCopy[locale].steps.map((step, index) => (
-                <li key={step.key}>
-                  <span aria-hidden="true">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <div>
-                    <h3>{step.title}</h3>
-                    <p>{step.points.join(' · ')}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
             <div className={styles.approachLink}>
               <Link
                 className={styles.textLink}

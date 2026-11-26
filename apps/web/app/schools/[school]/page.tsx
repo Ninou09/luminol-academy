@@ -13,6 +13,7 @@ import {
   type EditorialMediaAsset,
 } from '../../../components/editorial-media';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
+import { buildProgrammeContactHref } from '../../../lib/programme-contact';
 import {
   isProgrammeWaitlist,
   localizeProgrammeDelivery,
@@ -292,6 +293,18 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               <h2 id="school-programmes-title">{copy.programsTitle}</h2>
             </div>
             <p>{copy.programsBody}</p>
+            <Link
+              className={styles.catalogueLink}
+              href={localizeHref(locale, `/programmes?school=${school.slug}`)}
+            >
+              {
+                {
+                  en: 'Browse published courses for this school',
+                  fr: 'Voir les cours publiés de cette école',
+                  ar: 'تصفّح الدورات المنشورة لهذه المدرسة',
+                }[locale]
+              }
+            </Link>
           </div>
           <div className={styles.programGrid}>
             {programmes.map((program, index) => (
@@ -340,7 +353,11 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
                 ) : null}
                 <p dir="auto">{program.description}</p>
                 <Link
-                  href={localizeHref(locale, '/contact')}
+                  href={
+                    program.slug
+                      ? buildProgrammeContactHref(locale, program.slug)
+                      : localizeHref(locale, '/contact')
+                  }
                   aria-label={`${program.actionLabel ?? copy.askProgram}: ${program.title}`}
                 >
                   {program.actionLabel ?? copy.askProgram}{' '}

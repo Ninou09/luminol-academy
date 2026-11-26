@@ -65,20 +65,10 @@ test('premium About storytelling preserves public landmarks and school pathways'
     ).toBeVisible();
   }
 
-  const ecosystemSchools = page.locator('[data-ecosystem-school]');
-  await expect(ecosystemSchools).toHaveCount(3);
-  for (let index = 0; index < (await ecosystemSchools.count()); index += 1) {
-    const school = ecosystemSchools.nth(index);
-    // The link is named by its visible text (WCAG 2.5.3), which includes the
-    // school name from its heading.
-    const heading = school.locator('h3');
-    await expect(heading).toHaveCount(1);
-    const schoolName = ((await heading.textContent()) ?? '').trim();
-    expect(schoolName).not.toBe('');
-    await expect(school).not.toHaveAttribute('aria-labelledby');
-    await expect(school).not.toHaveAttribute('aria-label');
-    await expect(school).toContainText(schoolName);
-  }
+  await expect(page.locator('[data-ecosystem-school]')).toHaveCount(0);
+  await expect(
+    page.getByRole('complementary', { name: 'Our schools' }).locator('a'),
+  ).toHaveAttribute('href', '/en/schools');
 });
 
 test('About reduced motion keeps the editorial image in place', async ({

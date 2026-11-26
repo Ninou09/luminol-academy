@@ -1095,51 +1095,10 @@
   align-items: start;
 }
 
-/* Five approach steps beside the statement, linking to the full journey. */
 .approachSide {
   display: grid;
   gap: clamp(1.5rem, 3vw, 2.25rem);
   align-self: center;
-}
-.approachSteps {
-  display: grid;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: none;
-}
-.approachSteps li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 1.1rem;
-  align-items: baseline;
-  padding-block: 1rem;
-  border-block-end: 1px solid rgb(255 255 255 / 0.1);
-}
-.approachSteps li:first-child {
-  border-block-start: 1px solid rgb(255 255 255 / 0.1);
-}
-.approachSteps li > span {
-  color: var(--color-brand-gold-strong);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  font-variant-numeric: tabular-nums;
-}
-.approachSteps h3 {
-  margin: 0;
-  color: #f4f8fb;
-  font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2vw, 1.6rem);
-  font-weight: 500;
-  line-height: 1.2;
-}
-.approachSteps p {
-  margin: 0.3rem 0 0;
-  color: rgb(212 229 238 / 0.72);
-  font-size: 0.86rem;
-  line-height: 1.5;
 }
 @media (max-width: 900px) {
   .page[data-cosmos] .approach {
@@ -1156,22 +1115,17 @@
 
 /* Home school cards */
 .page[data-cosmos] section.schoolsSection {
-  padding: clamp(1.25rem, 4vw, 3.5rem);
+  padding: clamp(1rem, 3vw, 2.35rem);
 }
 
 .schoolsSection .sectionHeading {
-  align-items: end;
-  column-gap: clamp(1.25rem, 4vw, 4rem);
-  row-gap: 0.75rem;
-  margin-block-end: clamp(1.25rem, 3vw, 2.25rem);
-}
-
-.schoolsSection .sectionHeading > p {
-  margin: 0;
+  display: block;
+  margin-block-end: clamp(0.8rem, 2vw, 1.35rem);
 }
 
 .schoolsSection .sectionHeading h2 {
-  font-size: clamp(2rem, 4.25vw, 4rem);
+  max-width: 26ch;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
 }
 
 .schoolGrid {
@@ -1275,4 +1229,20 @@
   .schoolArt {
     aspect-ratio: 4 / 3;
   }
+}
+
+.schoolCard {
+  border-block-start-color: color-mix(
+    in srgb,
+    var(--color-brand-gold) 58%,
+    var(--color-brand-line)
+  );
+}
+.page[data-cosmos] .approach {
+  min-height: 0;
+  padding: clamp(1.25rem, 4vw, 3rem);
+}
+
+.page[data-cosmos] section[aria-labelledby='events-title'] {
+  padding: clamp(1rem, 3vw, 2.35rem);
 }
