@@ -9,6 +9,7 @@ import { ButtonLink } from '@luminol/ui';
 
 import type { Metadata } from 'next';
 
+import enquiryStyles from '../../components/compact-enquiry.module.css';
 import { EnquiryForm } from '../../components/enquiry-form';
 import Image from 'next/image';
 
@@ -268,10 +269,10 @@ export default async function ConsultationsPage() {
               src={consultationPhotos.journal.src}
               alt=""
               fill
-              sizes="(max-width: 720px) 100vw, 74rem"
+              sizes="(max-width: 720px) 100vw, 49rem"
             />
           </div>
-          <div className={styles.formSurface}>
+          <div className={`${styles.formSurface} ${enquiryStyles.compact}`}>
             <EnquiryForm
               locale={locale}
               copy={{

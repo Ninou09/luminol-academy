@@ -1276,18 +1276,3 @@
     aspect-ratio: 4 / 3;
   }
 }
-
-.schoolArt .schoolEmblem {
-  position: absolute;
-  inset-block-start: 0.65rem;
-  inset-inline-end: 0.65rem;
-  width: clamp(3rem, 5vw, 4.8rem);
-  height: auto;
-  aspect-ratio: 1;
-  padding: 0.25rem;
-  object-fit: contain;
-  border: 1px solid color-mix(in srgb, var(--school-accent) 45%, transparent);
-  border-radius: 0.85rem;
-  background: color-mix(in srgb, var(--color-brand-night) 82%, transparent);
-  box-shadow: 0 0.5rem 1.1rem rgb(0 0 0 / 0.32);
-}
