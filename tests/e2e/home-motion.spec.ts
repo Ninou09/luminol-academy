@@ -117,10 +117,12 @@ test('manual calm mode persists before any WebGL scene starts on reload', async 
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/ar');
-  await page.locator('button[aria-controls="dock-tools"]').click();
-  const calm = page.locator('#dock-tools button[aria-pressed]');
-  await calm.click();
-  await expect(calm).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('button[aria-controls="a11y-panel"]').click();
+  const calm = page.getByRole('checkbox', {
+    name: 'تقليل المؤثرات ثلاثية الأبعاد',
+  });
+  await calm.check();
+  await expect(calm).toBeChecked();
   await expect(
     page.locator('[data-scene="live"], [data-field="live"], video'),
   ).toHaveCount(0);
