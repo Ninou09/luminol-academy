@@ -24,7 +24,11 @@ import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
 import styles from './page.module.css';
 import { PhotoCard } from '../../components/live-photo';
-import { consultationPhotos, peoplePhotos } from '../../lib/people-photos';
+import {
+  consultationPhotos,
+  newEditorialPhotos,
+  illustrativePhotoCredit,
+} from '../../lib/people-photos';
 
 const CONSULTATION_COPY = {
   en: {
@@ -190,8 +194,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const routePhotos = [
-  peoplePhotos.therapySession,
-  consultationPhotos.family,
+  newEditorialPhotos.individualListening,
+  newEditorialPhotos.familyDiscussion,
   consultationPhotos.learning,
 ] as const;
 
@@ -250,9 +254,15 @@ export default async function ConsultationsPage() {
           className={styles.enquiry}
           aria-labelledby="consultation-enquiry-title"
         >
-          <div className={styles.enquiryBackdrop} aria-hidden="true">
+          <div
+            className={styles.enquiryBackdrop}
+            aria-hidden="true"
+            data-media-source={illustrativePhotoCredit.source}
+            data-media-license={illustrativePhotoCredit.license}
+            data-media-crop="center-center"
+          >
             <Image
-              src={consultationPhotos.journal.src}
+              src={newEditorialPhotos.quietRoom.src}
               alt=""
               fill
               sizes="(max-width: 720px) 100vw, 49rem"
@@ -294,7 +304,12 @@ export default async function ConsultationsPage() {
           <div className={styles.pathGrid}>
             {paths.map((path, index) => (
               <article className={styles.pathCard} key={path.number}>
-                <div className={styles.pathPhoto}>
+                <div
+                  className={styles.pathPhoto}
+                  data-media-source={illustrativePhotoCredit.source}
+                  data-media-license={illustrativePhotoCredit.license}
+                  data-media-crop="center-center"
+                >
                   <Image
                     src={routePhotos[index % routePhotos.length]!.src}
                     alt={routePhotos[index % routePhotos.length]!.alt[locale]}

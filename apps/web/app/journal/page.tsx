@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { journalArticles, journalCopy } from '../../lib/journal';
+import { illustrativePhotoCredit } from '../../lib/people-photos';
 import { getRequestLocale } from '../../lib/request-locale';
 import styles from './journal.module.css';
 import { StoryRail } from './story-rail';
@@ -42,7 +43,12 @@ export default async function JournalPage() {
                 href={localizeHref(locale, `/journal/${article.slug}`)}
                 className={styles.card}
               >
-                <span className={styles.cardImage}>
+                <span
+                  className={styles.cardImage}
+                  data-media-source={illustrativePhotoCredit.source}
+                  data-media-license={illustrativePhotoCredit.license}
+                  data-media-crop="center-center"
+                >
                   <Image
                     src={article.cover}
                     alt={article.coverAlt[locale]}

@@ -1,5 +1,6 @@
 'use client';
 
+import { GoldAccent } from './gold-accent';
 import { useMotionAllowed } from '../lib/calm-mode';
 
 import { localizeHref, type Locale } from '@luminol/localization';
@@ -95,6 +96,7 @@ export function MindSection({ locale }: { locale: Locale }) {
           <h2 id="mind-title" className={styles.title} data-no-split>
             {text.title}
           </h2>
+          <GoldAccent name="thread" />
           <p className={styles.body}>{text.body}</p>
           <ul className={styles.labels} data-no-split>
             {text.labels.map((label) => (

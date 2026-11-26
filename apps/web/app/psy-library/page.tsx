@@ -1,3 +1,5 @@
+import { GoldAccent } from '../../components/gold-accent';
+import { PhotoCard } from '../../components/live-photo';
 import { localizeHref } from '@luminol/localization';
 import type { Metadata } from 'next';
 
@@ -10,6 +12,7 @@ import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { founderExperience, founderPath } from '../../lib/founder';
 import {
   editorialPhotos,
+  newEditorialPhotos,
   illustrativePhotoCredit,
 } from '../../lib/people-photos';
 import {
@@ -175,15 +178,27 @@ export default async function PsychologyLibrary() {
           className={styles.section}
           aria-labelledby="library-tools-title"
         >
-          <h2 id="library-tools-title">{text.tools}</h2>
-          <div className={styles.resources}>
-            {resources.map((item) => (
-              <a className={styles.resource} key={item.href} href={item.href}>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-                <span aria-hidden="true">{direction}</span>
-              </a>
-            ))}
+          <div className={styles.toolsHeading}>
+            <h2 id="library-tools-title">{text.tools}</h2>
+            <GoldAccent name="bookmark" />
+          </div>
+          <div className={styles.toolsLayout}>
+            <PhotoCard
+              photo={newEditorialPhotos.worksheet}
+              locale={locale}
+              sizes="(max-width: 760px) 92vw, 46vw"
+              className={styles.toolsPhoto}
+              caption
+            />
+            <div className={styles.resources}>
+              {resources.map((item) => (
+                <a className={styles.resource} key={item.href} href={item.href}>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                  <span aria-hidden="true">{direction}</span>
+                </a>
+              ))}
+            </div>
           </div>
         </section>
 

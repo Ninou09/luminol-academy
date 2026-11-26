@@ -1,3 +1,4 @@
+import { GoldAccent } from '../../../components/gold-accent';
 import {
   buildLanguageAlternates,
   getOpenGraphLocale,
@@ -12,7 +13,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { ActHexaflex } from '../../../components/act-hexaflex';
-import { actPhotos, illustrativePhotoCredit } from '../../../lib/people-photos';
+import {
+  newEditorialPhotos,
+  illustrativePhotoCredit,
+} from '../../../lib/people-photos';
 import { ProgrammeEnquiryCard } from '../../../components/programme-enquiry-card';
 import { SiteFooter, SiteHeader } from '../../../components/site-shell';
 import { buildProgrammeContactHref } from '../../../lib/programme-contact';
@@ -321,6 +325,7 @@ export default async function ProgrammeDetailPage({
               <h1 id="programme-detail-title" dir="auto">
                 {publicCopy.title}
               </h1>
+              {isAct && <GoldAccent name="notebook" />}
               <p className={styles.summary} dir="auto">
                 {summary}
               </p>
@@ -350,7 +355,7 @@ export default async function ProgrammeDetailPage({
             </div>
 
             <div className={styles.heroAside}>
-              {!isWaitlist && programme.image ? (
+              {!isAct && !isWaitlist && programme.image ? (
                 <figure className={styles.mediaFrame}>
                   <Image
                     src={buildSanityProgrammeImageUrl(programme.image)}
@@ -371,10 +376,10 @@ export default async function ProgrammeDetailPage({
                   data-media-crop="center-center"
                 >
                   <Image
-                    src={actPhotos.cover.src}
-                    alt={actPhotos.cover.alt[locale]}
-                    width={actPhotos.cover.width}
-                    height={actPhotos.cover.height}
+                    src={newEditorialPhotos.actExercise.src}
+                    alt={newEditorialPhotos.actExercise.alt[locale]}
+                    width={newEditorialPhotos.actExercise.width}
+                    height={newEditorialPhotos.actExercise.height}
                     priority
                     sizes="(max-width: 900px) 100vw, 46vw"
                   />

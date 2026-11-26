@@ -99,7 +99,13 @@ export async function AuthShell({
 
   return (
     <main className="auth-page">
-      <section className="auth-story" aria-labelledby="auth-title">
+      <section
+        className="auth-story"
+        aria-labelledby="auth-title"
+        data-media-source="luminol-illustrative-photo"
+        data-media-license="Luminol Academy commissioned photography (AI-assisted)"
+        data-media-crop="center-62"
+      >
         <a className="auth-brand" href={site}>
           <Wordmark />
         </a>

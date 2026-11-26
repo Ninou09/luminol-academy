@@ -1,5 +1,6 @@
 'use client';
 
+import { GoldAccent } from './gold-accent';
 import type { Locale } from '@luminol/localization';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
@@ -51,6 +52,7 @@ export function PhotoMosaic({
     <section className={styles.gallery} aria-label={label}>
       <div className={styles.toolbar} data-reveal>
         <h2>{label}</h2>
+        <GoldAccent name="archive" />
         <div className={styles.controls}>
           <button
             type="button"
