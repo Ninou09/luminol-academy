@@ -50,7 +50,9 @@ for (const width of [390, 1440]) {
       await page.locator('button[aria-controls="mobile-menu-panel"]').click();
       await page.locator('#mobile-menu-panel a[href="/ar/schools"]').click();
     } else {
-      await page.getByRole('banner').locator('a[href="/ar/schools"]').click();
+      const banner = page.getByRole('banner');
+      await banner.getByRole('button', { name: 'الدراسة في لومينول' }).click();
+      await banner.locator('a[href="/ar/schools"]').click();
     }
     await expect(page).toHaveURL(/\/ar\/schools$/);
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);

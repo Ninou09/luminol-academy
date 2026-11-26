@@ -33,9 +33,9 @@ test('public copy follows the canonical locale', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
     'علم النفس واللغات والتكوين المهني في البليدة',
   );
-  await expect(
-    page.locator('header').getByRole('link', { name: 'البرامج' }),
-  ).toBeVisible();
+  const banner = page.getByRole('banner');
+  await banner.getByRole('button', { name: 'الدراسة في لومينول' }).click();
+  await expect(banner.getByRole('link', { name: 'البرامج' })).toBeVisible();
 
   await page.goto('/fr/contact');
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
