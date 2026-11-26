@@ -684,3 +684,22 @@
     opacity: 0.5;
   }
 }
+
+.hero .introActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+}
+.hero .introActions .goldScene {
+  position: static;
+  flex: 0 0 auto;
+  width: 4.5rem;
+  height: 3.25rem;
+  opacity: 0.9;
+}
+@media (max-width: 480px) {
+  .hero .introActions .goldScene {
+    display: none;
+  }
+}

@@ -222,6 +222,13 @@ const programme = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'publicUntil',
+      title: 'Public listing ends at',
+      description:
+        'Optional. At this time the programme leaves the public catalogue and website assistant. Use a new date when reopening a cohort.',
+      type: 'datetime',
+    }),
+    defineField({
       name: 'order',
       title: 'Display order',
       type: 'number',

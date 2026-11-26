@@ -34,13 +34,18 @@ import {
   buildSanityProgrammeImageUrl,
   getPublicProgrammes,
 } from '../../lib/sanity';
+import { schoolPhotos } from '../../lib/school-photos';
 import { getSchools } from '../../lib/schools';
 import {
   buildProgrammeListJsonLd,
   serializeJsonLd,
 } from '../../lib/structured-data';
 import styles from './page.module.css';
-import { extraPhotos, peoplePhotos } from '../../lib/people-photos';
+import {
+  extraPhotos,
+  illustrativePhotoCredit,
+  peoplePhotos,
+} from '../../lib/people-photos';
 
 type ProgrammesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -153,6 +158,10 @@ export default async function ProgrammesPage({
           const contactActionLabel = `${contactLabel}: ${publicCopy.title}`;
           const titleId = `programme-card-${index + 1}-title`;
 
+          const cover =
+            programme.slug.current === 'acceptance-commitment-therapy-act'
+              ? schoolPhotos['psychology-act-workshop']
+              : null;
           return (
             <article
               className={styles.card}
@@ -168,6 +177,17 @@ export default async function ProgrammesPage({
                   width={1200}
                   height={675}
                   sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                />
+              ) : cover ? (
+                <Image
+                  className={styles.image}
+                  src={cover.src}
+                  alt={cover.alt[locale]}
+                  width={cover.width}
+                  height={cover.height}
+                  sizes="(max-width: 760px) 95vw, 35vw"
+                  data-media-source={illustrativePhotoCredit.source}
+                  data-media-license={illustrativePhotoCredit.license}
                 />
               ) : null}
 
@@ -367,7 +387,6 @@ export default async function ProgrammesPage({
                 aria-current={active ? 'true' : undefined}
                 data-tilt="6"
               >
-                <span className={styles.tileNumber}>{school.number}</span>
                 <strong>{school.name}</strong>
                 <span className={styles.tilePromise}>{school.promise}</span>
               </Link>

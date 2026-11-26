@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { setCalmMode, useCalmMode } from '../lib/calm-mode';
 import type { Locale } from '@luminol/localization';
@@ -10,22 +10,11 @@ import { AccessibilityMenu } from './accessibility-menu';
 import { AssistantChat } from './assistant-chat';
 import styles from './site-dock.module.css';
 
-const toolsLabel = {
-  en: 'Display settings',
-  fr: 'Réglages d’affichage',
-  ar: 'إعدادات العرض',
-} as const satisfies Record<Locale, string>;
-
-/**
- * Floating dock: a WhatsApp shortcut (only when Luminol has configured a
- * number) and a back-to-top button whose ring fills with scroll progress.
- * It also gives every route change a soft fade-in so pages feel connected.
- */
 export function SiteDock({
   whatsappHref,
   whatsappLabel,
   topLabel,
-  calmLabels,
+  calmLabel,
   a11yLabels,
   locale,
   assistantEnabled,
@@ -35,7 +24,7 @@ export function SiteDock({
   whatsappHref: string | null;
   whatsappLabel: string;
   topLabel: string;
-  calmLabels: { on: string; off: string };
+  calmLabel: string;
   a11yLabels: {
     button: string;
     title: string;
@@ -46,31 +35,7 @@ export function SiteDock({
 }) {
   const calm = useCalmMode();
   const pathname = usePathname();
-  const ringRef = useRef<SVGCircleElement>(null);
-  const [visible, setVisible] = useState(false);
-  // Phones: display settings (text size, contrast, calm mode) fold behind one button.
-  const [toolsOpen, setToolsOpen] = useState(false);
   const dockRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-      setVisible(window.scrollY > window.innerHeight * 0.8);
-      ringRef.current?.style.setProperty('--progress', progress.toFixed(4));
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, []);
 
   useEffect(() => {
     const dock = dockRef.current;
@@ -112,82 +77,23 @@ export function SiteDock({
       {assistantEnabled ? (
         <AssistantChat locale={locale} whatsappHref={whatsappHref} />
       ) : null}
-      <button
-        type="button"
-        className={styles.toolsToggle}
-        aria-expanded={toolsOpen}
-        aria-controls="dock-tools"
-        aria-label={toolsLabel[locale]}
-        title={toolsLabel[locale]}
-        onClick={() => setToolsOpen((open) => !open)}
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            d="M4 7h10M18 7h2M4 17h4M12 17h8M16 4.5v5M10 14.5v5"
-          />
-        </svg>
-      </button>
-      <div
-        id="dock-tools"
-        className={styles.tools}
-        data-open={toolsOpen || undefined}
-      >
-        <AccessibilityMenu labels={a11yLabels} />
-        <button
-          type="button"
-          className={styles.calm}
-          aria-pressed={calm}
-          aria-label={calm ? calmLabels.off : calmLabels.on}
-          title={calm ? calmLabels.off : calmLabels.on}
-          onClick={() => setCalmMode(!calm)}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            {calm ? (
-              <path
-                fill="currentColor"
-                d="M12 2l1.8 5.6H20l-5 3.6 1.9 5.8L12 13.4 7.1 17l1.9-5.8-5-3.6h6.2Z"
-              />
-            ) : (
-              <path
-                fill="currentColor"
-                d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"
-              />
-            )}
-          </svg>
-        </button>
-      </div>
-      <button
-        type="button"
-        className={styles.top}
-        data-visible={visible || undefined}
-        aria-label={topLabel}
-        tabIndex={visible ? 0 : -1}
-        onClick={() =>
+      <AccessibilityMenu
+        labels={a11yLabels}
+        calm={calm}
+        calmLabel={calmLabel}
+        onCalmChange={() => setCalmMode(!calm)}
+        topLabel={topLabel}
+        onTop={() =>
           window.scrollTo({
             top: 0,
-            behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
-              .matches
-              ? 'auto'
-              : 'smooth',
+            behavior:
+              calm ||
+              window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? 'auto'
+                : 'smooth',
           })
         }
-      >
-        <svg viewBox="0 0 48 48" aria-hidden="true">
-          <circle className={styles.track} cx="24" cy="24" r="21" />
-          <circle
-            ref={ringRef}
-            className={styles.ring}
-            cx="24"
-            cy="24"
-            r="21"
-          />
-        </svg>
-        <span aria-hidden="true">↑</span>
-      </button>
+      />
     </div>
   );
 }

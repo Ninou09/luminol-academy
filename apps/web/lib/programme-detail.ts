@@ -103,6 +103,7 @@ export async function getPublicProgrammeBySlug(
   const query = `*[
     _type == "programme" &&
     active == true &&
+    (!defined(publicUntil) || dateTime(publicUntil) > dateTime(now())) &&
     !(_id in path("drafts.**")) &&
     slug.current == $slug
   ][0] {

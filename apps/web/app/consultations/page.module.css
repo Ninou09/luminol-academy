@@ -738,3 +738,23 @@
     align-items: center;
   }
 }
+
+.page .enquiry {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 66rem);
+  padding: clamp(0.85rem, 3vw, 1.7rem);
+}
+.enquiry .formSurface {
+  width: min(100%, 48rem);
+}
+.enquiry .formSurface :global(.enquiry-form) {
+  gap: 0.65rem;
+}
+.enquiry .formSurface :global(.form-heading h2) {
+  font-size: clamp(1.55rem, 3.3vw, 2.5rem);
+}
+.enquiry .formSurface :global(.form-grid) {
+  gap: 0.7rem;
+}
+.enquiry .safetyNote {
+  margin-block-start: 0.65rem;
+}

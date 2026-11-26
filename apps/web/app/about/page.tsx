@@ -26,6 +26,7 @@ import styles from './page.module.css';
 import Image from 'next/image';
 import {
   aboutPhotos,
+  editorialPhotos,
   extraPhotos,
   peoplePhotos,
 } from '../../lib/people-photos';
@@ -146,26 +147,32 @@ export async function generateMetadata(): Promise<Metadata> {
 const galleryChapters = {
   en: [
     'Listening in practice',
-    'Independent study',
+    'After class',
     'In the classroom',
     'Family support',
     'Learning online',
+    'Role-play practice',
+    'Independent study',
     'Recognising progress',
   ],
   fr: [
     'L’écoute en pratique',
-    'Étude en autonomie',
+    'Après le cours',
     'En salle de cours',
     'Soutien familial',
     'Apprendre en ligne',
+    'Mise en situation',
+    'Étude en autonomie',
     'Reconnaître les progrès',
   ],
   ar: [
     'الإصغاء في الممارسة',
-    'الدراسة الفردية',
+    'بعد الدرس',
     'داخل قاعة التدريب',
     'دعم الأسرة',
     'التعلّم عن بُعد',
+    'تمرين تمثيل الأدوار',
+    'الدراسة الفردية',
     'تقدير التقدّم',
   ],
 } as const;
@@ -256,11 +263,13 @@ export default async function AboutPage() {
           locale={locale}
           preserveFrame={aboutPhotos.graduate.src}
           photos={[
-            peoplePhotos.academyRoleplay,
-            aboutPhotos.listening,
+            editorialPhotos.seminar,
+            editorialPhotos.afterClass,
             aboutPhotos.event,
             aboutPhotos.family,
             aboutPhotos.online,
+            peoplePhotos.academyRoleplay,
+            aboutPhotos.listening,
             aboutPhotos.graduate,
           ]}
         />

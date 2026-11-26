@@ -69,3 +69,21 @@
   font-size: 0.8rem;
   cursor: pointer;
 }
+
+.button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.panel {
+  max-width: calc(100vw - 5.25rem);
+  max-height: min(24rem, 78svh);
+  overflow-y: auto;
+}
+.panel label,
+.close {
+  min-height: 2.25rem;
+}

@@ -65,14 +65,16 @@ export default async function FounderPage() {
         data-founder-theme
       >
         <section className={styles.hero} aria-labelledby="founder-title">
-          <FounderGold className={styles.goldScene} ornate />
           <div className={styles.intro}>
             <p className={styles.role}>{copy.role}</p>
             <h1 id="founder-title">{copy.name}</h1>
             <p>{copy.intro}</p>
-            <a className={styles.cta} href={founderWebsite}>
-              {copy.website} <span aria-hidden="true">↗</span>
-            </a>
+            <div className={styles.introActions}>
+              <a className={styles.cta} href={founderWebsite}>
+                {copy.website} <span aria-hidden="true">↗</span>
+              </a>
+              <FounderGold className={styles.goldScene} ornate />
+            </div>
           </div>
           <figure
             className={styles.portrait}

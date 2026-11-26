@@ -8,7 +8,10 @@ import Image from 'next/image';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { founderExperience, founderPath } from '../../lib/founder';
-import { actPhotos, illustrativePhotoCredit } from '../../lib/people-photos';
+import {
+  editorialPhotos,
+  illustrativePhotoCredit,
+} from '../../lib/people-photos';
 import {
   clinicalPathways,
   familyPathways,
@@ -119,8 +122,14 @@ export default async function PsychologyLibrary() {
       id: 'clinical-pathways',
       title: text.clinical,
       pathways: clinicalPathways,
+      photo: editorialPhotos.clinical,
     },
-    { id: 'family-pathways', title: text.family, pathways: familyPathways },
+    {
+      id: 'family-pathways',
+      title: text.family,
+      pathways: familyPathways,
+      photo: editorialPhotos.family,
+    },
   ];
 
   return (
@@ -150,10 +159,10 @@ export default async function PsychologyLibrary() {
             data-media-license={illustrativePhotoCredit.license}
           >
             <Image
-              src={actPhotos.values.src}
-              alt={actPhotos.values.alt[locale]}
-              width={actPhotos.values.width}
-              height={actPhotos.values.height}
+              src={editorialPhotos.library.src}
+              alt={editorialPhotos.library.alt[locale]}
+              width={editorialPhotos.library.width}
+              height={editorialPhotos.library.height}
               sizes="(max-width: 740px) 92vw, 42vw"
               preload
             />
@@ -176,9 +185,20 @@ export default async function PsychologyLibrary() {
           </div>
         </section>
 
-        {groups.map(({ id, title, pathways }) => (
+        {groups.map(({ id, title, pathways, photo }) => (
           <section key={id} className={styles.section} aria-labelledby={id}>
-            <h2 id={id}>{title}</h2>
+            <div className={styles.pathwayHeading}>
+              <h2 id={id}>{title}</h2>
+              <Image
+                src={photo.src}
+                alt={photo.alt[locale]}
+                width={photo.width}
+                height={photo.height}
+                sizes="(max-width: 560px) 90vw, 20vw"
+                data-media-source={illustrativePhotoCredit.source}
+                data-media-license={illustrativePhotoCredit.license}
+              />
+            </div>
             <ul className={styles.pathways}>
               {pathways.map((entry) => {
                 const isAct = entry.slug === 'act-therapy-techniques-course';

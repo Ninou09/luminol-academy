@@ -5,7 +5,13 @@ import {
   officialContacts,
   openingHours,
 } from './contact-channels';
-import { hasEventEnded, luminolEvents } from './events';
+import { getUpcomingEvents } from './events';
+import { getUpcomingWorkshops } from './workshop-plan';
+import {
+  isProgrammeWaitlist,
+  localizeProgrammePublicCopy,
+} from './programme-presentation';
+import type { PublicCmsProgramme } from './sanity';
 
 /**
  * Built-in answers for the public assistant, drawn only from facts published
@@ -361,49 +367,10 @@ function detectIntents(question: string): Intent[] {
 const whatsapp = officialContacts.whatsappDisplay;
 const reception = officialContacts.phoneDisplay;
 
-const psychologyCourses: Record<Locale, readonly string[]> = {
-  en: [
-    'CBT techniques',
-    'Emotional Freedom Technique (EFT)',
-    'Acceptance and Commitment Therapy (ACT)',
-    'Schema therapy',
-    'Marital counselling: assessment and care',
-    'Family counsellor',
-    'Child psychology: assessment and care programmes',
-    'Learning difficulties: assessment and care',
-    'Effective parenting, step by step',
-    'Learning difficulties for parents and teachers',
-  ],
-  fr: [
-    'Techniques de TCC',
-    'Technique de libération émotionnelle (EFT)',
-    'Thérapie d’acceptation et d’engagement (ACT)',
-    'Thérapie des schémas',
-    'Conseil conjugal : évaluation et prise en charge',
-    'Conseiller familial',
-    'Psychologie de l’enfant : évaluation et prise en charge',
-    'Troubles des apprentissages : évaluation et prise en charge',
-    'Parentalité efficace, pas à pas',
-    'Troubles des apprentissages pour parents et enseignants',
-  ],
-  ar: [
-    'فنيات العلاج المعرفي السلوكي',
-    'تقنية تحرير المشاعر السلبية (EFT)',
-    'العلاج بالتقبل والالتزام (ACT)',
-    'العلاج بالمخططات المعرفية',
-    'الإرشاد الزواجي (تشخيص وتكفل)',
-    'مستشار أسري',
-    'علم نفس الطفل: تقنيات التشخيص وبرامج التكفل',
-    'صعوبات التعلم (تشخيص وتكفل)',
-    'برنامج التنشئة الفعالة خطوة بخطوة',
-    'صعوبات التعلم للأولياء والمعلمين',
-  ],
-};
-
 function upcomingEvents(locale: Locale): string[] {
-  return luminolEvents
-    .filter((event) => !hasEventEnded(event))
-    .slice(0, 3)
+  const nextWorkshop = getUpcomingWorkshops()[0];
+  const scheduled = getUpcomingEvents()
+    .slice(0, 2)
     .map((event) => {
       const when =
         event.date ??
@@ -414,6 +381,45 @@ function upcomingEvents(locale: Locale): string[] {
         }[locale];
       return `${event.title[locale]} (${when})`;
     });
+  if (nextWorkshop) {
+    const proposed = { en: 'proposed', fr: 'prévisionnel', ar: 'مقترحة' }[
+      locale
+    ];
+    scheduled.push(
+      `${nextWorkshop.title[locale]} (${nextWorkshop.date}, ${proposed})`,
+    );
+  }
+  return scheduled;
+}
+
+function catalogueAnswer(
+  locale: Locale,
+  programmes: readonly PublicCmsProgramme[] | null,
+) {
+  const titles = programmes
+    ?.slice(0, 5)
+    .map((programme) => {
+      const waitlist = isProgrammeWaitlist(programme.slug.current)
+        ? {
+            en: ' (waitlist)',
+            fr: ' (liste d’attente)',
+            ar: ' (قائمة الانتظار)',
+          }[locale]
+        : '';
+      return localizeProgrammePublicCopy(locale, programme).title + waitlist;
+    })
+    .join('; ');
+  return {
+    en: titles
+      ? `Published programmes: ${titles}. Open Programmes for details and the enquiry link.`
+      : 'See Programmes for current listings and the Psychology Library for the founder’s teaching topics.',
+    fr: titles
+      ? `Formations publiées : ${titles}. La page Programmes donne les détails et permet de se renseigner.`
+      : 'Consultez Programmes pour les formations publiées et la Bibliothèque de psychologie pour les thèmes enseignés.',
+    ar: titles
+      ? `البرامج المنشورة: ${titles}. اطّلع على صفحة البرامج للتفاصيل والاستفسار.`
+      : 'اطّلع على صفحة البرامج للعروض المنشورة وعلى المكتبة النفسية لموضوعات التكوين.',
+  }[locale];
 }
 
 const answers: Record<Intent, Record<Locale, () => string>> = {
@@ -458,12 +464,9 @@ const answers: Record<Intent, Record<Locale, () => string>> = {
       `أسعارنا في متناول الجميع، ويشرحها لك الفريق شخصيًا لاقتراح الصيغة الأنسب لوضعك. راسلنا عبر واتساب ${whatsapp} أو اتصل على ${reception} لمعرفة كل التفاصيل دون أي التزام.`,
   },
   courses: {
-    en: () =>
-      `Our psychology courses include: ${psychologyCourses.en.join('; ')}. Each course runs for 18 hours, in Arabic with some Darija and French, in person in Blida or online, and ends with a certificate of attendance. A group starts once it is full.`,
-    fr: () =>
-      `Nos formations en psychologie : ${psychologyCourses.fr.join(' ; ')}. Chaque formation dure 18 heures, en arabe avec un peu de darija et de français, en présentiel à Blida ou en ligne, avec une attestation de participation. Un groupe démarre dès qu’il est complet.`,
-    ar: () =>
-      `من دوراتنا في علم النفس: ${psychologyCourses.ar.join('، ')}. تمتد كل دورة 18 ساعة، بالعربية مع شيء من الدارجة والفرنسية، حضوريًا في البليدة أو عن بُعد، وتنتهي بشهادة حضور. تبدأ المجموعة بمجرد اكتمالها.`,
+    en: () => catalogueAnswer('en', null),
+    fr: () => catalogueAnswer('fr', null),
+    ar: () => catalogueAnswer('ar', null),
   },
   consultations: {
     en: () =>
@@ -555,7 +558,11 @@ const fallback: Record<Locale, string> = {
 };
 
 /** Answers a visitor question from site facts; combines up to two topics. */
-export function answerFromSite(question: string, locale: Locale): string {
+export function answerFromSite(
+  question: string,
+  locale: Locale,
+  programmes: readonly PublicCmsProgramme[] | null = null,
+): string {
   const intents = detectIntents(question).filter(
     (intent, index, all) =>
       // A greeting or thanks only stands alone when nothing else was asked.
@@ -565,6 +572,10 @@ export function answerFromSite(question: string, locale: Locale): string {
   if (intents.length === 0) return fallback[locale];
   return intents
     .slice(0, 2)
-    .map((intent) => answers[intent][locale]())
+    .map((intent) =>
+      intent === 'courses'
+        ? catalogueAnswer(locale, programmes)
+        : answers[intent][locale](),
+    )
     .join('\n\n');
 }

@@ -209,6 +209,12 @@ export const luminolEvents: readonly LuminolEvent[] = [
   familyAfterTrauma,
 ];
 
+export function getUpcomingEvents(now = new Date()) {
+  return luminolEvents
+    .filter((event) => !hasEventEnded(event, now))
+    .sort((a, b) => (a.date ?? '9999').localeCompare(b.date ?? '9999'));
+}
+
 export type TeamMember = {
   id: 'fettouma' | 'dalila' | 'saliha' | 'linda';
   initials: string;
