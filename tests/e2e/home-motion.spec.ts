@@ -174,9 +174,10 @@ test('data saver keeps school links and posters available', async ({
 
 test('without WebGL the mobile poster and school links still work by touch', async ({
   browser,
+  baseURL,
 }) => {
   const ctx = await browser.newContext({
-    baseURL: 'http://localhost:3000',
+    baseURL,
     viewport: { width: 390, height: 844 },
     hasTouch: true,
     isMobile: true,

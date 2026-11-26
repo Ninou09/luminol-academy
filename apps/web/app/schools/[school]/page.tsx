@@ -292,7 +292,6 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               <p className={styles.eyebrow}>{copy.programsEyebrow}</p>
               <h2 id="school-programmes-title">{copy.programsTitle}</h2>
             </div>
-            <p>{copy.programsBody}</p>
             <Link
               className={styles.catalogueLink}
               href={localizeHref(locale, `/programmes?school=${school.slug}`)}
@@ -470,7 +469,6 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
               {copy.ctaEyebrow}
             </p>
             <h2 id="school-cta-title">{copy.ctaTitle}</h2>
-            <p>{copy.ctaBody}</p>
           </div>
           <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
             {copy.startJourney} <span aria-hidden="true">→</span>
