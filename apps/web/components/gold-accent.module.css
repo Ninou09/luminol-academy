@@ -1,0 +1,9 @@
+.accent {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 6rem;
+  max-height: 2.15rem;
+  object-fit: contain;
+  pointer-events: none;
+}

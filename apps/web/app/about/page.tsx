@@ -1,3 +1,4 @@
+import { newEditorialPhotos } from '../../lib/people-photos';
 import {
   localizeHref,
   localizePathname,
@@ -127,6 +128,9 @@ const galleryChapters = {
     'Learning online',
     'Role-play practice',
     'Independent study',
+    'Arranging the library',
+    'Morning in the classroom',
+    'Outside a learning centre',
     'Recognising progress',
   ],
   fr: [
@@ -138,6 +142,9 @@ const galleryChapters = {
     'Apprendre en ligne',
     'Mise en situation',
     'Étude en autonomie',
+    'Ranger la bibliothèque',
+    'Le matin en salle de cours',
+    'Devant un lieu de formation',
     'Reconnaître les progrès',
   ],
   ar: [
@@ -149,6 +156,9 @@ const galleryChapters = {
     'التعلّم عن بُعد',
     'تمرين تمثيل الأدوار',
     'الدراسة الفردية',
+    'ترتيب الكتب في المكتبة',
+    'صباح في القاعة الدراسية',
+    'أمام مركز تعليمي',
     'تقدير التقدّم',
   ],
 } as const;
@@ -225,6 +235,9 @@ export default async function AboutPage() {
             aboutPhotos.online,
             peoplePhotos.academyRoleplay,
             aboutPhotos.listening,
+            newEditorialPhotos.shelving,
+            newEditorialPhotos.classroomMorning,
+            newEditorialPhotos.illustrativeEntrance,
             aboutPhotos.graduate,
           ]}
         />

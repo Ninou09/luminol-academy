@@ -1,3 +1,4 @@
+import { GoldAccent } from '../../../components/gold-accent';
 import { localizeHref, type Locale } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
@@ -35,7 +36,12 @@ import {
 import styles from './page.module.css';
 import Image from 'next/image';
 import { PhotoCard } from '../../../components/live-photo';
-import { editorialPhotos, programmePhotos } from '../../../lib/people-photos';
+import {
+  editorialPhotos,
+  illustrativePhotoCredit,
+  newEditorialPhotos,
+  programmePhotos,
+} from '../../../lib/people-photos';
 import { schoolPhotos } from '../../../lib/school-photos';
 
 type SchoolPageProps = {
@@ -78,8 +84,8 @@ const schoolScenes = {
     audience: schoolPhotos['languages-who-we-support'],
     journey: [
       schoolPhotos['languages-know-level'],
-      schoolPhotos['languages-practice'],
-      schoolPhotos['languages-use-your-voice'],
+      newEditorialPhotos.listeningPair,
+      newEditorialPhotos.speakingFeedback,
     ],
     programmes: [
       schoolPhotos['languages-english-programs'],
@@ -90,12 +96,12 @@ const schoolScenes = {
   },
   training: {
     hero: editorialPhotos.teamWorkshop,
-    promise: schoolPhotos['training-presentation-practice'],
+    promise: newEditorialPhotos.trainingDebrief,
     audience: schoolPhotos['training-who-we-support'],
     journey: [
       schoolPhotos['training-define-outcome'],
       schoolPhotos['training-learn-by-doing'],
-      schoolPhotos['training-apply-skills'],
+      newEditorialPhotos.digitalTools,
     ],
     programmes: [
       schoolPhotos['training-leadership'],
@@ -236,6 +242,8 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
             <h1 id="school-hero-title">
               {publicSearch[`/schools/${slug}`][locale].heading}
             </h1>
+            {slug === 'languages' && <GoldAccent name="dialogue" />}
+            {slug === 'training' && <GoldAccent name="workshop" />}
             <p className={styles.heroLede}>{school.introduction}</p>
             <div className={styles.heroActions}>
               <ButtonLink href="#programs" size="lg">
@@ -266,6 +274,9 @@ export default async function SchoolPage({ params }: SchoolPageProps) {
           className={styles.promiseBand}
           role="region"
           aria-labelledby="school-promise-title"
+          data-media-source={illustrativePhotoCredit.source}
+          data-media-license={illustrativePhotoCredit.license}
+          data-media-crop="center-center"
           data-reveal
         >
           <Image

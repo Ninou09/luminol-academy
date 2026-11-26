@@ -1,6 +1,6 @@
 import type { Locale } from '@luminol/localization';
 
-import { extraPhotos } from './people-photos';
+import { extraPhotos, newEditorialPhotos } from './people-photos';
 
 type Text = Record<Locale, string>;
 
@@ -31,8 +31,8 @@ export const journalArticles: readonly JournalArticle[] = [
     date: '2026-11-19',
     minutes: 3,
     school: 'psychology',
-    cover: extraPhotos.sleepNight.src,
-    coverAlt: extraPhotos.sleepNight.alt,
+    cover: newEditorialPhotos.eveningReading.src,
+    coverAlt: newEditorialPhotos.eveningReading.alt,
     articleImage: {
       src: '/media/people/journal-sleep.webp',
       alt: {
@@ -96,8 +96,8 @@ export const journalArticles: readonly JournalArticle[] = [
     date: '2026-11-19',
     minutes: 3,
     school: 'psychology',
-    cover: extraPhotos.anxiety.src,
-    coverAlt: extraPhotos.anxiety.alt,
+    cover: newEditorialPhotos.outdoorPause.src,
+    coverAlt: newEditorialPhotos.outdoorPause.alt,
     articleImage: {
       src: '/media/people/journal-breathing.webp',
       alt: {
@@ -161,8 +161,8 @@ export const journalArticles: readonly JournalArticle[] = [
     date: '2026-11-19',
     minutes: 3,
     school: 'psychology',
-    cover: extraPhotos.parenting.src,
-    coverAlt: extraPhotos.parenting.alt,
+    cover: newEditorialPhotos.teenConversation.src,
+    coverAlt: newEditorialPhotos.teenConversation.alt,
     articleImage: {
       src: '/media/people/journal-teenagers.webp',
       alt: {

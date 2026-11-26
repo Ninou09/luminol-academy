@@ -782,7 +782,8 @@ main.auth-page {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: url('/media/portal-welcome.webp') 70% center / cover no-repeat;
+  background: url('/media/portal-evening-study.webp') center 62% / cover
+    no-repeat;
   content: '';
 }
 .auth-story::after {

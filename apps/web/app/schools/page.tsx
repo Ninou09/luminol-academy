@@ -1,3 +1,4 @@
+import { GoldAccent } from '../../components/gold-accent';
 import { localizeHref } from '@luminol/localization';
 import type { Metadata } from 'next';
 
@@ -41,6 +42,7 @@ export default async function SchoolsPage() {
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="schools-title">
+          <GoldAccent name="rings" />
           <p className={styles.eyebrow}>{copy.home.schoolsEyebrow}</p>
           <h1 id="schools-title">{publicSearch['/schools'][locale].heading}</h1>
           <p className={styles.lede}>{copy.home.schoolsIntro}</p>

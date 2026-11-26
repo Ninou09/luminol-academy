@@ -1,3 +1,4 @@
+import { GoldAccent } from '../../components/gold-accent';
 import type { Metadata } from 'next';
 
 import { buildPublicMetadata } from '../../lib/public-metadata';
@@ -7,7 +8,7 @@ import { EventsSection } from '../../components/events-section';
 import { FounderGold } from '../../components/founder-gold';
 import { PhotoCard } from '../../components/live-photo';
 import { SiteHeader, SiteFooter } from '../../components/site-shell';
-import { editorialPhotos } from '../../lib/people-photos';
+import { editorialPhotos, newEditorialPhotos } from '../../lib/people-photos';
 import { getRequestLocale } from '../../lib/request-locale';
 import { getUpcomingWorkshops } from '../../lib/workshop-plan';
 import { WorkshopAgenda } from './agenda';
@@ -19,6 +20,7 @@ const copy = {
     intro:
       'Explore Luminol’s recent psychology sessions and the proposed schedule for upcoming workshops.',
     recent: 'Recent sessions',
+    settings: 'Online and in-person workshops',
     upcoming: 'Upcoming workshops',
   },
   fr: {
@@ -26,6 +28,7 @@ const copy = {
     intro:
       'Découvrez les rencontres récentes en psychologie et le calendrier prévisionnel des prochains ateliers.',
     recent: 'Rencontres récentes',
+    settings: 'Ateliers en ligne et en présentiel',
     upcoming: 'Ateliers à venir',
   },
   ar: {
@@ -33,6 +36,7 @@ const copy = {
     intro:
       'تعرّف على لقاءات لومينول النفسية الأخيرة والجدول المقترح للورش القادمة.',
     recent: 'اللقاءات الأخيرة',
+    settings: 'ورش عن بُعد وورش حضورية',
     upcoming: 'الورش القادمة',
   },
 } as const;
@@ -56,7 +60,10 @@ export default async function EventsArchive() {
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="events-page-title">
           <div className={styles.heroCopy}>
-            <h1 id="events-page-title">{text.title}</h1>
+            <div className={styles.heroTitle}>
+              <h1 id="events-page-title">{text.title}</h1>
+              <GoldAccent name="calendar" />
+            </div>
             <p>{text.intro}</p>
             <div className={styles.actions}>
               <a href="#events-recent">{text.recent}</a>
@@ -77,6 +84,26 @@ export default async function EventsArchive() {
         </section>
         <EventsSection locale={locale} archive />
         <WorkshopAgenda locale={locale} workshops={workshops} />
+        <section
+          className={styles.settings}
+          aria-labelledby="event-settings-title"
+        >
+          <h2 id="event-settings-title">{text.settings}</h2>
+          <div className={styles.settingsPhotos}>
+            {[newEditorialPhotos.remoteSession, newEditorialPhotos.doorway].map(
+              (photo) => (
+                <PhotoCard
+                  key={photo.src}
+                  photo={photo}
+                  locale={locale}
+                  sizes="(max-width: 640px) 92vw, 46vw"
+                  className={styles.settingPhoto}
+                  caption
+                />
+              ),
+            )}
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </>

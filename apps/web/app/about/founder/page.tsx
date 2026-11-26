@@ -18,7 +18,10 @@ import {
   founderEditorialPortrait,
   founderWebsite,
 } from '../../../lib/founder';
-import { illustrativePhotoCredit } from '../../../lib/people-photos';
+import {
+  illustrativePhotoCredit,
+  newEditorialPhotos,
+} from '../../../lib/people-photos';
 import { getRequestLocale } from '../../../lib/request-locale';
 import {
   buildFounderJsonLd,
@@ -124,8 +127,8 @@ export default async function FounderPage() {
               data-media-crop="center-center"
             >
               <Image
-                src="/media/founder-study-still-life.webp"
-                alt=""
+                src={newEditorialPhotos.studyDetail.src}
+                alt={newEditorialPhotos.studyDetail.alt[locale]}
                 fill
                 sizes="(max-width: 760px) 90vw, (max-width: 1200px) 46vw, 560px"
               />
