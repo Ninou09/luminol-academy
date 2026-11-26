@@ -865,3 +865,66 @@
   align-items: start;
   align-content: start;
 }
+
+.page .hero {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 76rem);
+  gap: 0;
+  min-height: 0;
+  margin-block: 0.65rem 1.25rem;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--luminol-media-radius);
+  background:
+    linear-gradient(
+      135deg,
+      var(--color-school-psychology-soft),
+      transparent 70%
+    ),
+    var(--color-brand-night);
+}
+.page .heroCopy {
+  padding: clamp(1rem, 4vw, 3.4rem);
+  min-width: 0;
+}
+.page .hero h1 {
+  font-size: clamp(2.2rem, 5vw, 4.25rem);
+  line-height: 1.1;
+}
+.page .heroStack {
+  width: 100%;
+  height: 100%;
+  min-height: 15rem;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  border: 0;
+  border-radius: 0;
+}
+.page .heroStack img {
+  object-position: center 43%;
+}
+.page .enquirySection {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 76rem);
+  gap: clamp(1rem, 3vw, 2rem);
+  padding-block: clamp(0.9rem, 3vw, 2rem);
+}
+.page .enquiryContext h2 {
+  font-size: clamp(1.8rem, 3.6vw, 3.1rem);
+}
+.page .timeline {
+  gap: 0.75rem;
+}
+.page .formSurface {
+  padding: clamp(0.9rem, 2.6vw, 1.6rem);
+}
+.page .formSurface :global(.enquiry-form) {
+  gap: clamp(0.7rem, 2vw, 1.1rem);
+}
+@media (max-width: 900px) {
+  .page .heroStack {
+    height: auto;
+    min-height: 0;
+    max-height: 18rem;
+    aspect-ratio: 16 / 10;
+  }
+}

@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
 
 import { buildAssistantSystemPrompt } from '../../../lib/assistant-knowledge.server';
+import { getPublicProgrammes } from '../../../lib/sanity';
 import { answerFromSite } from '../../../lib/assistant-offline';
 import { crisisReply, looksLikeCrisis } from '../../../lib/assistant-safety';
 
@@ -109,8 +110,10 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const question = messages.at(-1)!.content;
+  const programmes = await getPublicProgrammes();
+  const offline = () => answerFromSite(question, locale, programmes);
   const anthropic = getClient();
-  if (!anthropic) return textStream(answerFromSite(question, locale));
+  if (!anthropic) return textStream(offline());
 
   const stream = anthropic.messages.stream({
     model: MODEL,
@@ -119,7 +122,7 @@ export async function POST(request: Request): Promise<Response> {
     system: [
       {
         type: 'text',
-        text: buildAssistantSystemPrompt(),
+        text: buildAssistantSystemPrompt(programmes),
         cache_control: { type: 'ephemeral' },
       },
     ],
@@ -143,11 +146,7 @@ export async function POST(request: Request): Promise<Response> {
         const final = await stream.finalMessage();
         if (final.stop_reason === 'refusal' || !wrote) {
           controller.enqueue(
-            encoder.encode(
-              wrote
-                ? `\n\n${unavailable[locale]}`
-                : answerFromSite(question, locale),
-            ),
+            encoder.encode(wrote ? `\n\n${unavailable[locale]}` : offline()),
           );
         }
       } catch (error) {
@@ -159,11 +158,7 @@ export async function POST(request: Request): Promise<Response> {
           console.error('Assistant stream failed');
         }
         controller.enqueue(
-          encoder.encode(
-            wrote
-              ? `\n\n${unavailable[locale]}`
-              : answerFromSite(question, locale),
-          ),
+          encoder.encode(wrote ? `\n\n${unavailable[locale]}` : offline()),
         );
       } finally {
         controller.close();

@@ -26,10 +26,25 @@ describe('assistant answers from site facts', () => {
     }
   });
 
-  it('lists the psychology courses with their 18-hour format', () => {
-    const answer = answerFromSite('Which courses do you offer?', 'en');
-    expect(answer).toContain('Schema therapy');
-    expect(answer).toContain('18 hours');
+  it('uses the current catalogue and preserves waitlist status', () => {
+    const answer = answerFromSite('Which courses do you offer?', 'en', [
+      {
+        _id: 'act',
+        slug: { current: 'acceptance-commitment-therapy-act' },
+        title: 'العلاج بالتقبل والالتزام',
+        summary: 'Public course summary',
+        school: 'psychology',
+        languages: ['ar'],
+        featured: true,
+      },
+    ]);
+    expect(answer).toContain(
+      'Acceptance and Commitment Therapy (ACT) (waitlist)',
+    );
+    expect(answer).not.toContain('18 hours');
+    expect(answerFromSite('Which courses do you offer?', 'en', [])).toContain(
+      'See Programmes',
+    );
   });
 
   it('does not confuse contact with the ACT course', () => {

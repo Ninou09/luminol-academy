@@ -899,3 +899,91 @@ main.auth-page {
     font-size: clamp(2.2rem, 9vw, 3rem);
   }
 }
+
+main.auth-page {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  max-width: 88rem;
+  margin-inline: auto;
+  padding: clamp(0.8rem, 3vw, 2.4rem);
+  background: transparent;
+}
+.auth-story {
+  justify-content: start;
+  min-height: 36rem;
+  gap: clamp(0.9rem, 3vw, 1.8rem);
+  padding: clamp(1rem, 3vw, 2.4rem);
+  border: 1px solid rgb(243 212 143 / 0.29);
+  border-radius: 1.45rem;
+}
+.auth-story::after {
+  background: linear-gradient(
+    180deg,
+    rgb(4 15 27 / 0.94),
+    rgb(4 15 27 / 0.7) 48%,
+    rgb(4 15 27 / 0.34) 86%
+  );
+}
+.auth-story-body {
+  margin-block-start: clamp(0.5rem, 3vw, 2.3rem);
+}
+.auth-story h1 {
+  font-size: clamp(2.1rem, 4.7vw, 3.9rem);
+  line-height: 1.1;
+}
+.auth-lede {
+  margin-block-start: 0.65rem;
+}
+.auth-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  margin-block-start: auto;
+}
+.auth-form {
+  place-content: center stretch;
+  min-width: 0;
+  gap: 0.65rem;
+  padding: clamp(0.4rem, 3vw, 1.65rem);
+}
+.auth-clerk-root {
+  width: min(100%, 27rem);
+}
+.auth-clerk-card {
+  max-width: 100%;
+}
+@media (max-width: 860px) {
+  main.auth-page {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 0.75rem;
+  }
+  .auth-story {
+    gap: 0.6rem;
+    min-height: 0;
+  }
+  .auth-story-body {
+    margin: 0;
+  }
+  .auth-story h1 {
+    font-size: clamp(1.85rem, 7vw, 2.5rem);
+  }
+  .auth-lede {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .auth-back {
+    min-height: 36px;
+    font-size: 0.82rem;
+  }
+}
+@media (max-width: 400px) {
+  .auth-form {
+    padding-inline: 0;
+  }
+  .auth-clerk-card .cl-card {
+    padding-inline: clamp(0.75rem, 5vw, 1.25rem);
+  }
+}

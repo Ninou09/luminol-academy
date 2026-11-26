@@ -731,3 +731,64 @@ main:has(> .hero .heroStack) {
   padding-inline: 0;
   text-decoration: underline;
 }
+
+.hero,
+.hero[data-single] {
+  padding-block: clamp(1.3rem, 3vw, 2.8rem);
+}
+.hero[data-single] {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 74rem);
+}
+.heroCopy {
+  min-width: 0;
+}
+.heroCopy h1 {
+  font-size: clamp(2.3rem, 5vw, 4.3rem);
+  line-height: 1.12;
+}
+.heroCopy .filters {
+  margin-block-start: 1rem;
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  gap: 0.65rem;
+}
+.hero[data-single] .card:has(> .image) {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+}
+.hero[data-single] .card > .image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 12rem;
+  object-fit: cover;
+}
+.hero[data-single] .card .cardBody {
+  padding: clamp(0.95rem, 2.8vw, 1.75rem);
+}
+.hero[data-single] .card h3 {
+  font-size: clamp(1.45rem, 3vw, 2.45rem);
+  line-height: 1.16;
+}
+.schoolTiles {
+  gap: 0.65rem;
+  margin-block: 0.75rem 1.25rem;
+}
+.schoolTiles .schoolTile {
+  min-height: 0;
+  padding: clamp(0.85rem, 2vw, 1.3rem);
+}
+.schoolTile strong {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.4vw, 2.1rem);
+}
+@media (max-width: 730px) {
+  .hero[data-single] .card:has(> .image) {
+    grid-template-columns: 1fr;
+  }
+  .hero[data-single] .card > .image {
+    height: auto;
+    min-height: 0;
+    max-height: 13rem;
+    aspect-ratio: 2 / 1;
+  }
+}

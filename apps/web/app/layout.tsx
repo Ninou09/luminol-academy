@@ -100,21 +100,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const a11yLabels = {
   en: {
-    button: 'Reading comfort',
+    button: 'Display settings',
     title: 'Reading comfort',
     largeText: 'Larger text',
     highContrast: 'High contrast',
     close: 'Close',
   },
   fr: {
-    button: 'Confort de lecture',
+    button: 'Réglages d’affichage',
     title: 'Confort de lecture',
     largeText: 'Texte plus grand',
     highContrast: 'Contraste élevé',
     close: 'Fermer',
   },
   ar: {
-    button: 'راحة القراءة',
+    button: 'إعدادات العرض',
     title: 'راحة القراءة',
     largeText: 'نص أكبر',
     highContrast: 'تباين عالٍ',
@@ -123,15 +123,9 @@ const a11yLabels = {
 } as const;
 
 const calmLabels = {
-  en: { on: 'Calm mode: turn off 3D effects', off: 'Turn 3D effects back on' },
-  fr: {
-    on: 'Mode calme : couper les effets 3D',
-    off: 'Réactiver les effets 3D',
-  },
-  ar: {
-    on: 'الوضع الهادئ: إيقاف المؤثرات ثلاثية الأبعاد',
-    off: 'إعادة تشغيل المؤثرات ثلاثية الأبعاد',
-  },
+  en: 'Reduce 3D effects',
+  fr: 'Réduire les effets 3D',
+  ar: 'تقليل المؤثرات ثلاثية الأبعاد',
 } as const;
 
 const backToTopLabel = {
@@ -166,7 +160,7 @@ export default async function RootLayout({
           whatsappHref={getWhatsAppHref(channelCopy[locale].whatsappMessage)}
           whatsappLabel={channelCopy[locale].whatsappAria}
           topLabel={backToTopLabel[locale]}
-          calmLabels={calmLabels[locale]}
+          calmLabel={calmLabels[locale]}
           a11yLabels={a11yLabels[locale]}
           locale={locale}
           assistantEnabled={process.env.LUMINOL_ASSISTANT_DISABLED !== '1'}

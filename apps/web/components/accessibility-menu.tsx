@@ -21,7 +21,17 @@ function apply(prefs: Prefs) {
  */
 export function AccessibilityMenu({
   labels,
+  calm,
+  calmLabel,
+  onCalmChange,
+  topLabel,
+  onTop,
 }: {
+  calm: boolean;
+  calmLabel: string;
+  onCalmChange: () => void;
+  topLabel: string;
+  onTop: () => void;
   labels: {
     button: string;
     title: string;
@@ -36,6 +46,11 @@ export function AccessibilityMenu({
     highContrast: false,
   });
   const panelRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const close = () => {
+    setOpen(false);
+    buttonRef.current?.focus();
+  };
 
   useEffect(() => {
     try {
@@ -56,7 +71,7 @@ export function AccessibilityMenu({
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') close();
     };
     const onClick = (event: MouseEvent) => {
       if (!panelRef.current?.parentElement?.contains(event.target as Node))
@@ -85,6 +100,7 @@ export function AccessibilityMenu({
     <div className={styles.wrap}>
       <button
         type="button"
+        ref={buttonRef}
         className={styles.button}
         aria-expanded={open}
         aria-controls="a11y-panel"
@@ -92,7 +108,19 @@ export function AccessibilityMenu({
         title={labels.button}
         onClick={() => setOpen(!open)}
       >
-        Aa
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.7"
+        >
+          <path
+            d="M10 3h4l.6 2.5 2 .9 2.3-1.3 2.8 2.8-1.3 2.3.9 2 2.5.6v4l-2.5.6-.9 2 1.3 2.3-2.8 2.8-2.3-1.3-2 .9-.6 2.5h-4l-.6-2.5-2-.9-2.3 1.3-2.8-2.8 1.3-2.3-.9-2-2.5-.6v-4l2.5-.6.9-2-1.3-2.3 2.8-2.8 2.3 1.3 2-.9z"
+            transform="translate(2 0) scale(.83)"
+          />
+          <circle cx="12" cy="12" r="3.1" />
+        </svg>
       </button>
       {open ? (
         <div
@@ -119,11 +147,21 @@ export function AccessibilityMenu({
             />
             <span>{labels.highContrast}</span>
           </label>
+          <label>
+            <input type="checkbox" checked={calm} onChange={onCalmChange} />
+            <span>{calmLabel}</span>
+          </label>
           <button
             type="button"
             className={styles.close}
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              close();
+              onTop();
+            }}
           >
+            {topLabel} <span aria-hidden="true">↑</span>
+          </button>
+          <button type="button" className={styles.close} onClick={close}>
             {labels.close}
           </button>
         </div>

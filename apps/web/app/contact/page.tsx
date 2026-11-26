@@ -36,7 +36,10 @@ import {
   getWhatsAppHref,
 } from '../../lib/contact-channels';
 import { contactFaq } from '../../lib/faq';
-import { pathPhotos, peoplePhotos } from '../../lib/people-photos';
+import {
+  editorialPhotos,
+  pathPhotos,
+} from '../../lib/people-photos';
 import { privacyPolicy } from '../../lib/privacy-policy';
 import Image from 'next/image';
 
@@ -189,7 +192,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           <PhotoCard
             className={styles.heroStack}
             locale={locale}
-            photo={peoplePhotos.contactsNextStep}
+            photo={editorialPhotos.reception}
             priority
             caption
           />

@@ -36,6 +36,65 @@ const photo = (
   alt: { en, fr, ar },
 });
 
+export const editorialPhotos = {
+  afterClass: photo(
+    'moments-after-class',
+    1672,
+    941,
+    'Two learners discuss a diagram after class',
+    'Deux participants discutent d’un schéma après le cours',
+    'متعلّمان يناقشان مخططًا بعد الدرس',
+  ),
+  seminar: photo(
+    'moments-seminar',
+    1672,
+    941,
+    'A trainer listens to a participant across a seminar table',
+    'Une formatrice écoute une participante autour d’une table de séminaire',
+    'مدرّبة تصغي إلى مشاركة حول طاولة التدريب',
+  ),
+  homework: photo(
+    'events-homework',
+    1536,
+    1024,
+    'Adults arrange illustrated cards to plan homework',
+    'Des adultes disposent des cartes illustrées pour organiser les devoirs',
+    'بالغون يرتّبون بطاقات مصوّرة لتخطيط الواجبات',
+  ),
+  clinical: photo(
+    'library-clinical',
+    1448,
+    1086,
+    'Two professionals discuss a hand-drawn diagram at a study table',
+    'Deux professionnels discutent d’un schéma dessiné à la main',
+    'مختصّان يناقشان مخططًا مرسومًا باليد حول طاولة دراسة',
+  ),
+  family: photo(
+    'library-family',
+    1448,
+    1086,
+    'Two adults use picture cards to plan a child’s learning week',
+    'Deux adultes préparent une semaine d’apprentissage avec des pictogrammes',
+    'بالغان يخطّطان لأسبوع تعلّم طفل باستخدام بطاقات مصوّرة',
+  ),
+  library: photo(
+    'library-hero',
+    1586,
+    992,
+    'A psychologist studies a learning diagram at a library table',
+    'Une psychologue étudie un schéma dans une bibliothèque',
+    'أخصائية نفسية تتأمل مخططًا تعليميًا في المكتبة',
+  ),
+  reception: photo(
+    'contact-reception',
+    1536,
+    1024,
+    'A receptionist listens to a visitor across a desk',
+    'Une chargée d’accueil écoute un visiteur à son bureau',
+    'موظفة استقبال تصغي إلى زائر عبر المكتب',
+  ),
+} as const;
+
 export const peoplePhotos = {
   // Home
   academyLecture: photo(

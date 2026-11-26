@@ -348,3 +348,45 @@
     scale: 1.05;
   }
 }
+
+.stories {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 76rem);
+}
+.storiesBar h2 {
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+}
+.card {
+  background:
+    linear-gradient(
+      150deg,
+      var(--color-school-psychology-soft),
+      transparent 85%
+    ),
+    var(--color-brand-night);
+}
+.cardImage {
+  height: clamp(8.5rem, 16vw, 12.5rem);
+  aspect-ratio: auto;
+}
+.storyBody {
+  gap: 0.42rem;
+  padding: clamp(0.75rem, 1.75vw, 1.15rem);
+}
+.card h3 {
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  line-height: 1.16;
+}
+.card .summary {
+  font-size: 0.92rem;
+  line-height: 1.52;
+}
+@media (min-width: 1080px) {
+  .storyTrack li {
+    flex-basis: calc((100% - 2 * var(--story-gap)) / 3);
+  }
+}
+@media (max-width: 700px) {
+  .cardImage {
+    height: clamp(8rem, 39vw, 11rem);
+  }
+}

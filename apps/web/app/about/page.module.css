@@ -1098,3 +1098,74 @@
     aspect-ratio: 16 / 10;
   }
 }
+
+.page .hero {
+  gap: clamp(1.1rem, 4vw, 3.5rem);
+  min-height: 0;
+  padding-block: clamp(1.75rem, 4vw, 3.5rem);
+}
+.page .hero h1 {
+  font-size: clamp(2.35rem, 5.4vw, 4.85rem);
+  line-height: 1.11;
+}
+.page .heroVisual {
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+}
+.page .section,
+.page .origin {
+  padding-block: clamp(1.5rem, 4vw, 3.15rem);
+}
+.page .sectionHeading {
+  gap: clamp(0.75rem, 3vw, 2rem);
+  margin-block-end: clamp(0.85rem, 2vw, 1.5rem);
+}
+.page .sectionHeading h2 {
+  font-size: clamp(1.85rem, 3.6vw, 3.3rem);
+  line-height: 1.12;
+}
+.page .founderFeatureCopy {
+  padding: clamp(0.85rem, 2.75vw, 1.65rem);
+}
+.page .founderFeatureCopy h2 {
+  font-size: clamp(1.7rem, 3.4vw, 2.8rem);
+}
+.page .founderFeaturePhoto {
+  min-height: 11rem;
+}
+.page .valueCard {
+  min-height: 0;
+  padding: clamp(0.85rem, 2vw, 1.45rem);
+}
+.page .valueCard h3 {
+  margin-block-start: 0.6rem;
+}
+.page .missionVision {
+  padding-block: clamp(1rem, 3vw, 1.75rem);
+  margin-block: 0;
+}
+.page .missionVision article {
+  min-height: 0;
+}
+.page .missionFrame {
+  height: clamp(9rem, 20vw, 15rem);
+  aspect-ratio: auto;
+}
+.page .missionCopy {
+  padding: clamp(0.9rem, 2.4vw, 1.65rem);
+}
+.page .missionCopy h2 {
+  margin-block: 0.55rem 0.7rem;
+  font-size: clamp(1.65rem, 3.1vw, 2.65rem);
+  line-height: 1.12;
+}
+.page .missionCopy p {
+  margin: 0;
+  line-height: 1.55;
+}
+@media (max-width: 720px) {
+  .page .founderFeaturePhoto {
+    min-height: 0;
+    aspect-ratio: 2 / 1;
+  }
+}

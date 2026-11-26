@@ -301,6 +301,7 @@ export async function getProgrammesForSchool(
     _type == "programme" &&
     school == $school &&
     active == true &&
+    (!defined(publicUntil) || dateTime(publicUntil) > dateTime(now())) &&
     !(_id in path("drafts.**")) &&
     defined(slug.current)
   ] | order(order asc, title asc) {
@@ -358,6 +359,7 @@ export async function getPublicProgrammes(): Promise<
   const query = `*[
     _type == "programme" &&
     active == true &&
+    (!defined(publicUntil) || dateTime(publicUntil) > dateTime(now())) &&
     !(_id in path("drafts.**")) &&
     defined(slug.current)
   ] | order(featured desc, school asc, order asc, title asc, _id asc) {

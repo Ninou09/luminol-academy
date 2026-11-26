@@ -1,11 +1,12 @@
 import { localizeHref, type Locale } from '@luminol/localization';
 import Image from 'next/image';
 
-import { illustrativePhotoCredit, peoplePhotos } from '../lib/people-photos';
+import { editorialPhotos, illustrativePhotoCredit } from '../lib/people-photos';
 import { getUpcomingWorkshops } from '../lib/workshop-plan';
 import { channelCopy, getWhatsAppHref } from '../lib/contact-channels';
 import {
   eventsCopy,
+  getUpcomingEvents,
   hasEventEnded,
   luminolEvents,
   psychologyTeam,
@@ -74,9 +75,7 @@ export function EventsSection({
   const copy = eventsCopy[locale];
   const now = new Date();
   const nextWorkshop = archive ? undefined : getUpcomingWorkshops(now)[0];
-  const upcoming = luminolEvents
-    .filter((event) => !hasEventEnded(event, now))
-    .sort((a, b) => (a.date ?? '9999').localeCompare(b.date ?? '9999'));
+  const upcoming = getUpcomingEvents(now);
   const endTime = (event: LuminolEvent) =>
     Date.parse(
       event.endsAt ?? `${event.secondDate ?? event.date}T23:59:59.999+01:00`,
@@ -169,8 +168,8 @@ export function EventsSection({
               data-media-license={illustrativePhotoCredit.license}
             >
               <Image
-                src={peoplePhotos.academyRoleplay.src}
-                alt={peoplePhotos.academyRoleplay.alt[locale]}
+                src={editorialPhotos.homework.src}
+                alt={editorialPhotos.homework.alt[locale]}
                 fill
                 sizes="(max-width: 760px) 92vw, 36vw"
               />
