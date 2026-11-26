@@ -107,6 +107,9 @@ export function PhotoMosaic({
             <figcaption>
               <strong>{chapters[index]}</strong>
               <span>{photo.alt[locale]}</span>
+              <small className={styles.credit}>
+                {illustrativePhotoCredit.label[locale]}
+              </small>
             </figcaption>
           </figure>
         ))}

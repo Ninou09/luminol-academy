@@ -178,12 +178,22 @@
 .pathwayHeading h2 {
   margin: 0;
 }
-.pathwayHeading img {
+.pathwayPhoto {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--color-brand-line);
+  border-block-start-color: color-mix(
+    in srgb,
+    var(--color-brand-gold) 45%,
+    var(--color-brand-line)
+  );
+  border-radius: var(--luminol-media-radius);
+}
+.pathwayPhoto img {
   display: block;
   width: 100%;
-  height: clamp(8rem, 19vw, 14rem);
+  height: clamp(8rem, 24vw, 20rem);
   object-fit: cover;
-  object-position: center 42%;
-  border: 1px solid var(--color-brand-line);
-  border-radius: var(--luminol-media-radius);
+  object-position: center 46%;
 }

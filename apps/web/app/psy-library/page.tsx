@@ -191,15 +191,23 @@ export default async function PsychologyLibrary() {
           <section key={id} className={styles.section} aria-labelledby={id}>
             <div className={styles.pathwayHeading}>
               <h2 id={id}>{title}</h2>
-              <Image
-                src={photo.src}
-                alt={photo.alt[locale]}
-                width={photo.width}
-                height={photo.height}
-                sizes="(max-width: 900px) 92vw, 1120px"
+              <figure
+                className={styles.pathwayPhoto}
                 data-media-source={illustrativePhotoCredit.source}
                 data-media-license={illustrativePhotoCredit.license}
-              />
+                data-media-crop="center-46"
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt[locale]}
+                  width={photo.width}
+                  height={photo.height}
+                  sizes="(max-width: 900px) 94vw, (max-width: 1320px) 96vw, 1296px"
+                />
+                <figcaption className="scene-caption">
+                  {illustrativePhotoCredit.label[locale]}
+                </figcaption>
+              </figure>
             </div>
             <ul className={styles.pathways}>
               {pathways.map((entry) => {
