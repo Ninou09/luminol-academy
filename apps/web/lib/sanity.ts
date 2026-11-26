@@ -134,6 +134,7 @@ const cmsProgrammeSchema = z.object({
 
 const cmsProgrammeListSchema = z.array(cmsProgrammeSchema).max(100);
 const publicCmsProgrammeSchema = cmsProgrammeSchema.extend({
+  updatedAt: z.string().nullish(),
   slug: z.object({ current: z.string().trim().min(1).max(96) }),
   school: schoolSlugSchema,
   languages: z.array(programmeLanguageSchema).max(3).default([]),
@@ -364,6 +365,7 @@ export async function getPublicProgrammes(): Promise<
     defined(slug.current)
   ] | order(featured desc, school asc, order asc, title asc, _id asc) {
     _id,
+    "updatedAt": _updatedAt,
     title,
     summary,
     localizedCopy,

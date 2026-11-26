@@ -1,13 +1,10 @@
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-  type Locale,
-} from '@luminol/localization';
+import { localizeHref, type Locale } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 
 import enquiryStyles from '../../components/compact-enquiry.module.css';
 import { EnquiryForm } from '../../components/enquiry-form';
@@ -15,15 +12,16 @@ import Image from 'next/image';
 
 import { FirstConsultation } from '../../components/first-consultation';
 
+import { PageBreadcrumbJsonLd } from '../../components/page-breadcrumb-json-ld';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import {
   founderExperience,
   founderPath,
   founderPortrait,
 } from '../../lib/founder';
+import { addressCopy, officialAddress } from '../../lib/contact-channels';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
-import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
 import { PhotoCard } from '../../components/live-photo';
 import { consultationPhotos, peoplePhotos } from '../../lib/people-photos';
@@ -184,33 +182,11 @@ const CONSULTATION_COPY = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = CONSULTATION_COPY[locale];
-  const route = localizePathname(locale, '/consultations');
-  const socialPreview = getSocialPreviewImage(locale);
-
-  return {
-    title: copy.title as string,
-    description: copy.description as string,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates('/consultations'),
-    },
-    openGraph: {
-      title: copy.title as string,
-      description: copy.description as string,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-      images: [socialPreview],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: copy.title as string,
-      description: copy.description as string,
-      images: [socialPreview],
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/consultations',
+    publicSearch['/consultations'][locale],
+  );
 }
 
 const routePhotos = [
@@ -231,6 +207,11 @@ export default async function ConsultationsPage() {
 
   return (
     <>
+      <PageBreadcrumbJsonLd
+        locale={locale}
+        pathname="/consultations"
+        label={copy.heroTitle}
+      />
       <SiteHeader />
       <main
         id="main-content"
@@ -248,6 +229,11 @@ export default async function ConsultationsPage() {
                 {copy.primaryAction}
               </ButtonLink>
             </div>
+            <p className={styles.consultationLocation}>
+              <a href={officialAddress.mapHref}>
+                {addressCopy[locale].directions}
+              </a>
+            </p>
             <p className={styles.feesNote}>{copy.feesNote as string}</p>
           </div>
           <PhotoCard

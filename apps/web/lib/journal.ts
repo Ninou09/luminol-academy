@@ -9,6 +9,7 @@ export type JournalArticle = {
   /** Drafts are shown with a "Draft for review" badge until Luminol approves them. */
   draft: boolean;
   date: string;
+  updatedAt?: string;
   minutes: number;
   school: 'psychology' | 'languages' | 'training';
   cover: string;

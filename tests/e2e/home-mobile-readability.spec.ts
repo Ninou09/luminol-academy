@@ -68,9 +68,9 @@ for (const locale of ['ar', 'fr', 'en'] as const) {
 }
 
 const expectedHeroTitles = {
-  ar: 'استشارات نفسية وبرامج تكوينية في البليدة',
-  fr: 'Consultations psychologiques et formations à Blida',
-  en: 'Psychological consultations and training in Blida',
+  ar: 'علم النفس واللغات والتكوين المهني في البليدة',
+  fr: 'Psychologie, langues et formation professionnelle à Blida',
+  en: 'Psychology, languages and professional training in Blida',
 } as const;
 
 for (const locale of ['ar', 'fr', 'en'] as const) {

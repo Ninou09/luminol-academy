@@ -1,12 +1,13 @@
 import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
   localizeHref,
   localizePathname,
   type Locale,
 } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 import Link from 'next/link';
 
 import { AcademyImage } from '../../components/academy-image';
@@ -21,7 +22,6 @@ import { PhotoMosaic } from '../../components/photo-mosaic';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
-import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import styles from './page.module.css';
 import Image from 'next/image';
 import {
@@ -115,33 +115,7 @@ const founderAuthorityByLocale = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = getPublicCopy(locale).about;
-  const route = localizePathname(locale, '/about');
-  const socialPreview = getSocialPreviewImage(locale);
-
-  return {
-    title: copy.title,
-    description: copy.description,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates('/about'),
-    },
-    openGraph: {
-      title: copy.title,
-      description: copy.description,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-      images: [socialPreview],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: copy.title,
-      description: copy.description,
-      images: [socialPreview],
-    },
-  };
+  return buildPublicMetadata(locale, '/about', publicSearch['/about'][locale]);
 }
 
 const galleryChapters = {
@@ -228,7 +202,9 @@ export default async function AboutPage() {
         >
           <div className={styles.heroCopy} data-reveal>
             <p className={styles.eyebrow}>{copy.heroEyebrow}</p>
-            <h1 id="about-hero-title">{copy.heroTitle}</h1>
+            <h1 id="about-hero-title">
+              {publicSearch['/about'][locale].heading}
+            </h1>
             <p>{copy.heroBody}</p>
           </div>
           <AcademyImage

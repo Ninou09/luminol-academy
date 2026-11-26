@@ -1,11 +1,9 @@
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-} from '@luminol/localization';
+import { localizeHref } from '@luminol/localization';
 import { ButtonLink } from '@luminol/ui';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 import Image from 'next/image';
 
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
@@ -20,24 +18,11 @@ import styles from './page.module.css';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = approachCopy[locale];
-  const route = localizePathname(locale, '/approach');
-  return {
-    title: copy.title,
-    description: copy.description,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates('/approach'),
-    },
-    openGraph: {
-      title: copy.title,
-      description: copy.description,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/approach',
+    publicSearch['/approach'][locale],
+  );
 }
 
 const stepPhotos: Record<string, PeoplePhoto | undefined> = {
@@ -70,7 +55,9 @@ export default async function ApproachPage() {
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="approach-title">
           <p className={styles.eyebrow}>{copy.eyebrow}</p>
-          <h1 id="approach-title">{copy.heroTitle}</h1>
+          <h1 id="approach-title">
+            {publicSearch['/approach'][locale].heading}
+          </h1>
           <p className={styles.lede}>{copy.heroBody}</p>
           <p className={styles.hint} aria-hidden="true">
             <span />

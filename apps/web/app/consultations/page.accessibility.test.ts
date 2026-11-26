@@ -22,7 +22,9 @@ describe('psychology consultation page accessibility contract', () => {
       'utf8',
     );
 
-    expect(source).toContain("buildLanguageAlternates('/consultations')");
+    expect(source).toMatch(
+      /buildPublicMetadata\(\s*locale,\s*'\/consultations'/,
+    );
     expect(source).toContain("localizeHref(locale, '/schools/psychology')");
     expect(source).toContain('id="consultation-enquiry"');
     expect(source).toContain('initialMessage={copy.initialMessage as string}');

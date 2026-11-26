@@ -1,10 +1,8 @@
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-} from '@luminol/localization';
+import { localizeHref } from '@luminol/localization';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -25,24 +23,11 @@ const coverPhotos = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = getPublicCopy(locale);
-  const route = localizePathname(locale, '/schools');
-  return {
-    title: copy.site.nav.schools,
-    description: copy.home.schoolsIntro,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates('/schools'),
-    },
-    openGraph: {
-      title: copy.site.nav.schools,
-      description: copy.home.schoolsIntro,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/schools',
+    publicSearch['/schools'][locale],
+  );
 }
 
 export default async function SchoolsPage() {
@@ -57,7 +42,7 @@ export default async function SchoolsPage() {
       <main id="main-content" tabIndex={-1} className={styles.page}>
         <section className={styles.hero} aria-labelledby="schools-title">
           <p className={styles.eyebrow}>{copy.home.schoolsEyebrow}</p>
-          <h1 id="schools-title">{copy.home.schoolsTitle}</h1>
+          <h1 id="schools-title">{publicSearch['/schools'][locale].heading}</h1>
           <p className={styles.lede}>{copy.home.schoolsIntro}</p>
         </section>
 

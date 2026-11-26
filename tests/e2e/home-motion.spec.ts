@@ -10,7 +10,7 @@ test('premium home shell exposes core navigation and brand surfaces', async ({
     page.getByRole('navigation', { name: /primary navigation/i }),
   ).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toContainText(
-    'Psychological consultations and training in Blida',
+    'Psychology, languages and professional training in Blida',
   );
   await expect(page.locator('[data-reveal]')).not.toHaveCount(0);
   await expect(page.getByRole('contentinfo')).toBeVisible();

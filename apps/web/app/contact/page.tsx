@@ -1,11 +1,9 @@
 import { localizeProgrammePublicCopy } from '../../lib/programme-presentation';
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-} from '@luminol/localization';
+import { localizeHref } from '@luminol/localization';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 import Link from 'next/link';
 
 import enquiryStyles from '../../components/compact-enquiry.module.css';
@@ -19,7 +17,6 @@ import {
 } from '../../lib/programme-detail';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
-import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import { getSchools } from '../../lib/schools';
 import styles from './page.module.css';
 import { GlassIcon, type GlassIconName } from '../../components/glass-icon';
@@ -47,33 +44,11 @@ type ContactPageProps = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = getPublicCopy(locale).contact;
-  const route = localizePathname(locale, '/contact');
-  const socialPreview = getSocialPreviewImage(locale);
-
-  return {
-    title: copy.title,
-    description: copy.description,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates('/contact'),
-    },
-    openGraph: {
-      title: copy.title,
-      description: copy.description,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-      images: [socialPreview],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: copy.title,
-      description: copy.description,
-      images: [socialPreview],
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/contact',
+    publicSearch['/contact'][locale],
+  );
 }
 
 const stepIcons: GlassIconName[] = [

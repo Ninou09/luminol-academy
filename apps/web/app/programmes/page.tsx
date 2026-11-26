@@ -1,11 +1,9 @@
 import { recordSearchTelemetry, SearchSurface } from '@luminol/database';
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizeHref,
-  localizePathname,
-} from '@luminol/localization';
+import { localizeHref } from '@luminol/localization';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../lib/public-metadata';
+import { publicSearch } from '../../lib/public-seo';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -29,7 +27,6 @@ import {
 } from '../../lib/programme-discovery';
 import { getPublicCopy } from '../../lib/public-localization';
 import { getRequestLocale } from '../../lib/request-locale';
-import { getSocialPreviewImage } from '../../lib/social-preview-metadata';
 import {
   buildSanityProgrammeImageUrl,
   getPublicProgrammes,
@@ -54,37 +51,19 @@ type ProgrammesPageProps = {
 export async function generateMetadata({
   searchParams,
 }: ProgrammesPageProps): Promise<Metadata> {
-  const locale = await getRequestLocale();
-  const copy = getPublicCopy(locale).programmes;
-  const route = localizePathname(locale, '/programmes');
-  const socialPreview = getSocialPreviewImage(locale);
-  const filters = parseProgrammeDiscoveryParams(await searchParams);
-  const isFilteredCatalogue = hasProgrammeDiscoveryFilters(filters);
-
-  return {
-    title: copy.title,
-    description: copy.description,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates('/programmes'),
+  const [locale, rawFilters] = await Promise.all([
+    getRequestLocale(),
+    searchParams,
+  ]);
+  const filters = parseProgrammeDiscoveryParams(rawFilters);
+  return buildPublicMetadata(
+    locale,
+    '/programmes',
+    publicSearch['/programmes'][locale],
+    {
+      noindex: hasProgrammeDiscoveryFilters(filters),
     },
-    robots: isFilteredCatalogue ? { index: false, follow: true } : undefined,
-    openGraph: {
-      title: copy.title,
-      description: copy.description,
-      siteName: 'Luminol Academy',
-      locale: getOpenGraphLocale(locale),
-      type: 'website',
-      url: route,
-      images: [socialPreview],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: copy.title,
-      description: copy.description,
-      images: [socialPreview],
-    },
-  };
+  );
 }
 
 export default async function ProgrammesPage({
@@ -282,7 +261,9 @@ export default async function ProgrammesPage({
         >
           <div className={styles.heroCopy}>
             <p className="eyebrow">{copy.eyebrow}</p>
-            <h1 id="programmes-hero-title">{copy.heroTitle}</h1>
+            <h1 id="programmes-hero-title">
+              {publicSearch['/programmes'][locale].heading}
+            </h1>
             {single ? results : <p>{copy.heroBody}</p>}
             {!single ? (
               <Link href={localizeHref(locale, '/psy-library')}>

@@ -1,10 +1,10 @@
-import {
-  buildLanguageAlternates,
-  getOpenGraphLocale,
-  localizePathname,
-} from '@luminol/localization';
 import type { Metadata } from 'next';
+
+import { buildPublicMetadata } from '../../../lib/public-metadata';
+import { publicSearch } from '../../../lib/public-seo';
 import Image from 'next/image';
+
+import { localizePathname } from '@luminol/localization';
 
 import { FounderGold } from '../../../components/founder-gold';
 import { FounderTraining } from '../../../components/founder-training';
@@ -20,6 +20,10 @@ import {
 } from '../../../lib/founder';
 import { illustrativePhotoCredit } from '../../../lib/people-photos';
 import { getRequestLocale } from '../../../lib/request-locale';
+import {
+  buildFounderJsonLd,
+  serializeJsonLd,
+} from '../../../lib/structured-data';
 import styles from './page.module.css';
 
 const contactLabels = {
@@ -30,33 +34,41 @@ const contactLabels = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const copy = founderCopy[locale];
-  const route = localizePathname(locale, founderPath);
-  return {
-    title: copy.name,
-    description: copy.intro,
-    alternates: {
-      canonical: route,
-      languages: buildLanguageAlternates(founderPath),
-    },
-    openGraph: {
-      title: copy.name,
-      description: copy.intro,
-      locale: getOpenGraphLocale(locale),
-      type: 'profile',
-      url: route,
-      images: [founderEditorialPortrait.src],
-    },
-  };
+  return buildPublicMetadata(
+    locale,
+    '/about/founder',
+    publicSearch['/about/founder'][locale],
+    { profileImage: founderEditorialPortrait.src },
+  );
 }
 
 export default async function FounderPage() {
   const locale = await getRequestLocale();
   const copy = founderCopy[locale];
   const journey = founderJourney[locale];
+  const { '@context': context, ...person } = buildFounderJsonLd({
+    name: copy.name,
+    description: copy.intro,
+    href: localizePathname(locale, founderPath),
+  });
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd({
+            '@context': context,
+            '@type': 'ProfilePage',
+            url: person.url,
+            mainEntity: {
+              ...person,
+              image: new URL(founderEditorialPortrait.src, person.url).href,
+              sameAs: [founderWebsite],
+            },
+          }),
+        }}
+      />
       <SiteHeader founderTheme />
       <main
         id="main-content"

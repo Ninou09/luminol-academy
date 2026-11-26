@@ -32,7 +32,7 @@ jobs:
           mapfile -t response_lines <<< "$response_meta"
 
           test "${response_lines[0]:-}" = '200'
-          grep --fixed-strings 'Grow with clarity.' "$RUNNER_TEMP/web-body.html"
+          grep --fixed-strings 'id="hero-title"' "$RUNNER_TEMP/web-body.html"
           grep --ignore-case --line-regexp 'nosniff' \
             <<< "${response_lines[1]:-}"
           grep --ignore-case --line-regexp 'DENY' \
