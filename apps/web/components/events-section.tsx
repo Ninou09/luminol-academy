@@ -81,7 +81,12 @@ export async function HomeEvents({ locale }: { locale: Locale }) {
         </a>
       </div>
       <div className={styles.scheduleGrid}>
-        <article className={styles.nextEvent}>
+        <article
+          className={styles.nextEvent}
+          data-upcoming-event={
+            next ? `${next.id ?? 'workshop'}:${next.date}` : ''
+          }
+        >
           {next && (
             <div
               className={styles.nextImage}

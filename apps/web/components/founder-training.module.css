@@ -36,3 +36,29 @@
     grid-template-columns: 1fr;
   }
 }
+
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: clamp(0.9rem, 2.5vw, 1.8rem);
+  align-items: center;
+  margin-block: clamp(0.85rem, 2.2vw, 1.6rem);
+  padding: clamp(0.85rem, 2.2vw, 1.6rem);
+}
+.teachingPhoto {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  aspect-ratio: 3 / 2;
+  border: 1px solid var(--founder-line, var(--color-brand-line));
+  border-radius: 0.9rem;
+}
+.teachingPhoto img {
+  object-fit: cover;
+  object-position: 55% center;
+}
+@media (max-width: 760px) {
+  .section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

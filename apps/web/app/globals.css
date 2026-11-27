@@ -1153,3 +1153,19 @@ main#main-content .form-grid textarea {
   --founder-gold: #f5d49a;
   --founder-gold-glow: rgb(232 180 95 / 0.29);
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-motion='full'] .enquiry-details[open] > :not(summary) {
+    animation: enquiry-details-arrive 180ms ease-out;
+  }
+}
+@keyframes enquiry-details-arrive {
+  from {
+    opacity: 0.65;
+    transform: translateY(-0.2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

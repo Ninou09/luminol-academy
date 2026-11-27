@@ -722,3 +722,89 @@
   padding-inline-start: 0.65rem;
   border-inline-start: 1px solid var(--founder-gold);
 }
+
+.details > section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.studyPhoto,
+.milestonePhoto {
+  position: relative;
+  flex: 1 0 auto;
+  overflow: hidden;
+  margin: 0.85rem 0 0;
+  border: 1px solid var(--founder-line);
+  border-radius: 0.85rem;
+  background: var(--founder-deep);
+}
+.milestonePhoto {
+  min-height: clamp(7rem, 12vw, 10rem);
+}
+.milestonePhoto img,
+.contactPhoto img,
+.editorialPortrait img {
+  object-fit: cover;
+}
+.milestonePhoto img {
+  object-position: center 62%;
+}
+.editorialPortrait,
+.contactPhoto {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--founder-line);
+  border-radius: 1rem;
+}
+.editorialPortrait {
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 72rem);
+  margin: 0 auto clamp(0.85rem, 2.2vw, 1.6rem);
+  aspect-ratio: 3 / 1;
+}
+.editorialPortrait img {
+  object-position: 74% 33%;
+}
+.signature {
+  position: absolute;
+  inset-block-end: clamp(0.65rem, 2vw, 1.25rem);
+  inset-inline-start: clamp(0.65rem, 2vw, 1.25rem);
+  max-width: calc(100% - 1.3rem);
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--founder-gold);
+  border-radius: 0.75rem;
+  background: var(--founder-deep);
+  direction: ltr;
+}
+.contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(0.85rem, 2.5vw, 1.8rem);
+}
+.contactCopy {
+  min-width: 0;
+}
+.contactPhoto {
+  min-height: 9.5rem;
+  aspect-ratio: 2.2 / 1;
+}
+.contactPhoto img {
+  object-position: 80% 30%;
+}
+@media (max-width: 760px) {
+  .milestonePhoto {
+    aspect-ratio: 2.65 / 1;
+  }
+  .contact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .editorialPortrait {
+    aspect-ratio: 4 / 5;
+  }
+  .editorialPortrait img {
+    object-position: center;
+  }
+}

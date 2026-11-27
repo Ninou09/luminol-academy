@@ -44,7 +44,7 @@ test('premium About storytelling preserves public landmarks and school pathways'
   await expect(gallery.locator('[aria-live="polite"]')).toHaveText('12 / 12');
   const founder = page.locator('[data-founder-authority]');
   await expect(
-    founder.locator('img[src*="founder-office-portrait.webp"]'),
+    founder.locator('img[src*="founder-portrait-window.webp"]'),
   ).toBeVisible();
   await expect(
     founder.getByRole('link', { name: 'Meet the founder' }),

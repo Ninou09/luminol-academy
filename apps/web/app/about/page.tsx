@@ -16,7 +16,8 @@ import { EditorialFilm } from '../../components/cinematic-backdrop';
 import { editorialFilms } from '../../lib/editorial-films';
 import { FounderJsonLd } from '../../components/founder-json-ld';
 import { TeamSection } from '../../components/events-section';
-import { founderPortrait, founderPath, founderCopy } from '../../lib/founder';
+import { founderPath, founderCopy } from '../../lib/founder';
+import { founderPhotoCredit, founderPhotos } from '../../lib/founder-photos';
 import { PhotoMosaic } from '../../components/photo-mosaic';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
@@ -254,7 +255,10 @@ export default async function AboutPage() {
         >
           <div className={styles.founderFeature} data-founder-theme>
             <div className={styles.founderFeatureCopy}>
-              <p className={styles.eyebrow}>{founderAuthority.eyebrow}</p>
+              <div className={styles.founderHeading}>
+                <p className={styles.eyebrow}>{founderAuthority.eyebrow}</p>
+                <FounderGold className={styles.founderAccent} ornate />
+              </div>
               <h2 id="founder-authority-title">{founderCopy[locale].name}</h2>
               <p>{founderAuthority.body}</p>
               <div className={styles.founderFacts}>
@@ -285,15 +289,15 @@ export default async function AboutPage() {
               </div>
             </div>
             <div className={styles.founderPhotoPanel}>
-              <FounderGold className={styles.founderAccent} ornate />
               <div
                 className={styles.founderFeaturePhoto}
-                data-media-source={founderPortrait.source}
+                data-media-source={founderPhotoCredit.source}
+                data-media-license={founderPhotoCredit.license}
                 data-media-crop="center-30"
               >
                 <Image
-                  src={founderPortrait.src}
-                  alt={founderCopy[locale].name}
+                  src={founderPhotos.window.src}
+                  alt={founderPhotos.window.alt[locale]}
                   fill
                   sizes="(max-width: 720px) 64vw, 320px"
                 />

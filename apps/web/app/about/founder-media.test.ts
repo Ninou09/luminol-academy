@@ -11,7 +11,13 @@ describe('About founder media governance', () => {
 
     expect(source).not.toContain('/media/founder-kheddaoui-fettouma.webp');
     expect(source).not.toContain('data-founder-media');
-    expect(source).toContain('src={founderPortrait.src}');
+    expect(source).toContain('src={founderPhotos.window.src}');
+    expect(source).toContain('data-media-source={founderPhotoCredit.source}');
+    const profile = await readFile(
+      new URL('./founder/page.tsx', import.meta.url),
+      'utf8',
+    );
+    expect(profile).toContain('src={founderEditorialPortrait.src}');
     expect(source).toContain('<EditorialFilm');
     expect(source).toContain('film={editorialFilms.about}');
   });

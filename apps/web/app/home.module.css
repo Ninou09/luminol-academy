@@ -1280,3 +1280,21 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    :global(html[data-motion='full']) .approachSteps {
+      animation: approach-arrive linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 75%;
+    }
+  }
+}
+@keyframes approach-arrive {
+  from {
+    transform: translateY(0.65rem);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
