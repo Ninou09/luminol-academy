@@ -11,7 +11,7 @@ describe('About founder media governance', () => {
 
     expect(source).not.toContain('/media/founder-kheddaoui-fettouma.webp');
     expect(source).not.toContain('data-founder-media');
-    expect(source).toContain('src={founderEditorialPortrait.src}');
+    expect(source).toContain('src={founderPortrait.src}');
     expect(source).toContain('<EditorialFilm');
     expect(source).toContain('film={editorialFilms.about}');
   });

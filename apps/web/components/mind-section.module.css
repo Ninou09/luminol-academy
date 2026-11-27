@@ -130,3 +130,23 @@
     cursor: crosshair;
   }
 }
+
+.stage {
+  padding: clamp(0.85rem, 2.35vw, 1.6rem);
+}
+.visual {
+  height: min(100%, 17rem);
+  min-height: 13rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--color-school-languages) 22%, transparent),
+    transparent 68%
+  );
+}
+@media (max-width: 620px) {
+  .visual {
+    height: 12.5rem;
+    min-height: 0;
+  }
+}

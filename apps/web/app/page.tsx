@@ -23,7 +23,7 @@ import { getPublicCopy } from '../lib/public-localization';
 import { getRequestLocale } from '../lib/request-locale';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
-import { EventsSection } from '../components/events-section';
+import { HomeEvents } from '../components/events-section';
 import { PhotoBand } from '../components/live-photo';
 import {
   homeSchoolPhotos,
@@ -186,9 +186,17 @@ export default async function Page() {
               </Link>
             </div>
           </div>
+          <ul className={styles.approachSteps}>
+            {copy.principles.map((principle) => (
+              <li key={principle.title}>
+                <h3>{principle.title}</h3>
+                <p>{principle.text}</p>
+              </li>
+            ))}
+          </ul>
         </section>
 
-        <EventsSection locale={locale} />
+        <HomeEvents locale={locale} />
 
         <PhotoBand
           photo={peoplePhotos.academyLecture}

@@ -350,7 +350,7 @@ export function createMindScene(
       camera.aspect < 0.8 ? 9.5 : camera.aspect < 1.2 ? 7.4 : 6.2;
     // On wide screens the brain sits right of the introduction text.
     brainOffsetX = !options.compact && camera.aspect > 1.2 ? 0.95 : 0;
-    if (options.compact) camera.position.z = camera.aspect < 0.9 ? 7.5 : 5.6;
+    if (options.compact) camera.position.z = camera.aspect < 0.9 ? 7.3 : 5.15;
     camera.updateProjectionMatrix();
   };
   const observer = new ResizeObserver(resize);

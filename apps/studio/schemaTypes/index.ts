@@ -420,8 +420,68 @@ const testimonial = defineType({
   ],
 });
 
+const academyEvent = defineType({
+  name: 'academyEvent',
+  title: 'Public event',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'title',
+      title: 'Event title',
+      type: 'object',
+      validation: (rule) => rule.required(),
+      fields: languageOptions.map(({ title, value }) =>
+        defineField({
+          name: value,
+          title,
+          type: 'string',
+          validation: (rule) => rule.required().min(3).max(160),
+        }),
+      ),
+    }),
+    defineField({
+      name: 'slug',
+      type: 'slug',
+      options: { source: 'title.en', maxLength: 96 },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'date',
+      title: 'Scheduled date in Algeria',
+      type: 'date',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'endsAt',
+      title: 'End time',
+      description:
+        'Optional. Without an end time, the event moves to the archive after its scheduled date in Algeria.',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'venue',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Blida', value: 'blida' },
+          { title: 'Online · Zoom', value: 'zoom' },
+        ],
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'active',
+      title: 'Visible on the public website',
+      type: 'boolean',
+      initialValue: false,
+    }),
+  ],
+  preview: { select: { title: 'title.en', subtitle: 'date' } },
+});
+
 export const schemaTypes: SchemaTypeDefinition[] = [
   programme,
+  academyEvent,
   siteSettings,
   teamMember,
   testimonial,

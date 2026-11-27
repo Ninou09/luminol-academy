@@ -10,15 +10,13 @@ import type { Metadata } from 'next';
 import { buildPublicMetadata } from '../../lib/public-metadata';
 import { publicSearch } from '../../lib/public-seo';
 
+import { FounderGold } from '../../components/founder-gold';
+import { GlassIcon } from '../../components/glass-icon';
 import { EditorialFilm } from '../../components/cinematic-backdrop';
 import { editorialFilms } from '../../lib/editorial-films';
 import { FounderJsonLd } from '../../components/founder-json-ld';
 import { TeamSection } from '../../components/events-section';
-import {
-  founderEditorialPortrait,
-  founderPath,
-  founderCopy,
-} from '../../lib/founder';
+import { founderPortrait, founderPath, founderCopy } from '../../lib/founder';
 import { PhotoMosaic } from '../../components/photo-mosaic';
 import { SiteFooter, SiteHeader } from '../../components/site-shell';
 import { getPublicCopy } from '../../lib/public-localization';
@@ -27,10 +25,19 @@ import styles from './page.module.css';
 import Image from 'next/image';
 import {
   aboutPhotos,
+  illustrativePhotoCredit,
+  momentPhotos,
   editorialPhotos,
   extraPhotos,
   peoplePhotos,
 } from '../../lib/people-photos';
+
+const valueIcons = [
+  'value-depth',
+  'value-warmth',
+  'value-progress',
+  'value-connected',
+] as const;
 
 const founderNameByLocale = {
   en: 'Kheddaoui Fettouma',
@@ -246,53 +253,56 @@ export default async function AboutPage() {
           data-founder-authority
         >
           <div className={styles.founderFeature} data-founder-theme>
-            <div className={styles.founderFeatureCopy} data-reveal>
+            <div className={styles.founderFeatureCopy}>
               <p className={styles.eyebrow}>{founderAuthority.eyebrow}</p>
               <h2 id="founder-authority-title">{founderCopy[locale].name}</h2>
               <p>{founderAuthority.body}</p>
-              <ButtonLink
-                href={localizeHref(locale, founderPath)}
-                variant="secondary"
-              >
-                {
+              <div className={styles.founderFacts}>
+                {founderAuthority.facts.slice(1).map((fact) => (
+                  <div key={fact.title}>
+                    <h3>{fact.title}</h3>
+                    <p>{fact.description}</p>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.founderActions}>
+                <ButtonLink href={localizeHref(locale, founderPath)}>
                   {
-                    en: 'Meet the founder',
-                    fr: 'Découvrir la fondatrice',
-                    ar: 'تعرّف على المؤسسة',
-                  }[locale]
-                }
-                <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
-              </ButtonLink>
+                    {
+                      en: 'Meet the founder',
+                      fr: 'Découvrir la fondatrice',
+                      ar: 'تعرّف على المؤسسة',
+                    }[locale]
+                  }
+                  <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
+                </ButtonLink>
+                <ButtonLink
+                  href={localizeHref(locale, '/consultations')}
+                  variant="secondary"
+                >
+                  {founderAuthority.action}
+                </ButtonLink>
+              </div>
             </div>
-            <div
-              className={styles.founderFeaturePhoto}
-              data-media-source={founderEditorialPortrait.source}
-            >
-              <Image
-                src={founderEditorialPortrait.src}
-                alt={founderCopy[locale].name}
-                fill
-                sizes="(max-width: 720px) 90vw, 43vw"
-              />
-            </div>
-          </div>
-          <div className={styles.valueGrid}>
-            {founderAuthority.facts.map((fact) => (
-              <article
-                className={styles.valueCard}
-                key={`${fact.number}-${fact.title}`}
-                data-reveal
+            <div className={styles.founderPhotoPanel}>
+              <FounderGold className={styles.founderAccent} ornate />
+              <div
+                className={styles.founderFeaturePhoto}
+                data-media-source={founderPortrait.source}
+                data-media-crop="center-30"
               >
-                <span>{fact.number}</span>
-                <h3>{fact.title}</h3>
-                <p>{fact.description}</p>
-              </article>
-            ))}
-          </div>
-          <div style={{ marginTop: '2rem' }} data-reveal>
-            <ButtonLink href={localizeHref(locale, '/consultations')} size="lg">
-              {founderAuthority.action} <span aria-hidden="true">→</span>
-            </ButtonLink>
+                <Image
+                  src={founderPortrait.src}
+                  alt={founderCopy[locale].name}
+                  fill
+                  sizes="(max-width: 720px) 64vw, 320px"
+                />
+              </div>
+              <div className={styles.founderExperience}>
+                <bdi>{founderAuthority.facts[0].number}</bdi>
+                <span>{founderAuthority.facts[0].title}</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -344,7 +354,7 @@ export default async function AboutPage() {
             <p>{copy.valuesBody}</p>
           </div>
           <div className={styles.valueGrid}>
-            {copy.values.map((value) => {
+            {copy.values.map((value, index) => {
               const valueTitleId = `about-value-${value.number}-title`;
 
               return (
@@ -355,7 +365,7 @@ export default async function AboutPage() {
                   data-value-card
                   data-reveal
                 >
-                  <span>{value.number}</span>
+                  <GlassIcon name={valueIcons[index]!} size="sm" />
                   <h3 id={valueTitleId}>{value.title}</h3>
                   <p>{value.description}</p>
                 </article>
@@ -368,7 +378,7 @@ export default async function AboutPage() {
           className={styles.schoolGuide}
           aria-labelledby="school-guide-title"
         >
-          <h2 id="school-guide-title">
+          <h2 id="school-guide-title" data-no-split>
             {getPublicCopy(locale).site.nav.schools}
           </h2>
           <ButtonLink
@@ -386,21 +396,34 @@ export default async function AboutPage() {
           </ButtonLink>
         </aside>
 
-        <section
-          className={styles.cta}
-          aria-labelledby="about-cta-title"
-          data-reveal
-        >
+        <section className={styles.cta} aria-labelledby="about-cta-title">
           <div className={styles.ctaText}>
             <p className={`${styles.eyebrow} ${styles.eyebrowLight}`}>
               {copy.ctaEyebrow}
             </p>
-            <h2 id="about-cta-title">{copy.ctaTitle}</h2>
+            <h2 id="about-cta-title" data-no-split>
+              {copy.ctaTitle}
+            </h2>
             <p>{copy.ctaBody}</p>
+            <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
+              {copy.ctaAction}{' '}
+              <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
+            </ButtonLink>
           </div>
-          <ButtonLink href={localizeHref(locale, '/contact')} size="lg">
-            {copy.ctaAction} <span aria-hidden="true">→</span>
-          </ButtonLink>
+          <figure
+            className={styles.ctaMedia}
+            data-no-reveal
+            data-media-source={illustrativePhotoCredit.source}
+            data-media-license={illustrativePhotoCredit.license}
+            data-media-crop="center-center"
+          >
+            <Image
+              src={momentPhotos.onlineCourseFlatlay.src}
+              alt={momentPhotos.onlineCourseFlatlay.alt[locale]}
+              fill
+              sizes="(max-width: 720px) 94vw, 38vw"
+            />
+          </figure>
         </section>
       </main>
       <SiteFooter />

@@ -223,43 +223,70 @@
   width: min(calc(100% - 2 * var(--luminol-page-gutter)), 84rem);
   margin-inline: auto;
 }
-.storiesBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.65rem;
-  padding-block: 0.4rem 0.8rem;
-}
-.storiesBar h2 {
-  margin: 0;
+.storiesTitle {
+  margin: 0 0 0.8rem;
   font: 500 clamp(1.65rem, 3vw, 2.45rem)/1.15 var(--font-display);
 }
-.storyControls {
-  display: flex;
-  gap: 0.5rem;
+.storyFrame {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.4rem, 1vw, 0.8rem);
 }
-.storyControls button {
+.storyFrame button {
+  z-index: 1;
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: clamp(2.75rem, 4vw, 3.5rem);
+  aspect-ratio: 1;
   padding: 0;
-  border: 1px solid var(--color-brand-line);
+  border: 1px solid var(--color-brand-gold-strong);
   border-radius: 50%;
   background: var(--color-brand-night);
-  color: var(--color-brand-ink);
+  color: var(--color-brand-surface);
+  font-size: 1.65rem;
+  line-height: 1;
   cursor: pointer;
-  transition:
-    border-color 180ms,
-    background 180ms;
 }
-.storyControls button:disabled {
-  opacity: 0.42;
+.storyFrame button:disabled {
+  opacity: 0.55;
   cursor: default;
 }
-.storyControls button:enabled:hover {
-  border-color: var(--color-brand-gold-strong);
+.storyFrame button:enabled:hover {
   color: var(--color-brand-gold-strong);
+  box-shadow: var(--luminol-glow);
+}
+.storyFrame button:focus-visible {
+  outline: 2px solid var(--color-brand-gold-strong);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :global(html[data-motion='full']) .storyFrame button {
+    transition:
+      scale 220ms var(--luminol-ease-out, ease),
+      box-shadow 220ms ease;
+  }
+  :global(html[data-motion='full'])
+    .storyFrame
+    button:enabled:is(:hover, :focus-visible) {
+    scale: 1.1;
+  }
+}
+@media (max-width: 580px) {
+  .storyFrame {
+    display: block;
+  }
+  .storyFrame button {
+    position: absolute;
+    inset-block-start: clamp(2.25rem, 14vw, 5rem);
+  }
+  .storyPrevious {
+    inset-inline-start: 0.35rem;
+  }
+  .storyNext {
+    inset-inline-end: 0.35rem;
+  }
 }
 .storyTrack {
   --story-gap: clamp(0.75rem, 2vw, 1.2rem);

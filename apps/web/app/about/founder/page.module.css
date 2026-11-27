@@ -703,3 +703,22 @@
     display: none;
   }
 }
+
+.details {
+  align-items: stretch;
+  gap: 0.85rem;
+  margin-block: clamp(0.9rem, 2vw, 1.55rem);
+}
+.page .details > section {
+  padding: clamp(0.85rem, 2.2vw, 1.6rem);
+}
+.studyPhoto {
+  aspect-ratio: 2 / 1;
+  margin-block-start: 0.85rem;
+}
+.timeline {
+  position: relative;
+  margin-block-start: 0.75rem;
+  padding-inline-start: 0.65rem;
+  border-inline-start: 1px solid var(--founder-gold);
+}

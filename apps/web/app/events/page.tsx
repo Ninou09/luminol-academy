@@ -10,6 +10,7 @@ import { PhotoCard } from '../../components/live-photo';
 import { SiteHeader, SiteFooter } from '../../components/site-shell';
 import { editorialPhotos, newEditorialPhotos } from '../../lib/people-photos';
 import { getRequestLocale } from '../../lib/request-locale';
+import { getEventSchedule } from '../../lib/public-events';
 import { getUpcomingWorkshops } from '../../lib/workshop-plan';
 import { WorkshopAgenda } from './agenda';
 import styles from './page.module.css';
@@ -53,7 +54,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function EventsArchive() {
   const locale = await getRequestLocale();
   const text = copy[locale];
-  const workshops = getUpcomingWorkshops();
+  const now = new Date();
+  const workshops = getUpcomingWorkshops(now);
+  const schedule = await getEventSchedule(now);
   return (
     <>
       <SiteHeader />
@@ -82,7 +85,7 @@ export default async function EventsArchive() {
             priority
           />
         </section>
-        <EventsSection locale={locale} archive />
+        <EventsSection locale={locale} schedule={schedule} />
         <WorkshopAgenda locale={locale} workshops={workshops} />
         <section
           className={styles.settings}

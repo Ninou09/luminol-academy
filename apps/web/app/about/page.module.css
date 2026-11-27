@@ -747,3 +747,187 @@
 .page .originCopy p + p {
   margin-block-start: 0.65rem;
 }
+
+.page .founderFeature {
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(0.7rem, 2.4vw, 1.8rem);
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 82% 12%, var(--founder-light), transparent 55%),
+    linear-gradient(125deg, var(--founder-panel), var(--founder-deep) 80%);
+}
+.page .founderFeatureCopy {
+  padding: clamp(1.25rem, 3vw, 2.6rem);
+}
+.page .founderFeatureCopy .eyebrow {
+  color: var(--founder-gold);
+}
+.founderFacts {
+  display: grid;
+  gap: 0.55rem;
+  margin-block: 1rem;
+}
+.founderFacts > div {
+  padding: 0.65rem 0.85rem;
+  border-inline-start: 2px solid var(--founder-gold);
+  border-radius: 0.55rem;
+  background: var(--founder-tint);
+}
+.founderFacts h3,
+.founderFacts p {
+  margin: 0;
+  color: var(--founder-ink);
+}
+.founderFacts p {
+  margin-block-start: 0.2rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+.founderActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.founderActions a {
+  max-width: 100%;
+  text-align: center;
+}
+.page .founderFeature .founderActions a:first-child {
+  background: var(--founder-gold);
+  color: var(--founder-deep);
+  box-shadow: 0 0.75rem 1.5rem -0.9rem var(--founder-gold);
+}
+.founderPhotoPanel {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  justify-items: center;
+  align-items: end;
+  min-width: 0;
+  padding: clamp(0.9rem, 4vw, 2.6rem);
+}
+.page .founderFeaturePhoto {
+  grid-area: 1 / 1;
+  width: min(100%, 19rem);
+  min-height: 0;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border: 1px solid var(--founder-gold-glow);
+  border-radius: 48% 48% 1.4rem 1.4rem / 35% 35% 1.4rem 1.4rem;
+  background: var(--founder-panel);
+}
+.founderFeaturePhoto img {
+  object-position: 50% 30%;
+}
+.founderAccent {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 80%;
+  pointer-events: none;
+}
+.founderExperience {
+  z-index: 1;
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  max-width: 100%;
+  margin-block-end: 0.75rem;
+  padding: 0.38rem 0.6rem;
+  border: 1px solid var(--founder-gold-glow);
+  border-radius: 0.75rem;
+  background: var(--founder-deep);
+  color: var(--founder-ink);
+  font-size: 0.8rem;
+}
+.founderExperience bdi {
+  color: var(--founder-gold);
+  font: 500 1.65rem/1 var(--font-display);
+}
+
+.valueGrid {
+  gap: 0.65rem;
+  border: 0;
+}
+.page .valueCard {
+  position: relative;
+  display: grid;
+  align-content: start;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.3rem 0.7rem;
+  padding: clamp(0.7rem, 2vw, 1.2rem);
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--luminol-media-radius);
+  background: linear-gradient(
+    125deg,
+    var(--color-school-languages-soft),
+    var(--color-brand-night)
+  );
+}
+.page .valueCard > [data-glass-icon] {
+  grid-row: span 2;
+  width: clamp(2.3rem, 5vw, 4rem);
+}
+.page .valueCard h3 {
+  margin: 0;
+  font-size: clamp(1.3rem, 2.4vw, 2.05rem);
+  line-height: 1.14;
+}
+.page .valueCard p {
+  grid-column: 2;
+  line-height: 1.5;
+}
+.page .cta {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(0.75rem, 2.4vw, 1.75rem);
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 82rem);
+  margin: 1rem auto clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1rem, 3vw, 2.2rem);
+  overflow: hidden;
+  border: 1px solid var(--color-brand-line);
+  border-radius: var(--luminol-media-radius);
+  background: linear-gradient(
+    135deg,
+    var(--color-school-languages-soft),
+    var(--color-brand-night)
+  );
+}
+.page .cta h2 {
+  margin-block: 0.35rem 0.6rem;
+  font-size: clamp(1.8rem, 3.6vw, 3.35rem);
+}
+.ctaText > a {
+  margin-block-start: 0.8rem;
+}
+.ctaMedia {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  aspect-ratio: 1.8;
+  overflow: hidden;
+  border: 1px solid var(--color-brand-line);
+  border-radius: 1rem;
+}
+.ctaMedia img {
+  object-fit: cover;
+}
+@media (max-width: 760px) {
+  .page .founderFeature,
+  .page .cta {
+    grid-template-columns: 1fr;
+  }
+  .page .founderFeaturePhoto {
+    width: min(72%, 13rem);
+    aspect-ratio: 4 / 5;
+  }
+  .founderPhotoPanel {
+    padding-block-start: 0;
+  }
+  .founderAccent {
+    height: 100%;
+  }
+}

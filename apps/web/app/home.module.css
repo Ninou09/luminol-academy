@@ -1241,3 +1241,42 @@
 .page[data-cosmos] section[aria-labelledby='events-title'] {
   padding: clamp(1rem, 3vw, 2.35rem);
 }
+
+.page[data-cosmos] .approach {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(0.85rem, 3vw, 2.4rem);
+  margin-block-start: clamp(0.75rem, 2vw, 1.65rem);
+  padding: clamp(1rem, 2.7vw, 2.2rem);
+}
+.approachIntro h2 {
+  font-size: clamp(1.9rem, 3.5vw, 3.5rem);
+}
+.approachSteps {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.approachSteps li {
+  padding: 0.65rem 0.8rem;
+  border-inline-start: 2px solid var(--color-brand-gold-strong);
+  border-radius: 0.55rem;
+  background: color-mix(in srgb, var(--color-brand-night) 78%, transparent);
+}
+.approachSteps h3 {
+  margin: 0;
+  font-size: 0.97rem;
+}
+.approachSteps p {
+  margin: 0.18rem 0 0;
+  color: var(--color-brand-ink-soft);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+@media (max-width: 760px) {
+  .page[data-cosmos] .approach {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

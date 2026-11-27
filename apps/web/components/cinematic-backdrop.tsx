@@ -79,6 +79,13 @@ function LoopVideo({
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (editorial || !allowMotion || !visible || userPaused || !video) return;
+    video.muted = true;
+    void video.play().catch(() => setPlaying(false));
+  }, [allowMotion, editorial, userPaused, visible]);
+
   function togglePlayback() {
     const video = videoRef.current;
     if (!video) return;
@@ -99,7 +106,7 @@ function LoopVideo({
             muted
             playsInline
             loop
-            preload="none"
+            preload={editorial ? 'none' : 'metadata'}
             aria-hidden="true"
             onLoadStart={() => setPlaying(false)}
             onPlaying={(event) => {

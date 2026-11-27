@@ -63,39 +63,41 @@ export function StoryRail({
 
   return (
     <section className={styles.stories} aria-labelledby="journal-stories-title">
-      <div className={styles.storiesBar}>
-        <h2 id="journal-stories-title">{title}</h2>
-        <div className={styles.storyControls}>
-          <button
-            type="button"
-            aria-label={previous}
-            aria-controls="journal-stories"
-            disabled={edges.start}
-            onClick={() => move(-1)}
-          >
-            <span aria-hidden="true">{rtl ? '→' : '←'}</span>
-          </button>
-          <button
-            type="button"
-            aria-label={next}
-            aria-controls="journal-stories"
-            disabled={edges.end}
-            onClick={() => move(1)}
-          >
-            <span aria-hidden="true">{rtl ? '←' : '→'}</span>
-          </button>
-        </div>
+      <h2 id="journal-stories-title" className={styles.storiesTitle}>
+        {title}
+      </h2>
+      <div className={styles.storyFrame}>
+        <button
+          type="button"
+          className={styles.storyPrevious}
+          aria-label={previous}
+          aria-controls="journal-stories"
+          disabled={edges.start}
+          onClick={() => move(-1)}
+        >
+          <span aria-hidden="true">{rtl ? '→' : '←'}</span>
+        </button>
+        <ul
+          ref={track}
+          tabIndex={0}
+          id="journal-stories"
+          aria-label={title}
+          className={styles.storyTrack}
+          data-lenis-prevent-horizontal
+        >
+          {children}
+        </ul>
+        <button
+          type="button"
+          className={styles.storyNext}
+          aria-label={next}
+          aria-controls="journal-stories"
+          disabled={edges.end}
+          onClick={() => move(1)}
+        >
+          <span aria-hidden="true">{rtl ? '←' : '→'}</span>
+        </button>
       </div>
-      <ul
-        ref={track}
-        tabIndex={0}
-        id="journal-stories"
-        aria-label={title}
-        className={styles.storyTrack}
-        data-lenis-prevent-horizontal
-      >
-        {children}
-      </ul>
     </section>
   );
 }

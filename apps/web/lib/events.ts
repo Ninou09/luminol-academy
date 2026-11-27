@@ -43,14 +43,16 @@ export const familyAfterTrauma: LuminolEvent = {
   pageHref: '/workshops/family-after-trauma',
 };
 
-const algeriaDay = new Intl.DateTimeFormat('en-CA', {
+export const algeriaDay = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Africa/Algiers',
   year: 'numeric',
   month: '2-digit',
   day: '2-digit',
 });
 
-export function hasEventEnded(event: LuminolEvent, now = new Date()) {
+export function hasEventEnded<
+  T extends Pick<LuminolEvent, 'date' | 'secondDate' | 'endsAt'>,
+>(event: T, now = new Date()) {
   if (event.endsAt) return now.getTime() >= Date.parse(event.endsAt);
   const lastDay = event.secondDate ?? event.date;
   return lastDay !== null && lastDay < algeriaDay.format(now);

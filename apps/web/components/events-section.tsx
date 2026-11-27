@@ -2,16 +2,10 @@ import { localizeHref, type Locale } from '@luminol/localization';
 import Image from 'next/image';
 
 import { editorialPhotos, illustrativePhotoCredit } from '../lib/people-photos';
-import { getUpcomingWorkshops } from '../lib/workshop-plan';
 import { channelCopy, getWhatsAppHref } from '../lib/contact-channels';
-import {
-  eventsCopy,
-  getUpcomingEvents,
-  hasEventEnded,
-  luminolEvents,
-  psychologyTeam,
-  type LuminolEvent,
-} from '../lib/events';
+import { eventsCopy, psychologyTeam } from '../lib/events';
+import { getEventSchedule } from '../lib/public-events';
+import { EventScheduleRefresh } from './event-schedule-refresh';
 import styles from './events-section.module.css';
 
 const dateLocale: Record<Locale, string> = {
@@ -23,66 +17,158 @@ const dateLocale: Record<Locale, string> = {
 const previewCopy = {
   en: {
     proposed: 'Next proposed workshop',
+    confirmed: 'Next scheduled event',
+    none: 'A new date will be announced here.',
+    calendar: 'All events and workshops',
     schedule: 'See the workshop calendar',
     blida: 'Blida',
     zoom: 'Online · Zoom',
   },
   fr: {
     proposed: 'Prochain atelier prévisionnel',
+    confirmed: 'Prochain événement confirmé',
+    none: 'Une nouvelle date sera annoncée ici.',
+    calendar: 'Tous les événements et ateliers',
     schedule: 'Voir le calendrier des ateliers',
     blida: 'Blida',
     zoom: 'En ligne · Zoom',
   },
   ar: {
     proposed: 'الورشة المقترحة القادمة',
+    confirmed: 'الفعالية المؤكدة القادمة',
+    none: 'سيُعلَن الموعد الجديد هنا.',
+    calendar: 'كل الفعاليات والورش',
     schedule: 'عرض تقويم الورش',
     blida: 'البليدة',
     zoom: 'عبر الإنترنت · Zoom',
   },
 } as const;
 
-function parts(iso: string, locale: Locale) {
-  const date = new Date(`${iso}T12:00:00+01:00`);
-  const fmt = (options: Intl.DateTimeFormatOptions) =>
-    new Intl.DateTimeFormat(dateLocale[locale], {
-      timeZone: 'Africa/Algiers',
-      ...options,
-    }).format(date);
-  return {
-    day: fmt({ day: 'numeric' }),
-    month: fmt({ month: 'short' }),
-    full: fmt({ day: 'numeric', month: 'long', year: 'numeric' }),
-  };
+function formatDate(iso: string, locale: Locale) {
+  return new Intl.DateTimeFormat(dateLocale[locale], {
+    timeZone: 'Africa/Algiers',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(`${iso}T12:00:00+01:00`));
 }
 
-function presenterNames(event: LuminolEvent, locale: Locale) {
-  return event.presenters
-    .map(
-      (id) => psychologyTeam.find((member) => member.id === id)?.name[locale],
-    )
-    .filter(Boolean)
-    .join(' · ');
+type Schedule = Awaited<ReturnType<typeof getEventSchedule>>;
+
+export async function HomeEvents({ locale }: { locale: Locale }) {
+  const { next, recent, daysUntil } = await getEventSchedule();
+  const copy = eventsCopy[locale];
+  const text = previewCopy[locale];
+  const direction = locale === 'ar' ? '←' : '→';
+  const calendar = localizeHref(locale, '/events');
+  return (
+    <section
+      id="home-events"
+      className={styles.section}
+      data-home-events
+      aria-labelledby="events-title"
+    >
+      <EventScheduleRefresh />
+      <div className={styles.scheduleHeading}>
+        <div>
+          <p className={styles.eyebrow}>{copy.eyebrow}</p>
+          <h2 id="events-title" data-no-split>
+            {copy.title}
+          </h2>
+        </div>
+        <a className={styles.scheduleLink} href={calendar}>
+          {text.calendar} <span aria-hidden="true">{direction}</span>
+        </a>
+      </div>
+      <div className={styles.scheduleGrid}>
+        <article className={styles.nextEvent}>
+          {next && (
+            <div
+              className={styles.nextImage}
+              data-media-source={illustrativePhotoCredit.source}
+              data-media-license={illustrativePhotoCredit.license}
+              data-media-crop="center-center"
+            >
+              <Image
+                src={editorialPhotos.homework.src}
+                alt=""
+                fill
+                sizes="(max-width: 560px) 90vw, 260px"
+              />
+            </div>
+          )}
+          <div className={styles.nextCopy}>
+            <p className={styles.eyebrow}>
+              {next
+                ? next.id
+                  ? text.confirmed
+                  : text.proposed
+                : copy.upcoming}
+            </p>
+            {daysUntil !== null && (
+              <p className={styles.eventCountdown}>
+                {new Intl.RelativeTimeFormat(dateLocale[locale], {
+                  numeric: 'auto',
+                }).format(daysUntil, 'day')}
+              </p>
+            )}
+            {next ? (
+              <>
+                <h3 dir="auto">{next.title[locale]}</h3>
+                <p>
+                  <time dateTime={next.date}>
+                    {formatDate(next.date, locale)}
+                  </time>{' '}
+                  · {text[next.venue]}
+                </p>
+                <a
+                  className={styles.scheduleLink}
+                  href={`${calendar}#${next.id ? `event-${next.id}` : 'upcoming-workshops'}`}
+                >
+                  {copy.details} <span aria-hidden="true">{direction}</span>
+                </a>
+              </>
+            ) : (
+              <p>{text.none}</p>
+            )}
+          </div>
+        </article>
+        {recent.length > 0 && (
+          <div className={styles.latestEvents}>
+            <h3>{copy.past}</h3>
+            <ol>
+              {recent.slice(0, 2).map((event) => {
+                const date = event.secondDate ?? event.date!;
+                const href = event.pageHref
+                  ? localizeHref(locale, event.pageHref)
+                  : `${calendar}#event-${event.id}`;
+                return (
+                  <li key={event.id}>
+                    <time dateTime={date}>{formatDate(date, locale)}</time>
+                    <a href={href} dir="auto">
+                      {event.title[locale]}{' '}
+                      <span aria-hidden="true">{direction}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
 
-/** Upcoming and recent Luminol sessions, from the academy's own records. */
 export function EventsSection({
   locale,
-  archive = false,
+  schedule,
 }: {
   locale: Locale;
-  archive?: boolean;
+  schedule: Schedule;
 }) {
+  const { confirmed, recent } = schedule;
   const copy = eventsCopy[locale];
-  const now = new Date();
-  const nextWorkshop = archive ? undefined : getUpcomingWorkshops(now)[0];
-  const upcoming = getUpcomingEvents(now);
-  const endTime = (event: LuminolEvent) =>
-    Date.parse(
-      event.endsAt ?? `${event.secondDate ?? event.date}T23:59:59.999+01:00`,
-    );
-  const past = luminolEvents
-    .filter((event) => hasEventEnded(event, now))
-    .sort((a, b) => endTime(b) - endTime(a));
   const askHref =
     getWhatsAppHref(channelCopy[locale].whatsappMessage) ??
     localizeHref(locale, '/contact');
@@ -90,219 +176,69 @@ export function EventsSection({
   return (
     <section
       className={styles.section}
-      aria-labelledby={archive ? 'events-recent' : 'events-title'}
-      data-events-archive={archive || undefined}
-      data-home-events={!archive || undefined}
+      aria-labelledby="events-recent"
+      data-events-archive
     >
-      {!archive ? (
-        <div className={styles.heading} data-reveal>
-          <p className={styles.eyebrow}>{copy.eyebrow}</p>
-          <h2 id="events-title" data-no-split>
-            {copy.title}
-          </h2>
-          <p>{copy.intro}</p>
-        </div>
-      ) : null}
-
-      <div className={archive ? undefined : styles.homeProgramme}>
-        <div className={archive ? undefined : styles.recentPanel}>
-          {archive ? (
-            <h2 id="events-recent" className={styles.groupTitle} data-no-split>
-              {copy.past}
-            </h2>
-          ) : (
-            <h3 className={styles.groupTitle}>{copy.past}</h3>
-          )}
-          <ol className={styles.past}>
-            {(archive ? past : past.slice(0, 3)).map((event) => {
-              const lastDate = event.secondDate ?? event.date!;
-              const date = parts(lastDate, locale);
-              return (
-                <li key={event.id}>
-                  <time dateTime={lastDate}>{date.full}</time>
-                  <div>
-                    <strong dir="auto">{event.title[locale]}</strong>
-                    <span>
-                      {copy.with} {presenterNames(event, locale)}
-                    </span>
-                  </div>
-                  {event.pageHref ? (
-                    <a href={localizeHref(locale, event.pageHref)}>
-                      {copy.details} <span aria-hidden="true">→</span>
-                    </a>
-                  ) : event.recording ? (
-                    <a href={askHref} target="_blank" rel="noopener">
-                      {copy.recording} · {copy.askRecording}
-                    </a>
-                  ) : (
-                    <span />
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-          {!archive && (
-            <a
-              className={styles.calendar}
-              href={localizeHref(locale, '/events')}
-            >
-              {
-                {
-                  ar: 'كل الفعاليات والورش',
-                  fr: 'Tous les événements et ateliers',
-                  en: 'All events and workshops',
-                }[locale]
-              }{' '}
-              →
-            </a>
-          )}
-        </div>
-        {!archive && nextWorkshop ? (
-          <aside
-            className={styles.workshopPreview}
-            aria-labelledby="home-workshop-title"
-          >
-            <figure
-              className={styles.previewPhoto}
-              data-media-source={illustrativePhotoCredit.source}
-              data-media-license={illustrativePhotoCredit.license}
-            >
-              <Image
-                src={editorialPhotos.homework.src}
-                alt={editorialPhotos.homework.alt[locale]}
-                fill
-                sizes="(max-width: 760px) 92vw, 36vw"
-              />
-              <figcaption className="scene-caption">
-                {illustrativePhotoCredit.label[locale]}
-              </figcaption>
-            </figure>
-            <div className={styles.previewCopy}>
-              <p className={styles.previewLabel}>
-                {previewCopy[locale].proposed}
-              </p>
-              <h3 id="home-workshop-title">{nextWorkshop.title[locale]}</h3>
-              <p>
-                <time dateTime={nextWorkshop.date}>
-                  {parts(nextWorkshop.date, locale).full}
-                </time>{' '}
-                · {previewCopy[locale][nextWorkshop.venue]}
-              </p>
-              <a href={localizeHref(locale, '/events#upcoming-workshops')}>
-                {previewCopy[locale].schedule}{' '}
-                <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
-              </a>
-            </div>
-          </aside>
-        ) : null}
-      </div>
-      {!archive && upcoming.length > 0 ? (
+      {confirmed.length > 0 && (
         <>
-          <h3 className={styles.groupTitle}>{copy.upcoming}</h3>
-          <ul className={styles.upcoming}>
-            {upcoming.slice(0, 3).map((event) => {
-              const date = event.date ? parts(event.date, locale) : null;
-              const second = event.secondDate
-                ? parts(event.secondDate, locale)
-                : null;
-              const statusLabel =
-                event.status === 'waitlist'
-                  ? copy.waitlist
-                  : event.status === 'dateTbc'
-                    ? copy.dateTbc
-                    : event.status === 'inProgress'
-                      ? copy.inProgress
-                      : null;
-              return (
-                <li
-                  key={event.id}
-                  className={styles.card}
-                  data-kind={event.kind}
-                  data-cover={event.cover ? true : undefined}
-                >
-                  {event.cover ? (
-                    <span className={styles.cover} aria-hidden="true">
-                      <Image
-                        src={event.cover}
-                        alt=""
-                        fill
-                        sizes="(max-width: 700px) 100vw, 33vw"
-                      />
-                    </span>
-                  ) : null}
-                  <div className={styles.dateBadge} aria-hidden="true">
-                    {second && event.status === 'inProgress' ? (
-                      <>
-                        <strong>{second.day}</strong>
-                        <span>{second.month}</span>
-                      </>
-                    ) : date ? (
-                      <>
-                        <strong>{date.day}</strong>
-                        <span>{date.month}</span>
-                      </>
-                    ) : (
-                      <strong>…</strong>
-                    )}
-                  </div>
-                  <div className={styles.cardBody}>
-                    <p className={styles.tags}>
-                      <span data-free={event.free || undefined}>
-                        {event.free ? copy.free : copy.paid}
-                      </span>
-                      <span>{copy.online}</span>
-                      {statusLabel ? <span>{statusLabel}</span> : null}
-                    </p>
-                    <h4 dir="auto">{event.title[locale]}</h4>
-                    <p className={styles.meta}>
-                      {date && event.status !== 'inProgress' ? (
-                        <time dateTime={event.date!}>{date.full}</time>
-                      ) : null}
-                      {second && event.status === 'inProgress' ? (
-                        <span>
-                          {copy.session2} ·{' '}
-                          <time dateTime={event.secondDate}>{second.full}</time>
-                        </span>
-                      ) : null}
-                      <span>{event.audience[locale]}</span>
-                      <span>
-                        {copy.with} {presenterNames(event, locale)}
-                      </span>
-                    </p>
-                    {event.status !== 'inProgress' ? (
-                      <a
-                        className={styles.action}
-                        href={
-                          event.registerHref ?? localizeHref(locale, '/contact')
-                        }
-                        {...(event.registerHref
-                          ? { target: '_blank', rel: 'noopener' }
-                          : {})}
-                      >
-                        {event.status === 'waitlist'
-                          ? copy.joinWaitlist
-                          : event.registerHref
-                            ? copy.register
-                            : copy.notify}{' '}
-                        <span aria-hidden="true">↗</span>
-                      </a>
-                    ) : null}
-                    {event.date && event.status !== 'waitlist' ? (
-                      <a
-                        className={styles.calendar}
-                        href={`/api/events/${event.id}/calendar?lang=${locale}`}
-                        download
-                      >
-                        + {copy.calendar}
-                      </a>
-                    ) : null}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+          <h2 className={styles.groupTitle}>{copy.upcoming}</h2>
+          <ol className={styles.past}>
+            {confirmed.map((event) => (
+              <li id={`event-${event.id}`} key={event.id}>
+                <time dateTime={event.nextDate}>
+                  {formatDate(event.nextDate, locale)}
+                </time>
+                <div>
+                  <strong dir="auto">{event.title[locale]}</strong>
+                  <span>{previewCopy[locale][event.venue ?? 'zoom']}</span>
+                </div>
+                {event.registerHref && (
+                  <a href={event.registerHref} target="_blank" rel="noopener">
+                    {copy.details}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ol>
         </>
-      ) : null}
+      )}
+      <h2 id="events-recent" className={styles.groupTitle} data-no-split>
+        {copy.past}
+      </h2>
+      <ol className={styles.past}>
+        {recent.map((event) => {
+          const date = event.secondDate ?? event.date!;
+          const presenters = event.presenters
+            .map(
+              (id) =>
+                psychologyTeam.find((member) => member.id === id)?.name[locale],
+            )
+            .filter(Boolean)
+            .join(' · ');
+          return (
+            <li id={`event-${event.id}`} key={event.id}>
+              <time dateTime={date}>{formatDate(date, locale)}</time>
+              <div>
+                <strong dir="auto">{event.title[locale]}</strong>
+                {presenters && (
+                  <span>
+                    {copy.with} {presenters}
+                  </span>
+                )}
+              </div>
+              {event.pageHref ? (
+                <a href={localizeHref(locale, event.pageHref)}>
+                  {copy.details}
+                </a>
+              ) : event.recording ? (
+                <a href={askHref} target="_blank" rel="noopener">
+                  {copy.recording} · {copy.askRecording}
+                </a>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
