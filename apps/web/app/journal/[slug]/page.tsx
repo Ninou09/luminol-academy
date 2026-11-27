@@ -59,6 +59,21 @@ export default async function JournalArticlePage({ params }: Props) {
   const article = findArticle(slug);
   if (!article) notFound();
   const copy = journalCopy[locale];
+  const resourceSection =
+    article.slug === 'small-rituals-with-teenagers'
+      ? '#family-pathways'
+      : '#library-tools-title';
+  const resourceCopy = {
+    en: [
+      'Related resources',
+      'Explore learning resources in the Psychology Library',
+    ],
+    fr: [
+      'Ressources liées',
+      'Explorer les ressources de la Bibliothèque de psychologie',
+    ],
+    ar: ['موارد ذات صلة', 'استكشف مواد التعلّم في المكتبة النفسية'],
+  }[locale];
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -114,6 +129,17 @@ export default async function JournalArticlePage({ params }: Props) {
               <p>{section.body[locale]}</p>
             </section>
           ))}
+          {article.school === 'psychology' && (
+            <aside className={styles.related} aria-labelledby="article-related">
+              <h2 id="article-related">{resourceCopy[0]}</h2>
+              <Link
+                href={localizeHref(locale, `/psy-library${resourceSection}`)}
+              >
+                {resourceCopy[1]}{' '}
+                <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
+              </Link>
+            </aside>
+          )}
           <p className={styles.disclaimer}>{copy.disclaimer}</p>
           <aside className={styles.cta}>
             <h2>{copy.ctaTitle}</h2>

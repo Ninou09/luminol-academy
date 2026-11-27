@@ -6,6 +6,7 @@ import localFont from 'next/font/local';
 import { CountUp } from '../components/count-up';
 import { InnerUniverse } from '../components/inner-universe';
 import { LuminousCursor } from '../components/luminous-cursor';
+import { PublicAnalytics } from '../components/public-analytics';
 import { PublicInteractions } from '../components/public-interactions';
 import { PublicMotionController } from '../components/public-motion-controller';
 import { PageNavigation } from '../components/page-navigation';
@@ -160,16 +161,7 @@ export default async function RootLayout({
         {/* Load only once Web Analytics is enabled in the Vercel project;
             otherwise the script path does not exist and returns 404. */}
         {process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === '1' ? (
-          <>
-            {/* Vercel Web Analytics: cookie-free, aggregated page views. */}
-            <script
-              dangerouslySetInnerHTML={{
-                __html:
-                  'window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};',
-              }}
-            />
-            <script defer src="/_vercel/insights/script.js" />
-          </>
+          <PublicAnalytics />
         ) : null}
       </body>
     </html>

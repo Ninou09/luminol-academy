@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getEventSchedule, selectEventSchedule } from './public-events';
+import { GET } from '../app/api/events/[id]/calendar/route';
 
 const title = {
   en: 'Clinical workshop',
@@ -9,6 +10,7 @@ const title = {
 const event = { id: 'new-clinical-workshop', title, presenters: [] };
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
 });
@@ -73,5 +75,56 @@ describe('the home event schedule', () => {
     expect(
       (fetch.mock.calls[0]?.[0] as URL).searchParams.get('query'),
     ).toContain('active == true');
+  });
+});
+
+describe('published schedule and calendar consistency', () => {
+  const confirmed = {
+    ...event,
+    date: '2026-11-28',
+    venue: 'blida',
+    startsAt: '2026-11-28T10:00:00+01:00',
+    endsAt: '2026-11-28T14:00:00+01:00',
+  } as const;
+
+  it('keeps cancellations and postponements visible without offering them as entries to book', () => {
+    const schedule = selectEventSchedule(
+      [
+        { ...confirmed, id: 'cancelled-event', scheduleStatus: 'cancelled' },
+        { ...confirmed, id: 'postponed-event', scheduleStatus: 'postponed' },
+      ],
+      new Date('2026-11-27T12:00:00Z'),
+    );
+    expect(schedule.confirmed).toHaveLength(0);
+    expect(schedule.recent).toHaveLength(0);
+    expect(schedule.updates.map(({ id }) => id)).toEqual([
+      'cancelled-event',
+      'postponed-event',
+    ]);
+  });
+
+  it('uses the same CMS time and venue for calendar downloads and stops offering completed events', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-11-27T12:00:00Z'));
+    vi.stubEnv('NEXT_PUBLIC_SANITY_PROJECT_ID', 'eventfixture');
+    vi.stubEnv('NEXT_PUBLIC_SANITY_DATASET', 'fixtures');
+    const fetch = vi.fn(async () => Response.json({ result: [confirmed] }));
+    vi.stubGlobal('fetch', fetch);
+    const args = () =>
+      [
+        new Request(
+          'https://example.com/api/events/new-clinical-workshop/calendar?lang=fr',
+        ),
+        { params: Promise.resolve({ id: event.id }) },
+      ] as const;
+    const response = await GET(...args());
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toBe('no-store');
+    const ics = await response.text();
+    expect(ics).toContain('DTSTART:20261128T090000Z');
+    expect(ics).toContain('DTEND:20261128T130000Z');
+    expect(ics).toContain('LOCATION:Blida');
+    vi.setSystemTime(new Date('2026-11-28T13:00:00Z'));
+    expect((await GET(...args())).status).toBe(410);
   });
 });

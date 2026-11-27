@@ -417,3 +417,22 @@
     height: clamp(8rem, 39vw, 11rem);
   }
 }
+
+.related {
+  margin-block: 1.35rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-brand-line);
+  border-inline-start: 2px solid var(--color-brand-gold-strong);
+  border-radius: 0.8rem;
+}
+.related h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.related a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  color: var(--color-brand-cyan-light);
+}

@@ -341,7 +341,12 @@ export default async function ProgrammeDetailPage({
               </ul>
 
               <div className={styles.actions}>
-                <ButtonLink href={contactHref}>{primaryActionLabel}</ButtonLink>
+                <ButtonLink
+                  href={contactHref}
+                  data-public-action="Programme enquiry opened"
+                >
+                  {primaryActionLabel}
+                </ButtonLink>
                 <ButtonLink
                   href={localizeHref(
                     locale,
@@ -520,7 +525,12 @@ export default async function ProgrammeDetailPage({
             </h2>
             <p>{isWaitlist ? copy.waitlistNextBody : copy.nextBody}</p>
             <div className={styles.footerActions}>
-              <ButtonLink href={contactHref}>{primaryActionLabel}</ButtonLink>
+              <ButtonLink
+                href={contactHref}
+                data-public-action="Programme enquiry opened"
+              >
+                {primaryActionLabel}
+              </ButtonLink>
               <ButtonLink
                 href={localizeHref(locale, '/programmes')}
                 variant="secondary"

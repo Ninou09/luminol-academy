@@ -1,4 +1,26 @@
-import { luminolEvents } from '../../../../../lib/events';
+import { hasEventEnded } from '../../../../../lib/events';
+import {
+  getPublicEvents,
+  isEventScheduled,
+} from '../../../../../lib/public-events';
+
+const copy = {
+  en: {
+    reminder: 'Time to be confirmed. Date shown in Algeria time.',
+    blida: 'Blida',
+    zoom: 'Online (Zoom)',
+  },
+  fr: {
+    reminder: 'Horaire à confirmer. Date indiquée à l’heure d’Algérie.',
+    blida: 'Blida',
+    zoom: 'En ligne (Zoom)',
+  },
+  ar: {
+    reminder: 'الوقت قيد التأكيد. التاريخ بتوقيت الجزائر.',
+    blida: 'البليدة',
+    zoom: 'عبر الإنترنت (Zoom)',
+  },
+} as const;
 
 /**
  * "Add to calendar" for a Luminol event: a small iCalendar file. Events with
@@ -9,7 +31,7 @@ function escapeText(value: string) {
     .replaceAll('\\', '\\\\')
     .replaceAll(';', '\\;')
     .replaceAll(',', '\\,')
-    .replaceAll('\n', '\\n');
+    .replace(/\r\n|[\r\n]/g, '\\n');
 }
 
 function compactDate(iso: string) {
@@ -27,16 +49,33 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ): Promise<Response> {
   const { id } = await params;
-  const event = luminolEvents.find((item) => item.id === id);
+  const event = (await getPublicEvents()).find((item) => item.id === id);
   if (!event || !event.date) {
     return new Response('Not found', { status: 404 });
+  }
+  if (!isEventScheduled(event) || hasEventEnded(event)) {
+    return new Response(null, {
+      status: 410,
+      headers: { 'Cache-Control': 'no-store' },
+    });
   }
   const url = new URL(request.url);
   const locale = url.searchParams.get('lang');
   const lang = locale === 'fr' || locale === 'ar' ? locale : 'en';
-  const day = event.secondDate ?? event.date;
-  const stamp =
-    new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const now = new Date();
+  const day = event.date;
+  const utcStamp = (value: string) =>
+    new Date(value).toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const dates = event.startsAt
+    ? [
+        `DTSTART:${utcStamp(event.startsAt)}`,
+        ...(event.endsAt ? [`DTEND:${utcStamp(event.endsAt)}`] : []),
+      ]
+    : [
+        `DTSTART;VALUE=DATE:${compactDate(day)}`,
+        `DTEND;VALUE=DATE:${compactDate(nextDay(event.secondDate ?? day))}`,
+      ];
+  const labels = copy[lang];
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -44,22 +83,19 @@ export async function GET(
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
     `UID:${event.id}@luminol-academy`,
-    `DTSTAMP:${stamp}`,
-    `DTSTART;VALUE=DATE:${compactDate(day)}`,
-    `DTEND;VALUE=DATE:${compactDate(nextDay(day))}`,
+    `DTSTAMP:${utcStamp(now.toISOString())}`,
+    ...dates,
     `SUMMARY:${escapeText(`Luminol · ${event.title[lang]}`)}`,
-    `DESCRIPTION:${escapeText(
-      `${event.audience[lang]}. Online via Zoom. The exact time and link are shared by Luminol before the session.`,
-    )}`,
-    'LOCATION:Online (Zoom)',
+    ...(!event.startsAt ? [`DESCRIPTION:${escapeText(labels.reminder)}`] : []),
+    `LOCATION:${escapeText(labels[event.venue ?? 'zoom'])}`,
     'END:VEVENT',
     'END:VCALENDAR',
   ];
-  return new Response(lines.join('\r\n'), {
+  return new Response(lines.join('\r\n') + '\r\n', {
     headers: {
       'Content-Type': 'text/calendar; charset=utf-8',
       'Content-Disposition': `attachment; filename="luminol-${event.id}.ics"`,
-      'Cache-Control': 'public, max-age=3600',
+      'Cache-Control': 'no-store',
     },
   });
 }

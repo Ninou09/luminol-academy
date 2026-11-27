@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 
 import { buildPublicMetadata } from '../../lib/public-metadata';
 import { publicSearch } from '../../lib/public-seo';
+import Form from 'next/form';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -17,6 +18,8 @@ import {
   localizeProgrammeViewAction,
   localizeProgrammeWaitlistAction,
   localizeProgrammeWaitlistLabel,
+  normalizeProgrammeDelivery,
+  programmeDeliveryModes,
 } from '../../lib/programme-presentation';
 import {
   filterPublicProgrammes,
@@ -70,6 +73,18 @@ export default async function ProgrammesPage({
   const enquiryProgrammeLabel = localizeProgrammeEnquiryAction(locale);
   const filters = parseProgrammeDiscoveryParams(await searchParams);
   const sourceProgrammes = await getPublicProgrammes();
+  const formats = programmeDeliveryModes.filter(
+    (mode) =>
+      filters.format === mode ||
+      sourceProgrammes?.some(
+        (programme) => normalizeProgrammeDelivery(programme.delivery) === mode,
+      ),
+  );
+  const formatLabels = {
+    en: ['Format', 'All formats'],
+    fr: ['Modalité', 'Toutes les modalités'],
+    ar: ['صيغة التكوين', 'جميع الصيغ'],
+  }[locale];
   const programmes = sourceProgrammes
     ? filterPublicProgrammes(sourceProgrammes, filters)
     : null;
@@ -178,7 +193,11 @@ export default async function ProgrammesPage({
                   </span>
                 </div>
                 <h3 id={titleId} dir="auto">
-                  <Link className={styles.titleLink} href={programmeHref}>
+                  <Link
+                    className={styles.titleLink}
+                    href={programmeHref}
+                    data-public-action="Programme opened"
+                  >
                     {publicCopy.title}
                   </Link>
                 </h3>
@@ -204,6 +223,7 @@ export default async function ProgrammesPage({
                     className={styles.primaryAction}
                     href={programmeHref}
                     aria-label={programmeActionLabel}
+                    data-public-action="Programme opened"
                     data-programme-primary-action
                   >
                     {viewProgrammeLabel}
@@ -263,10 +283,12 @@ export default async function ProgrammesPage({
               }
             </h1>
             <p>{copy.heroBody}</p>
-            <form
+            <Form
+              key={JSON.stringify(filters)}
               className={styles.filters}
+              data-format-filter={formats.length > 0 || undefined}
               action={localizeHref(locale, '/programmes')}
-              method="get"
+              autoComplete="off"
               role="search"
               aria-label={copy.searchLabel}
             >
@@ -315,13 +337,30 @@ export default async function ProgrammesPage({
                 </select>
               </label>
 
+              {formats.length > 0 && (
+                <label htmlFor="programme-format">
+                  <span>{formatLabels[0]}</span>
+                  <select
+                    id="programme-format"
+                    name="format"
+                    defaultValue={filters.format ?? ''}
+                  >
+                    <option value="">{formatLabels[1]}</option>
+                    {formats.map((mode) => (
+                      <option key={mode} value={mode}>
+                        {localizeProgrammeDelivery(locale, mode)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <div className={styles.filterActions}>
                 <button type="submit">{copy.apply}</button>
                 <Link href={localizeHref(locale, '/programmes')}>
                   {copy.clear}
                 </Link>
               </div>
-            </form>
+            </Form>
           </div>
         </section>
 

@@ -134,3 +134,17 @@ for (const locale of ['en', 'fr'] as const) {
     }
   });
 }
+
+test('catalogue restores filters from the URL after browser Back', async ({
+  page,
+}) => {
+  await page.goto('/en/programmes?language=fr');
+  const filters = page.getByRole('search');
+  await expect(filters.locator('select[name="language"]')).toHaveValue('fr');
+  await filters.locator('select[name="language"]').selectOption('ar');
+  await filters.locator('button[type="submit"]').click();
+  await expect(page).toHaveURL(/[?&]language=ar(?:&|$)/);
+  await page.goBack();
+  await expect(page).toHaveURL(/[?&]language=fr(?:&|$)/);
+  await expect(filters.locator('select[name="language"]')).toHaveValue('fr');
+});

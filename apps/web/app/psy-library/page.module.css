@@ -212,3 +212,22 @@
   object-fit: cover;
   object-position: center 46%;
 }
+
+.sectionNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 74rem);
+  margin: 0 auto;
+  padding-block: 0.3rem;
+  border-block: 1px solid var(--color-brand-line);
+}
+.sectionNav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-brand-cyan-light);
+}
+.page :is(h2[id], section[id]) {
+  scroll-margin-block-start: 7rem;
+}

@@ -53,7 +53,13 @@ export function MindSection({ locale }: { locale: Locale }) {
   useEffect(() => {
     const section = sectionRef.current;
     const canvas = canvasRef.current;
-    if (!allowMotion || !section || !canvas) return;
+    if (
+      !allowMotion ||
+      !section ||
+      !canvas ||
+      window.matchMedia('(max-width: 760px) and (pointer: coarse)').matches
+    )
+      return;
     let scene: MindScene | null = null;
     const steer = (event: PointerEvent) => {
       if (!scene || event.pointerType === 'touch') return;

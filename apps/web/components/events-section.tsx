@@ -23,6 +23,11 @@ const previewCopy = {
     schedule: 'See the workshop calendar',
     blida: 'Blida',
     zoom: 'Online · Zoom',
+    updates: 'Schedule changes',
+    cancelled: 'Cancelled',
+    postponed: 'Postponed · new date pending',
+    timezone: 'Algeria time',
+    noRecent: 'Past events will appear here.',
   },
   fr: {
     proposed: 'Prochain atelier prévisionnel',
@@ -32,6 +37,11 @@ const previewCopy = {
     schedule: 'Voir le calendrier des ateliers',
     blida: 'Blida',
     zoom: 'En ligne · Zoom',
+    updates: 'Modifications du calendrier',
+    cancelled: 'Annulé',
+    postponed: 'Reporté · nouvelle date à confirmer',
+    timezone: 'heure d’Algérie',
+    noRecent: 'Les événements passés apparaîtront ici.',
   },
   ar: {
     proposed: 'الورشة المقترحة القادمة',
@@ -41,6 +51,11 @@ const previewCopy = {
     schedule: 'عرض تقويم الورش',
     blida: 'البليدة',
     zoom: 'عبر الإنترنت · Zoom',
+    updates: 'تغييرات الجدول',
+    cancelled: 'أُلغي',
+    postponed: 'مؤجّل · الموعد الجديد قيد التأكيد',
+    timezone: 'بتوقيت الجزائر',
+    noRecent: 'ستظهر الفعاليات الماضية هنا.',
   },
 } as const;
 
@@ -51,6 +66,30 @@ function formatDate(iso: string, locale: Locale) {
     month: 'long',
     year: 'numeric',
   }).format(new Date(`${iso}T12:00:00+01:00`));
+}
+
+function EventTime({
+  startsAt,
+  locale,
+}: {
+  startsAt?: string | undefined;
+  locale: Locale;
+}) {
+  if (!startsAt) return null;
+  const time = new Intl.DateTimeFormat(dateLocale[locale], {
+    timeZone: 'Africa/Algiers',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(new Date(startsAt));
+  return (
+    <span>
+      <time dateTime={startsAt}>
+        <bdi>{time}</bdi>
+      </time>{' '}
+      · {previewCopy[locale].timezone}
+    </span>
+  );
 }
 
 type Schedule = Awaited<ReturnType<typeof getEventSchedule>>;
@@ -84,7 +123,9 @@ export async function HomeEvents({ locale }: { locale: Locale }) {
         <article
           className={styles.nextEvent}
           data-upcoming-event={
-            next ? `${next.id ?? 'workshop'}:${next.date}` : ''
+            next
+              ? `${next.id ?? 'workshop'}:${next.date}:${next.startsAt ?? ''}`
+              : ''
           }
         >
           {next && (
@@ -120,11 +161,17 @@ export async function HomeEvents({ locale }: { locale: Locale }) {
             {next ? (
               <>
                 <h3 dir="auto">{next.title[locale]}</h3>
-                <p>
+                <p data-event-timing>
                   <time dateTime={next.date}>
                     {formatDate(next.date, locale)}
                   </time>{' '}
                   · {text[next.venue]}
+                  {next.startsAt && (
+                    <>
+                      {' '}
+                      · <EventTime startsAt={next.startsAt} locale={locale} />
+                    </>
+                  )}
                 </p>
                 <a
                   className={styles.scheduleLink}
@@ -172,7 +219,8 @@ export function EventsSection({
   locale: Locale;
   schedule: Schedule;
 }) {
-  const { confirmed, recent } = schedule;
+  const { confirmed, recent, updates } = schedule;
+  const text = previewCopy[locale];
   const copy = eventsCopy[locale];
   const askHref =
     getWhatsAppHref(channelCopy[locale].whatsappMessage) ??
@@ -195,13 +243,49 @@ export function EventsSection({
                 </time>
                 <div>
                   <strong dir="auto">{event.title[locale]}</strong>
-                  <span>{previewCopy[locale][event.venue ?? 'zoom']}</span>
+                  <span>{text[event.venue ?? 'zoom']}</span>
+                  <EventTime startsAt={event.startsAt} locale={locale} />
                 </div>
-                {event.registerHref && (
-                  <a href={event.registerHref} target="_blank" rel="noopener">
-                    {copy.details}
+                <div className={styles.eventActions}>
+                  {event.registerHref && (
+                    <a
+                      href={event.registerHref}
+                      data-public-action="Event registration"
+                    >
+                      {copy.details}
+                    </a>
+                  )}
+                  <a
+                    href={`/api/events/${event.id}/calendar?lang=${locale}`}
+                    data-public-action="Calendar download"
+                  >
+                    {copy.calendar}
                   </a>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
+      {updates.length > 0 && (
+        <>
+          <h2 className={styles.groupTitle}>{text.updates}</h2>
+          <ol className={styles.past}>
+            {updates.map((event) => (
+              <li id={`event-${event.id}`} key={event.id}>
+                {event.date && (
+                  <time dateTime={event.date}>
+                    {formatDate(event.date, locale)}
+                  </time>
                 )}
+                <div>
+                  <strong dir="auto">{event.title[locale]}</strong>
+                  <span>
+                    {event.scheduleStatus === 'cancelled'
+                      ? text.cancelled
+                      : text.postponed}
+                  </span>
+                </div>
               </li>
             ))}
           </ol>
@@ -210,6 +294,7 @@ export function EventsSection({
       <h2 id="events-recent" className={styles.groupTitle} data-no-split>
         {copy.past}
       </h2>
+      {recent.length === 0 && <p>{text.noRecent}</p>}
       <ol className={styles.past}>
         {recent.map((event) => {
           const date = event.secondDate ?? event.date!;

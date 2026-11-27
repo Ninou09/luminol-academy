@@ -236,6 +236,21 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             className={`${styles.formSurface} ${enquiryStyles.compact}`}
             data-contact-form
           >
+            {programme && (
+              <p className={styles.selectedProgramme}>
+                {
+                  {
+                    en: 'Selected programme',
+                    fr: 'Programme sélectionné',
+                    ar: 'البرنامج المختار',
+                  }[locale]
+                }
+                {' · '}
+                <strong dir="auto">
+                  {localizeProgrammePublicCopy(locale, programme).title}
+                </strong>
+              </p>
+            )}
             {programmeSlug && !programme && (
               <p role="status">
                 {

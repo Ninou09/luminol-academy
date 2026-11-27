@@ -93,6 +93,23 @@ describe('programme discovery filters', () => {
     ).toEqual(['programme-leadership']);
   });
 
+  it('combines a shareable format filter with the language and normalizes CMS delivery labels', () => {
+    const filters = parseProgrammeDiscoveryParams({
+      format: 'HYBRID',
+      language: 'en',
+    });
+    expect(hasProgrammeDiscoveryFilters(filters)).toBe(true);
+    expect(
+      filterPublicProgrammes(programmes, filters).map(({ _id }) => _id),
+    ).toEqual(['programme-english']);
+    expect(
+      filterPublicProgrammes(programmes, { ...filters, language: 'ar' }),
+    ).toEqual([]);
+    expect(
+      parseProgrammeDiscoveryParams({ format: ['ONLINE', 'HYBRID'] }),
+    ).toEqual({ query: '' });
+  });
+
   it('searches reviewed localized programme copy', () => {
     const actProgramme: PublicCmsProgramme = {
       _id: 'programme-act',

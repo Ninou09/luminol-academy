@@ -28,6 +28,7 @@ import styles from './page.module.css';
 const copy = {
   en: {
     title: 'Psychology Library',
+    sections: 'Library sections',
     intro:
       'Explore clinical approaches and family support through reading, visual tools and the teaching topics of clinical psychologist Kheddaoui Fettouma.',
     founder: 'Years of clinical experience',
@@ -49,6 +50,7 @@ const copy = {
   },
   fr: {
     title: 'Bibliothèque de psychologie',
+    sections: 'Rubriques de la bibliothèque',
     intro:
       'Explorez les approches cliniques et l’accompagnement des familles à travers des lectures, des outils visuels et les thèmes enseignés par la psychologue clinicienne Kheddaoui Fettouma.',
     founder: 'Ans d’expérience clinique',
@@ -72,6 +74,7 @@ const copy = {
   },
   ar: {
     title: 'المكتبة النفسية',
+    sections: 'أقسام المكتبة',
     intro:
       'استكشف المقاربات السريرية ودعم الأسرة من خلال قراءات وأدوات بصرية وموضوعات التكوين التي تقدّمها الأخصائية النفسية خداوي فطومة.',
     founder: 'سنة من الخبرة السريرية',
@@ -107,7 +110,11 @@ export default async function PsychologyLibrary() {
   const text = copy[locale];
   const direction = locale === 'ar' ? '←' : '→';
   const resources = [
-    { title: text.maps, body: text.mapsBody, href: '/psy-library.html' },
+    {
+      title: text.maps,
+      body: text.mapsBody,
+      href: '/psy-library.html#library',
+    },
     {
       title: text.journal,
       body: text.journalBody,
@@ -167,6 +174,15 @@ export default async function PsychologyLibrary() {
             sizes="(max-width: 740px) 92vw, 42vw"
           />
         </section>
+
+        <nav className={styles.sectionNav} aria-label={text.sections}>
+          <a href="#library-tools-title">{text.tools}</a>
+          {groups.map(({ id, title }) => (
+            <a href={`#${id}`} key={id}>
+              {title}
+            </a>
+          ))}
+        </nav>
 
         <section
           className={styles.section}

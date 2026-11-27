@@ -452,6 +452,30 @@ const academyEvent = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'startsAt',
+      title: 'Confirmed start time',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'scheduleStatus',
+      title: 'Schedule status',
+      type: 'string',
+      initialValue: 'scheduled',
+      options: {
+        list: [
+          { title: 'Scheduled', value: 'scheduled' },
+          { title: 'Cancelled', value: 'cancelled' },
+          { title: 'Postponed', value: 'postponed' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'registerHref',
+      title: 'Registration link',
+      type: 'url',
+      validation: (rule) => rule.uri({ scheme: ['https'] }),
+    }),
+    defineField({
       name: 'endsAt',
       title: 'End time',
       description:

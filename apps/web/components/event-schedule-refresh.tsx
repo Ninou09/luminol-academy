@@ -45,10 +45,12 @@ export function EventScheduleRefresh() {
       if (!card || card.dataset.upcomingEvent === previous) return;
       previous = card.dataset.upcomingEvent;
       animation?.cancel();
-      animation = card.animate(
-        [{ transform: 'translateY(4px)' }, { transform: 'translateY(0)' }],
-        { duration: 260, easing: 'ease-out' },
-      );
+      animation = card
+        .querySelector('[data-event-timing]')
+        ?.animate([{ opacity: 0.62 }, { opacity: 1 }], {
+          duration: 260,
+          easing: 'ease-out',
+        });
     });
     observer.observe(section, {
       subtree: true,

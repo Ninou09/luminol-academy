@@ -7,7 +7,7 @@ import { getImageProps } from 'next/image';
 import { useEffect, useRef } from 'react';
 
 import { brandArtwork, brandArtworkCredit } from '../lib/academy-media';
-import { createLuminousField, type ArtworkFrame } from './luminous-field';
+import type { ArtworkFrame, createLuminousField } from './luminous-field';
 import styles from './luminous-backdrop.module.css';
 
 /** Keep in sync with the <source media> below. */
@@ -37,21 +37,20 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
     const portrait = window.matchMedia(portraitQuery);
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 
-    const field = createLuminousField(canvas);
-    if (!field) return;
-    root.dataset.field = 'live';
-
+    let field: ReturnType<typeof createLuminousField>;
+    let disposed = false;
+    let started = false;
     let inView = false;
     let frame = 0;
     const target = { x: 0, y: 0 };
     const current = { x: 0, y: 0 };
 
     const syncFrame = () =>
-      field.setFrame(portrait.matches ? portraitFrame : desktopFrame);
+      field?.setFrame(portrait.matches ? portraitFrame : desktopFrame);
     const syncRunning = () => {
-      if (inView && !document.hidden) field.start();
+      if (inView && !document.hidden) field?.start();
       else {
-        field.stop();
+        field?.stop();
         cancelAnimationFrame(frame);
         frame = 0;
       }
@@ -74,24 +73,40 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
       target.x =
         ((event.clientX - rect.left) / rect.width - 0.5) * 2 * direction;
       target.y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
-      field.setPointer(target.x * direction, -target.y);
+      field?.setPointer(target.x * direction, -target.y);
       if (!frame) frame = requestAnimationFrame(paint);
     };
     const onPointerLeave = () => {
       target.x = 0;
       target.y = 0;
-      field.setPointer(0, 0);
+      field?.setPointer(0, 0);
       if (!frame) frame = requestAnimationFrame(paint);
     };
 
     const observer = new IntersectionObserver(([entry]) => {
       inView = Boolean(entry?.isIntersecting);
       syncRunning();
+      if (!inView || started) return;
+      started = true;
+      void import('./luminous-field')
+        .then(({ createLuminousField }) => {
+          if (disposed) return;
+          field = createLuminousField(canvas);
+          if (!field) return;
+          root.dataset.field = 'live';
+          field.setPointer(
+            target.x * (document.dir === 'rtl' ? -1 : 1),
+            -target.y,
+          );
+          syncFrame();
+          syncRunning();
+        })
+        .catch(() => {
+          // The editorial artwork is already visible if WebGL cannot start.
+        });
     });
     observer.observe(hero);
 
-    syncFrame();
-    syncRunning();
     portrait.addEventListener('change', syncFrame);
     document.addEventListener('visibilitychange', syncRunning);
     if (finePointer.matches) {
@@ -100,6 +115,7 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
     }
 
     return () => {
+      disposed = true;
       cancelAnimationFrame(frame);
       observer.disconnect();
       portrait.removeEventListener('change', syncFrame);
@@ -108,7 +124,7 @@ export function LuminousBackdrop({ locale }: { locale: Locale }) {
       hero.removeEventListener('pointerleave', onPointerLeave);
       hero.style.removeProperty('--hero-px');
       hero.style.removeProperty('--hero-py');
-      field.destroy();
+      field?.destroy();
       delete root.dataset.field;
     };
   }, [allowMotion]);

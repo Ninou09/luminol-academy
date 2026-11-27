@@ -2,22 +2,22 @@ import type { Locale } from '@luminol/localization';
 
 const PROGRAMME_DELIVERY_LABELS = {
   en: {
-    'In person': 'In person',
-    Online: 'Online',
-    Hybrid: 'Hybrid',
-    Flexible: 'Flexible',
+    IN_PERSON: 'In person',
+    ONLINE: 'Online',
+    HYBRID: 'Hybrid',
+    FLEXIBLE: 'Flexible',
   },
   fr: {
-    'In person': 'En présentiel',
-    Online: 'En ligne',
-    Hybrid: 'Hybride',
-    Flexible: 'Flexible',
+    IN_PERSON: 'En présentiel',
+    ONLINE: 'En ligne',
+    HYBRID: 'Hybride',
+    FLEXIBLE: 'Flexible',
   },
   ar: {
-    'In person': 'حضوري',
-    Online: 'عن بُعد',
-    Hybrid: 'هجين',
-    Flexible: 'مرن',
+    IN_PERSON: 'حضوري',
+    ONLINE: 'عن بُعد',
+    HYBRID: 'هجين',
+    FLEXIBLE: 'مرن',
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
@@ -214,6 +214,20 @@ export function localizeProgrammeDetailContent(
   );
 }
 
+export const programmeDeliveryModes = [
+  'ONLINE',
+  'IN_PERSON',
+  'HYBRID',
+  'FLEXIBLE',
+] as const;
+
+export function normalizeProgrammeDelivery(
+  delivery: string | null | undefined,
+) {
+  const key = delivery?.trim().toUpperCase().replace(/\s+/g, '_');
+  return programmeDeliveryModes.find((mode) => mode === key);
+}
+
 export function localizeProgrammeDelivery(
   locale: Locale,
   delivery: string | null | undefined,
@@ -221,11 +235,8 @@ export function localizeProgrammeDelivery(
   const normalized = delivery?.trim();
   if (!normalized) return null;
 
-  return (
-    PROGRAMME_DELIVERY_LABELS[locale][
-      normalized as keyof (typeof PROGRAMME_DELIVERY_LABELS)[typeof locale]
-    ] ?? normalized
-  );
+  const mode = normalizeProgrammeDelivery(normalized);
+  return mode ? PROGRAMME_DELIVERY_LABELS[locale][mode] : normalized;
 }
 
 export function localizeProgrammeViewAction(locale: Locale): string {

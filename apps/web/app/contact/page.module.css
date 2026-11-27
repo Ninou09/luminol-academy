@@ -739,3 +739,11 @@
     max-height: 8rem;
   }
 }
+
+.selectedProgramme {
+  margin: 0 0 0.7rem;
+  padding: 0.5rem 0.75rem;
+  border-inline-start: 2px solid var(--color-brand-gold-strong);
+  color: var(--color-brand-ink);
+  overflow-wrap: anywhere;
+}

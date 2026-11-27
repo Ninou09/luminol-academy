@@ -680,6 +680,9 @@
   align-items: end;
   backdrop-filter: none;
 }
+.heroCopy .filters[data-format-filter] {
+  grid-template-columns: minmax(0, 1.7fr) repeat(3, minmax(0, 1fr)) auto;
+}
 .heroCopy .queryField {
   grid-column: auto;
 }
@@ -711,12 +714,16 @@
   .heroCopy .filters {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .heroCopy .filters[data-format-filter] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
   .heroCopy :is(.queryField, .filterActions) {
     grid-column: 1 / -1;
   }
 }
 @media (max-width: 480px) {
-  .heroCopy .filters {
+  .heroCopy .filters,
+  .heroCopy .filters[data-format-filter] {
     grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -56,7 +56,7 @@
   padding: 1rem 0.25rem;
   border-bottom: 1px solid rgb(255 255 255 / 0.1);
 }
-.past time {
+.past li > time {
   color: #f0cf8e;
   font-size: 0.82rem;
   font-weight: 700;
@@ -292,4 +292,11 @@
   margin-block-start: 0.28rem;
   font-size: 0.8rem;
   color: var(--color-brand-gold-strong);
+}
+
+.past .eventActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
 }

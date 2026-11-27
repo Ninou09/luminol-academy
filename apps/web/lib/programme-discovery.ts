@@ -4,6 +4,8 @@ import { z } from 'zod';
 import {
   localizeProgrammeDelivery,
   localizeProgrammePublicCopy,
+  normalizeProgrammeDelivery,
+  programmeDeliveryModes,
 } from './programme-presentation';
 import {
   PROGRAMME_LANGUAGE_CODES,
@@ -26,10 +28,13 @@ const programmeLanguageSearchLabels: Record<CmsProgrammeLanguage, string> = {
   en: 'English Anglais الإنجليزية',
 };
 
+export type ProgrammeDeliveryMode = (typeof programmeDeliveryModes)[number];
+
 export type ProgrammeDiscoveryFilters = {
   query: string;
   school?: SchoolSlug;
   language?: CmsProgrammeLanguage;
+  format?: ProgrammeDeliveryMode;
 };
 
 const paramsObjectSchema = z.record(z.string(), z.unknown());
@@ -73,11 +78,15 @@ export function parseProgrammeDiscoveryParams(
   const languageResult = z
     .enum(PROGRAMME_LANGUAGE_CODES)
     .safeParse(languageValue);
+  const formatResult = z
+    .enum(programmeDeliveryModes)
+    .safeParse(parseSingleParam(parsed.data.format, 16));
   const filters: ProgrammeDiscoveryFilters = { query };
 
   if (school) filters.school = school;
   if (languageResult.success) filters.language = languageResult.data;
 
+  if (formatResult.success) filters.format = formatResult.data;
   return filters;
 }
 
@@ -87,7 +96,8 @@ export function hasProgrammeDiscoveryFilters(
   return (
     filters.query.length > 0 ||
     filters.school !== undefined ||
-    filters.language !== undefined
+    filters.language !== undefined ||
+    filters.format !== undefined
   );
 }
 
@@ -166,7 +176,9 @@ export function filterPublicProgrammes(
   const eligible = programmes.filter(
     (programme) =>
       (!filters.school || programme.school === filters.school) &&
-      (!filters.language || programme.languages.includes(filters.language)),
+      (!filters.language || programme.languages.includes(filters.language)) &&
+      (!filters.format ||
+        normalizeProgrammeDelivery(programme.delivery) === filters.format),
   );
 
   let scored = eligible.flatMap((programme) => {
@@ -185,7 +197,7 @@ export function filterPublicProgrammes(
       [
         ...Object.values(programmeLanguageSearchLabels),
         ...(['ar', 'fr', 'en'] as const).flatMap((locale) =>
-          (['ONLINE', 'IN_PERSON', 'HYBRID', 'FLEXIBLE'] as const).map(
+          programmeDeliveryModes.map(
             (mode) => localizeProgrammeDelivery(locale, mode) ?? '',
           ),
         ),
