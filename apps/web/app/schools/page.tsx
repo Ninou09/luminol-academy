@@ -65,7 +65,7 @@ export default async function SchoolsPage() {
                   sizes="(max-width: 900px) 100vw, 33vw"
                 />
               </span>
-              <span className={`scene-caption ${styles.sourceCaption}`}>
+              <span className="scene-caption">
                 {illustrativePhotoCredit.label[locale]}
               </span>
               <span className={styles.cardBody}>

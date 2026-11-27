@@ -7,24 +7,6 @@ export type EditorialFilmAsset = {
   alt: Record<Locale, string>;
 };
 
-export const filmControls = {
-  en: {
-    play: 'Play video',
-    loading: 'Loading video',
-    error: 'Video unavailable',
-  },
-  fr: {
-    play: 'Lire la vidéo',
-    loading: 'Chargement de la vidéo',
-    error: 'Vidéo indisponible',
-  },
-  ar: {
-    play: 'تشغيل الفيديو',
-    loading: 'جارٍ تحميل الفيديو',
-    error: 'الفيديو غير متاح',
-  },
-} as const;
-
 export const editorialFilms = {
   library: {
     src: '/media/editorial/psychology-library-pexels-3009667.mp4',

@@ -88,10 +88,6 @@
   object-fit: cover;
   transition: scale 1.4s var(--luminol-ease-out);
 }
-.card .sourceCaption {
-  inset-block: 0.75rem auto;
-  inset-inline: auto 0.75rem;
-}
 .card:hover .cardPhoto img {
   scale: 1.06;
 }

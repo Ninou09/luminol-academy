@@ -172,7 +172,7 @@ test('data saver keeps school links and posters available', async ({
   await expect(page).toHaveURL(/\/fr\/schools\/training$/);
 });
 
-test('without WebGL the mobile poster and school links still work by touch', async ({
+test('without WebGL mobile videos autoplay and school links work by touch', async ({
   browser,
   baseURL,
 }) => {
@@ -196,17 +196,15 @@ test('without WebGL the mobile poster and school links still work by touch', asy
       );
     });
     const page = await ctx.newPage();
-    const videos: string[] = [];
-    page.on('request', (r) => {
-      if (r.url().includes('.mp4')) videos.push(r.url());
-    });
     await page.goto('/en');
     await expect(page.locator('#top img')).toBeVisible();
     for (const area of ['#about', 'section[aria-labelledby="pathway-title"]']) {
       await page.locator(area).scrollIntoViewIfNeeded();
-      await expect(page.locator(area).locator('img').first()).toBeVisible();
+      const video = page.locator(area).locator('video');
+      await expect(video).toHaveJSProperty('paused', false);
+      await expect(video).toHaveJSProperty('loop', true);
+      await expect(video).toHaveJSProperty('muted', true);
     }
-    expect(videos).toEqual([]);
     await page.locator('[data-school-card] a').nth(1).tap();
     await expect(page).toHaveURL(/\/en\/schools\/languages$/);
   } finally {

@@ -84,6 +84,26 @@ test('About reduced motion keeps the editorial image in place', async ({
   await expect(page.locator('[data-founder-media]')).toHaveCount(0);
 });
 
+test('editorial films autoplay muted on phones and keep their source metadata', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const path of ['/en/about', '/fr/psy-library']) {
+    await page.goto(path);
+    const film = page.locator('[data-editorial-film]');
+    await film.scrollIntoViewIfNeeded();
+    const video = film.locator('video');
+    await expect(video).toHaveJSProperty('paused', false);
+    await expect(video).toHaveJSProperty('loop', true);
+    await expect(video).toHaveJSProperty('muted', true);
+    await expect(film).toHaveAttribute(
+      'data-media-source',
+      /^https:\/\/www\.pexels\.com/,
+    );
+    await expect(film.locator('figcaption')).toHaveCount(0);
+  }
+});
+
 test('premium Contact page preserves the enquiry form contract', async ({
   page,
 }) => {

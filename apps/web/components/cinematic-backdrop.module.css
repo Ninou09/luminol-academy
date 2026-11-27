@@ -1,4 +1,5 @@
 .backdrop,
+.loop,
 .poster,
 .video,
 .veil {
@@ -108,45 +109,12 @@
 }
 .editorialVideo {
   z-index: 1;
-  object-fit: contain;
 }
-.editorialControl {
-  position: absolute;
-  z-index: 2;
-  inset: 50% auto auto 50%;
-  translate: -50% -50%;
-  min-height: 44px;
-  margin: 0;
-  padding: 0.6rem 0.95rem;
-  border: 1px solid var(--color-brand-line);
-  border-radius: var(--radius-pill);
-  background: var(--color-brand-night);
-  color: var(--color-brand-surface);
-  font: inherit;
-  font-weight: 700;
-  white-space: nowrap;
+.video:not([data-ready]),
+.editorialVideo:not([data-ready]) {
+  opacity: 0;
 }
-button.editorialControl:not(:disabled) {
-  cursor: pointer;
-}
-.editorialControl:focus-visible,
-.editorialCredit a:focus-visible {
-  outline: 2px solid var(--color-brand-gold-strong);
-  outline-offset: 3px;
-}
-.editorialCredit {
-  position: absolute;
-  z-index: 2;
-  inset: 0.7rem auto auto 50%;
-  translate: -50% 0;
-  padding: 0.32rem 0.65rem;
-  border-radius: var(--radius-pill);
-  background: var(--color-brand-night);
-  color: var(--color-brand-surface);
-  font-size: 0.73rem;
-  white-space: nowrap;
-}
-.editorialCredit a {
-  color: inherit;
-  text-underline-offset: 0.16em;
+.editorial .control {
+  inset-inline-end: 0.75rem;
+  inset-block-end: 0.75rem;
 }

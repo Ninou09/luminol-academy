@@ -116,3 +116,44 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+@container (width < 29rem) {
+  .compact :global(.enquiry-form) {
+    --enquiry-padding: clamp(0.75rem, 4cqi, 1rem);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .compact :global(.enquiry-form .form-heading),
+  .compact :global(.enquiry-form .enquiry-context),
+  .compact :global(.enquiry-form .form-status) {
+    overflow-wrap: anywhere;
+  }
+
+  .compact :global(.enquiry-form .consent-field) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    align-content: center;
+    gap: 0.2rem 0.65rem;
+    min-block-size: 44px;
+  }
+
+  .compact :global(.enquiry-form .consent-field > span) {
+    grid-column: 2;
+  }
+
+  .compact :global(.enquiry-form .consent-field > [role='alert']) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .compact :global(.enquiry-form .form-actions) {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .compact :global(.enquiry-form .form-actions button) {
+    inline-size: 100%;
+    min-block-size: 44px;
+  }
+}
