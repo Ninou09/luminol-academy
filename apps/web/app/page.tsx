@@ -24,12 +24,30 @@ import { getRequestLocale } from '../lib/request-locale';
 import { getSchools } from '../lib/schools';
 import styles from './home.module.css';
 import { HomeEvents } from '../components/events-section';
-import { PhotoBand } from '../components/live-photo';
+import { PhotoCard } from '../components/live-photo';
 import {
   homeSchoolPhotos,
   illustrativePhotoCredit,
   peoplePhotos,
 } from '../lib/people-photos';
+
+const practiceCopy = {
+  en: {
+    title: 'Put what you learn into practice',
+    body: 'Work through examples, exchange feedback and practise skills you can take into your work and daily life.',
+    action: 'Explore programmes',
+  },
+  fr: {
+    title: 'Mettre en pratique ses apprentissages',
+    body: 'Travaillez sur des exemples, échangez des retours et entraînez-vous à mobiliser vos acquis au travail comme au quotidien.',
+    action: 'Découvrir les programmes',
+  },
+  ar: {
+    title: 'حوّل ما تتعلّمه إلى ممارسة',
+    body: 'ناقش أمثلة وتبادل الملاحظات وتدرّب على مهارات يمكنك استخدامها في العمل والحياة اليومية.',
+    action: 'استكشف البرامج',
+  },
+} as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
@@ -47,6 +65,7 @@ export default async function Page() {
     training: styles.training ?? '',
   };
   const cinematic = cinematicCopy[locale];
+  const practice = practiceCopy[locale];
   return (
     <>
       <SiteHeader />
@@ -198,11 +217,28 @@ export default async function Page() {
 
         <HomeEvents locale={locale} />
 
-        <PhotoBand
-          photo={peoplePhotos.academyLecture}
-          locale={locale}
-          reveal="portal"
-        />
+        <section
+          className={styles.practice}
+          aria-labelledby="home-practice-title"
+        >
+          <PhotoCard
+            photo={peoplePhotos.academySupervision}
+            locale={locale}
+            className={styles.practicePhoto}
+            sizes="(max-width: 680px) 92vw, (max-width: 1200px) 47vw, 640px"
+          />
+          <div className={styles.practiceCopy}>
+            <h2 id="home-practice-title">{practice.title}</h2>
+            <p>{practice.body}</p>
+            <Link
+              className={styles.textLink}
+              href={localizeHref(locale, '/programmes')}
+            >
+              {practice.action}{' '}
+              <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
+            </Link>
+          </div>
+        </section>
 
         <BreathingSpace locale={locale} />
 

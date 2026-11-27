@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { buildPublicMetadata } from '../../../lib/public-metadata';
 import { publicSearch } from '../../../lib/public-seo';
 import Image, { getImageProps } from 'next/image';
+import Link from 'next/link';
 
 import { localizePathname } from '@luminol/localization';
 
@@ -33,6 +34,24 @@ const contactLabels = {
   ar: { email: 'البريد الإلكتروني', phone: 'الهاتف' },
 } as const;
 
+const editorialCopy = {
+  en: {
+    title: 'Explore the subjects she teaches',
+    body: 'Find her published course outlines on clinical approaches, child development and family support in the Psychology Library.',
+    action: 'Explore the Psychology Library',
+  },
+  fr: {
+    title: 'Découvrir les sujets qu’elle enseigne',
+    body: 'La Bibliothèque de psychologie rassemble ses plans de cours publiés sur les approches cliniques, le développement de l’enfant et l’accompagnement des familles.',
+    action: 'Explorer la Bibliothèque de psychologie',
+  },
+  ar: {
+    title: 'تعرّف على الموضوعات التي تدرّسها',
+    body: 'تجد في المكتبة النفسية محاور دوراتها المنشورة حول المقاربات العيادية ونمو الطفل ودعم الأسرة.',
+    action: 'استكشف المكتبة النفسية',
+  },
+} as const;
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   return buildPublicMetadata(
@@ -47,10 +66,11 @@ export default async function FounderPage() {
   const locale = await getRequestLocale();
   const copy = founderCopy[locale];
   const journey = founderJourney[locale];
+  const editorial = editorialCopy[locale];
   const { props: mobilePortrait } = getImageProps({
     ...founderPhotos.vertical,
     alt: founderPhotos.vertical.alt[locale],
-    sizes: '92vw',
+    sizes: '(max-width: 600px) 92vw, 560px',
   });
   const { '@context': context, ...person } = buildFounderJsonLd({
     name: copy.name,
@@ -168,97 +188,113 @@ export default async function FounderPage() {
           </section>
         </div>
         <FounderTraining locale={locale} />
-        <figure
-          className={styles.editorialPortrait}
-          data-media-source={founderPhotoCredit.source}
-          data-media-license={founderPhotoCredit.license}
-          data-media-crop="wide-and-vertical"
-        >
-          <picture>
-            <source
-              media="(max-width: 600px)"
-              srcSet={mobilePortrait.srcSet}
-              sizes={mobilePortrait.sizes}
-            />
-            <Image
-              src={founderPhotos.wide.src}
-              alt={founderPhotos.wide.alt[locale]}
-              fill
-              sizes="(max-width: 1200px) 94vw, 1152px"
-            />
-          </picture>
-          <AcademyLogo className={styles.signature ?? ''} />
-        </figure>
         <section
-          className={styles.contact}
-          aria-labelledby="founder-contact"
-          data-reveal
+          className={styles.editorialPortrait}
+          aria-labelledby="founder-editorial-title"
         >
-          <div className={styles.contactCopy}>
-            <h2 id="founder-contact">{copy.contact}</h2>
-            <address>
-              <a href={`mailto:${founderContact.email}`}>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                >
-                  <rect x="3" y="5" width="18" height="14" rx="2" />
-                  <path d="m3 7 9 6 9-6" />
-                </svg>
-                <span>
-                  <strong>{contactLabels[locale].email}</strong>
-                  <span dir="ltr">{founderContact.email}</span>
-                </span>
-              </a>
-              <a href={`tel:${founderContact.phone}`}>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                >
-                  <path d="M7 3H4a1 1 0 0 0-1 1c0 9 8 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2c-3-1-6-4-7-7l2-2z" />
-                </svg>
-                <span>
-                  <strong>{contactLabels[locale].phone}</strong>
-                  <span dir="ltr">{founderContact.phoneDisplay}</span>
-                </span>
-              </a>
-              <a href={`https://wa.me/${founderContact.phone.slice(1)}`}>
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                >
-                  <path d="M20.5 11.5a8.5 8.5 0 0 1-12.7 7.4L4 20l1.1-3.8A8.5 8.5 0 1 1 20.5 11.5Z" />
-                  <path d="M9 8.2c-.8.3-.7 1.6 0 2.7 1 1.6 2.3 2.9 3.9 3.4 1.3.4 2.3 0 2.5-.7l-1.8-1.1-.8.8c-1.3-.5-2.4-1.5-3-2.9l.6-.7-.8-1.8Z" />
-                </svg>
-                <span>
-                  <strong>WhatsApp</strong>
-                  <span dir="ltr">{founderContact.phoneDisplay}</span>
-                </span>
-              </a>
-            </address>
+          <div className={styles.editorialCopy}>
+            <AcademyLogo className={styles.signature ?? ''} />
+            <h2 id="founder-editorial-title">{editorial.title}</h2>
+            <p>{editorial.body}</p>
+            <Link
+              className={styles.editorialLink}
+              href={localizePathname(locale, '/psy-library')}
+            >
+              {editorial.action}{' '}
+              <span aria-hidden="true">{locale === 'ar' ? '←' : '→'}</span>
+            </Link>
           </div>
           <figure
-            className={styles.contactPhoto}
+            className={styles.editorialPhoto}
+            data-no-reveal
             data-media-source={founderPhotoCredit.source}
             data-media-license={founderPhotoCredit.license}
-            data-media-crop="right-center"
+            data-media-crop="wide-right-and-vertical"
           >
-            <Image
-              src={founderPhotos.academy.src}
-              alt={founderPhotos.academy.alt[locale]}
-              fill
-              sizes="(max-width: 760px) 90vw, 360px"
-            />
+            <picture>
+              <source
+                media="(max-width: 600px)"
+                srcSet={mobilePortrait.srcSet}
+                sizes={mobilePortrait.sizes}
+              />
+              <Image
+                src={founderPhotos.wide.src}
+                alt={founderPhotos.wide.alt[locale]}
+                fill
+                sizes="(max-width: 760px) 90vw, (max-width: 1200px) 45vw, 560px"
+              />
+            </picture>
           </figure>
+        </section>
+        <section className={styles.contact} aria-labelledby="founder-contact">
+          <div className={styles.contactIdentity}>
+            <figure
+              className={styles.contactPhoto}
+              data-no-reveal
+              data-media-source={founderPhotoCredit.source}
+              data-media-license={founderPhotoCredit.license}
+              data-media-crop="right-portrait"
+            >
+              <Image
+                src={founderPhotos.academy.src}
+                alt={founderPhotos.academy.alt[locale]}
+                fill
+                sizes="(max-width: 480px) 200px, 290px"
+              />
+            </figure>
+            <div>
+              <h2 id="founder-contact">{copy.contact}</h2>
+              <p>{copy.role}</p>
+            </div>
+          </div>
+          <address>
+            <a href={`mailto:${founderContact.email}`}>
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+              >
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m3 7 9 6 9-6" />
+              </svg>
+              <span>
+                <strong>{contactLabels[locale].email}</strong>
+                <span dir="ltr">{founderContact.email}</span>
+              </span>
+            </a>
+            <a href={`tel:${founderContact.phone}`}>
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+              >
+                <path d="M7 3H4a1 1 0 0 0-1 1c0 9 8 17 17 17a1 1 0 0 0 1-1v-3l-5-2-2 2c-3-1-6-4-7-7l2-2z" />
+              </svg>
+              <span>
+                <strong>{contactLabels[locale].phone}</strong>
+                <span dir="ltr">{founderContact.phoneDisplay}</span>
+              </span>
+            </a>
+            <a href={`https://wa.me/${founderContact.phone.slice(1)}`}>
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+              >
+                <path d="M20.5 11.5a8.5 8.5 0 0 1-12.7 7.4L4 20l1.1-3.8A8.5 8.5 0 1 1 20.5 11.5Z" />
+                <path d="M9 8.2c-.8.3-.7 1.6 0 2.7 1 1.6 2.3 2.9 3.9 3.4 1.3.4 2.3 0 2.5-.7l-1.8-1.1-.8.8c-1.3-.5-2.4-1.5-3-2.9l.6-.7-.8-1.8Z" />
+              </svg>
+              <span>
+                <strong>WhatsApp</strong>
+              </span>
+            </a>
+          </address>
         </section>
       </main>
       <SiteFooter founderTheme />

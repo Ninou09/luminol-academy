@@ -381,28 +381,19 @@
 }
 .contact address {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
 }
 .contact address a {
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border: 1px solid var(--founder-line);
-  border-radius: 0.8rem;
   text-decoration: none;
 }
 .contact address a:hover {
-  border-color: var(--founder-gold);
   background: var(--founder-tint);
 }
 .contact address svg {
   width: 1.25rem;
-  flex: none;
   color: var(--founder-gold);
 }
 .contact address a > span {
-  display: grid;
   min-width: 0;
-  gap: 0.2rem;
   color: var(--founder-ink);
 }
 @media (max-width: 760px) {
@@ -743,68 +734,162 @@
 }
 .milestonePhoto img,
 .contactPhoto img,
-.editorialPortrait img {
+.editorialPhoto img {
   object-fit: cover;
 }
 .milestonePhoto img {
   object-position: center 62%;
 }
-.editorialPortrait,
+.editorialPortrait {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 72rem);
+  margin: 0 auto clamp(0.85rem, 2.2vw, 1.6rem);
+  overflow: hidden;
+  border: 1px solid var(--founder-line);
+  border-radius: clamp(1rem, 2vw, 1.6rem);
+  background:
+    radial-gradient(ellipse at 0% 0%, var(--founder-tint), transparent 75%),
+    var(--founder-deep);
+}
+.editorialCopy {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: clamp(0.65rem, 1.4vw, 1rem);
+  padding: clamp(1rem, 3vw, 2.6rem);
+}
+.editorialCopy h2,
+.editorialCopy p,
+.contactIdentity p {
+  margin: 0;
+}
+.editorialCopy h2 {
+  max-width: 21ch;
+  font-size: clamp(1.6rem, 3.3vw, 3rem);
+  line-height: 1.11;
+  text-wrap: balance;
+}
+.editorialCopy p,
+.contactIdentity p {
+  color: var(--founder-muted);
+}
+.editorialLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  min-height: 44px;
+  color: var(--founder-gold);
+  text-underline-offset: 0.23em;
+}
+.editorialLink:focus-visible {
+  outline: 2px solid var(--founder-gold);
+  outline-offset: 3px;
+}
+.signature {
+  border-block-end: 1px solid var(--founder-line);
+  padding-block-end: 0.55rem;
+}
+.editorialPhoto,
 .contactPhoto {
   position: relative;
   overflow: hidden;
   margin: 0;
-  border: 1px solid var(--founder-line);
-  border-radius: 1rem;
-}
-.editorialPortrait {
-  width: min(calc(100% - 2 * var(--luminol-page-gutter)), 72rem);
-  margin: 0 auto clamp(0.85rem, 2.2vw, 1.6rem);
-  aspect-ratio: 3 / 1;
-}
-.editorialPortrait img {
-  object-position: 74% 33%;
-}
-.signature {
-  position: absolute;
-  inset-block-end: clamp(0.65rem, 2vw, 1.25rem);
-  inset-inline-start: clamp(0.65rem, 2vw, 1.25rem);
-  max-width: calc(100% - 1.3rem);
-  padding: 0.45rem 0.7rem;
-  border: 1px solid var(--founder-gold);
-  border-radius: 0.75rem;
   background: var(--founder-deep);
-  direction: ltr;
+}
+.editorialPhoto {
+  min-height: clamp(14rem, 26vw, 23rem);
+}
+.editorialPhoto img {
+  object-position: 97% 24%;
 }
 .contact {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   align-items: center;
   gap: clamp(0.85rem, 2.5vw, 1.8rem);
 }
-.contactCopy {
-  min-width: 0;
+.page .contact {
+  border-block-start-color: var(--founder-gold);
+  background:
+    radial-gradient(ellipse at 12% 0%, var(--founder-tint), transparent 80%),
+    var(--founder-panel);
+}
+.contactIdentity {
+  display: grid;
+  grid-template-columns: clamp(4.75rem, 11vw, 8rem) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(0.65rem, 1.65vw, 1.2rem);
+}
+.contactIdentity h2 {
+  font-size: clamp(1.2rem, 2.7vw, 2.25rem);
+  line-height: 1.13;
+  text-wrap: wrap;
+}
+.contactIdentity p {
+  font-size: clamp(0.84rem, 1.4vw, 1rem);
 }
 .contactPhoto {
-  min-height: 9.5rem;
-  aspect-ratio: 2.2 / 1;
+  aspect-ratio: 4 / 5;
+  border: 1px solid var(--founder-gold);
+  border-radius: 3rem 3rem 0.75rem 0.75rem;
 }
 .contactPhoto img {
-  object-position: 80% 30%;
+  object-position: 87% center;
+}
+.contact address {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.3rem;
+}
+.contact address a {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+  min-height: 44px;
+  padding: 0.45rem 0.65rem;
+  border: 0;
+  border-block-end: 1px solid var(--founder-line);
+  border-radius: 0.4rem;
+}
+.contact address a > span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.2rem 0.65rem;
+}
+.contact address a:hover {
+  border-block-end-color: var(--founder-gold);
 }
 @media (max-width: 760px) {
   .milestonePhoto {
     aspect-ratio: 2.65 / 1;
   }
-  .contact {
+  .contact,
+  .editorialPortrait {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .editorialPhoto {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
   }
 }
 @media (max-width: 600px) {
-  .editorialPortrait {
-    aspect-ratio: 4 / 5;
+  .editorialPhoto {
+    aspect-ratio: 4 / 3;
   }
-  .editorialPortrait img {
-    object-position: center;
+  .editorialPhoto img {
+    object-position: center 27%;
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :global(html[data-motion='full']) .editorialPhoto img {
+    transition: scale 600ms var(--luminol-ease-out, ease);
+  }
+  :global(html[data-motion='full'])
+    .editorialPortrait:is(:hover, :focus-within)
+    .editorialPhoto
+    img {
+    scale: 1.035;
   }
 }
